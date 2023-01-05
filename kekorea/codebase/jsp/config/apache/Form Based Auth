@@ -1,0 +1,57 @@
+1. Windchill 설정
+	xconfmanager -t codebase/wt.properties -s wt.auth.form.enabled=true -p
+
+2. Apache 설정
+	Windchill Shell 실행
+	Web Sever 디렉토리 이동
+	백업 
+	스크립트 실행 - ant -f webAppConfig.xml regenWebAppConf -DappName=Windchill -DprotocolAuthOnly=true
+	web.xml 수정 
+	httpd.conf documentroot 수정
+	30-app-Windchill-AJP.conf JkMount /Windchill/plm/* ajpWorker 추가
+
+
+  3. Tomcat 설정
+  	%wt_home%/tomcat/conf/Catalina/localhost/Windchill.xml 에 LDAP 정보 추가
+ 	<Realm className="org.apache.catalina.realm.JNDIRealm" debug="99"
+       resourceName="ldap"
+       connectionURL="ldap://pdmdev.techwing.co.kr:389"
+       userPattern="uid={0},ou=people,cn=AdministrativeLdap,cn=Windchill_11.0,o=ptc" 
+       allRolesMode = "authOnly"/>
+ 
+ 4. 기타 설정
+ 	Spring Framework Customization Changes
+ 	Visualization Service
+ 	Desktop Integration
+ 	Info*Engine Customization Changes
+ 	3rd-Party Product Changes  
+ 	
+ 5. Windchill Shell 커맨드 실행이 안될때
+ 	변경된 30-app-Windchill-Auth.conf 파일 부분 확인
+ 	
+ 	<!-- basic auth 로 원복.. -->
+ 	<LocationMatch ^/+Windchill/+(;.*)?>
+	  AuthName "Windchill"
+	  AuthType Basic
+	  AuthBasicProvider Windchill-AdministrativeLdap Windchill-EnterpriseLdap 
+	  Require valid-user
+	</LocationMatch>
+ 
+  
+6.
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<bean
+					class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+					<property name="objectMapper">
+						<bean
+							class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean"></bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+  
+  

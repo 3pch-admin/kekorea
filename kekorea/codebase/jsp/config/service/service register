@@ -1,0 +1,57 @@
+1. 서비스 등록 방법
+
+1) 커스텀
+xconfmanager -t codebase/wt.properties -s wt.services.service.90000=e3ps.org.service.OrgService/e3ps.org.service.StandardOrgService -p
+xconfmanager -t codebase/wt.properties -s wt.services.service.91000=e3ps.event.EventService/e3ps.event.StandardEventService -p
+xconfmanager -t codebase/wt.properties -s wt.services.service.92000=e3ps.admin.service.AdminService/e3ps.admin.service.StandardAdminService -p
+
+2) 워커
+#xconfmanager -t codebase/WEB-INF/conf/wvs.properties -s worker.exe.whitelist.prefixes=C:\|D:\|/|nohup / -p
+
+3) 볼트
+xconfmanager -t codebase/wt.properties -s wt.fv.useVaultsForAllContent=true -p
+xconfmanager -t codebase/wt.properties -s wt.fv.useFvFileThreshold=true -p
+xconfmanager -t codebase/wt.properties -s wt.fv.fvFileThreshold=20000 -p
+xconfmanager -t codebase/wt.properties -s wt.fv.forceContentToVault=false -p
+
+4) 메일
+xconfmanager -t codebase/wt.properties -s wt.mail.mailhost= -p
+
+5) 쿼리
+xconfmanager -t codebase/db/db.properties -s wt.pom.queryLimit=-1 -p
+xconfmanager -t codebase/db/db.properties -s wt.pom.maxDbConnections=50 -p
+xconfmanager -t codebase/db/db.properties -s wt.pom.paging.threshold=-1 -p
+xconfmanager -t codebase/db/db.properties -s wt.pom.queryDepthThreshold=3 -p
+xconfmanager -t codebase/db/db.properties -s wt.pom.paging.snapshotQueryLimit=20000 -p
+
+6) 시간
+xconfmanager -t codebase/wt.properties -s wt.method.timezone=Asia/Seoul -p
+
+7) PDF, DWG 변환 (띄워 쓰기 어케 하지?)
+xconfmanager -t codebase/WEB-INF/conf/wvs.properties -s publish.usesPublishRules="ARBORTEXT PROE" -p
+
+8) Creo View 인증 (??)
+xconfmanager -t codebase/WEB-INF/conf/wvs.properties -s wvs.openincreoview.use.plugin.ie=true -p
+
+9) mail host 설정
+xconfmanager -t codebase/wt.properties -s wt.mail.mailhost=pop3s.hiworks.com -p
+
+10) 로그 처리
+xconfmanager -t codebase/WEB-INF/log4jMethodServer.properties -s log4j.logger.com.ptc.core.lwc.server.cache.factory.AttributeDefinitionViewFactory=FATAL -p
+
+11) 메소드 서버 설정
+xconfmanager -t codebase/wt.properties -s wt.manager.monitor.start.MethodServer=1 -p
+xconfmanager -t codebase/wt.properties -s wt.manager.monitor.start.BackgroundMethodServer=1 -p
+xconfmanager -s wt.manager.monitor.services="MethodServer BackgroundMethodServer" -t codebase\wt.properties -p
+xconfmanager -t codebase/wt.properties -s wt.method.maxHeap=8192 -p
+xconfmanager -t codebase/wt.properties -s wt.method.minHeap=8192 -p
+
+# ServerManager
+xconfmanager -t codebase/wt.properties -s wt.manager.maxHeap=1024 -p
+xconfmanager -t codebase/wt.properties -s wt.manager.minHeap=512 -p
+
+12) 기본설정관리자
+도면-부품 같은 폴더에 저장되도록
+
+13) 뷰 
+뷰 체인지

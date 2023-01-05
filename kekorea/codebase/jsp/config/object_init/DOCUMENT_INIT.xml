@@ -1,0 +1,31 @@
+
+<AttributeValues objType="wt.doc.WTDocument">
+
+	<!-- set the folder -->
+	<AttrValue id="folder.id"
+		algorithm="com.ptc.core.foundation.folder.server.impl.FolderPathAttributeAlgorithm">
+		<Arg>/Default</Arg>
+	</AttrValue>
+
+	<!-- set the lifecycle -->
+	<AttrValue id="lifeCycle.id"
+		algorithm="com.ptc.core.foundation.lifecycle.server.impl.LifeCycleTemplateAttributeAlgorithm">
+		<!-- NOTE: this argument value must be the same as the name of the lifecycle 
+			template in loadFiles\pdmlink\1PhaseDevelopmentLifecycleTemplate.xml -->
+		<Arg>DEFAULT_LIFECYCLE</Arg>
+	</AttrValue>
+
+	<!-- set the team template -->
+	<AttrValue id="teamTemplate.id"
+		algorithm="com.ptc.core.foundation.team.server.impl.TeamTemplateAttributeAlgorithm">
+		<Arg>Default</Arg>
+	</AttrValue>
+
+	<!-- set the version info to a generated version info -->
+	<AttrValue id="MBA|versionInfo"
+		algorithm="com.ptc.core.foundation.vc.server.impl.VersionInfoGenerator">
+		<Arg>wt.series.HarvardSeries.StateBased</Arg>
+	</AttrValue>
+
+</AttributeValues>
+             

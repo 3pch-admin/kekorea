@@ -1,0 +1,8 @@
+@charset "UTF-8";
+
+@font-face {
+	/** Noto Sans CJK KR Light **/
+	font-family: "NotoSansCJKkr-Light";
+	src: local('Noto Sans CJK KR Light');
+	src: url("/Windchill/jsp/asset/font/NotoSansCJKkr-Light.otf");
+}

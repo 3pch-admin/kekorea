@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<rules evaluate-rules-on-republish="true" xsi:schemaLocation="http://www.ptc.com PublishRulesSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.ptc.com">
+<!-- authoring-application name="PROE"-->
+<authoring-application name="PROE">
+	<additional-files name="DRW_FILES">
+		<file display-label="DWG" type="dwg" default="true" output-prefix="dwg"/>
+	</additional-files>
+	<additional-files name="PART_FILES">
+	</additional-files>
+	<additional-files name="ASM_FILES">
+	</additional-files>
+	<condition name="IS_PART">
+		<attribute name="epmdoc_number" regex=".*\.PRT"/>
+	</condition>
+	<condition name="IS_ASM">
+		<attribute name="epmdoc_number" regex=".*\.ASM"/>
+	</condition>
+	<condition name="IS_DRW">
+		<attribute name="epmdoc_number" regex=".*\.DRW" />
+	</condition>
+
+	<if condition="IS_PART">
+		<publish on="checkin" display-label="" additional-files="PART_FILES"/>
+		<publish on="create-representation" display-label="" additional-files="PART_FILES"/>
+		<publish on="schedule" display-label="" additional-files="PART_FILES"/>
+	</if>
+	<if condition="IS_ASM">
+		<publish on="checkin" display-label="" additional-files="ASM_FILES"/>
+		<publish on="create-representation" display-label="" additional-files="ASM_FILES"/>
+		<publish on="schedule" display-label="" additional-files="ASM_FILES"/>
+	</if>
+	<if condition="IS_DRW">
+		<publish on="checkin" display-label="도면 DWG 생성" additional-files="DRW_FILES"/>
+		<publish on="create-representation" display-label="도면 DWG 생성" additional-files="DRW_FILES"/>
+		<publish on="schedule" display-label="도면 DWG 생성" additional-files="DRW_FILES"/>
+	</if>
+</authoring-application> </rules>

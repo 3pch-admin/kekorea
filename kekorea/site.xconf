@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configuration
+  SYSTEM "xconf.dtd">
+<Configuration xmlns:xlink="http://www.w3.org/1999/xlink">
+   <Property name="ie.ldap.serverHostName" overridable="true"
+             targetFile="codebase/WEB-INF/ieStructProperties.txt"
+             value="plm.kekorea.co.kr"/>
+   <Property name="installedProduct.location.Apache" overridable="true"
+             targetFile="codebase/WEB-INF/ieWebServerLocation.txt"
+             value="d:\ptc\Windchill_11.1\HTTPServer"/>
+   <Property name="ie.ldap.managerPw" overridable="true"
+             targetFile="codebase/WEB-INF/ieStructProperties.txt"
+             value="encrypted.ie.ldap.managerPw"/>
+   <Property name="wt.webapp.name" overridable="true" targetFile="codebase/wt.properties"
+             value="Windchill"/>
+   <Property name="wt.rmi.server.hostname" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="plm.kekorea.co.kr"/>
+   <Property name="wt.webserver.port" overridable="true" targetFile="codebase/wt.properties"
+             value="80"/>
+   <Property name="installedProduct.location.Tomcat" overridable="true"
+             targetFile="codebase/WEB-INF/ieWebServerLocation.txt"
+             value="d:\ptc\Windchill_11.1\Windchill\tomcat"/>
+   <Property name="ie.ldap.propertyBaseDn" overridable="true"
+             targetFile="codebase/WEB-INF/ieStructProperties.txt"
+             value="cn=configuration,cn=Windchill_11.1,o=ptc"/>
+   <Property name="ie.shortcut.folder.name" overridable="true"
+             targetFile="codebase/WEB-INF/ieShortcutFolderName.txt"
+             value="C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Windchill_11.1"/>
+   <Property name="ie.ldap.serverPort" overridable="true"
+             targetFile="codebase/WEB-INF/ieStructProperties.txt"
+             value="389"/>
+   <Property name="ie.ldap.managerDn" overridable="true"
+             targetFile="codebase/WEB-INF/ieStructProperties.txt"
+             value="cn=Manager"/>
+   <Property name="wt.java.cmd" overridable="true" targetFile="codebase/wt.properties"
+             value="d:\ptc\Windchill_11.1\Java\jre\bin\java.exe"/>
+   <Property name="wt.jdk" overridable="true" targetFile="codebase/wt.properties"
+             value="d:\ptc\Windchill_11.1\Java"/>
+   <Property name="wt.db.maxBytesPerChar" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="3"/>
+   <Property name="wt.db.dataStore" overridable="true" targetFile="codebase/wt.properties"
+             value="Oracle"/>
+   <Property name="wt.pom.dbUser" overridable="true" targetFile="db/db.properties"
+             value="wcadmin"/>
+   <Property name="wt.locale.baseData" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="ko"/>
+   <Property name="Windchill.Foundation" overridable="true"
+             targetFile="codebase/installed.properties"
+             value="true"/>
+   <Property name="wt.federation.ie.ldapServer" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="ldap://plm.kekorea.co.kr:389"/>
+   <Property name="wt.federation.ie.namingService" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="kr.co.kekorea.plm.namingService"/>
+   <Property name="wt.pom.dbPassword" overridable="true" targetFile="db/db.properties"
+             value="encrypted.wt.pom.dbPassword"/>
+   <Property name="wt.pom.jdbc.host" overridable="true" targetFile="db/db.properties"
+             value="plm.kekorea.co.kr"/>
+   <Property name="wt.inf.container.SiteOrganization.internetDomain" overridable="true"
+             targetFile="codebase/wt/inf/container/SiteOrganization.properties"
+             value="kekorea.co.kr"/>
+   <Property name="wt.home" overridable="true" targetFile="codebase/wt.properties"
+             value="d:\ptc\Windchill_11.1\Windchill"/>
+   <Property name="wt.pom.jdbc.service" overridable="true" targetFile="db/db.properties"
+             value="wind"/>
+   <Property name="wt.federation.ie.VMName" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="kr.co.kekorea.plm.Windchill"/>
+   <Property name="wt.server.id" overridable="true" targetFile="codebase/wt.properties"
+             value="Windchill"/>
+   <Property name="wt.pom.jdbc.port" overridable="true" targetFile="db/db.properties"
+             value="1521"/>
+   <Property name="wt.federation.org.defaultAdapter" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="kr.co.kekorea.Ldap"/>
+   <Property name="wt.federation.org.enterpriseAdapter" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="kr.co.kekorea.EnterpriseLdap"/>
+   <Property name="wt.inf.container.SiteOrganization.name" overridable="true"
+             targetFile="codebase/wt/inf/container/SiteOrganization.properties"
+             value="kekorea"/>
+   <Property name="wt.servlet.ajp.minPort" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="8010"/>
+   <Property name="wt.licenseUsage.initial.connectedToInternet" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="1"/>
+   <Property name="wt.org.initial.uniquenesslevel" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="ORG_LEVEL"/>
+   <Property name="wt.licenseusage.licensepath" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="d:\ptc\Windchill_11.1\Windchill\conf\licensing"/>
+   <Property name="WC_PROMPTED.ig.ldapSettings.ldapPassword" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="-7448c9662491eb2b2ecb34b08c0e0e03"/>
+   <Property name="wt.licenseUsage.initial.PTCUsername" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="jhkim@3pchain.co.kr"/>
+   <Property name="mapcredentials.admin.adapters" overridable="true"
+             targetFile="codebase/WEB-INF/mapCredentials.txt"
+             value="kr.co.kekorea.Ldap^cn=Manager^encrypted.kr.co.kekorea.Ldap.cn=Manager"/>
+   <Property name="WC_PROMPTED.ig.coreproductSettings.siteAdminPw" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="54336eef6459a308df8592078de921bc"/>
+   <Property name="wt.licenseUsage.initial.PTCPassword" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="encrypted.wt.licenseUsage.initial.PTCPassword"/>
+   <AddToProperty name="mapcredentials.admin.adapters"
+                  value="kr.co.kekorea.EnterpriseLdap^cn=Manager^encrypted.kr.co.kekorea.EnterpriseLdap.cn=Manager"/>
+   <Property name="WVS.ThumbnailViewer" overridable="true"
+             targetFile="codebase/installed.properties"
+             value="true"/>
+   <Property name="WVS.ProductViewDownload" overridable="true"
+             targetFile="codebase/installed.properties"
+             value="true"/>
+   <Property name="WVS.ViewableCompressionUtilities" overridable="true"
+             targetFile="codebase/installed.properties"
+             value="true"/>
+   <Property name="viewable.compression.nativecmd" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="d:\ptc\Windchill_11.1\Windchill\wvs\bin\pvschange -vc -r pvschange_for_illustration.rcp -vL $(wt.logs.dir)\pvschange_for_illustration.log"/>
+   <Property name="thumbnail.generator.nativecmd" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="d:\ptc\Windchill_11.1\Windchill\wvs\bin\pvsthumb -vc -vL $(wt.logs.dir)\thumbnail3d.log"/>
+   <!--Updated by wt.load.Installer.--><Property name="wt.sysadm.administrators" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="Administrator, wcadmin"/>
+   <ConfigurationRef xlink:href="utilities/wca/conf/windchill/windchillconfigurator.xconf"/>
+   <ConfigurationRef xlink:href="kekorea.xconf"/>
+</Configuration>

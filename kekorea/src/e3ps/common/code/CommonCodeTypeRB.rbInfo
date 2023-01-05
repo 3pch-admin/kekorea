@@ -1,0 +1,38 @@
+ResourceInfo.class=wt.tools.resource.EnumResourceInfo
+ResourceInfo.customizable=true
+ResourceInfo.deprecated=false
+
+
+# Entry Format (values equal to default value are not included)
+# <key>.value=
+# <key>.category=
+# <key>.comment=
+# <key>.argComment<n>=
+# <key>.constant=
+# <key>.customizable=
+# <key>.deprecated=
+# <key>.abbreviatedDisplay=
+# <key>.fullDisplay=
+# <key>.shortDescription=
+# <key>.longDescription=
+# <key>.order=
+# <key>.defaultValue=
+# <key>.selectable=
+
+# Entry Contents
+
+
+CUSTOMER.value=CUSTOMER
+CUSTOMER.sort=1
+
+STEP.value=STEP
+STEP.sort=2
+
+INSTALL.value=INSTALL
+INSTALL.sort=3
+
+PROJECT.value=PROJECT
+PROJECT.sort=4
+
+PROJECT_TYPE.value=PROJECT_TYPE
+PROJECT_TYPE.sort=5
