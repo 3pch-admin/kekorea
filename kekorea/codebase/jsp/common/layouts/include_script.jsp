@@ -8,6 +8,11 @@
 <script type="text/javascript" src="/Windchill/jsp/asset/jquery-ui/jquery-ui.js"></script>
 <script src="//cdn.jsdelivr.net/npm/ui-contextmenu/jquery.ui-contextmenu.min.js"></script>
 
+
+<!-- AUIGrid -->
+<script src="/Windchill/jsp/asset/AUIGrid/AUIGrid.js"></script>
+<script src="/Windchill/jsp/asset/AUIGrid/AUIGridLicense.js"></script>
+
 <!-- jexcel -->
 <!-- <script src="https://bossanova.uk/jexcel/v3/jexcel.js"></script> -->
 <script src="/Windchill/jsp/asset/jexcel/dist/jexcel.js"></script>

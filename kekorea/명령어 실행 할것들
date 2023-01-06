@@ -1,0 +1,3 @@
+1. Apache 설정 변경
+	- HTTPServer 홈으로 이동
+	- ant -f webAppConfig.xml regenWebAppConf -DappName=Windchill -DprotocolAuthOnly=true 실행

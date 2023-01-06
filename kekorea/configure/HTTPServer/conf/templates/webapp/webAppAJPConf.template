@@ -3,6 +3,7 @@
 # Delegate specific web app requests to Tomcat by request URL
 
 <IfModule mod_jk.c>
+  JkMount /@@WEB_APP_NAME@@/plm/* @@AJP_WORKER_NAME@@
   JkMount /@@WEB_APP_NAME@@/*.jsp* @@AJP_WORKER_NAME@@
 
   JkMount /@@WEB_APP_NAME@@/servlet/* @@AJP_WORKER_NAME@@

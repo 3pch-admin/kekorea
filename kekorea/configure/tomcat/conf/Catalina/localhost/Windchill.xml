@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/Windchill" docBase="D:\ptc\Windchill_11.1\Windchill/codebase" reloadable="false" useHttpOnly="false">
+	<!-- Use parallel loader -->
+	<Loader loaderClass="org.apache.catalina.loader.ParallelWebappClassLoader" delegate="true" />
+
+	<Realm className="org.apache.catalina.realm.JNDIRealm" debug="99" resourceName="ldap" connectionURL="ldap://plm.kekorea.co.kr:389" userPattern="uid={0},ou=people,cn=AdministrativeLdap,cn=Windchill_11.1,o=ptc" allRolesMode="authOnly" />
+
+	<!-- <Environment name="solr/home" type="java.lang.String" override="true" value="@@SOLR_HOME@@"/> -->
+</Context>

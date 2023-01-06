@@ -3,6 +3,9 @@
 <!-- favicon -->
 <link rel="shortcut icon" href="/Windchill/jsp/images/logo3.gif" type="image/x-icon">
 
+<!-- AUIGrid -->
+<link rel="stylesheet" href="/Windchill/jsp/asset/AUIGrid/AUIGrid_classic_style.css">
+
 <!-- jexcel -->
 <!-- <link rel="stylesheet" href="https://bossanova.uk/jexcel/v3/jexcel.css"> -->
 <link rel="stylesheet" href="/Windchill/jsp/asset/jexcel/dist/jexcel.css">

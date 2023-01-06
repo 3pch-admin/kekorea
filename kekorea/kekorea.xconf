@@ -2,4 +2,38 @@
 <!DOCTYPE Configuration
   SYSTEM "xconf.dtd">
 <Configuration xmlns:xlink="http://www.w3.org/1999/xlink">
+	<!-- Form Base Auth -->
+   <Property name="wt.auth.form.enabled" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="true"/>
+             
+   <!-- Service -->          
+   <Property name="wt.services.service.90000" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="e3ps.org.service.OrgService/e3ps.org.service.StandardOrgService"/>
+   <Property name="wt.services.service.91000" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="e3ps.event.EventService/e3ps.event.StandardEventService"/>
+   <Property name="wt.services.service.92000" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="e3ps.admin.service.AdminService/e3ps.admin.service.StandardAdminService"/>
+   
+   
+   <!-- Method Server Setting -->
+   <Property name="wt.manager.monitor.start.MethodServer" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="1"/>  
+   <Property name="wt.manager.monitor.start.BackgroundMethodServer" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="1"/>
+   <Property name="wt.manager.monitor.services" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="MethodServer BackgroundMethodServer"/>       
+             
+             
+             
+             
+             
+             
+                                               
 </Configuration>
