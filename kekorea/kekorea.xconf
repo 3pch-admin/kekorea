@@ -29,11 +29,20 @@
    <Property name="wt.manager.monitor.services" overridable="true"
              targetFile="codebase/wt.properties"
              value="MethodServer BackgroundMethodServer"/>       
-             
-             
-             
-             
-             
+   <Property name="wt.method.maxHeap" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="2048"/>                 
+   <Property name="wt.method.minHeap" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="2048"/>                 
+
+	<!-- Server Manager -->
+   <Property name="wt.manager.maxHeap" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="1024"/>                 
+   <Property name="wt.manager.minHeap" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="512"/>     	             
              
                                                
 </Configuration>

@@ -6,9 +6,36 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 http://www.ptc.com/schema/mvc http://www.ptc.com/schema/mvc/mvc-10.0.xsd">
 
 	<!-- Configurations in this file override all other configurations -->
+
+	<!-- EPLAN -->
+	<!--  bean id="com.eplan.service.mvc.CreateArticleAttributesBuilder" class="com.eplan.service.mvc.CreateArticleAttributes" />
+	<bean id="com.eplan.service.mvc.ConvertArticleAttributesBuilder" class="com.eplan.service.mvc.ConvertArticleAttributes" />
+	<bean id="com.eplan.service.mvc.CreateEPLANHarnessProjectAttributesBuilder" class="com.eplan.service.mvc.CreateProjectAttributesHARNESS" />
+	<bean id="com.eplan.service.mvc.CreateEPLANProjectAttributesBuilder" class="com.eplan.service.mvc.CreateProjectAttributesELECTRIC" />
+	<bean id="com.eplan.service.mvc.SaveAsEPLANHarnessProjectAttributesBuilder" class="com.eplan.service.mvc.SaveAsProjectAttributesHARNESS" />
+	<bean id="com.eplan.service.mvc.SaveAsEPLANProjectAttributesBuilder" class="com.eplan.service.mvc.SaveAsProjectAttributesELECTRIC" />
+	<bean id="com.eplan.service.mvc.SaveAsEPLANHarnessProjectTemplateAttributesBuilder" class="com.eplan.service.mvc.SaveAsProjectTemplateAttributesHARNESS" />
+	<bean id="com.eplan.service.mvc.SaveAsEPLANProjectTemplateAttributesBuilder" class="com.eplan.service.mvc.SaveAsProjectTemplateAttributesELECTRIC" />
+	<bean id="com.eplan.service.mvc.SelectEPLANHarnessProjectTemplateBuilder" class="com.eplan.service.mvc.SelectProjectTemplateHARNESS" />
+	<bean id="com.eplan.service.mvc.SelectEPLANProjectTemplateBuilder" class="com.eplan.service.mvc.SelectProjectTemplateELECTRIC" />
+	<bean id="com.eplan.service.mvc.CustomActionBuilderHandler" class="com.eplan.service.mvc.CustomActionBuilderHandler" /-->
+
 	<context:component-scan base-package="e3ps">
 		<context:include-filter type="regex" expression="(service|controller)\..*" />
 	</context:component-scan>
+	<!-- tiles setting -->
+	<bean id="tilesviewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView"></property>
+		<property name="order" value="1"></property>
+	</bean>
+
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+		<property name="definitions">
+			<list>
+				<value>/config/tiles/layout.xml</value>
+			</list>
+		</property>
+	</bean>
 
 
 </beans>
