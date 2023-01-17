@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,7 @@ import e3ps.project.service.TemplateHelper;
 import wt.doc.WTDocument;
 import wt.fc.PersistenceHelper;
 import wt.fc.ReferenceFactory;
+import wt.log4j.LogR;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 import wt.vc.VersionControlHelper;
@@ -35,6 +37,8 @@ import wt.vc.Versioned;
 
 @Controller
 public class DocumentController extends BaseController {
+
+	private static final Logger logger = LogR.getLogger(DocumentController.class.getName());
 
 	@Description("문서 번호 세팅")
 	@ResponseBody
@@ -203,7 +207,7 @@ public class DocumentController extends BaseController {
 		}
 		return map;
 	}
-	
+
 	@Description("산출물 목록 가져오기")
 	@ResponseBody
 	@RequestMapping(value = "/document/listOldOuptutAction")
@@ -304,7 +308,8 @@ public class DocumentController extends BaseController {
 		// default 승인됨
 		StateKeys[] states = StateKeys.values();
 		model.addObject("states", states);
-		model.setViewName("default:/document/listDocument");
+//		model.setViewName("default:/document/listDocument");
+		model.setViewName("/jsp/document/listDocument.jsp");
 		return model;
 	}
 
@@ -320,7 +325,7 @@ public class DocumentController extends BaseController {
 		}
 		return map;
 	}
-	
+
 	@Description("구 제작사양서 가져오기")
 	@ResponseBody
 	@RequestMapping(value = "/document/listDocumentOldSpecAction")
@@ -337,14 +342,18 @@ public class DocumentController extends BaseController {
 	@Description("문서 목록 가져오기")
 	@ResponseBody
 	@RequestMapping(value = "/document/listDocumentAction")
-	public Map<String, Object> listDocumentAction(@RequestBody Map<String, Object> param) throws Exception {
-		Map<String, Object> map = null;
+	public Map<String, Object> listDocumentAction(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			map = DocumentHelper.manager.find(param);
+			logger.info("Call DocumentController listDocumentAction Method !!");
+			result = DocumentHelper.manager.find(params);
+			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
-		return map;
+		return result;
 	}
 
 	@Description("문서 등록 페이지")
@@ -487,11 +496,11 @@ public class DocumentController extends BaseController {
 		ArrayList<ProjectOutputLink> projectList = new ArrayList<ProjectOutputLink>();
 		ReferenceFactory rf = new ReferenceFactory();
 		try {
-			if(rf.getReference(oid).getObject() instanceof Contents) {
-				Contents content = (Contents)rf.getReference(oid).getObject();
-				ContentsPersistablesLink link =DocumentHelper.manager.getWTDOcument(content);
-				document = (WTDocument)link.getPersistables();
-			}else {
+			if (rf.getReference(oid).getObject() instanceof Contents) {
+				Contents content = (Contents) rf.getReference(oid).getObject();
+				ContentsPersistablesLink link = DocumentHelper.manager.getWTDOcument(content);
+				document = (WTDocument) link.getPersistables();
+			} else {
 				document = (WTDocument) rf.getReference(oid).getObject();
 			}
 			data = new DocumentViewData(document);
@@ -509,7 +518,7 @@ public class DocumentController extends BaseController {
 		}
 		return model;
 	}
-	
+
 	@Description("문서 추가")
 	@RequestMapping(value = "/document/addDocumentAction")
 	@ResponseBody
@@ -561,7 +570,6 @@ public class DocumentController extends BaseController {
 			map.put("result", SUCCESS);
 		} catch (Exception e) {
 			map.put("msg", "개정에 실패하였습니다.\n시스템 관리자에게 문의하세요");
-			map.put("url", ERROR_PAGE_URL);
 			map.put("result", FAIL);
 			e.printStackTrace();
 		}

@@ -21,7 +21,8 @@
 
 <!-- module js -->
 <script type="text/javascript" src="/Windchill/jsp/js/common.js"></script>
-<script type="text/javascript" src="/Windchill/jsp/js/quick.js"></script>
+<script type="text/javascript" src="/Windchill/jsp/js/base.js"></script>
+<!-- <script type="text/javascript" src="/Windchill/jsp/js/quick.js"></script> -->
 <script type="text/javascript" src="/Windchill/jsp/js/approval.js"></script>
 
 

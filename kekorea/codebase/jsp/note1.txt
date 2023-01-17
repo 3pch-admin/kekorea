@@ -1,5 +1,0 @@
-String oid = (String) param.get("oid");
-String name = (String) param.get("name");
-String rank = (String) param.get("rank");
-tring duty = (String) param.get("duty");
-String email = (String) param.get("email");

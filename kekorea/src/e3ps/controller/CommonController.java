@@ -63,6 +63,7 @@ import wt.vc.Versioned;
 import wt.viewmarkup.WTMarkUp;
 
 @Controller
+@RequestMapping(value = "/")
 public class CommonController extends BaseController {
 
 	@Description("주석세트 페이지")
@@ -571,7 +572,7 @@ public class CommonController extends BaseController {
 			map.put("result", SUCCESS);
 		} catch (Exception e) {
 			map.put("msg", "개정에 실패하였습니다.\n시스템 관리자에게 문의하세요");
-			map.put("url", ERROR_PAGE_URL);
+//			map.put("url", ERROR_PAGE_URL);
 			map.put("result", FAIL);
 			e.printStackTrace();
 		}

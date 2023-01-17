@@ -9,6 +9,7 @@ html {
 }
 
 body {
+	background-color: white !important;
 	margin: 14px;
 	padding: 0;
 	scrollbar-highlight-color: #FFFFFF;
@@ -974,7 +975,7 @@ table.view_table>tbody>tr>td.pview_td {
 
 table.btn_table {
 	width: 100%;
-	margin-top: 10px;
+	margin-top: 4px;
 	margin-bottom: 4px;
 }
 
@@ -3297,9 +3298,9 @@ table#main_table td:first-child {
 	border-radius: 10px 10px 10px 10px;
 }
 
-table#main_table td:last-child {
-	//border-radius: 10px 10px 10px 10px;
-}
+/* table#main_table td:last-child { */
+/* 	border-radius: 10px 10px 10px 10px; */
+/* } */
 
 table#notice_header_table, table#checkout_header_table {
 	width: 100%;
@@ -3650,7 +3651,8 @@ div.right {
 
 span.latest {
 	position: relative;
-	top: 1px;
+/* 	top: 1px; */
+	right: 4px;
 }
 
 span#locationStr {

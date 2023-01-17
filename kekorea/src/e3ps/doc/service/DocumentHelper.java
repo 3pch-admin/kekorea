@@ -287,7 +287,7 @@ public class DocumentHelper implements MessageHelper {
 				sc = VersionControlHelper.getSearchCondition(WTDocument.class, true);
 				query.appendWhere(sc, new int[] { idx_d });
 
-				CommonUtils.addLastVersionCondition2(query, WTDocument.class, idx_d);
+				CommonUtils.latestQuery(query, WTDocument.class, idx_d);
 			}
 
 			if (StringUtils.isNull(sort)) {
@@ -328,274 +328,207 @@ public class DocumentHelper implements MessageHelper {
 		return map;
 	}
 
-	public Map<String, Object> find(Map<String, Object> param) {
+	public Map<String, Object> find(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<DocumentColumnData> list = new ArrayList<DocumentColumnData>();
-		QuerySpec query = null;
 
-		// search param
-		String number = (String) param.get("number");
-		String name = (String) param.get("name");
-		String statesDoc = (String) param.get("statesDoc");
-		String creatorsOid = (String) param.get("creatorsOid");
-		String modifierOid = (String) param.get("modifierOid");
-		String description = (String) param.get("description");
-
-		String predate = (String) param.get("predate");
-		String postdate = (String) param.get("postdate");
-
-		String predate_m = (String) param.get("predate_m");
-		String postdate_m = (String) param.get("postdate_m");
-
-		String sub_folder = (String) param.get("sub_folder");
-
-		String latest = (String) param.get("latest");
+		String number = (String) params.get("number");
+		String name = (String) params.get("name");
+		String state = (String) params.get("state");
+		String creatorsOid = (String) params.get("creatorsOid");
+		String modifierOid = (String) params.get("modifierOid");
+		String description = (String) params.get("description");
+		String predate = (String) params.get("predate");
+		String postdate = (String) params.get("postdate");
+		String predate_m = (String) params.get("predate_m");
+		String postdate_m = (String) params.get("postdate_m");
+		String latest = (String) params.get("latest");
+		String location = (String) params.get("location");
 		if (StringUtils.isNull(latest)) {
 			latest = "true";
 		}
 
-		String location = (String) param.get("location");
 		ReferenceFactory rf = new ReferenceFactory();
-		// 정렬
-		String sort = (String) param.get("sort");
-		String sortKey = (String) param.get("sortKey");
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WTDocument.class, true);
+		int master = query.appendClassList(WTDocumentMaster.class, false);
 
-		try {
-			query = new QuerySpec();
+		SearchCondition sc = null;
+		ClassAttribute ca = null;
 
-			int idx = query.appendClassList(WTDocument.class, true);
-			int master = query.appendClassList(WTDocumentMaster.class, false);
-			// int idx_olink = query.appendClassList(DocumentOutputLink.class, false);
-			// int idx_plink = query.appendClassList(ProjectOutputLink.class, false);
-			// int idx_o = query.appendClassList(Output.class, false);
-			// int idx_p = query.appendClassList(Project.class, true);
+		sc = WorkInProgressHelper.getSearchCondition_CI(WTDocument.class);
+		query.appendWhere(sc, new int[] { idx });
+		query.appendAnd();
 
-			SearchCondition sc = null;
-			ClassAttribute ca = null;
+		sc = new SearchCondition(WTDocument.class, "masterReference.key.id", WTDocumentMaster.class,
+				"thePersistInfo.theObjectIdentifier.id");
+		query.appendWhere(sc, new int[] { idx, master });
 
-			// ClassAttribute roleAca = null;
-			// ClassAttribute roleBca = null;
-			//
-			// query.appendOpenParen();
-			//
-			// roleAca = new ClassAttribute(Output.class, WTAttributeNameIfc.ID_NAME);
-			// roleBca = new ClassAttribute(WTDocument.class, WTAttributeNameIfc.ID_NAME);
-			//
-			// sc = new SearchCondition(new ClassAttribute(DocumentOutputLink.class,
-			// "roleAObjectRef.key.id"), "=",
-			// roleAca);
-			// query.appendWhere(sc, new int[] { idx_olink, idx_o });
-			// query.appendAnd();
-			// sc = new SearchCondition(new ClassAttribute(DocumentOutputLink.class,
-			// "roleBObjectRef.key.id"), "=",
-			// roleBca);
-			// query.appendWhere(sc, new int[] { idx_olink, idx });
-			//
-			// query.appendAnd();
-			//
-			// roleAca = new ClassAttribute(Output.class, WTAttributeNameIfc.ID_NAME);
-			// roleBca = new ClassAttribute(Project.class, WTAttributeNameIfc.ID_NAME);
-			//
-			// sc = new SearchCondition(new ClassAttribute(ProjectOutputLink.class,
-			// "roleAObjectRef.key.id"), "=",
-			// roleAca);
-			// query.appendWhere(sc, new int[] { idx_plink, idx_o });
-			// query.appendAnd();
-			// sc = new SearchCondition(new ClassAttribute(ProjectOutputLink.class,
-			// "roleBObjectRef.key.id"), "=",
-			// roleBca);
-			// query.appendWhere(sc, new int[] { idx_plink, idx_p });
-			//
-			// query.appendCloseParen();
-			//
-			// query.appendAnd();
-
-			sc = WorkInProgressHelper.getSearchCondition_CI(WTDocument.class);
-			query.appendWhere(sc, new int[] { idx });
-			query.appendAnd();
-
-			sc = new SearchCondition(WTDocument.class, "masterReference.key.id", WTDocumentMaster.class,
-					"thePersistInfo.theObjectIdentifier.id");
-			query.appendWhere(sc, new int[] { idx, master });
-
-			if (!StringUtils.isNull(name)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ca = new ClassAttribute(WTDocument.class, WTDocument.NAME);
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(name);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			// 대소문자 구분
-			if (!StringUtils.isNull(number)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				ca = new ClassAttribute(WTDocument.class, WTDocument.NUMBER);
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(number);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(description)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ca = new ClassAttribute(WTDocument.class, WTDocument.DESCRIPTION);
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(description);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(creatorsOid)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				People user = (People) rf.getReference(creatorsOid).getObject();
-				long ids = user.getUser().getPersistInfo().getObjectIdentifier().getId();
-				sc = new SearchCondition(WTDocument.class, "iterationInfo.creator.key.id", SearchCondition.EQUAL, ids);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			// 수정자
-			if (!StringUtils.isNull(modifierOid)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				People user = (People) rf.getReference(modifierOid).getObject();
-				long ids = user.getUser().getPersistInfo().getObjectIdentifier().getId();
-				sc = new SearchCondition(WTDocument.class, "iterationInfo.modifier.key.id", SearchCondition.EQUAL, ids);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(statesDoc)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				sc = new SearchCondition(WTDocument.class, "state.state", SearchCondition.EQUAL, statesDoc);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(predate)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp start = DateUtils.convertStartDate(predate);
-				sc = new SearchCondition(WTDocument.class, WTAttributeNameIfc.CREATE_STAMP_NAME,
-						SearchCondition.GREATER_THAN_OR_EQUAL, start);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(postdate)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp end = DateUtils.convertEndDate(postdate);
-				sc = new SearchCondition(WTDocument.class, WTAttributeNameIfc.CREATE_STAMP_NAME,
-						SearchCondition.LESS_THAN_OR_EQUAL, end);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			// 수정일
-			if (!StringUtils.isNull(predate_m)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp start = DateUtils.convertStartDate(predate_m);
-				sc = new SearchCondition(WTDocument.class, WTAttributeNameIfc.MODIFY_STAMP_NAME,
-						SearchCondition.GREATER_THAN_OR_EQUAL, start);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(postdate_m)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp end = DateUtils.convertEndDate(postdate_m);
-				sc = new SearchCondition(WTDocument.class, WTAttributeNameIfc.MODIFY_STAMP_NAME,
-						SearchCondition.LESS_THAN_OR_EQUAL, end);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			Folder folder = null;
-			if (StringUtils.isNull(location)) {
-				location = ROOT;
-			}
-
-			folder = FolderTaskLogic.getFolder(location, CommonUtils.getContainer());
-
-			if (!StringUtils.isNull(folder)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				int f_idx = query.appendClassList(IteratedFolderMemberLink.class, false);
-				ClassAttribute fca = new ClassAttribute(IteratedFolderMemberLink.class, "roleBObjectRef.key.branchId");
-				SearchCondition fsc = new SearchCondition(fca, "=",
-						new ClassAttribute(WTDocument.class, "iterationInfo.branchId"));
-				fsc.setFromIndicies(new int[] { f_idx, idx }, 0);
-				fsc.setOuterJoin(0);
-				query.appendWhere(fsc, new int[] { f_idx, idx });
+		if (!StringUtils.isNull(name)) {
+			if (query.getConditionCount() > 0)
 				query.appendAnd();
 
-				query.appendOpenParen();
-				long fid = folder.getPersistInfo().getObjectIdentifier().getId();
-				query.appendWhere(
-						new SearchCondition(IteratedFolderMemberLink.class, "roleAObjectRef.key.id", "=", fid),
-						new int[] { f_idx });
-
-				if (!StringUtils.isNull(sub_folder)) {
-					ArrayList<Folder> folders = FolderUtils.getSubFolders(folder, new ArrayList<Folder>());
-					for (int i = 0; i < folders.size(); i++) {
-						Folder sub = (Folder) folders.get(i);
-						query.appendOr();
-						long sfid = sub.getPersistInfo().getObjectIdentifier().getId();
-						query.appendWhere(
-								new SearchCondition(IteratedFolderMemberLink.class, "roleAObjectRef.key.id", "=", sfid),
-								new int[] { f_idx });
-					}
-				}
-				query.appendCloseParen();
-			}
-
-			if ("true".equals(latest)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				sc = VersionControlHelper.getSearchCondition(WTDocument.class, true);
-				query.appendWhere(sc, new int[] { idx });
-
-				CommonUtils.addLastVersionCondition2(query, WTDocument.class, idx);
-			}
-
-			if (StringUtils.isNull(sort)) {
-				sort = "true";
-			}
-
-			if (StringUtils.isNull(sortKey)) {
-				sortKey = WTDocument.MODIFY_TIMESTAMP;
-			}
-
-			SearchUtils.appendOrderBy(query, WTDocument.class, sortKey, idx, Boolean.parseBoolean(sort));
-
-			query.setAdvancedQueryEnabled(true);
-			query.setDescendantsIncluded(false, master);
-
-			PageQueryUtils pager = new PageQueryUtils(param, query);
-			PagingQueryResult result = pager.find();
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				WTDocument document = (WTDocument) obj[0];
-				DocumentColumnData data = new DocumentColumnData(document);
-				list.add(data);
-			}
-
-			map.put("list", list);
-			map.put("lastPage", pager.getLastPage());
-			map.put("topListCount", pager.getTotal());
-			map.put("sessionid", pager.getSessionId());
-			map.put("curPage", pager.getCpage());
-			map.put("total", pager.getTotalSize());
-			map.put("result", "SUCCESS");
-		} catch (Exception e) {
-			map.put("result", "FAIL");
-			e.printStackTrace();
+			ca = new ClassAttribute(WTDocument.class, WTDocument.NAME);
+			ColumnExpression ce = StringUtils.getUpperColumnExpression(name);
+			SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
+			sc = new SearchCondition(function, SearchCondition.LIKE, ce);
+			query.appendWhere(sc, new int[] { idx });
 		}
+
+		// 대소문자 구분
+		if (!StringUtils.isNull(number)) {
+			if (query.getConditionCount() > 0)
+				query.appendAnd();
+			ca = new ClassAttribute(WTDocument.class, WTDocument.NUMBER);
+			ColumnExpression ce = StringUtils.getUpperColumnExpression(number);
+			SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
+			sc = new SearchCondition(function, SearchCondition.LIKE, ce);
+			query.appendWhere(sc, new int[] { idx });
+		}
+
+		if (!StringUtils.isNull(description)) {
+			if (query.getConditionCount() > 0)
+				query.appendAnd();
+
+			ca = new ClassAttribute(WTDocument.class, WTDocument.DESCRIPTION);
+			ColumnExpression ce = StringUtils.getUpperColumnExpression(description);
+			SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
+			sc = new SearchCondition(function, SearchCondition.LIKE, ce);
+			query.appendWhere(sc, new int[] { idx });
+		}
+
+		if (!StringUtils.isNull(creatorsOid)) {
+			if (query.getConditionCount() > 0)
+				query.appendAnd();
+			People user = (People) rf.getReference(creatorsOid).getObject();
+			long ids = user.getUser().getPersistInfo().getObjectIdentifier().getId();
+			sc = new SearchCondition(WTDocument.class, "iterationInfo.creator.key.id", SearchCondition.EQUAL, ids);
+			query.appendWhere(sc, new int[] { idx });
+		}
+
+		// 수정자
+		if (!StringUtils.isNull(modifierOid)) {
+			if (query.getConditionCount() > 0)
+				query.appendAnd();
+			People user = (People) rf.getReference(modifierOid).getObject();
+			long ids = user.getUser().getPersistInfo().getObjectIdentifier().getId();
+			sc = new SearchCondition(WTDocument.class, "iterationInfo.modifier.key.id", SearchCondition.EQUAL, ids);
+			query.appendWhere(sc, new int[] { idx });
+		}
+
+		if (!StringUtils.isNull(state)) {
+			if (query.getConditionCount() > 0)
+				query.appendAnd();
+
+			sc = new SearchCondition(WTDocument.class, "state.state", SearchCondition.EQUAL, state);
+			query.appendWhere(sc, new int[] { idx });
+		}
+
+		if (!StringUtils.isNull(predate)) {
+			if (query.getConditionCount() > 0)
+				query.appendAnd();
+			Timestamp start = DateUtils.convertStartDate(predate);
+			sc = new SearchCondition(WTDocument.class, WTAttributeNameIfc.CREATE_STAMP_NAME,
+					SearchCondition.GREATER_THAN_OR_EQUAL, start);
+			query.appendWhere(sc, new int[] { idx });
+		}
+
+		if (!StringUtils.isNull(postdate)) {
+			if (query.getConditionCount() > 0)
+				query.appendAnd();
+			Timestamp end = DateUtils.convertEndDate(postdate);
+			sc = new SearchCondition(WTDocument.class, WTAttributeNameIfc.CREATE_STAMP_NAME,
+					SearchCondition.LESS_THAN_OR_EQUAL, end);
+			query.appendWhere(sc, new int[] { idx });
+		}
+
+		// 수정일
+		if (!StringUtils.isNull(predate_m)) {
+			if (query.getConditionCount() > 0)
+				query.appendAnd();
+			Timestamp start = DateUtils.convertStartDate(predate_m);
+			sc = new SearchCondition(WTDocument.class, WTAttributeNameIfc.MODIFY_STAMP_NAME,
+					SearchCondition.GREATER_THAN_OR_EQUAL, start);
+			query.appendWhere(sc, new int[] { idx });
+		}
+
+		if (!StringUtils.isNull(postdate_m)) {
+			if (query.getConditionCount() > 0)
+				query.appendAnd();
+			Timestamp end = DateUtils.convertEndDate(postdate_m);
+			sc = new SearchCondition(WTDocument.class, WTAttributeNameIfc.MODIFY_STAMP_NAME,
+					SearchCondition.LESS_THAN_OR_EQUAL, end);
+			query.appendWhere(sc, new int[] { idx });
+		}
+
+		Folder folder = null;
+		if (StringUtils.isNull(location)) {
+			location = ROOT;
+		}
+
+		folder = FolderTaskLogic.getFolder(location, CommonUtils.getContainer());
+
+		if (!StringUtils.isNull(folder)) {
+			if (query.getConditionCount() > 0)
+				query.appendAnd();
+			int f_idx = query.appendClassList(IteratedFolderMemberLink.class, false);
+			ClassAttribute fca = new ClassAttribute(IteratedFolderMemberLink.class, "roleBObjectRef.key.branchId");
+			SearchCondition fsc = new SearchCondition(fca, "=",
+					new ClassAttribute(WTDocument.class, "iterationInfo.branchId"));
+			fsc.setFromIndicies(new int[] { f_idx, idx }, 0);
+			fsc.setOuterJoin(0);
+			query.appendWhere(fsc, new int[] { f_idx, idx });
+			query.appendAnd();
+
+			query.appendOpenParen();
+			long fid = folder.getPersistInfo().getObjectIdentifier().getId();
+			query.appendWhere(new SearchCondition(IteratedFolderMemberLink.class, "roleAObjectRef.key.id", "=", fid),
+					new int[] { f_idx });
+
+			ArrayList<Folder> folders = FolderUtils.getSubFolders(folder, new ArrayList<Folder>());
+			for (int i = 0; i < folders.size(); i++) {
+				Folder sub = (Folder) folders.get(i);
+				query.appendOr();
+				long sfid = sub.getPersistInfo().getObjectIdentifier().getId();
+				query.appendWhere(
+						new SearchCondition(IteratedFolderMemberLink.class, "roleAObjectRef.key.id", "=", sfid),
+						new int[] { f_idx });
+			}
+			query.appendCloseParen();
+		}
+
+		if ("true".equals(latest)) {
+			if (query.getConditionCount() > 0)
+				query.appendAnd();
+			sc = VersionControlHelper.getSearchCondition(WTDocument.class, true);
+			query.appendWhere(sc, new int[] { idx });
+
+			CommonUtils.latestQuery(query, WTDocument.class, idx);
+		}
+
+		SearchUtils.appendOrderBy(query, WTDocument.class, WTDocument.MODIFY_TIMESTAMP, idx, false);
+
+		query.setAdvancedQueryEnabled(true);
+		query.setDescendantsIncluded(false, master);
+
+		PageQueryUtils pager = new PageQueryUtils(params, query);
+		PagingQueryResult result = pager.find();
+		int total = pager.getTotal();
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WTDocument document = (WTDocument) obj[0];
+			DocumentColumnData column = new DocumentColumnData(document);
+			column.setNo(total--);
+			list.add(column);
+		}
+
+		map.put("list", list);
+		map.put("topListCount", pager.getTotal());
+		map.put("sessionid", pager.getSessionId());
+		map.put("curPage", pager.getCpage());
+		map.put("pageSize", pager.getPsize());
+		map.put("total", pager.getTotalSize());
+		map.put("result", "SUCCESS");
 		return map;
 	}
 
@@ -1164,7 +1097,7 @@ public class DocumentHelper implements MessageHelper {
 				sc = VersionControlHelper.getSearchCondition(PRJDocument.class, true);
 				query.appendWhere(sc, new int[] { idx });
 
-				CommonUtils.addLastVersionCondition2(query, PRJDocument.class, idx);
+				CommonUtils.latestQuery(query, PRJDocument.class, idx);
 			}
 
 			if (StringUtils.isNull(sort)) {
@@ -1587,7 +1520,7 @@ public class DocumentHelper implements MessageHelper {
 				sc = VersionControlHelper.getSearchCondition(WTDocument.class, true);
 				query.appendWhere(sc, new int[] { idx });
 
-				CommonUtils.addLastVersionCondition2(query, WTDocument.class, idx);
+				CommonUtils.latestQuery(query, WTDocument.class, idx);
 			}
 
 			if (StringUtils.isNull(sort)) {
@@ -2195,7 +2128,7 @@ public class DocumentHelper implements MessageHelper {
 				sc = VersionControlHelper.getSearchCondition(PRJDocument.class, true);
 				query.appendWhere(sc, new int[] { idx });
 
-				CommonUtils.addLastVersionCondition2(query, PRJDocument.class, idx);
+				CommonUtils.latestQuery(query, PRJDocument.class, idx);
 			}
 
 			if (StringUtils.isNull(sort)) {
@@ -2423,7 +2356,7 @@ public class DocumentHelper implements MessageHelper {
 				sc = VersionControlHelper.getSearchCondition(WTDocument.class, true);
 				query.appendWhere(sc, new int[] { idx });
 
-				CommonUtils.addLastVersionCondition2(query, WTDocument.class, idx);
+				CommonUtils.latestQuery(query, WTDocument.class, idx);
 
 			}
 

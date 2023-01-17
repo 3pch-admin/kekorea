@@ -1,9 +1,9 @@
 /*!
  * AUIGrid 3.0.12 License
  * License Type : Evaluation(Trial) Version
- * Authorized Domain(or IP) : localhost,127.0.0.1
- * Expiration Date : 2023-02-05
+ * Authorized Domain(or IP) : localhost,127.0.0.1,plm.kekorea.co.kr
+ * Expiration Date : 2023-02-16
  * www.auisoft.net
  */
  /* eslint-disable */
-AUIGridLicense = "eyJjdCI6IkZcL05XcUZrc01GckZ4d2MzYmpKbUVMWGU3NDJiaHdEU2U4ZEpia1wvSGtnTnNVVmJYcjg5Q2kzK25XY3M0Sm1tOFVNZTFabkI1bnFrMkEyY2Z0bFhpcExSdUNkQ2tIT0ZIaWtaSytWZFkwMDQ9IiwiaXYiOiJkM2YyZTZlZmNjMDJhN2Y4N2Y0NjA4NDg1ZWJmYmJkYyIsInMiOiJlZDBkZThjNTFjMTIyZjI2In0=";
+AUIGridLicense = "eyJjdCI6IkU4Rk1ZZzhrV3VkQWdySUUwd3FNRmQrcThYbEV0R2xMK1k0aEhlY3FVK0JZckpCQlwvdllqWFQ1ZXFKSDFyWkNwWTlWTXkzdGUrbzFuVTYwUmhvNDdVY3RoNGU2VW1BU251UGUzTlRMaFZBVWtyc3cwS3dLV1dvbXA5OXBiNEZHaSIsIml2IjoiZjQ5ZjkyNDExMjc5YTE2ZDA2NTZkZGM0NTQ3NDNjZGYiLCJzIjoiYTQ2ZDQyNTFkMTBmZTlmNSJ9";

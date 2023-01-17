@@ -1,5 +1,6 @@
 package e3ps.common.util;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -51,7 +52,7 @@ public class CommonUtils implements MessageHelper {
 	}
 
 	private static ReferenceFactory rf = null;
-	
+
 	public static boolean isAdmin() throws Exception {
 		return isMember("Administrators");
 	}
@@ -248,7 +249,8 @@ public class CommonUtils implements MessageHelper {
 
 		ClassInfo var2 = WTIntrospector.getClassInfo(target);
 		String tableName = var2.getDatabaseInfo().getBaseTableInfo().getTablename();
-		String columnName = var2.getDatabaseInfo().getBaseTableInfo().getColumnDescriptor("versionInfo.identifier.versionSortId").getColumnName();
+		String columnName = var2.getDatabaseInfo().getBaseTableInfo()
+				.getColumnDescriptor("versionInfo.identifier.versionSortId").getColumnName();
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -256,34 +258,33 @@ public class CommonUtils implements MessageHelper {
 				new KeywordExpression(query.getFromClause().getAliasAt(idx) + "." + columnName), "=",
 				new KeywordExpression("(SELECT MAX(" + columnName + ") FROM " + tableName + " WHERE "
 						+ query.getFromClause().getAliasAt(idx) + ".IDA3MASTERREFERENCE = IDA3MASTERREFERENCE)")));
-	
+
 	}
-	
-	public static void addLastVersionCondition2(QuerySpec qs, Class targetClass, int idx) throws WTException {
+
+	public static void latestQuery(QuerySpec qs, Class targetClass, int idx) throws WTException {
 		try {
 			int branchIdx = qs.appendClassList(ControlBranch.class, false);
 			int childBranchIdx = qs.appendClassList(ControlBranch.class, false);
-			
-			if (qs.getConditionCount() > 0) qs.appendAnd();
-			qs.appendWhere(new SearchCondition(
-					targetClass, RevisionControlled.BRANCH_IDENTIFIER, 
-					ControlBranch.class, WTAttributeNameIfc.ID_NAME), 
-				new int[] {idx, branchIdx});
-			
-			if (qs.getConditionCount() > 0) qs.appendAnd();
-			SearchCondition outerJoinSc = new SearchCondition(
-					ControlBranch.class, WTAttributeNameIfc.ID_NAME,
+
+			if (qs.getConditionCount() > 0)
+				qs.appendAnd();
+			qs.appendWhere(new SearchCondition(targetClass, RevisionControlled.BRANCH_IDENTIFIER, ControlBranch.class,
+					WTAttributeNameIfc.ID_NAME), new int[] { idx, branchIdx });
+
+			if (qs.getConditionCount() > 0)
+				qs.appendAnd();
+			SearchCondition outerJoinSc = new SearchCondition(ControlBranch.class, WTAttributeNameIfc.ID_NAME,
 					ControlBranch.class, "predecessorReference.key.id");
 			outerJoinSc.setOuterJoin(SearchCondition.RIGHT_OUTER_JOIN);
-			qs.appendWhere(outerJoinSc, new int[] {branchIdx, childBranchIdx});
-			
-			ClassAttribute childBranchIdNameCa = 
-					new ClassAttribute(ControlBranch.class, WTAttributeNameIfc.ID_NAME);
-			qs.appendSelect(childBranchIdNameCa, new int[] {childBranchIdx}, false);
-			
-			if (qs.getConditionCount() > 0) qs.appendAnd();
-			qs.appendWhere(new SearchCondition(childBranchIdNameCa, SearchCondition.IS_NULL), 
-				new int[] {childBranchIdx});
+			qs.appendWhere(outerJoinSc, new int[] { branchIdx, childBranchIdx });
+
+			ClassAttribute childBranchIdNameCa = new ClassAttribute(ControlBranch.class, WTAttributeNameIfc.ID_NAME);
+			qs.appendSelect(childBranchIdNameCa, new int[] { childBranchIdx }, false);
+
+			if (qs.getConditionCount() > 0)
+				qs.appendAnd();
+			qs.appendWhere(new SearchCondition(childBranchIdNameCa, SearchCondition.IS_NULL),
+					new int[] { childBranchIdx });
 		} catch (WTPropertyVetoException e) {
 			throw new WTException(e);
 		}
@@ -407,31 +408,60 @@ public class CommonUtils implements MessageHelper {
 	public static RevisionControlled getLatestVersion(RevisionControlled object) throws WTException {
 		return getLatestObject((Master) object.getMaster(), null);
 	}
+
 	public static long getOIDLongValue(String oid) {
 		String tempoid = oid;
-		tempoid = tempoid.substring ( tempoid.lastIndexOf ( ":" ) + 1 );
-		return Long.parseLong ( tempoid );
+		tempoid = tempoid.substring(tempoid.lastIndexOf(":") + 1);
+		return Long.parseLong(tempoid);
 	}
+
 	public static long getOIDLongValue(Persistable per) {
-		String tempoid = getOIDString ( per );
-		tempoid = tempoid.substring ( tempoid.lastIndexOf ( ":" ) + 1 );
-		return Long.parseLong ( tempoid );
+		String tempoid = getOIDString(per);
+		tempoid = tempoid.substring(tempoid.lastIndexOf(":") + 1);
+		return Long.parseLong(tempoid);
 	}
-    public static boolean checkString(String str) {
-        return str != null && str.length() > 0 && !str.equals("null");
-    }
+
+	public static boolean checkString(String str) {
+		return str != null && str.length() > 0 && !str.equals("null");
+	}
+
 	public static String getOIDString(Persistable per) {
-		if (per == null) return null;
-		return PersistenceHelper.getObjectIdentifier ( per ).getStringValue ();
+		if (per == null)
+			return null;
+		return PersistenceHelper.getObjectIdentifier(per).getStringValue();
 	}
+
 	public static Persistable getObject(String oid) {
-		if (oid == null) return null;
+		if (oid == null)
+			return null;
 		try {
-			if (rf == null) rf = new ReferenceFactory ();
-			return rf.getReference ( oid ).getObject ();
+			if (rf == null)
+				rf = new ReferenceFactory();
+			return rf.getReference(oid).getObject();
 		} catch (Exception e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static String getVersion(RevisionControlled rc) throws Exception {
+		return rc.getVersionIdentifier().getSeries().getValue();
+	}
+
+	public static String getIteration(RevisionControlled rc) throws Exception {
+		return rc.getIterationIdentifier().getSeries().getValue();
+	}
+
+	public static String getFullVersion(RevisionControlled rc) throws Exception {
+		return rc.getVersionIdentifier().getSeries().getValue() + "."
+				+ rc.getIterationIdentifier().getSeries().getValue();
+	}
+
+	public static String getPersistableTime(Timestamp time) throws Exception {
+		return getPersistableTime(time, 10);
+	}
+
+	public static String getPersistableTime(Timestamp time, int index) throws Exception {
+		return time.toString().substring(0, index);
 	}
 }
