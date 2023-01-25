@@ -44,6 +44,11 @@
 			document.getElementById("content").src = "/Windchill/plm" + url;
 		}
 
+		let toggle = document.getElementById("toggle");
+		toggle.addEventListener("click", function() {
+			alert("화면 조절 필요!");
+		})
+
 		function open() {
 			$("#loading_layer").show();
 			cover.open();

@@ -1,8 +1,12 @@
+<%@page import="java.util.Map"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.admin.commonCode.CommonCodeType"%>
 <%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) request.getAttribute("headers");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,10 +16,8 @@
 <%@include file="/jsp/common/layouts/include_script.jsp"%>
 <!-- auigrid -->
 <%@include file="/jsp/include/auigrid.jsp"%>
-<!-- highchart -->
-<%@include file="/jsp/include/highchart.jsp"%>
 </head>
-<body onload="loadGridData();">
+<body>
 	<input type="hidden" name="sessionid" id="sessionid">
 	<input type="hidden" name="curPage" id="curPage">
 	<!-- button table -->
@@ -29,95 +31,102 @@
 			</td>
 		</tr>
 	</table>
-	<div id="grid_wrap" style="height: 383px; border-top: 1px solid #3180c3;"></div>
+	<div id="grid_wrap" style="height: 786px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;
-
 	const columns = [ {
-		dataField : "state",
+		dataField : "pDate",
 		headerText : "발행일",
-		dataType : "string",
-		width : 100
+		dataType : "date",
+		formatString : "yyyy-mm-dd",
+		width : 120
 	}, {
-		dataField : "pType",
+		dataField : "line",
 		headerText : "LINE",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "customer",
+		dataField : "kekNumber",
 		headerText : "KEK작번",
 		dataType : "string",
-		width : 100
+		width : 140,
+		editRenderer : {
+			type: "RemoteListRenderer",
+			fieldName: "value",
+			showEditorBtnOver: true, // 마우스 오버 시 에디터버턴 보이기
+			remoter: function (request, response) { // remoter 지정 필수
+				if (String(request.term).length < 2) {
+					alert("2글자 이상 입력하십시오.");
+					response(false); // 데이터 요청이 없는 경우 반드시 false 삽입하십시오.
+					return;
+				}
+				// 데이터 요청
+				let url = getCallUrl("/history/remoter");
+				let params = new Object();
+				params.term = request.term;
+				params.target = "project";
+				call(url, params, function(data) {
+					response(data.list);
+				}, "POST");
+			}
+		}
 	}, {
-		dataField : "ins_location",
+		dataField : "ke_number",
 		headerText : "KE작번",
 		dataType : "string",
-		width : 130
+		width : 140
 	}, {
-		dataField : "mak",
+		dataField : "tuv",
 		headerText : "TUV유무",
 		dataType : "string",
 		width : 130
-	}, {
+	}, 
+	<%for (Map<String, Object> header : headers) {
+	String dataField = (String) header.get("key");
+	String headerText = (String) header.get("value");%>
+	{
+		dataField : "<%=dataField%>",
+		headerText : "<%=headerText%>",
+		dataType : "string",
+		width : 130		
+	},
+	<%}%>
+	{
 		dataField : "oid",
 		headerText : "oid",
 		dataType : "string",
 		visible : false
 	} ]
 
-	const props = {
-		rowIdField : "oid",
-		headerHeight : 30,
-		rowHeight : 30,
-		showRowNumColumn : true,
-		rowNumHeaderText : "번호",
-		showRowCheckColumn : true, // 체크 박스 출력
-		fixedColumnCount : 7,
-
-		// 컨텍스트 메뉴 사용
-		useContextMenu : true,
-
-		// 컨텍스트 메뉴 아이템들
-		contextMenuItems : [ {
-			label : "BOM 비교",
-			callback : contextHandler
-		}, {
-			label : "CONFIG 비교",
-			callback : contextHandler
-		}, {
-			label : "도면일람표 비교",
-			callback : contextHandler
-		} ],
-	};
-
-	myGridID = AUIGrid.create("#grid_wrap", columns, props);
-	// LazyLoading 바인딩
-	AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
-
-	function contextHandler(event) {
-
-		let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-		if (checkedItems.length < 2) {
-			alert("2개 이상의 작번을 선택하세요.");
-			return false;
-		}
-
-		switch (event.contextIndex) {
-		case 0:
-			alert(event.value + ", rowIndex : " + event.rowIndex + ", columnIndex : " + event.columnIndex);
-			break;
-
-		case 2:
-			// 내보내기 실행
-			AUIGrid.exportToXlsx(event.pid);
-			break;
-
-		case 3:
-			window.open("https://www.google.com", "_blank");
-			break;
+	
+	function createAUIGrid(columnLayout) {
+		const props = {
+				rowIdField : "oid",
+				headerHeight : 30,
+				rowHeight : 30,
+				showRowNumColumn : true,
+				rowNumHeaderText : "번호",
+				showRowCheckColumn : true, // 체크 박스 출력
+				fixedColumnCount : 5,
+				editable : true,
+				editableOnFixedCell : true
+			};
+			myGridID = AUIGrid.create("#grid_wrap", columns, props);
+			// 그리드 데이터 로딩
+			loadGridData();
+			// LazyLoading 바인딩
+			AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+			// 셀 편집 종료 이벤트
+			AUIGrid.bind(myGridID, "cellEditEnd", editEndHandler);
+	}
+	
+	function editEndHandler(event) {
+		if (event.type == "cellEditEnd") {
 		}
 	};
+
+
 
 	function loadGridData() {
 		let params = new Object();
@@ -129,7 +138,7 @@
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
 			parent.close();
-		})
+		}, "POST");
 	}
 
 	let last = false;
@@ -159,10 +168,12 @@
 				AUIGrid.removeAjaxLoader(myGridID);
 				$("input[name=curPage]").val(parseInt(curPage) + 1);
 			}
-		})
+		}, "POST");
 	}
 
 	$(function() {
+		// 그리드 생성 함수 - 모든 이벤트 안에 바인딩 시킨다.
+		createAUIGrid();
 		$("#searchBtn").click(function() {
 			loadGridData();
 		})
@@ -170,7 +181,6 @@
 		// 그리드 행 추가
 		$("#addRowBtn").click(function() {
 			let item = new Object();
-			item.createDate = new Date();
 			AUIGrid.addRow(myGridID, item, "last");
 		})
 
@@ -183,7 +193,6 @@
 			params.addRows = addRows;
 			params.removeRows = removeRows;
 			params.editRows = editRows;
-			console.log(params);
 			call(url, params, function(data) {
 
 			}, "POST");
@@ -197,8 +206,6 @@
 				AUIGrid.removeRow(myGridID, rowIndex);
 			}
 		})
-
-		check("install");
 	}).keypress(function(e) {
 		let keyCode = e.keyCode;
 		if (keyCode == 13) {

@@ -8,6 +8,7 @@ import e3ps.admin.sheetvariable.CategoryItemsLink;
 import e3ps.admin.sheetvariable.Items;
 import e3ps.admin.spec.Options;
 import e3ps.admin.spec.Spec;
+import e3ps.admin.spec.SpecOptionsLink;
 import e3ps.common.util.CommonUtils;
 import wt.fc.PersistenceHelper;
 import wt.pom.Transaction;
@@ -35,16 +36,16 @@ public class StandardOptionsService extends StandardManager implements OptionsSe
 			Spec spec = (Spec) CommonUtils.getObject(soid);
 
 			for (Map<String, Object> addRow : addRows) {
-				String iname = (String) addRow.get("iname");
-				int isort = (int) addRow.get("isort");
+				String name = (String) addRow.get("name");
+				int sort = (int) addRow.get("sort");
 
 				Options options = Options.newOptions();
-				options.setName(iname);
-				options.setSort(isort);
+				options.setName(name);
+				options.setSort(sort);
 				PersistenceHelper.manager.save(options);
 
 				// 신규 링크
-				CategoryItemsLink link = CategoryItemsLink.newCategoryItemsLink(category, items);
+				SpecOptionsLink link = SpecOptionsLink.newSpecOptionsLink(spec, options);
 				PersistenceHelper.manager.save(link);
 			}
 
@@ -55,13 +56,13 @@ public class StandardOptionsService extends StandardManager implements OptionsSe
 			}
 
 			for (Map<String, Object> editRow : editRows) {
-				String iname = (String) editRow.get("iname");
-				int isort = (int) editRow.get("isort");
+				String name = (String) editRow.get("name");
+				int sort = (int) editRow.get("sort");
 				String oid = (String) editRow.get("oid");
-				Items items = (Items) CommonUtils.getObject(oid);
-				items.setName(iname);
-				items.setSort(isort);
-				PersistenceHelper.manager.modify(items);
+				Options optoins = (Options) CommonUtils.getObject(oid);
+				optoins.setName(name);
+				optoins.setSort(sort);
+				PersistenceHelper.manager.modify(optoins);
 			}
 
 			trs.commit();

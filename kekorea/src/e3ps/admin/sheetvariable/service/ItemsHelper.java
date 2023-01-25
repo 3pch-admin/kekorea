@@ -89,7 +89,7 @@ public class ItemsHelper {
 
 		sc = new SearchCondition(CategoryItemsLink.class, "roleAObjectRef.key.id", Category.class,
 				WTAttributeNameIfc.ID_NAME);
-		query.appendWhere(sc, new int[] { idx });
+		query.appendWhere(sc, new int[] { idx, idx_c });
 		query.appendAnd();
 
 		sc = new SearchCondition(CategoryItemsLink.class, "roleAObjectRef.key.id", "=",

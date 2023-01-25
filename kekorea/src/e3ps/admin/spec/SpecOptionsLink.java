@@ -10,15 +10,15 @@ import wt.util.WTException;
 
 		roleA = @GeneratedRole(name = "spec", type = Spec.class),
 
-		roleB = @GeneratedRole(name = "option", type = Options.class)
+		roleB = @GeneratedRole(name = "options", type = Options.class)
 
 )
-public class SpecOptionLink extends _SpecOptionLink {
+public class SpecOptionsLink extends _SpecOptionsLink {
 
 	static final long serialVersionUID = 1;
 
-	public static SpecOptionLink newSpecOptionLink(Spec spec, Options option) throws WTException {
-		SpecOptionLink instance = new SpecOptionLink();
+	public static SpecOptionsLink newSpecOptionsLink(Spec spec, Options option) throws WTException {
+		SpecOptionsLink instance = new SpecOptionsLink();
 		instance.initialize(spec, option);
 		return instance;
 	}

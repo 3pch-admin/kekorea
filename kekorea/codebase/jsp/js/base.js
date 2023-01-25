@@ -75,5 +75,6 @@ function popup(url, width, height) {
 	var popW = width;
 	var popH = height;
 	var left = (screen.width - popW) / 2;
+	var top = (screen.height - popH) / 2;
 	window.open(url, "", "top=" + top + ", left=" + left + ", height=" + popH + ", width=" + popW);
 }
