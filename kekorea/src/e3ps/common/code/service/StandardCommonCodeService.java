@@ -3,8 +3,8 @@ package e3ps.common.code.service;
 import java.util.HashMap;
 import java.util.Map;
 
-import e3ps.common.code.CommonCode;
-import e3ps.common.code.CommonCodeType;
+import e3ps.admin.commonCode.CommonCode;
+import e3ps.admin.commonCode.CommonCodeType;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.MessageHelper;
 import wt.fc.PersistenceHelper;

@@ -11,6 +11,7 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +31,7 @@ import e3ps.approval.service.ApprovalHelper;
 import e3ps.approval.service.NoticeHelper;
 import e3ps.common.excel.ExcelHelper;
 import e3ps.common.mail.MailUtils;
+import e3ps.common.util.ColumnParseUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
@@ -48,10 +50,12 @@ import wt.doc.WTDocument;
 import wt.enterprise.RevisionControlled;
 import wt.epm.EPMDocument;
 import wt.fc.PagingQueryResult;
+import wt.fc.PagingSessionHelper;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.fc.ReferenceFactory;
+import wt.log4j.LogR;
 import wt.org.WTUser;
 import wt.part.WTPart;
 import wt.session.SessionHelper;
@@ -63,8 +67,32 @@ import wt.vc.Versioned;
 import wt.viewmarkup.WTMarkUp;
 
 @Controller
-@RequestMapping(value = "/")
 public class CommonController extends BaseController {
+
+	private static final Logger logger = LogR.getLogger(CommonController.class.getName());
+
+	@RequestMapping(value = "/appendData")
+	@ResponseBody
+	public Map<String, Object> appendData(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		String sessionid = (String) params.get("sessionid");
+		int start = (int) params.get("start");
+		int end = (int) params.get("end");
+		try {
+			logger.info("Call CommonController appendData Method !!");
+			PagingQueryResult qr = PagingSessionHelper.fetchPagingSession(start, end, Long.parseLong(sessionid));
+			ArrayList list = ColumnParseUtils.parse(qr);
+			logger.info("=" + list.size());
+			result.put("list", list);
+			result.put("result", SUCCESS);
+			logger.info(result);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
 
 	@Description("주석세트 페이지")
 	@RequestMapping(value = "/common/alertPassword")

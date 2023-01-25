@@ -9,7 +9,7 @@ html {
 }
 
 body {
-	background-color: white !important;
+/* 	background-color: white !important; */
 	margin: 14px;
 	padding: 0;
 	scrollbar-highlight-color: #FFFFFF;
@@ -866,7 +866,7 @@ span#thumbnail {
 
 table.search_table {
 	width: 100%;
-	border-top: 2px solid #2b85c1;
+	border-top: 1px solid #2b85c1;
 }
 
 table.search_table>tbody>tr>th:first-child {
@@ -4692,4 +4692,11 @@ table.partlist_table td {
 
 .AXanchorSelectorExpandBox {
 	height: 600px !important;
+}
+
+span.text {
+	position: relative;
+	top: 1px;
+	right: 3px;
+	font-size: 13px;
 }

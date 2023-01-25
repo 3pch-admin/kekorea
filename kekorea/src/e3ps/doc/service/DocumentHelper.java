@@ -506,19 +506,17 @@ public class DocumentHelper implements MessageHelper {
 			CommonUtils.latestQuery(query, WTDocument.class, idx);
 		}
 
-		SearchUtils.appendOrderBy(query, WTDocument.class, WTDocument.MODIFY_TIMESTAMP, idx, false);
+		SearchUtils.appendOrderBy(query, WTDocument.class, WTDocument.NUMBER, idx, false);
 
 		query.setAdvancedQueryEnabled(true);
 		query.setDescendantsIncluded(false, master);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
-		int total = pager.getTotal();
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			WTDocument document = (WTDocument) obj[0];
 			DocumentColumnData column = new DocumentColumnData(document);
-			column.setNo(total--);
 			list.add(column);
 		}
 

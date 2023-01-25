@@ -5,60 +5,44 @@
 <tiles-definitions>
 	<definition name="layout" template="/jsp/layout/layout.jsp">
 		<put-attribute name="title" value="국제엘렉트릭코리아 PLM 시스템"></put-attribute>
-		<put-attribute name="header" value="/jsp/layout/header.jsp"></put-attribute>
+		<put-attribute name="header" value="/plm/header"></put-attribute>
 		<!-- <put-attribute name="menu" value="/jsp/menu.jsp"></put-attribute> -->
 		<put-attribute name="body" value=""></put-attribute>
-		<put-attribute name="footer" value="/jsp/layout/footer.jsp"></put-attribute>
+		<put-attribute name="footer" value="/plm/footer"></put-attribute>
 	</definition>
 
-	<definition name="layoutMain" template="/jsp/common/layouts/layoutMain.jsp">
-		<put-attribute name="title" value="국제엘렉트릭코리아 PLM 시스템"></put-attribute>
-		<put-attribute name="header" value="/jsp/common/header.jsp"></put-attribute>
-		<put-attribute name="body" value=""></put-attribute>
-		<put-attribute name="footer" value="/jsp/common/footer.jsp"></put-attribute>
-	</definition>
 
-	<definition name="layoutPopup" template="/jsp/common/layouts/layoutPopup.jsp">
+	<definition name="popup" template="/jsp/layout/popup.jsp">
 		<put-attribute name="title" value="국제엘렉트릭코리아 PLM 시스템"></put-attribute>
 		<put-attribute name="body" value=""></put-attribute>
-		<put-attribute name="footer" value="/jsp/common/footer.jsp"></put-attribute>
 	</definition>
 
 	<!-- default layout patter -->
 	<definition name="content:/*" extends="layout">
 		<put-attribute name="body" value="/jsp/{1}.jsp"></put-attribute>
-		<!-- <put-attribute name="menu" value="/jsp/{1}/menu.jsp"></put-attribute> -->
 	</definition>
 
 	<definition name="content:/*/*" extends="layout">
 		<put-attribute name="body" value="/jsp/{1}/{2}.jsp"></put-attribute>
-		<!-- <put-attribute name="menu" value="/jsp/{1}/menu.jsp"></put-attribute> -->
 	</definition>
 
 	<definition name="content:/*/*/*" extends="layout">
 		<put-attribute name="body" value="/jsp/{1}/{2}/{3}.jsp"></put-attribute>
-		<!-- <put-attribute name="menu" value="/jsp/{1}/menu.jsp"></put-attribute> -->
 	</definition>
 
-	<definition name="default:/*/*/*/*" extends="layoutDefault">
-		<put-attribute name="body" value="/jsp/{1}/{2}/{3}/{4}.jsp"></put-attribute>
-		<put-attribute name="menu" value="/jsp/{1}/menu.jsp"></put-attribute>
+	<definition name="popup:/*" extends="popup">
+		<put-attribute name="body" value="/jsp/{1}.jsp"></put-attribute>
 	</definition>
 
-	<definition name="main:/*/*" extends="layoutMain">
+	<definition name="popup:/*/*" extends="popup">
 		<put-attribute name="body" value="/jsp/{1}/{2}.jsp"></put-attribute>
 	</definition>
 
-	<definition name="popup:/*/*" extends="layoutPopup">
-		<put-attribute name="body" value="/jsp/{1}/{2}.jsp"></put-attribute>
-	</definition>
-
-	<definition name="popup:/*/*/*" extends="layoutPopup">
+	<definition name="popup:/*/*/*" extends="popup">
 		<put-attribute name="body" value="/jsp/{1}/{2}/{3}.jsp"></put-attribute>
 	</definition>
 
-	<definition name="popup:/*/*/*/*" extends="layoutPopup">
+	<definition name="popup:/*/*/*/*" extends="popup">
 		<put-attribute name="body" value="/jsp/{1}/{2}/{3}/{4}.jsp"></put-attribute>
 	</definition>
-
 </tiles-definitions>

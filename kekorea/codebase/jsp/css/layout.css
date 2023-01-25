@@ -9858,3 +9858,16 @@ span.loc {
 	top: 19px;
 	left: 6px;
 }
+
+a.menu {
+	color: white !important;
+}
+
+div#loading_layer {
+	z-index: 9999999;
+	display: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}

@@ -9,7 +9,6 @@ import wt.doc.WTDocument;
 @Getter
 @Setter
 public class DocumentColumnData {
-	private int no;
 	private String oid;
 	private String name;
 	private String number;

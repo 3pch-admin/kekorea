@@ -39,10 +39,11 @@ public class OrgHelper implements MessageHelper {
 	/**
 	 * 직급
 	 */
-	//public static final String[] dutys = new String[] { "대표이사", "TW연구소 소장", "TW연구소 부소장", "그룹장", "팀장", "팀원" };
+	// public static final String[] dutys = new String[] { "대표이사", "TW연구소 소장",
+	// "TW연구소 부소장", "그룹장", "팀장", "팀원" };
 	public static final String[] dutys = new String[] { "사장", "전무", "수석연구원", "책임연구원", "선임연구원", "전임연구원", "주임연구원", "연구원",
 			"상무", "상무(보)", "차장", "부장" };
-	
+
 	/**
 	 * 직위, 직책..
 	 */
@@ -501,12 +502,12 @@ public class OrgHelper implements MessageHelper {
 			OrderBy orderBy = new OrderBy(ca, false);
 			query.appendOrderBy(orderBy, new int[] { idx });
 
-			ca = new ClassAttribute(People.class, People.RESIGN);	
+			ca = new ClassAttribute(People.class, People.RESIGN);
 			orderBy = new OrderBy(ca, false);
-			query.appendOrderBy(orderBy, new int[] { idx });	
-			System.out.println("유저검색 쿼리 : "+query);
+			query.appendOrderBy(orderBy, new int[] { idx });
+			System.out.println("유저검색 쿼리 : " + query);
 			QueryResult result = PersistenceHelper.manager.find(query);
-			System.out.println("유저 수  : "+result.size());
+			System.out.println("유저 수  : " + result.size());
 			while (result.hasMoreElements()) {
 				Object[] obj = (Object[]) result.nextElement();
 				People user = (People) obj[0];
@@ -523,7 +524,7 @@ public class OrgHelper implements MessageHelper {
 				String[] value = new String[] {
 						oid + "&" + user.getName() + "&" + user.getId() + "&" + rank + "&" + deptName };
 				userMap.put("value", value);
-				System.out.println("유저  : "+userMap);
+				System.out.println("유저  : " + userMap);
 				list.add(userMap);
 			}
 
@@ -1108,10 +1109,6 @@ public class OrgHelper implements MessageHelper {
 	}
 
 	public People getUser(String id) throws Exception {
-		if (id.equals("Administrator")) {
-			id = "wcadmin";
-		}
-
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(People.class, true);
 		SearchCondition sc = new SearchCondition(People.class, People.ID, "=", id);

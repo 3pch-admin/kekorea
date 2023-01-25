@@ -2,7 +2,7 @@ package e3ps.admin.service;
 
 import java.util.Map;
 
-import e3ps.common.code.CommonCode;
+import e3ps.admin.commonCode.CommonCode;
 import wt.method.RemoteInterface;
 import wt.util.WTException;
 

@@ -1,4 +1,12 @@
+<%@page import="e3ps.admin.commonCode.CommonCode"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="e3ps.org.beans.UserData"%>
+<%@page import="wt.session.SessionHelper"%>
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+UserData data = (UserData) request.getAttribute("data");
+%>
 <nav class="navbar-default navbar-static-side" role="navigation">
 	<div class="sidebar-collapse">
 		<ul class="nav metismenu" id="side-menu">
@@ -6,9 +14,9 @@
 				<div class="dropdown profile-element">
 					<img alt="image" class="rounded-circle" src="/Windchill/jsp/images/profile_small.jpg" />
 					<a data-toggle="dropdown" class="dropdown-toggle" href="#">
-						<span class="block m-t-xs font-bold">David Williams</span>
+						<span class="block m-t-xs font-bold"><%=data.getName()%></span>
 						<span class="text-muted text-xs block">
-							Art Director
+							<%=data.getDuty()%>
 							<b class="caret"></b>
 						</span>
 					</a>
@@ -176,10 +184,10 @@
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="redirect('/document/listDocument');">문서 조회</a>
+						<a onclick="moveToPage(this, '/document/listDocument');">문서 조회</a>
 					</li>
 					<li>
-						<a href="lockscreen.html">산출물 조회</a>
+						<a onclick="moveToPage(this, '/document/listDocument');">산출물 조회</a>
 					</li>
 					<li>
 						<a href="invoice.html">수배표 조회</a>
@@ -210,38 +218,21 @@
 			<li>
 				<a href="#">
 					<i class="fa fa-sitemap"></i>
-					<span class="nav-label">한국 생산 </span>
+					<span class="nav-label">한국 생산</span>
 					<span class="fa arrow"></span>
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a href="#" id="damian">
-							한국생산
-							<span class="fa arrow"></span>
-						</a>
-						<ul class="nav nav-third-level">
-							<li>
-								<a href="#">LINE1</a>
-							</li>
-							<li>
-								<a href="#">LINE2</a>
-							</li>
-							<li>
-								<a href="#">LINE3</a>
-							</li>
-						</ul>
+						<a onclick="moveToPage(this, '/korea/list');">한국 생산</a>
 					</li>
 					<li>
-						<a href="#">CIP 등록</a>
+						<a onclick="moveToPage(this, '/cip/create');">CIP 등록</a>
 					</li>
 					<li>
-						<a href="#">CIP 조회</a>
+						<a onclick="moveToPage(this, '/cip/list');">CIP 조회</a>
 					</li>
 					<li>
-						<a href="#">이력 관리 등록</a>
-					</li>
-					<li>
-						<a href="#">이력 관리 조회</a>
+						<a onclick="moveToPage(this, '/history/list');">이력 관리 조회</a>
 					</li>
 				</ul>
 			</li>
@@ -253,10 +244,16 @@
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a href="#">비밀번호 세팅</a>
+						<a onclick="moveToPage(this, '/commonCode/list');">코드 관리</a>
 					</li>
 					<li>
-						<a href="#">코드 관리</a>
+						<a onclick="moveToPage(this, '/spec/list');">사양 관리</a>
+					</li>
+					<li>
+						<a onclick="moveToPage(this, '/category/list');">CS 카테고리</a>
+					</li>
+					<li>
+						<a href="#">비밀번호 세팅</a>
 					</li>
 					<li>
 						<a href="#">설치장소 생성</a>

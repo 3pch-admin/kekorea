@@ -912,7 +912,7 @@
 	<!-- Standard means of setting servlet session inactivity timeout. Values are in whole numbers of minutes. Without this element, the web application would obtain a default value from the servlet engine, which is a quite reasonable 30 minutes in most cases. Thus, this element is included here mainly 
 		to make it quite obvious where and how to change this value if necessary. -->
 	<session-config>
-		<session-timeout>30</session-timeout>
+		<session-timeout>10000</session-timeout>
 	</session-config>
 
 	<error-page>

@@ -25,8 +25,7 @@ public class StringUtils {
 	}
 
 	/**
-	 * @param value
-	 *            : parameter String 값
+	 * @param value : parameter String 값
 	 * @return boolean : String 값이 null 일 경우 true, not null 일 경우 false
 	 *         <p>
 	 *         String 값이 null 인지 체크 하는 함수
@@ -41,8 +40,7 @@ public class StringUtils {
 	}
 
 	/**
-	 * @param obj
-	 *            : parameter Object 객체
+	 * @param obj : parameter Object 객체
 	 * @return boolean : Object 객체가 null 일 경우 true, not null 일 경우 false
 	 *         <p>
 	 *         Object 객체가 null 인지 체크 하는 함수
@@ -66,8 +64,7 @@ public class StringUtils {
 	}
 
 	/**
-	 * @param map
-	 *            : Map 객체
+	 * @param map : Map 객체
 	 * @return boolean
 	 *         <p>
 	 *         Map객체가 null or size 가 0 일 경우 true
@@ -82,8 +79,7 @@ public class StringUtils {
 	}
 
 	/**
-	 * @param list
-	 *            : ArrayList 배열
+	 * @param list : ArrayList 배열
 	 * @return boolean
 	 *         <p>
 	 *         배열이 null or size 가 0 일 경우 true
@@ -98,8 +94,7 @@ public class StringUtils {
 	}
 
 	/**
-	 * @param value
-	 *            : parameter String 값
+	 * @param value : parameter String 값
 	 * @return String
 	 *         <p>
 	 *         String 값이 null 일 경우 공백 값 return <br>
@@ -114,10 +109,8 @@ public class StringUtils {
 	}
 
 	/**
-	 * @param value
-	 *            : parameter String 값
-	 * @param dValue
-	 *            : parameter value가 null 일 경우 return 될 String 값
+	 * @param value  : parameter String 값
+	 * @param dValue : parameter value가 null 일 경우 return 될 String 값
 	 * @return String
 	 *         <p>
 	 *         parameter String 값이 null 일 parameter dValue 값 return <br>
@@ -132,8 +125,7 @@ public class StringUtils {
 	}
 
 	/**
-	 * @param value
-	 *            : String 값
+	 * @param value : String 값
 	 * @return String
 	 *         <p>
 	 *         parameter String 값이 null 일 경우 공백 return
@@ -144,10 +136,8 @@ public class StringUtils {
 	}
 
 	/**
-	 * @param value
-	 *            : String 값
-	 * @param dValue
-	 *            : String 값이 null 일 경우 return 될 값
+	 * @param value  : String 값
+	 * @param dValue : String 값이 null 일 경우 return 될 값
 	 * @return String
 	 *         <p>
 	 *         parameter String 값이 null 일 경우 parameter dValue 값 return
@@ -161,8 +151,7 @@ public class StringUtils {
 	}
 
 	/**
-	 * @param value
-	 *            : Boolean 값으로 return 할 String 값
+	 * @param value : Boolean 값으로 return 할 String 값
 	 * @return boolean
 	 *         <p>
 	 *         parameter String 값이 null or true가 아니면 false return <br>
@@ -178,8 +167,7 @@ public class StringUtils {
 	}
 
 	/**
-	 * @param query
-	 *            : query 문
+	 * @param query : query 문
 	 * @return boolean
 	 *         <p>
 	 *         query 문 앞뒤로 * 있을 경우 true<br>
@@ -204,8 +192,7 @@ public class StringUtils {
 
 	/**
 	 * 
-	 * @param query
-	 *            : query 문
+	 * @param query : query 문
 	 * @return ColumnExpression
 	 *         <p>
 	 *         query 문에 * 있을 경우 % 변경 및 toUpperCase 처리(대문자)
@@ -221,15 +208,14 @@ public class StringUtils {
 //			 builder.setCharAt(query.length() - 1, '%');
 //			 ce = ConstantExpression.newExpression(builder.toString().toUpperCase());
 //		 } else {
-			 ce = ConstantExpression.newExpression("%" + query.toUpperCase() + "%");
+		ce = ConstantExpression.newExpression("%" + query.toUpperCase() + "%");
 //		 }
 		return ce;
 	}
 
 	/**
 	 * 
-	 * @param query
-	 *            : query 문
+	 * @param query : query 문
 	 * @return ColumnExpression
 	 *         <p>
 	 *         query 문에 * 있을 경우 % 변경 및 toLowerCase 처리(소문자)
@@ -245,7 +231,7 @@ public class StringUtils {
 //			 builder.setCharAt(query.length() - 1, '%');
 //			 ce = ConstantExpression.newExpression(builder.toString().toLowerCase());
 //		 } else {
-			 ce = ConstantExpression.newExpression("%" + query.toLowerCase() + "%");
+		ce = ConstantExpression.newExpression("%" + query.toLowerCase() + "%");
 //		 }
 		return ce;
 	}
@@ -280,9 +266,11 @@ public class StringUtils {
 		DecimalFormat df = new DecimalFormat("#,###");
 		return df.format(param);
 	}
-	
+
 	public static String checkReplaceStr(String str, String defaultStr) {
-		if (str == null || str.equals ( "" )) return defaultStr;
-		else return str.trim ();
+		if (str == null || str.equals(""))
+			return defaultStr;
+		else
+			return str.trim();
 	}
 }

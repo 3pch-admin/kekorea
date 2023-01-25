@@ -25,8 +25,6 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "email", type = String.class, javaDoc = "이메일"),
 
-				@GeneratedProperty(name = "password", type = String.class, javaDoc = "비밀번호"),
-
 				@GeneratedProperty(name = "duty", type = String.class, javaDoc = "직급"),
 
 				@GeneratedProperty(name = "rank", type = String.class, javaDoc = "직위 및 직책"),
@@ -35,15 +33,7 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "mobile", type = String.class, javaDoc = "핸드폰 번호"),
 
-				@GeneratedProperty(name = "fax", type = String.class, javaDoc = "팩스 번호"),
-
-				@GeneratedProperty(name = "css", type = String.class, javaDoc = "CSS 파일"),
-
-				@GeneratedProperty(name = "resign", type = Boolean.class, javaDoc = "퇴사 처리", initialValue = "false"),
-
-				@GeneratedProperty(name = "passwordUpdateTime", type = Timestamp.class)
-
-		},
+				@GeneratedProperty(name = "resign", type = Boolean.class, javaDoc = "퇴사 처리", initialValue = "false"), },
 
 		foreignKeys = {
 				// front target object, before source user

@@ -12,18 +12,24 @@ import wt.util.WTException;
 public interface OrgService {
 
 	/**
+	 * 최상위 부서 생성
+	 * 
 	 * @return Department
 	 * @throws WTException
 	 */
 	public abstract Department makeRoot() throws WTException;
 
 	/**
+	 * 서버 실행시 유저 검색하여 People 객체 생성 및 수정
+	 * 
 	 * @param department
 	 * @throws WTException
 	 */
 	public abstract void inspectUser(Department department) throws WTException;
 
 	/**
+	 * WTUser로 People 객체 생성
+	 * 
 	 * @param sessionUser
 	 * @return User
 	 * @throws WTException
@@ -49,15 +55,6 @@ public interface OrgService {
 	public abstract Map<String, Object> initPasswordAction(Map<String, Object> param) throws WTException;;
 
 	/**
-	 * 사용자 개인 테이블 컬럼 셋 저장
-	 * 
-	 * @param param
-	 * @return Map<String, Object>
-	 * @throws WTException
-	 */
-	public abstract Map<String, Object> saveUserTableSet(Map<String, Object> param) throws WTException;
-
-	/**
 	 * 개인 결재선 등록
 	 * 
 	 * @param param
@@ -74,24 +71,6 @@ public interface OrgService {
 	 * @throws WTException
 	 */
 	public abstract Map<String, Object> deleteUserLineAction(Map<String, Object> param) throws WTException;
-
-	/**
-	 * 개인 테이블 넓이 저장
-	 * 
-	 * @param param
-	 * @return Map<String, Object>
-	 * @throws WTException
-	 */
-	public abstract Map<String, Object> saveUserTableStyle(Map<String, Object> param) throws WTException;
-
-	/**
-	 * 개인 목록 리스트 수 저장
-	 * 
-	 * @param param
-	 * @return Map<String, Object>
-	 * @throws WTException
-	 */
-	public abstract Map<String, Object> saveUserPaging(Map<String, Object> param) throws WTException;
 
 	/**
 	 * 퇴사 처리
@@ -139,12 +118,18 @@ public interface OrgService {
 	public abstract Map<String, Object> setDeptAction(Map<String, Object> param) throws WTException;
 
 	/**
-	 * 개인 테이블 순서
+	 * WTUser 생성시 호출 되는 이벤트
 	 * 
-	 * @param param
-	 * @return Map<String, Object>
-	 * @throws WTException
+	 * @param wtuser
+	 * @throws Exception
 	 */
-	public abstract Map<String, Object> saveUserTableIndexs(Map<String, Object> param) throws WTException;
+	public abstract void save(WTUser wtuser) throws Exception;
 
+	/**
+	 * WTUser 수정시 호출 되는 이벤트
+	 * 
+	 * @param wtuser
+	 * @throws Exception
+	 */
+	public abstract void modify(WTUser wtuser) throws Exception;
 }

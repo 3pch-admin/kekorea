@@ -17,7 +17,7 @@
 					<li>
 						<div class="dropdown-messages-box">
 							<a class="dropdown-item float-left" href="profile.html">
-								<img alt="image" class="rounded-circle" src="img/a7.jpg">
+								<img alt="image" class="rounded-circle" src="">
 							</a>
 							<div class="media-body">
 								<small class="float-right">46h ago</small>
@@ -34,7 +34,7 @@
 					<li>
 						<div class="dropdown-messages-box">
 							<a class="dropdown-item float-left" href="profile.html">
-								<img alt="image" class="rounded-circle" src="img/a4.jpg">
+								<img alt="image" class="rounded-circle" src="">
 							</a>
 							<div class="media-body ">
 								<small class="float-right text-navy">5h ago</small>
@@ -51,7 +51,7 @@
 					<li>
 						<div class="dropdown-messages-box">
 							<a class="dropdown-item float-left" href="profile.html">
-								<img alt="image" class="rounded-circle" src="img/profile.jpg">
+								<img alt="image" class="rounded-circle" src="">
 							</a>
 							<div class="media-body ">
 								<small class="float-right">23h ago</small>
@@ -135,4 +135,4 @@
 		</ul>
 	</nav>
 </div>
-<iframe src="" id="content"></iframe>
+<iframe src="/Windchill/plm/commonCode/list" id="content"></iframe>

@@ -11,7 +11,7 @@ import e3ps.admin.LoginHistory;
 import e3ps.admin.PasswordSetting;
 import e3ps.admin.column.CodeColumnData;
 import e3ps.admin.column.LoginHistoryColumnData;
-import e3ps.common.code.CommonCode;
+import e3ps.admin.commonCode.CommonCode;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.MessageHelper;
 import e3ps.common.util.PageQueryUtils;
@@ -200,30 +200,6 @@ public class AdminHelper implements MessageHelper {
 		return lastTime;
 	}
 
-	public FunctionControl getFuntion() {
-		FunctionControl fc = null;
-		QuerySpec query = null;
-		try {
-
-			query = new QuerySpec();
-			int idx = query.appendClassList(FunctionControl.class, true);
-
-			ClassAttribute ca = new ClassAttribute(FunctionControl.class, WTAttributeNameIfc.CREATE_STAMP_NAME);
-			OrderBy by = new OrderBy(ca, false);
-			query.appendOrderBy(by, new int[] { idx });
-
-			QueryResult result = PersistenceHelper.manager.find(query);
-			if (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				fc = (FunctionControl) obj[0];
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return fc;
-	}
-
 	public JSONArray getCodeTree(Map<String, Object> param) throws Exception {
 
 		String codeType = (String) param.get("codeType");
@@ -405,9 +381,8 @@ public class AdminHelper implements MessageHelper {
 		String uses = (String) param.get("uses");
 		String codeOid = (String) param.get("codeOid");
 
-		String codeType = StringUtils.checkReplaceStr((String) param.get("codeType"),"CUSTOMER");
-		
-		
+		String codeType = StringUtils.checkReplaceStr((String) param.get("codeType"), "CUSTOMER");
+
 		ReferenceFactory rf = new ReferenceFactory();
 		// 정렬
 		CommonCode pCode = null;
@@ -490,31 +465,32 @@ public class AdminHelper implements MessageHelper {
 		}
 		return map;
 	}
-	
+
 	public PasswordSetting getPasswordSetting() throws Exception {
 		PasswordSetting ps = null;
-		
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(PasswordSetting.class, true);
-		
-		OrderBy orderBy = new OrderBy(new ClassAttribute(PasswordSetting.class, PasswordSetting.CREATE_TIMESTAMP), false);
+
+		OrderBy orderBy = new OrderBy(new ClassAttribute(PasswordSetting.class, PasswordSetting.CREATE_TIMESTAMP),
+				false);
 		query.appendOrderBy(orderBy, new int[] { idx });
 
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {
-			Object[] obj = (Object[])result.nextElement();
-			ps = (PasswordSetting)obj[0];
-			
-		}else {
+			Object[] obj = (Object[]) result.nextElement();
+			ps = (PasswordSetting) obj[0];
+
+		} else {
 			ps = PasswordSetting.newPasswordSetting();
 			ps.setComplex(true);
 			ps.setLength(true);
 			ps.setPrange(12);
 			ps.setReset(3);
-			
-			ps = (PasswordSetting)PersistenceHelper.manager.save(ps);
+
+			ps = (PasswordSetting) PersistenceHelper.manager.save(ps);
 		}
 		return ps;
 	}
-	
+
 }

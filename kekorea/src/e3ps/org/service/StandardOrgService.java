@@ -1,8 +1,6 @@
 package e3ps.org.service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +14,6 @@ import e3ps.common.util.MessageHelper;
 import e3ps.common.util.StringUtils;
 import e3ps.org.Department;
 import e3ps.org.People;
-import e3ps.org.UserTableSet;
 import e3ps.org.WTUserPeopleLink;
 import e3ps.org.beans.UserViewData;
 import wt.fc.PersistenceHelper;
@@ -47,11 +44,8 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 	private static String userAdapter;
 	private static String userDirectory;
 	private static String userSearch;
-	private String ADMIN_ID = "wcadmin";
 
 	private String email_prefix = "@kekorea.co.kr";
-
-//	private String email_prefix = "@e3ps.com";
 
 	static {
 		try {
@@ -193,8 +187,6 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 				// not value...
 				People user = null;
 
-				Timestamp today = new Timestamp(new Date().getTime());
-
 				if (!qr.hasMoreElements()) {
 					user = People.newPeople();
 					// set foreignKey
@@ -202,19 +194,12 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 					user.setUser(wtuser);
 
 					String a = wtuser.getName();
-					if (a.equals("Administrator")) {
-						a = ADMIN_ID;
-					}
 					user.setName(wtuser.getFullName());
-//					user.setName(a);
 					user.setId(a);
-					user.setPasswordUpdateTime(today);
 					user.setEmail(wtuser.getEMail() != null ? wtuser.getEMail() : "");
 					user = (People) PersistenceHelper.manager.save(user);
 				} else {
 					user = (People) qr.nextElement();
-//					user.setPasswordUpdateTime(today);
-//					user.setDepartment(department);
 					user = (People) PersistenceHelper.manager.modify(user);
 				}
 			}
@@ -242,13 +227,8 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 			user.setName(sessionUser.getFullName());
 
 			String a = sessionUser.getName();
-			if (a.equals("Administrator")) {
-				a = ADMIN_ID;
-			}
-//			user.setId(sessionUser.getName());
 			user.setId(a);
 			user.setEmail(sessionUser.getEMail() != null ? sessionUser.getEMail() : "");
-			user.setFax(sessionUser.getFaxNumber());
 			user.setUser(sessionUser);
 			user.setDuty("사원");
 			user.setDepartment(OrgHelper.manager.getDepartment("ROOT"));
@@ -281,10 +261,6 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 
 			user = (WTUser) SessionHelper.manager.getPrincipal();
 			String id = user.getName();
-			if (id.equals("Administrator")) {
-				id = ADMIN_ID;
-			}
-
 			String uid = DirContext.getMapping(userAdapter, "user.uniqueIdAttribute",
 					DirContext.getMapping(userAdapter, "user.uid"));
 			String object = uid + "=" + id + "," + userSearch;
@@ -347,10 +323,6 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 			}
 
 			String id = user.getUser().getName();
-			if (id.equals("Administrator")) {
-				id = ADMIN_ID;
-			}
-
 			String uid = DirContext.getMapping(userAdapter, "user.uniqueIdAttribute",
 					DirContext.getMapping(userAdapter, "user.uid"));
 			String object = uid + "=" + id + "," + userSearch;
@@ -383,104 +355,6 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 			map.put("msg", user.getName() + " 사용자의 비밀번호 초기화 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
 			map.put("url", BASE_URL + "/admin/initPassword");
 			// fail..
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-		return map;
-	}
-
-	@Override
-	public Map<String, Object> saveUserTableSet(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-
-		List<String> keys = (List<String>) param.get("keys");
-		List<String> headers = (List<String>) param.get("headers");
-		List<String> styles = (List<String>) param.get("styles");
-		List<String> indexs = (List<String>) param.get("indexs");
-		String module = (String) param.get("module");
-
-		String[] keysData = new String[keys.size()];
-		String[] headersData = new String[headers.size()];
-		String[] stylesData = new String[styles.size()];
-		String[] indexsData = new String[indexs.size()];
-
-		UserTableSet tableSet = null;
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			boolean isUserTableSet = OrgHelper.manager.isUserTableSet(module);
-			if (!isUserTableSet) {
-				WTUser user = (WTUser) SessionHelper.manager.getPrincipal();
-
-				for (int i = 0; i < keys.size(); i++) {
-					String key = (String) keys.get(i);
-					keysData[i] = key;
-				}
-
-				for (int i = 0; i < headers.size(); i++) {
-					String header = (String) headers.get(i);
-					headersData[i] = header;
-				}
-
-				for (int i = 0; i < styles.size(); i++) {
-					String style = (String) styles.get(i);
-					stylesData[i] = style;
-				}
-
-				for (int i = 0; i < indexs.size(); i++) {
-					String index = (String) indexs.get(i);
-					indexsData[i] = index;
-				}
-
-				tableSet = UserTableSet.newUserTableSet();
-				tableSet.setModule(module);
-				tableSet.setKeys(keysData);
-				tableSet.setStyles(stylesData);
-				tableSet.setHeaders(headersData);
-				tableSet.setTabIndex(indexsData);
-				tableSet.setWtuser(user);
-
-				PersistenceHelper.manager.save(tableSet);
-			} else {
-				// 테이블 셋 데이터가 있을경우
-				for (int i = 0; i < keys.size(); i++) {
-					String key = (String) keys.get(i);
-					keysData[i] = key;
-				}
-
-				for (int i = 0; i < headers.size(); i++) {
-					String header = (String) headers.get(i);
-					headersData[i] = header;
-				}
-
-				for (int i = 0; i < styles.size(); i++) {
-					String style = (String) styles.get(i);
-					stylesData[i] = style;
-				}
-
-				for (int i = 0; i < indexs.size(); i++) {
-					String index = (String) indexs.get(i);
-					indexsData[i] = index;
-				}
-
-				tableSet = OrgHelper.manager.getUserTableSet(module);
-				tableSet.setModule(module);
-				tableSet.setKeys(keysData);
-				tableSet.setStyles(stylesData);
-				tableSet.setHeaders(headersData);
-				tableSet.setTabIndex(indexsData);
-				PersistenceHelper.manager.modify(tableSet);
-			}
-
-			map.put("result", SUCCESS);
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			map.put("result", FAIL);
 			e.printStackTrace();
 			trs.rollback();
 		} finally {
@@ -561,110 +435,6 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 			map.put("result", FAIL);
 			map.put("msg", "개인 결재선 삭제 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
 			map.put("url", "/Windchill/plm/org/addLine?lineType=" + lineType);
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-		return map;
-	}
-
-	@Override
-	public Map<String, Object> saveUserTableStyle(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-
-		List<Object> cols = (List<Object>) param.get("cols");
-		String module = (String) param.get("module");
-
-		String[] colsData = new String[cols.size()];
-
-		UserTableSet tableSet = null;
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			boolean isUserTableSet = OrgHelper.manager.isUserTableSet(module);
-			if (!isUserTableSet) {
-				WTUser user = (WTUser) SessionHelper.manager.getPrincipal();
-
-				for (int i = 0; i < cols.size(); i++) {
-					Object data = (Object) cols.get(i);
-					String col = String.valueOf(data);
-					colsData[i] = col;
-				}
-
-				tableSet = UserTableSet.newUserTableSet();
-				tableSet.setCols(colsData);
-				tableSet.setModule(module);
-				tableSet.setWtuser(user);
-
-				PersistenceHelper.manager.save(tableSet);
-			} else {
-				// 테이블 셋 데이터가 있을경우
-				for (int i = 0; i < cols.size(); i++) {
-					Object data = (Object) cols.get(i);
-					String col = String.valueOf(data);
-					colsData[i] = col;
-				}
-
-				tableSet = OrgHelper.manager.getUserTableSet(module);
-				tableSet.setCols(colsData);
-				tableSet.setModule(module);
-				PersistenceHelper.manager.modify(tableSet);
-			}
-
-			map.put("result", SUCCESS);
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			map.put("result", FAIL);
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-		return map;
-	}
-
-	@Override
-	public Map<String, Object> saveUserPaging(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-
-		String list = (String) param.get("list"); // 사이즈
-		String module = (String) param.get("module");
-
-		UserTableSet tableSet = null;
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			boolean isUserTableSet = OrgHelper.manager.isUserTableSet(module);
-			if (!isUserTableSet) {
-				WTUser user = (WTUser) SessionHelper.manager.getPrincipal();
-
-				tableSet = UserTableSet.newUserTableSet();
-				tableSet.setModule(module);
-				tableSet.setWtuser(user);
-				tableSet.setPsize(list);
-
-				PersistenceHelper.manager.save(tableSet);
-			} else {
-				// 테이블 셋 데이터가 있을경우
-
-				tableSet = OrgHelper.manager.getUserTableSet(module);
-				tableSet.setPsize(list);
-				tableSet.setModule(module);
-				PersistenceHelper.manager.modify(tableSet);
-			}
-
-			map.put("list", list);
-			map.put("result", SUCCESS);
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			map.put("result", FAIL);
 			e.printStackTrace();
 			trs.rollback();
 		} finally {
@@ -871,75 +641,58 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 	}
 
 	@Override
-	public Map<String, Object> saveUserTableIndexs(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<String> indexs = (List<String>) param.get("indexs");
-		List<String> texts = (List<String>) param.get("texts");
-		String module = (String) param.get("module");
-		String[] indexsData = new String[indexs.size()];
-		String[] textsData = new String[texts.size()];
-
-		UserTableSet tableSet = null;
+	public void save(WTUser wtuser) throws Exception {
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			boolean isUserTableSet = OrgHelper.manager.isUserTableSet(module);
-			if (!isUserTableSet) {
-				WTUser user = (WTUser) SessionHelper.manager.getPrincipal();
+			People user = People.newPeople();
+			user.setUser(wtuser);
+			user.setName(wtuser.getFullName());
+			user.setId(wtuser.getName());
+			user.setEmail(wtuser.getEMail());
+			user.setDepartment(OrgHelper.manager.getRoot());
+			user.setDuty("사원");
+			user.setRank("지정안됨");
+			user.setPhone(wtuser.getTelephoneNumber());
+			user.setMobile(wtuser.getMobilePhoneNumber());
+			PersistenceHelper.manager.save(user);
 
-				for (int i = 0; i < indexs.size(); i++) {
-					String index = (String) indexs.get(i);
-					indexsData[i] = index;
-				}
-
-				for (int i = 0; i < texts.size(); i++) {
-					String text = (String) texts.get(i);
-					textsData[i] = text;
-				}
-
-				tableSet = UserTableSet.newUserTableSet();
-				tableSet.setHeaders(textsData);
-				tableSet.setModule(module);
-				tableSet.setKeys(indexsData);
-				tableSet.setTabIndex(indexsData);
-				tableSet.setWtuser(user);
-
-				PersistenceHelper.manager.save(tableSet);
-			} else {
-				// 테이블 셋 데이터가 있을경우
-				for (int i = 0; i < indexs.size(); i++) {
-					String index = (String) indexs.get(i);
-					indexsData[i] = index;
-				}
-
-				for (int i = 0; i < texts.size(); i++) {
-					String text = (String) texts.get(i);
-					textsData[i] = text;
-				}
-
-				tableSet = OrgHelper.manager.getUserTableSet(module);
-				tableSet.setHeaders(textsData);
-				tableSet.setKeys(indexsData);
-				tableSet.setModule(module);
-				tableSet.setTabIndex(indexsData);
-
-				System.out.println("몇번 실행되는지??");
-
-				PersistenceHelper.manager.modify(tableSet);
-			}
-
-			map.put("result", SUCCESS);
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			e.printStackTrace();
 			trs.rollback();
+			throw e;
 		} finally {
 			if (trs != null)
 				trs.rollback();
 		}
-		return map;
+	}
+
+	@Override
+	public void modify(WTUser wtuser) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			People user = OrgHelper.manager.getUser(wtuser.getName());
+			user.setName(wtuser.getFullName());
+			user.setId(wtuser.getName());
+			user.setEmail(wtuser.getEMail());
+			user.setPhone(wtuser.getTelephoneNumber());
+			user.setMobile(wtuser.getMobilePhoneNumber());
+			PersistenceHelper.manager.modify(user);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
 	}
 }
