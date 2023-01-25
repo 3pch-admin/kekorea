@@ -1,5 +1,6 @@
 package e3ps.admin.spec;
 
+import com.ptc.windchill.annotations.metadata.ColumnProperties;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
@@ -11,13 +12,15 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "name", type = String.class, constraints = @PropertyConstraints(upperLimit = 2000)),
+				@GeneratedProperty(name = "name", type = String.class, constraints = @PropertyConstraints(upperLimit = 2000, required = true)),
 
-				@GeneratedProperty(name = "sort", type = Integer.class),
+				@GeneratedProperty(name = "colKey", type = String.class, columnProperties = @ColumnProperties(unique = true), constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "latest", type = Boolean.class, initialValue = "true"),
+				@GeneratedProperty(name = "sort", type = Integer.class, columnProperties = @ColumnProperties(unique = true)),
 
-				@GeneratedProperty(name = "version", type = Integer.class, initialValue = "1"),
+				@GeneratedProperty(name = "latest", type = Boolean.class, initialValue = "true", constraints = @PropertyConstraints(required = true)),
+
+				@GeneratedProperty(name = "version", type = Integer.class, initialValue = "1", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "enable", type = boolean.class, initialValue = "true"),
 

@@ -11,6 +11,8 @@ import e3ps.admin.spec.Spec;
 import e3ps.admin.spec.beans.SpecColumnData;
 import e3ps.common.util.PageQueryUtils;
 import wt.fc.PagingQueryResult;
+import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.query.ClassAttribute;
 import wt.query.OrderBy;
 import wt.query.QuerySpec;
@@ -64,9 +66,21 @@ public class SpecHelper {
 		SearchCondition sc = new SearchCondition(Spec.class, Spec.ENABLE, SearchCondition.IS_TRUE);
 		query.appendWhere(sc, new int[] { idx });
 		query.appendAnd();
-		
+
 		sc = new SearchCondition(Spec.class, Spec.LATEST, SearchCondition.IS_TRUE);
-		
+		query.appendWhere(sc, new int[] { idx });
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Spec spec = (Spec) obj[0];
+
+			Map<String, Object> data = new HashMap<>();
+			data.put("key", spec.getColKey());
+			data.put("value", spec.getName());
+			list.add(data);
+
+		}
 
 		return list;
 	}

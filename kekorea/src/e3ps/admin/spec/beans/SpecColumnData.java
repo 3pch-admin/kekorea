@@ -13,6 +13,8 @@ public class SpecColumnData {
 	private String name;
 	private int sort;
 	private boolean enable;
+	private boolean config;
+	private boolean history;
 
 	public SpecColumnData() {
 
@@ -23,5 +25,7 @@ public class SpecColumnData {
 		setName(spec.getName());
 		setSort(spec.getSort());
 		setEnable(spec.isEnable());
+		setConfig(spec.isConfig());
+		setHistory(spec.isHistroy());
 	}
 }

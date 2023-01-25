@@ -12,6 +12,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.MessageHelper;
 import e3ps.common.util.PageQueryUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.org.Department;
 import e3ps.org.People;
@@ -1549,7 +1550,7 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 //				QueryResult qr = PersistenceHelper.manager.find(query);
 				while (qr.hasMoreElements()) {
 //					Object[] obj = (Object[]) qr.nextElement();
-					DocumentOutputLink link = (DocumentOutputLink)qr.nextElement();
+					DocumentOutputLink link = (DocumentOutputLink) qr.nextElement();
 //					DocumentOutputLink link = (DocumentOutputLink) qr.nextElement();
 					list.add(link);
 				}
@@ -1571,7 +1572,7 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 		for (Task tt : child) {
 
 			QueryResult result = PersistenceHelper.manager.navigate(tt, "output", TaskOutputLink.class);
-			
+
 //			QuerySpec qs = new QuerySpec();
 //			int idx_ = qs.appendClassList(TaskOutputLink.class, true);
 //
@@ -1584,7 +1585,7 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 //			qs.appendOrderBy(by, new int[] { idx_ });
 //
 //			QueryResult result = PersistenceHelper.manager.find(qs);
-			
+
 			while (result.hasMoreElements()) {
 //				Object[] oo = (Object[]) result.nextElement();
 //				TaskOutputLink ll = (TaskOutputLink) oo[0];
@@ -1605,7 +1606,7 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 //				ca = new ClassAttribute(DocumentMasterOutputLink.class, DocumentMasterOutputLink.CREATE_TIMESTAMP);
 //				by = new OrderBy(ca, true);
 //				query.appendOrderBy(by, new int[] { idx });
-				
+
 				QueryResult qr = PersistenceHelper.manager.navigate(output, "master", DocumentMasterOutputLink.class,
 						false);
 				while (qr.hasMoreElements()) {
@@ -3202,6 +3203,40 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 			}
 		}
 		return gate5;
+	}
+
+	public ArrayList<Map<String, Object>> remoter(String term) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Project.class, true);
+		QuerySpecUtils.appendLike(query, idx, Project.class, Project.KEK_NUMBER, term);
+		QuerySpecUtils.appendOrderBy(query, idx, Project.class, Project.KEK_NUMBER, false);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		Map<String, Object> v = new HashMap<String, Object>();
+		v.put("key", "123");
+		v.put("value", "KCB1775484");
+		list.add(v);
+		
+		Map<String, Object> v2 = new HashMap<String, Object>();
+		v2.put("key", "123");
+		v2.put("value", "KCB1775485");
+		list.add(v2);
+		
+		Map<String, Object> v3 = new HashMap<String, Object>();
+		v3.put("key", "123");
+		v3.put("value", "KCB1775486");
+		list.add(v3);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Project project = (Project) obj[0];
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put("key", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			data.put("value", project.getKekNumber());
+			list.add(data);
+		}
+		return list;
 	}
 
 }

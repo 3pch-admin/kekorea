@@ -141,13 +141,13 @@ String oid = (String) request.getAttribute("oid");
 		})
 
 		$("#saveBtn").click(function() {
-			let cnameValid = AUIGrid.validateGridData(myGridID, [ "iname" ], "아이템 명을 입력하세요.");
-			if (!cnameValid) {
+			let nameValid = AUIGrid.validateGridData(myGridID, [ "name" ], "아이템 명을 입력하세요.");
+			if (!nameValid) {
 				return false;
 			}
 
-			let csortValid = AUIGrid.validateGridData(myGridID, [ "isort" ], "아이템 정렬 순서를 입력하세요.");
-			if (!csortValid) {
+			let sortValid = AUIGrid.validateGridData(myGridID, [ "sort" ], "아이템 정렬 순서를 입력하세요.");
+			if (!sortValid) {
 				return false;
 			}
 			let addRows = AUIGrid.getAddedRowItems(myGridID);

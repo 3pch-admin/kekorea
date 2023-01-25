@@ -1,17 +1,23 @@
+<%@page import="e3ps.admin.spec.Spec"%>
+<%@page import="e3ps.admin.sheetvariable.beans.ItemsColumnData"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="e3ps.admin.sheetvariable.Category"%>
 <%@page import="e3ps.admin.commonCode.CommonCodeType"%>
 <%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+Spec spec = (Spec) request.getAttribute("spec");
+String oid = (String) request.getAttribute("oid");
+%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title></title>
-<%@include file="/jsp/common/layouts/include_css.jsp"%>
-<%@include file="/jsp/common/layouts/include_script.jsp"%>
 <!-- auigrid -->
 <%@include file="/jsp/include/auigrid.jsp"%>
 </head>
-<body onload="loadGridData();">
+<body>
 	<input type="hidden" name="sessionid" id="sessionid">
 	<input type="hidden" name="curPage" id="curPage">
 	<!-- button table -->
@@ -21,7 +27,7 @@
 				<input type="button" value="추가" class="redBtn" id="addRowBtn" title="추가">
 				<input type="button" value="삭제" class="orangeBtn" id="deleteRowBtn" title="삭제">
 				<input type="button" value="저장" class="" id="saveBtn" title="저장">
-				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
+				<input type="button" value="닫기" class="blueBtn" id="closeBtn" title="닫기">
 			</td>
 		</tr>
 	</table>
@@ -30,69 +36,26 @@
 <script type="text/javascript">
 	let myGridID;
 	const columns = [ {
-		dataField : "",
-		headerText : "아이템 등록",
-		dataType : "numeric",
-		width : 140,
-		cellMerge : true,
-		mergeRef : "cnadme",
-		mergePolicy : "restrict",
-		editable : false,
-		renderer : {
-			type : "ButtonRenderer",
-			labelText : "아이템 등록",
-			onClick : function(event) {
-				let oid = event.item.oid;
-				let url = getCallUrl("/options/create?oid=" + oid);
-				popup(url, 1200, 660);
-			},
-		}
-	}, {
-		dataField : "name",
+		dataField : "sname",
 		headerText : "사양 명",
 		dataType : "string",
-		width : 350
+		width : 350,
+		editable : false,
+		cellMerge : true,
+	}, {
+		dataField : "name",
+		headerText : "아이템 명",
+		dataType : "string",
 	}, {
 		dataField : "sort",
-		headerText : "순서",
+		headerText : "아이템 정렬 순서",
 		dataType : "numeric",
 		formatString : "###0",
-		width : 80,
+		width : 140,
 		editRenderer : {
 			type : "InputEditRenderer",
 			onlyNumeric : true, // 0~9만 입력가능
-		}
-	}, {
-		dataField : "config",
-		headerText : "CONFIG SHEET 사용여부",
-		dataType : "boolean",
-		width : 180,
-		renderer : {
-			type : "CheckBoxEditRenderer",
-			editable : true, // 체크박스 편집 활성화 여부(기본값 : false)
-		}
-	}, {
-		dataField : "history",
-		headerText : "이력 관리 사용여부",
-		dataType : "boolean",
-		width : 180,
-		renderer : {
-			type : "CheckBoxEditRenderer",
-			editable : true, // 체크박스 편집 활성화 여부(기본값 : false)
-		}
-	}, {
-		dataField : "enable",
-		headerText : "사용여부",
-		width : 120,
-		renderer : {
-			type : "CheckBoxEditRenderer",
-			editable : true, // 체크박스 편집 활성화 여부(기본값 : false)
-		}
-	}, {
-		dataField : "description",
-		headerText : "설명",
-		dataType : "string",
-		style : "left indent10",
+		},
 	}, {
 		dataField : "oid",
 		headerText : "oid",
@@ -100,33 +63,39 @@
 		visible : false
 	} ]
 
-	const props = {
-		rowIdField : "oid",
-		headerHeight : 30,
-		rowHeight : 30,
-		showRowNumColumn : true,
-		rowNumHeaderText : "번호",
-		showRowCheckColumn : true, // 체크 박스 출력
-		fillColumnSizeMode : true, // 화면 꽉채우기
-		editable : true,
-		showStateColumn : true
-	// 상태값 표시
-	};
-
-	myGridID = AUIGrid.create("#grid_wrap", columns, props);
-	// LazyLoading 바인딩
-	AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+	function createAUIGrid(columnLayout) {
+		const props = {
+			rowIdField : "oid",
+			headerHeight : 30,
+			rowHeight : 30,
+			showRowNumColumn : true,
+			rowNumHeaderText : "번호",
+			showRowCheckColumn : true, // 체크 박스 출력
+			fillColumnSizeMode : true, // 화면 꽉채우기
+			editable : true,
+			showStateColumn : true,
+			enableCellMerge : true,
+			cellMergePolicy : "withNull",
+			softRemoveRowMode : false,
+		};
+		myGridID = AUIGrid.create("#grid_wrap", columns, props);
+		loadGridData();
+		// LazyLoading 바인딩
+		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+	}
 
 	function loadGridData() {
 		let params = new Object();
-		let url = getCallUrl("/spec/list");
+		let url = getCallUrl("/options/list");
+		params.oid = "<%=oid%>";
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
-			parent.close();
+			close();
+			opener.loadGridData();
 		})
 	}
 
@@ -161,38 +130,45 @@
 	}
 
 	$(function() {
-		$("#searchBtn").click(function() {
-			loadGridData();
+
+		$("#closeBtn").click(function() {
+			self.close();
 		})
 
 		// 그리드 행 추가
 		$("#addRowBtn").click(function() {
 			let item = new Object();
-			item.config = true;
-			item.history = true;
-			item.enable = true;
+			item.sname = "<%=spec.getName()%>";
 			AUIGrid.addRow(myGridID, item, "last");
 		})
 
 		$("#saveBtn").click(function() {
+			let nameValid = AUIGrid.validateGridData(myGridID, [ "name" ], "아이템 명을 입력하세요.");
+			if (!nameValid) {
+				return false;
+			}
+
+			let sortValid = AUIGrid.validateGridData(myGridID, [ "sort" ], "아이템 정렬 순서를 입력하세요.");
+			if (!sortValid) {
+				return false;
+			}
 			let addRows = AUIGrid.getAddedRowItems(myGridID);
 			let removeRows = AUIGrid.getRemovedItems(myGridID);
 			let editRows = AUIGrid.getEditedRowItems(myGridID);
 			let params = new Object();
-			let url = getCallUrl("/spec/create");
+			let url = getCallUrl("/options/create");
 			params.addRows = addRows;
 			params.removeRows = removeRows;
 			params.editRows = editRows;
-			parent.open();
-			console.log(params);
+			params.soid = "<%=oid%>";
+			open();
 			call(url, params, function(data) {
 				alert(data.msg);
 				if (data.result) {
 					loadGridData();
 				} else {
-					parent.close();
-				} 
-					
+					close();
+				}
 			}, "POST");
 		})
 
