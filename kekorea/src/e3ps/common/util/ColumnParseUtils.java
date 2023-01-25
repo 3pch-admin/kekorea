@@ -10,6 +10,8 @@ import e3ps.admin.sheetvariable.beans.CategoryColumnData;
 import e3ps.admin.spec.Spec;
 import e3ps.admin.spec.beans.SpecColumnData;
 import e3ps.doc.column.DocumentColumnData;
+import e3ps.project.Project;
+import e3ps.project.beans.ProjectColumnData;
 import wt.doc.WTDocument;
 import wt.fc.PagingQueryResult;
 import wt.fc.Persistable;
@@ -23,40 +25,47 @@ public class ColumnParseUtils {
 			Persistable per = (Persistable) obj[0];
 			// 문서
 			if (per instanceof WTDocument) {
-				DocumentColumnData data = document((WTDocument) per);
+				DocumentColumnData data = parse((WTDocument) per);
 				list.add(data);
 				// 코드
 			} else if (per instanceof CommonCode) {
-				CommonCodeColumnData data = commonCode((CommonCode) per);
+				CommonCodeColumnData data = parse((CommonCode) per);
 				list.add(data);
 				// 사양
 			} else if (per instanceof Spec) {
-				SpecColumnData data = spec((Spec) per);
+				SpecColumnData data = parse((Spec) per);
 				list.add(data);
 				// CS 카테고리
 			} else if (per instanceof Category) {
 				CategoryItemsLink link = (CategoryItemsLink) obj[1];
-				CategoryColumnData data = category((Category) per, link);
+				CategoryColumnData data = parse((Category) per, link);
+				list.add(data);
+				// 프로젝트
+			} else if (per instanceof Project) {
+				ProjectColumnData data = parse((Project) per);
 				list.add(data);
 			}
-
 		}
 		return list;
 	}
 
-	private static CategoryColumnData category(Category per, CategoryItemsLink link) throws Exception {
+	private static CategoryColumnData parse(Category per, CategoryItemsLink link) throws Exception {
 		return new CategoryColumnData(per, link);
 	}
 
-	private static SpecColumnData spec(Spec per) throws Exception {
+	private static SpecColumnData parse(Spec per) throws Exception {
 		return new SpecColumnData(per);
 	}
 
-	private static CommonCodeColumnData commonCode(CommonCode per) throws Exception {
+	private static CommonCodeColumnData parse(CommonCode per) throws Exception {
 		return new CommonCodeColumnData(per);
 	}
 
-	private static DocumentColumnData document(WTDocument per) throws Exception {
+	private static DocumentColumnData parse(WTDocument per) throws Exception {
 		return new DocumentColumnData(per);
+	}
+
+	private static ProjectColumnData parse(Project per) throws Exception {
+		return new ProjectColumnData(per);
 	}
 }
