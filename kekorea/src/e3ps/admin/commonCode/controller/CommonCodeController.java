@@ -1,5 +1,6 @@
 package e3ps.admin.commonCode.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.CommonCodeType;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.util.AUIGridUtils;
 import e3ps.controller.BaseController;
 
 @Controller
@@ -56,6 +58,23 @@ public class CommonCodeController extends BaseController {
 		try {
 			CommonCodeHelper.service.create(params);
 			result.put("msg", SAVE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+	
+	@Description(value = "코드관리 리스트 AUIGrid 코드 리모트 렌더러 호출 함수")
+	@ResponseBody
+	@RequestMapping(value = "/remoter", method = RequestMethod.POST)
+	public Map<String, Object> remoter(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ArrayList<Map<String, Object>> list = AUIGridUtils.remoter(params);
+			result.put("list", list);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();

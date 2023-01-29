@@ -64,8 +64,16 @@ function radio(name) {
  * CHECKBOX 박스 바인딩
  * 변수 CHECKBOX 박스 NAME 값
  */
-function check(name) {
+function checkBox(name) {
 	$("input:checkbox[name=" + name + "]").checks();
+}
+
+/**
+ * SELECTBOX 박스 바인딩
+ * 변수 SELECTBOX 박스 NAME 값
+ */
+function selectBox(name) {
+	$("select[name=" + name + "]").bindSelect();
 }
 
 /**
@@ -77,4 +85,32 @@ function popup(url, width, height) {
 	var left = (screen.width - popW) / 2;
 	var top = (screen.height - popH) / 2;
 	window.open(url, "", "top=" + top + ", left=" + left + ", height=" + popH + ", width=" + popW);
+}
+
+
+/**
+ * 등록 페이지 FORM PARAMETER 가져오기
+ */
+function form(params) {
+	if (params === null) {
+		params = new Object();
+	}
+
+	let input = $(".create_table input[type=text]");
+	$.each(input, function(idx) {
+		let key = input.eq(idx).attr("name");
+		let value = input.eq(idx).val();
+		params[key] = value;
+	})
+
+	let select = $(".create_table select");
+	$.each(select, function(idx) {
+		let key = select.eq(idx).attr("name");
+		if (key == undefined) {
+			return true;
+		}
+		let value = select.eq(idx).val();
+		params[key] = value;
+	})
+	return params;
 }

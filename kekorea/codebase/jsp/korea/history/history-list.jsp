@@ -89,7 +89,27 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 		dataField : "<%=dataField%>",
 		headerText : "<%=headerText%>",
 		dataType : "string",
-		width : 130		
+		width : 150,
+		editRenderer : {
+			type: "RemoteListRenderer",
+			fieldName: "value",
+			showEditorBtnOver: true, // 마우스 오버 시 에디터버턴 보이기
+			remoter: function (request, response) { // remoter 지정 필수
+				if (String(request.term).length < 2) {
+					alert("2글자 이상 입력하십시오.");
+					response(false); // 데이터 요청이 없는 경우 반드시 false 삽입하십시오.
+					return;
+				}
+				// 데이터 요청
+				let url = getCallUrl("/options/remoter");
+				let params = new Object();
+				params.term = request.term;
+				params.target = "<%=dataField%>";
+				call(url, params, function(data) {
+					response(data.list);
+				}, "POST");
+			}
+		}		
 	},
 	<%}%>
 	{
@@ -173,7 +193,7 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 
 	$(function() {
 		// 그리드 생성 함수 - 모든 이벤트 안에 바인딩 시킨다.
-		createAUIGrid();
+		createAUIGrid(columns);
 		$("#searchBtn").click(function() {
 			loadGridData();
 		})

@@ -47,7 +47,7 @@ public class HistoryController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "이력관리 리스트 AUIGrid 리모트 렌더러 호출 함수")
+	@Description(value = "이력관리 리스트 AUIGrid KEK작번 리모트 렌더러 호출 함수")
 	@ResponseBody
 	@RequestMapping(value = "/remoter", method = RequestMethod.POST)
 	public Map<String, Object> remoter(@RequestBody Map<String, Object> params) throws Exception {

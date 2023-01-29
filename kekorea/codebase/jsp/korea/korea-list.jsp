@@ -18,7 +18,7 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 <!-- highchart -->
 <%@include file="/jsp/include/highchart.jsp"%>
 </head>
-<body onload="loadGridData();">
+<body>
 	<input type="hidden" name="sessionid" id="sessionid">
 	<input type="hidden" name="curPage" id="curPage">
 	<div id="container"></div>
@@ -178,34 +178,37 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 		visible : false
 	} ]
 
-	const props = {
-		rowIdField : "oid",
-		headerHeight : 30,
-		rowHeight : 30,
-		showRowNumColumn : true,
-		rowNumHeaderText : "번호",
-		showRowCheckColumn : true, // 체크 박스 출력
-		fixedColumnCount : 7,
+	function createAUIGrid(columnLayout) {
+		const props = {
+			rowIdField : "oid",
+			headerHeight : 30,
+			rowHeight : 30,
+			showRowNumColumn : true,
+			rowNumHeaderText : "번호",
+			showRowCheckColumn : true, // 체크 박스 출력
+			fixedColumnCount : 7,
 
-		// 컨텍스트 메뉴 사용
-		useContextMenu : true,
+			// 컨텍스트 메뉴 사용
+			useContextMenu : true,
 
-		// 컨텍스트 메뉴 아이템들
-		contextMenuItems : [ {
-			label : "BOM 비교",
-			callback : contextHandler
-		}, {
-			label : "CONFIG 비교",
-			callback : contextHandler
-		}, {
-			label : "도면일람표 비교",
-			callback : contextHandler
-		} ],
-	};
+			// 컨텍스트 메뉴 아이템들
+			contextMenuItems : [ {
+				label : "BOM 비교",
+				callback : contextHandler
+			}, {
+				label : "CONFIG 비교",
+				callback : contextHandler
+			}, {
+				label : "도면일람표 비교",
+				callback : contextHandler
+			} ],
+		};
 
-	myGridID = AUIGrid.create("#grid_wrap", columns, props);
-	// LazyLoading 바인딩
-	AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+		myGridID = AUIGrid.create("#grid_wrap", columns, props);
+		loadGridData();
+		// LazyLoading 바인딩
+		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+	}
 
 	function contextHandler(event) {
 
@@ -275,6 +278,9 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 	}
 
 	$(function() {
+
+		createAUIGrid(columns);
+
 		$("#searchBtn").click(function() {
 			loadGridData();
 		})
@@ -310,7 +316,6 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 			}
 		})
 
-		check("install");
 	}).keypress(function(e) {
 		let keyCode = e.keyCode;
 		if (keyCode == 13) {

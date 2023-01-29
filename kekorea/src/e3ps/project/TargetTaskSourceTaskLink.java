@@ -9,6 +9,7 @@ import com.ptc.windchill.annotations.metadata.GeneratedRole;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
+import e3ps.project.template.Template;
 import wt.fc.ObjectToObjectLink;
 import wt.util.WTException;
 

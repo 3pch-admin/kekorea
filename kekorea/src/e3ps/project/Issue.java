@@ -20,6 +20,7 @@ import wt.util.WTException;
 		}
 
 )
+
 public class Issue extends _Issue {
 
 	static final long serialVersionUID = 1;

@@ -16,8 +16,6 @@ import wt.ownership.Ownership;
 
 		properties = {
 
-				@GeneratedProperty(name = "updateUser", type = Ownership.class, javaDoc = "수정자"),
-
 				@GeneratedProperty(name = "name", type = String.class, javaDoc = "제목", columnProperties = @ColumnProperties(index = true)),
 
 				@GeneratedProperty(name = "description", type = String.class, javaDoc = "설명", constraints = @PropertyConstraints(upperLimit = 2000)),
@@ -26,15 +24,15 @@ import wt.ownership.Ownership;
 
 				@GeneratedProperty(name = "duration", type = Integer.class, javaDoc = "기간", initialValue = "0"),
 
-				@GeneratedProperty(name = "planStartDate", type = Timestamp.class, javaDoc = "계획 시작일"),
+				@GeneratedProperty(name = "planStartDate", type = Timestamp.class, javaDoc = "계획 시작일", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "planEndDate", type = Timestamp.class, javaDoc = "계획 종료일"),
+				@GeneratedProperty(name = "planEndDate", type = Timestamp.class, javaDoc = "계획 종료일", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "startDate", type = Timestamp.class, javaDoc = "실제 시작일"),
 
 				@GeneratedProperty(name = "endDate", type = Timestamp.class, javaDoc = "실제 종료일"),
 
-				@GeneratedProperty(name = "state", type = String.class, javaDoc = "상태"), }
+				@GeneratedProperty(name = "state", type = String.class, javaDoc = "상태", constraints = @PropertyConstraints(required = true)), }
 
 )
 public interface ProjectImpl extends _ProjectImpl {

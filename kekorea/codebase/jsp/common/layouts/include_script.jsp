@@ -17,7 +17,7 @@
 
 <!-- module js -->
 <script type="text/javascript" src="/Windchill/jsp/js/common.js"></script>
-<script type="text/javascript" src="/Windchill/jsp/js/base.js?v=2"></script>
+<script type="text/javascript" src="/Windchill/jsp/js/base.js?v=5"></script>
 
 <!-- axisj js -->
 <script type="text/javascript" src="/Windchill/jsp/asset/axisj/dist/AXJ.all.js"></script>

@@ -1,4 +1,4 @@
-<%@page import="e3ps.admin.commonCode.CommonCode"%>
+템플<%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.org.beans.UserData"%>
 <%@page import="wt.session.SessionHelper"%>
@@ -97,25 +97,10 @@ UserData data = (UserData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a href="graph_flot.html">작번 조회</a>
+						<a onclick="moveToPage(this, '/project/list');">작번 조회</a>
 					</li>
 					<li>
-						<a href="graph_morris.html">작번 등록</a>
-					</li>
-				</ul>
-			</li>
-			<li>
-				<a href="widgets.html">
-					<i class="fa fa-flask"></i>
-					<span class="nav-label">템플릿 관리</span>
-					<span class="fa arrow"></span>
-				</a>
-				<ul class="nav nav-second-level collapse">
-					<li>
-						<a href="graph_flot.html">템플릿 조회</a>
-					</li>
-					<li>
-						<a href="graph_morris.html">템플릿 등록</a>
+						<a onclick="moveToPage(this, '/template/list');">템플릿 조회</a>
 					</li>
 				</ul>
 			</li>
@@ -131,6 +116,12 @@ UserData data = (UserData) request.getAttribute("data");
 					</li>
 					<li>
 						<a href="form_advanced.html">라이브러리 조회</a>
+					</li>
+					<li>
+						<a href="form_wizard.html">도면 일람표 조회</a>
+					</li>
+					<li>
+						<a href="form_wizard.html">도면 일람표 등록</a>
 					</li>
 					<li>
 						<a href="form_wizard.html">도면 결재</a>
@@ -224,6 +215,9 @@ UserData data = (UserData) request.getAttribute("data");
 				<ul class="nav nav-second-level collapse">
 					<li>
 						<a onclick="moveToPage(this, '/korea/list');">한국 생산</a>
+					</li>
+					<li>
+						<a onclick="moveToPage(this, '/cssheet/list');">CS SHEET 조회</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/cip/create');">CIP 등록</a>

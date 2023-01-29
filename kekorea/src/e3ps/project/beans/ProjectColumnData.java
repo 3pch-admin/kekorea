@@ -15,7 +15,7 @@ public class ProjectColumnData {
 
 	private String oid;
 	private String state;
-	private String pType;
+	private String ptype;
 	private String customer;
 	private String ins_location;
 	private String mak;
@@ -23,7 +23,7 @@ public class ProjectColumnData {
 	private String ke_number;
 	private String userId;
 	private String description;
-	private Timestamp pDate;
+	private Timestamp pdate;
 	private Timestamp completeDate;
 	private Timestamp endDate;
 	private String model;
@@ -48,7 +48,7 @@ public class ProjectColumnData {
 		String gate5 = ProjectHelper.manager.getStateIcon(project.getGate5() != null ? project.getGate5() : 0);
 		setState(gate1 + gate2 + gate3 + gate4 + gate5);
 
-		setPType(project.getPType());
+		setPtype(project.getPType());
 		setCustomer(project.getCustomer());
 		setIns_location(project.getIns_location());
 		setMak(project.getMak());
@@ -56,7 +56,7 @@ public class ProjectColumnData {
 		setKe_number(project.getKeNumber());
 		setUserId(project.getUserId());
 		setDescription(StringUtils.replaceToValue(project.getDescription()));
-		setPDate(project.getPDate());
+		setPdate(project.getPDate());
 		setCompleteDate(project.getEndDate());
 		setEndDate(project.getCustomDate());
 		setModel(project.getModel());

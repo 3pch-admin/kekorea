@@ -69,8 +69,6 @@ import wt.viewmarkup.WTMarkUp;
 @Controller
 public class CommonController extends BaseController {
 
-	private static final Logger logger = LogR.getLogger(CommonController.class.getName());
-
 	@RequestMapping(value = "/appendData")
 	@ResponseBody
 	public Map<String, Object> appendData(@RequestBody Map<String, Object> params) throws Exception {
@@ -79,27 +77,16 @@ public class CommonController extends BaseController {
 		int start = (int) params.get("start");
 		int end = (int) params.get("end");
 		try {
-			logger.info("Call CommonController appendData Method !!");
 			PagingQueryResult qr = PagingSessionHelper.fetchPagingSession(start, end, Long.parseLong(sessionid));
 			ArrayList list = ColumnParseUtils.parse(qr);
-			logger.info("=" + list.size());
 			result.put("list", list);
 			result.put("result", SUCCESS);
-			logger.info(result);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
 		}
 		return result;
-	}
-
-	@Description("주석세트 페이지")
-	@RequestMapping(value = "/common/alertPassword")
-	public ModelAndView alertPassword(@RequestParam Map<String, Object> param) throws Exception {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("popup:/common/alertPassword");
-		return model;
 	}
 
 	@Description("주석세트 페이지")
@@ -442,58 +429,6 @@ public class CommonController extends BaseController {
 			model.setViewName("/jsp/common/openFolder.jsp");
 		}
 		return model;
-	}
-
-	@Description("개인 테이블 컬럼 사이즈 저장")
-	@RequestMapping(value = "/common/saveUserTableStyle")
-	@ResponseBody
-	public Map<String, Object> saveUserTableStyle(@RequestBody Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		try {
-			map = OrgHelper.service.saveUserTableStyle(param);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return map;
-	}
-
-	@Description("개인 테이블 리스트 사이즈 저장")
-	@RequestMapping(value = "/common/saveUserPaging")
-	@ResponseBody
-	public Map<String, Object> saveUserPaging(@RequestBody Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		try {
-			map = OrgHelper.service.saveUserPaging(param);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return map;
-	}
-
-	@Description("개인 테이블 컬럼 저장")
-	@RequestMapping(value = "/common/saveUserTableSet")
-	@ResponseBody
-	public Map<String, Object> saveUserTableSet(@RequestBody Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		try {
-			map = OrgHelper.service.saveUserTableSet(param);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return map;
-	}
-
-	@Description("개인 테이블 컬럼 순서")
-	@RequestMapping(value = "/common/saveUserTableIndexs")
-	@ResponseBody
-	public Map<String, Object> saveUserTableIndexs(@RequestBody Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		try {
-			map = OrgHelper.service.saveUserTableIndexs(param);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return map;
 	}
 
 	@RequestMapping(value = "/common/qna")

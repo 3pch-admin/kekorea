@@ -18,7 +18,7 @@ import e3ps.controller.BaseController;
 @RequestMapping(value = "/category/**")
 public class CategoryController extends BaseController {
 
-	@Description(value = "CONFIG SHEET 카테고리 리스트 페이지")
+	 @Description(value = "CONFIG SHEET 카테고리 리스트 페이지")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();

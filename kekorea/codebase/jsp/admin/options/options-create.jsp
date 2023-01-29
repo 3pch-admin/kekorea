@@ -131,6 +131,8 @@ String oid = (String) request.getAttribute("oid");
 
 	$(function() {
 
+		createAUIGrid(columns);
+		
 		$("#closeBtn").click(function() {
 			self.close();
 		})
@@ -179,6 +181,9 @@ String oid = (String) request.getAttribute("oid");
 				let rowIndex = checkedItems[i].rowIndex;
 				AUIGrid.removeRow(myGridID, rowIndex);
 			}
+		})
+		
+		$("#closeBtn").click(function() {
 		})
 
 	}).keypress(function(e) {

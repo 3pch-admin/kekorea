@@ -3,6 +3,8 @@ package e3ps.common.util;
 import java.util.ArrayList;
 import java.util.Map;
 
+import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.admin.spec.service.SpecHelper;
 import e3ps.project.service.ProjectHelper;
 
 public class AUIGridUtils {
@@ -17,8 +19,12 @@ public class AUIGridUtils {
 		String target = (String) params.get("target");
 
 		// 프로젝트 리모터
-		if ("project".equals(target)) {
+		if (target.contains("project")) {
 			list = ProjectHelper.manager.remoter(term);
+		} else if (target.contains("spec")) {
+			list = SpecHelper.manager.remoter(term, target);
+		} else if(target.contains("code")) {
+			list = CommonCodeHelper.manager.remoter(term);
 		}
 
 		return list;

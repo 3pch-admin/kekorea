@@ -5,7 +5,7 @@
 <%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-Category category = (Category) request.getAttribute("category"); 
+Category category = (Category) request.getAttribute("category");
 String oid = (String) request.getAttribute("oid");
 %>
 <!DOCTYPE html>
@@ -30,7 +30,7 @@ String oid = (String) request.getAttribute("oid");
 			</td>
 		</tr>
 	</table>
-	<div id="grid_wrap" style="height: 740px; border-top: 1px solid #3180c3;"></div>
+	<div id="grid_wrap" style="height: 640px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;
@@ -55,32 +55,43 @@ String oid = (String) request.getAttribute("oid");
 			type : "InputEditRenderer",
 			onlyNumeric : true, // 0~9만 입력가능
 		},
-	}, {
+	},  {
+		dataField : "enable",
+		headerText : "사용여부",
+		width : 80,
+		renderer : {
+			type : "CheckBoxEditRenderer",
+			editable : true, // 체크박스 편집 활성화 여부(기본값 : false)
+		},
+	},{
 		dataField : "oid",
 		headerText : "oid",
 		dataType : "string",
 		visible : false
 	} ]
 
-	const props = {
-		rowIdField : "oid",
-		headerHeight : 30,
-		rowHeight : 30,
-		showRowNumColumn : true,
-		rowNumHeaderText : "번호",
-		showRowCheckColumn : true, // 체크 박스 출력
-		fillColumnSizeMode : true, // 화면 꽉채우기
-		editable : true,
-		showStateColumn : true,
-		enableCellMerge : true,
-		cellMergePolicy : "withNull",
-		softRemoveRowMode : false,
-	};
+	function createAUIGrid(columnLayout) {
+		const props = {
+				rowIdField : "oid",
+				headerHeight : 30,
+				rowHeight : 30,
+				showRowNumColumn : true,
+				rowNumHeaderText : "번호",
+				showRowCheckColumn : true, // 체크 박스 출력
+				fillColumnSizeMode : true, // 화면 꽉채우기
+				editable : true,
+				showStateColumn : true,
+				enableCellMerge : true,
+				cellMergePolicy : "withNull",
+				softRemoveRowMode : false,
+			};
 
-	myGridID = AUIGrid.create("#grid_wrap", columns, props);
+			myGridID = AUIGrid.create("#grid_wrap", columns, props);
+			loadGridData();
+			// LazyLoading 바인딩
+			AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+	}
 
-	// LazyLoading 바인딩
-	AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 
 	function loadGridData() {
 		let params = new Object();
@@ -129,6 +140,8 @@ String oid = (String) request.getAttribute("oid");
 
 	$(function() {
 		
+		createAUIGrid(columns);
+		
 		$("#closeBtn").click(function() {
 			self.close();
 		})
@@ -136,6 +149,7 @@ String oid = (String) request.getAttribute("oid");
 		// 그리드 행 추가
 		$("#addRowBtn").click(function() {
 			let item = new Object();
+			item.enable = true;
 			item.cname = "<%=category.getName()%>";
 			AUIGrid.addRow(myGridID, item, "last");
 		})

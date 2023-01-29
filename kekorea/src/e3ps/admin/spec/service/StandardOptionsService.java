@@ -17,7 +17,7 @@ import wt.util.WTException;
 
 public class StandardOptionsService extends StandardManager implements OptionsService {
 
-	public static StandardOptionsService newStandardOptionService() throws WTException {
+	public static StandardOptionsService newStandardOptionsService() throws WTException {
 		StandardOptionsService instance = new StandardOptionsService();
 		instance.initialize();
 		return instance;

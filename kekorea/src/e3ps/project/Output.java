@@ -9,6 +9,7 @@ import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import e3ps.doc.E3PSDocumentMaster;
+import e3ps.project.template.Template;
 import wt.content.ContentHolder;
 import wt.fc.WTObject;
 import wt.lifecycle.LifeCycleManaged;

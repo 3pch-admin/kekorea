@@ -9646,15 +9646,15 @@ function Datepicker() {
 	this.regional = []; // Available regional settings, indexed by language code
 	this.regional[ "" ] = { // Default regional settings
 		closeText: "Done", // Display text for close link
-		prevText: "Prev", // Display text for previous month link
-		nextText: "Next", // Display text for next month link
-		currentText: "Today", // Display text for current month link
+		prevText: "이전 달", // Display text for previous month link
+		nextText: "다음 달", // Display text for next month link
+		currentText: "오늘", // Display text for current month link
 		monthNames: [ "January","February","March","April","May","June",
 			"July","August","September","October","November","December" ], // Names of months for drop-down and formatting
-		monthNamesShort: [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ], // For formatting
+		monthNamesShort: [ "1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월" ], // For formatting
 		dayNames: [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ], // For formatting
 		dayNamesShort: [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ], // For formatting
-		dayNamesMin: [ "Su","Mo","Tu","We","Th","Fr","Sa" ], // Column headings for days starting at Sunday
+		dayNamesMin: [ "일","월","화","수","목","금","토" ], // Column headings for days starting at Sunday
 		weekHeader: "Wk", // Column header for week of the year
 		dateFormat: "mm/dd/yy", // See format options on parseDate
 		firstDay: 0, // The first day of the week, Sun = 0, Mon = 1, ...
@@ -9672,7 +9672,7 @@ function Datepicker() {
 		appendText: "", // Display text following the input box, e.g. showing the format
 		buttonText: "...", // Text for trigger button
 		buttonImage: "", // URL for trigger button image
-		buttonImageOnly: false, // True if the image appears alone, false if it appears on a button
+		buttonImageOnly: true, // True if the image appears alone, false if it appears on a button
 		hideIfNoPrevNext: false, // True to hide next/previous month links
 			// if not applicable, false to just disable them
 		navigationAsDateFormat: false, // True if date formatting applied to prev/today/next links
