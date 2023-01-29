@@ -15,7 +15,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 <!-- auigrid -->
 <%@include file="/jsp/include/auigrid.jsp"%>
 </head>
-<body onload="loadGridData();">
+<body>
 	<input type="hidden" name="sessionid" id="sessionid">
 	<input type="hidden" name="curPage" id="curPage">
 	<table class="search_table">
@@ -49,7 +49,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			</td>
 			<th>사용여부</th>
 			<td>
-				<select name="uses" id="uses" class="wid200 AXSelect">
+				<select name="enable" id="enable" class="wid200 AXSelect">
 					<option value="">선택</option>
 					<option value="true">사용</option>
 					<option value="false">미사용</option>
@@ -73,7 +73,9 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 </body>
 <script type="text/javascript">
 	let myGridID;
-	const jsonList = <%=jsonList%>
+	let parentList = [];
+	const jsonList =
+<%=jsonList%>
 	const columns = [ {
 		dataField : "name",
 		headerText : "코드 명",
@@ -96,8 +98,8 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			valueField : "value" // value 에 해당되는 필드명
 		},
 		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
-			var retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
-			for (var i = 0, len = jsonList.length; i < len; i++) {
+			let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+			for (let i = 0, len = jsonList.length; i < len; i++) {
 				if (jsonList[i]["key"] == value) {
 					retStr = jsonList[i]["value"];
 					break;
@@ -105,6 +107,32 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			}
 			return retStr == "" ? value : retStr;
 		}
+	}, {
+		dataField : "parentName",
+		headerText : "상위코드 명",
+		dataType : "string",
+		width : 180,
+		editRenderer : {
+			type : "RemoteListRenderer",
+			fieldName : "value",
+			showEditorBtnOver : true, // 마우스 오버 시 에디터버턴 보이기
+			remoter : function(request, response) { // remoter 지정 필수
+				if (String(request.term).length < 2) {
+					alert("2글자 이상 입력하십시오.");
+					response(false); // 데이터 요청이 없는 경우 반드시 false 삽입하십시오.
+					return;
+				}
+				// 데이터 요청
+				let url = getCallUrl("/commonCode/remoter");
+				let params = new Object();
+				params.term = request.term;
+				params.target = "code";
+				call(url, params, function(data) {
+					parentList = data.list;
+					response(data.list);
+				}, "POST");
+			}
+		},
 	}, {
 		dataField : "description",
 		headerText : "설명",
@@ -116,16 +144,8 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		dataType : "boolean",
 		width : 120,
 		renderer : {
-			type : "TemplateRenderer",
-		},
-		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // HTML 템플릿 작성
-			var template = '';
-			var checkedTag = '';
-			if (item.enable) {
-				checkedTag = ' checked="checked"';
-			}
-			template += '<input type="checkbox"' + checkedTag + '">';
-			return template;
+			type : "CheckBoxEditRenderer",
+			editable : true, // 체크박스 편집 활성화 여부(기본값 : false)
 		},
 	}, {
 		dataField : "createDate",
@@ -134,36 +154,81 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		formatString : "yyyy-mm-dd",
 		width : 120
 	}, {
+		dataField : "poid",
+		headerText : "poid",
+		dataType : "string",
+		visible : false
+	}, {
 		dataField : "oid",
 		headerText : "oid",
 		dataType : "string",
 		visible : false
 	} ]
 
-	const props = {
-		rowIdField : "oid",
-		headerHeight : 30,
-		rowHeight : 30,
-		showRowNumColumn : true,
-		rowNumHeaderText : "번호",
-		showRowCheckColumn : true, // 체크 박스 출력
-		fillColumnSizeMode : true, // 화면 꽉채우기
-		editable : true,
-		showStateColumn : true
-	// 상태값 표시
-	};
+	function createAUIGrid(columnLayout) {
 
-	myGridID = AUIGrid.create("#grid_wrap", columns, props);
-	// LazyLoading 바인딩
-	AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
-	// 클릭 이벤트 바인딩
-	AUIGrid.bind(myGridID, "cellClick", function(event) {
-		let dataField = event.dataField;
-		let oid = event.item.oid;
-		if ("name" === dataField || "number" === dataField) {
-			// 뷰 생성
+		const props = {
+			rowIdField : "rowId",
+			headerHeight : 30,
+			rowHeight : 30,
+			showRowNumColumn : true,
+			rowNumHeaderText : "번호",
+			showRowCheckColumn : true, // 체크 박스 출력
+			fillColumnSizeMode : true, // 화면 꽉채우기
+			editable : true,
+			showStateColumn : true,
+			selectionMode : "multipleCells"
+		// 상태값 표시
+		};
+
+		myGridID = AUIGrid.create("#grid_wrap", columns, props);
+		loadGridData();
+		// LazyLoading 바인딩
+		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+		// 클릭 이벤트 바인딩
+		AUIGrid.bind(myGridID, "cellClick", function(event) {
+			let dataField = event.dataField;
+			let oid = event.item.oid;
+			if ("name" === dataField || "number" === dataField) {
+				// 뷰 생성
+			}
+		});
+		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditHandler);
+		AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
+	}
+
+	function auiAddRowHandler(event) {
+		var selected = AUIGrid.getSelectedIndex(myGridID);
+		if (selected.length <= 0) {
+			return;
 		}
-	});
+
+		var rowIndex = selected[0];
+		var colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "name");
+		AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex); // ISBN 으로 선택자 이동
+		AUIGrid.openInputer(myGridID);
+	}
+
+	function auiCellEditHandler(event) {
+		if (event.dataField === "parentName") {
+			let item = getItem(event.value);
+			let poid = item.key;
+			AUIGrid.updateRow(myGridID, {
+				poid : poid
+			}, event.rowIndex);
+		}
+	}
+
+	function getItem(value) {
+		let item;
+		$.each(parentList, function(n, v) {
+			if (v.value === value) {
+				item = v;
+				return false;
+			}
+		});
+		return item;
+	};
 
 	function loadGridData() {
 		let params = new Object();
@@ -209,6 +274,12 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 	}
 
 	$(function() {
+
+		createAUIGrid(columns);
+
+		selectBox("codeType");
+		selectBox("enable");
+
 		$("#searchBtn").click(function() {
 			loadGridData();
 		})
@@ -216,8 +287,10 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		// 그리드 행 추가
 		$("#addRowBtn").click(function() {
 			let item = new Object();
+			item.enable = true;
 			item.createDate = new Date();
-			AUIGrid.addRow(myGridID, item, "last");
+			AUIGrid.addRow(myGridID, item, "first");
+
 		})
 
 		$("#saveBtn").click(function() {
@@ -230,6 +303,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			params.removeRows = removeRows;
 			params.editRows = editRows;
 			parent.open();
+			console.log(params);
 			call(url, params, function(data) {
 				alert(data.msg);
 				if (data.result) {

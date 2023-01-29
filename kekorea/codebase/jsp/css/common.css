@@ -866,7 +866,7 @@ span#thumbnail {
 
 table.search_table {
 	width: 100%;
-	border-top: 1px solid #2b85c1;
+	border-top: 2px solid #2b85c1;
 }
 
 table.search_table>tbody>tr>th:first-child {
@@ -4699,4 +4699,13 @@ span.text {
 	top: 1px;
 	right: 3px;
 	font-size: 13px;
+}
+
+textarea.description {
+	height: 200px !important;
+	border: 1px solid #a6a6a6;
+	resize: none;
+	margin-top: 5px !important;
+	padding-top: 10px !Important;
+	padding-bottom: 10px !Important;
 }

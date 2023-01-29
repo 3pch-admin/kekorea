@@ -3,7 +3,6 @@ package e3ps.admin.spec.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.admin.commonCode.CommonCodeType;
-import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.admin.spec.service.SpecHelper;
 import e3ps.controller.BaseController;
 

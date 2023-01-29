@@ -14,6 +14,7 @@ public class CategoryColumnData {
 	private String cname;
 	private int csort;
 	private int version;
+	private boolean enable;
 	private String iname;
 	private int isort;
 
@@ -26,6 +27,7 @@ public class CategoryColumnData {
 		setCname(category.getName());
 		setCsort(category.getSort());
 		setVersion(category.getVersion());
+		setEnable(category.isEnable());
 		if (link != null) {
 			Items items = link.getItems();
 			setIname(items.getName());

@@ -35,7 +35,7 @@
 		dataType : "numeric",
 		width : 140,
 		cellMerge : true,
-		mergeRef : "cnadme",
+		mergeRef : "name",
 		mergePolicy : "restrict",
 		editable : false,
 		renderer : {
@@ -51,7 +51,18 @@
 		dataField : "name",
 		headerText : "사양 명",
 		dataType : "string",
-		width : 350
+		width : 300,
+		cellMerge : true,
+	}, {
+		dataField : "version",
+		headerText : "버전",
+		dataType : "numeric",
+		formatString : "###0",
+		width : 80,
+		editable : false,
+		cellMerge : true,
+		mergeRef : "name",
+		mergePolicy : "restrict"
 	}, {
 		dataField : "sort",
 		headerText : "순서",
@@ -61,38 +72,62 @@
 		editRenderer : {
 			type : "InputEditRenderer",
 			onlyNumeric : true, // 0~9만 입력가능
-		}
+		},
+		cellMerge : true,
+		mergeRef : "name",
+		mergePolicy : "restrict"
 	}, {
 		dataField : "config",
 		headerText : "CONFIG SHEET 사용여부",
 		dataType : "boolean",
-		width : 180,
+		width : 130,
 		renderer : {
 			type : "CheckBoxEditRenderer",
 			editable : true, // 체크박스 편집 활성화 여부(기본값 : false)
-		}
+		},
+		cellMerge : true,
+		mergeRef : "name",
+		mergePolicy : "restrict"
 	}, {
 		dataField : "history",
 		headerText : "이력 관리 사용여부",
 		dataType : "boolean",
-		width : 180,
+		width : 130,
 		renderer : {
 			type : "CheckBoxEditRenderer",
 			editable : true, // 체크박스 편집 활성화 여부(기본값 : false)
-		}
+		},
+		cellMerge : true,
+		mergeRef : "name",
+		mergePolicy : "restrict"
 	}, {
 		dataField : "enable",
 		headerText : "사용여부",
-		width : 120,
+		width : 80,
 		renderer : {
 			type : "CheckBoxEditRenderer",
 			editable : true, // 체크박스 편집 활성화 여부(기본값 : false)
-		}
+		},
+		cellMerge : true,
+		mergeRef : "name",
+		mergePolicy : "restrict"
 	}, {
-		dataField : "description",
-		headerText : "설명",
+		dataField : "oname",
+		headerText : "아이템 명",
 		dataType : "string",
-		style : "left indent10",
+		width : 200,
+		editable : false,
+	}, {
+		dataField : "osort",
+		headerText : "아이템 정렬 순서",
+		dataType : "numeric",
+		formatString : "###0",
+		width : 100,
+		editRenderer : {
+			type : "InputEditRenderer",
+			onlyNumeric : true, // 0~9만 입력가능
+		},
+		editable : false,
 	}, {
 		dataField : "oid",
 		headerText : "oid",
@@ -101,7 +136,6 @@
 	} ]
 
 	const props = {
-		rowIdField : "oid",
 		headerHeight : 30,
 		rowHeight : 30,
 		showRowNumColumn : true,
@@ -109,8 +143,10 @@
 		showRowCheckColumn : true, // 체크 박스 출력
 		fillColumnSizeMode : true, // 화면 꽉채우기
 		editable : true,
-		showStateColumn : true
-	// 상태값 표시
+		showStateColumn : true,
+		enableCellMerge : true,
+		cellMergePolicy : "withNull",
+		softRemoveRowMode : false,
 	};
 
 	myGridID = AUIGrid.create("#grid_wrap", columns, props);
@@ -191,8 +227,8 @@
 					loadGridData();
 				} else {
 					parent.close();
-				} 
-					
+				}
+
 			}, "POST");
 		})
 

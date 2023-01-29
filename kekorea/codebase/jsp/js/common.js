@@ -565,6 +565,7 @@ $(document).ready(function() {
 
 	$("#backBtn").click(function() {
 		var preUrl = document.referrer;
+		alert(preUrl);
 		if (preUrl) {
 			$(document).onLayer();
 			document.location.href = preUrl;

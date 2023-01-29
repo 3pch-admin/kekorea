@@ -8,25 +8,23 @@ import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedForeignKey;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
-import com.ptc.windchill.annotations.metadata.IconProperties;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
+import e3ps.project.template.Template;
 import wt.content.ContentHolder;
 import wt.fc.WTObject;
 import wt.util.WTException;
 
 @GenAsPersistable(superClass = WTObject.class, interfaces = { ContentHolder.class, ProjectImpl.class },
 
-		iconProperties = @IconProperties(standardIcon = "/jsp/images/project.gif", openIcon = "/jsp/images/projec.gif"),
-
 		properties = {
 
-				@GeneratedProperty(name = "kekNumber", type = String.class, javaDoc = "KEK 작번", columnProperties = @ColumnProperties(index = true)),
+				@GeneratedProperty(name = "kekNumber", type = String.class, javaDoc = "KEK 작번", columnProperties = @ColumnProperties(index = true, unique = true), constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "pDate", type = Timestamp.class, javaDoc = "작번 발행일", columnProperties = @ColumnProperties(index = true)),
+				@GeneratedProperty(name = "pDate", type = Timestamp.class, javaDoc = "작번 발행일", columnProperties = @ColumnProperties(index = true), constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "keNumber", type = String.class, javaDoc = "KE 작번"),
+				@GeneratedProperty(name = "keNumber", type = String.class, javaDoc = "KE 작번", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "userId", type = String.class, javaDoc = "USER ID"),
 
@@ -39,8 +37,6 @@ import wt.util.WTException;
 				@GeneratedProperty(name = "ins_location", type = String.class, javaDoc = "설치 장소"),
 
 				@GeneratedProperty(name = "pType", type = String.class, javaDoc = "작번 유형"),
-
-				@GeneratedProperty(name = "description", type = String.class, javaDoc = "작업 내용", constraints = @PropertyConstraints(upperLimit = 2000)),
 
 				@GeneratedProperty(name = "customDate", type = Timestamp.class, javaDoc = "요구납기일"),
 

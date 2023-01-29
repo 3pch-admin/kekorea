@@ -14,6 +14,7 @@ public class ItemsColumnData {
 	private String cname;
 	private String name;
 	private int sort;
+	private boolean enable;
 
 	public ItemsColumnData() {
 
@@ -26,5 +27,6 @@ public class ItemsColumnData {
 		setCname(category.getName());
 		setName(items.getName());
 		setSort(items.getSort());
+		setEnable(items.isEnable());
 	}
 }

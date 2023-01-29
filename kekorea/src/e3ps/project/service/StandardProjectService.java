@@ -47,8 +47,6 @@ import wt.util.WTException;
 
 public class StandardProjectService extends StandardManager implements ProjectService, MessageHelper {
 
-	private static final long serialVersionUID = 2932147525988273702L;
-
 	public static StandardProjectService newStandardProjectService() throws WTException {
 		StandardProjectService instance = new StandardProjectService();
 		instance.initialize();
@@ -1373,15 +1371,15 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				if (project.getEndDate() == null) {
 					project.setEndDate(DateUtils.getCurrentTimestamp());
 				}
-				
-				if(project.getKekState() != null) {
+
+				if (project.getKekState() != null) {
 					switch (project.getKekState()) {
 					case "작업완료":
 						break;
 					default:
 						project.setKekState("설계완료");
 					}
-				}else{
+				} else {
 					project.setKekState("설계완료");
 				}
 
@@ -2587,4 +2585,123 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 		}
 		return map;
 	}
-}// end class
+
+	@Override
+	public void create(Map<String, Object> params) throws Exception {
+		String kekNumber = (String) params.get("kekNumber");
+		String pDate = (String) params.get("pDate");
+		String keNumber = (String) params.get("keNumber");
+		String userId = (String) params.get("userId");
+		String mak = (String) params.get("mak");
+		String model = (String) params.get("model");
+		String customer = (String) params.get("customer");
+		String install = (String) params.get("install");
+		String projectType = (String) params.get("projectType");
+		String templateName = (String) params.get("templateName");
+		String description = (String) params.get("description");
+		String customDate = (String) params.get("customDate");
+		String systemInfo = (String) params.get("systemInfo");
+
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Ownership ownership = Ownership.newOwnership(SessionHelper.manager.getPrincipal());
+
+			Project project = Project.newProject();
+
+			project.setOwnership(ownership);
+			project.setKekNumber(kekNumber);
+			project.setKeNumber(keNumber);
+			project.setPDate(DateUtils.convertDate(pDate));
+			project.setUserId(userId);
+			project.setMak(mak);
+			project.setModel(model);
+			project.setIns_location(install);
+			project.setPType(projectType);
+			project.setKekState("준비");
+			project.setCustomer(customer);
+			project.setDescription(description);
+			project.setCustomDate(DateUtils.convertDate(customDate));
+			project.setSystemInfo(systemInfo);
+
+			project.setMachinePrice(0D);
+			project.setElecPrice(0D);
+
+			PersistenceHelper.manager.save(project);
+
+			if (!StringUtils.isNull(templateName)) {
+				Template template = TemplateHelper.manager.getTemplateByName(templateName);
+
+				if (!StringUtils.isNull(template)) {
+
+					Timestamp start = DateUtils.getPlanStartDate();
+					// 계획 시작일, 계획 종료일은 등록일로 세팅 한다. 템플릿의 경우 태스크 생성시 일정을 다시 조절한다.
+					project.setPlanStartDate(start);
+
+					Calendar eCa = Calendar.getInstance();
+					eCa.setTimeInMillis(start.getTime());
+					eCa.add(Calendar.DATE, template.getDuration());
+
+					Timestamp end = new Timestamp(eCa.getTime().getTime());
+					project.setPlanEndDate(end);
+
+					project.setTemplate(template);
+
+					project = (Project) PersistenceHelper.manager.modify(project);
+
+					copyTasks(project, template, null);
+					// 없을경우
+
+					WTUser pm = TemplateHelper.manager.getPMByTemplate(template);
+					if (pm != null) {
+						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, pm);
+						userLink.setUserType(ProjectUserType.PM.name());
+						PersistenceHelper.manager.save(userLink);
+					} else {
+						pm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectUserType.PM_ID);
+						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, pm);
+						userLink.setUserType(ProjectUserType.PM.name());
+						PersistenceHelper.manager.save(userLink);
+					}
+
+					WTUser subPm = TemplateHelper.manager.getSubPMByTemplate(template);
+					if (subPm != null) {
+						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, subPm);
+						userLink.setUserType(ProjectUserType.SUB_PM.name());
+						PersistenceHelper.manager.save(userLink);
+					} else {
+						subPm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectUserType.SUB_PM_ID);
+						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, subPm);
+						userLink.setUserType(ProjectUserType.SUB_PM.name());
+						PersistenceHelper.manager.save(userLink);
+					}
+				}
+			} else {
+				Timestamp start = DateUtils.getPlanStartDate();
+				// 계획 시작일, 계획 종료일은 등록일로 세팅 한다. 템플릿의 경우 태스크 생성시 일정을 다시 조절한다.
+				project.setPlanStartDate(start);
+
+				Calendar eCa = Calendar.getInstance();
+				eCa.setTimeInMillis(start.getTime());
+				eCa.add(Calendar.DATE, 1);
+
+				Timestamp end = new Timestamp(eCa.getTime().getTime());
+				project.setPlanEndDate(end);
+
+				PersistenceHelper.manager.modify(project);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+}
+// end class

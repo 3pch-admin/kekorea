@@ -1,6 +1,7 @@
 package e3ps.admin.commonCode;
 
 import com.ptc.windchill.annotations.metadata.Cardinality;
+import com.ptc.windchill.annotations.metadata.ColumnProperties;
 import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedForeignKey;
@@ -16,11 +17,11 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "name", type = String.class),
+				@GeneratedProperty(name = "name", type = String.class, constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "code", type = String.class),
+				@GeneratedProperty(name = "code", type = String.class, constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "codeType", type = CommonCodeType.class),
+				@GeneratedProperty(name = "codeType", type = CommonCodeType.class, constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "description", type = String.class),
 

@@ -15,6 +15,7 @@ public class CommonCodeColumnData {
 	private String name;
 	private String code;
 	private String codeType;
+	private String parentName;
 	private String description;
 	private boolean enable;
 	private Timestamp createDate;
@@ -28,6 +29,10 @@ public class CommonCodeColumnData {
 		setName(commonCode.getName());
 		setCode(commonCode.getCode());
 		setCodeType(commonCode.getCodeType().toString());
+		CommonCode parent = commonCode.getParent();
+		if (commonCode.getParent() != null) {
+			setParentName(parent.getName() + " [" + parent.getCodeType().getDisplay() + "]");
+		}
 		setDescription(StringUtils.replaceToValue(commonCode.getDescription()));
 		setEnable(commonCode.isEnable());
 		setCreateDate(commonCode.getCreateTimestamp());

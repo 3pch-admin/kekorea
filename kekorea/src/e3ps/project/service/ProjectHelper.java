@@ -30,9 +30,9 @@ import e3ps.project.Task;
 import e3ps.project.TaskOutputLink;
 import e3ps.project.beans.OutputCompare;
 import e3ps.project.beans.OutputCompare2;
+import e3ps.project.beans.ProjectColumnData;
 import e3ps.project.beans.ProjectGateState;
 import e3ps.project.column.IssueColumnData;
-import e3ps.project.column.ProjectColumnData;
 import e3ps.project.enums.ProjectStateType;
 import e3ps.project.enums.ProjectUserType;
 import e3ps.project.enums.TaskStateType;
@@ -3210,20 +3210,20 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);
-		QuerySpecUtils.appendLike(query, idx, Project.class, Project.KEK_NUMBER, term);
-		QuerySpecUtils.appendOrderBy(query, idx, Project.class, Project.KEK_NUMBER, false);
+		QuerySpecUtils.toLike(query, idx, Project.class, Project.KEK_NUMBER, term);
+		QuerySpecUtils.toOrderBy(query, idx, Project.class, Project.KEK_NUMBER, false);
 
 		QueryResult result = PersistenceHelper.manager.find(query);
 		Map<String, Object> v = new HashMap<String, Object>();
 		v.put("key", "123");
 		v.put("value", "KCB1775484");
 		list.add(v);
-		
+
 		Map<String, Object> v2 = new HashMap<String, Object>();
 		v2.put("key", "123");
 		v2.put("value", "KCB1775485");
 		list.add(v2);
-		
+
 		Map<String, Object> v3 = new HashMap<String, Object>();
 		v3.put("key", "123");
 		v3.put("value", "KCB1775486");
@@ -3239,4 +3239,30 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 		return list;
 	}
 
+	public Map<String, Object> list(Map<String, Object> params) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<ProjectColumnData> list = new ArrayList<ProjectColumnData>();
+
+		String name = (String) params.get("name");
+		String codeType = (String) params.get("codeType");
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Project.class, true);
+
+		QuerySpecUtils.toOrderBy(query, idx, Project.class, Project.P_DATE, false);
+
+		PageQueryUtils pager = new PageQueryUtils(params, query);
+		PagingQueryResult result = pager.find();
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Project project = (Project) obj[0];
+			ProjectColumnData column = new ProjectColumnData(project);
+			list.add(column);
+		}
+
+		map.put("list", list);
+		map.put("sessionid", pager.getSessionId());
+		map.put("curPage", pager.getCpage());
+		return map;
+	}
 }

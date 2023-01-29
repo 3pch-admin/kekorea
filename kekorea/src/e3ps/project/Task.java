@@ -11,6 +11,7 @@ import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 import com.ptc.windchill.annotations.metadata.TableProperties;
 
+import e3ps.project.template.Template;
 import wt.content.ContentHolder;
 import wt.fc.WTObject;
 import wt.util.WTException;
@@ -18,8 +19,6 @@ import wt.util.WTException;
 @GenAsPersistable(superClass = WTObject.class,
 
 		interfaces = { ContentHolder.class, ProjectImpl.class },
-
-		iconProperties = @IconProperties(standardIcon = "/jsp/images/task.gif", openIcon = "/jsp/images/task.gif"),
 
 		tableProperties = @TableProperties(tableName = "J_TASK"),
 

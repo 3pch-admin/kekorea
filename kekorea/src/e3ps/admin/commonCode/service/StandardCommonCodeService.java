@@ -1,3 +1,4 @@
+
 package e3ps.admin.commonCode.service;
 
 import java.util.ArrayList;
@@ -6,6 +7,7 @@ import java.util.Map;
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.CommonCodeType;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.StringUtils;
 import wt.fc.PersistenceHelper;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
@@ -33,14 +35,19 @@ public class StandardCommonCodeService extends StandardManager implements Common
 				String code = (String) addRow.get("code");
 				String codeType = (String) addRow.get("codeType");
 				String description = (String) addRow.get("description");
-				String uses = (String) addRow.get("uses");
+				boolean enable = (boolean) addRow.get("enable");
+				String poid = (String) addRow.get("poid");
 
 				CommonCode commonCode = CommonCode.newCommonCode();
 				commonCode.setName(name);
 				commonCode.setCode(code);
 				commonCode.setCodeType(CommonCodeType.toCommonCodeType(codeType));
 				commonCode.setDescription(description);
-				commonCode.setEnable(true);
+				commonCode.setEnable(enable);
+				if (!StringUtils.isNull(poid)) {
+					CommonCode parent = (CommonCode) CommonUtils.getObject(poid);
+					commonCode.setParent(parent);
+				}
 				PersistenceHelper.manager.save(commonCode);
 			}
 
@@ -55,7 +62,8 @@ public class StandardCommonCodeService extends StandardManager implements Common
 				String code = (String) editRow.get("code");
 				String codeType = (String) editRow.get("codeType");
 				String description = (String) editRow.get("description");
-				String uses = (String) editRow.get("uses");
+				boolean enable = (boolean) editRow.get("enable");
+				String poid = (String) editRow.get("poid");
 				String oid = (String) editRow.get("oid");
 
 				CommonCode commonCode = (CommonCode) CommonUtils.getObject(oid);
@@ -63,7 +71,11 @@ public class StandardCommonCodeService extends StandardManager implements Common
 				commonCode.setCode(code);
 				commonCode.setCodeType(CommonCodeType.toCommonCodeType(codeType));
 				commonCode.setDescription(description);
-				commonCode.setEnable(true);
+				commonCode.setEnable(enable);
+				if (!StringUtils.isNull(poid)) {
+					CommonCode parent = (CommonCode) CommonUtils.getObject(poid);
+					commonCode.setParent(parent);
+				}
 				PersistenceHelper.manager.modify(commonCode);
 			}
 

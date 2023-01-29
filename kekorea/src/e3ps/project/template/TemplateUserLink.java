@@ -1,4 +1,4 @@
-package e3ps.project;
+package e3ps.project.template;
 
 import com.ptc.windchill.annotations.metadata.GenAsBinaryLink;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;

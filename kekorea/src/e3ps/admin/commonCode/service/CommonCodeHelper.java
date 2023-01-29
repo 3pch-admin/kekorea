@@ -11,7 +11,9 @@ import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.CommonCodeType;
 import e3ps.admin.commonCode.beans.CommonCodeColumnData;
 import e3ps.common.util.PageQueryUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.project.Project;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -36,27 +38,13 @@ public class CommonCodeHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
 
-		SearchCondition sc = null;
-		ClassAttribute ca = null;
-		OrderBy by = null;
-
 		if (!StringUtils.isNull(codeType)) {
-			if (query.getConditionCount() > 0) {
-				query.appendAnd();
-			}
-			sc = new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", codeType);
-			query.appendWhere(sc, new int[] { idx });
+			QuerySpecUtils.toEquals(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
 		}
 
-		// 코드 타입 순서
-		ca = new ClassAttribute(CommonCode.class, CommonCode.CODE_TYPE);
-		by = new OrderBy(ca, false);
-		query.appendOrderBy(by, new int[] { idx });
-
-		// 코드명 순서
-		ca = new ClassAttribute(CommonCode.class, CommonCode.NAME);
-		by = new OrderBy(ca, false);
-		query.appendOrderBy(by, new int[] { idx });
+		
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.CODE_TYPE, false);
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -106,6 +94,27 @@ public class CommonCodeHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			CommonCode commonCode = (CommonCode) obj[0];
 			list.add(commonCode);
+		}
+		return list;
+	}
+
+	public ArrayList<Map<String, Object>> remoter(String term) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(CommonCode.class, true);
+		QuerySpecUtils.toLike(query, idx, CommonCode.class, CommonCode.CODE, term);
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			CommonCode commonCode = (CommonCode) obj[0];
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put("key", commonCode.getPersistInfo().getObjectIdentifier().getStringValue());
+			data.put("value", commonCode.getName() + " [" + commonCode.getCodeType().getDisplay() + "]");
+			data.put("codeType", commonCode.getCodeType().toString());
+			list.add(data);
 		}
 		return list;
 	}

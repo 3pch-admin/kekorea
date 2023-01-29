@@ -4668,7 +4668,7 @@ ol.unstyled {
   padding: 10px 20px;
   background: white;
   border-top: 1px solid #e7eaec;
-  margin-left: 220px;
+  margin-left: 233px;
 }
 body.mini-navbar .footer.fixed,
 body.body-small.mini-navbar .footer.fixed {
@@ -5070,7 +5070,8 @@ table.table-mail tr td {
 /* BACKGROUNDS */
 .gray-bg,
 .bg-muted {
-  background-color: #f3f3f4;
+/*   background-color: #f3f3f4; */
+  background-color: white;
 }
 .white-bg {
   background-color: #ffffff;

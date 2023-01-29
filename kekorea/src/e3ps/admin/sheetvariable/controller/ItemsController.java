@@ -67,5 +67,4 @@ public class ItemsController extends BaseController {
 		model.setViewName("popup:/admin/items/items-create");
 		return model;
 	}
-
 }

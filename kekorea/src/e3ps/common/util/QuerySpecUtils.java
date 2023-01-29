@@ -1,5 +1,9 @@
 package e3ps.common.util;
 
+import java.sql.Timestamp;
+
+import e3ps.admin.spec.Spec;
+import e3ps.admin.spec.SpecOptionsLink;
 import e3ps.epm.ViewerData;
 import wt.query.ClassAttribute;
 import wt.query.ColumnExpression;
@@ -8,6 +12,7 @@ import wt.query.OrderBy;
 import wt.query.QuerySpec;
 import wt.query.SQLFunction;
 import wt.query.SearchCondition;
+import wt.util.WTAttributeNameIfc;
 
 public class QuerySpecUtils {
 
@@ -15,8 +20,7 @@ public class QuerySpecUtils {
 
 	}
 
-	public static void appendEquals(QuerySpec query, int idx, Class clazz, String column, String value)
-			throws Exception {
+	public static void toEquals(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -27,7 +31,7 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
-	public static void appendLike(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
+	public static void toLike(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -38,19 +42,53 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
-	public static void appendOrderBy(QuerySpec query, int idx, Class clazz, String column, boolean sort)
-			throws Exception {
+	public static void toOrderBy(QuerySpec query, int idx, Class clazz, String column, boolean sort) throws Exception {
 		ClassAttribute ca = new ClassAttribute(clazz, column);
 		OrderBy orderBy = new OrderBy(ca, sort);
 		query.appendOrderBy(orderBy, new int[] { idx });
 	}
 
-	public static void appendBoolean(QuerySpec query) throws Exception {
-
+	public static void toBoolean(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
-
+		SearchCondition sc = new SearchCondition(clazz, column, value.toUpperCase());
+		query.appendWhere(sc, new int[] { idx });
 	}
 
+	public static void toInnerJoin(QuerySpec query, Class left, Class right, String leftKey, String rightKey,
+			int leftIdx, int rightIdx) throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+		SearchCondition sc = new SearchCondition(left, leftKey, right, rightKey);
+		query.appendWhere(sc, new int[] { leftIdx, rightIdx });
+	}
+
+	public static void toTimeGreaterThan(QuerySpec query, int idx, Class clazz, String column, Timestamp time)
+			throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+		SearchCondition sc = new SearchCondition(clazz, column, SearchCondition.GREATER_THAN, time);
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	public static void toTimeLessThan(QuerySpec query, int idx, Class clazz, String column, Timestamp time)
+			throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+		SearchCondition sc = new SearchCondition(clazz, column, SearchCondition.LESS_THAN, time);
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	public static void toNotEquals(QuerySpec query, int idx, Class clazz, String column, String value)
+			throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+		SearchCondition sc = new SearchCondition(clazz, column, SearchCondition.NOT_EQUAL, value);
+		query.appendWhere(sc, new int[] { idx });
+	}
 }
