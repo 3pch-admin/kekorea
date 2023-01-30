@@ -236,7 +236,7 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 
 	function loadGridData() {
 		let params = new Object();
-		let url = getCallUrl("/commonCode/list");
+		let url = getCallUrl("/project/list");
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
@@ -283,37 +283,6 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 
 		$("#searchBtn").click(function() {
 			loadGridData();
-		})
-
-		// 그리드 행 추가
-		$("#addRowBtn").click(function() {
-			let item = new Object();
-			item.createDate = new Date();
-			AUIGrid.addRow(myGridID, item, "last");
-		})
-
-		$("#saveBtn").click(function() {
-			let addRows = AUIGrid.getAddedRowItems(myGridID);
-			let removeRows = AUIGrid.getRemovedItems(myGridID);
-			let editRows = AUIGrid.getEditedRowItems(myGridID);
-			let params = new Object();
-			let url = getCallUrl("/commonCode/create");
-			params.addRows = addRows;
-			params.removeRows = removeRows;
-			params.editRows = editRows;
-			console.log(params);
-			call(url, params, function(data) {
-
-			}, "POST");
-		})
-
-		// 그리드 행 삭제
-		$("#deleteRowBtn").click(function() {
-			let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-			for (let i = checkedItems.length - 1; i >= 0; i--) {
-				let rowIndex = checkedItems[i].rowIndex;
-				AUIGrid.removeRow(myGridID, rowIndex);
-			}
 		})
 
 	}).keypress(function(e) {

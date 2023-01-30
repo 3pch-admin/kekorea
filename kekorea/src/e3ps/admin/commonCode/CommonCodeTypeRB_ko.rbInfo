@@ -33,10 +33,10 @@ STEP.sort=2
 INSTALL.value=\uC124\uCE58\uC7A5\uC18C
 INSTALL.sort=3
 
-#프로젝트
-PROJECT.value=\uD504\uB85C\uC81D\uD2B8
-PROJECT.sort=4
-
 #프로젝트유형
 PROJECT_TYPE.value=\uD504\uB85C\uC81D\uD2B8\uC720\uD615
-PROJECT_TYPE.sort=5
+PROJECT_TYPE.sort=4
+
+#막종
+MAK.value=\ub9c9\uc885
+MAK.sort=5

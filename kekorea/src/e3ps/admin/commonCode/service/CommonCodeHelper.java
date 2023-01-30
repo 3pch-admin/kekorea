@@ -33,16 +33,36 @@ public class CommonCodeHelper {
 		List<CommonCodeColumnData> list = new ArrayList<CommonCodeColumnData>();
 
 		String name = (String) params.get("name");
+		String code = (String) params.get("code");
 		String codeType = (String) params.get("codeType");
+		String description = (String) params.get("description");
+		String enable = (String) params.get("enable");
+
+		System.out.println("name=" + name);
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
+
+		if (!StringUtils.isNull(name)) {
+			QuerySpecUtils.toLike(query, idx, CommonCode.class, CommonCode.NAME, name);
+		}
+
+		if (!StringUtils.isNull(code)) {
+			QuerySpecUtils.toLike(query, idx, CommonCode.class, CommonCode.CODE, code);
+		}
+
+		if (!StringUtils.isNull(description)) {
+			QuerySpecUtils.toLike(query, idx, CommonCode.class, CommonCode.DESCRIPTION, description);
+		}
+
+		if (!StringUtils.isNull(enable)) {
+			QuerySpecUtils.toBoolean(query, idx, CommonCode.class, CommonCode.ENABLE, enable);
+		}
 
 		if (!StringUtils.isNull(codeType)) {
 			QuerySpecUtils.toEquals(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
 		}
 
-		
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.CODE_TYPE, false);
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
 
