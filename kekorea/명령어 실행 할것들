@@ -3,4 +3,4 @@
 	- ant -f webAppConfig.xml regenWebAppConf -DappName=Windchill -DprotocolAuthOnly=true 실행
 	
 2. ResourceBuild 실행
-	- tools bundle -Dbundle.input=e3ps.admin.code.** -Dbundle.buildLocales=true
+	- tools bundle -Dbundle.input=e3ps.admin.commonCode.** -Dbundle.buildLocales=true

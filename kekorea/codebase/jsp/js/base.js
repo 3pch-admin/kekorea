@@ -91,19 +91,19 @@ function popup(url, width, height) {
 /**
  * 등록 페이지 FORM PARAMETER 가져오기
  */
-function form(params) {
+function form(params, table) {
 	if (params === null) {
 		params = new Object();
 	}
 
-	let input = $(".create_table input[type=text]");
+	let input = $("." + table + " input[type=text]");
 	$.each(input, function(idx) {
 		let key = input.eq(idx).attr("name");
 		let value = input.eq(idx).val();
 		params[key] = value;
 	})
 
-	let select = $(".create_table select");
+	let select = $("." + table + " select");
 	$.each(select, function(idx) {
 		let key = select.eq(idx).attr("name");
 		if (key == undefined) {
@@ -113,4 +113,11 @@ function form(params) {
 		params[key] = value;
 	})
 	return params;
+}
+
+/**
+ * BIND DATE 달력
+ */
+function date(name) {
+	$("input[name=" + name + "]").bindDate();
 }

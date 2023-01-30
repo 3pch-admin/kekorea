@@ -148,13 +148,13 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 			self.close();
 		})
 
-		$("#pDate").bindDate();
-		$("#customDate").bindDate();
+		date("pDate");
+		date("customDate");
 
 		$("#createBtn").click(function() {
 			let url = getCallUrl("/project/create");
 			let params = new Object();
-			params = form(params);
+			params = form(params, "create_table");
 			open();
 			call(url, params, function(data) {
 				alert(data.msg);

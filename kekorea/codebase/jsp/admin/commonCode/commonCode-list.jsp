@@ -234,6 +234,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		let params = new Object();
 		let url = getCallUrl("/commonCode/list");
 		AUIGrid.showAjaxLoader(myGridID);
+		params = form(params, "search_table");
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);

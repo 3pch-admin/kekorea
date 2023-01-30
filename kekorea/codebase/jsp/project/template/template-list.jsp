@@ -17,6 +17,12 @@
 	<input type="hidden" name="sessionid" id="sessionid">
 	<input type="hidden" name="curPage" id="curPage">
 	<table class="search_table">
+		<colgroup>
+			<col width="130">
+			<col width="800">
+			<col width="130">
+			<col width="800">
+		</colgroup>
 		<tr>
 			<th>템플릿 이름</th>
 			<td>
@@ -111,6 +117,7 @@
 		let params = new Object();
 		let url = getCallUrl("/template/list");
 		AUIGrid.showAjaxLoader(myGridID);
+		params = form(params, "search_table");
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);
@@ -153,7 +160,6 @@
 	$(function() {
 
 		createAUIGrid(columns);
-
 		$("#searchBtn").click(function() {
 			loadGridData();
 		})

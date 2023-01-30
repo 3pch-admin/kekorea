@@ -7,7 +7,7 @@ import java.util.Map;
 import e3ps.doc.RequestDocument;
 import e3ps.project.Project;
 import e3ps.project.Task;
-import e3ps.project.Template;
+import e3ps.project.template.Template;
 import wt.doc.WTDocument;
 import wt.method.RemoteInterface;
 import wt.util.WTException;
