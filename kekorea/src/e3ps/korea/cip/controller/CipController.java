@@ -24,18 +24,19 @@ public class CipController extends BaseController {
 		model.setViewName("/jsp/korea/cip/cip-list.jsp");
 		return model;
 	}
+
 	@Description("cip 등록 페이지")
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public ModelAndView create() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/korea/cip/create.jsp");
+		model.setViewName("/jsp/korea/cip/cip-create.jsp");
 		return model;
 	}
-	
+
 	@Description("cip 등록")
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> create(@RequestBody Map<String, Object> params)  throws Exception{
+	public Map<String, Object> create(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 //		Map<String, Object> result = null;
 		try {

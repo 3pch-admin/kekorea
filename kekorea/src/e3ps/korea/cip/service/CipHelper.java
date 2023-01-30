@@ -10,6 +10,7 @@ import wt.services.ServiceFactory;
 public class CipHelper {
 
 	public static final CipHelper manager = new CipHelper();
+	
 	public static final CipService service = ServiceFactory.getService(CipService.class);
 	
 	public Map<String, Object> create(Map<String, Object> params) throws Exception {

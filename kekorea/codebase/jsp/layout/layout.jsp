@@ -34,6 +34,7 @@
 	<script src="/Windchill/jsp/js/plugins/gritter/jquery.gritter.min.js"></script>
 	<script type="text/javascript">
 		const cover = new ax5.ui.mask();
+		let iframe = document.getElementById("content");
 		function moveToPage(obj, url) {
 			let menu = document.getElementsByClassName("menu");
 			for (let i = 0; i < menu.length; i++) {
@@ -41,12 +42,19 @@
 			}
 			open();
 			obj.classList.add("menu");
-			document.getElementById("content").src = "/Windchill/plm" + url;
+			iframe.src = "/Windchill/plm" + url;
 		}
 
 		let toggle = document.getElementById("toggle");
 		toggle.addEventListener("click", function() {
-			alert("화면 조절 필요!");
+			let open = $(this).data("open");
+			if (open === "open") {
+				$(this).data("open", "close");
+				iframe.style.width = "1890px";
+			} else {
+				$(this).data("open", "open");
+				iframe.style.width = "1670px";
+			}
 		})
 
 		function open() {
