@@ -3,9 +3,6 @@
 <%@page import="e3ps.admin.commonCode.CommonCodeType"%>
 <%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%
-ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("installs");
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,65 +12,108 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 <%@include file="/jsp/common/layouts/include_script.jsp"%>
 <!-- auigrid -->
 <%@include file="/jsp/include/auigrid.jsp"%>
-<!-- highchart -->
-<%@include file="/jsp/include/highchart.jsp"%>
 </head>
 <body>
 	<input type="hidden" name="sessionid" id="sessionid">
 	<input type="hidden" name="curPage" id="curPage">
-	<div id="container"></div>
-	<div id="grid_wrap" style="height: 383px; border-top: 1px solid #3180c3;"></div>
+	<table class="search_table">
+		<tr>
+			<th>KEK 작번</th>
+			<td>
+				<input type="text" name="kekNumber" class="AXInput wid200">
+			</td>
+			<th>발행일</th>
+			<th>KE 작번</th>
+			<td>
+				<input type="text" name="keNumber" class="AXInput wid200">
+			</td>
+			<th>USER ID</th>
+			<td>
+				<input type="text" name="userId" id="userId" class="AXInput wid200">
+			</td>
+		</tr>
+		<tr>
+			<th>작번상태</th>
+			<td>
+				<select name="kekState" id="kekState" class="AXSelect wid200">
+					<option value="">선택</option>
+					<option value="준비">준비</option>
+					<option value="설계중">설계중</option>
+					<option value="설계완료">설계완료</option>
+					<option value="작업완료">작업완료</option>
+					<option value="중단됨">중단됨</option>
+					<option value="취소">취소</option>
+				</select>
+			</td>
+			<th>모델</th>
+			<td>
+				<input type="text" name="model" class="AXInput wid200">
+			</td>
+			<th>거래처</th>
+			<td>
+				<!-- 							<input type="text" name="customer" class="AXInput wid200"> -->
+				<select name="customer" id="customer" class="AXSelect wid200">
+					<option value="">선택</option>
+				</select>
+			</td>
+			<th>설치장소</th>
+			<td>
+				<select name="ins_location" id="ins_location" class="AXSelect wid209">
+					<option value="">선택</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<th>작번유형</th>
+			<td>
+				<select name="pType" id="pType" class="AXSelect wid200">
+					<option value="">선택</option>
+				</select>
+			</td>
+			<th>기계 담당자</th>
+			<td>
+				<input type="text" name="machine" id="machine" class="AXInput wid200" data-dbl="true" data-dept="기계설계" data-resign="resign">
+				<input type="hidden" name="machineOid" id="machineOid">
+				<i title="삭제" class="axi axi-ion-close-circled delete-text" data-prefix="Oid" data-target="machine"></i>
+			</td>
+			<th>전기 담당자</th>
+			<td>
+				<input type="text" name="elec" id="elec" class="AXInput wid192" data-dbl="true" data-dept="전기설계" data-resign="resign">
+				<input type="hidden" name="elecOid" id="elecOid">
+				<i title="삭제" class="axi axi-ion-close-circled delete-text" data-prefix="Oid" data-target="elec"></i>
+			</td>
+			<th>SW 담당자</th>
+			<td>
+				<input type="text" name="soft" id="soft" class="AXInput wid200" data-dbl="true" data-dept="SW설계" data-resign="resign">
+				<input type="hidden" name="softOid" id="softOid">
+				<i title="삭제" class="axi axi-ion-close-circled delete-text" data-prefix="Oid" data-target="soft"></i>
+			</td>
+		</tr>
+		<tr>
+			<th>막종</th>
+			<td>
+				<input type="text" name="mak" id="mak" class="AXInput wid200">
+			</td>
+			<th>작업내용</th>
+			<td colspan="5">
+				<input type="text" name="description" class="AXInput wid500">
+			</td>
+		</tr>
+	</table>
+	<!-- button table -->
+	<table class="btn_table">
+		<tr>
+			<td class="left">
+				<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
+			</td>
+			<td class="right">
+				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
+				<input type="button" value="초기화" class="" id="initGrid" title="초기화">
+			</td>
+		</tr>
+	</table>
+	<div id="grid_wrap" style="height: 625px; border-top: 1px solid #3180c3;"></div>
 </body>
-<script type="text/javascript">
-	Highcharts.chart('container', {
-		chart : {
-			type : 'column'
-		},
-		title : {
-			text : '고객별 작번 현황'
-		},
-		xAxis : {
-			categories : [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ],
-			crosshair : true
-		},
-		yAxis : {
-			min : 0,
-			title : {
-				text : '한국생산(台)'
-			}
-		},
-		tooltip : {
-			headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
-			pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' + '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
-			footerFormat : '</table>',
-			shared : true,
-			useHTML : true
-		},
-		plotOptions : {
-			column : {
-				pointPadding : 0.2,
-				borderWidth : 0
-			}
-		},
-		series : [ {
-			name : 'PYRO',
-			data : [ 49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4 ]
-
-		}, {
-			name : 'sZrO2',
-			data : [ 83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3 ]
-
-		}, {
-			name : 'HDPL',
-			data : [ 48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2 ]
-
-		}, {
-			name : 'HfO2',
-			data : [ 42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1 ]
-
-		} ]
-	});
-</script>
 <script type="text/javascript">
 	let myGridID;
 	const columns = [ {
@@ -182,28 +222,13 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-			rowIdField : "oid",
+			rowIdField : "rowId",
 			headerHeight : 30,
 			rowHeight : 30,
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
 			showRowCheckColumn : true, // 체크 박스 출력
 			fixedColumnCount : 7,
-
-			// 컨텍스트 메뉴 사용
-			useContextMenu : true,
-
-			// 컨텍스트 메뉴 아이템들
-			contextMenuItems : [ {
-				label : "BOM 비교",
-				callback : contextHandler
-			}, {
-				label : "CONFIG 비교",
-				callback : contextHandler
-			}, {
-				label : "도면일람표 비교",
-				callback : contextHandler
-			} ],
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
@@ -211,30 +236,6 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 		// LazyLoading 바인딩
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 	}
-
-	function contextHandler(event) {
-
-		let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-		if (checkedItems.length < 2) {
-			alert("2개 이상의 작번을 선택하세요.");
-			return false;
-		}
-
-		switch (event.contextIndex) {
-		case 0:
-			alert(event.value + ", rowIndex : " + event.rowIndex + ", columnIndex : " + event.columnIndex);
-			break;
-
-		case 2:
-			// 내보내기 실행
-			AUIGrid.exportToXlsx(event.pid);
-			break;
-
-		case 3:
-			window.open("https://www.google.com", "_blank");
-			break;
-		}
-	};
 
 	function loadGridData() {
 		let params = new Object();
@@ -285,6 +286,12 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 
 		$("#searchBtn").click(function() {
 			loadGridData();
+		})
+
+		// 등록페이지
+		$("#createBtn").click(function() {
+			let url = getCallUrl("/project/create");
+			popup(url, 1200, 540);
 		})
 
 	}).keypress(function(e) {

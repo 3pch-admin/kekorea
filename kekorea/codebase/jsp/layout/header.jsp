@@ -112,6 +112,9 @@ UserData data = (UserData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
+						<a onclick="moveToPage(this, '/numberRule/list');">도번 조회</a>
+					</li>
+					<li>
 						<a href="form_basic.html">도면 조회</a>
 					</li>
 					<li>
@@ -120,18 +123,18 @@ UserData data = (UserData) request.getAttribute("data");
 					<li>
 						<a href="form_wizard.html">도면 일람표 조회</a>
 					</li>
-					<li>
-						<a href="form_wizard.html">도면 일람표 등록</a>
-					</li>
+					<!-- 					<li> -->
+					<!-- 						<a href="form_wizard.html">도면 일람표 등록</a> -->
+					<!-- 					</li> -->
 					<li>
 						<a href="form_wizard.html">도면 결재</a>
 					</li>
 					<li>
 						<a href="form_file_upload.html">도면 출력</a>
 					</li>
-					<li>
-						<a href="form_editors.html">뷰어 등록</a>
-					</li>
+					<!-- 					<li> -->
+					<!-- 						<a href="form_editors.html">뷰어 등록</a> -->
+					<!-- 					</li> -->
 					<li>
 						<a href="form_autocomplete.html">뷰어 조회</a>
 					</li>
@@ -150,18 +153,18 @@ UserData data = (UserData) request.getAttribute("data");
 					<li>
 						<a href="profile.html">코드 생성</a>
 					</li>
-					<li>
-						<a href="profile_2.html">부품 일괄 등록</a>
-					</li>
-					<li>
-						<a href="contacts_2.html">제작사양서 등록</a>
-					</li>
+					<!-- 					<li> -->
+					<!-- 						<a href="profile_2.html">부품 일괄 등록</a> -->
+					<!-- 					</li> -->
+					<!-- 					<li> -->
+					<!-- 						<a href="contacts_2.html">제작사양서 등록</a> -->
+					<!-- 					</li> -->
 					<li>
 						<a href="projects.html">UNIT BOM 조회</a>
 					</li>
-					<li>
-						<a href="project_detail.html">UNIT BOM 등록</a>
-					</li>
+					<!-- 					<li> -->
+					<!-- 						<a href="project_detail.html">UNIT BOM 등록</a> -->
+					<!-- 					</li> -->
 					<li>
 						<a href="activity_stream.html">EPLAN 결재</a>
 					</li>
@@ -186,18 +189,18 @@ UserData data = (UserData) request.getAttribute("data");
 					<li>
 						<a href="login.html">의뢰서 조회</a>
 					</li>
-					<li>
-						<a href="login_two_columns.html">문서 등록</a>
-					</li>
-					<li>
-						<a href="forgot_password.html">산출물 등록</a>
-					</li>
-					<li>
-						<a href="register.html">수배표 등록</a>
-					</li>
-					<li>
-						<a href="404.html">의뢰서 등록</a>
-					</li>
+					<!-- 					<li> -->
+					<!-- 						<a href="login_two_columns.html">문서 등록</a> -->
+					<!-- 					</li> -->
+					<!-- 					<li> -->
+					<!-- 						<a href="forgot_password.html">산출물 등록</a> -->
+					<!-- 					</li> -->
+					<!-- 					<li> -->
+					<!-- 						<a href="register.html">수배표 등록</a> -->
+					<!-- 					</li> -->
+					<!-- 					<li> -->
+					<!-- 						<a href="404.html">의뢰서 등록</a> -->
+					<!-- 					</li> -->
 					<li>
 						<a href="500.html">문서 결재</a>
 					</li>

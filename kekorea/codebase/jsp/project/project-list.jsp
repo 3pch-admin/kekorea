@@ -135,7 +135,6 @@ String end = (String) request.getAttribute("end");
 </body>
 <script type="text/javascript">
 	let myGridID;
-
 	const columns = [ {
 		dataField : "state",
 		headerText : "진행상태",

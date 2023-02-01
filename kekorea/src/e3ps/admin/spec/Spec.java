@@ -12,11 +12,11 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "name", type = String.class, constraints = @PropertyConstraints(upperLimit = 2000, required = true)),
+				@GeneratedProperty(name = "name", type = String.class, columnProperties = @ColumnProperties(unique = true), constraints = @PropertyConstraints(upperLimit = 2000, required = true)),
 
-				@GeneratedProperty(name = "colKey", type = String.class, columnProperties = @ColumnProperties(unique = true), constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "column", type = String.class, constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "sort", type = Integer.class, columnProperties = @ColumnProperties(unique = true)),
+				@GeneratedProperty(name = "sort", type = Integer.class, constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "latest", type = Boolean.class, initialValue = "true", constraints = @PropertyConstraints(required = true)),
 

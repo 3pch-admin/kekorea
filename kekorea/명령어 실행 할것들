@@ -4,3 +4,4 @@
 	
 2. ResourceBuild 실행
 	- tools bundle -Dbundle.input=e3ps.admin.commonCode.** -Dbundle.buildLocales=true
+	

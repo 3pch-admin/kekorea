@@ -25,11 +25,11 @@ import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.TargetTaskSourceTaskLink;
 import e3ps.project.Task;
-import e3ps.project.Template;
 import e3ps.project.beans.ProjectViewData;
 import e3ps.project.enums.ProjectStateType;
 import e3ps.project.enums.ProjectUserType;
 import e3ps.project.enums.TaskStateType;
+import e3ps.project.template.Template;
 import wt.doc.WTDocument;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
@@ -344,7 +344,6 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 							// task.setState("작업 중");
 							task.setState(TaskStateType.INWORK.getDisplay());
 							task.setAllocate(0);
-							task.setUpdateUser(ownership);
 
 							task = (Task) PersistenceHelper.manager.save(task);
 
@@ -390,7 +389,6 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 						// task.setState("작업 중");
 						task.setState(TaskStateType.INWORK.getDisplay());
 						task.setAllocate(0);
-						task.setUpdateUser(ownership);
 
 						task = (Task) PersistenceHelper.manager.save(task);
 
@@ -484,7 +482,6 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				newTask.setTaskType(orgTask.getTaskType());
 
 				newTask.setOwnership(ownership);
-				newTask.setUpdateUser(ownership);
 
 				// 프로젝트 생성일로
 
@@ -1954,7 +1951,6 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				task.setOwnership(ownership);
 				int sort = ProjectHelper.manager.getMaxSort(project);
 
-				task.setUpdateUser(ownership);
 
 				if ("text".equals(col)) {
 					task.setName(newValue);

@@ -35,7 +35,7 @@ public class StandardSpecService extends StandardManager implements SpecService 
 				boolean enable = (boolean) addRow.get("enable");
 
 				Spec spec = Spec.newSpec();
-				spec.setColKey("spec_" + sort);
+				spec.setColumn("spec_" + sort);
 				spec.setName(name);
 				spec.setSort(sort);
 				spec.setLatest(true);
@@ -65,7 +65,7 @@ public class StandardSpecService extends StandardManager implements SpecService 
 				PersistenceHelper.manager.modify(pre);
 
 				Spec latest = Spec.newSpec();
-				latest.setColKey("spec_" + sort);
+				latest.setColumn("spec_" + sort);
 				latest.setName(name);
 				latest.setSort(sort);
 				latest.setHistroy(history);
