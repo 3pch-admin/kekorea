@@ -3,17 +3,16 @@ package e3ps.epm.numberRule.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.admin.sheetvariable.Category;
-import e3ps.admin.sheetvariable.service.CategoryHelper;
-import e3ps.common.util.CommonUtils;
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.controller.BaseController;
 import e3ps.epm.numberRule.service.NumberRuleHelper;
 
@@ -25,6 +24,10 @@ public class NumberRuleController extends BaseController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
+		JSONArray sizes = CommonCodeHelper.manager.parseJson("SIZE");
+		JSONArray drawingTypes = CommonCodeHelper.manager.parseJson("DRAWING_TYPE");
+		model.addObject("sizes", sizes);
+		model.addObject("drawingTypes", drawingTypes);
 		model.setViewName("/jsp/epm/numberRule/numberRule-list.jsp");
 		return model;
 	}

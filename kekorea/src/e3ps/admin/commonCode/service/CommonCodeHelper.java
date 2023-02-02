@@ -81,6 +81,34 @@ public class CommonCodeHelper {
 		return map;
 	}
 
+	public JSONArray parseJson(String codeType) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(CommonCode.class, true);
+
+		SearchCondition sc = new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", codeType);
+		query.appendWhere(sc, new int[] { idx });
+		query.appendAnd();
+
+		sc = new SearchCondition(CommonCode.class, CommonCode.ENABLE, SearchCondition.IS_TRUE);
+		query.appendWhere(sc, new int[] { idx });
+
+		ClassAttribute ca = new ClassAttribute(CommonCode.class, CommonCode.NAME);
+		OrderBy by = new OrderBy(ca, false);
+		query.appendOrderBy(by, new int[] { idx });
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			CommonCode commonCode = (CommonCode) obj[0];
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("key", commonCode.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("value", commonCode.getName());
+			list.add(map);
+		}
+		return new JSONArray(list);
+	}
+
 	public JSONArray parseJson() throws Exception {
 		CommonCodeType[] codeTypes = CommonCodeType.getCommonCodeTypeSet();
 		ArrayList<Map<String, Object>> list = new ArrayList<>();

@@ -9,23 +9,25 @@
 <title><tiles:insertAttribute name="title" ignore="false"></tiles:insertAttribute></title>
 </head>
 <body class="fixed-sidebar">
-	<div id="wrapper">
-		<tiles:insertAttribute name="body"></tiles:insertAttribute>
-	</div>
-	<div id="loading_layer">
-		<img src="/Windchill/jsp/images/loading.gif">
-	</div>
-	<script type="text/javascript">
-		const cover = new ax5.ui.mask();
-		function open() {
-			$("#loading_layer").show();
-			cover.open();
-		}
+	<form>
+		<div id="wrapper">
+			<tiles:insertAttribute name="body"></tiles:insertAttribute>
+		</div>
+		<div id="loading_layer">
+			<img src="/Windchill/jsp/images/loading.gif">
+		</div>
+		<script type="text/javascript">
+			const cover = new ax5.ui.mask();
+			function open() {
+				$("#loading_layer").show();
+				cover.open();
+			}
 
-		function close() {
-			$("#loading_layer").hide();
-			cover.close();
-		}
-	</script>
+			function close() {
+				$("#loading_layer").hide();
+				cover.close();
+			}
+		</script>
+	</form>
 </body>
 </html>

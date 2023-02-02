@@ -18,85 +18,39 @@
 	<input type="hidden" name="curPage" id="curPage">
 	<table class="search_table">
 		<tr>
-			<th>KEK 작번</th>
+			<th>사업부문</th>
+			<td>&nbsp;</td>
+			<th>작성기간</th>
+			<td>&nbsp;</td>
+			<th>도면번호</th>
 			<td>
 				<input type="text" name="kekNumber" class="AXInput wid200">
 			</td>
-			<th>발행일</th>
-			<th>KE 작번</th>
+			<th>도면생성회사</th>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<th>사이즈</th>
+			<td>&nbsp;</td>
+			<th>도면구분</th>
+			<td>&nbsp;</td>
+			<th>년도</th>
+			<td>&nbsp;</td>
+			<th>관리번호</th>
 			<td>
-				<input type="text" name="keNumber" class="AXInput wid200">
-			</td>
-			<th>USER ID</th>
-			<td>
-				<input type="text" name="userId" id="userId" class="AXInput wid200">
+				<input type="text" name="kekNumber" class="AXInput wid200">
 			</td>
 		</tr>
 		<tr>
-			<th>작번상태</th>
+			<th>부품도구분</th>
+			<td>&nbsp;</td>
+			<th>진행상태</th>
+			<td>&nbsp;</td>
+			<th>작성부서</th>
+			<td>&nbsp;</td>
+			<th>작성자</th>
 			<td>
-				<select name="kekState" id="kekState" class="AXSelect wid200">
-					<option value="">선택</option>
-					<option value="준비">준비</option>
-					<option value="설계중">설계중</option>
-					<option value="설계완료">설계완료</option>
-					<option value="작업완료">작업완료</option>
-					<option value="중단됨">중단됨</option>
-					<option value="취소">취소</option>
-				</select>
-			</td>
-			<th>모델</th>
-			<td>
-				<input type="text" name="model" class="AXInput wid200">
-			</td>
-			<th>거래처</th>
-			<td>
-				<!-- 							<input type="text" name="customer" class="AXInput wid200"> -->
-				<select name="customer" id="customer" class="AXSelect wid200">
-					<option value="">선택</option>
-				</select>
-			</td>
-			<th>설치장소</th>
-			<td>
-				<select name="ins_location" id="ins_location" class="AXSelect wid209">
-					<option value="">선택</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<th>작번유형</th>
-			<td>
-				<select name="pType" id="pType" class="AXSelect wid200">
-					<option value="">선택</option>
-				</select>
-			</td>
-			<th>기계 담당자</th>
-			<td>
-				<input type="text" name="machine" id="machine" class="AXInput wid200" data-dbl="true" data-dept="기계설계" data-resign="resign">
-				<input type="hidden" name="machineOid" id="machineOid">
-				<i title="삭제" class="axi axi-ion-close-circled delete-text" data-prefix="Oid" data-target="machine"></i>
-			</td>
-			<th>전기 담당자</th>
-			<td>
-				<input type="text" name="elec" id="elec" class="AXInput wid192" data-dbl="true" data-dept="전기설계" data-resign="resign">
-				<input type="hidden" name="elecOid" id="elecOid">
-				<i title="삭제" class="axi axi-ion-close-circled delete-text" data-prefix="Oid" data-target="elec"></i>
-			</td>
-			<th>SW 담당자</th>
-			<td>
-				<input type="text" name="soft" id="soft" class="AXInput wid200" data-dbl="true" data-dept="SW설계" data-resign="resign">
-				<input type="hidden" name="softOid" id="softOid">
-				<i title="삭제" class="axi axi-ion-close-circled delete-text" data-prefix="Oid" data-target="soft"></i>
-			</td>
-		</tr>
-		<tr>
-			<th>막종</th>
-			<td>
-				<input type="text" name="mak" id="mak" class="AXInput wid200">
-			</td>
-			<th>작업내용</th>
-			<td colspan="5">
-				<input type="text" name="description" class="AXInput wid500">
+				<input type="text" name="kekNumber" class="AXInput wid200">
 			</td>
 		</tr>
 	</table>
@@ -112,107 +66,50 @@
 			</td>
 		</tr>
 	</table>
-	<div id="grid_wrap" style="height: 625px; border-top: 1px solid #3180c3;"></div>
+	<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;
 	const columns = [ {
 		dataField : "state",
-		headerText : "진행상태",
+		headerText : "도면번호",
 		dataType : "string",
 		width : 80,
-		renderer : {
-			type : "TemplateRenderer",
-		},
 	}, {
 		dataField : "ptype",
-		headerText : "작번유형",
+		headerText : "도면생성회사",
 		dataType : "string",
 		width : 100
 	}, {
 		dataField : "customer",
-		headerText : "거래처",
+		headerText : "보관장소",
 		dataType : "string",
 		width : 100
 	}, {
 		dataField : "ins_location",
-		headerText : "설치장소",
+		headerText : "도면명",
 		dataType : "string",
 		width : 130
 	}, {
 		dataField : "mak",
-		headerText : "막종",
+		headerText : "사이즈",
 		dataType : "string",
 		width : 130
 	}, {
 		dataField : "kek_number",
-		headerText : "KEK 작번",
+		headerText : "년도",
 		dataType : "string",
 		width : 130
 	}, {
 		dataField : "ke_number",
-		headerText : "KE 작번",
+		headerText : "도면구분",
 		dataType : "string",
 		width : 130
 	}, {
 		dataField : "userId",
-		headerText : "USER ID",
+		headerText : "진행상태",
 		dataType : "string",
 		width : 100
-	}, {
-		dataField : "description",
-		headerText : "작업 내용",
-		dataType : "string",
-		width : 450
-	}, {
-		dataField : "pdate",
-		headerText : "발행일",
-		dataType : "date",
-		formatString : "yyyy-mm-dd",
-		width : 100
-	}, {
-		dataField : "completeDate",
-		headerText : "설계 완료일",
-		dataType : "date",
-		formatString : "yyyy-mm-dd",
-		width : 100
-	}, {
-		dataField : "endDate",
-		headerText : "요구 납기일",
-		dataType : "date",
-		formatString : "yyyy-mm-dd",
-		width : 100
-	}, {
-		dataField : "model",
-		headerText : "모델",
-		dataType : "string",
-		width : 130
-	}, {
-		dataField : "machine",
-		headerText : "기계 담당자",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "elec",
-		headerText : "전기 담당자",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "soft",
-		headerText : "SW 담당자",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "kekProgress",
-		headerText : "진행율",
-		dataType : "string",
-		postfix : "%",
-		width : 80
-	}, {
-		dataField : "kekState",
-		headerText : "작번상태",
-		dataType : "string",
-		width : 80
 	}, {
 		dataField : "oid",
 		headerText : "oid",
@@ -228,7 +125,7 @@
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
 			showRowCheckColumn : true, // 체크 박스 출력
-			fixedColumnCount : 7,
+			fillColumnSizeMode : true
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
@@ -239,7 +136,7 @@
 
 	function loadGridData() {
 		let params = new Object();
-		let url = getCallUrl("/project/list");
+		let url = getCallUrl("/numberRule/list");
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
@@ -290,7 +187,7 @@
 
 		// 등록페이지
 		$("#createBtn").click(function() {
-			let url = getCallUrl("/project/create");
+			let url = getCallUrl("/numberRule/create");
 			popup(url, 1200, 540);
 		})
 

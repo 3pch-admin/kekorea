@@ -3,9 +3,6 @@
 <%@page import="e3ps.admin.commonCode.CommonCodeType"%>
 <%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%
-ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("installs");
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,105 +16,85 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 <body>
 	<input type="hidden" name="sessionid" id="sessionid">
 	<input type="hidden" name="curPage" id="curPage">
-	<div id="grid_wrap" style="height: 383px; border-top: 1px solid #3180c3;"></div>
+	<table class="search_table">
+		<tr>
+			<th>사업부문</th>
+			<td>&nbsp;</td>
+			<th>작성기간</th>
+			<td>&nbsp;</td>
+			<th>도면번호</th>
+			<td>
+				<input type="text" name="kekNumber" class="AXInput wid200">
+			</td>
+			<th>도면생성회사</th>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<th>사이즈</th>
+			<td>&nbsp;</td>
+			<th>도면구분</th>
+			<td>&nbsp;</td>
+			<th>년도</th>
+			<td>&nbsp;</td>
+			<th>관리번호</th>
+			<td>
+				<input type="text" name="kekNumber" class="AXInput wid200">
+			</td>
+		</tr>
+		<tr>
+			<th>부품도구분</th>
+			<td>&nbsp;</td>
+			<th>진행상태</th>
+			<td>&nbsp;</td>
+			<th>작성부서</th>
+			<td>&nbsp;</td>
+			<th>작성자</th>
+			<td>
+				<input type="text" name="kekNumber" class="AXInput wid200">
+			</td>
+		</tr>
+	</table>
+	<!-- button table -->
+	<table class="btn_table">
+		<tr>
+			<td class="left">
+				<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
+			</td>
+			<td class="right">
+				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
+				<input type="button" value="초기화" class="" id="initGrid" title="초기화">
+			</td>
+		</tr>
+	</table>
+	<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;
-
 	const columns = [ {
 		dataField : "state",
-		headerText : "진행상태",
+		headerText : "CS SHEET 번호",
 		dataType : "string",
-		width : 100
+		width : 150,
 	}, {
-		dataField : "pType",
-		headerText : "작번유형",
+		dataField : "ptype",
+		headerText : "CS SHEET 명",
 		dataType : "string",
-		width : 100
+		width : 250
 	}, {
 		dataField : "customer",
-		headerText : "거래처",
+		headerText : "설명",
 		dataType : "string",
-		width : 100
-	}, {
-		dataField : "ins_location",
-		headerText : "설치장소",
-		dataType : "string",
-		width : 130
-	}, {
-		dataField : "mak",
-		headerText : "막종",
-		dataType : "string",
-		width : 130
-	}, {
-		dataField : "kek_number",
-		headerText : "KEK 작번",
-		dataType : "string",
-		width : 130
-	}, {
-		dataField : "ke_number",
-		headerText : "KE 작번",
-		dataType : "string",
-		width : 130
 	}, {
 		dataField : "userId",
-		headerText : "USER ID",
+		headerText : "작성자",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "description",
-		headerText : "작업 내용",
-		dataType : "string",
-		width : 450
-	}, {
-		dataField : "pDate",
-		headerText : "발행일",
+		dataField : "userId",
+		headerText : "작성일",
 		dataType : "date",
 		formatString : "yyyy-mm-dd",
 		width : 100
-	}, {
-		dataField : "completeDate",
-		headerText : "설계 완료일",
-		dataType : "date",
-		formatString : "yyyy-mm-dd",
-		width : 100
-	}, {
-		dataField : "endDate",
-		headerText : "요구 납기일",
-		dataType : "date",
-		formatString : "yyyy-mm-dd",
-		width : 100
-	}, {
-		dataField : "model",
-		headerText : "모델",
-		dataType : "string",
-		width : 130
-	}, {
-		dataField : "machine",
-		headerText : "기계 담당자",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "elec",
-		headerText : "전기 담당자",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "soft",
-		headerText : "SW 담당자",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "kekProgress",
-		headerText : "진행율",
-		dataType : "string",
-		postfix : "%",
-		width : 80
-	}, {
-		dataField : "kekState",
-		headerText : "작번상태",
-		dataType : "string",
-		width : 80
 	}, {
 		dataField : "oid",
 		headerText : "oid",
@@ -127,28 +104,13 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-			rowIdField : "oid",
+			rowIdField : "rowId",
 			headerHeight : 30,
 			rowHeight : 30,
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
 			showRowCheckColumn : true, // 체크 박스 출력
-			fixedColumnCount : 7,
-
-			// 컨텍스트 메뉴 사용
-			useContextMenu : true,
-
-			// 컨텍스트 메뉴 아이템들
-			contextMenuItems : [ {
-				label : "BOM 비교",
-				callback : contextHandler
-			}, {
-				label : "CONFIG 비교",
-				callback : contextHandler
-			}, {
-				label : "도면일람표 비교",
-				callback : contextHandler
-			} ],
+			fillColumnSizeMode : true
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
@@ -157,33 +119,9 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 	}
 
-	function contextHandler(event) {
-
-		let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-		if (checkedItems.length < 2) {
-			alert("2개 이상의 작번을 선택하세요.");
-			return false;
-		}
-
-		switch (event.contextIndex) {
-		case 0:
-			alert(event.value + ", rowIndex : " + event.rowIndex + ", columnIndex : " + event.columnIndex);
-			break;
-
-		case 2:
-			// 내보내기 실행
-			AUIGrid.exportToXlsx(event.pid);
-			break;
-
-		case 3:
-			window.open("https://www.google.com", "_blank");
-			break;
-		}
-	};
-
 	function loadGridData() {
 		let params = new Object();
-		let url = getCallUrl("/commonCode/list");
+		let url = getCallUrl("/cssheet /list");
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
@@ -232,35 +170,10 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 			loadGridData();
 		})
 
-		// 그리드 행 추가
-		$("#addRowBtn").click(function() {
-			let item = new Object();
-			item.createDate = new Date();
-			AUIGrid.addRow(myGridID, item, "last");
-		})
-
-		$("#saveBtn").click(function() {
-			let addRows = AUIGrid.getAddedRowItems(myGridID);
-			let removeRows = AUIGrid.getRemovedItems(myGridID);
-			let editRows = AUIGrid.getEditedRowItems(myGridID);
-			let params = new Object();
-			let url = getCallUrl("/commonCode/create");
-			params.addRows = addRows;
-			params.removeRows = removeRows;
-			params.editRows = editRows;
-			console.log(params);
-			call(url, params, function(data) {
-
-			}, "POST");
-		})
-
-		// 그리드 행 삭제
-		$("#deleteRowBtn").click(function() {
-			let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-			for (let i = checkedItems.length - 1; i >= 0; i--) {
-				let rowIndex = checkedItems[i].rowIndex;
-				AUIGrid.removeRow(myGridID, rowIndex);
-			}
+		// 등록페이지
+		$("#createBtn").click(function() {
+			let url = getCallUrl("/cssheet/create");
+			popup(url, 1200, 540);
 		})
 
 	}).keypress(function(e) {

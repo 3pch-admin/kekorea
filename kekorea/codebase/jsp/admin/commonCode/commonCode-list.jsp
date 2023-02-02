@@ -198,13 +198,13 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 	}
 
 	function auiAddRowHandler(event) {
-		var selected = AUIGrid.getSelectedIndex(myGridID);
+		let selected = AUIGrid.getSelectedIndex(myGridID);
 		if (selected.length <= 0) {
 			return;
 		}
 
-		var rowIndex = selected[0];
-		var colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "name");
+		let rowIndex = selected[0];
+		let colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "name");
 		AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex); // ISBN 으로 선택자 이동
 		AUIGrid.openInputer(myGridID);
 	}
@@ -291,7 +291,6 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			item.enable = true;
 			item.createDate = new Date();
 			AUIGrid.addRow(myGridID, item, "first");
-
 		})
 
 		$("#saveBtn").click(function() {

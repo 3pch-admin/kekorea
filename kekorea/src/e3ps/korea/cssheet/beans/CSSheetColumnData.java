@@ -1,5 +1,6 @@
 package e3ps.korea.cssheet.beans;
 
+import e3ps.korea.cssheet.CSSheet;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,4 +14,6 @@ public class CSSheetColumnData {
 
 	}
 
+	public CSSheetColumnData(CSSheet csSheet) throws Exception {
+	}
 }

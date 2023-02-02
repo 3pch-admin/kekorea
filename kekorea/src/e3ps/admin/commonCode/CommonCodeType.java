@@ -10,4 +10,6 @@ public class CommonCodeType extends _CommonCodeType {
 	public static final CommonCodeType INSTALL = toCommonCodeType("INSTALL");
 	public static final CommonCodeType PROJECT_TYPE = toCommonCodeType("PROJECT_TYPE");
 	public static final CommonCodeType MAK = toCommonCodeType("MAK");
+	public static final CommonCodeType SIZE = toCommonCodeType("SIZE");
+	public static final CommonCodeType DRAWING_TYPE = toCommonCodeType("DRAWING_TYPE");
 }

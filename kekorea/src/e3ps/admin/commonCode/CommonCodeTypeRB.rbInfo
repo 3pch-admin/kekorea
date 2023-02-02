@@ -36,3 +36,12 @@ PROJECT_TYPE.sort=4
 
 MAK.value=MAK
 MAK.sort=5
+
+SIZE.value=SIZE
+SIZE.sort=6
+
+DRAWING_TYPE.value=DRAWING_TYPE
+DRAWING_TYPE.sort=7
+
+YEAR.value=YEAR
+YEAR.sort=8

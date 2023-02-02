@@ -40,3 +40,15 @@ PROJECT_TYPE.sort=4
 #막종
 MAK.value=\ub9c9\uc885
 MAK.sort=5
+
+#사이즈
+SIZE.value=\uc0ac\uc774\uc988
+SIZE.sort=6
+
+#도면구분
+DRAWING_TYPE.value=\ub3c4\uba74\uad6c\ubd84
+DRAWING_TYPE.sort=7
+
+#년도
+YEAR.value=\ub144\ub3c4
+YEAR.sort=8
