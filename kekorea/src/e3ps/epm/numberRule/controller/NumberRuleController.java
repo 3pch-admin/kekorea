@@ -1,5 +1,6 @@
 package e3ps.epm.numberRule.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import e3ps.admin.commonCode.CommonCode;
+import e3ps.admin.commonCode.CommonCodeType;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.controller.BaseController;
 import e3ps.epm.numberRule.service.NumberRuleHelper;
@@ -24,10 +27,18 @@ public class NumberRuleController extends BaseController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		JSONArray sizes = CommonCodeHelper.manager.parseJson("SIZE");
-		JSONArray drawingTypes = CommonCodeHelper.manager.parseJson("DRAWING_TYPE");
+		ArrayList<CommonCode> sizes = CommonCodeHelper.manager.getArrayCodeList("SIZE");
+		ArrayList<CommonCode> drawingCompanys = CommonCodeHelper.manager.getArrayCodeList("DRAWING_COMPANY");
+		ArrayList<CommonCode> writtenDocuments = CommonCodeHelper.manager.getArrayCodeList("WRITTEN_DOCUMENT");
+		ArrayList<CommonCode> businessSectors = CommonCodeHelper.manager.getArrayCodeList("BUSINESS_SECTOR");
+		ArrayList<CommonCode> classificationWritingDepartment = CommonCodeHelper.manager
+				.getArrayCodeList("CLASSIFICATION_WRITING_DEPARTMENT");
+
+		model.addObject("drawingCompanys", drawingCompanys);
+		model.addObject("writtenDocuments", writtenDocuments);
+		model.addObject("businessSectors", businessSectors);
+		model.addObject("classificationWritingDepartment", classificationWritingDepartment);
 		model.addObject("sizes", sizes);
-		model.addObject("drawingTypes", drawingTypes);
 		model.setViewName("/jsp/epm/numberRule/numberRule-list.jsp");
 		return model;
 	}
@@ -69,6 +80,15 @@ public class NumberRuleController extends BaseController {
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public ModelAndView create() throws Exception {
 		ModelAndView model = new ModelAndView();
+		JSONArray drawingCompanys = CommonCodeHelper.manager.parseJson("DRAWING_COMPANY");
+		JSONArray writtenDocuments = CommonCodeHelper.manager.parseJson("WRITTEN_DOCUMENT");
+		JSONArray businessSectors = CommonCodeHelper.manager.parseJson("BUSINESS_SECTOR");
+		JSONArray classificationWritingDepartment = CommonCodeHelper.manager
+				.parseJson("CLASSIFICATION_WRITING_DEPARTMENT");
+		model.addObject("drawingCompanys", drawingCompanys);
+		model.addObject("writtenDocuments", writtenDocuments);
+		model.addObject("businessSectors", businessSectors);
+		model.addObject("classificationWritingDepartment", classificationWritingDepartment);
 		model.setViewName("popup:/epm/numberRule/numberRule-create");
 		return model;
 	}

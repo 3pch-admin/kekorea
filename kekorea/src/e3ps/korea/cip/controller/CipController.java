@@ -18,11 +18,11 @@ import e3ps.korea.cip.service.CipHelper;
 @RequestMapping(value = "/cip/**")
 public class CipController extends BaseController {
 	
-	@Description(value = "cip 리스트 페이지")
+	@Description(value = "CIP 리스트 페이지")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/korea/cip/list-cip.jsp");
+		model.setViewName("/jsp/korea/cip/cip-list.jsp");
 		return model;
 	}
 	
@@ -40,7 +40,7 @@ public class CipController extends BaseController {
 		return result;
 	}
 	
-	@Description("cip 등록 페이지")
+	@Description("CIP 등록 페이지")
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public ModelAndView create() throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -48,7 +48,7 @@ public class CipController extends BaseController {
 		return model;
 	}
 
-	@Description("cip 등록")
+	@Description("CIP 등록")
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> create(@RequestBody Map<String, Object> params) throws Exception {

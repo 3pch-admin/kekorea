@@ -13,7 +13,6 @@ import e3ps.admin.commonCode.beans.CommonCodeColumnData;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.project.Project;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -102,7 +101,7 @@ public class CommonCodeHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			CommonCode commonCode = (CommonCode) obj[0];
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("key", commonCode.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("key", commonCode.getCode());
 			map.put("value", commonCode.getName());
 			list.add(map);
 		}
@@ -165,5 +164,19 @@ public class CommonCodeHelper {
 			list.add(data);
 		}
 		return list;
+	}
+
+	public CommonCode getCommonCode(String code, String codeType) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(CommonCode.class, true);
+		QuerySpecUtils.toEquals(query, idx, CommonCode.class, CommonCode.CODE, code);
+		QuerySpecUtils.toEquals(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			CommonCode commonCode = (CommonCode) obj[0];
+			return commonCode;
+		}
+		return null;
 	}
 }

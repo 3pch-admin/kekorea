@@ -76,15 +76,9 @@ public class ContentUtils {
 	 *         객체 OID로 찾은 후 주 첨부파일 내용 가져 오기
 	 *         </p>
 	 */
-	public static String[] getPrimary(String oid) {
+	public static String[] getPrimary(String oid) throws Exception {
 		ReferenceFactory rf = new ReferenceFactory();
-		ContentHolder holder = null;
-		try {
-			holder = (ContentHolder) rf.getReference(oid).getObject();
-			return getPrimary(holder);
-		} catch (WTException e) {
-			e.printStackTrace();
-		}
+		ContentHolder holder = (ContentHolder) rf.getReference(oid).getObject();
 		return getPrimary(holder);
 	}
 
@@ -101,17 +95,12 @@ public class ContentUtils {
 	 *         5 다운로드 링크<br>
 	 *         </p>
 	 */
-	public static String[] getPrimary(ContentHolder holder) {
+	public static String[] getPrimary(ContentHolder holder) throws Exception {
 		// 6 개를 담아야하면 6개 생성
 		// 담는건 0 부터 시작
-		String[] primarys = new String[7];
+		String[] primarys = new String[8];
 
-		QueryResult result = null;
-		try {
-			result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
-		} catch (WTException e) {
-			e.printStackTrace();
-		}
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
 		// primary 하나
 		if (result.hasMoreElements()) {
 			ContentItem item = (ContentItem) result.nextElement();
@@ -132,12 +121,9 @@ public class ContentUtils {
 				// 4 icon
 				primarys[4] = getFileIcons(primarys[2]);
 				// 5 download url
-				try {
-					primarys[5] = ContentHelper.getDownloadURL(holder, data, false, primarys[2]).toString();
-				} catch (WTException e) {
-					e.printStackTrace();
-				}
+				primarys[5] = ContentHelper.getDownloadURL(holder, data, false, primarys[2]).toString();
 				primarys[6] = String.valueOf(data.getFileSize());
+				primarys[7] = "<a href=" + primarys[5] + "><img src=" + primarys[4] + " class='pos2'></a>";
 			}
 		}
 		return primarys;

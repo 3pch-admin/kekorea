@@ -2,6 +2,7 @@ package e3ps.epm.jDrawing.beans;
 
 import java.sql.Timestamp;
 
+import e3ps.common.util.ContentUtils;
 import e3ps.epm.jDrawing.JDrawing;
 import e3ps.epm.jDrawing.JDrawingMaster;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class JDrawingColumnData {
 	private String modifier;
 	private Timestamp modifiedDate;
 	private boolean latest;
+	private String primary;
 
 	public JDrawingColumnData() {
 
@@ -38,5 +40,6 @@ public class JDrawingColumnData {
 		setCreatedDate(master.getCreateTimestamp());
 		setModifier(jDrawing.getOwnership().getOwner().getFullName());
 		setModifiedDate(jDrawing.getModifyTimestamp());
+		setPrimary(ContentUtils.getPrimary(jDrawing)[7]);
 	}
 }

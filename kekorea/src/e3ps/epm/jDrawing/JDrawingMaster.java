@@ -13,7 +13,9 @@ import wt.util.WTException;
 		properties = {
 				@GeneratedProperty(name = "number", type = String.class, javaDoc = "도면번호", columnProperties = @ColumnProperties(columnName = "drawingNumber")),
 
-				@GeneratedProperty(name = "name", type = String.class, javaDoc = "도면번호") }
+				@GeneratedProperty(name = "name", type = String.class, javaDoc = "도면번호")
+
+		}
 
 )
 public class JDrawingMaster extends _JDrawingMaster {

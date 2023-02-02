@@ -83,7 +83,10 @@
 		dataField : "latest",
 		headerText : "최신버전여부",
 		dataType : "string",
-		width : 100
+		width : 100,
+		renderer : {
+			type : "CheckBoxEditRenderer",
+		},		
 	}, {
 		dataField : "version",
 		headerText : "REV",
@@ -112,6 +115,18 @@
 		formatString : "yyyy-mm-dd",
 		width : 100
 	}, {
+		dataField : "primary",
+		headerText : "도면파일",
+		dataType : "string",
+		width : 100,
+		renderer : { // HTML 템플릿 렌더러 사용
+			type : "TemplateRenderer"
+		},
+		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // HTML 템플릿 작성
+			let template = value;
+			return template; // HTML 템플릿 반환..그대도 innerHTML 속성값으로 처리됨
+		}
+	}, {
 		dataField : "oid",
 		headerText : "oid",
 		dataType : "string",
@@ -125,7 +140,6 @@
 			rowHeight : 30,
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
-			showRowCheckColumn : true, // 체크 박스 출력
 			fillColumnSizeMode : true
 		};
 

@@ -45,10 +45,22 @@ MAK.sort=5
 SIZE.value=\uc0ac\uc774\uc988
 SIZE.sort=6
 
-#도면구분
-DRAWING_TYPE.value=\ub3c4\uba74\uad6c\ubd84
-DRAWING_TYPE.sort=7
-
 #년도
 YEAR.value=\ub144\ub3c4
-YEAR.sort=8
+YEAR.sort=7
+
+#도면생성회사
+DRAWING_COMPANY.value=\ub3c4\uba74\uc0dd\uc131\ud68c\uc0ac
+DRAWING_COMPANY.sort=8
+
+#작성문서구분
+WRITTEN_DOCUMENT.value=\uc791\uc131\ubb38\uc11c
+WRITTEN_DOCUMENT.sort=9
+
+#사업부문
+BUSINESS_SECTOR.value=\uc0ac\uc5c5\ubd80\ubb38
+BUSINESS_SECTOR.sort=10
+
+#작성부서구분
+CLASSIFICATION_WRITING_DEPARTMENT.value=\uc791\uc131\ubd80\uc11c\uad6c\ubd84
+CLASSIFICATION_WRITING_DEPARTMENT.sort=11

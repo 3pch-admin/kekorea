@@ -26,6 +26,7 @@ import wt.lifecycle.LifeCycleManaged;
 import wt.lifecycle.LifeCycleTemplate;
 import wt.lifecycle.State;
 import wt.org.WTUser;
+import wt.ownership.Ownership;
 import wt.part.PartType;
 import wt.pdmlink.PDMLinkProduct;
 import wt.pds.StatementSpec;
@@ -463,5 +464,9 @@ public class CommonUtils implements MessageHelper {
 
 	public static String getPersistableTime(Timestamp time, int index) throws Exception {
 		return time.toString().substring(0, index);
+	}
+	
+	public static Ownership sessionOwner() throws Exception {
+		return Ownership.newOwnership(SessionHelper.manager.getPrincipal());
 	}
 }

@@ -19,7 +19,9 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "number", type = String.class, columnProperties = @ColumnProperties(columnName = "documentNumber"))
+				@GeneratedProperty(name = "number", type = String.class, javaDoc = "도면번호", columnProperties = @ColumnProperties(columnName = "documentNumber"), constraints = @PropertyConstraints(required = true)),
+
+				@GeneratedProperty(name = "name", type = String.class, javaDoc = "도면명", constraints = @PropertyConstraints(required = true))
 
 		},
 
@@ -33,9 +35,33 @@ import wt.util.WTException;
 
 						myRole = @MyRole(name = "numberRule", cardinality = Cardinality.ONE)),
 
-				@GeneratedForeignKey(name = "NumberRuleTypeLink",
+				@GeneratedForeignKey(name = "NumberRuleBusinessSectorLink",
 
-						foreignKeyRole = @ForeignKeyRole(name = "drawingType", type = CommonCode.class,
+						foreignKeyRole = @ForeignKeyRole(name = "businessSector", type = CommonCode.class,
+
+								constraints = @PropertyConstraints(required = true)),
+
+						myRole = @MyRole(name = "numberRule", cardinality = Cardinality.ONE)),
+
+				@GeneratedForeignKey(name = "NumberRuleDrawingCompanyLink",
+
+						foreignKeyRole = @ForeignKeyRole(name = "drawingCompany", type = CommonCode.class,
+
+								constraints = @PropertyConstraints(required = true)),
+
+						myRole = @MyRole(name = "numberRule", cardinality = Cardinality.ONE)),
+
+				@GeneratedForeignKey(name = "NumberRuleDepartmentLink",
+
+						foreignKeyRole = @ForeignKeyRole(name = "department", type = CommonCode.class,
+
+								constraints = @PropertyConstraints(required = true)),
+
+						myRole = @MyRole(name = "numberRule", cardinality = Cardinality.ONE)),
+
+				@GeneratedForeignKey(name = "NumberRuleDocumentLink",
+
+						foreignKeyRole = @ForeignKeyRole(name = "document", type = CommonCode.class,
 
 								constraints = @PropertyConstraints(required = true)),
 

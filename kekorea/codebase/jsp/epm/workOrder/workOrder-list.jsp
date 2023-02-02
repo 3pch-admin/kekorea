@@ -3,14 +3,6 @@
 <%@page import="e3ps.admin.commonCode.CommonCodeType"%>
 <%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%
-ArrayList<CommonCode> sizes = (ArrayList<CommonCode>) request.getAttribute("sizes");
-ArrayList<CommonCode> drawingCompanys = (ArrayList<CommonCode>) request.getAttribute("drawingCompanys");
-ArrayList<CommonCode> writtenDocuments = (ArrayList<CommonCode>) request.getAttribute("writtenDocuments");
-ArrayList<CommonCode> businessSectors = (ArrayList<CommonCode>) request.getAttribute("businessSectors");
-ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) request
-		.getAttribute("classificationWritingDepartment");
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,20 +19,7 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 	<table class="search_table">
 		<tr>
 			<th>사업부문</th>
-			<td>
-				<select name="size" id="size" class="AXSelect w200">
-					<option value="">선택</option>
-					<%
-					for (CommonCode commonCode : sizes) {
-						String value = commonCode.getPersistInfo().getObjectIdentifier().getStringValue();
-						String display = commonCode.getName();
-					%>
-					<option value="<%=value%>"><%=display%></option>
-					<%
-					}
-					%>
-				</select>
-			</td>
+			<td>&nbsp;</td>
 			<th>작성기간</th>
 			<td>&nbsp;</td>
 			<th>도면번호</th>
@@ -48,37 +27,11 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 				<input type="text" name="kekNumber" class="AXInput wid200">
 			</td>
 			<th>도면생성회사</th>
-			<td>
-				<select name="size" id="size" class="AXSelect w200">
-					<option value="">선택</option>
-					<%
-					for (CommonCode commonCode : sizes) {
-						String value = commonCode.getPersistInfo().getObjectIdentifier().getStringValue();
-						String display = commonCode.getName();
-					%>
-					<option value="<%=value%>"><%=display%></option>
-					<%
-					}
-					%>
-				</select>
-			</td>
+			<td>&nbsp;</td>
 		</tr>
 		<tr>
 			<th>사이즈</th>
-			<td>
-				<select name="size" id="size" class="AXSelect w200">
-					<option value="">선택</option>
-					<%
-					for (CommonCode commonCode : sizes) {
-						String value = commonCode.getPersistInfo().getObjectIdentifier().getStringValue();
-						String display = commonCode.getName();
-					%>
-					<option value="<%=value%>"><%=display%></option>
-					<%
-					}
-					%>
-				</select>
-			</td>
+			<td>&nbsp;</td>
 			<th>도면구분</th>
 			<td>&nbsp;</td>
 			<th>년도</th>
@@ -92,14 +45,7 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 			<th>부품도구분</th>
 			<td>&nbsp;</td>
 			<th>진행상태</th>
-			<td>
-				<select name="state" id="state" class="AXSelect w200">
-					<option value="">선택</option>
-					<option value="진행중">진행중</option>
-					<option value="완료">완료</option>
-					<option value="폐기">폐기</option>
-				</select>
-			</td>
+			<td>&nbsp;</td>
 			<th>작성부서</th>
 			<td>&nbsp;</td>
 			<th>작성자</th>
@@ -125,46 +71,46 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 <script type="text/javascript">
 	let myGridID;
 	const columns = [ {
-		dataField : "number",
-		headerText : "도면번호",
-		dataType : "string",
-		width : 150
-	}, {
 		dataField : "name",
-		headerText : "도면명",
+		headerText : "DRAWING TITLE",
 		dataType : "string",
-		width : 150
 	}, {
-		dataField : "businessSector",
-		headerText : "사업부문",
+		dataField : "number",
+		headerText : "DWG. NO",
 		dataType : "string",
-		width : 200,
+		width : 300
 	}, {
-		dataField : "drawingCompany",
-		headerText : "도면생성회사",
+		dataField : "latest",
+		headerText : "최신버전여부",
 		dataType : "string",
-		width : 150,
+		width : 100
 	}, {
-		dataField : "department",
-		headerText : "작성부서구분",
+		dataField : "version",
+		headerText : "REV",
 		dataType : "string",
-		width : 150,
-	}, {
-		dataField : "document",
-		headerText : "작성문서구분",
-		dataType : "string",
-		width : 150,
+		width : 100
 	}, {
 		dataField : "creator",
-		headerText : "작성자",
+		headerText : "등록자",
 		dataType : "string",
-		width : 150,
+		width : 100
 	}, {
 		dataField : "createdDate",
-		headerText : "작성일",
+		headerText : "등록일",
 		dataType : "date",
 		formatString : "yyyy-mm-dd",
-		width : 150,
+		width : 100
+	}, {
+		dataField : "modifier",
+		headerText : "수정자",
+		dataType : "string",
+		width : 100
+	}, {
+		dataField : "modifiedDate",
+		headerText : "수정일",
+		dataType : "date",
+		formatString : "yyyy-mm-dd",
+		width : 100
 	}, {
 		dataField : "oid",
 		headerText : "oid",
@@ -191,10 +137,9 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 
 	function loadGridData() {
 		let params = new Object();
-		let url = getCallUrl("/numberRule/list");
+		let url = getCallUrl("/jDrawing/list");
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
-			console.log(data);
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
@@ -243,8 +188,8 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 
 		// 등록페이지
 		$("#createBtn").click(function() {
-			let url = getCallUrl("/numberRule/create");
-			popup(url, 1400, 740);
+			let url = getCallUrl("/jDrawing/create");
+			popup(url, 1200, 900);
 		})
 
 	}).keypress(function(e) {

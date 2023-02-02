@@ -168,7 +168,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 	function createAUIGrid(columnLayout) {
 
 		const props = {
-			rowIdField : "rowId",
+			rowIdField : "oid",
 			headerHeight : 30,
 			rowHeight : 30,
 			showRowNumColumn : true,

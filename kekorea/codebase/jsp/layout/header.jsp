@@ -112,7 +112,7 @@ UserData data = (UserData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/jDrawing/list');">KE도면 조회</a>
+						<a onclick="moveToPage(this, '/jDrawing/list');">KE 도면 조회</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/numberRule/list');">KEK 도번 조회</a>

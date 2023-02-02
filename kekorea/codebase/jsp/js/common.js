@@ -243,7 +243,7 @@ $(document).ready(function() {
 				return true;
 			}
 			$value = $allContents.eq(idx).val();
-			params[$key] =dw```` $value;
+			params[$key] =$value;
 		})
 
 		return params;

@@ -21,7 +21,7 @@ import e3ps.epm.numberRule.service.NumberRuleHelper;
 @RequestMapping(value = "/jDrawing/**")
 public class JDrawingController extends BaseController {
 
-	@Description(value = "일본 도면 리스트 페이지")
+	@Description(value = "KE 리스트 페이지")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -29,7 +29,7 @@ public class JDrawingController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "일본 도면 리스트 가져 오는 함수")
+	@Description(value = "KE 리스트 가져 오는 함수")
 	@ResponseBody
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -45,7 +45,7 @@ public class JDrawingController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "일본 도면 등록 함수")
+	@Description(value = "KE 등록 함수")
 	@ResponseBody
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public Map<String, Object> create(@RequestBody Map<String, Object> params) throws Exception {
@@ -62,7 +62,7 @@ public class JDrawingController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "일본 도면 생성 페이지")
+	@Description(value = "KE 생성 페이지")
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public ModelAndView create() throws Exception {
 		ModelAndView model = new ModelAndView();

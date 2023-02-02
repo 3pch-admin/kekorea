@@ -1,9 +1,10 @@
 package e3ps.epm.jDrawing.service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
+import e3ps.admin.commonCode.CommonCode;
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.epm.jDrawing.JDrawing;
 import e3ps.epm.jDrawing.JDrawingMaster;
 import wt.content.ApplicationData;
@@ -41,6 +42,7 @@ public class StandardJDrawingService extends StandardManager implements JDrawing
 				String path = (String) arr.get(i);
 
 				Ownership ownership = Ownership.newOwnership(SessionHelper.manager.getPrincipal());
+
 
 				JDrawingMaster master = JDrawingMaster.newJDrawingMaster();
 				master.setNumber(number);
