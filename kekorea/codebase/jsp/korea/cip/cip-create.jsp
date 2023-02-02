@@ -17,7 +17,7 @@
 		<tr>
 			<td class="right">
 				<input type="button" value="등록" class="redBtn" id="addRowBtn" title="등록">
-<!-- 				<input type="button" value="삭제" class="orangeBtn" id="deleteRowBtn" title="삭제"> -->
+				<input type="button" value="수정" class="orangeBtn" id="modifyRowBtn" title="수정">
 <!-- 				<input type="button" value="저장" class="" id="saveBtn" title="저장"> -->
 <!-- 				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회"> -->
 			</td>
@@ -28,48 +28,48 @@
 <script type="text/javascript">
 	let myGridID;
 	const columns = [{
-		dataField : "",
+		dataField : "item",
 		headerText : "항목",
 		dataType : "string",
-		width : 100
+		width : "10%"
 	}, {
-		dataField : "",
+		dataField : "improvements",
 		headerText : "개선내용",
 		dataType : "string",
-		width : 400
+		width : "20%"
 	}, {
-		dataField : "",
+		dataField : "improvement",
 		headerText : "개선책",
 		dataType : "string",
-		width : 400
+		width : "20%"
 	}, {
-		dataField : "",
+		dataField : "apply",
 		headerText : "적용/미적용",
 		dataType : "string",
-		width : 100,
+		width : "10%",
 		renderer : {
 			type : "DropDownListRenderer",
 			list : ["적용완료", "일부적용", "미적용", "검토중"]
 		}
 	}, {
-		dataField : "",
+		dataField : "mak",
 		headerText : "대상막종",
 		dataType : "string",
-		width : 100,
+		width : "10%",
 		renderer : {
 			type : "DropDownListRenderer",
 			list : ["PYRO", "MT-ZrO2", "MT-HfO2", "HDPL", "LTM-TIN", "공통"]
 		}
 	}, {
-		dataField : "",
+		dataField : "note",
 		headerText : "비고",
 		dataType : "string",
-		width : 300
+		width : "10%"
 	}, {
 		dataField : "",
 		headerText : "미리보기",
 		dataType : "string",
-		width : 100,
+		width : "10%",
 		renderer : {
 			
 		}
@@ -77,7 +77,7 @@
 		dataField : "",
 		headerText : "파일첨부",
 		dataType : "",
-		width : 100,
+		width : "10%",
 	}, {
 		dataField : "oid",
 		headerText : "oid",
@@ -91,6 +91,7 @@
 				rowHeight : 30,
 				showRowNumColumn : true,
 				rowNumHeaderText : "번호",
+				editable : true,
 				multiepleMode : true	//다중선택
 			};
 // 	function createAUIGrid(columns) {
@@ -113,5 +114,17 @@
 			console.log(data);
 		});
 	}
+	
+	$("#addRowBtn").click(function() {
+		let item = new Object();
+		AUIGrid.addRow(myGridID, item, "first");
+
+	})
+	
+	$("#modifyRowBtn").click(function() {
+		let item = new Object();
+		AUIGrid.editRow(myGridID, item, "first");
+
+	})
 </script>
 </html>

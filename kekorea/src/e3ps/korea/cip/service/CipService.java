@@ -8,4 +8,7 @@ import wt.method.RemoteInterface;
 public interface CipService {
 
 	public abstract void create(Map<String, Object> params) throws Exception;
+//	public abstract Map<String, Object> create(Map<String, Object> params) throws Exception;
+
+//	public abstract void list(Map<String, Object> params) throws Exception;
 }
