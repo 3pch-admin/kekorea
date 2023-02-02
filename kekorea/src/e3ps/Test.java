@@ -1,24 +1,27 @@
 package e3ps;
 
-import e3ps.epm.jDrawing.JDrawing;
-import e3ps.epm.jDrawing.JDrawingMaster;
-import wt.fc.PersistenceHelper;
+import com.aspose.pdf.Document;
+
+import e3ps.common.aspose.AsposeUtils;
 
 public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-		JDrawingMaster m = JDrawingMaster.newJDrawingMaster();
-		m.setNumber("123");
-		m.setName("21333");
-		m = (JDrawingMaster) PersistenceHelper.manager.save(m);
+//		AsposeUtils.setAsposeLic();
+		
+        Document pdfDocument1 = new Document("D:\\1.pdf");
+        Document pdfDocument2 = new Document("D:\\2.pdf");
+        Document pdfDocument3 = new Document("D:\\3.pdf");
 
-		JDrawing d = JDrawing.newJDrawing();
-		d.setLot("AsASDSA");
-		d.setMaster(m);
-		PersistenceHelper.manager.save(d);
-		System.out.println("저장..");
+        // Add pages of second document to the first
+        pdfDocument1.getPages().add(pdfDocument2.getPages());
+        pdfDocument1.getPages().add(pdfDocument3.getPages());
 
+        // Save concatenated output file
+        pdfDocument1.save("D:\\oncatenatePdfFiles_out.pdf");
+
+        System.out.println("정ㅇ");
 	}
 
 }

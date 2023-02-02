@@ -115,20 +115,17 @@ UserData data = (UserData) request.getAttribute("data");
 						<a onclick="moveToPage(this, '/jDrawing/list');">KE도면 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/numberRule/list');">도번 조회</a>
+						<a onclick="moveToPage(this, '/numberRule/list');">KEK 도번 조회</a>
 					</li>
 					<li>
-						<a href="form_basic.html">도면 조회</a>
+						<a href="form_basic.html">KEK 도면 조회</a>
 					</li>
 					<li>
 						<a href="form_advanced.html">라이브러리 조회</a>
 					</li>
 					<li>
-						<a href="form_wizard.html">도면 일람표 조회</a>
+						<a onclick="moveToPage(this, '/workOrder/list');">도면 일람표 조회</a>
 					</li>
-					<!-- 					<li> -->
-					<!-- 						<a href="form_wizard.html">도면 일람표 등록</a> -->
-					<!-- 					</li> -->
 					<li>
 						<a href="form_wizard.html">도면 결재</a>
 					</li>
