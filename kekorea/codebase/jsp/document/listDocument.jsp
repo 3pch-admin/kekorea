@@ -6,6 +6,8 @@
 <title></title>
 <%@include file="/jsp/common/layouts/include_css.jsp"%>
 <%@include file="/jsp/common/layouts/include_script.jsp"%>
+<!-- auigrid -->
+<%@include file="/jsp/include/auigrid.jsp"%>
 </head>
 <body onload="loadGridData();">
 	<input type="hidden" name="sessionid" id="sessionid">
@@ -166,7 +168,7 @@
 
 	function loadGridData() {
 		let params = new Object();
-		let url = getCallUrl("/document/listDocumentAction");
+		let url = getCallUrl("/doc/list");
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
@@ -186,26 +188,26 @@
 		}
 	}
 
-	function requestAdditionalData() {
-		let params = new Object();
-		let curPage = $("input[name=curPage]").val();
-		params.sessionid = $("input[name=sessionid]").val();
-		params.start = (curPage * 30);
-		params.end = (curPage * 30) + 30;
-		let url = getCallUrl("/appendData");
-		AUIGrid.showAjaxLoader(myGridID);
-		call(url, params, function(data) {
-			if (data.list.length == 0) {
-				last = true;
-				alert("마지막 데이터 입니다.");
-				AUIGrid.removeAjaxLoader(myGridID);
-			} else {
-				AUIGrid.appendData(myGridID, data.list);
-				AUIGrid.removeAjaxLoader(myGridID);
-				$("input[name=curPage]").val(parseInt(curPage) + 1);
-			}
-		})
-	}
+// 	function requestAdditionalData() {
+// 		let params = new Object();
+// 		let curPage = $("input[name=curPage]").val();
+// 		params.sessionid = $("input[name=sessionid]").val();
+// 		params.start = (curPage * 30);
+// 		params.end = (curPage * 30) + 30;
+// 		let url = getCallUrl("/appendData");
+// 		AUIGrid.showAjaxLoader(myGridID);
+// 		call(url, params, function(data) {
+// 			if (data.list.length == 0) {
+// 				last = true;
+// 				alert("마지막 데이터 입니다.");
+// 				AUIGrid.removeAjaxLoader(myGridID);
+// 			} else {
+// 				AUIGrid.appendData(myGridID, data.list);
+// 				AUIGrid.removeAjaxLoader(myGridID);
+// 				$("input[name=curPage]").val(parseInt(curPage) + 1);
+// 			}
+// 		})
+// 	}
 
 	$(function() {
 		// resize ...
