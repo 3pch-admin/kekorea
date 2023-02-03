@@ -203,7 +203,7 @@
 		// 등록페이지
 		$("#createBtn").click(function() {
 			let url = getCallUrl("/jDrawing/create");
-			popup(url, 1200, 900);
+			popup(url, 1200, 760);
 		})
 
 	}).keypress(function(e) {

@@ -178,13 +178,13 @@ UserData data = (UserData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/document/listDocument');">문서 조회</a>
+						<a onclick="moveToPage(this, '/document/list');">문서 조회</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/document/listDocument');">산출물 조회</a>
 					</li>
 					<li>
-						<a href="invoice.html">수배표 조회</a>
+						<a onclick="moveToPage(this, '/partlist/list');">수배표 조회</a>
 					</li>
 					<li>
 						<a href="login.html">의뢰서 조회</a>
@@ -221,9 +221,6 @@ UserData data = (UserData) request.getAttribute("data");
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/cssheet/list');">CS SHEET 조회</a>
-					</li>
-					<li>
-						<a onclick="moveToPage(this, '/cip/create');">CIP 등록</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/cip/list');">CIP 조회</a>

@@ -8,13 +8,12 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
-import e3ps.project.Project;
 import wt.content.ContentHolder;
-import wt.fc.WTObject;
+import wt.fc.Item;
 import wt.ownership.Ownable;
 import wt.util.WTException;
 
-@GenAsPersistable(superClass = WTObject.class, interfaces = { Ownable.class, ContentHolder.class },
+@GenAsPersistable(superClass = Item.class, interfaces = { Ownable.class, ContentHolder.class },
 		// 수정자...
 		properties = {
 

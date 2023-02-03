@@ -77,7 +77,8 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 			rowNumHeaderText : "번호",
 			showRowCheckColumn : true, // 체크 박스 출력,
 			fillColumnSizeMode : true,
-			editable : true
+			editable : true,
+			showStateColumn : true,
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
