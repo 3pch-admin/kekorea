@@ -16,7 +16,7 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 		</td>
 		<td class="right">
 			<input type="button" value="등록" id="createBtn" title="등록">
-			<input type="button" value="닫기ㅊ" id="closeBtn" title="닫기" class="blueBtn">
+			<input type="button" value="닫기" id="closeBtn" title="닫기" class="blueBtn">
 		</td>
 	</tr>
 </table>

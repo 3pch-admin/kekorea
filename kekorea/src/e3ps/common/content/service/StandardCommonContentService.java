@@ -21,7 +21,6 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import e3ps.common.content.Contents;
 import e3ps.common.content.ContentsPersistablesLink;
 import e3ps.common.util.ContentUtils;
-import e3ps.common.util.MessageHelper;
 import e3ps.common.util.StringUtils;
 import e3ps.common.util.ZipUtils;
 import wt.content.ApplicationData;
@@ -45,7 +44,7 @@ import wt.util.FileUtil;
 import wt.util.WTException;
 import wt.util.WTProperties;
 
-public class StandardContentService extends StandardManager implements ContentService, MessageHelper {
+public class StandardCommonContentService extends StandardManager implements CommonContentService {
 
 	private static String downRoot;
 	private static String temp;
@@ -81,8 +80,8 @@ public class StandardContentService extends StandardManager implements ContentSe
 
 	private static final String ALL_UPLOAD_KEY = "allContent";
 
-	public static StandardContentService newStandardContentService() throws WTException {
-		StandardContentService instance = new StandardContentService();
+	public static StandardCommonContentService newStandardCommonContentService() throws WTException {
+		StandardCommonContentService instance = new StandardCommonContentService();
 		instance.initialize();
 		return instance;
 	}
@@ -459,14 +458,12 @@ public class StandardContentService extends StandardManager implements ContentSe
 
 			File rtnFile = new File(downRoot + File.separator + "zip" + File.separator + zipFileName);
 
-			map.put("result", SUCCESS);
 			// 다운 URL
 			map.put("url", "/Windchill/jsp/temp/pdm/zip/" + rtnFile.getName());
 
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			map.put("msg", "다운로드 중 에러가 발생 하였습니다.\n시스템 관리자에게 문의하세요.");
 			// map.put("url", "/Windchill/plm/EPM/listEpm");
 			e.printStackTrace();
@@ -502,14 +499,12 @@ public class StandardContentService extends StandardManager implements ContentSe
 				primary = ContentUtils.getPrimary(contents);
 			}
 
-			map.put("result", SUCCESS);
 			// 다운 URL
 			map.put("url", primary[5]);
 
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			map.put("msg", "다운로드 중 에러가 발생 하였습니다.\n시스템 관리자에게 문의하세요.");
 			// map.put("url", "/Windchill/plm/EPM/listEpm");
 			e.printStackTrace();
@@ -672,14 +667,12 @@ public class StandardContentService extends StandardManager implements ContentSe
 
 			File rtnFile = new File(downRoot + File.separator + "zip" + File.separator + zipFileName);
 
-			map.put("result", SUCCESS);
 			// 다운 URL
 			map.put("url", "/Windchill/jsp/temp/pdm/zip/" + rtnFile.getName());
 
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			map.put("msg", "다운로드 중 에러가 발생 하였습니다.\n시스템 관리자에게 문의하세요.");
 			// map.put("url", "/Windchill/plm/EPM/listEpm");
 			e.printStackTrace();
@@ -744,14 +737,12 @@ public class StandardContentService extends StandardManager implements ContentSe
 
 			File rtnFile = new File(downRoot + File.separator + "zip" + File.separator + zipFileName);
 
-			map.put("result", SUCCESS);
 			// 다운 URL
 			map.put("url", "/Windchill/jsp/temp/pdm/zip/" + rtnFile.getName());
 
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			map.put("msg", "다운로드 중 에러가 발생 하였습니다.\n시스템 관리자에게 문의하세요.");
 			// map.put("url", "/Windchill/plm/EPM/listEpm");
 			e.printStackTrace();
@@ -844,18 +835,109 @@ public class StandardContentService extends StandardManager implements ContentSe
 
 			File rtnFile = new File(downRoot + File.separator + "zip" + File.separator + zipFileName);
 
-			map.put("result", SUCCESS);
 			// 다운 URL
 			map.put("url", "/Windchill/jsp/temp/pdm/zip/" + rtnFile.getName());
 
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			map.put("msg", "다운로드 중 에러가 발생 하였습니다.\n시스템 관리자에게 문의하세요.");
 			// map.put("url", "/Windchill/plm/EPM/listEpm");
 			e.printStackTrace();
 			trs.rollback();
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+		return map;
+	}
+
+	@Override
+	public Map<String, Object> upload(HttpServletRequest request) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		Transaction trs = new Transaction();
+		try {
+
+			int limit = 1024 * 1024 * 1024;
+			MultipartRequest multi = new MultipartRequest(request, temp, limit, "UTF-8", new DefaultFileRenamePolicy());
+
+			String roleType = multi.getParameter("roleType");
+			String origin = multi.getOriginalFileName(roleType);
+			String name = multi.getFilesystemName(roleType);
+
+			String ext = FileUtil.getExtension(origin);
+			String fullPath = temp + File.separator + name;
+
+			map.put("name", origin);
+			map.put("fullPath", fullPath);
+			map.put("icon", CommonContentHelper.manager.getIconPath(ext));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+		return map;
+	}
+
+	@Override
+	public Map<String, Object> auiPreview(HttpServletRequest request) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		Transaction trs = new Transaction();
+		try {
+
+			int limit = 1024 * 1024 * 1024;
+			MultipartRequest multi = new MultipartRequest(request, temp, limit, "UTF-8", new DefaultFileRenamePolicy());
+
+			String roleType = multi.getParameter("roleType");
+			String origin = multi.getOriginalFileName(roleType);
+			String name = multi.getFilesystemName(roleType);
+
+			String ext = FileUtil.getExtension(origin);
+			String fullPath = temp + File.separator + name;
+
+			map.put("name", origin);
+			map.put("fullPath", fullPath);
+			map.put("base64", ContentUtils.imageToBase64(new File(fullPath), ext));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+		return map;
+	}
+
+	@Override
+	public Map<String, Object> auiUpload(HttpServletRequest request) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		Transaction trs = new Transaction();
+		try {
+
+			int limit = 1024 * 1024 * 1024;
+			MultipartRequest multi = new MultipartRequest(request, temp, limit, "UTF-8", new DefaultFileRenamePolicy());
+
+			String roleType = multi.getParameter("roleType");
+			String origin = multi.getOriginalFileName(roleType);
+			String name = multi.getFilesystemName(roleType);
+
+			String ext = FileUtil.getExtension(origin);
+			String fullPath = temp + File.separator + name;
+
+			map.put("name", origin);
+			map.put("fullPath", fullPath);
+			map.put("icon", CommonContentHelper.manager.getIconPath(ext));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
 		} finally {
 			if (trs != null)
 				trs.rollback();

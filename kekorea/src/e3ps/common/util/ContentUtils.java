@@ -1,12 +1,21 @@
 package e3ps.common.util;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.commons.io.FileUtils;
+
+import com.ptc.wvs.server.util.FileHelper;
 import com.ptc.wvs.server.util.PublishUtils;
 
+import e3ps.korea.cip.Cip;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
 import wt.content.ContentHolder;
@@ -25,7 +34,6 @@ import wt.representation.Representation;
 import wt.session.SessionHelper;
 import wt.util.FileUtil;
 import wt.util.IconSelector;
-import wt.util.WTException;
 
 /**
  * @author user
@@ -651,5 +659,72 @@ public class ContentUtils {
 
 		data.setFileName(fname);
 		PersistenceHelper.manager.modify(data);
+	}
+
+	public static String imageToBase64(File image, String ext) throws Exception {
+		String base64 = Base64.getEncoder().encodeToString(loadFileAsBytesArray(image));
+		return "data:image/" + ext + ";base64," + base64;
+	}
+
+	private static byte[] loadFileAsBytesArray(File file) throws Exception {
+		int length = (int) file.length();
+		BufferedInputStream reader = new BufferedInputStream(new FileInputStream(file));
+		byte[] bytes = new byte[length];
+		reader.read(bytes, 0, length);
+		reader.close();
+		return bytes;
+	}
+
+	public static void savePrimary(ContentHolder holder, String path) throws Exception {
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
+		if (result.hasMoreElements()) {
+			ContentItem item = (ContentItem) result.nextElement();
+			ContentServerHelper.service.deleteContent(holder, item);
+		}
+
+		ApplicationData data = ApplicationData.newApplicationData(holder);
+		data.setRole(ContentRoleType.PRIMARY);
+		data = (ApplicationData) ContentServerHelper.service.updateContent(holder, data, path);
+	}
+
+	public static void saveSecondary(ContentHolder holder, ArrayList<String> secondaryPaths) throws Exception {
+		if (secondaryPaths.isEmpty()) {
+			return;
+		}
+
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.SECONDARY);
+		while (result.hasMoreElements()) {
+			ContentItem item = (ContentItem) result.nextElement();
+			ContentServerHelper.service.deleteContent(holder, item);
+		}
+
+		for (String path : secondaryPaths) {
+			ApplicationData data = ApplicationData.newApplicationData(holder);
+			data.setRole(ContentRoleType.SECONDARY);
+			data = (ApplicationData) ContentServerHelper.service.updateContent(holder, data, path);
+		}
+	}
+
+	public static String getPreViewBase64(String oid) throws Exception {
+		ContentHolder holder = (ContentHolder) CommonUtils.getObject(oid);
+		return getPreViewBase64(holder);
+	}
+
+	public static String getPreViewBase64(ContentHolder holder) throws Exception {
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
+		if (result.hasMoreElements()) {
+			ContentItem item = (ContentItem) result.nextElement();
+			if (item instanceof ApplicationData) {
+				ApplicationData data = (ApplicationData) item;
+				String ext = FileUtil.getExtension(data.getFileName());
+				InputStream is = ContentServerHelper.service.findLocalContentStream(data);
+				File tempFile = File.createTempFile(String.valueOf(is.hashCode()), ".tmp");
+				tempFile.deleteOnExit();
+				FileUtils.copyInputStreamToFile(is, tempFile);
+				String base64 = Base64.getEncoder().encodeToString(loadFileAsBytesArray(tempFile));
+				return "data:image/" + ext + ";base64," + base64;
+			}
+		}
+		return null;
 	}
 }

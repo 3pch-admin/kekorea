@@ -80,10 +80,19 @@ function selectBox(name) {
  * 팝업창
  */
 function popup(url, width, height) {
-	var popW = width;
-	var popH = height;
-	var left = (screen.width - popW) / 2;
-	var top = (screen.height - popH) / 2;
+
+	if (width === undefined) {
+		width = screen.availWidth;
+	}
+
+	if (height === undefined) {
+		height = screen.availHeight;
+	}
+
+	let popW = width;
+	let popH = height;
+	let left = (screen.width - popW) / 2;
+	let top = (screen.height - popH) / 2;
 	window.open(url, "", "top=" + top + ", left=" + left + ", height=" + popH + ", width=" + popW);
 }
 

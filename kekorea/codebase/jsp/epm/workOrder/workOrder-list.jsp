@@ -72,21 +72,16 @@
 	let myGridID;
 	const columns = [ {
 		dataField : "name",
-		headerText : "DRAWING TITLE",
+		headerText : "도면일람표 번호",
 		dataType : "string",
+		width : 200
 	}, {
 		dataField : "number",
-		headerText : "DWG. NO",
+		headerText : "도면일람표 명",
 		dataType : "string",
-		width : 300
 	}, {
 		dataField : "latest",
-		headerText : "최신버전여부",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "version",
-		headerText : "REV",
+		headerText : "작번",
 		dataType : "string",
 		width : 100
 	}, {
@@ -97,17 +92,6 @@
 	}, {
 		dataField : "createdDate",
 		headerText : "등록일",
-		dataType : "date",
-		formatString : "yyyy-mm-dd",
-		width : 100
-	}, {
-		dataField : "modifier",
-		headerText : "수정자",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "modifiedDate",
-		headerText : "수정일",
 		dataType : "date",
 		formatString : "yyyy-mm-dd",
 		width : 100
@@ -125,7 +109,6 @@
 			rowHeight : 30,
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
-			showRowCheckColumn : true, // 체크 박스 출력
 			fillColumnSizeMode : true
 		};
 
@@ -137,7 +120,7 @@
 
 	function loadGridData() {
 		let params = new Object();
-		let url = getCallUrl("/jDrawing/list");
+		let url = getCallUrl("/workOrder/list");
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
@@ -188,8 +171,8 @@
 
 		// 등록페이지
 		$("#createBtn").click(function() {
-			let url = getCallUrl("/jDrawing/create");
-			popup(url, 1200, 900);
+			let url = getCallUrl("/workOrder/create");
+			popup(url, 1400, 900);
 		})
 
 	}).keypress(function(e) {

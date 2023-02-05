@@ -12,7 +12,7 @@ import e3ps.approval.ApprovalContractPersistableLink;
 import e3ps.approval.ApprovalLine;
 import e3ps.approval.ApprovalMaster;
 import e3ps.approval.service.ApprovalHelper;
-import e3ps.common.content.service.ContentHelper;
+import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
@@ -173,7 +173,7 @@ public class StandardDocumentService extends StandardManager implements Document
 				param.put("number", document.getNumber());
 			}
 
-			ContentHelper.service.createContents(param);
+			CommonContentHelper.service.createContents(param);
 
 			map.put("result", SUCCESS);
 			map.put("msg", "문서가 " + CREATE_OK);
@@ -386,7 +386,7 @@ public class StandardDocumentService extends StandardManager implements Document
 				param.put("number", document.getNumber());
 			}
 
-			ContentHelper.service.createContents(param);
+			CommonContentHelper.service.createContents(param);
 
 			map.put("reload", true);
 			map.put("result", SUCCESS);
@@ -492,7 +492,7 @@ public class StandardDocumentService extends StandardManager implements Document
 				param.put("number", req.getNumber());
 			}
 
-			ContentHelper.service.createContents(param);
+			CommonContentHelper.service.createContents(param);
 
 			map.put("reload", true);
 			map.put("result", SUCCESS);
@@ -837,7 +837,7 @@ public class StandardDocumentService extends StandardManager implements Document
 				param.put("number", document.getNumber());
 			}
 
-			ContentHelper.service.createContents(param);
+			CommonContentHelper.service.createContents(param);
 
 			// erp sample
 			// ErpHelper.service.sendOutputToERP(document);

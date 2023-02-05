@@ -10,6 +10,8 @@ import e3ps.admin.sheetvariable.beans.CategoryColumnData;
 import e3ps.admin.spec.Spec;
 import e3ps.admin.spec.beans.SpecColumnData;
 import e3ps.doc.column.DocumentColumnData;
+import e3ps.korea.cip.Cip;
+import e3ps.korea.cip.beans.CipColumnData;
 import e3ps.project.Project;
 import e3ps.project.beans.ProjectColumnData;
 import wt.doc.WTDocument;
@@ -44,6 +46,10 @@ public class ColumnParseUtils {
 			} else if (per instanceof Project) {
 				ProjectColumnData data = parse((Project) per);
 				list.add(data);
+				// Cip
+			} else if(per instanceof Cip) {
+				CipColumnData data = parse((Cip)per));
+				list.add(data);
 			}
 		}
 		return list;
@@ -67,5 +73,9 @@ public class ColumnParseUtils {
 
 	private static ProjectColumnData parse(Project per) throws Exception {
 		return new ProjectColumnData(per);
+	}
+
+	private static CipColumnData parse(Cip per) throws Exception {
+		return new CipColumnData(per);
 	}
 }

@@ -17,7 +17,7 @@ import e3ps.doc.service.DocumentHelper;
 @Controller
 @RequestMapping(value = "/doc/**")
 public class DocumentController {
-	
+
 	@Description("문서 조회 페이지")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
@@ -29,18 +29,17 @@ public class DocumentController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value= "/list", method = RequestMethod.POST)
+	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			result = DocumentHelper.manager.find(params);
 			result.put("result", true);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", false);
 			result.put("msg", e.toString());
 		}
 		return result;
 	}
-	
 }

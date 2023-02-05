@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import e3ps.approval.service.ApprovalHelper;
-import e3ps.common.content.service.ContentHelper;
+import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
@@ -337,7 +337,7 @@ public class StandardPartListMasterService extends StandardManager implements Pa
 				param.put("number", master.getNumber());
 			}
 
-			ContentHelper.service.createContents(param);
+			CommonContentHelper.service.createContents(param);
 
 			map.put("reload", true);
 			map.put("result", SUCCESS);

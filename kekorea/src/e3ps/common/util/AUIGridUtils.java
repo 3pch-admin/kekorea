@@ -5,7 +5,15 @@ import java.util.Map;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.admin.spec.service.SpecHelper;
+import e3ps.common.content.service.CommonContentHelper;
 import e3ps.project.service.ProjectHelper;
+import wt.content.ApplicationData;
+import wt.content.ContentHelper;
+import wt.content.ContentHolder;
+import wt.content.ContentRoleType;
+import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
+import wt.util.FileUtil;
 
 public class AUIGridUtils {
 
@@ -23,10 +31,28 @@ public class AUIGridUtils {
 			list = ProjectHelper.manager.remoter(term);
 		} else if (target.contains("spec")) {
 			list = SpecHelper.manager.remoter(term, target);
-		} else if(target.contains("code")) {
+		} else if (target.contains("code")) {
 			list = CommonCodeHelper.manager.remoter(term);
 		}
 
 		return list;
+	}
+
+	public static String primaryTemplate(ContentHolder holder) throws Exception {
+		String template = null;
+
+		return template;
+	}
+
+	public static String secondaryTemplate(ContentHolder holder) throws Exception {
+		String template = "";
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.SECONDARY);
+		while (result.hasMoreElements()) {
+			ApplicationData data = (ApplicationData) result.nextElement();
+			String ext = FileUtil.getExtension(data.getFileName());
+			String icon = CommonContentHelper.manager.getIconPath(ext);
+			template += "<a><img src=" + icon + "></a>&nbsp;";
+		}
+		return template;
 	}
 }

@@ -9,7 +9,7 @@ import wt.method.RemoteInterface;
 import wt.util.WTException;
 
 @RemoteInterface
-public interface ContentService {
+public interface CommonContentService {
 
 	/**
 	 * 첨부 파일 업로드 서버
@@ -108,5 +108,11 @@ public interface ContentService {
 	 * @throws WTException
 	 */
 	public abstract Map<String, Object> downContentAll(Map<String, Object> param) throws WTException;
+
+	public abstract Map<String, Object> upload(HttpServletRequest request) throws Exception;
+
+	public abstract Map<String, Object> auiPreview(HttpServletRequest request) throws Exception;
+
+	public abstract Map<String, Object> auiUpload(HttpServletRequest request) throws Exception;
 
 }

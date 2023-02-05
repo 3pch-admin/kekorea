@@ -31,7 +31,7 @@
 <script type="text/javascript" src="/Windchill/jsp/asset/radio/dist/jquery.checks.js"></script>
 
 <!-- upload -->
-<script type="text/javascript" src="/Windchill/jsp/js/upload.js"></script>
+<!-- <script type="text/javascript" src="/Windchill/jsp/js/upload.js"></script> -->
 
 <!-- tree -->
 <script type="text/javascript" src="/Windchill/jsp/asset/fancytree/src/jquery.fancytree.js"></script>
