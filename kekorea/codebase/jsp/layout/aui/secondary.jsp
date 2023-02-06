@@ -20,7 +20,7 @@ String oid = (String) request.getAttribute("oid");
 		<th>첨부파일</th>
 		<td>
 			<div class="AXUpload5" id="secondary_layer"></div>
-			<div class="AXUpload5QueueBox_list" id="uploadQueueBox" style="height: 300px;"></div>
+			<div class="AXUpload5QueueBox_list" id="uploadQueueBox" style="height: 290px;"></div>
 		</td>
 	</tr>
 </table>

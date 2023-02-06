@@ -118,7 +118,7 @@ String userId = (String) request.getAttribute("userId");
 			</td>
 		</tr>
 	</table>
-	<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+	<div id="grid_wrap" style="height: 700px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;
@@ -378,7 +378,8 @@ String userId = (String) request.getAttribute("userId");
 			showRowCheckColumn : true,
 			noDataMessage : "검색 결과가 없습니다.",
 			enableFilter : true,
-			fixedColumnCount : 3
+			fixedColumnCount : 3,
+			editableOnFixedCell : true
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		loadGridData();

@@ -27,23 +27,22 @@ public class StandardSpecService extends StandardManager implements SpecService 
 		try {
 			trs.start();
 
+			int key = 0;
 			for (Map<String, Object> addRow : addRows) {
 				String name = (String) addRow.get("name");
 				int sort = (int) addRow.get("sort");
-				boolean config = (boolean) addRow.get("config");
-				boolean history = (boolean) addRow.get("history");
 				boolean enable = (boolean) addRow.get("enable");
 
 				Spec spec = Spec.newSpec();
-				spec.setColumn("spec_" + sort);
+				spec.setColumnKey("COLUMN_" + key);
 				spec.setName(name);
 				spec.setSort(sort);
 				spec.setLatest(true);
-				spec.setHistroy(history);
-				spec.setConfig(config);
 				spec.setEnable(enable);
 				spec.setVersion(1);
+				spec.setOwnership(CommonUtils.sessionOwner());
 				PersistenceHelper.manager.save(spec);
+				key++;
 			}
 
 			for (Map<String, Object> removeRow : removeRows) {
@@ -56,8 +55,6 @@ public class StandardSpecService extends StandardManager implements SpecService 
 				String oid = (String) editRow.get("oid");
 				String name = (String) editRow.get("name");
 				int sort = (int) editRow.get("sort");
-				boolean history = (boolean) editRow.get("history");
-				boolean config = (boolean) editRow.get("config");
 				boolean enable = (boolean) editRow.get("enable");
 
 				Spec pre = (Spec) CommonUtils.getObject(oid);
@@ -65,11 +62,9 @@ public class StandardSpecService extends StandardManager implements SpecService 
 				PersistenceHelper.manager.modify(pre);
 
 				Spec latest = Spec.newSpec();
-				latest.setColumn("spec_" + sort);
+				latest.setColumnKey(pre.getColumnKey()); // 키 값은 불변으로 한다
 				latest.setName(name);
 				latest.setSort(sort);
-				latest.setHistroy(history);
-				latest.setConfig(config);
 				latest.setEnable(enable);
 				latest.setLatest(true);
 				latest.setVersion(pre.getVersion() + 1);

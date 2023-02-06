@@ -11,7 +11,6 @@ import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import e3ps.admin.commonCode.CommonCode;
 import wt.fc.WTObject;
-import wt.org.WTUser;
 import wt.ownership.Ownable;
 import wt.util.WTException;
 
@@ -21,7 +20,9 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "number", type = String.class, javaDoc = "도면번호", columnProperties = @ColumnProperties(columnName = "documentNumber"), constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "name", type = String.class, javaDoc = "도면명", constraints = @PropertyConstraints(required = true))
+				@GeneratedProperty(name = "name", type = String.class, javaDoc = "도면명", constraints = @PropertyConstraints(required = true)),
+
+				@GeneratedProperty(name = "version", type = Integer.class, javaDoc = "버전", initialValue = "1", constraints = @PropertyConstraints(required = true))
 
 		},
 

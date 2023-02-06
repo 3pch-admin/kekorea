@@ -1,5 +1,7 @@
 package e3ps.admin.spec.beans;
 
+import java.sql.Timestamp;
+
 import e3ps.admin.spec.Options;
 import e3ps.admin.spec.Spec;
 import e3ps.admin.spec.SpecOptionsLink;
@@ -15,8 +17,8 @@ public class SpecColumnData {
 	private int sort;
 	private int version;
 	private boolean enable;
-	private boolean config;
-	private boolean history;
+	private String creator;
+	private Timestamp createdDate;
 	private String oname;
 	private int osort;
 
@@ -28,9 +30,9 @@ public class SpecColumnData {
 		setOid(spec.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(spec.getName());
 		setSort(spec.getSort());
-		setEnable(spec.isEnable());
-		setConfig(spec.isConfig());
-		setHistory(spec.isHistroy());
+		setEnable(spec.getEnable());
+		setCreator(spec.getOwnership().getOwner().getFullName());
+		setCreatedDate(spec.getCreateTimestamp());
 		setVersion(spec.getVersion());
 		if (link != null) {
 			Options options = link.getOptions();

@@ -40,12 +40,14 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 		headerText : "발행일",
 		dataType : "date",
 		formatString : "yyyy-mm-dd",
-		width : 120
+		width : 120,
+		editable : false
 	}, {
-		dataField : "line",
-		headerText : "LINE",
+		dataField : "install",
+		headerText : "설치장소",
 		dataType : "string",
-		width : 100
+		width : 100,
+		editable : false
 	}, {
 		dataField : "kekNumber",
 		headerText : "KEK작번",
@@ -75,7 +77,8 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 		dataField : "ke_number",
 		headerText : "KE작번",
 		dataType : "string",
-		width : 140
+		width : 140,
+		editable : false
 	}, {
 		dataField : "tuv",
 		headerText : "TUV유무",
@@ -130,7 +133,8 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 				showRowCheckColumn : true, // 체크 박스 출력
 				fixedColumnCount : 5,
 				editable : true,
-				editableOnFixedCell : true
+				editableOnFixedCell : true,
+				showStateColumn : true,
 			};
 			myGridID = AUIGrid.create("#grid_wrap", columns, props);
 			// 그리드 데이터 로딩
@@ -150,7 +154,7 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 
 	function loadGridData() {
 		let params = new Object();
-		let url = getCallUrl("/commonCode/list");
+		let url = getCallUrl("/history/list");
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
@@ -198,24 +202,10 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 			loadGridData();
 		})
 
-		// 그리드 행 추가
+
 		$("#addRowBtn").click(function() {
 			let item = new Object();
-			AUIGrid.addRow(myGridID, item, "last");
-		})
-
-		$("#saveBtn").click(function() {
-			let addRows = AUIGrid.getAddedRowItems(myGridID);
-			let removeRows = AUIGrid.getRemovedItems(myGridID);
-			let editRows = AUIGrid.getEditedRowItems(myGridID);
-			let params = new Object();
-			let url = getCallUrl("/commonCode/create");
-			params.addRows = addRows;
-			params.removeRows = removeRows;
-			params.editRows = editRows;
-			call(url, params, function(data) {
-
-			}, "POST");
+			AUIGrid.addRow(myGridID, item, "first");
 		})
 
 		// 그리드 행 삭제
@@ -226,6 +216,21 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 				AUIGrid.removeRow(myGridID, rowIndex);
 			}
 		})
+
+		$("#saveBtn").click(function() {
+			let addRows = AUIGrid.getAddedRowItems(myGridID);
+			let removeRows = AUIGrid.getRemovedItems(myGridID);
+			let editRows = AUIGrid.getEditedRowItems(myGridID);
+			let params = new Object();
+			let url = getCallUrl("/history/create");
+			params.addRows = addRows;
+			params.removeRows = removeRows;
+			params.editRows = editRows;
+			call(url, params, function(data) {
+
+			}, "POST");
+		})
+
 	}).keypress(function(e) {
 		let keyCode = e.keyCode;
 		if (keyCode == 13) {

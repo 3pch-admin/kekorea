@@ -35,8 +35,8 @@ public class ColumnParseUtils {
 				list.add(data);
 				// 사양
 			} else if (per instanceof Spec) {
-				SpecColumnData data = parse((Spec) per);
-				list.add(data);
+//				SpecColumnData data = parse((Spec) per);
+//				list.add(data);
 				// CS 카테고리
 			} else if (per instanceof Category) {
 				CategoryItemsLink link = (CategoryItemsLink) obj[1];
@@ -47,8 +47,8 @@ public class ColumnParseUtils {
 				ProjectColumnData data = parse((Project) per);
 				list.add(data);
 				// Cip
-			} else if(per instanceof Cip) {
-				CipColumnData data = parse((Cip)per));
+			} else if (per instanceof Cip) {
+				CipColumnData data = parse((Cip) per);
 				list.add(data);
 			}
 		}
@@ -59,9 +59,9 @@ public class ColumnParseUtils {
 		return new CategoryColumnData(per, link);
 	}
 
-	private static SpecColumnData parse(Spec per) throws Exception {
-		return new SpecColumnData(per);
-	}
+//	private static SpecColumnData parse(Spec per) throws Exception {
+//		return new SpecColumnData(per);
+//	}
 
 	private static CommonCodeColumnData parse(CommonCode per) throws Exception {
 		return new CommonCodeColumnData(per);

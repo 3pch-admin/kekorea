@@ -31,7 +31,7 @@ String oid = (String) request.getAttribute("oid");
 			</td>
 		</tr>
 	</table>
-	<div id="grid_wrap" style="height: 740px; border-top: 1px solid #3180c3;"></div>
+	<div id="grid_wrap" style="height: 600px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;
@@ -145,15 +145,6 @@ String oid = (String) request.getAttribute("oid");
 		})
 
 		$("#saveBtn").click(function() {
-			let nameValid = AUIGrid.validateGridData(myGridID, [ "name" ], "아이템 명을 입력하세요.");
-			if (!nameValid) {
-				return false;
-			}
-
-			let sortValid = AUIGrid.validateGridData(myGridID, [ "sort" ], "아이템 정렬 순서를 입력하세요.");
-			if (!sortValid) {
-				return false;
-			}
 			let addRows = AUIGrid.getAddedRowItems(myGridID);
 			let removeRows = AUIGrid.getRemovedItems(myGridID);
 			let editRows = AUIGrid.getEditedRowItems(myGridID);

@@ -1,18 +1,25 @@
 package e3ps.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.util.ColumnParseUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.org.beans.UserData;
+import wt.fc.PagingQueryResult;
+import wt.fc.PagingSessionHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -81,5 +88,25 @@ public class IndexController extends BaseController {
 		model.addObject("base64", base64);
 		model.setViewName("popup:/layout/aui/thumbnail");
 		return model;
+	}
+
+	@RequestMapping(value = "/appendData")
+	@ResponseBody
+	public Map<String, Object> appendData(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		String sessionid = (String) params.get("sessionid");
+		int start = (int) params.get("start");
+		int end = (int) params.get("end");
+		try {
+			PagingQueryResult qr = PagingSessionHelper.fetchPagingSession(start, end, Long.parseLong(sessionid));
+			ArrayList list = ColumnParseUtils.parse(qr);
+			result.put("list", list);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
 	}
 }

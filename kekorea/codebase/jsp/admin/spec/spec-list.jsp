@@ -11,7 +11,7 @@
 <!-- auigrid -->
 <%@include file="/jsp/include/auigrid.jsp"%>
 </head>
-<body onload="loadGridData();">
+<body>
 	<input type="hidden" name="sessionid" id="sessionid">
 	<input type="hidden" name="curPage" id="curPage">
 	<!-- button table -->
@@ -51,14 +51,13 @@
 		dataField : "name",
 		headerText : "사양 명",
 		dataType : "string",
-		width : 300,
 		cellMerge : true,
 	}, {
 		dataField : "version",
 		headerText : "버전",
 		dataType : "numeric",
 		formatString : "###0",
-		width : 80,
+		width : 100,
 		editable : false,
 		cellMerge : true,
 		mergeRef : "name",
@@ -68,7 +67,7 @@
 		headerText : "순서",
 		dataType : "numeric",
 		formatString : "###0",
-		width : 80,
+		width : 100,
 		editRenderer : {
 			type : "InputEditRenderer",
 			onlyNumeric : true, // 0~9만 입력가능
@@ -77,37 +76,32 @@
 		mergeRef : "name",
 		mergePolicy : "restrict"
 	}, {
-		dataField : "config",
-		headerText : "CONFIG SHEET 사용여부",
-		dataType : "boolean",
-		width : 130,
-		renderer : {
-			type : "CheckBoxEditRenderer",
-			editable : true, // 체크박스 편집 활성화 여부(기본값 : false)
-		},
-		cellMerge : true,
-		mergeRef : "name",
-		mergePolicy : "restrict"
-	}, {
-		dataField : "history",
-		headerText : "이력 관리 사용여부",
-		dataType : "boolean",
-		width : 130,
-		renderer : {
-			type : "CheckBoxEditRenderer",
-			editable : true, // 체크박스 편집 활성화 여부(기본값 : false)
-		},
-		cellMerge : true,
-		mergeRef : "name",
-		mergePolicy : "restrict"
-	}, {
 		dataField : "enable",
 		headerText : "사용여부",
-		width : 80,
+		width : 100,
 		renderer : {
 			type : "CheckBoxEditRenderer",
 			editable : true, // 체크박스 편집 활성화 여부(기본값 : false)
 		},
+		cellMerge : true,
+		mergeRef : "name",
+		mergePolicy : "restrict"
+	}, {
+		dataField : "creator",
+		headerText : "작성자",
+		dataType : "string",
+		width : 100,
+		editable : false,
+		cellMerge : true,
+		mergeRef : "name",
+		mergePolicy : "restrict"
+	}, {
+		dataField : "createdDate",
+		headerText : "작성일",
+		dataType : "date",
+		formatString : "yyyy-mm-dd",
+		width : 100,
+		editable : false,
 		cellMerge : true,
 		mergeRef : "name",
 		mergePolicy : "restrict"
@@ -115,14 +109,14 @@
 		dataField : "oname",
 		headerText : "아이템 명",
 		dataType : "string",
-		width : 200,
+		width : 350,
 		editable : false,
 	}, {
 		dataField : "osort",
 		headerText : "아이템 정렬 순서",
 		dataType : "numeric",
 		formatString : "###0",
-		width : 100,
+		width : 130,
 		editRenderer : {
 			type : "InputEditRenderer",
 			onlyNumeric : true, // 0~9만 입력가능
@@ -135,23 +129,23 @@
 		visible : false
 	} ]
 
-	const props = {
-		headerHeight : 30,
-		rowHeight : 30,
-		showRowNumColumn : true,
-		rowNumHeaderText : "번호",
-		showRowCheckColumn : true, // 체크 박스 출력
-		fillColumnSizeMode : true, // 화면 꽉채우기
-		editable : true,
-		showStateColumn : true,
-		enableCellMerge : true,
-		cellMergePolicy : "withNull",
-		softRemoveRowMode : false,
-	};
-
-	myGridID = AUIGrid.create("#grid_wrap", columns, props);
-	// LazyLoading 바인딩
-	AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+	function createAUIGrid(columns) {
+		const props = {
+			headerHeight : 30,
+			rowHeight : 30,
+			showRowNumColumn : true,
+			rowNumHeaderText : "번호",
+			showRowCheckColumn : true, // 체크 박스 출력
+			editable : true,
+			showStateColumn : true,
+			enableCellMerge : true,
+			cellMergePolicy : "withNull",
+			noDataMessage : "검색 결과가 없습니다.",
+		};
+		myGridID = AUIGrid.create("#grid_wrap", columns, props);
+		loadGridData();
+		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+	}
 
 	function loadGridData() {
 		let params = new Object();
@@ -197,6 +191,8 @@
 	}
 
 	$(function() {
+
+		createAUIGrid(columns);
 		$("#searchBtn").click(function() {
 			loadGridData();
 		})
@@ -204,10 +200,8 @@
 		// 그리드 행 추가
 		$("#addRowBtn").click(function() {
 			let item = new Object();
-			item.config = true;
-			item.history = true;
 			item.enable = true;
-			AUIGrid.addRow(myGridID, item, "last");
+			AUIGrid.addRow(myGridID, item, "first");
 		})
 
 		$("#saveBtn").click(function() {
@@ -220,7 +214,6 @@
 			params.removeRows = removeRows;
 			params.editRows = editRows;
 			parent.open();
-			console.log(params);
 			call(url, params, function(data) {
 				alert(data.msg);
 				if (data.result) {

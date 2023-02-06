@@ -3,6 +3,7 @@ package e3ps.korea.history.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import e3ps.korea.history.History;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.query.QuerySpec;

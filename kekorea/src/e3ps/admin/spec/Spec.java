@@ -6,27 +6,28 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import wt.fc.WTObject;
+import wt.ownership.Ownable;
 import wt.util.WTException;
 
 @GenAsPersistable(superClass = WTObject.class,
 
+		interfaces = { Ownable.class },
+
 		properties = {
 
-				@GeneratedProperty(name = "name", type = String.class, columnProperties = @ColumnProperties(unique = true), constraints = @PropertyConstraints(upperLimit = 2000, required = true)),
+				@GeneratedProperty(name = "name", type = String.class, javaDoc = "사양관리 헤더명", columnProperties = @ColumnProperties(unique = true), constraints = @PropertyConstraints(upperLimit = 2000, required = true)),
 
-				@GeneratedProperty(name = "column", type = String.class, constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "columnKey", type = String.class, javaDoc = "사양관리 칼럼 키 값", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "sort", type = Integer.class, constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "sort", type = Integer.class, javaDoc = "사양관리 정렬 순서", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "latest", type = Boolean.class, initialValue = "true", constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "latest", type = Boolean.class, javaDoc = "최신버전여부", initialValue = "true", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "version", type = Integer.class, initialValue = "1", constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "version", type = Integer.class, javaDoc = "버전", initialValue = "1", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "enable", type = boolean.class, initialValue = "true"),
+				@GeneratedProperty(name = "enable", type = Boolean.class, javaDoc = "사용여부", initialValue = "true")
 
-				@GeneratedProperty(name = "config", type = boolean.class, initialValue = "true"),
-
-				@GeneratedProperty(name = "histroy", type = boolean.class, initialValue = "true"), }
+		}
 
 )
 public class Spec extends _Spec {

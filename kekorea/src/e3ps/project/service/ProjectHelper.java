@@ -3214,20 +3214,6 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 		QuerySpecUtils.toOrderBy(query, idx, Project.class, Project.KEK_NUMBER, false);
 
 		QueryResult result = PersistenceHelper.manager.find(query);
-		Map<String, Object> v = new HashMap<String, Object>();
-		v.put("key", "123");
-		v.put("value", "KCB1775484");
-		list.add(v);
-
-		Map<String, Object> v2 = new HashMap<String, Object>();
-		v2.put("key", "123");
-		v2.put("value", "KCB1775485");
-		list.add(v2);
-
-		Map<String, Object> v3 = new HashMap<String, Object>();
-		v3.put("key", "123");
-		v3.put("value", "KCB1775486");
-		list.add(v3);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			Project project = (Project) obj[0];

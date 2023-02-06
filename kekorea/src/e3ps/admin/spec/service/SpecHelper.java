@@ -101,7 +101,7 @@ public class SpecHelper {
 			Spec spec = (Spec) obj[0];
 
 			Map<String, Object> data = new HashMap<>();
-			data.put("key", spec.getColKey());
+			data.put("key", spec.getColumnKey());
 			data.put("value", spec.getName());
 			list.add(data);
 
@@ -122,7 +122,7 @@ public class SpecHelper {
 				WTAttributeNameIfc.ID_NAME, idx, idx_s);
 		QuerySpecUtils.toInnerJoin(query, SpecOptionsLink.class, Options.class, "roleBObjectRef.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_o);
-		QuerySpecUtils.toEquals(query, idx_s, Spec.class, Spec.COL_KEY, target);
+		QuerySpecUtils.toEquals(query, idx_s, Spec.class, Spec.COLUMN_KEY, target);
 		QuerySpecUtils.toLike(query, idx_o, Options.class, Options.NAME, term);
 		QuerySpecUtils.toOrderBy(query, idx_o, Options.class, Options.SORT, false);
 

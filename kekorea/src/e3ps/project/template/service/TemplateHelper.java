@@ -26,7 +26,7 @@ public class TemplateHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Template.class, true);
 
-		QuerySpecUtils.toOrderBy(query, idx, Template.class, Project.CREATE_TIMESTAMP, false);
+		QuerySpecUtils.toOrderBy(query, idx, Template.class, Template.CREATE_TIMESTAMP, false);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
