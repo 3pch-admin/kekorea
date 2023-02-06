@@ -142,7 +142,7 @@
 		width : 100
 	}, {
 		dataField : "",
-		headerText : "userid",
+		headerText : "user id",
 		dataType : "string",
 		width : 100
 	}, {
