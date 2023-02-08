@@ -34,6 +34,29 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	public static void toLikeLeft(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+		ClassAttribute ca = new ClassAttribute(clazz, column);
+		ColumnExpression ce = ConstantExpression.newExpression("%" + value.toUpperCase());
+		SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
+		SearchCondition sc = new SearchCondition(function, SearchCondition.LIKE, ce);
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	public static void toLikeRight(QuerySpec query, int idx, Class clazz, String column, String value)
+			throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+		ClassAttribute ca = new ClassAttribute(clazz, column);
+		ColumnExpression ce = ConstantExpression.newExpression(value.toUpperCase() + "%");
+		SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
+		SearchCondition sc = new SearchCondition(function, SearchCondition.LIKE, ce);
+		query.appendWhere(sc, new int[] { idx });
+	}
+
 	public static void toLike(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();

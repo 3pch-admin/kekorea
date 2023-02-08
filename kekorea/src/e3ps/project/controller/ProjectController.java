@@ -92,4 +92,23 @@ public class ProjectController extends BaseController {
 		model.setViewName("popup:/project/project-create");
 		return model;
 	}
+	
+	@Description(value = "그리드상 리모터로 프로젝트 정보 가져오기")
+	@ResponseBody
+	@RequestMapping(value = "/get", method = RequestMethod.GET)
+	public Map<String, Object> get(@RequestParam String kekNumber) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = ProjectHelper.manager.get(kekNumber);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+	
 }
+
+

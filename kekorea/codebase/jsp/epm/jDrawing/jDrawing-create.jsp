@@ -25,24 +25,10 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 	</tr>
 </table>
 
-<div id="grid_wrap" style="height: 325px; border-top: 1px solid #3180c3;"></div>
-<br>
-<table class="create_table">
-	<colgroup>
-		<col width="130">
-		<col width="*">
-	</colgroup>
-	<tr>
-		<th>첨부파일</th>
-		<td colspan="1">
-			<!-- upload.js see -->
-			<div class="AXUpload5" id="allUpload_layer"></div>
-			<div class="AXUpload5QueueBox_list" id="uploadQueueBox" style="height: 300px;"></div>
-		</td>
-	</tr>
-</table>
+<div id="grid_wrap" style="height: 490px; border-top: 1px solid #3180c3;"></div>
 <script type="text/javascript">
 	let myGridID;
+	let recentGridItem;
 	const columns = [ {
 		dataField : "name",
 		headerText : "DRAWING TITLE",
@@ -52,6 +38,7 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 		headerText : "DWG. NO",
 		dataType : "string",
 		width : 200,
+		editable : false
 	}, {
 		dataField : "lot",
 		headerText : "LOT",
@@ -65,7 +52,32 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 			type : "InputEditRenderer",
 			onlyNumeric : true, // 0~9만 입력가능
 		},
-		width : 100
+		width : 100,
+		editable : false
+	}, {
+		dataField : "file",
+		headerText : "도면파일",
+		width : 130,
+		editable : false,
+	}, {
+		dataField : "",
+		headerText : "",
+		width : 100,
+		editable : false,
+		renderer : {
+			type : "ButtonRenderer",
+			labelText : "파일선택",
+			onclick : function(rowIndex, columnIndex, value, item) {
+				recentGridItem = item;
+				let url = getCallUrl("/aui/primary?method=attach");
+				popup(url, 1000, 200);
+			}
+		}
+	}, {
+		dataField : "primaryPath",
+		headerText : "",
+		dataType : "string",
+		visible : false
 	} ]
 
 	function createAUIGrid(columnLayout) {
@@ -92,14 +104,28 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 		}
 
 		let rowIndex = selected[0];
-		let colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "numberr");
+		let colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "name");
 		AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex); // ISBN 으로 선택자 이동
 		AUIGrid.openInputer(myGridID);
 	}
 
+	function attach(data) {
+		let name = data.name;
+		let start = name.indexOf("-");
+		let end = name.lastIndexOf(".");
+		let number = name.substring(0, start);
+		let version = name.substring(start + 1, end);
+		AUIGrid.updateRowsById(myGridID, {
+			rowId : recentGridItem.rowId,
+			number : number,
+			version : Number(version),
+			file : name,
+			primaryPath : data.fullPath
+		});
+	}
+
 	$(function() {
 		createAUIGrid(columns);
-		upload.pageStart(null, null, "all");
 
 		$("#closeBtn").click(function() {
 			self.close();
@@ -119,25 +145,11 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 		})
 
 		$("#createBtn").click(function() {
-			let arr = new Array();
-			let dd = $("input[name*=allContent]");
-			let gridData = AUIGrid.getGridData(myGridID);
-			if (dd.length != gridData.length) {
-				alert("첨부파일 개수와 그리드의 데이터 개수를 확인 하세요.");
-				return false;
-			}
-
-			for (let i = 0; i < dd.length; i++) {
-				arr.push(dd[i].value.split("&")[0]);
-			}
-
 			let url = getCallUrl("/jDrawing/create");
 			let addRows = AUIGrid.getAddedRowItems(myGridID);
 			let params = new Object();
-			params.arr = arr;
 			params.addRows = addRows;
-			console.log(params);
-			open();
+			openLayer();
 			call(url, params, function(data) {
 				alert(data.msg);
 				if (data.result) {

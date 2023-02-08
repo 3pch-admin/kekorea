@@ -28,7 +28,7 @@ public class CSSheetController extends BaseController {
 	}
 	
 
-	@Description(value = "CONFIG SHEET 카테고리 리스트 가져 오는 함수")
+	@Description(value = "CONFIG SHEET 리스트 가져 오는 함수")
 	@ResponseBody
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {

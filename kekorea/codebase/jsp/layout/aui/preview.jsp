@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 String oid = (String) request.getAttribute("oid");
+String method = (String)request.getAttribute("method");
 %>
 <!-- button table -->
 <table class="btn_table">
@@ -25,8 +26,7 @@ String oid = (String) request.getAttribute("oid");
 </table>
 <script type="text/javascript">
 	let primary = new AXUpload5();
-	let preView;
-	let preViewPath;
+	let data;
 	function load() {
 		primary.setConfig({
 			isSingleUpload : true,
@@ -40,10 +40,8 @@ String oid = (String) request.getAttribute("oid");
 			},
 			deleteUrl : "/Windchill/plm/content/delete",
 			fileKeys : {},
-			// 			file_types : "image/*",
 			onComplete : function() {
-				preView = this[0].base64;
-				preViewPath = this[0].fullPath;
+				data = this[0];
 			},
 		})
 	}
@@ -52,7 +50,8 @@ String oid = (String) request.getAttribute("oid");
 	$(function() {
 
 		$("#saveBtn").click(function() {
-			opener.setPreView(preView, preViewPath);
+			opener.<%=method%>(data);
+			self.close();
 		})
 	})
 </script>

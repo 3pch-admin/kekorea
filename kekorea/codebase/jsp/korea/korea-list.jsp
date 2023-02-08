@@ -266,15 +266,18 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 		params.end = (curPage * 30) + 30;
 		let url = getCallUrl("/appendData");
 		AUIGrid.showAjaxLoader(myGridID);
+		parent.open();
 		call(url, params, function(data) {
 			if (data.list.length == 0) {
 				last = true;
 				alert("마지막 데이터 입니다.");
 				AUIGrid.removeAjaxLoader(myGridID);
+				parent.close();
 			} else {
 				AUIGrid.appendData(myGridID, data.list);
 				AUIGrid.removeAjaxLoader(myGridID);
 				$("input[name=curPage]").val(parseInt(curPage) + 1);
+				parent.close();
 			}
 		})
 	}

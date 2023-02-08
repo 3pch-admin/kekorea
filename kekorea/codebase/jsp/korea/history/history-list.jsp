@@ -17,21 +17,23 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 <!-- auigrid -->
 <%@include file="/jsp/include/auigrid.jsp"%>
 </head>
-<body>
+<body style="margin-bottom: 0px;">
 	<input type="hidden" name="sessionid" id="sessionid">
 	<input type="hidden" name="curPage" id="curPage">
 	<!-- button table -->
 	<table class="btn_table">
 		<tr>
-			<td class="right">
+			<td class="left">
 				<input type="button" value="추가" class="redBtn" id="addRowBtn" title="추가">
 				<input type="button" value="삭제" class="orangeBtn" id="deleteRowBtn" title="삭제">
-				<input type="button" value="저장" class="" id="saveBtn" title="저장">
+				<input type="button" value="저장" class="blueBtn" id="saveBtn" title="저장">
+			</td>
+			<td class="right">
 				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
 			</td>
 		</tr>
 	</table>
-	<div id="grid_wrap" style="height: 786px; border-top: 1px solid #3180c3;"></div>
+	<div id="grid_wrap" style="height: 785px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;
@@ -56,6 +58,7 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 		editRenderer : {
 			type: "RemoteListRenderer",
 			fieldName: "value",
+			noDataMessage : "검색결과가 없습니다.",
 			showEditorBtnOver: true, // 마우스 오버 시 에디터버턴 보이기
 			remoter: function (request, response) { // remoter 지정 필수
 				if (String(request.term).length < 2) {
@@ -74,7 +77,7 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 			}
 		}
 	}, {
-		dataField : "ke_number",
+		dataField : "keNumber",
 		headerText : "KE작번",
 		dataType : "string",
 		width : 140,
@@ -96,6 +99,7 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 		editRenderer : {
 			type: "RemoteListRenderer",
 			fieldName: "value",
+			noDataMessage : "검색결과가 없습니다.",
 			showEditorBtnOver: true, // 마우스 오버 시 에디터버턴 보이기
 			remoter: function (request, response) { // remoter 지정 필수
 				if (String(request.term).length < 2) {
@@ -107,7 +111,8 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 				let url = getCallUrl("/options/remoter");
 				let params = new Object();
 				params.term = request.term;
-				params.target = "<%=dataField%>";
+				params.columnKey = "<%=dataField%>";
+				params.target = "options";
 				call(url, params, function(data) {
 					response(data.list);
 				}, "POST");
@@ -120,7 +125,13 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 		headerText : "oid",
 		dataType : "string",
 		visible : false
-	} ]
+	},
+	{
+		dataField : "poid",
+		headerText : "poid",
+		dataType : "string",
+		visible : false
+	}]
 
 	
 	function createAUIGrid(columnLayout) {
@@ -143,14 +154,38 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 			AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 			// 셀 편집 종료 이벤트
 			AUIGrid.bind(myGridID, "cellEditEnd", editEndHandler);
+			AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler); 
+	}
+	
+	function auiAddRowHandler(event) {
+		let selected = AUIGrid.getSelectedIndex(myGridID);
+		if (selected.length <= 0) {
+			return;
+		}
+
+		let rowIndex = selected[0];
+		let colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "kekNumber");
+		AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex);
+		AUIGrid.openInputer(myGridID);
 	}
 	
 	function editEndHandler(event) {
-		if (event.type == "cellEditEnd") {
+		let dataField = event.dataField;
+		let item = event.item;
+		
+		if(dataField === "kekNumber") {
+			let url = getCallUrl("/project/get?kekNumber="+item.kekNumber);
+			call(url, null, function(data) {
+				AUIGrid.updateRowsById(myGridID, {
+					oid : item.oid,
+					keNumber : data.keNumber,
+					install : data.install,
+					pDate : data.pDate,
+					poid : data.oid
+				});
+			}, "GET");
 		}
 	};
-
-
 
 	function loadGridData() {
 		let params = new Object();
@@ -226,8 +261,12 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 			params.addRows = addRows;
 			params.removeRows = removeRows;
 			params.editRows = editRows;
+			parent.open();
 			call(url, params, function(data) {
-
+				alert(data.msg);
+				if (data.result) {
+					loadGridData();
+				}
 			}, "POST");
 		})
 

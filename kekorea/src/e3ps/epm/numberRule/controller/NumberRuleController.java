@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -91,5 +92,21 @@ public class NumberRuleController extends BaseController {
 		model.addObject("classificationWritingDepartment", classificationWritingDepartment);
 		model.setViewName("popup:/epm/numberRule/numberRule-create");
 		return model;
+	}
+	
+	@Description(value = "KEK 최종 도번 가져오기")
+	@ResponseBody
+	@RequestMapping(value = "/last", method = RequestMethod.GET)
+	public Map<String, Object> last(@RequestParam String number) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			NumberRuleHelper.manager.last(number);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
 	}
 }

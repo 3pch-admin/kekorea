@@ -80,7 +80,6 @@ function selectBox(name) {
  * 팝업창
  */
 function popup(url, width, height) {
-
 	if (width === undefined) {
 		width = screen.availWidth;
 	}

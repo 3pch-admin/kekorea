@@ -5,17 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import e3ps.admin.sheetvariable.Category;
-import e3ps.admin.sheetvariable.CategoryItemsLink;
-import e3ps.admin.sheetvariable.Items;
-import e3ps.admin.sheetvariable.beans.ItemsColumnData;
 import e3ps.admin.spec.Options;
 import e3ps.admin.spec.Spec;
 import e3ps.admin.spec.SpecOptionsLink;
 import e3ps.admin.spec.beans.OptionsColumnData;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
+import e3ps.common.util.QuerySpecUtils;
 import wt.fc.PagingQueryResult;
+import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.query.ClassAttribute;
 import wt.query.OrderBy;
 import wt.query.QuerySpec;
@@ -77,5 +76,46 @@ public class OptionsHelper {
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
 		return map;
+	}
+
+	public ArrayList<Map<String, Object>> remoter(Map<String, Object> params) throws Exception {
+		String columnKey = (String) params.get("columnKey");
+		String term = (String) params.get("term");
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(SpecOptionsLink.class, true);
+		int idx_o = query.appendClassList(Options.class, true);
+		int idx_s = query.appendClassList(Spec.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, SpecOptionsLink.class, Spec.class, "roleAObjectRef.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_s);
+		QuerySpecUtils.toInnerJoin(query, SpecOptionsLink.class, Options.class, "roleBObjectRef.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_o);
+		QuerySpecUtils.toEquals(query, idx_s, Spec.class, Spec.COLUMN_KEY, columnKey);
+		QuerySpecUtils.toLike(query, idx_o, Options.class, Options.NAME, term);
+		QuerySpecUtils.toOrderBy(query, idx_o, Options.class, Options.SORT, false);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Options options = (Options) obj[1];
+			Map<String, Object> data = new HashMap<>();
+			data.put("key", options.getPersistInfo().getObjectIdentifier().getStringValue());
+			data.put("value", options.getName());
+			list.add(data);
+		}
+		return list;
+	}
+
+	public ArrayList<SpecOptionsLink> getLinks(Spec spec) throws Exception {
+		ArrayList<SpecOptionsLink> list = new ArrayList<>();
+		QueryResult result = PersistenceHelper.manager.navigate(spec, "options", SpecOptionsLink.class, false);
+		while (result.hasMoreElements()) {
+			SpecOptionsLink link = (SpecOptionsLink) result.nextElement();
+			list.add(link);
+		}
+		;
+		return list;
 	}
 }

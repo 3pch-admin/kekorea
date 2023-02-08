@@ -72,7 +72,11 @@ public class CipHelper {
 					customer.getPersistInfo().getObjectIdentifier().getId());
 		}
 
-		QuerySpecUtils.toOrderBy(query, idx, Cip.class, Cip.CREATE_TIMESTAMP, false);
+		if (!StringUtils.isNull(note)) {
+			QuerySpecUtils.toLike(query, idx, Cip.class, Cip.NOTE, note);
+		}
+
+		QuerySpecUtils.toOrderBy(query, idx, Cip.class, Cip.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();

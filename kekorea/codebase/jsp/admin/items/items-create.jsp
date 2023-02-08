@@ -8,30 +8,22 @@
 Category category = (Category) request.getAttribute("category");
 String oid = (String) request.getAttribute("oid");
 %>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title></title>
 <!-- auigrid -->
 <%@include file="/jsp/include/auigrid.jsp"%>
-</head>
-<body onload="loadGridData();">
-	<input type="hidden" name="sessionid" id="sessionid">
-	<input type="hidden" name="curPage" id="curPage">
-	<!-- button table -->
-	<table class="btn_table">
-		<tr>
-			<td class="right">
-				<input type="button" value="추가" class="redBtn" id="addRowBtn" title="추가">
-				<input type="button" value="삭제" class="orangeBtn" id="deleteRowBtn" title="삭제">
-				<input type="button" value="저장" class="" id="saveBtn" title="저장">
-				<input type="button" value="닫기" class="blueBtn" id="closeBtn" title="닫기">
-			</td>
-		</tr>
-	</table>
-	<div id="grid_wrap" style="height: 640px; border-top: 1px solid #3180c3;"></div>
-</body>
+<input type="hidden" name="sessionid" id="sessionid">
+<input type="hidden" name="curPage" id="curPage">
+<!-- button table -->
+<table class="btn_table">
+	<tr>
+		<td class="right">
+			<input type="button" value="추가" class="redBtn" id="addRowBtn" title="추가">
+			<input type="button" value="삭제" class="orangeBtn" id="deleteRowBtn" title="삭제">
+			<input type="button" value="저장" class="" id="saveBtn" title="저장">
+			<input type="button" value="닫기" class="blueBtn" id="closeBtn" title="닫기">
+		</td>
+	</tr>
+</table>
+<div id="grid_wrap" style="height: 640px; border-top: 1px solid #3180c3;"></div>
 <script type="text/javascript">
 	let myGridID;
 	const columns = [ {
@@ -83,7 +75,6 @@ String oid = (String) request.getAttribute("oid");
 				showStateColumn : true,
 				enableCellMerge : true,
 				cellMergePolicy : "withNull",
-				softRemoveRowMode : false,
 			};
 
 			myGridID = AUIGrid.create("#grid_wrap", columns, props);
@@ -103,7 +94,7 @@ String oid = (String) request.getAttribute("oid");
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
-			close();
+			closeLayer();
 			opener.loadGridData();
 		})
 	}
@@ -155,15 +146,6 @@ String oid = (String) request.getAttribute("oid");
 		})
 
 		$("#saveBtn").click(function() {
-			let nameValid = AUIGrid.validateGridData(myGridID, [ "name" ], "아이템 명을 입력하세요.");
-			if (!nameValid) {
-				return false;
-			}
-
-			let sortValid = AUIGrid.validateGridData(myGridID, [ "sort" ], "아이템 정렬 순서를 입력하세요.");
-			if (!sortValid) {
-				return false;
-			}
 			let addRows = AUIGrid.getAddedRowItems(myGridID);
 			let removeRows = AUIGrid.getRemovedItems(myGridID);
 			let editRows = AUIGrid.getEditedRowItems(myGridID);
@@ -173,7 +155,7 @@ String oid = (String) request.getAttribute("oid");
 			params.removeRows = removeRows;
 			params.editRows = editRows;
 			params.coid = "<%=oid%>";
-			open();
+			openLayer();
 			call(url, params, function(data) {
 				alert(data.msg);
 				if (data.result) {
@@ -202,4 +184,3 @@ String oid = (String) request.getAttribute("oid");
 		AUIGrid.resize(myGridID);
 	})
 </script>
-</html>

@@ -9,30 +9,22 @@
 Spec spec = (Spec) request.getAttribute("spec");
 String oid = (String) request.getAttribute("oid");
 %>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title></title>
 <!-- auigrid -->
 <%@include file="/jsp/include/auigrid.jsp"%>
-</head>
-<body>
-	<input type="hidden" name="sessionid" id="sessionid">
-	<input type="hidden" name="curPage" id="curPage">
-	<!-- button table -->
-	<table class="btn_table">
-		<tr>
-			<td class="right">
-				<input type="button" value="추가" class="redBtn" id="addRowBtn" title="추가">
-				<input type="button" value="삭제" class="orangeBtn" id="deleteRowBtn" title="삭제">
-				<input type="button" value="저장" class="" id="saveBtn" title="저장">
-				<input type="button" value="닫기" class="blueBtn" id="closeBtn" title="닫기">
-			</td>
-		</tr>
-	</table>
-	<div id="grid_wrap" style="height: 600px; border-top: 1px solid #3180c3;"></div>
-</body>
+<input type="hidden" name="sessionid" id="sessionid">
+<input type="hidden" name="curPage" id="curPage">
+<!-- button table -->
+<table class="btn_table">
+	<tr>
+		<td class="right">
+			<input type="button" value="추가" class="redBtn" id="addRowBtn" title="추가">
+			<input type="button" value="삭제" class="orangeBtn" id="deleteRowBtn" title="삭제">
+			<input type="button" value="저장" class="" id="saveBtn" title="저장">
+			<input type="button" value="닫기" class="blueBtn" id="closeBtn" title="닫기">
+		</td>
+	</tr>
+</table>
+<div id="grid_wrap" style="height: 600px; border-top: 1px solid #3180c3;"></div>
 <script type="text/javascript">
 	let myGridID;
 	const columns = [ {
@@ -82,6 +74,19 @@ String oid = (String) request.getAttribute("oid");
 		loadGridData();
 		// LazyLoading 바인딩
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+		AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
+	}
+	
+	function auiAddRowHandler(event) {
+		let selected = AUIGrid.getSelectedIndex(myGridID);
+		if (selected.length <= 0) {
+			return;
+		}
+
+		let rowIndex = selected[0];
+		let colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "name");
+		AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex);
+		AUIGrid.openInputer(myGridID);
 	}
 
 	function loadGridData() {
@@ -94,7 +99,7 @@ String oid = (String) request.getAttribute("oid");
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
-			close();
+			closeLayer();
 			opener.loadGridData();
 		})
 	}
@@ -154,7 +159,7 @@ String oid = (String) request.getAttribute("oid");
 			params.removeRows = removeRows;
 			params.editRows = editRows;
 			params.soid = "<%=oid%>";
-			open();
+			openLayer();
 			call(url, params, function(data) {
 				alert(data.msg);
 				if (data.result) {
@@ -173,7 +178,7 @@ String oid = (String) request.getAttribute("oid");
 				AUIGrid.removeRow(myGridID, rowIndex);
 			}
 		})
-		
+
 		$("#closeBtn").click(function() {
 		})
 
@@ -188,4 +193,3 @@ String oid = (String) request.getAttribute("oid");
 		AUIGrid.resize(myGridID);
 	})
 </script>
-</html>

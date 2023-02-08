@@ -3,7 +3,9 @@ package e3ps.admin.spec.service;
 import java.util.ArrayList;
 import java.util.Map;
 
+import e3ps.admin.spec.Options;
 import e3ps.admin.spec.Spec;
+import e3ps.admin.spec.SpecOptionsLink;
 import e3ps.common.util.CommonUtils;
 import wt.fc.PersistenceHelper;
 import wt.pom.Transaction;
@@ -27,14 +29,13 @@ public class StandardSpecService extends StandardManager implements SpecService 
 		try {
 			trs.start();
 
-			int key = 0;
 			for (Map<String, Object> addRow : addRows) {
 				String name = (String) addRow.get("name");
 				int sort = (int) addRow.get("sort");
 				boolean enable = (boolean) addRow.get("enable");
 
 				Spec spec = Spec.newSpec();
-				spec.setColumnKey("COLUMN_" + key);
+				spec.setColumnKey("COLUMN_" + sort);
 				spec.setName(name);
 				spec.setSort(sort);
 				spec.setLatest(true);
@@ -42,12 +43,16 @@ public class StandardSpecService extends StandardManager implements SpecService 
 				spec.setVersion(1);
 				spec.setOwnership(CommonUtils.sessionOwner());
 				PersistenceHelper.manager.save(spec);
-				key++;
 			}
 
 			for (Map<String, Object> removeRow : removeRows) {
 				String oid = (String) removeRow.get("oid");
 				Spec spec = (Spec) CommonUtils.getObject(oid);
+
+				ArrayList<SpecOptionsLink> links = OptionsHelper.manager.getLinks(spec);
+				for (SpecOptionsLink link : links) {
+					PersistenceHelper.manager.delete(link);
+				}
 				PersistenceHelper.manager.delete(spec);
 			}
 

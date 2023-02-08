@@ -15,5 +15,6 @@ public class CSSheetColumnData {
 	}
 
 	public CSSheetColumnData(CSSheet csSheet) throws Exception {
+		setOid(csSheet.getPersistInfo().getObjectIdentifier().getStringValue());
 	}
 }

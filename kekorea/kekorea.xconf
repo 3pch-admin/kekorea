@@ -6,6 +6,9 @@
    <Property name="wt.auth.form.enabled" overridable="true"
              targetFile="codebase/wt.properties"
              value="true"/>
+   <Property name="wt.auth.handler" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="wt.auth.NullAuthentication,wt.httpgw.HTTPAuthentication"/>             
              
    <!-- Service -->          
    <Property name="wt.services.service.90000" overridable="true"

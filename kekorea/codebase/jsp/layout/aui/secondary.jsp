@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 String oid = (String) request.getAttribute("oid");
+String method = (String)request.getAttribute("method");
 %>
 <!-- button table -->
 <table class="btn_table">
@@ -26,8 +27,7 @@ String oid = (String) request.getAttribute("oid");
 </table>
 <script type="text/javascript">
 	let secondary = new AXUpload5();
-	let arr = new Array();
-	let icons = new Array();
+	let data;
 	function load() {
 		secondary.setConfig({
 			isSingleUpload : false,
@@ -45,10 +45,7 @@ String oid = (String) request.getAttribute("oid");
 			deleteUrl : "/Windchill/plm/content/delete",
 			fileKeys : {},
 			onComplete : function() {
-				for (let i = 0; i < this.length; i++) {
-					arr.push(this[i].fullPath);
-					icons.push(this[i].icon);
-				}
+				data = this;
 			},
 		})
 	}
@@ -57,7 +54,8 @@ String oid = (String) request.getAttribute("oid");
 	$(function() {
 
 		$("#saveBtn").click(function() {
-			opener.setSecondary(icons, arr);
+			opener.<%=method%>(data);
+			self.close();
 		})
 	})
 </script>

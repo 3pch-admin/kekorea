@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import e3ps.common.util.PageQueryUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.numberRule.beans.NumberRuleColumnData;
 import wt.fc.PagingQueryResult;
@@ -38,5 +39,19 @@ public class NumberRuleHelper {
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
 		return map;
+	}
+
+	public void last(String number) throws Exception {
+		
+		QuerySpec query = new QuerySpec(); 
+		int idx = query.appendClassList(NumberRule.class, true);
+		QuerySpecUtils.toLikeRight(query, idx, NumberRule.class, NumberRule.NUMBER, number);
+		QuerySpecUtils.toOrderBy(query, idx, NumberRule.class, NumberRule.NUMBER, true);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if(result.hasMoreElements()) {
+			
+		}
+		
+		
 	}
 }

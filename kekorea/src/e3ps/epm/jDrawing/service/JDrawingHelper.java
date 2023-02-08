@@ -27,6 +27,8 @@ public class JDrawingHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(JDrawing.class, true);
 
+		QuerySpecUtils.toOrderBy(query, idx, JDrawing.class, JDrawing.CREATE_TIMESTAMP, true);
+
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 

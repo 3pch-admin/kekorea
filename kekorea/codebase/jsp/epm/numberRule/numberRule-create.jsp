@@ -27,7 +27,7 @@ JSONArray classificationWritingDepartment = (JSONArray) request.getAttribute("cl
 	</tr>
 </table>
 
-<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
+<div id="grid_wrap" style="height: 490px; border-top: 1px solid #3180c3;"></div>
 <script type="text/javascript">
 	let myGridID;
 	let businessSectors =
@@ -39,6 +39,12 @@ JSONArray classificationWritingDepartment = (JSONArray) request.getAttribute("cl
 	let writtenDocuments =
 <%=writtenDocuments%>
 	const columns = [ {
+		dataField : "last",
+		headerText : "최종도번",
+		dataType : "string",
+		width : 120,
+		editable : false,
+	}, {
 		dataField : "number",
 		headerText : "도면번호",
 		dataType : "string",
@@ -134,49 +140,14 @@ JSONArray classificationWritingDepartment = (JSONArray) request.getAttribute("cl
 			return retStr == "" ? value : retStr;
 		}
 	}, {
-		dataField : "seq1",
-		headerText : "일련번호1",
+		dataField : "version",
+		headerText : "버전",
 		dataType : "string",
 		width : 120,
 		editRenderer : {
 			type : "InputEditRenderer",
-
-			// 에디팅 유효성 검사
-			validator : function(oldValue, newValue, item) {
-				let isValid = false;
-				let matcher = /^[A-Z]{1,1}$/;
-
-				if (matcher.test(newValue)) {
-					isValid = true;
-				}
-				return {
-					"validate" : isValid,
-					"message" : "1자리의 대문자만 입력가능합니다."
-				};
-			}
-		}
-	}, {
-		dataField : "seq2",
-		headerText : "일련번호2",
-		dataType : "string",
-		width : 120,
-		editRenderer : {
-			type : "InputEditRenderer",
-
-			// 에디팅 유효성 검사
-			validator : function(oldValue, newValue, item) {
-				let isValid = false;
-				let matcher = /^[0-9]{5,5}$/;
-
-				if (matcher.test(newValue)) {
-					isValid = true;
-				}
-				return {
-					"validate" : isValid,
-					"message" : "5자리의 숫자로만 입력가능합니다."
-				};
-			}
-		}
+			onlyNumeric : true, // 0~9만 입력가능
+		},
 	}, ]
 
 	function createAUIGrid(columnLayout) {
@@ -188,13 +159,25 @@ JSONArray classificationWritingDepartment = (JSONArray) request.getAttribute("cl
 			rowNumHeaderText : "번호",
 			showRowCheckColumn : true, // 체크 박스 출력,
 			fillColumnSizeMode : true,
-			editable : true
+			editable : true,
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
 		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
-		//validate 난중에..
+		AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
+	}
+
+	function auiAddRowHandler(event) {
+		let selected = AUIGrid.getSelectedIndex(myGridID);
+		if (selected.length <= 0) {
+			return;
+		}
+
+		let rowIndex = selected[0];
+		let colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "name");
+		AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex);
+		AUIGrid.openInputer(myGridID);
 	}
 
 	function auiCellEditEndHandler(event) {
@@ -206,41 +189,21 @@ JSONArray classificationWritingDepartment = (JSONArray) request.getAttribute("cl
 			AUIGrid.updateRow(myGridID, item, event.rowIndex);
 		}
 
-		if (dataField === "department") {
+		if (dataField === "department") { // 작성부서
 			let department = item.department;
 			item.number = item.number + department;
 			AUIGrid.updateRow(myGridID, item, event.rowIndex);
 		}
 
-		if (dataField === "document") {
+		if (dataField === "document") { // 작성문서
 			let document = item.document;
 			item.number = item.number + document;
 			AUIGrid.updateRow(myGridID, item, event.rowIndex);
+			let url = getCallUrl("/numberRule/last?number=" + item.number);
+			call(url, null, function(data) {
+				
+			})
 		}
-
-		if (dataField === "seq1") {
-			let seq1 = item.seq1;
-			item.number = item.number + seq1;
-			AUIGrid.updateRow(myGridID, item, event.rowIndex);
-		}
-
-		if (dataField === "seq2") {
-			let seq2 = item.seq2;
-			item.number = item.number + seq2;
-			AUIGrid.updateRow(myGridID, item, event.rowIndex);
-		}
-	}
-
-	function auiAddRowHandler(event) {
-		let selected = AUIGrid.getSelectedIndex(myGridID);
-		if (selected.length <= 0) {
-			return;
-		}
-
-		let rowIndex = selected[0];
-		let colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "numberr");
-		AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex); // ISBN 으로 선택자 이동
-		AUIGrid.openInputer(myGridID);
 	}
 
 	$(function() {

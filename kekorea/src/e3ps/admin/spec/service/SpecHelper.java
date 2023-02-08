@@ -110,31 +110,56 @@ public class SpecHelper {
 		return list;
 	}
 
-	public ArrayList<Map<String, Object>> remoter(String term, String target) throws Exception {
-		ArrayList<Map<String, Object>> list = new ArrayList<>();
+	public ArrayList<Spec> getSpecArray() throws Exception {
+		ArrayList<Spec> list = new ArrayList<>();
 
 		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(SpecOptionsLink.class, true);
-		int idx_o = query.appendClassList(Options.class, true);
-		int idx_s = query.appendClassList(Spec.class, false);
 
-		QuerySpecUtils.toInnerJoin(query, SpecOptionsLink.class, Spec.class, "roleAObjectRef.key.id",
-				WTAttributeNameIfc.ID_NAME, idx, idx_s);
-		QuerySpecUtils.toInnerJoin(query, SpecOptionsLink.class, Options.class, "roleBObjectRef.key.id",
-				WTAttributeNameIfc.ID_NAME, idx, idx_o);
-		QuerySpecUtils.toEquals(query, idx_s, Spec.class, Spec.COLUMN_KEY, target);
-		QuerySpecUtils.toLike(query, idx_o, Options.class, Options.NAME, term);
-		QuerySpecUtils.toOrderBy(query, idx_o, Options.class, Options.SORT, false);
+		int idx = query.appendClassList(Spec.class, true);
+
+		SearchCondition sc = new SearchCondition(Spec.class, Spec.ENABLE, SearchCondition.IS_TRUE);
+		query.appendWhere(sc, new int[] { idx });
+		query.appendAnd();
+
+		sc = new SearchCondition(Spec.class, Spec.LATEST, SearchCondition.IS_TRUE);
+		query.appendWhere(sc, new int[] { idx });
 
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
-			Options options = (Options) obj[1];
-			Map<String, Object> data = new HashMap<>();
-			data.put("key", options.getPersistInfo().getObjectIdentifier().getStringValue());
-			data.put("value", options.getName());
-			list.add(data);
+			Spec spec = (Spec) obj[0];
+			list.add(spec);
 		}
 		return list;
 	}
+
+//	public ArrayList<Map<String, Object>> remoter(Map<String, Object> params) throws Exception {
+//		String columnKey = (String) params.get("columnKey");
+//		String term = (String) params.get("term");
+//		ArrayList<Map<String, Object>> list = new ArrayList<>();
+//
+//		QuerySpec query = new QuerySpec();
+//		int idx = query.appendClassList(SpecOptionsLink.class, true);
+//		int idx_o = query.appendClassList(Options.class, true);
+//		int idx_s = query.appendClassList(Spec.class, false);
+//
+//		QuerySpecUtils.toInnerJoin(query, SpecOptionsLink.class, Spec.class, "roleAObjectRef.key.id",
+//				WTAttributeNameIfc.ID_NAME, idx, idx_s);
+//		QuerySpecUtils.toInnerJoin(query, SpecOptionsLink.class, Options.class, "roleBObjectRef.key.id",
+//				WTAttributeNameIfc.ID_NAME, idx, idx_o);
+//		QuerySpecUtils.toEquals(query, idx_s, Spec.class, Spec.COLUMN_KEY, colmnKey);
+//		QuerySpecUtils.toLike(query, idx_o, Options.class, Options.NAME, term);
+//		QuerySpecUtils.toOrderBy(query, idx_o, Options.class, Options.SORT, false);
+//
+//		QueryResult result = PersistenceHelper.manager.find(query);
+//		while (result.hasMoreElements()) {
+//			Object[] obj = (Object[]) result.nextElement();
+//			Options options = (Options) obj[1];
+//			Map<String, Object> data = new HashMap<>();
+//			data.put("key", options.getPersistInfo().getObjectIdentifier().getStringValue());
+//			data.put("value", options.getName());
+//			list.add(data);
+//		}
+//		return list;
+//	}
 }

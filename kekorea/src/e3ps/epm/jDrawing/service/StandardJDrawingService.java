@@ -5,6 +5,7 @@ import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.util.CommonUtils;
 import e3ps.epm.jDrawing.JDrawing;
 import e3ps.epm.jDrawing.JDrawingMaster;
 import wt.content.ApplicationData;
@@ -39,20 +40,17 @@ public class StandardJDrawingService extends StandardManager implements JDrawing
 				String number = (String) data.get("number");
 				int version = (int) data.get("version");
 				String lot = (String) data.get("lot");
-				String path = (String) arr.get(i);
-
-				Ownership ownership = Ownership.newOwnership(SessionHelper.manager.getPrincipal());
-
+				String primaryPath = (String) data.get("primaryPath");
 
 				JDrawingMaster master = JDrawingMaster.newJDrawingMaster();
 				master.setNumber(number);
 				master.setName(name);
-				master.setOwnership(ownership);
+				master.setOwnership(CommonUtils.sessionOwner());
 				master = (JDrawingMaster) PersistenceHelper.manager.save(master);
 
 				JDrawing jDrawing = JDrawing.newJDrawing();
 				jDrawing.setLot(lot);
-				jDrawing.setOwnership(ownership);
+				jDrawing.setOwnership(CommonUtils.sessionOwner());
 				jDrawing.setVersion(version);
 				jDrawing.setMaster(master);
 				jDrawing.setLatest(true);
@@ -60,8 +58,7 @@ public class StandardJDrawingService extends StandardManager implements JDrawing
 
 				ApplicationData dd = ApplicationData.newApplicationData(jDrawing);
 				dd.setRole(ContentRoleType.PRIMARY);
-				dd.setCreatedBy(SessionHelper.manager.getPrincipalReference());
-				dd = (ApplicationData) ContentServerHelper.service.updateContent(jDrawing, dd, path);
+				dd = (ApplicationData) ContentServerHelper.service.updateContent(jDrawing, dd, primaryPath);
 
 			}
 

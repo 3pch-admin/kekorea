@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import e3ps.admin.sheetvariable.service.CategoryHelper;
 import e3ps.admin.spec.service.SpecHelper;
 import e3ps.common.util.AUIGridUtils;
 import e3ps.controller.BaseController;
@@ -55,6 +56,23 @@ public class HistoryController extends BaseController {
 		try {
 			ArrayList<Map<String, Object>> list = AUIGridUtils.remoter(params);
 			result.put("list", list);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+	
+	@Description(value = "이력 관리 등록 함수")
+	@ResponseBody
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public Map<String, Object> create(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			HistoryHelper.service.create(params);
+			result.put("msg", SAVE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();

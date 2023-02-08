@@ -3205,7 +3205,8 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 		return gate5;
 	}
 
-	public ArrayList<Map<String, Object>> remoter(String term) throws Exception {
+	public ArrayList<Map<String, Object>> remoter(Map<String, Object> params) throws Exception {
+		String term = (String) params.get("term");
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 
 		QuerySpec query = new QuerySpec();
@@ -3249,6 +3250,30 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
+		return map;
+	}
+
+	public Map<String, Object> get(String kekNumber) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Project.class, true);
+
+		QuerySpecUtils.toEquals(query, idx, Project.class, Project.KEK_NUMBER, kekNumber);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Project project = (Project) obj[0];
+			map.put("kekNumber", kekNumber);
+			map.put("keNumber", project.getKeNumber());
+			map.put("mak", project.getMak());
+			map.put("install", project.getIns_location());
+			map.put("pDate", project.getPDate());
+			map.put("customer", project.getCustomer());
+			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+
 		return map;
 	}
 }

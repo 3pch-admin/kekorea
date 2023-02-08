@@ -145,7 +145,8 @@ public class CommonCodeHelper {
 		return list;
 	}
 
-	public ArrayList<Map<String, Object>> remoter(String term) throws Exception {
+	public ArrayList<Map<String, Object>> remoter(Map<String, Object> params) throws Exception {
+		String term = (String) params.get("term");
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 
 		QuerySpec query = new QuerySpec();

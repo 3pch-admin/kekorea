@@ -90,7 +90,7 @@
 	}, {
 		dataField : "version",
 		headerText : "REV",
-		dataType : "string",
+		dataType : "numeric",
 		width : 100
 	}, {
 		dataField : "creator",
@@ -140,7 +140,10 @@
 			rowHeight : 30,
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
-			fillColumnSizeMode : true
+			fillColumnSizeMode : true,
+			showStateColumn : true,
+			showRowCheckColumn : true,
+			noDataMessage : "검색 결과가 없습니다.",
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
@@ -203,7 +206,7 @@
 		// 등록페이지
 		$("#createBtn").click(function() {
 			let url = getCallUrl("/jDrawing/create");
-			popup(url, 1200, 760);
+			popup(url, 1400, 570);
 		})
 
 	}).keypress(function(e) {

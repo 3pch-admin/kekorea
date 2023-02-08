@@ -244,7 +244,7 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 		// 등록페이지
 		$("#createBtn").click(function() {
 			let url = getCallUrl("/numberRule/create");
-			popup(url, 1400, 740);
+			popup(url, 1600, 550);
 		})
 
 	}).keypress(function(e) {

@@ -8,9 +8,9 @@ import wt.util.WTException;
 
 @GenAsBinaryLink(superClass = ObjectToObjectLink.class,
 
-		roleA = @GeneratedRole(name = "spec", type = Spec.class),
+		roleA = @GeneratedRole(name = "spec", type = Spec.class, cascade = true),
 
-		roleB = @GeneratedRole(name = "options", type = Options.class)
+		roleB = @GeneratedRole(name = "options", type = Options.class, cascade = true)
 
 )
 public class SpecOptionsLink extends _SpecOptionsLink {

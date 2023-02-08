@@ -145,6 +145,19 @@
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		loadGridData();
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+		AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
+	}
+	
+	function auiAddRowHandler(event) {
+		let selected = AUIGrid.getSelectedIndex(myGridID);
+		if (selected.length <= 0) {
+			return;
+		}
+
+		let rowIndex = selected[0];
+		let colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "name");
+		AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex);
+		AUIGrid.openInputer(myGridID);
 	}
 
 	function loadGridData() {

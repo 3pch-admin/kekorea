@@ -311,7 +311,7 @@ String userId = (String) request.getAttribute("userId");
 			onclick : function(rowIndex, columnIndex, value, item) {
 				recentGridItem = item;
 				let oid = item.oid;
-				let url = getCallUrl("/aui/preview?oid=" + oid);
+				let url = getCallUrl("/aui/preview?oid=" + oid + "&method=preView");
 				popup(url, 1000, 200);
 			}
 		}
@@ -334,7 +334,7 @@ String userId = (String) request.getAttribute("userId");
 			onclick : function(rowIndex, columnIndex, value, item) {
 				recentGridItem = item;
 				let oid = item.oid;
-				let url = getCallUrl("/aui/secondary?oid=" + oid);
+				let url = getCallUrl("/aui/secondary?oid=" + oid + "&method=setSecondary");
 				popup(url, 1000, 400);
 			}
 		}
@@ -453,7 +453,10 @@ String userId = (String) request.getAttribute("userId");
 		AUIGrid.openInputer(myGridID);
 	}
 
-	function setPreView(preView, preViewPath) {
+	function preView(data) {
+		console.log(data);
+		let preView = data.base64;
+		let preViewPath = data.fullPath;
 		AUIGrid.updateRowsById(myGridID, {
 			oid : recentGridItem.oid,
 			preView : preView,
@@ -461,11 +464,13 @@ String userId = (String) request.getAttribute("userId");
 		});
 	}
 
-	function setSecondary(icons, arr) {
-
+	
+	function setSecondary(data) {
 		let template = "";
-		for (let i = 0; i < icons.length; i++) {
-			template += "<img src='" + icons[i] + "'>&nbsp;";
+		let arr = new Array();
+		for (let i = 0; i < data.length; i++) {
+			template += "<img src='" + data[i].icon + "'>&nbsp;";
+			arr.push(data[i].fullPath);
 		}
 
 		AUIGrid.updateRowsById(myGridID, {

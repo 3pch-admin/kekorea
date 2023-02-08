@@ -18,12 +18,12 @@
 		</div>
 		<script type="text/javascript">
 			const cover = new ax5.ui.mask();
-			function open() {
+			function openLayer() {
 				$("#loading_layer").show();
 				cover.open();
 			}
 
-			function close() {
+			function closeLayer() {
 				$("#loading_layer").hide();
 				cover.close();
 			}

@@ -55,17 +55,21 @@ public class IndexController extends BaseController {
 
 	@Description("그리드 리스트서 주 첨부파일 추가 페이지")
 	@RequestMapping(value = "/aui/primary", method = RequestMethod.GET)
-	public ModelAndView primary(@RequestParam String oid) throws Exception {
+	public ModelAndView primary(@RequestParam(required = false) String oid, @RequestParam String method)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
+		model.addObject("method", method);
 		model.addObject("oid", oid);
-		model.setViewName("popup:/layout/common/primary");
+		model.setViewName("popup:/layout/aui/primary");
 		return model;
 	}
 
 	@Description("그리드 리스트서 첨부파일 추가 페이지")
 	@RequestMapping(value = "/aui/secondary", method = RequestMethod.GET)
-	public ModelAndView create(@RequestParam String oid) throws Exception {
+	public ModelAndView create(@RequestParam(required = false) String oid, @RequestParam String method)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
+		model.addObject("method", method);
 		model.addObject("oid", oid);
 		model.setViewName("popup:/layout/aui/secondary");
 		return model;
@@ -73,8 +77,10 @@ public class IndexController extends BaseController {
 
 	@Description("그리드 리스트서 주 프리뷰 추가 페이지")
 	@RequestMapping(value = "/aui/preview", method = RequestMethod.GET)
-	public ModelAndView preview(@RequestParam String oid) throws Exception {
+	public ModelAndView preview(@RequestParam(required = false) String oid, @RequestParam String method)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
+		model.addObject("method", method);
 		model.addObject("oid", oid);
 		model.setViewName("popup:/layout/aui/preview");
 		return model;
