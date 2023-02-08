@@ -9,7 +9,6 @@
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@page import="wt.fc.PagingQueryResult"%>
-<%@page import="e3ps.common.ModuleKeys"%>
 <%@page import="e3ps.common.util.PageQueryUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
@@ -29,25 +28,27 @@
 	boolean isProduct = false;
 	boolean isLibrary = false;
 	boolean isEplan = false;
-	String purl = "/Windchill/plm/part/listProductPart2?context=product";
+	String purl = "/Windchill/plm/part/listPart?context=product";
 	String lurl = "/Windchill/plm/part/listProductPart2?context=library";
 	String eurl = "/Windchill/plm/part/listProductPart2?context=eplan";
 		
 	// module
-	String module = ModuleKeys.list_product_part.name();
+// 	String module = ModuleKeys.list_product_part.name();
 
+	HtmlUtils html = new HtmlUtils();
+	
 	String title = "";
 	if("product".equals(context)) {
 		isProduct = true;
-		module = ModuleKeys.list_product_part.name();
+// 		module = ModuleKeys.list_product_part.name();
 		title = "부품";
 	} else if("library".equals(context)) {
 		isLibrary = true;
-		module = ModuleKeys.list_library_part.name();
+// 		module = ModuleKeys.list_library_part.name();
 		title = "라이브러리";
 	} else if("eplan".equals(context)) {
 		isEplan = true;
-		module = ModuleKeys.list_eplan_part.name();
+// 		module = ModuleKeys.list_eplan_part.name();
 		title = "EPLAN";
 	}
 %>
@@ -57,16 +58,16 @@
 <%@include file="/jsp/include/auigrid.jsp"%>
 <body onload="loadGridData();">
 	<!-- module -->
-	<input type="hidden" name="module" id="module" value="<%=module%>"> 
+<%-- 	<input type="hidden" name="module" id="module" value="<%=module%>">  --%>
 	<!-- paging script -->
 	<input type="hidden" name="sessionid" id="sessionid">
 	<input type="hidden" name="curPage" id="curPage">
 	<input type="hidden" name="psize" id="psize">
 	<!-- only folder tree.. -->
-	<jsp:include page="/jsp/common/layouts/include_tree.jsp">
-		<jsp:param value="<%=root%>" name="root" />
-		<jsp:param value="<%=context.toUpperCase() %>" name="context" />
-	</jsp:include>
+<%-- 	<jsp:include page="/jsp/common/layouts/include_tree.jsp"> --%>
+<%-- 		<jsp:param value="<%=root%>" name="root" /> --%>
+<%-- 		<jsp:param value="<%=context.toUpperCase() %>" name="context" /> --%>
+<%-- 	</jsp:include> --%>
 	<table class="search_table">
 		<tr>
 			<th>부품분류</th>
@@ -82,7 +83,6 @@
 			<td>
 				<input type="text" name="fileName" class="AXInput wid200">
 			</td>
-			
 			<th>품번</th>
 			<td>
 				<input type="text" name="partCode" class="AXInput wid200">
@@ -282,13 +282,13 @@
 					</span> 
 					<span class="count_span"><span id="count_text"></span></span>
 					<%
-						String psize = OrgHelper.manager.getUserPaging(module);
+// 						String psize = OrgHelper.manager.getUserPaging(module);
 					%>
 					<select name="paging_count" id="paging_count" class="AXSelectSmall">
-						<option value="15" <%if(psize.equals("15")) { %> selected="selected"  <%} %>>15</option>
-						<option value="30" <%if(psize.equals("30")) { %> selected="selected"  <%} %>>30</option>
-						<option value="50" <%if(psize.equals("50")) { %> selected="selected"  <%} %>>50</option>
-						<option value="100" <%if(psize.equals("100")) { %> selected="selected"  <%} %>>100</option>
+<%-- 						<option value="15" <%if(psize.equals("15")) { %> selected="selected"  <%} %>>15</option> --%>
+<%-- 						<option value="30" <%if(psize.equals("30")) { %> selected="selected"  <%} %>>30</option> --%>
+<%-- 						<option value="50" <%if(psize.equals("50")) { %> selected="selected"  <%} %>>50</option> --%>
+<%-- 						<option value="100" <%if(psize.equals("100")) { %> selected="selected"  <%} %>>100</option> --%>
 					</select>
 				</div>
 			</td>
@@ -428,20 +428,22 @@
 		<%
  		} else if(isLibrary) {
  		%>
-			url = "/Windchill/plm/part/listLibraryPartAction";
+			url = "/Windchill/plm/part/listLibrary";
 		<%
 		} else if(isEplan) {
-		%>
-			url = "/Windchill/plm/part/listEplanPartAction";
-		<%
-		} 
  		%>
+ 			url = "/Windchill/plm/part/listEplan";
+		<%
+ 		} 
+  		%>
+ 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
 			parent.close();
+			console.log();
 		});
 	};
 	

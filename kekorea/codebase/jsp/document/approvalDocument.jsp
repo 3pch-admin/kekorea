@@ -1,6 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<td valign="top">
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<%@include file="/jsp/common/layouts/include_css.jsp"%>
+<%@include file="/jsp/common/layouts/include_script.jsp"%>
+</head>
+<body>
 	<!-- script area -->
 	<script type="text/javascript">
 	$(document).ready(function() {
@@ -71,9 +78,9 @@
 									<thead>
 										<tr>
 											<th>
-												<input type="checkbox" name="allDocuments" id="allDocuments">
+												<input type="checkbox" name="allDocuments" id="allDocuments" >
 											</th>
-											<th>문서번호</th>
+											<th >문서번호</th>
 											<th>문서제목</th>
 											<th>MODEL_NAME</th>
 											<th>버전</th>
@@ -95,8 +102,60 @@
 			</td>
 		</tr>		
 		<!-- 결재 -->
-		<jsp:include page="/jsp/common/appLine.jsp">
-			<jsp:param value="true" name="required" />
-		</jsp:include>
+<%-- 		<jsp:include page="/jsp/common/appLine.jsp"> --%>
+<%-- 			<jsp:param value="true" name="required" /> --%>
+<%-- 		</jsp:include> --%>
+		
+		<tr>
+			<th><font class="req">결재</font></th>
+			<td colspan="3">
+				<table class="in_btn_table">
+					<tr>
+						<td class="add">
+							<input type="button" value="결재선 지정"  class="greenBtn" >
+							<input type="button" value="결재선 삭제"  class="blueBtn">
+						</td>
+					</tr>
+				</table>
+				<table id="tblBackground">
+					<tr>
+                		<td>
+							<div id="app_container">
+								<table id="create_series_table" class="create_table_in create_series_table fix_table">
+									<colgroup>
+										<col width="40">
+										<col width="100">
+										<col width="250">
+										<col width="250">
+										<col width="250">
+										<col width="250">
+										<col width="250">
+									</colgroup>
+									<thead>
+										<tr>
+											<th>
+												<input type="checkbox" name="allDocuments" id="allDocuments">
+											</th>
+											<th>순서</th>
+											<th>결제타입</th>
+											<th>이름</th>
+											<th>아이디</th>
+											<th>직급</th>
+											<th>부서</th>
+										</tr>						
+									</thead>
+									<tbody id="addLineBody_series">
+										<tr id="nodataSeriesLine">
+											<td class="nodata" colspan="7">지정된 결재라인이 없습니다.</td>
+										</tr>
+									</tbody>	
+								</table>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>	
 	</table>
-</td>
+</body>
+</html>

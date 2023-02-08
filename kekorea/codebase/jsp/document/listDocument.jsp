@@ -168,7 +168,7 @@
 
 	function loadGridData() {
 		let params = new Object();
-		let url = getCallUrl("/doc/list");
+		let url = getCallUrl("/document/list");
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);

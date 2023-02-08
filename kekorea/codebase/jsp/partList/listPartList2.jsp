@@ -97,6 +97,9 @@
 	<!-- button table -->
 	<table class="btn_table">
 		<tr>
+			<td class="left">
+				<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
+			</td>
 			<td class="right">
 				<input type="button" value="삭제" class="redBtn" id="deletePartListBtn" title="삭제"> 
 				<input type="button" value="상세조회" class="orangeBtn" id="detailEpmBtn" title="상세조회"> 
