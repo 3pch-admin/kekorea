@@ -32,11 +32,6 @@
 	String lurl = "/Windchill/plm/part/listProductPart2?context=library";
 	String eurl = "/Windchill/plm/part/listProductPart2?context=eplan";
 		
-	// module
-// 	String module = ModuleKeys.list_product_part.name();
-
-	HtmlUtils html = new HtmlUtils();
-	
 	String title = "";
 	if("product".equals(context)) {
 		isProduct = true;
@@ -52,6 +47,11 @@
 		title = "EPLAN";
 	}
 %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
 <%@include file="/jsp/common/layouts/include_css.jsp"%>
 <%@include file="/jsp/common/layouts/include_script.jsp"%>
 <!-- auigrid -->
@@ -358,7 +358,7 @@
 	
        dataField : "creator",
        headerText : "작성자",
-       width : 80
+       width : 100
 
    }, {
 
@@ -370,7 +370,7 @@
 
        dataField : "modifier",
        headerText : "수정자",
-       width : 80
+       width : 100
        
    }, {
 	
@@ -387,7 +387,7 @@
 	
        dataField : "location",
        headerText : "FOLDER",
-       width : 80
+       width : 60
        
  	}, {
 						
@@ -470,3 +470,4 @@
 		}
 	})
 </script>
+</html>
