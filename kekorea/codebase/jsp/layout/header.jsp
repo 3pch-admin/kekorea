@@ -265,7 +265,7 @@ UserData data = (UserData) request.getAttribute("data");
 						<a onclick="moveToPage(this, '/category/list');">CS 카테고리</a>
 					</li>
 					<li>
-						<a href="#">비밀번호 세팅</a>
+						<a onclick="moveToPage(this, '/password/list');">비밀번호 세팅</a>
 					</li>
 					<li>
 						<a href="#">설치장소 생성</a>

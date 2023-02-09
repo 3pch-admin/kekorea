@@ -26,14 +26,7 @@ import wt.util.WTAttributeNameIfc;
 
 public class NoticeHelper {
 
-	/**
-	 * access service
-	 */
 	public static final NoticeService service = ServiceFactory.getService(NoticeService.class);
-
-	/**
-	 * access helper
-	 */
 	public static final NoticeHelper manager = new NoticeHelper();
 
 	/**

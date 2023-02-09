@@ -14,8 +14,8 @@ numberRule.setBusinessSector(c);
 numberRule.setDocument(c);
 numberRule.setDrawingCompany(c);
 numberRule.setName("123");
-numberRule.setNumber("KABCA00003");
+numberRule.setNumber("KEDA00002");
 numberRule.setVersion(1);
 PersistenceHelper.manager.save(numberRule);
-
+System.out.println("종룟,.");
 %>

@@ -13,4 +13,6 @@ public interface NoticeService {
 	public abstract Map<String, Object> deleteNoticeAction(Map<String, Object> param) throws WTException;
 
 	public abstract Map<String, Object> modifyNoticeAction(Map<String, Object> param) throws WTException;
+	
+	public abstract void aaa() throws Exception;
 }

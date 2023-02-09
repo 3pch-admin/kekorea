@@ -113,6 +113,7 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 		<tr>
 			<td class="left">
 				<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
+				<input type="button" value="개정" class="greenBtn" id="reviseBtn" title="개정">
 			</td>
 			<td class="right">
 				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
@@ -155,16 +156,40 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 		dataType : "string",
 		width : 150,
 	}, {
+		dataField : "latest",
+		headerText : "최신버전여부",
+		dataType : "boolean",
+		width : 100,
+		renderer : {
+			type : "CheckBoxEditRenderer",
+		},
+	}, {
+		dataField : "version",
+		headerText : "버전",
+		dataType : "string",
+		width : 100,
+	}, {
 		dataField : "creator",
 		headerText : "작성자",
 		dataType : "string",
-		width : 150,
+		width : 100,
 	}, {
 		dataField : "createdDate",
 		headerText : "작성일",
 		dataType : "date",
 		formatString : "yyyy-mm-dd",
-		width : 150,
+		width : 100,
+	}, {
+		dataField : "modifier",
+		headerText : "수정자",
+		dataType : "string",
+		width : 100,
+	}, {
+		dataField : "modifiedDate",
+		headerText : "수정일",
+		dataType : "date",
+		formatString : "yyyy-mm-dd",
+		width : 100,
 	}, {
 		dataField : "oid",
 		headerText : "oid",
@@ -174,13 +199,13 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-			rowIdField : "rowId",
+			rowIdField : "oid",
 			headerHeight : 30,
 			rowHeight : 30,
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
 			showRowCheckColumn : true, // 체크 박스 출력
-			fillColumnSizeMode : true
+// 			fillColumnSizeMode : true
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
@@ -194,7 +219,6 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 		let url = getCallUrl("/numberRule/list");
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
-			console.log(data);
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
@@ -245,6 +269,18 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 		$("#createBtn").click(function() {
 			let url = getCallUrl("/numberRule/create");
 			popup(url, 1600, 550);
+		})
+
+		$("#reviseBtn").click(function() {
+			let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+			if (checkedItems.length == 0) {
+				alert("개정할 도면을 선택하세요.");
+				return false;
+			}
+			let url = getCallUrl("/numberRule/revise");
+			let panel;
+			panel = popup(url, 1600, 550);
+			panel.list = checkedItems;
 		})
 
 	}).keypress(function(e) {

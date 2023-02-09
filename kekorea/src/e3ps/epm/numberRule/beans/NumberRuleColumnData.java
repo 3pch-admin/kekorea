@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.epm.numberRule.NumberRule;
+import e3ps.epm.numberRule.NumberRuleMaster;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,8 +23,12 @@ public class NumberRuleColumnData {
 	private String drawingCompany;
 	private String department;
 	private String document;
+	private boolean latest;
+	private int version;
 	private String creator;
 	private Timestamp createdDate;
+	private String modifier;
+	private Timestamp modifiedDate;
 
 	public NumberRuleColumnData() {
 
@@ -31,14 +36,17 @@ public class NumberRuleColumnData {
 
 	public NumberRuleColumnData(NumberRule numberRule) throws Exception {
 		setOid(numberRule.getPersistInfo().getObjectIdentifier().getStringValue());
-		setName(numberRule.getName());
-		setNumber(numberRule.getNumber());
-		setBusinessSector(numberRule.getBusinessSector().getName());
-		setDrawingCompany(numberRule.getDrawingCompany().getName());
-		setDocument(numberRule.getDocument().getName());
-		setDepartment(numberRule.getDepartment().getName());
-		setCreator(numberRule.getOwnership().getOwner().getFullName());
-		setCreatedDate(numberRule.getCreateTimestamp());
-
+		setName(numberRule.getMaster().getName());
+		setNumber(numberRule.getMaster().getNumber());
+		setBusinessSector(numberRule.getMaster().getSector().getName());
+		setDrawingCompany(numberRule.getMaster().getCompany().getName());
+		setDocument(numberRule.getMaster().getDocument().getName());
+		setDepartment(numberRule.getMaster().getDepartment().getName());
+		setCreator(numberRule.getMaster().getOwnership().getOwner().getFullName());
+		setCreatedDate(numberRule.getMaster().getCreateTimestamp());
+		setLatest(numberRule.getLatest());
+		setVersion(numberRule.getVersion());
+		setModifier(numberRule.getOwnership().getOwner().getFullName());
+		setModifiedDate(numberRule.getCreateTimestamp());
 	}
 }

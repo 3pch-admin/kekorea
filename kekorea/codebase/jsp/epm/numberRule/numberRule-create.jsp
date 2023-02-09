@@ -142,7 +142,7 @@ JSONArray classificationWritingDepartment = (JSONArray) request.getAttribute("cl
 	}, {
 		dataField : "version",
 		headerText : "버전",
-		dataType : "string",
+		dataType : "numeric",
 		width : 120,
 		editRenderer : {
 			type : "InputEditRenderer",
@@ -201,8 +201,14 @@ JSONArray classificationWritingDepartment = (JSONArray) request.getAttribute("cl
 			AUIGrid.updateRow(myGridID, item, event.rowIndex);
 			let url = getCallUrl("/numberRule/last?number=" + item.number);
 			call(url, null, function(data) {
-				
-			})
+				let last = data.last;
+				let next = data.next;
+				AUIGrid.updateRowsById(myGridID, {
+					rowId : item.rowId,
+					last : last,
+					number : item.number + next
+				});
+			}, "GET");
 		}
 	}
 
@@ -232,14 +238,14 @@ JSONArray classificationWritingDepartment = (JSONArray) request.getAttribute("cl
 			let params = new Object();
 			let url = getCallUrl("/numberRule/create");
 			params.addRows = addRows;
-			console.log(params);
+			openLayer();
 			call(url, params, function(data) {
 				alert(data.msg);
 				if (data.result) {
 					opener.loadGridData();
 					self.close();
 				} else {
-					close();
+					closeLayer();
 				}
 			}, "POST");
 		})

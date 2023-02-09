@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.CommonCode;
-import e3ps.admin.commonCode.CommonCodeType;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.controller.BaseController;
 import e3ps.epm.numberRule.service.NumberRuleHelper;
@@ -93,14 +92,39 @@ public class NumberRuleController extends BaseController {
 		model.setViewName("popup:/epm/numberRule/numberRule-create");
 		return model;
 	}
-	
+
 	@Description(value = "KEK 최종 도번 가져오기")
 	@ResponseBody
 	@RequestMapping(value = "/last", method = RequestMethod.GET)
 	public Map<String, Object> last(@RequestParam String number) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			NumberRuleHelper.manager.last(number);
+			result = NumberRuleHelper.manager.last(number);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "KEK 도번 개정 페이지")
+	@RequestMapping(value = "/revise", method = RequestMethod.GET)
+	public ModelAndView revise() throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("popup:/epm/numberRule/numberRule-revise");
+		return model;
+	}
+
+	@Description(value = "KEK 최종 도번 개정")
+	@ResponseBody
+	@RequestMapping(value = "/revise", method = RequestMethod.POST)
+	public Map<String, Object> revise(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			NumberRuleHelper.service.revise(params);
+			result.put("msg", REVISE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -174,4 +174,12 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 		}
 		return map;
 	}
+
+	@Override
+	public void aaa() throws Exception {
+		Notice notice = Notice.newNotice();
+		notice.setName("공지사항");
+		notice.setDescription("설명");
+		PersistenceHelper.manager.save(notice);
+	}
 }

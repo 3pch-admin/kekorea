@@ -1,7 +1,6 @@
 package e3ps.epm.numberRule;
 
 import com.ptc.windchill.annotations.metadata.Cardinality;
-import com.ptc.windchill.annotations.metadata.ColumnProperties;
 import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedForeignKey;
@@ -18,55 +17,23 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "number", type = String.class, javaDoc = "도면번호", columnProperties = @ColumnProperties(columnName = "documentNumber"), constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "version", type = Integer.class, javaDoc = "버전", initialValue = "1", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "name", type = String.class, javaDoc = "도면명", constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "latest", type = Boolean.class, javaDoc = "최신버전여부", initialValue = "true", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "version", type = Integer.class, javaDoc = "버전", initialValue = "1", constraints = @PropertyConstraints(required = true))
+				@GeneratedProperty(name = "note", type = String.class, javaDoc = "개정사유", constraints = @PropertyConstraints(upperLimit = 2000))
 
 		},
 
 		foreignKeys = {
 
-				@GeneratedForeignKey(name = "NumberRuleSizeLink",
+				@GeneratedForeignKey(name = "NumberRuleMasterLink",
 
-						foreignKeyRole = @ForeignKeyRole(name = "size", type = CommonCode.class,
-
-								constraints = @PropertyConstraints(required = true)),
-
-						myRole = @MyRole(name = "numberRule", cardinality = Cardinality.ONE)),
-
-				@GeneratedForeignKey(name = "NumberRuleBusinessSectorLink",
-
-						foreignKeyRole = @ForeignKeyRole(name = "businessSector", type = CommonCode.class,
+						foreignKeyRole = @ForeignKeyRole(name = "master", type = NumberRuleMaster.class,
 
 								constraints = @PropertyConstraints(required = true)),
 
-						myRole = @MyRole(name = "numberRule", cardinality = Cardinality.ONE)),
-
-				@GeneratedForeignKey(name = "NumberRuleDrawingCompanyLink",
-
-						foreignKeyRole = @ForeignKeyRole(name = "drawingCompany", type = CommonCode.class,
-
-								constraints = @PropertyConstraints(required = true)),
-
-						myRole = @MyRole(name = "numberRule", cardinality = Cardinality.ONE)),
-
-				@GeneratedForeignKey(name = "NumberRuleDepartmentLink",
-
-						foreignKeyRole = @ForeignKeyRole(name = "department", type = CommonCode.class,
-
-								constraints = @PropertyConstraints(required = true)),
-
-						myRole = @MyRole(name = "numberRule", cardinality = Cardinality.ONE)),
-
-				@GeneratedForeignKey(name = "NumberRuleDocumentLink",
-
-						foreignKeyRole = @ForeignKeyRole(name = "document", type = CommonCode.class,
-
-								constraints = @PropertyConstraints(required = true)),
-
-						myRole = @MyRole(name = "numberRule", cardinality = Cardinality.ONE)),
+						myRole = @MyRole(name = "numberRule", cardinality = Cardinality.ONE))
 
 		}
 

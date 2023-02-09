@@ -49,6 +49,10 @@ String method = (String)request.getAttribute("method");
 
 	$(function() {
 
+		$("#closeBtn").click(function() {
+			self.close();
+		})
+		
 		$("#saveBtn").click(function() {
 			opener.<%=method%>(data);
 			self.close();

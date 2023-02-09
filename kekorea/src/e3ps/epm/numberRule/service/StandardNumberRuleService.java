@@ -7,6 +7,7 @@ import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.epm.numberRule.NumberRule;
+import e3ps.epm.numberRule.NumberRuleMaster;
 import wt.fc.PersistenceHelper;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
@@ -34,6 +35,7 @@ public class StandardNumberRuleService extends StandardManager implements Number
 				String drawingCompany = (String) addRow.get("drawingCompany");
 				String department = (String) addRow.get("department");
 				String document = (String) addRow.get("document");
+				int version = (int) addRow.get("version");
 
 				CommonCode businessCode = CommonCodeHelper.manager.getCommonCode(businessSector, "BUSINESS_SECTOR");
 				CommonCode companyCode = CommonCodeHelper.manager.getCommonCode(drawingCompany, "DRAWING_COMPANY");
@@ -41,20 +43,45 @@ public class StandardNumberRuleService extends StandardManager implements Number
 				CommonCode documentCode = CommonCodeHelper.manager.getCommonCode(department,
 						"CLASSIFICATION_WRITING_DEPARTMENT");
 
+				NumberRuleMaster master = NumberRuleMaster.newNumberRuleMaster();
+				master.setNumber(number);
+				master.setName(name);
+				master.setSector(businessCode);
+				master.setCompany(companyCode);
+				master.setDepartment(departmentCode);
+				master.setDocument(documentCode);
+				master.setOwnership(CommonUtils.sessionOwner());
+				PersistenceHelper.manager.save(master);
+
 				NumberRule numberRule = NumberRule.newNumberRule();
 				numberRule.setOwnership(CommonUtils.sessionOwner());
-				numberRule.setNumber(number);
-				numberRule.setName(name);
-				numberRule.setBusinessSector(businessCode);
-				numberRule.setDrawingCompany(companyCode);
-				numberRule.setDepartment(departmentCode);
-				numberRule.setDocument(documentCode);
-
+				numberRule.setVersion(version);
+				numberRule.setLatest(true);
+				numberRule.setMaster(master);
 				PersistenceHelper.manager.save(numberRule);
 			}
 
 			trs.commit();
 			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void revise(Map<String, Object> params) throws Exception {
+		ArrayList<Map<String, Object>> editRows = (ArrayList<Map<String, Object>>) params.get("editRows");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			trs.commit();
+			trs.rollback();
 		} catch (Exception e) {
 			e.printStackTrace();
 			trs.rollback();

@@ -92,7 +92,8 @@ function popup(url, width, height) {
 	let popH = height;
 	let left = (screen.width - popW) / 2;
 	let top = (screen.height - popH) / 2;
-	window.open(url, "", "top=" + top + ", left=" + left + ", height=" + popH + ", width=" + popW);
+	let panel = window.open(url, "", "top=" + top + ", left=" + left + ", height=" + popH + ", width=" + popW);
+	return panel;
 }
 
 
