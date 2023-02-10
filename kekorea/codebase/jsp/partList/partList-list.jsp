@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,15 +22,15 @@
 			<td>
 				<select name="statesDoc" id="statesDoc" class="AXSelect wid200">
 					<option value="">선택</option>
-<%-- 					<% --%>
-<!--  						for(StateKeys state : states) { -->
-<%-- 					%> --%>
-<%-- 					<option value="<%=state.name() %>"><%=state.getDisplay() %></option> --%>
-<%-- 					<% --%>
-<!--  						} -->
-<%-- 					%> --%>
+					<%-- 					<% --%>
+					<!--  						for(StateKeys state : states) { -->
+					<%-- 					%> --%>
+					<%-- 					<option value="<%=state.name() %>"><%=state.getDisplay() %></option> --%>
+					<%-- 					<% --%>
+					<!--  						} -->
+					<%-- 					%> --%>
 				</select>
-			</td>						
+			</td>
 			<th>KEK 작번</th>
 			<td>
 				<input type="text" name="kekNumber" class="AXInput wid200">
@@ -67,29 +66,31 @@
 			<td>
 				<input type="text" name="pDescription" class="AXInput wid200">
 			</td>
-		</tr>														
+		</tr>
 		<tr class="detailEpm">
 			<th>작성자</th>
 			<td>
-				<input type="text" name="creators" id="creators" class="AXInput wid200" data-dbl="true"> 
-				<input type="hidden" name="creatorsOid" id="creatorsOid" class="AXInput wid200" data-dbl="true"> 
+				<input type="text" name="creators" id="creators" class="AXInput wid200" data-dbl="true">
+				<input type="hidden" name="creatorsOid" id="creatorsOid" class="AXInput wid200" data-dbl="true">
 				<i title="삭제" class="axi axi-ion-close-circled delete-text" data-prefix="Oid" data-target="creators"></i>
 			</td>
 			<th>작성일</th>
 			<td>
-				<input type="text" name="predate" id="predate" class="AXInput"> ~ 
-				<input type="text" name="postdate" id="postdate" class="AXInput twinDatePicker" data-start="predate"> 
+				<input type="text" name="predate" id="predate" class="AXInput">
+				~
+				<input type="text" name="postdate" id="postdate" class="AXInput twinDatePicker" data-start="predate">
 				<i title="삭제" class="axi axi-ion-close-circled delete-calendar" data-start="predate" data-end="postdate"></i>
 			</td>
 			<th>수정자</th>
 			<td>
-				<input type="text" name="modifier" id="modifier" class="AXInput wid200" data-dbl="true"> 
+				<input type="text" name="modifier" id="modifier" class="AXInput wid200" data-dbl="true">
 				<i title="삭제" class="axi axi-ion-close-circled delete-text" data-prefix="Oid" data-target="creators"></i>
 			</td>
 			<th>수정일</th>
 			<td>
-				<input type="text" name="predate_m" id="predate_m" class="AXInput"> ~ 
-				<input type="text" name="pstdate_m" id="postdate_m" class="AXInput twinDatePicker_m" data-start="predate_m"> 
+				<input type="text" name="predate_m" id="predate_m" class="AXInput">
+				~
+				<input type="text" name="pstdate_m" id="postdate_m" class="AXInput twinDatePicker_m" data-start="predate_m">
 				<i title="삭제" class="axi axi-ion-close-circled delete-calendar" data-start="predate_m" data-end="postdate_m"></i>
 			</td>
 		</tr>
@@ -101,29 +102,29 @@
 				<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
 			</td>
 			<td class="right">
-				<input type="button" value="삭제" class="redBtn" id="deletePartListBtn" title="삭제"> 
-				<input type="button" value="상세조회" class="orangeBtn" id="detailEpmBtn" title="상세조회"> 
-				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회"> 
-<%-- 				<input type="button" value="초기화" class="" id="initGrid" title="초기화" data-location="<%=root %>"> --%>
+				<input type="button" value="삭제" class="redBtn" id="deletePartListBtn" title="삭제">
+				<input type="button" value="상세조회" class="orangeBtn" id="detailEpmBtn" title="상세조회">
+				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
+				<%-- 				<input type="button" value="초기화" class="" id="initGrid" title="초기화" data-location="<%=root %>"> --%>
 			</td>
 		</tr>
-	</table> 
+	</table>
 	<div id="grid_wrap" style="height: 650px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;
 	const columns = [ {
-		dataField : "",
+		dataField : "pjtType",
 		headerText : "설계구분",
 		dataType : "string",
 		width : 80
 	}, {
-		dataField : "",
+		dataField : "info",
 		headerText : "",
 		dataType : "string",
 		width : 40
 	}, {
-		dataField : "",
+		dataField : "name",
 		headerText : "수배표제목",
 		dataType : "string",
 		style : "left",
@@ -134,84 +135,84 @@
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "",
-		headerText : "kek 작번",
+		dataField : "kekNumber",
+		headerText : "KEK 작번",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "",
-		headerText : "ke 작번",
+		dataField : "keNumber",
+		headerText : "KE 작번",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "",
-		headerText : "user id",
+		dataField : "user_id",
+		headerText : "USER ID",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "",
+		dataField : "kek_description",
 		headerText : "작업내용",
 		dataType : "string",
 		width : 300
 	}, {
-		dataField : "",
+		dataField : "customer",
 		headerText : "거래처",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "",
+		dataField : "ins_location",
 		headerText : "설치 장소",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "",
+		dataField : "pDate",
 		headerText : "발행일",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "",
+		dataField : "model",
 		headerText : "모델",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "",
+		dataField : "creator",
 		headerText : "작성자",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "",
+		dataField : "createDate",
 		headerText : "작성일",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "",
+		dataField : "modifyDate",
 		headerText : "수정일",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "",
+		dataField : "state",
 		headerText : "상태",
 		dataType : "string",
 		width : 100
 	} ]
-	
+
 	function createAUIGrid(columnLayout) {
 		const props = {
-				rowIdField : "oid",
-				headerHeight : 30,
-				rowHeight : 30,
-				showRowCheckColumn : true,
-				showRowNumColumn : true,
-				rowNumHeaderText : "번호",
-				fillColumnSizeMode : true, // 화면 꽉채우기
+			rowIdField : "oid",
+			headerHeight : 30,
+			rowHeight : 30,
+			showRowCheckColumn : true,
+			showRowNumColumn : true,
+			rowNumHeaderText : "번호",
+			fillColumnSizeMode : true, // 화면 꽉채우기
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		loadGridData();
 		// LazyLoading 바인딩
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
-		
+
 	}
-	
+
 	function loadGridData() {
 		let params = new Object();
 		let url = getCallUrl("/partlist/list");
@@ -224,8 +225,7 @@
 			parent.close();
 		});
 	}
-	
-	
+
 	let last = false;
 	function vScrollChangeHandler(event) {
 		if (event.position == event.maxPosition) {

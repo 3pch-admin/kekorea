@@ -13,7 +13,8 @@
 	<input type="hidden" name="curPage" id="curPage">
 	<!-- list header title -->
 	<div class="header_title">
-		<i class="axi axi-subtitles"></i><span>반려함</span>
+		<i class="axi axi-subtitles"></i>
+		<span>반려함</span>
 		<!-- info search -->
 		<jsp:include page="/jsp/common/search_info.jsp"></jsp:include>
 	</div>
@@ -26,49 +27,49 @@
 				<input type="text" style="display: none;" class="AXInput wid300">
 			</td>
 		</tr>
-	</table> 
-	
+	</table>
+
 	<!-- button table -->
 	<table class="btn_table">
 		<tr>
 			<td class="right">
-				 <input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회"> 
-				 <input type="button" value="초기화" class="" id="initGrid" title="초기화">
+				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
+				<input type="button" value="초기화" class="" id="initGrid" title="초기화">
 			</td>
 		</tr>
-	</table> 
-	<!-- end button table --> 
+	</table>
+	<!-- end button table -->
 	<div id="grid_wrap" style="height: 650px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;
 	const columns = [ {
-		
+
 		dataField : "name",
 		headerText : "결재제목",
 		width : "40%"
-	},{
-		
+	}, {
+
 		dataField : "returnPoint",
 		headerText : "반려단계",
 		width : "40%"
-	},{
-		
+	}, {
+
 		dataField : "createDate",
 		headerText : "기안일",
 		width : "10%"
-	},{
-		
+	}, {
+
 		dataField : "completeTime",
 		headerText : "반려일",
 		width : "10%"
-	},{
-		
+	}, {
+
 		dataField : "oid",
 		headerText : "oid",
 		visible : false
 	} ];
-	
+
 	function createAUIGrid(columnLayout) {
 		const props = {
 			rowIdField : "oid",
@@ -87,7 +88,7 @@
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 
 	}
-	
+
 	function loadGridData() {
 		let params = new Object();
 		let url = getCallUrl("/approval/listReturn");
@@ -100,7 +101,7 @@
 			parent.close();
 		});
 	}
-	
+
 	let last = false;
 	function vScrollChangeHandler(event) {
 		if (event.position == event.maxPosition) {

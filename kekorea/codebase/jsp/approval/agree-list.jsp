@@ -118,7 +118,7 @@
 			rowNumHeaderText : "번호",
 			fillColumnSizeMode : true, // 화면 꽉채우기
 			enableCellMerge : true,
-			cellMergePolicy : "withNull",
+			cellMergePolicy : "withNull"
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);

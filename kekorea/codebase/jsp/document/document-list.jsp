@@ -72,6 +72,9 @@
 	<!-- button table -->
 	<table class="btn_table">
 		<tr>
+			<td class="left">
+				<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
+			</td>
 			<td class="right">
 				<input type="button" value="삭제" class="redBtn" id="deleteListDocBtn" title="삭제">
 				<input type="button" value="상세조회" class="orangeBtn" id="detailEpmBtn" title="상세조회">
@@ -148,12 +151,12 @@
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-				rowIdField : "oid",
-				headerHeight : 30,
-				rowHeight : 30,
-				showRowNumColumn : true,
-				rowNumHeaderText : "번호",
-				fillColumnSizeMode : true, // 화면 꽉채우기
+			rowIdField : "oid",
+			headerHeight : 30,
+			rowHeight : 30,
+			showRowNumColumn : true,
+			rowNumHeaderText : "번호",
+			fillColumnSizeMode : true, // 화면 꽉채우기
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		loadGridData();
@@ -167,7 +170,7 @@
 			}
 		});
 	}
-	
+
 	function loadGridData() {
 		let params = new Object();
 		let url = getCallUrl("/document/list");

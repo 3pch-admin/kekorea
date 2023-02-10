@@ -109,7 +109,7 @@
 		headerText : "oid",
 		visible : false
 	} ];
-	
+
 	function createAUIGrid(columnLayout) {
 		const props = {
 			rowIdField : "oid",
@@ -171,7 +171,7 @@
 			}
 		})
 	}
-	
+
 	$(function() {
 		createAUIGrid(columns);
 
