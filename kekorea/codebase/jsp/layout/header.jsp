@@ -46,7 +46,8 @@ UserData data = (UserData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a href="graph_flot.html">공지사항</a>
+<!-- 						<a href="graph_flot.html">공지사항</a> -->
+						<a onclick="moveToPage(this, '/approval/listNotice');">공지사항</a>
 					</li>
 					<li>
 						<a href="graph_morris.html">나의작번</a>
@@ -199,13 +200,14 @@ UserData data = (UserData) request.getAttribute("data");
 						<a onclick="moveToPage(this, '/document/list');">문서 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/document/listDocument');">산출물 조회</a>
+						<a onclick="moveToPage(this, '/document/listOutput');">산출물 조회</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/partlist/list');">수배표 조회</a>
 					</li>
 					<li>
-						<a href="login.html">의뢰서 조회</a>
+<!-- 						<a href="login.html">의뢰서 조회</a> -->
+						<a onclick="moveToPage(this, '/document/listRequestDocument');">의뢰서 조회</a>
 					</li>
 					<!-- 					<li> -->
 					<!-- 						<a href="login_two_columns.html">문서 등록</a> -->
@@ -223,7 +225,8 @@ UserData data = (UserData) request.getAttribute("data");
 						<a href="500.html">문서 결재</a>
 					</li>
 					<li>
-						<a href="empty_page.html">첨부파일 조회</a>
+<!-- 						<a href="empty_page.html">첨부파일 조회</a> -->
+						<a onclick="moveToPage(this, '/document/listContents');">첨부파일 조회</a>
 					</li>
 				</ul>
 			</li>

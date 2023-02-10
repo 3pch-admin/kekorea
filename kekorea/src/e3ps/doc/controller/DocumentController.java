@@ -41,17 +41,17 @@ public class DocumentController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description("문서 결재 페이지")
-	@RequestMapping(value="/approval", method = RequestMethod.GET)
+	@RequestMapping(value = "/approval", method = RequestMethod.GET)
 	public ModelAndView approval() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("/jsp/document/approvalDocument.jsp");
 		return model;
 	}
-	
+
 	@Description("문서 결재")
-	@RequestMapping(value="/approval", method = RequestMethod.POST)
+	@RequestMapping(value = "/approval", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> approval(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -64,4 +64,74 @@ public class DocumentController extends BaseController {
 		}
 		return result;
 	}
+
+	@Description("산출물 조회 페이지")
+	@RequestMapping(value = "/listOutput", method = RequestMethod.GET)
+	public ModelAndView listOutput() throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("/jsp/document/output-list.jsp");
+		return model;
+	}
+
+	@Description("산출물 조회")
+	@ResponseBody
+	@RequestMapping(value = "/listOutput", method = RequestMethod.POST)
+	public Map<String, Object> listOutput(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = DocumentHelper.manager.findOutput(params);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+
+	@Description("의뢰서 조회 페이지")
+	@RequestMapping(value = "/listRequestDocument", method = RequestMethod.GET)
+	public ModelAndView listRequestDocument() throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("/jsp/document/requestDocument-list.jsp");
+		return model;
+	}
+
+	@Description("의뢰서 조회")
+	@ResponseBody
+	@RequestMapping(value = "/listRequestDocument", method = RequestMethod.POST)
+	public Map<String, Object> listRequestDocument(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = DocumentHelper.manager.findRequestDocument(params);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+
+	@Description("첨부파일 조회 페이지")
+	@RequestMapping(value = "/listContents", method = RequestMethod.GET)
+	public ModelAndView listContents() throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("/jsp/document/contents-list.jsp");
+		return model;
+	}
+
+	@Description("첨부파일 조회")
+	@ResponseBody
+	@RequestMapping(value = "/listContents", method = RequestMethod.POST)
+	public Map<String, Object> listContents(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = DocumentHelper.manager.findContents(params);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+
 }
