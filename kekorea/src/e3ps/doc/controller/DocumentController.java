@@ -22,7 +22,7 @@ public class DocumentController extends BaseController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/document/listDocument.jsp");
+		model.setViewName("/jsp/document/document-list.jsp");
 		return model;
 	}
 

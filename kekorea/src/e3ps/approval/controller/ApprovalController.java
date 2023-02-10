@@ -22,7 +22,7 @@ public class ApprovalController extends BaseController{
 	@RequestMapping(value="/listAgree", method=RequestMethod.GET)
 	public ModelAndView listaAree() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/approval/listAgree.jsp");
+		model.setViewName("/jsp/approval/agree-list.jsp");
 		return  model;
 	}
 	
@@ -45,7 +45,7 @@ public class ApprovalController extends BaseController{
 	@RequestMapping(value="/listApproval", method=RequestMethod.GET)
 	public ModelAndView listApproval() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/approval/listApproval.jsp");
+		model.setViewName("/jsp/approval/approval-list.jsp");
 		return  model;
 	}
 	
@@ -68,7 +68,7 @@ public class ApprovalController extends BaseController{
 	@RequestMapping(value="/listReceive", method=RequestMethod.GET)
 	public ModelAndView listReceive() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/approval/listReceive.jsp");
+		model.setViewName("/jsp/approval/receive-list.jsp");
 		return model;
 	}
 	
@@ -91,7 +91,7 @@ public class ApprovalController extends BaseController{
 	@RequestMapping(value="/listIng", method=RequestMethod.GET)
 	public ModelAndView listIng() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/approval/listIng.jsp");
+		model.setViewName("/jsp/approval/ing-list.jsp");
 		return model;
 	}
 	
@@ -114,7 +114,7 @@ public class ApprovalController extends BaseController{
 	@RequestMapping(value="/listComplete", method=RequestMethod.GET)
 	public ModelAndView listComplete() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/approval/listComplete.jsp");
+		model.setViewName("/jsp/approval/complete-list.jsp");
 		return model;
 	}
 	
@@ -137,7 +137,7 @@ public class ApprovalController extends BaseController{
 	@RequestMapping(value="/listReturn", method=RequestMethod.GET)
 	public ModelAndView listReturn() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/approval/listReturn.jsp");
+		model.setViewName("/jsp/approval/return-list.jsp");
 		return model;
 	}
 	
@@ -154,5 +154,13 @@ public class ApprovalController extends BaseController{
 			result.put("result", FAIL);
 		}
 		return result;
+	}
+	
+	@Description("공지사항 페이지")
+	@RequestMapping(value="/listNotice", method=RequestMethod.GET)
+	public ModelAndView listNotice() throws Exception {
+		ModelAndView model = new ModelAndView();
+		
+		return model;
 	}
 }

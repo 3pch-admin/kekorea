@@ -23,7 +23,7 @@ public class PartController extends BaseController{
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		
-		model.setViewName("/jsp/part/listProductPart2.jsp");
+		model.setViewName("/jsp/part/productPart-list.jsp");
 		return model;
 	}
 	

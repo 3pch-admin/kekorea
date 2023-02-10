@@ -88,7 +88,7 @@
 		visible : false
 	} ]
 	
-	function createAUIGrid(columns) {
+	function createAUIGrid(columnLayout) {
 		const props = {
 			rowIdField : "rowId",
 			headerHeight : 30,

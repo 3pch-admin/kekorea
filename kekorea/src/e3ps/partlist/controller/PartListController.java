@@ -21,7 +21,7 @@ public class PartListController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/partList/listPartList2.jsp");
+		model.setViewName("/jsp/partList/partList-list.jsp");
 		return model;
 	}
 	

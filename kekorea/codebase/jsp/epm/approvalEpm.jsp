@@ -8,7 +8,6 @@
 <%@include file="/jsp/common/layouts/include_script.jsp"%>
 </head>
 <body>
-<td valign="top">
 	<!-- script area -->
 	<script type="text/javascript">
 	$(document).ready(function() {
@@ -165,6 +164,5 @@
 			</td>			
 		</tr>				
 	</table>
-</td>
 </body>
 </html>
