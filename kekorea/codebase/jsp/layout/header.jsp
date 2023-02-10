@@ -1,4 +1,4 @@
-템플<%@page import="e3ps.admin.commonCode.CommonCode"%>
+<%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.org.beans.UserData"%>
 <%@page import="wt.session.SessionHelper"%>

@@ -15,7 +15,7 @@ String base64 = (String) request.getAttribute("base64");
 	$(function() {
 
 		$("#closeBtn").click(function() {
-
+			sefl.close();
 		})
 
 		let width = $("#thumbnail").width();

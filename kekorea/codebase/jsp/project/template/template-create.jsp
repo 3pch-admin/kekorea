@@ -1,5 +1,9 @@
+<%@page import="java.util.HashMap"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
+<%
+ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) request.getAttribute("list");
+%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <table class="btn_table">
 	<tr>
@@ -17,6 +21,10 @@
 </table>
 
 <table class="create_table">
+	<colgroup>
+		<col width="130">
+		<col width="*">
+	</colgroup>
 	<tr>
 		<th>
 			<font class="req">템플릿 명</font>
@@ -30,7 +38,7 @@
 			<font class="req">사용여부</font>
 		</th>
 		<td>
-			<input type="checkbox" name="enable" id="enable" checked="checked">
+			<input type="checkbox" name="enable" id="enable" checked="checked" value="true">
 		</td>
 	</tr>
 	<tr>
@@ -38,6 +46,15 @@
 		<td colspan="3">
 			<select name="temp" id="temp" class="AXSelect wid300">
 				<option value="">선택</option>
+				<%
+				for (HashMap<String, Object> map : list) {
+					String key = (String) map.get("value");
+					String value = (String) map.get(key);
+				%>
+				<option value="<%=key%>"><%=value %></option>
+				<%
+				}
+				%>
 			</select>
 		</td>
 	</tr>
@@ -63,17 +80,17 @@
 		$("#createBtn").click(function() {
 			let url = getCallUrl("/template/create");
 			let params = new Object();
-			params = form(params);
-			open();
+			params = form(params, "create_table");
+			openLayer();
 			call(url, params, function(data) {
 				alert(data.msg);
 				if (data.result) {
 					opener.loadGridData();
 					self.close();
 				} else {
-					close();
+					closeLayer();
 				}
 			}, "POST");
 		})
 	})
-</script>m
+</script>

@@ -16,6 +16,7 @@ public class TemplateColumnData {
 	private String name;
 	private String description;
 	private int duration;
+	private boolean enable;
 	private String creator;
 	private Timestamp createDate;
 
@@ -28,6 +29,7 @@ public class TemplateColumnData {
 		setName(template.getName());
 		setDescription(StringUtils.replaceToValue(template.getDescription(), ""));
 		setDuration(template.getDuration());
+		setEnable(template.getEnable());
 		setCreator(template.getOwnership().getOwner().getFullName());
 		setCreateDate(template.getCreateTimestamp());
 	}

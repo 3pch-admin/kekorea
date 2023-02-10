@@ -118,7 +118,7 @@ String userId = (String) request.getAttribute("userId");
 			</td>
 		</tr>
 	</table>
-	<div id="grid_wrap" style="height: 700px; border-top: 1px solid #3180c3;"></div>
+	<div id="grid_wrap" style="height: 690px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;
@@ -134,17 +134,26 @@ String userId = (String) request.getAttribute("userId");
 		dataField : "item",
 		headerText : "항목",
 		dataType : "string",
-		width : 120
+		width : 120,
+		filter : {
+			showIcon : true
+		}
 	}, {
 		dataField : "improvements",
 		headerText : "개선내용",
 		dataType : "string",
-		width : 300
+		width : 300,
+		filter : {
+			showIcon : true
+		}
 	}, {
 		dataField : "improvement",
 		headerText : "개선책",
 		dataType : "string",
-		width : 300
+		width : 300,
+		filter : {
+			showIcon : true
+		}
 	}, {
 		dataField : "apply",
 		headerText : "적용/미적용",
@@ -289,7 +298,10 @@ String userId = (String) request.getAttribute("userId");
 		dataField : "note",
 		headerText : "비고",
 		dataType : "string",
-		width : 150
+		width : 150,
+		filter : {
+			showIcon : true
+		}
 	}, {
 		dataField : "preView",
 		headerText : "미리보기",
@@ -342,13 +354,19 @@ String userId = (String) request.getAttribute("userId");
 		dataField : "creator",
 		headerText : "작성자",
 		dataType : "string",
-		width : 100
+		width : 100,
+		filter : {
+			showIcon : true
+		}
 	}, {
 		dataField : "createdDate",
 		headerText : "작성일",
 		dataType : "date",
 		formatString : "yyyy-mm-dd",
-		width : 100
+		width : 100,
+		filter : {
+			showIcon : true
+		}
 	}, {
 		dataField : "secondaryPaths",
 		headerText : "",
@@ -391,7 +409,7 @@ String userId = (String) request.getAttribute("userId");
 	function auiCellClickHandler(event) {
 		let oid = event.item.oid;
 		let dataField = event.dataField;
-		if (dataField == "preView") {
+		if (dataField == "preView" && oid.indexOf("Cip") > -1) {
 			let url = getCallUrl("/aui/thumbnail?oid=" + oid);
 			popup(url);
 		}
@@ -464,7 +482,6 @@ String userId = (String) request.getAttribute("userId");
 		});
 	}
 
-	
 	function setSecondary(data) {
 		let template = "";
 		let arr = new Array();

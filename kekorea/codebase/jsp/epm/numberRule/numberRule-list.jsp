@@ -121,7 +121,7 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 			</td>
 		</tr>
 	</table>
-	<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+	<div id="grid_wrap" style="height: 660px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;
@@ -134,7 +134,7 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 		dataField : "name",
 		headerText : "도면명",
 		dataType : "string",
-		width : 150
+// 		width : 150
 	}, {
 		dataField : "businessSector",
 		headerText : "사업부문",
@@ -172,7 +172,7 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 		dataField : "creator",
 		headerText : "작성자",
 		dataType : "string",
-		width : 100,
+		width : 80,
 	}, {
 		dataField : "createdDate",
 		headerText : "작성일",
@@ -183,7 +183,7 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 		dataField : "modifier",
 		headerText : "수정자",
 		dataType : "string",
-		width : 100,
+		width : 80,
 	}, {
 		dataField : "modifiedDate",
 		headerText : "수정일",
@@ -205,7 +205,7 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
 			showRowCheckColumn : true, // 체크 박스 출력
-// 			fillColumnSizeMode : true
+			fillColumnSizeMode : true
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);

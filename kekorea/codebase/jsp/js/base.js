@@ -108,6 +108,9 @@ function form(params, table) {
 	let input = $("." + table + " input[type=text]");
 	$.each(input, function(idx) {
 		let key = input.eq(idx).attr("name");
+		if (key === undefined) {
+			return true;
+		}
 		let value = input.eq(idx).val();
 		params[key] = value;
 	})
@@ -115,11 +118,30 @@ function form(params, table) {
 	let select = $("." + table + " select");
 	$.each(select, function(idx) {
 		let key = select.eq(idx).attr("name");
-		if (key == undefined) {
+		if (key === undefined) {
 			return true;
 		}
 		let value = select.eq(idx).val();
 		params[key] = value;
+	})
+
+	let textarea = $("." + table + " textarea");
+	$.each(textarea, function(idx) {
+		let key = textarea.eq(idx).attr("name");
+		if (key === undefined) {
+			return true;
+		}
+		let value = textarea.eq(idx).val();
+		params[key] = value;
+	})
+
+	let checkbox = $("." + table + " input[type=checkbox");
+	$.each(checkbox, function(idx) {
+		if (checkbox.eq(idx).prop("checked")) {
+			var key = checkbox.eq(idx).attr("name");
+			var value = Boolean(checkbox.eq(idx).val());
+			params[key] = value;
+		}
 	})
 	return params;
 }
@@ -129,4 +151,21 @@ function form(params, table) {
  */
 function date(name) {
 	$("input[name=" + name + "]").bindDate();
+}
+
+/**
+ * BIND PRE TO AFTER DATE
+ */
+function rangeDate(name, startName) {
+	const config = {
+		align: "left",
+		valign: "top",
+		buttonText: "확인",
+		startTargetID: startName,
+		customPos: {
+			top: 28,
+			left: 25
+		},
+	}
+	$("input[name=" + name + "]").bindTwinDate(config);
 }

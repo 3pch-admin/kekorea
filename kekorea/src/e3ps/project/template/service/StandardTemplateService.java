@@ -26,9 +26,8 @@ public class StandardTemplateService extends StandardManager implements Template
 	@Override
 	public void create(Map<String, Object> params) throws Exception {
 		String name = (String) params.get("name");
-		String duration = (String) params.get("duration");
 		String description = (String) params.get("description");
-		String enable = (String) params.get("enable");
+		boolean enable = (boolean) params.get("enable");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
@@ -38,13 +37,14 @@ public class StandardTemplateService extends StandardManager implements Template
 
 			Template template = Template.newTemplate();
 			template.setName(name);
-			template.setEnable(Boolean.parseBoolean(enable));
+			template.setEnable(enable);
 			template.setOwnership(ownership);
 			template.setDuration(1);
 			template.setDescription(description);
 
 			Timestamp start = DateUtils.getPlanStartDate();
 			template.setPlanStartDate(start);
+			template.setState("완료됨");
 
 			Calendar eCa = Calendar.getInstance();
 			eCa.setTimeInMillis(start.getTime());

@@ -127,11 +127,6 @@
 					Log out
 				</a>
 			</li>
-			<li>
-				<a class="right-sidebar-toggle">
-					<i class="fa fa-tasks"></i>
-				</a>
-			</li>
 		</ul>
 	</nav>
 </div>

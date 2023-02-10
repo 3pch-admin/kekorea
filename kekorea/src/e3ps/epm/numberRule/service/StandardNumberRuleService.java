@@ -39,9 +39,9 @@ public class StandardNumberRuleService extends StandardManager implements Number
 
 				CommonCode businessCode = CommonCodeHelper.manager.getCommonCode(businessSector, "BUSINESS_SECTOR");
 				CommonCode companyCode = CommonCodeHelper.manager.getCommonCode(drawingCompany, "DRAWING_COMPANY");
-				CommonCode departmentCode = CommonCodeHelper.manager.getCommonCode(document, "WRITTEN_DOCUMENT");
-				CommonCode documentCode = CommonCodeHelper.manager.getCommonCode(department,
+				CommonCode departmentCode = CommonCodeHelper.manager.getCommonCode(department,
 						"CLASSIFICATION_WRITING_DEPARTMENT");
+				CommonCode documentCode = CommonCodeHelper.manager.getCommonCode(document, "WRITTEN_DOCUMENT");
 
 				NumberRuleMaster master = NumberRuleMaster.newNumberRuleMaster();
 				master.setNumber(number);
@@ -75,10 +75,27 @@ public class StandardNumberRuleService extends StandardManager implements Number
 
 	@Override
 	public void revise(Map<String, Object> params) throws Exception {
-		ArrayList<Map<String, Object>> editRows = (ArrayList<Map<String, Object>>) params.get("editRows");
+		ArrayList<Map<String, Object>> addRows = (ArrayList<Map<String, Object>>) params.get("addRows");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
+
+			for (Map<String, Object> addRow : addRows) {
+				String oid = (String) addRow.get("oid");
+				String note = (String) addRow.get("note");
+
+				NumberRule pre = (NumberRule) CommonUtils.getObject(oid); // 이전버전..
+				pre.setLatest(false);
+				pre = (NumberRule) PersistenceHelper.manager.modify(pre);
+
+				NumberRule latest = NumberRule.newNumberRule();
+				latest.setLatest(true);
+				latest.setMaster(pre.getMaster());
+				latest.setOwnership(CommonUtils.sessionOwner());
+				latest.setVersion(pre.getVersion() + 1);
+				latest.setNote(note);
+				PersistenceHelper.manager.save(latest);
+			}
 
 			trs.commit();
 			trs.rollback();

@@ -43,7 +43,7 @@
 			<td>
 				<input type="text" name="predate" id="predate" class="AXInput">
 				~
-				<input type="text" name="postdate" id="postdate" class="AXInput twinDatePicker" data-start="predate">
+				<input type="text" name="postdate" id="postdate" class="AXInput">
 				<i title="삭제" class="axi axi-ion-close-circled delete-calendar" data-start="predate" data-end="postdate"></i>
 			</td>
 		</tr>
@@ -63,7 +63,6 @@
 </body>
 <script type="text/javascript">
 	let myGridID;
-
 	const columns = [ {
 		dataField : "name",
 		headerText : "템플릿 명",
@@ -74,6 +73,14 @@
 		headerText : "설명",
 		dataType : "string",
 	}, {
+		dataField : "enable",
+		headerText : "사용여부",
+		dataType : "boolean",
+		width : 100,
+		renderer : {
+			type : "CheckBoxEditRenderer"
+		}
+	}, {
 		dataField : "duration",
 		headerText : "기간",
 		dataType : "numeric",
@@ -83,7 +90,7 @@
 		dataField : "creator",
 		headerText : "작성자",
 		dataType : "string",
-		width : 120
+		width : 80
 	}, {
 		dataField : "createDate",
 		headerText : "설명",
@@ -111,6 +118,16 @@
 		loadGridData();
 		// LazyLoading 바인딩
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+	}
+
+	function auiCellClickHandler(event) {
+		let oid = event.item.oid;
+		let dataField = event.dataField;
+		if (dataField === "name" || dataField === "description") {
+			let url = getCallUrl("/template/view?oid=" + oid);
+			popup(url);
+		}
 	}
 
 	function loadGridData() {
@@ -158,6 +175,7 @@
 	}
 
 	$(function() {
+		rangeDate("postdate", "predate");
 
 		createAUIGrid(columns);
 		$("#searchBtn").click(function() {
@@ -167,7 +185,7 @@
 		// 등록페이지
 		$("#createBtn").click(function() {
 			let url = getCallUrl("/template/create");
-			popup(url, 1200, 430);
+			popup(url, 1200, 420);
 		})
 
 	}).keypress(function(e) {

@@ -1,9 +1,7 @@
 package e3ps.project.template;
 
-import com.ptc.windchill.annotations.metadata.ColumnProperties;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
-import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import e3ps.project.ProjectImpl;
 import wt.fc.WTObject;
@@ -13,11 +11,7 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "number", type = String.class, javaDoc = "템플릿 번호",
-
-						columnProperties = @ColumnProperties(columnName = "TEMPLATENUMBER", unique = true), constraints = @PropertyConstraints(required = true)),
-
-				@GeneratedProperty(name = "enable", type = boolean.class, initialValue = "true") }
+				@GeneratedProperty(name = "enable", type = Boolean.class, initialValue = "true") }
 
 )
 

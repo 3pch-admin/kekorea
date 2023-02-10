@@ -4707,5 +4707,6 @@ textarea.description {
 	resize: none;
 	margin-top: 5px !important;
 	padding-top: 10px !Important;
+	padding-left: 10px !important;
 	padding-bottom: 10px !Important;
 }

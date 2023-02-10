@@ -13,9 +13,8 @@
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="추가" class="redBtn" id="addRowBtn" title="추가">
 			<input type="button" value="삭제" class="orangeBtn" id="deleteRowBtn" title="삭제">
-			<input type="button" value="등록" id="createBtn" title="등록">
+			<input type="button" value="개점" id="createBtn" title="개정">
 			<input type="button" value="닫기" id="closeBtn" title="닫기" class="blueBtn">
 		</td>
 	</tr>
@@ -26,12 +25,6 @@
 	const data = window.list;
 	let myGridID;
 	const columns = [ {
-		dataField : "last",
-		headerText : "최종도번",
-		dataType : "string",
-		width : 120,
-		editable : false,
-	}, {
 		dataField : "number",
 		headerText : "도면번호",
 		dataType : "string",
@@ -41,7 +34,7 @@
 		dataField : "name",
 		headerText : "도면명",
 		dataType : "string",
-		width : 250,
+		width : 200,
 		editable : false
 	}, {
 		dataField : "businessSector",
@@ -71,11 +64,15 @@
 		dataField : "version",
 		headerText : "버전",
 		dataType : "numeric",
-		width : 120,
+		width : 100,
 		editRenderer : {
 			type : "InputEditRenderer",
 			onlyNumeric : true, // 0~9만 입력가능
 		},
+	}, {
+		dataField : "note",
+		headerText : "개정사유",
+		dataType : "string",
 	}, {
 		dataField : "oid",
 		headerText : "oid",
@@ -85,7 +82,7 @@
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-			rowIdField : "oid",
+			rowIdField : "rowId",
 			headerHeight : 30,
 			rowHeight : 30,
 			showRowNumColumn : true,
@@ -93,9 +90,12 @@
 			showRowCheckColumn : true, // 체크 박스 출력,
 			fillColumnSizeMode : true,
 			editable : true,
+			showStateColumn : true,
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
-		AUIGrid.setGridData(myGridID, data);
+		for (let i = 0; i < data.length; i++) {
+			AUIGrid.addRow(myGridID, data[i].item, "last");
+		}
 	}
 
 	$(function() {
@@ -116,9 +116,10 @@
 		$("#createBtn").click(function() {
 			let addRows = AUIGrid.getAddedRowItems(myGridID);
 			let params = new Object();
-			let url = getCallUrl("/numberRule/create");
+			let url = getCallUrl("/numberRule/revise");
 			params.addRows = addRows;
 			openLayer();
+			console.log(params);
 			call(url, params, function(data) {
 				alert(data.msg);
 				if (data.result) {
