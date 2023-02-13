@@ -35,7 +35,7 @@ String method = (String)request.getAttribute("method");
 			uploadFileName : "secondary",
 			buttonTxt : "파일 선택",
 			uploadMaxFileSize : (1024 * 1024 * 1024),
-			uploadUrl : "/Windchill/plm/content/aui/upload",
+			uploadUrl : "/Windchill/plm/content/aui/auiUpload",
 			dropBoxID : "uploadQueueBox",
 			queueBoxID : "uploadQueueBox",
 			uploadPars : {

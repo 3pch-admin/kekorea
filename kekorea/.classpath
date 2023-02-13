@@ -66,5 +66,6 @@
 	<classpathentry kind="lib" path="D:/ptc/Windchill_11.1/Windchill/codebase/WEB-INF/lib/tiles-velocity-3.0.7.jar"/>
 	<classpathentry kind="lib" path="D:/ptc/Windchill_11.1/Windchill/codebase/WEB-INF/lib/lombok.jar"/>
 	<classpathentry kind="lib" path="D:/ptc/Windchill_11.1/Windchill/codebase/WEB-INF/lib/aspose-pdf-23.1.jar"/>
+	<classpathentry kind="lib" path="D:/ptc/Windchill_11.1/Windchill/codebase/WEB-INF/lib/gson-2.8.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

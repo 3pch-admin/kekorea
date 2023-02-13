@@ -19,6 +19,7 @@ public class CommonCodeColumnData {
 	private String description;
 	private boolean enable;
 	private Timestamp createDate;
+	private String parent;
 
 	public CommonCodeColumnData() {
 
@@ -32,9 +33,11 @@ public class CommonCodeColumnData {
 		CommonCode parent = commonCode.getParent();
 		if (commonCode.getParent() != null) {
 			setParentName(parent.getName() + " [" + parent.getCodeType().getDisplay() + "]");
+			setParent(parent.getPersistInfo().getObjectIdentifier().getStringValue());
 		}
 		setDescription(StringUtils.replaceToValue(commonCode.getDescription()));
 		setEnable(commonCode.isEnable());
 		setCreateDate(commonCode.getCreateTimestamp());
+
 	}
 }

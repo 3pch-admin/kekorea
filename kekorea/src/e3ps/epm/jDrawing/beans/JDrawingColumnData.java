@@ -2,6 +2,7 @@ package e3ps.epm.jDrawing.beans;
 
 import java.sql.Timestamp;
 
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.epm.jDrawing.JDrawing;
 import e3ps.epm.jDrawing.JDrawingMaster;
@@ -40,6 +41,6 @@ public class JDrawingColumnData {
 		setCreatedDate(master.getCreateTimestamp());
 		setModifier(jDrawing.getOwnership().getOwner().getFullName());
 		setModifiedDate(jDrawing.getModifyTimestamp());
-		setPrimary(ContentUtils.getPrimary(jDrawing)[7]);
+		setPrimary(AUIGridUtils.primaryTemplate(jDrawing));
 	}
 }

@@ -3259,7 +3259,7 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);
 
-		QuerySpecUtils.toEquals(query, idx, Project.class, Project.KEK_NUMBER, kekNumber);
+		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, Project.KEK_NUMBER, kekNumber);
 
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {

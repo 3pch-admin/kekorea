@@ -35,6 +35,7 @@ public class StandardCipService extends StandardManager implements CipService {
 				String apply = (String) addRow.get("apply");
 				String note = (String) addRow.get("note");
 				String mak = (String) addRow.get("mak");
+				String detail = (String) addRow.get("detail");
 				String customer = (String) addRow.get("customer");
 				String install = (String) addRow.get("install");
 				String preViewPath = (String) addRow.get("preViewPath");
@@ -48,6 +49,7 @@ public class StandardCipService extends StandardManager implements CipService {
 				cip.setApply(apply);
 				cip.setNote(note);
 				cip.setMak(CommonCodeHelper.manager.getCommonCode(mak, "MAK"));
+				cip.setDetail(CommonCodeHelper.manager.getCommonCode(detail, "MAK_DETAIL"));
 				cip.setCustomer(CommonCodeHelper.manager.getCommonCode(customer, "CUSTOMER"));
 				cip.setInstall(CommonCodeHelper.manager.getCommonCode(install, "INSTALL"));
 				PersistenceHelper.manager.save(cip);
@@ -75,6 +77,7 @@ public class StandardCipService extends StandardManager implements CipService {
 				String apply = (String) editRow.get("apply");
 				String note = (String) editRow.get("note");
 				String mak = (String) editRow.get("mak");
+				String detail = (String) editRow.get("detail");
 				String customer = (String) editRow.get("customer");
 				String install = (String) editRow.get("install");
 				String oid = (String) editRow.get("oid");
@@ -88,6 +91,7 @@ public class StandardCipService extends StandardManager implements CipService {
 				cip.setApply(apply);
 				cip.setNote(note);
 				cip.setMak(CommonCodeHelper.manager.getCommonCode(mak, "MAK"));
+				cip.setDetail(CommonCodeHelper.manager.getCommonCode(detail, "MAK_DETAIL"));
 				cip.setCustomer(CommonCodeHelper.manager.getCommonCode(customer, "CUSTOMER"));
 				cip.setInstall(CommonCodeHelper.manager.getCommonCode(install, "INSTALL"));
 				PersistenceHelper.manager.modify(cip);

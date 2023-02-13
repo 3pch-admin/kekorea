@@ -1,4 +1,4 @@
-package e3ps.project;
+package e3ps.project.task;
 
 import com.ptc.windchill.annotations.metadata.Cardinality;
 import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
@@ -9,6 +9,7 @@ import com.ptc.windchill.annotations.metadata.GeneratedRole;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
+import e3ps.project.Project;
 import e3ps.project.template.Template;
 import wt.fc.ObjectToObjectLink;
 import wt.util.WTException;
@@ -21,9 +22,7 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "lag", type = Integer.class)
-
-		},
+				@GeneratedProperty(name = "lag", type = Integer.class, initialValue = "1") },
 
 		foreignKeys = {
 
@@ -34,8 +33,6 @@ import wt.util.WTException;
 								constraints = @PropertyConstraints(required = false)),
 
 						myRole = @MyRole(name = "target", cardinality = Cardinality.ONE)),
-
-				// front target object, before source user
 
 				@GeneratedForeignKey(name = "TemplateTargetSourceLink",
 

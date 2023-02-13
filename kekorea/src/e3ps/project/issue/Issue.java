@@ -1,4 +1,4 @@
-package e3ps.project;
+package e3ps.project.issue;
 
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
@@ -13,13 +13,11 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "name", type = String.class, javaDoc = "특이사항 제목"),
+				@GeneratedProperty(name = "name", type = String.class, javaDoc = "특이사항 제목", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "description", type = String.class, constraints = @PropertyConstraints(upperLimit = 2000))
+				@GeneratedProperty(name = "description", type = String.class, constraints = @PropertyConstraints(upperLimit = 2000, required = true))
 
-		}
-
-)
+		})
 
 public class Issue extends _Issue {
 

@@ -465,8 +465,12 @@ public class CommonUtils implements MessageHelper {
 	public static String getPersistableTime(Timestamp time, int index) throws Exception {
 		return time.toString().substring(0, index);
 	}
-	
+
 	public static Ownership sessionOwner() throws Exception {
 		return Ownership.newOwnership(SessionHelper.manager.getPrincipal());
+	}
+
+	public static WTUser sessionUser() throws Exception {
+		return (WTUser) SessionHelper.manager.getPrincipal();
 	}
 }

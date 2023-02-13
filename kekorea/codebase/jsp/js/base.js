@@ -1,11 +1,9 @@
-let context = "/Windchill/plm";
-
 /**
  * 메소드 호출 URL 생성 
  * CONTEXT 값을 제외한 URL 주소
  */
 function getCallUrl(url) {
-	return context + url;
+	return "/Windchill/plm" + url;
 }
 
 /**
@@ -28,7 +26,7 @@ function call(url, params, callBack, methodType) {
 		dataType: "JSON",
 		crossDomain: true,
 		data: params,
-		async: true,
+		async: false,
 		contentType: "application/json; charset=UTF-8",
 		success: function(res) {
 			callBack(res);

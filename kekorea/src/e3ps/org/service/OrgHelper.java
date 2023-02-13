@@ -8,6 +8,7 @@ import java.util.Map;
 import e3ps.approval.ApprovalUserLine;
 import e3ps.common.util.MessageHelper;
 import e3ps.common.util.PageQueryUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.org.Department;
 import e3ps.org.People;
@@ -304,153 +305,36 @@ public class OrgHelper implements MessageHelper {
 		return list;
 	}
 
-	public Map<String, Object> getUserBind(Map<String, Object> param) {
+	public Map<String, Object> getUserBind(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>(); // json
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>(); // data
-		String key = (String) param.get("key");
-		String dept = (String) param.get("dept");
+		String value = (String) params.get("value");
 
-		String resign = (String) param.get("resign");
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(People.class, true);
 
-		QuerySpec query = null;
-		try {
-
-			query = new QuerySpec();
-			int idx = query.appendClassList(People.class, true);
-
-			SearchCondition sc = null;
-			ColumnExpression ce = null;
-			ClassAttribute ca = null;
-			SQLFunction function = null;
-			if (!StringUtils.isNull(key)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				query.appendOpenParen();
-
-				ca = new ClassAttribute(People.class, People.NAME);
-				ce = ConstantExpression.newExpression("%" + key.trim().toUpperCase() + "%");
-				function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx });
-
-				query.appendOr();
-
-				ca = new ClassAttribute(People.class, People.ID);
-				ce = ConstantExpression.newExpression("%" + key.trim().toUpperCase() + "%");
-				function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx });
-
-				query.appendCloseParen();
-			}
-
-			if (!StringUtils.isNull(dept)) {
-
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				Department dd = OrgHelper.manager.getDepartment(dept);
-
-				int idx_dept = query.appendClassList(Department.class, false);
-
-				ClassAttribute roleAca = new ClassAttribute(People.class, "departmentReference.key.id");
-				ClassAttribute roleBca = new ClassAttribute(Department.class, "thePersistInfo.theObjectIdentifier.id");
-				sc = new SearchCondition(roleAca, "=", roleBca);
-
-				query.appendWhere(sc, new int[] { idx, idx_dept });
-				query.appendAnd();
-
-				sc = new SearchCondition(People.class, "departmentReference.key.id", "=",
-						dd.getPersistInfo().getObjectIdentifier().getId());
-				query.appendWhere(sc, new int[] { idx, idx_dept });
-
-			}
-
-			System.out.println("여기 실행...");
-
-			if (query.getConditionCount() > 0) {
-				query.appendAnd();
-			}
-
-			sc = new SearchCondition(People.class, People.RESIGN, SearchCondition.IS_FALSE);
-			query.appendWhere(sc, new int[] { idx });
-
-			ca = new ClassAttribute(People.class, People.RESIGN);
-			OrderBy orderBy = new OrderBy(ca, false);
-			query.appendOrderBy(orderBy, new int[] { idx });
-
-			ca = new ClassAttribute(People.class, People.ID);
-			orderBy = new OrderBy(ca, false);
-			query.appendOrderBy(orderBy, new int[] { idx });
-
-			QueryResult result = PersistenceHelper.manager.find(query);
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				People user = (People) obj[0];
-				Map<String, Object> userMap = new HashMap<String, Object>();
-				userMap.put("name", user.getName() + " [" + user.getId() + "]");
-				userMap.put("value", user.getPersistInfo().getObjectIdentifier().getStringValue());
-				list.add(userMap);
-			}
-
-			if ("resign".equals(resign)) {
-				QuerySpec qs = new QuerySpec();
-				int idx_p = qs.appendClassList(People.class, true);
-
-				if (!StringUtils.isNull(key)) {
-					if (qs.getConditionCount() > 0)
-						qs.appendAnd();
-
-					qs.appendOpenParen();
-
-					ca = new ClassAttribute(People.class, People.NAME);
-					ce = ConstantExpression.newExpression("%" + key.trim().toUpperCase() + "%");
-					function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-					sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-					qs.appendWhere(sc, new int[] { idx_p });
-
-					qs.appendOr();
-
-					ca = new ClassAttribute(People.class, People.ID);
-					ce = ConstantExpression.newExpression("%" + key.trim().toUpperCase() + "%");
-					function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-					sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-					qs.appendWhere(sc, new int[] { idx_p });
-
-					qs.appendCloseParen();
-				}
-
-				if (qs.getConditionCount() > 0) {
-					qs.appendAnd();
-				}
-
-				sc = new SearchCondition(People.class, People.RESIGN, SearchCondition.IS_TRUE);
-				qs.appendWhere(sc, new int[] { idx_p });
-
-				ca = new ClassAttribute(People.class, People.ID);
-				orderBy = new OrderBy(ca, false);
-				qs.appendOrderBy(orderBy, new int[] { idx });
-
-				result.reset();
-				result = PersistenceHelper.manager.find(qs);
-				while (result.hasMoreElements()) {
-					Object[] obj = (Object[]) result.nextElement();
-					People user = (People) obj[0];
-					Map<String, Object> userMap = new HashMap<String, Object>();
-					userMap.put("name", user.getName() + " [" + user.getId() + "(퇴사자)]");
-					userMap.put("value", user.getPersistInfo().getObjectIdentifier().getStringValue());
-					list.add(userMap);
-				}
-			}
-
-			map.put("result", SUCCESS);
-			map.put("list", list);
-		} catch (Exception e) {
-			e.printStackTrace();
-			map.put("result", FAIL);
-			map.put("msg", FAIL_DATA_LOAD);
+		if (!StringUtils.isNull(value)) {
+			query.appendOpenParen();
+			QuerySpecUtils.toLikeOr(query, idx, People.class, People.NAME, value);
+			QuerySpecUtils.toLikeOr(query, idx, People.class, People.ID, value);
+			query.appendCloseParen();
 		}
+
+		QuerySpecUtils.toBoolean(query, idx, People.class, People.RESIGN, SearchCondition.IS_FALSE);
+		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, false);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			People user = (People) obj[0];
+			Map<String, Object> userMap = new HashMap<String, Object>();
+			userMap.put("name", user.getName() + " [" + user.getId() + "]");
+			userMap.put("value", user.getPersistInfo().getObjectIdentifier().getStringValue());
+			list.add(userMap);
+		}
+
+		map.put("result", SUCCESS);
+		map.put("list", list);
 		return map;
 	}
 

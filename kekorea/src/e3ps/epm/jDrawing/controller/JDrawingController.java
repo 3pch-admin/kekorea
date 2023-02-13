@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.util.CommonUtils;
 import e3ps.controller.BaseController;
 import e3ps.epm.jDrawing.service.JDrawingHelper;
 import e3ps.epm.numberRule.service.NumberRuleHelper;
+import wt.org.WTUser;
 
 @Controller
 @RequestMapping(value = "/jDrawing/**")
@@ -25,6 +27,8 @@ public class JDrawingController extends BaseController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
+		WTUser sessionUser = CommonUtils.sessionUser();
+		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/jsp/epm/jDrawing/jDrawing-list.jsp");
 		return model;
 	}
@@ -60,13 +64,5 @@ public class JDrawingController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
-	}
-
-	@Description(value = "KE 생성 페이지")
-	@RequestMapping(value = "/create", method = RequestMethod.GET)
-	public ModelAndView create() throws Exception {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("popup:/epm/jDrawing/jDrawing-create");
-		return model;
 	}
 }

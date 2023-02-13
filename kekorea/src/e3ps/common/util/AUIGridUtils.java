@@ -33,7 +33,7 @@ public class AUIGridUtils {
 //			list = SpecHelper.manager.remoter(params);
 		} else if (target.contains("code")) {
 			list = CommonCodeHelper.manager.remoter(params);
-		} else if(target.contains("options")) {
+		} else if (target.contains("options")) {
 			list = OptionsHelper.manager.remoter(params);
 		}
 
@@ -41,8 +41,14 @@ public class AUIGridUtils {
 	}
 
 	public static String primaryTemplate(ContentHolder holder) throws Exception {
-		String template = null;
-
+		String template = "";
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
+		if (result.hasMoreElements()) {
+			ApplicationData data = (ApplicationData) result.nextElement();
+			String ext = FileUtil.getExtension(data.getFileName());
+			String icon = CommonContentHelper.manager.getIconPath(ext);
+			template += "<a><img src=" + icon + "></a>&nbsp;";
+		}
 		return template;
 	}
 

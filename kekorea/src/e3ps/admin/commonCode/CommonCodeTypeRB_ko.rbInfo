@@ -64,3 +64,15 @@ BUSINESS_SECTOR.sort=10
 #작성부서구분
 CLASSIFICATION_WRITING_DEPARTMENT.value=\uc791\uc131\ubd80\uc11c\uad6c\ubd84
 CLASSIFICATION_WRITING_DEPARTMENT.sort=11
+
+#태스크 타입
+TASK_TYPE.value=\ud0dc\uc2a4\ud06c\ud0c0\uc785
+TASK_TYPE.sort=12
+
+#막종상세
+MAK_DETAIL.value=\ub9c9\uc885\uc0c1\uc138
+MAK_DETAIL.sort=13
+
+#프로젝트유저타입
+USER_TYPE.value=\ud504\ub85c\uc81d\ud2b8\uc720\uc800\ud0c0\uc785
+USER_TYPE.sort=14

@@ -7,6 +7,7 @@ JSONArray maks = (JSONArray) request.getAttribute("maks");
 JSONArray installs = (JSONArray) request.getAttribute("installs");
 JSONArray customers = (JSONArray) request.getAttribute("customers");
 String userId = (String) request.getAttribute("userId");
+String name = (String) request.getAttribute("name");
 %>
 <!DOCTYPE html>
 <html>
@@ -122,13 +123,11 @@ String userId = (String) request.getAttribute("userId");
 </body>
 <script type="text/javascript">
 	let myGridID;
-	let maks =
-<%=maks%>
-	let installs =
-<%=installs%>
-	let customers =
-<%=customers%>
+	let maks = <%=maks%>
+	let installs = <%=installs%>
+	let customers = <%=customers%>
 	let recentGridItem = null;
+	let subListMap = {};
 	let list = [ "적용완료", "일부적용", "미적용", "검토중" ];
 	const columns = [ {
 		dataField : "item",
@@ -190,6 +189,8 @@ String userId = (String) request.getAttribute("userId");
 			list : maks, //key-value Object 로 구성된 리스트
 			keyField : "key", // key 에 해당되는 필드명
 			valueField : "value", // value 에 해당되는 필드명,
+			descendants : [ "detail" ], // 자손 필드들
+			descendantDefaultValues : [ "-" ], // 변경 시 자손들에게 기본값 지정
 			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 				let isValid = false;
 				for (let i = 0, len = maks.length; i < len; i++) { // keyValueList 있는 값만..
@@ -210,6 +211,57 @@ String userId = (String) request.getAttribute("userId");
 			for (let i = 0, len = maks.length; i < len; i++) {
 				if (maks[i]["key"] == value) {
 					retStr = maks[i]["value"];
+					break;
+				}
+			}
+			return retStr == "" ? value : retStr;
+		},
+		filter : {
+			showIcon : true
+		}
+	}, {
+		dataField : "detail",
+		headerText : "막종상세",
+		width : 150,
+		editRenderer : {
+			type : "ComboBoxRenderer",
+			autoCompleteMode : true,
+			keyField : "key", // key 에 해당되는 필드명
+			valueField : "value", // value 에 해당되는 필드명,
+			listFunction : function(rowIndex, columnIndex, item, dataField) {
+				var param = item.mak;
+				var dd = subListMap[param]; // param으로 보관된 리스트가 있는지 여부
+				if(dd === undefined) {
+					return [];
+				}
+				return dd;
+			},			
+			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+				let isValid = false;
+				let param = item.mak;
+				let dd = subListMap[param]; // param으로 보관된 리스트가 있는지 여부
+				if(dd === undefined) return value;
+				for (let i = 0, len = dd.length; i < len; i++) { // keyValueList 있는 값만..
+					if (dd[i]["value"] == newValue) {
+						isValid = true;
+						break;
+					}
+				}
+				// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
+				return {
+					"validate" : isValid,
+					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+				};
+			}
+		},
+		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
+			let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+			let param = item.mak;
+			let dd = subListMap[param]; // param으로 보관된 리스트가 있는지 여부
+			if(dd === undefined) return value;
+			for (let i = 0, len = dd.length; i < len; i++) {
+				if (dd[i]["key"] == value) {
+					retStr = dd[i]["value"];
 					break;
 				}
 			}
@@ -404,6 +456,21 @@ String userId = (String) request.getAttribute("userId");
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 		AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
 		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+	}
+	
+	function auiCellEditEndHandler(event) {
+		let dataField = event.dataField;
+		let item = event.item;
+		let rowIndex = event.rowIndex;
+		let mak = item.mak;
+		if(dataField === "mak") {
+			let mak = item.mak;
+			let url = getCallUrl("/commonCode/getChildrens?parentCode=" + mak + "&codeType=MAK");
+			call(url, null, function(data) {
+				subListMap[mak] = data.list;
+			}, "GET");
+		}
 	}
 
 	function auiCellClickHandler(event) {
@@ -420,12 +487,13 @@ String userId = (String) request.getAttribute("userId");
 		params.apply = $("#apply").val();
 		let url = getCallUrl("/cip/list");
 		AUIGrid.showAjaxLoader(myGridID);
+		parent.openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
-			parent.close(); //이거해야 로딩바 사라짐;
+			parent.closeLayer();
 		});
 	}
 
@@ -472,7 +540,6 @@ String userId = (String) request.getAttribute("userId");
 	}
 
 	function preView(data) {
-		console.log(data);
 		let preView = data.base64;
 		let preViewPath = data.fullPath;
 		AUIGrid.updateRowsById(myGridID, {
@@ -514,7 +581,7 @@ String userId = (String) request.getAttribute("userId");
 			params.addRows = addRows;
 			params.removeRows = removeRows;
 			params.editRows = editRows;
-			parent.open();
+			parent.openLayer();
 			call(url, params, function(data) {
 				alert(data.msg);
 				if (data.result) {
@@ -525,6 +592,8 @@ String userId = (String) request.getAttribute("userId");
 
 		$("#addRowBtn").click(function() {
 			let item = new Object();
+			item.createdDate = new Date();
+			item.creator = "<%=name %>";
 			AUIGrid.addRow(myGridID, item, "first");
 		})
 
@@ -532,7 +601,6 @@ String userId = (String) request.getAttribute("userId");
 		$("#deleteRowBtn").click(function() {
 			let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 			for (let i = checkedItems.length - 1; i >= 0; i--) {
-				console.log(checkedItems[i]);
 				let rowIndex = checkedItems[i].rowIndex;
 				AUIGrid.removeRow(myGridID, rowIndex);
 			}

@@ -18,6 +18,7 @@ public class CipColumnData {
 	private String improvement;
 	private String apply;
 	private String mak;
+	private String detail;
 	private String install;
 	private String customer;
 	private String note;
@@ -37,6 +38,7 @@ public class CipColumnData {
 		setImprovement(cip.getImprovement());
 		setApply(cip.getApply());
 		setMak(cip.getMak().getName());
+		setDetail(cip.getDetail().getName());
 		setNote(cip.getNote());
 		setCreator(cip.getOwnership().getOwner().getFullName());
 		setCreatedDate(cip.getCreateTimestamp());

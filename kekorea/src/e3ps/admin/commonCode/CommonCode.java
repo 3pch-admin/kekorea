@@ -1,7 +1,6 @@
 package e3ps.admin.commonCode;
 
 import com.ptc.windchill.annotations.metadata.Cardinality;
-import com.ptc.windchill.annotations.metadata.ColumnProperties;
 import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedForeignKey;
@@ -30,7 +29,6 @@ import wt.util.WTException;
 		},
 
 		foreignKeys = {
-				// front target object, before source user
 				@GeneratedForeignKey(name = "ParentChildLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "parent", type = CommonCode.class,

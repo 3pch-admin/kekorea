@@ -37,21 +37,19 @@ public class CommonCodeHelper {
 		String description = (String) params.get("description");
 		String enable = (String) params.get("enable");
 
-		System.out.println("name=" + name);
-
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
 
 		if (!StringUtils.isNull(name)) {
-			QuerySpecUtils.toLike(query, idx, CommonCode.class, CommonCode.NAME, name);
+			QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.NAME, name);
 		}
 
 		if (!StringUtils.isNull(code)) {
-			QuerySpecUtils.toLike(query, idx, CommonCode.class, CommonCode.CODE, code);
+			QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.CODE, code);
 		}
 
 		if (!StringUtils.isNull(description)) {
-			QuerySpecUtils.toLike(query, idx, CommonCode.class, CommonCode.DESCRIPTION, description);
+			QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.DESCRIPTION, description);
 		}
 
 		if (!StringUtils.isNull(enable)) {
@@ -59,14 +57,26 @@ public class CommonCodeHelper {
 		}
 
 		if (!StringUtils.isNull(codeType)) {
-			QuerySpecUtils.toEquals(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
+
+			if (codeType.equals("MAK")) {
+				query.appendOpenParen();
+				query.appendWhere(new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", "MAK"),
+						new int[] { idx });
+				query.appendOr();
+				query.appendWhere(new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", "MAK_DETAIL"),
+						new int[] { idx });
+				query.appendCloseParen();
+			} else {
+				QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
+			}
 		}
 
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.CODE_TYPE, false);
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
 
-		PageQueryUtils pager = new PageQueryUtils(params, query);
-		PagingQueryResult result = pager.find();
+//		PageQueryUtils pager = new PageQueryUtils(params, query);
+//		PagingQueryResult result = pager.find();
+		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			CommonCode commonCode = (CommonCode) obj[0];
@@ -75,8 +85,8 @@ public class CommonCodeHelper {
 		}
 
 		map.put("list", list);
-		map.put("sessionid", pager.getSessionId());
-		map.put("curPage", pager.getCpage());
+//		map.put("sessionid", pager.getSessionId());
+//		map.put("curPage", pager.getCpage());
 		return map;
 	}
 
@@ -151,7 +161,7 @@ public class CommonCodeHelper {
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
-		QuerySpecUtils.toLike(query, idx, CommonCode.class, CommonCode.CODE, term);
+		QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.CODE, term);
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
 
 		QueryResult result = PersistenceHelper.manager.find(query);
@@ -170,8 +180,8 @@ public class CommonCodeHelper {
 	public CommonCode getCommonCode(String code, String codeType) throws Exception {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
-		QuerySpecUtils.toEquals(query, idx, CommonCode.class, CommonCode.CODE, code);
-		QuerySpecUtils.toEquals(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE, code);
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -179,5 +189,25 @@ public class CommonCodeHelper {
 			return commonCode;
 		}
 		return null;
+	}
+
+	public ArrayList<Map<String, Object>> getChildrens(String parentCode, String codeType) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		CommonCode parent = getCommonCode(parentCode, codeType);
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(CommonCode.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, "parentReference.key.id",
+				parent.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			CommonCode commonCode = (CommonCode) obj[0];
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("key", commonCode.getCode());
+			map.put("value", commonCode.getName());
+			list.add(map);
+		}
+		return list;
 	}
 }

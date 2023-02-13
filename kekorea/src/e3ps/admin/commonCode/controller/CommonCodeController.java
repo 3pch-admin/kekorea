@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -66,7 +67,7 @@ public class CommonCodeController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description(value = "코드관리 리스트 AUIGrid 코드 리모트 렌더러 호출 함수")
 	@ResponseBody
 	@RequestMapping(value = "/remoter", method = RequestMethod.POST)
@@ -83,4 +84,22 @@ public class CommonCodeController extends BaseController {
 		}
 		return result;
 	}
+
+	@Description(value = "코드의 자식 코드 가져오는 함수")
+	@ResponseBody
+	@RequestMapping(value = "/getChildrens", method = RequestMethod.GET)
+	public Map<String, Object> getChildrens(@RequestParam String parentCode, String codeType) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ArrayList<Map<String, Object>> childrens = CommonCodeHelper.manager.getChildrens(parentCode, codeType);
+			result.put("list", childrens);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
 }

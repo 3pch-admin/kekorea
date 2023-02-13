@@ -12,6 +12,7 @@ import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.ownership.Ownership;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
@@ -29,18 +30,18 @@ public class StandardJDrawingService extends StandardManager implements JDrawing
 	@Override
 	public void create(Map<String, Object> params) throws Exception {
 		ArrayList<Map<String, Object>> addRows = (ArrayList<Map<String, Object>>) params.get("addRows");
-		ArrayList<String> arr = (ArrayList<String>) params.get("arr");
+		ArrayList<Map<String, Object>> removeRows = (ArrayList<Map<String, Object>>) params.get("removeRows");
+		ArrayList<Map<String, Object>> editRows = (ArrayList<Map<String, Object>>) params.get("editRows");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			for (int i = 0; i < addRows.size(); i++) {
-				Map<String, Object> data = (Map<String, Object>) addRows.get(i);
-				String name = (String) data.get("name");
-				String number = (String) data.get("number");
-				int version = (int) data.get("version");
-				String lot = (String) data.get("lot");
-				String primaryPath = (String) data.get("primaryPath");
+			for (Map<String, Object> addRow : addRows) {
+				String name = (String) addRow.get("name");
+				String number = (String) addRow.get("number");
+				int version = (int) addRow.get("version");
+				String lot = (String) addRow.get("lot");
+				String primaryPath = (String) addRow.get("primaryPath");
 
 				JDrawingMaster master = JDrawingMaster.newJDrawingMaster();
 				master.setNumber(number);
@@ -59,7 +60,25 @@ public class StandardJDrawingService extends StandardManager implements JDrawing
 				ApplicationData dd = ApplicationData.newApplicationData(jDrawing);
 				dd.setRole(ContentRoleType.PRIMARY);
 				dd = (ApplicationData) ContentServerHelper.service.updateContent(jDrawing, dd, primaryPath);
+			}
 
+			for (Map<String, Object> removeRow : removeRows) {
+				String oid = (String) removeRow.get("oid");
+				JDrawing jDrawing = (JDrawing) CommonUtils.getObject(oid);
+				boolean isLast = JDrawingHelper.manager.isLast(jDrawing.getMaster());
+				if (isLast) {
+					PersistenceHelper.manager.delete(jDrawing.getMaster());
+					PersistenceHelper.manager.delete(jDrawing);
+				} else {
+					// 이전 버전을 최신 버전으로 만드는 작업..
+				}
+			}
+
+			for (Map<String, Object> editRow : editRows) {
+				String oid = (String) editRow.get("oid");
+				JDrawing jDrawing = (JDrawing) CommonUtils.getObject(oid);
+
+				PersistenceHelper.manager.modify(jDrawing);
 			}
 
 			trs.commit();

@@ -31,6 +31,7 @@ public class CipController extends BaseController {
 		JSONArray installs = CommonCodeHelper.manager.parseJson("INSTALL");
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		String userId = sessionUser.getName();
+		model.addObject("name", sessionUser.getFullName());
 		model.addObject("userId", userId);
 		model.addObject("maks", maks);
 		model.addObject("installs", installs);

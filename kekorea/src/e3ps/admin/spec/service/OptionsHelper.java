@@ -92,7 +92,7 @@ public class OptionsHelper {
 				WTAttributeNameIfc.ID_NAME, idx, idx_s);
 		QuerySpecUtils.toInnerJoin(query, SpecOptionsLink.class, Options.class, "roleBObjectRef.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_o);
-		QuerySpecUtils.toEquals(query, idx_s, Spec.class, Spec.COLUMN_KEY, columnKey);
+		QuerySpecUtils.toEqualsAnd(query, idx_s, Spec.class, Spec.COLUMN_KEY, columnKey);
 		QuerySpecUtils.toLike(query, idx_o, Options.class, Options.NAME, term);
 		QuerySpecUtils.toOrderBy(query, idx_o, Options.class, Options.SORT, false);
 

@@ -20,7 +20,8 @@ public class QuerySpecUtils {
 
 	}
 
-	public static void toEquals(QuerySpec query, int idx, Class clazz, String column, Object value) throws Exception {
+	public static void toEqualsAnd(QuerySpec query, int idx, Class clazz, String column, Object value)
+			throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -30,11 +31,65 @@ public class QuerySpecUtils {
 			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (String) value);
 		} else if (value instanceof Long) {
 			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (long) value);
+		} else if (value instanceof Integer) {
+			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (int) value);
 		}
 		query.appendWhere(sc, new int[] { idx });
 	}
 
-	public static void toLikeLeft(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
+	public static void toEqualsOr(QuerySpec query, int idx, Class clazz, String column, Object value) throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendOr();
+		}
+
+		SearchCondition sc = null;
+		if (value instanceof String) {
+			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (String) value);
+		} else if (value instanceof Long) {
+			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (long) value);
+		} else if (value instanceof Integer) {
+			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (int) value);
+		}
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	public static void toLikeLeftOr(QuerySpec query, int idx, Class clazz, String column, String value)
+			throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendOr();
+		}
+		ClassAttribute ca = new ClassAttribute(clazz, column);
+		ColumnExpression ce = ConstantExpression.newExpression("%" + value.toUpperCase());
+		SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
+		SearchCondition sc = new SearchCondition(function, SearchCondition.LIKE, ce);
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	public static void toLikeRightOr(QuerySpec query, int idx, Class clazz, String column, String value)
+			throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendOr();
+		}
+		ClassAttribute ca = new ClassAttribute(clazz, column);
+		ColumnExpression ce = ConstantExpression.newExpression(value.toUpperCase() + "%");
+		SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
+		SearchCondition sc = new SearchCondition(function, SearchCondition.LIKE, ce);
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	public static void toLikeOr(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendOr();
+		}
+		ClassAttribute ca = new ClassAttribute(clazz, column);
+		ColumnExpression ce = ConstantExpression.newExpression("%" + value.toUpperCase() + "%");
+		SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
+		SearchCondition sc = new SearchCondition(function, SearchCondition.LIKE, ce);
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	public static void toLikeLeftAnd(QuerySpec query, int idx, Class clazz, String column, String value)
+			throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -45,7 +100,7 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
-	public static void toLikeRight(QuerySpec query, int idx, Class clazz, String column, String value)
+	public static void toLikeRightAnd(QuerySpec query, int idx, Class clazz, String column, String value)
 			throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
@@ -57,7 +112,7 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
-	public static void toLike(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
+	public static void toLikeAnd(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}

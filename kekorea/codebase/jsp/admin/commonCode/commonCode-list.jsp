@@ -16,8 +16,6 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 <%@include file="/jsp/include/auigrid.jsp"%>
 </head>
 <body>
-	<input type="hidden" name="sessionid" id="sessionid">
-	<input type="hidden" name="curPage" id="curPage">
 	<table class="search_table">
 		<tr>
 			<th>코드 명</th>
@@ -34,6 +32,10 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 					<option value="">선택</option>
 					<%
 					for (CommonCodeType codeType : codeTypes) {
+						String value = codeType.toString();
+						if(value.equals("MAK_DETAIL")) {
+							continue;
+						}
 					%>
 					<option value="<%=codeType.toString()%>"><%=codeType.getDisplay()%></option>
 					<%
@@ -69,7 +71,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			</td>
 		</tr>
 	</table>
-	<div id="grid_wrap" style="height: 650px; border-top: 1px solid #3180c3;"></div>
+	<div id="grid_wrap" style="height: 700px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;
@@ -91,11 +93,26 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		headerText : "코드 타입",
 		dataType : "string",
 		width : 200,
-		renderer : {
-			type : "DropDownListRenderer",
-			list : jsonList, //key-value Object 로 구성된 리스트
-			keyField : "key", // key 에 해당되는 필드명
-			valueField : "value" // value 에 해당되는 필드명
+		editRenderer : {
+			type : "ComboBoxRenderer",
+			autoCompleteMode : true,
+			showEditorBtnOver : true,
+			list : jsonList,
+			keyField : "key",
+			valueField : "value",
+			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+				let isValid = false;
+				for (let i = 0, len = jsonList.length; i < len; i++) { // keyValueList 있는 값만..
+					if (jsonList[i]["value"] == newValue) {
+						isValid = true;
+						break;
+					}
+				}
+				return {
+					"validate" : isValid,
+					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+				};
+			}
 		},
 		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
 			let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
@@ -177,14 +194,16 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			fillColumnSizeMode : true, // 화면 꽉채우기
 			editable : true,
 			showStateColumn : true,
-			selectionMode : "multipleCells"
-		// 상태값 표시
+			selectionMode : "multipleCells",
+			flat2tree: true,
+			treeIdField: "oid",
+			treeIdRefField: "parent"
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		loadGridData();
 		// LazyLoading 바인딩
-		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+// 		AUIGrid.bind(myGridID, "vScrollC	hange", vScrollChangeHandler);
 		// 클릭 이벤트 바인딩
 		AUIGrid.bind(myGridID, "cellClick", function(event) {
 			let dataField = event.dataField;
@@ -235,42 +254,13 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		let url = getCallUrl("/commonCode/list");
 		AUIGrid.showAjaxLoader(myGridID);
 		params = form(params, "search_table");
+		parent.openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
-			parent.close();
-		})
-	}
-
-	let last = false;
-	function vScrollChangeHandler(event) {
-		if (event.position == event.maxPosition) {
-			if (!last) {
-				requestAdditionalData();
-			}
-		}
-	}
-
-	function requestAdditionalData() {
-		let params = new Object();
-		let curPage = $("input[name=curPage]").val();
-		params.sessionid = $("input[name=sessionid]").val();
-		params.start = (curPage * 30);
-		params.end = (curPage * 30) + 30;
-		let url = getCallUrl("/appendData");
-		AUIGrid.showAjaxLoader(myGridID);
-		call(url, params, function(data) {
-			if (data.list.length == 0) {
-				last = true;
-				alert("마지막 데이터 입니다.");
-				AUIGrid.removeAjaxLoader(myGridID);
-			} else {
-				AUIGrid.appendData(myGridID, data.list);
-				AUIGrid.removeAjaxLoader(myGridID);
-				$("input[name=curPage]").val(parseInt(curPage) + 1);
-			}
+			parent.closeLayer();
 		})
 	}
 
@@ -302,8 +292,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			params.addRows = addRows;
 			params.removeRows = removeRows;
 			params.editRows = editRows;
-			parent.open();
-			console.log(params);
+			parent.openLayer();
 			call(url, params, function(data) {
 				alert(data.msg);
 				if (data.result) {

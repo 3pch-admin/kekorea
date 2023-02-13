@@ -176,12 +176,12 @@ function getCookie(cookieName){
 						<table>
 							<tr>
 								<td>
-									<input type="text" name="j_username" id="id">
+									<input type="text" name="j_username" id="id" value="wcadmin">
 								</td>
 							</tr>
 							<tr>
 								<td>
-									<input type="password" name="j_password" id="pw">
+									<input type="password" name="j_password" id="pw" value="wcadmin1">
 								</td>
 							</tr>
 						</table>

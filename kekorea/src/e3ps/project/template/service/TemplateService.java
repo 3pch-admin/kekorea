@@ -9,4 +9,8 @@ public interface TemplateService {
 
 	public abstract void create(Map<String, Object> params) throws Exception;
 
+	public abstract void save(Map<String, Object> params) throws Exception;
+
+	public abstract void saveUserLink(Map<String, Object> params) throws Exception;
+
 }

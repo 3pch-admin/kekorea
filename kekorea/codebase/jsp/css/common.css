@@ -4691,7 +4691,7 @@ table.partlist_table td {
 }
 
 .AXanchorSelectorExpandBox {
-	height: 600px !important;
+	height: 250px !important;
 }
 
 span.text {
@@ -4709,4 +4709,19 @@ textarea.description {
 	padding-top: 10px !Important;
 	padding-left: 10px !important;
 	padding-bottom: 10px !Important;
+}
+
+iframe {
+	margin: 0 auto;
+/* 	padding: 0 auto; */
+	border: none;
+}
+
+textarea.view {
+	border: none;
+	resize: none;
+}
+
+.bl {
+	border-left: 1px solid #c8c8c8;
 }

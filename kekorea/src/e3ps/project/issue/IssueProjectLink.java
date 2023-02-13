@@ -1,8 +1,9 @@
-package e3ps.project;
+package e3ps.project.issue;
 
 import com.ptc.windchill.annotations.metadata.GenAsBinaryLink;
 import com.ptc.windchill.annotations.metadata.GeneratedRole;
 
+import e3ps.project.Project;
 import wt.fc.ObjectToObjectLink;
 import wt.util.WTException;
 

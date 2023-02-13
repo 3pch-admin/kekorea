@@ -11,32 +11,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.controller.BaseController;
 import e3ps.org.service.OrgHelper;
 
-@Controller
-@RequestMapping(value="org/**")
-public class OrgController  extends BaseController {
+@RequestMapping(value = "/org/**")
+public class OrgController extends BaseController {
 
-	@Description("조직도 페이지")
-	@RequestMapping(value="/viewOrg", method=RequestMethod.GET)
-	public ModelAndView viewOrg() throws Exception {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/org/org-view.jsp");
-		return model;
-	}
-	
-	@Description("조직도")
-	@RequestMapping(value="/viewOrg", method=RequestMethod.POST)
+	@Description("사용자 검색 바인딩")
+	@RequestMapping(value = "/getUserBind")
 	@ResponseBody
-	public Map<String, Object> viewOrg(@RequestBody Map<String, Object> params) throws Exception {
+	public Map<String, Object> getUserBind(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = OrgHelper.manager.find(params);
+			result = OrgHelper.manager.getUserBind(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}

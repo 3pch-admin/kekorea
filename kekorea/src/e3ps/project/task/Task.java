@@ -1,24 +1,23 @@
-package e3ps.project;
+package e3ps.project.task;
 
 import com.ptc.windchill.annotations.metadata.Cardinality;
-import com.ptc.windchill.annotations.metadata.ColumnProperties;
 import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedForeignKey;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
-import com.ptc.windchill.annotations.metadata.IconProperties;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 import com.ptc.windchill.annotations.metadata.TableProperties;
 
+import e3ps.admin.commonCode.CommonCode;
+import e3ps.project.Project;
+import e3ps.project.ProjectImpl;
 import e3ps.project.template.Template;
-import wt.content.ContentHolder;
 import wt.fc.WTObject;
+import wt.ownership.Ownable;
 import wt.util.WTException;
 
-@GenAsPersistable(superClass = WTObject.class,
-
-		interfaces = { ContentHolder.class, ProjectImpl.class },
+@GenAsPersistable(superClass = WTObject.class, interfaces = { ProjectImpl.class, Ownable.class },
 
 		tableProperties = @TableProperties(tableName = "J_TASK"),
 
@@ -26,15 +25,13 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "allocate", type = Integer.class, javaDoc = "할당율"),
 
-				@GeneratedProperty(name = "depth", type = Integer.class, javaDoc = "레벨"),
+				@GeneratedProperty(name = "depth", type = Integer.class, javaDoc = "레벨", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "sort", type = Integer.class, javaDoc = "정렬"),
+				@GeneratedProperty(name = "sort", type = Integer.class, javaDoc = "정렬순서", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "taskType", type = String.class, javaDoc = "태스크 타입(NORMAL/MACHINE/ELEC/SOFT)"),
+				@GeneratedProperty(name = "taskType", type = String.class, javaDoc = "태스크 타입(NORMAL,MACHINE,ELEC,SOFT", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "state", type = String.class, javaDoc = "상태", columnProperties = @ColumnProperties(columnName = "TASKSTATE")) },
-
-		// 태스크 끼리 모자 관계
+		},
 
 		foreignKeys = {
 				// front target object, before source user
@@ -46,7 +43,7 @@ import wt.util.WTException;
 
 						myRole = @MyRole(name = "childTask", cardinality = Cardinality.DEFAULT)),
 
-				@GeneratedForeignKey(name = "ProjectTaskLink",
+				@GeneratedForeignKey(name = "TaskProjectLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "project", type = Project.class,
 
@@ -54,9 +51,17 @@ import wt.util.WTException;
 
 						myRole = @MyRole(name = "task", cardinality = Cardinality.ONE)),
 
-				@GeneratedForeignKey(name = "TemplateTaskLink",
+				@GeneratedForeignKey(name = "TaskTemplateLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "template", type = Template.class,
+
+								constraints = @PropertyConstraints(required = false)),
+
+						myRole = @MyRole(name = "task", cardinality = Cardinality.ONE)),
+
+				@GeneratedForeignKey(name = "TaskTaskTypeLink",
+
+						foreignKeyRole = @ForeignKeyRole(name = "taskType", type = CommonCode.class,
 
 								constraints = @PropertyConstraints(required = false)),
 
@@ -65,8 +70,8 @@ import wt.util.WTException;
 		}
 
 )
-
 public class Task extends _Task {
+
 	static final long serialVersionUID = 1;
 
 	public static Task newTask() throws WTException {

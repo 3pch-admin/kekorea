@@ -17,16 +17,16 @@ import e3ps.controller.BaseController;
 public class CommonContentController extends BaseController {
 
 	@Description("그리드 첨부파일 업로드")
-	@RequestMapping(value = "/aui/upload")
+	@RequestMapping(value = "/aui/auiUpload")
 	@ResponseBody
 	public Map<String, Object> auiUpload(HttpServletRequest request) throws Exception {
 		return CommonContentHelper.service.auiUpload(request);
 	}
 
 	@Description("미리보기 업로드")
-	@RequestMapping(value = "/aui/preview")
+	@RequestMapping(value = "/aui/auiPreview")
 	@ResponseBody
-	public Map<String, Object> preview(HttpServletRequest request) throws Exception {
+	public Map<String, Object> auiPreview(HttpServletRequest request) throws Exception {
 		return CommonContentHelper.service.auiPreview(request);
 	}
 }

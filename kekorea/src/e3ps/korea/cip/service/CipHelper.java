@@ -39,41 +39,41 @@ public class CipHelper {
 		int idx = query.appendClassList(Cip.class, true);
 
 		if (!StringUtils.isNull(item)) {
-			QuerySpecUtils.toLike(query, idx, Cip.class, Cip.ITEM, item);
+			QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.ITEM, item);
 		}
 
 		if (!StringUtils.isNull(improvements)) {
-			QuerySpecUtils.toLike(query, idx, Cip.class, Cip.IMPROVEMENTS, improvements);
+			QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.IMPROVEMENTS, improvements);
 		}
 
 		if (!StringUtils.isNull(improvement)) {
-			QuerySpecUtils.toLike(query, idx, Cip.class, Cip.IMPROVEMENT, improvement);
+			QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.IMPROVEMENT, improvement);
 		}
 
 		if (!StringUtils.isNull(apply)) {
-			QuerySpecUtils.toEquals(query, idx, Cip.class, Cip.APPLY, apply);
+			QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, Cip.APPLY, apply);
 		}
 
 		if (!StringUtils.isNull(makCode)) {
 			CommonCode mak = CommonCodeHelper.manager.getCommonCode(makCode, "MAK");
-			QuerySpecUtils.toEquals(query, idx, Cip.class, "makReference.key.id",
+			QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, "makReference.key.id",
 					mak.getPersistInfo().getObjectIdentifier().getId());
 		}
 
 		if (!StringUtils.isNull(installCode)) {
 			CommonCode install = CommonCodeHelper.manager.getCommonCode(installCode, "INSTALL");
-			QuerySpecUtils.toEquals(query, idx, Cip.class, "installReference.key.id",
+			QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, "installReference.key.id",
 					install.getPersistInfo().getObjectIdentifier().getId());
 		}
 
 		if (!StringUtils.isNull(customerCode)) {
 			CommonCode customer = CommonCodeHelper.manager.getCommonCode(customerCode, "CUSTOMER");
-			QuerySpecUtils.toEquals(query, idx, Cip.class, "customerReference.key.id",
+			QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, "customerReference.key.id",
 					customer.getPersistInfo().getObjectIdentifier().getId());
 		}
 
 		if (!StringUtils.isNull(note)) {
-			QuerySpecUtils.toLike(query, idx, Cip.class, Cip.NOTE, note);
+			QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.NOTE, note);
 		}
 
 		QuerySpecUtils.toOrderBy(query, idx, Cip.class, Cip.CREATE_TIMESTAMP, true);

@@ -10,10 +10,14 @@ import e3ps.admin.sheetvariable.beans.CategoryColumnData;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.epm.jDrawing.JDrawing;
+import e3ps.epm.jDrawing.JDrawingMaster;
 import e3ps.epm.jDrawing.beans.JDrawingColumnData;
 import wt.fc.PagingQueryResult;
+import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.query.QuerySpec;
 import wt.services.ServiceFactory;
+import wt.util.WTAttributeNameIfc;
 
 public class JDrawingHelper {
 
@@ -43,5 +47,17 @@ public class JDrawingHelper {
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
 		return map;
+	}
+
+	public boolean isLast(JDrawingMaster jDrawingMaster) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(JDrawing.class, true);
+		int idx_m = query.appendClassList(JDrawingMaster.class, false);
+		QuerySpecUtils.toInnerJoin(query, JDrawing.class, JDrawingMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_m);
+		QuerySpecUtils.toEqualsAnd(query, idx, JDrawing.class, "masterReference.key.id",
+				jDrawingMaster.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult result = PersistenceHelper.manager.find(query);
+		return result.size() == 1 ? true : false;
 	}
 }

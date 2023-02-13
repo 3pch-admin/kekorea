@@ -1,4 +1,4 @@
-package e3ps.project;
+package e3ps.project.output;
 
 import com.ptc.windchill.annotations.metadata.Cardinality;
 import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
@@ -9,6 +9,8 @@ import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import e3ps.doc.E3PSDocumentMaster;
+import e3ps.project.Project;
+import e3ps.project.task.Task;
 import e3ps.project.template.Template;
 import wt.content.ContentHolder;
 import wt.fc.WTObject;
@@ -16,17 +18,15 @@ import wt.lifecycle.LifeCycleManaged;
 import wt.ownership.Ownable;
 import wt.util.WTException;
 
-@GenAsPersistable(superClass = WTObject.class, interfaces = { ContentHolder.class, Ownable.class },
+@GenAsPersistable(superClass = WTObject.class, interfaces = { Ownable.class, ContentHolder.class },
 
 		properties = {
 
-				@GeneratedProperty(name = "name", type = String.class),
+				@GeneratedProperty(name = "name", type = String.class, javaDoc = "산출물 이름", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "location", type = String.class),
+				@GeneratedProperty(name = "location", type = String.class, javaDoc = "저장위치", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "description", type = String.class),
-
-		},
+				@GeneratedProperty(name = "description", type = String.class, javaDoc = "설명") },
 
 		foreignKeys = {
 
@@ -48,8 +48,6 @@ import wt.util.WTException;
 
 						myRole = @MyRole(name = "output", cardinality = Cardinality.ONE)),
 
-				// front target object, before source user
-
 				@GeneratedForeignKey(name = "ProjectOutputLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "project", type = Project.class,
@@ -70,9 +68,9 @@ import wt.util.WTException;
 
 						foreignKeyRole = @ForeignKeyRole(name = "task", type = Task.class,
 
-								constraints = @PropertyConstraints(required = false)),
+								constraints = @PropertyConstraints(required = )),
 
-						myRole = @MyRole(name = "output", cardinality = Cardinality.DEFAULT))
+						myRole = @MyRole(name = "output", cardinality = Cardinality.ONE))
 
 		}
 
@@ -86,5 +84,4 @@ public class Output extends _Output {
 		instance.initialize();
 		return instance;
 	}
-
 }

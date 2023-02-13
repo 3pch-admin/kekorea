@@ -11,6 +11,7 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
+import e3ps.admin.commonCode.CommonCode;
 import e3ps.project.template.Template;
 import wt.content.ContentHolder;
 import wt.fc.WTObject;
@@ -65,8 +66,24 @@ import wt.util.WTException;
 		},
 
 		foreignKeys = {
-				// front target object, before source user
-				@GeneratedForeignKey(name = "TemplateProjectLink",
+
+				@GeneratedForeignKey(name = "ProjectMakLink",
+
+						foreignKeyRole = @ForeignKeyRole(name = "maks", type = CommonCode.class,
+
+								constraints = @PropertyConstraints(required = false)),
+
+						myRole = @MyRole(name = "project", cardinality = Cardinality.ONE)),
+
+				@GeneratedForeignKey(name = "ProjectDetailLink",
+
+						foreignKeyRole = @ForeignKeyRole(name = "detail", type = CommonCode.class,
+
+								constraints = @PropertyConstraints(required = false)),
+
+						myRole = @MyRole(name = "project", cardinality = Cardinality.ONE)),
+
+				@GeneratedForeignKey(name = "ProjectTemplateLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "template", type = Template.class,
 

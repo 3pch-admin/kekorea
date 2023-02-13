@@ -1,8 +1,12 @@
+<%@page import="wt.org.WTUser"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.admin.commonCode.CommonCodeType"%>
 <%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -58,7 +62,9 @@
 	<table class="btn_table">
 		<tr>
 			<td class="left">
-				<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
+				<input type="button" value="추가" class="redBtn" id="addRowBtn" title="추가">
+				<input type="button" value="삭제" class="orangeBtn" id="deleteRowBtn" title="삭제">
+				<input type="button" value="저장" class="blueBtn" id="saveBtn" title="저장">
 			</td>
 			<td class="right">
 				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
@@ -78,7 +84,8 @@
 		dataField : "number",
 		headerText : "DWG. NO",
 		dataType : "string",
-		width : 300
+		width : 300,
+		editable : false
 	}, {
 		dataField : "latest",
 		headerText : "최신버전여부",
@@ -86,82 +93,107 @@
 		width : 100,
 		renderer : {
 			type : "CheckBoxEditRenderer",
-		},		
+		},
+		editable : false
 	}, {
 		dataField : "version",
 		headerText : "REV",
 		dataType : "numeric",
-		width : 100
+		width : 100,
+		editable : false
 	}, {
 		dataField : "creator",
 		headerText : "등록자",
 		dataType : "string",
-		width : 100
+		width : 100,
+		editable : false
 	}, {
 		dataField : "createdDate",
 		headerText : "등록일",
 		dataType : "date",
 		formatString : "yyyy-mm-dd",
-		width : 100
+		width : 100,
+		editable : false
 	}, {
 		dataField : "modifier",
 		headerText : "수정자",
 		dataType : "string",
-		width : 100
+		width : 100,
+		editable : false
 	}, {
 		dataField : "modifiedDate",
 		headerText : "수정일",
 		dataType : "date",
 		formatString : "yyyy-mm-dd",
-		width : 100
+		width : 100,
+		editable : false
 	}, {
 		dataField : "primary",
 		headerText : "도면파일",
 		dataType : "string",
 		width : 100,
-		renderer : { // HTML 템플릿 렌더러 사용
-			type : "TemplateRenderer"
+		renderer : {
+			type : "TemplateRenderer",
 		},
-		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // HTML 템플릿 작성
-			let template = value;
-			return template; // HTML 템플릿 반환..그대도 innerHTML 속성값으로 처리됨
+	}, {
+		dataField : "",
+		headerText : "",
+		width : 100,
+		editable : false,
+		renderer : {
+			type : "ButtonRenderer",
+			labelText : "파일선택",
+			onclick : function(rowIndex, columnIndex, value, item) {
+				recentGridItem = item;
+				let oid = item.oid;
+				let url = getCallUrl("/aui/primary?oid=" + oid + "&method=attach");
+				popup(url, 1000, 200);
+			}
 		}
 	}, {
 		dataField : "oid",
 		headerText : "oid",
 		dataType : "string",
 		visible : false
-	} ]
+	}, {
+		dataField : "primaryPath",
+		headerText : "",
+		dataType : "string",
+		visible : false
+	}, ]
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-			rowIdField : "rowId",
+			rowIdField : "oid",
 			headerHeight : 30,
-			rowHeight : 30,
+			rowHeight : 36,
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
 			fillColumnSizeMode : true,
 			showStateColumn : true,
 			showRowCheckColumn : true,
 			noDataMessage : "검색 결과가 없습니다.",
+			editable : true,
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		loadGridData();
 		// LazyLoading 바인딩
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+		AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
 	}
 
 	function loadGridData() {
 		let params = new Object();
 		let url = getCallUrl("/jDrawing/list");
 		AUIGrid.showAjaxLoader(myGridID);
+		parent.openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
-			parent.close();
+			parent.closeLayer();
 		})
 	}
 
@@ -195,18 +227,80 @@
 		})
 	}
 
+	function auiAddRowHandler(event) {
+		let selected = AUIGrid.getSelectedIndex(myGridID);
+		if (selected.length <= 0) {
+			return;
+		}
+
+		let rowIndex = selected[0];
+		let colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "name");
+		AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex);
+		AUIGrid.openInputer(myGridID);
+	}
+
+	function attach(data) {
+		let name = data.name;
+		let start = name.indexOf("-");
+		let end = name.lastIndexOf(".");
+		let number = name.substring(0, start);
+		let version = name.substring(start + 1, end);
+		let template = "<img src='" + data.icon + "'>";
+		AUIGrid.updateRowsById(myGridID, {
+			oid : recentGridItem.oid,
+			number : number,
+			version : Number(version),
+			file : name,
+			primary : template,
+			primaryPath : data.fullPath
+		});
+	}
+
 	$(function() {
 
 		createAUIGrid(columns);
+
+		$("#addRowBtn").click(function() {
+			let item = new Object();
+			item.latest = true;
+			item.createdDate = new Date();
+			item.modifiedDate = new Date();
+			item.creator = "<%=sessionUser.getFullName()%>";
+			item.modifier = "<%=sessionUser.getFullName()%>";
+			AUIGrid.addRow(myGridID, item, "first");
+		})
+
+		// 그리드 행 삭제
+		$("#deleteRowBtn").click(function() {
+			let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+			for (let i = checkedItems.length - 1; i >= 0; i--) {
+				let rowIndex = checkedItems[i].rowIndex;
+				AUIGrid.removeRow(myGridID, rowIndex);
+			}
+		})
 
 		$("#searchBtn").click(function() {
 			loadGridData();
 		})
 
-		// 등록페이지
-		$("#createBtn").click(function() {
+		$("#saveBtn").click(function() {
 			let url = getCallUrl("/jDrawing/create");
-			popup(url, 1400, 570);
+			let addRows = AUIGrid.getAddedRowItems(myGridID);
+			let removeRows = AUIGrid.getRemovedItems(myGridID);
+			let editRows = AUIGrid.getEditedRowItems(myGridID);
+			let params = new Object();
+			params.addRows = addRows;
+			params.removeRows = removeRows;
+			params.editRows = editRows;
+			parent.openLayer();
+			call(url, params, function(data) {
+				alert(data.msg);
+				if (data.result) {
+					loadGridData();
+				} else {
+					parent.closeLayer();
+				}
+			}, "POST");
 		})
 
 	}).keypress(function(e) {

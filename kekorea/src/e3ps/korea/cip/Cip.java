@@ -40,6 +40,14 @@ import wt.util.WTException;
 
 						myRole = @MyRole(name = "cip", cardinality = Cardinality.ONE)),
 
+				@GeneratedForeignKey(name = "CipDetailLink",
+
+						foreignKeyRole = @ForeignKeyRole(name = "detail", type = CommonCode.class,
+
+								constraints = @PropertyConstraints(required = true)),
+
+						myRole = @MyRole(name = "cip", cardinality = Cardinality.ONE)),
+
 				@GeneratedForeignKey(name = "CipCustomerLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "customer", type = CommonCode.class,

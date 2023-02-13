@@ -16,4 +16,6 @@ public class CommonCodeType extends _CommonCodeType {
 	public static final CommonCodeType BUSINESS_SECTOR = toCommonCodeType("BUSINESS_SECTOR");
 	public static final CommonCodeType CLASSIFICATION_WRITING_DEPARTMENT = toCommonCodeType(
 			"CLASSIFICATION_WRITING_DEPARTMENT");
+	public static final CommonCodeType MAK_DETAIL = toCommonCodeType("MAK_DETAIL");
+	public static final CommonCodeType USER_TYPE = toCommonCodeType("USER_TYPE");
 }
