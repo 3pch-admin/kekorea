@@ -106,6 +106,9 @@ UserData data = (UserData) request.getAttribute("data");
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
+					<li>
+						<a onclick="moveToPage(this, '/org/viewOrg');">조직도</a>
+					</li>
 				</ul>
 			</li>
 			<li>
