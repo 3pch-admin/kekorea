@@ -33,57 +33,62 @@ if (isAdmin) {
 		<!-- info search -->
 		<jsp:include page="/jsp/common/search_info.jsp"></jsp:include>
 	</div>
+	<table class="container_table">
+		<tr>
+			<!-- only folder tree.. -->
+			<jsp:include page="/jsp/common/layouts/include_dept.jsp" />
+			<td id="container_td">
+				<!-- search table -->
+				<table class="search_table">
+					<tr>
+						<th>부서</th>
+						<td>
+							<input type="hidden" name="deptOid" id="deptOid">
+							<span id="deptName"><%=root%></span>
+						</td>
+						<th>퇴사여부</th>
+						<td>
+							<select name="resigns" id="resigns" class="AXSelect wid100">
+								<option value="">선택</option>
+								<option value="false" selected="selected">재직중</option>
+								<option value="true">퇴사</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th>아이디</th>
+						<td>
+							<input type="text" name="id" class="AXInput wid200">
+						</td>
+						<th>이름</th>
+						<td>
+							<input type="text" name="name" class="AXInput wid200">
+						</td>
+					</tr>
+				</table>
 
-	<!-- only folder tree.. -->
-<%-- 	<jsp:include page="/jsp/common/layouts/include_dept.jsp" /> --%>
-	<!-- search table -->
-	<table class="search_table">
-		<tr>
-			<th>부서</th>
-			<td>
-				<input type="hidden" name="deptOid" id="deptOid">
-				<span id="deptName"><%=root%></span>
-			</td>
-			<th>퇴사여부</th>
-			<td>
-				<select name="resigns" id="resigns" class="AXSelect wid100">
-					<option value="">선택</option>
-					<option value="false" selected="selected">재직중</option>
-					<option value="true">퇴사</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<th>아이디</th>
-			<td>
-				<input type="text" name="id" class="AXInput wid200">
-			</td>
-			<th>이름</th>
-			<td>
-				<input type="text" name="name" class="AXInput wid200">
+				<!-- start sub table -->
+				<!-- <table class="sub_table"> -->
+				<table class="btn_table">
+					<tr>
+						<td class="right">
+							<%
+							if (isAdmin) {
+							%>
+							<input type="button" value="퇴사처리" class="redBtn" id="resignListUserBtn" title="퇴사처리">
+							<%
+							}
+							%>
+							<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
+							<input type="button" value="초기화" class="" id="initGrid" title="초기화">
+						</td>
+					</tr>
+				</table>
+				<!-- end sub_table -->
+				<div id="grid_wrap" style="height: 650px; border-top: 1px solid #3180c3;"></div>
 			</td>
 		</tr>
 	</table>
-
-	<!-- start sub table -->
-	<!-- <table class="sub_table"> -->
-	<table class="btn_table">
-		<tr>
-			<td class="right">
-				<%
-				if (isAdmin) {
-				%>
-				<input type="button" value="퇴사처리" class="redBtn" id="resignListUserBtn" title="퇴사처리">
-				<%
-				}
-				%>
-				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
-				<input type="button" value="초기화" class="" id="initGrid" title="초기화">
-			</td>
-		</tr>
-	</table>
-	<!-- end sub_table -->
-	<div id="grid_wrap" style="height: 650px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;

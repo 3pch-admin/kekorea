@@ -1,8 +1,12 @@
+<%@page import="e3ps.doc.service.DocumentHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
+<%
+String root = DocumentHelper.ROOT;
+%>
 <title></title>
 <%@include file="/jsp/common/layouts/include_css.jsp"%>
 <%@include file="/jsp/common/layouts/include_script.jsp"%>
@@ -12,78 +16,97 @@
 <body>
 	<input type="hidden" name="sessionid" id="sessionid">
 	<input type="hidden" name="curPage" id="curPage">
-	<table class="search_table">
+	<!-- list header title -->
+	<div class="header_title">
+		<i class="axi axi-subtitles"></i>
+		<span>문서 조회</span>
+		<!-- info search -->
+		<jsp:include page="/jsp/common/search_info.jsp"></jsp:include>
+	</div>
+	<table class="container_table">
 		<tr>
-			<th>문서분류</th>
-			<td colspan="7">
-				<%-- 				<input type="hidden" name="location" value="<%=root%>"> --%>
-				<%-- 				<span id="location"><%=root%></span> --%>
-			</td>
-		</tr>
-		<tr>
-			<th>문서제목</th>
-			<td>
-				<input type="text" name="name" id="name" class="AXInput wid200">
-			</td>
-			<th>문서번호</th>
-			<td>
-				<input type="text" name="number" class="AXInput wid200">
-			</td>
-			<th>설명</th>
-			<td>
-				<input type="text" name="description" class="AXInput wid200">
-			</td>
-			<th>상태</th>
-			<td>
-				<select name="state" id="state" class="AXSelect wid200">
-					<option value="">선택</option>
-					<%-- 					<option value="<%=state.name()%>"><%=state.getDisplay()%></option> --%>
-				</select>
-			</td>
-		</tr>
-		<tr class="detailEpm">
-			<th>작성자</th>
-			<td>
-				<input type="text" name="creators" id="creators" class="AXInput wid200" data-dbl="true">
-				<input type="hidden" name="creatorsOid" id="creatorsOid" class="AXInput wid200" data-dbl="true">
-				<i title="삭제" class="axi axi-ion-close-circled delete-text" data-prefix="Oid" data-target="creators"></i>
-			</td>
-			<th>작성일</th>
-			<td>
-				<input type="text" name="predate" id="predate" class="AXInput">
-				~
-				<input type="text" name="postdate" id="postdate" class="AXInput twinDatePicker" data-start="predate">
-				<i title="삭제" class="axi axi-ion-close-circled delete-calendar" data-start="predate" data-end="postdate"></i>
-			</td>
-			<th>버전</th>
-			<td colspan="3">
-				<label title="최신버전">
-					<input type="radio" name="latest" value="true" checked="checked">
-					<span class="latest">최신버전</span>
-				</label>
-				<label title="모든버전">
-					<input type="radio" name="latest" value="false">
-					<span class="latest">모든버전</span>
-				</label>
-			</td>
-		</tr>
-	</table>
+			<!-- only folder tree.. -->
+			<jsp:include page="/jsp/common/layouts/include_tree.jsp">
+				<jsp:param value="<%=root%>" name="root" />
+				<jsp:param value="PRODUCT" name="context" />
+			</jsp:include>
+			<!-- container -->
+			<td id="container_td">
+				<table class="search_table">
+					<tr>
+						<th>문서분류</th>
+						<td colspan="7">
+							<%-- 				<input type="hidden" name="location" value="<%=root%>"> --%>
+							<%-- 				<span id="location"><%=root%></span> --%>
+						</td>
+					</tr>
+					<tr>
+						<th>문서제목</th>
+						<td>
+							<input type="text" name="name" id="name" class="AXInput wid200">
+						</td>
+						<th>문서번호</th>
+						<td>
+							<input type="text" name="number" class="AXInput wid200">
+						</td>
+						<th>설명</th>
+						<td>
+							<input type="text" name="description" class="AXInput wid200">
+						</td>
+						<th>상태</th>
+						<td>
+							<select name="state" id="state" class="AXSelect wid200">
+								<option value="">선택</option>
+								<%-- 					<option value="<%=state.name()%>"><%=state.getDisplay()%></option> --%>
+							</select>
+						</td>
+					</tr>
+					<tr class="detailEpm">
+						<th>작성자</th>
+						<td>
+							<input type="text" name="creators" id="creators" class="AXInput wid200" data-dbl="true">
+							<input type="hidden" name="creatorsOid" id="creatorsOid" class="AXInput wid200" data-dbl="true">
+							<i title="삭제" class="axi axi-ion-close-circled delete-text" data-prefix="Oid" data-target="creators"></i>
+						</td>
+						<th>작성일</th>
+						<td>
+							<input type="text" name="predate" id="predate" class="AXInput">
+							~
+							<input type="text" name="postdate" id="postdate" class="AXInput twinDatePicker" data-start="predate">
+							<i title="삭제" class="axi axi-ion-close-circled delete-calendar" data-start="predate" data-end="postdate"></i>
+						</td>
+						<th>버전</th>
+						<td colspan="3">
+							<label title="최신버전">
+								<input type="radio" name="latest" value="true" checked="checked">
+								<span class="latest">최신버전</span>
+							</label>
+							<label title="모든버전">
+								<input type="radio" name="latest" value="false">
+								<span class="latest">모든버전</span>
+							</label>
+						</td>
+					</tr>
+				</table>
 
-	<!-- button table -->
-	<table class="btn_table">
-		<tr>
-			<td class="left">
-				<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
-			</td>
-			<td class="right">
-				<input type="button" value="삭제" class="redBtn" id="deleteListDocBtn" title="삭제">
-				<input type="button" value="상세조회" class="orangeBtn" id="detailEpmBtn" title="상세조회">
-				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
-				<%-- 				<input type="button" value="초기화" class="" id="initGrid" title="초기화" data-location="<%=root%>"> --%>
+				<!-- button table -->
+				<table class="btn_table">
+					<tr>
+						<td class="left">
+							<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
+						</td>
+						<td class="right">
+							<input type="button" value="삭제" class="redBtn" id="deleteListDocBtn" title="삭제">
+							<input type="button" value="상세조회" class="orangeBtn" id="detailEpmBtn" title="상세조회">
+							<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
+							<%-- 				<input type="button" value="초기화" class="" id="initGrid" title="초기화" data-location="<%=root%>"> --%>
+						</td>
+					</tr>
+				</table>
+				<div id="grid_wrap" style="height: 650px; border-top: 1px solid #3180c3;"></div>
 			</td>
 		</tr>
 	</table>
-	<div id="grid_wrap" style="height: 650px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;
@@ -226,7 +249,7 @@
 			let url = getCallUrl("/document/create");
 			popup(url, 1400, 570);
 		})
-		
+
 	}).keypress(function(e) {
 		let keyCode = e.keyCode;
 		if (keyCode == 13) {
