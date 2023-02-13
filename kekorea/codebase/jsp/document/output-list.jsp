@@ -149,7 +149,10 @@ if ("new".equals(context)) {
 				<!-- list jsp.. -->
 				<!-- 							<div class="non_paging_layer"> -->
 <!-- 					<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록" style="margin-left:50px;"> -->
-				<div class="view_layer">
+				<div class="left" style="margin-right:5px;">
+					<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록" >
+				</div>
+				<div class="view_layer" style="margin-top:2px;">
 					<ul>
 						<li data-url="<%=nurl%>" <%if (isNew) {%> class="active_view" <%}%> id="newOutput_view" title="NEW">NEW</li>
 						<li data-url="<%=ourl%>" <%if (isOld) {%> class="active_view" <%}%> id="oldOutput_view" title="OLD">OLD</li>
@@ -176,7 +179,7 @@ if ("new".equals(context)) {
 				</div>
 			</td>
 			<td class="right">
-			<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
+<!-- 			<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록"> -->
 				<%
 				if (isAdmin) {
 				%>
