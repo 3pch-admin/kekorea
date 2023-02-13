@@ -71,18 +71,7 @@ if (!StringUtils.isNull(outputLoc)) {
 			<td class="right">
 				<input type="button" value="저장" id="createOutputAction" title="저장" data-self="false" data-output="<%=isOutput%>" data-toid="<%=toid%>" data-progress="<%=progress%>" data-ptype="<%=ptype%>">
 				<%-- 				<input type="button" value="자가결재" id="createSelfOutputBtn" title="자가결재" class="blueBtn" data-self="true" data-output="<%=isOutput %>" data-progress="<%=progress %>"> --%>
-				<%
-				if (!isPopup) {
-				%>
-				<input type="button" value="뒤로" id="backBtn" title="뒤로" class="blueBtn">
-				<!-- 				<input type="button" value="취소" id="backBtn" title="취소" class="redBtn"> -->
-				<%
-				} else {
-				%>
 				<input type="button" value="닫기" onclick="self.close();" title="닫기" class="redBtn">
-				<%
-				}
-				%>
 			</td>
 		</tr>
 	</table>

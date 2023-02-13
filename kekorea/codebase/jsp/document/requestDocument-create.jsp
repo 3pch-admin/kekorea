@@ -86,17 +86,7 @@ String toid = (String) request.getParameter("toid");
 			<td class="right">
 				<input type="button" value="저장" id="createRequestDocumentBtn" title="저장" data-self="false">
 				<!-- 				<input type="button" value="자가결재" id="createSelfRequestDocumentBtn" title="자가결재" class="blueBtn" data-self="true">  -->
-				<%
-				if (isPopup) {
-				%>
-				<input type="button" value="닫기" id="closeDocBtn" title="닫기" class="redBtn">
-				<%
-				} else {
-				%>
-				<input type="button" value="취소" id="backBtn" title="취소" class="redBtn">
-				<%
-				}
-				%>
+				<input type="button" value="닫기" id="closeDocBtn" title="닫기" class="redBtn" onclick="self.close()">
 			</td>
 		</tr>
 	</table>

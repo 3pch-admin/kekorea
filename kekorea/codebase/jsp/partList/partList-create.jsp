@@ -74,17 +74,7 @@ if (!StringUtils.isNull(poid)) {
 			</td>
 			<td class="right">
 				<input type="button" value="저장" id="createPartListBtn" title="저장" data-output="<%=isOutput%>" data-progress="<%=progress%>">
-				<%
-				if (isPopup) {
-				%>
-				<input type="button" value="닫기" id="closePartList" title="닫기" class="redBtn">
-				<%
-				} else {
-				%>
-				<input type="button" value="취소" id="backBtn" title="취소" class="redBtn">
-				<%
-				}
-				%>
+				<input type="button" value="닫기" id="closePartList" title="닫기" class="redBtn" onclick="self.close()">
 			</td>
 		</tr>
 	</table>

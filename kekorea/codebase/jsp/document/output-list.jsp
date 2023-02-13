@@ -160,12 +160,12 @@ if ("new".equals(context)) {
 							<span id="thumbnail" title="썸네일 리스트로 확인하세요.">썸네일 리스트로 확인하세요 </span>
 						</li>
 					</ul>
-					<span class="left2_sub_folder_search">
-						<label title="하위폴더검색">
-							<input name="sub_folder" id="sub_folder" type="checkbox" value="ok" checked="checked">
-							하위폴더검색
-						</label>
-					</span>
+<!-- 					<span class="left2_sub_folder_search"> -->
+<!-- 						<label title="하위폴더검색"> -->
+<!-- 							<input name="sub_folder" id="sub_folder" type="checkbox" value="ok" checked="checked"> -->
+<!-- 							하위폴더검색 -->
+<!-- 						</label> -->
+<!-- 					</span> -->
 					<!-- 								<span class="count_span"><span id="count_text"></span></span> -->
 					<%-- 								<% --%>
 					<!--  									String psize = OrgHelper.manager.getUserPaging(module); -->

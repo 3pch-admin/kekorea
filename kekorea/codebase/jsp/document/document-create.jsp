@@ -40,7 +40,7 @@ String root = DocumentHelper.ROOT;
 			<td class="right">
 				<input type="button" value="등록" id="createDocBtn" title="등록" data-self="false">
 				<input type="button" value="자가결재" id="createSelfDocBtn" title="자가결재" class="blueBtn" data-self="true">
-				<input type="button" value="뒤로" id="backBtn" title="뒤로" class="blueBtn">
+				<input type="button" value="닫기" id="closeBtn" title="닫기" class="blueBtn" onclick="self.close();">
 			</td>
 		</tr>
 	</table>
