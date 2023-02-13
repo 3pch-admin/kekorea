@@ -148,6 +148,7 @@ if ("new".equals(context)) {
 			<td class="left">
 				<!-- list jsp.. -->
 				<!-- 							<div class="non_paging_layer"> -->
+<!-- 					<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록" style="margin-left:50px;"> -->
 				<div class="view_layer">
 					<ul>
 						<li data-url="<%=nurl%>" <%if (isNew) {%> class="active_view" <%}%> id="newOutput_view" title="NEW">NEW</li>
@@ -175,6 +176,7 @@ if ("new".equals(context)) {
 				</div>
 			</td>
 			<td class="right">
+			<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
 				<%
 				if (isAdmin) {
 				%>
@@ -334,6 +336,12 @@ if ("new".equals(context)) {
 			loadGridData();
 		})
 
+		// 등록페이지
+		$("#createBtn").click(function() {
+			let url = getCallUrl("/document/createOutput");
+			popup(url, 1400, 570);
+		})
+		
 		// 그리드 행 삭제
 		$("#deleteRowBtn").click(function() {
 			let checkedItems = AUIGrid.getCheckedRowItems(myGridID);

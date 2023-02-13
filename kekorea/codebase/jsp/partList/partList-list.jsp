@@ -263,6 +263,11 @@
 			loadGridData();
 		})
 
+		$("#createBtn").click(function() {
+			let url = getCallUrl("/partlist/create");
+			popup(url, 1400, 570);
+		});
+
 	}).keypress(function(e) {
 		let keyCode = e.keyCode;
 		if (keyCode == 13) {

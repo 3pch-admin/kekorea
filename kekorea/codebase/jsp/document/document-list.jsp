@@ -221,6 +221,12 @@
 			loadGridData();
 		})
 
+		// 등록페이지
+		$("#createBtn").click(function() {
+			let url = getCallUrl("/document/create");
+			popup(url, 1400, 570);
+		})
+		
 	}).keypress(function(e) {
 		let keyCode = e.keyCode;
 		if (keyCode == 13) {

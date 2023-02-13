@@ -25,6 +25,7 @@ public class PartListController {
 		return model;
 	}
 	
+	@Description("수배표 조회")
 	@ResponseBody
 	@RequestMapping(value= "/list", method = RequestMethod.POST)
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -38,5 +39,14 @@ public class PartListController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+	
+	@Description("수배표 등록")
+	@RequestMapping(value="/create", method=RequestMethod.GET)
+	public ModelAndView create() throws Exception {
+		ModelAndView model = new ModelAndView();
+//		model.setViewName("/jsp/partList/partList-create.jsp");
+		model.setViewName("popup:/partList/partList-create");
+		return model;
 	}
 }

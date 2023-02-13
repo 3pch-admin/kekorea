@@ -155,6 +155,9 @@ if (isAdmin) {
 	<table class="btn_table">
 		<tr>
 			<!-- start sub table -->
+			<td class="left">
+				<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
+			</td>
 			<td class="right">
 				<%
 				if (isAdmin) {
@@ -357,15 +360,11 @@ if (isAdmin) {
 			loadGridData();
 		})
 
-		// 그리드 행 삭제
-		$("#deleteRowBtn").click(function() {
-			let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-			for (let i = checkedItems.length - 1; i >= 0; i--) {
-				let rowIndex = checkedItems[i].rowIndex;
-				AUIGrid.removeRow(myGridID, rowIndex);
-			}
-		})
-
+		$("#createBtn").click(function() {
+			let url = getCallUrl("/document/createRequestDocument");
+			popup(url, 1400, 570);	
+		});
+		
 	}).keypress(function(e) {
 		let keyCode = e.keyCode;
 		if (keyCode == 13) {
