@@ -25,16 +25,26 @@ public class StartMigration {
 		Timestamp start = new Timestamp(new Date().getTime());
 		System.out.println("시작 = " + start);
 
-		if (args.length != 1) {
-			System.out.println("엑셀 파일 추가.");
+		if (args.length < 1) {
+			System.out.println("실행 명령어 입력");
+			System.out.println("mak, customer, install, projectType");
+			System.out.println("mak 일 경우 엑셀 파일 추가");
 			System.exit(0);
 		}
 
-		File file = new File(args[0]);
-		XSSFWorkbook workBook = new XSSFWorkbook(file);
+		String cmd = args[0];
 		StartMigration migration = new StartMigration();
-		migration.start(workBook);
-		
+		if (cmd.equals("mak")) {
+			File file = new File(args[1]);
+			XSSFWorkbook workBook = new XSSFWorkbook(file);
+			migration.mak(workBook);
+		} else if (cmd.equals("customer")) {
+			migration.customer();
+		} else if (cmd.equals("install")) {
+			migration.install();
+		} else if (cmd.equals("projectType")) {
+			migration.projectType();
+		}
 		Timestamp end = new Timestamp(new Date().getTime());
 		System.out.println("종료 = " + end);
 
@@ -42,7 +52,31 @@ public class StartMigration {
 
 	}
 
-	private void start(XSSFWorkbook workBook) {
+	private void projectType() {
+		try {
+			MigrationHelper.service.projectToProjectType();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void install() {
+		try {
+			MigrationHelper.service.projectToInstall();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void customer() {
+		try {
+			MigrationHelper.service.projectToCustomer();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void mak(XSSFWorkbook workBook) {
 		try {
 			XSSFSheet sheet = workBook.getSheetAt(0);
 
@@ -55,38 +89,17 @@ public class StartMigration {
 				}
 
 				String orgMak = row.getCell(0).getStringCellValue();
-				QuerySpec query = new QuerySpec();
-				int idx = query.appendClassList(Project.class, true);
-				QuerySpecUtils.toEqualsAnd(query, idx, Project.class, Project.MAK, orgMak);
-				QueryResult result = PersistenceHelper.manager.find(query);
-				Project project = null;
-				while (result.hasMoreElements()) {
-					Object[] obj = (Object[]) result.nextElement();
-					project = (Project) obj[0];
-					System.out.println("=" + project.getKekNumber());
+				String mak = row.getCell(2).getStringCellValue();
+				String detail = row.getCell(3).getStringCellValue();
 
-					CommonCode makCode = null;
-					CommonCode detailCode = null;
-					String mak = row.getCell(2).getStringCellValue();
-					String detail = row.getCell(3).getStringCellValue();
-					if (!StringUtils.isNull(mak)) {
-						makCode = CommonCodeHelper.manager.getCommonCode(mak, "MAK");
-					}
+				HashMap<String, Object> params = new HashMap<>();
+				params.put("orgMak", orgMak);
+				params.put("mak", mak);
+				params.put("detail", detail);
 
-					if (!StringUtils.isNull(detail)) {
-						detailCode = CommonCodeHelper.manager.getCommonCode(detail, "MAK_DETAIL");
-					}
-
-					if (makCode != null && detailCode != null) {
-						HashMap<String, Object> map = new HashMap<>();
-						map.put("detailCode", detailCode);
-						map.put("makCode", makCode);
-						map.put("project", project);
-						MigrationHelper.service.projectToMak(map);
-					}
-				}
+				MigrationHelper.service.projectToMak(params);
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

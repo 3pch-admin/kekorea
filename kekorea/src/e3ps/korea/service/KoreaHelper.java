@@ -5,10 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import e3ps.admin.commonCode.CommonCode;
 import e3ps.common.util.PageQueryUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.project.Project;
 import e3ps.project.beans.ProjectColumnData;
 import wt.fc.PagingQueryResult;
+import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.query.ClassAttribute;
 import wt.query.OrderBy;
 import wt.query.QuerySpec;
@@ -44,5 +48,39 @@ public class KoreaHelper {
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
 		return map;
+	}
+
+	public int yAxisValueForMak(CommonCode mak) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Project.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "makReference.key.id",
+				mak.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult result = PersistenceHelper.manager.find(query);
+		return result.size();
+	}
+	
+	public int yAxisValueForDetail(CommonCode mak) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Project.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "detailReference.key.id",
+				mak.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult result = PersistenceHelper.manager.find(query);
+		return result.size();
+	}
+
+	public ArrayList<CommonCode> drillDownList(CommonCode mak) throws Exception {
+		ArrayList<CommonCode> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(CommonCode.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, "parentReference.key.id",
+				mak.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			CommonCode detail = (CommonCode) obj[0];
+			list.add(detail);
+		}
+		return list;
 	}
 }

@@ -1,3 +1,4 @@
+<%@page import="e3ps.korea.service.KoreaHelper"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.admin.commonCode.CommonCodeType"%>
@@ -5,6 +6,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("installs");
+ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks");
 %>
 <!DOCTYPE html>
 <html>
@@ -21,58 +23,104 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 <body>
 	<input type="hidden" name="sessionid" id="sessionid">
 	<input type="hidden" name="curPage" id="curPage">
-	<div id="container"></div>
-	<div id="grid_wrap" style="height: 383px; border-top: 1px solid #3180c3;"></div>
+	<div id="container" style="height: 490px;"></div>
+	<div id="grid_wrap" style="height: 330px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
-	Highcharts.chart('container', {
-		chart : {
-			type : 'column'
-		},
-		title : {
-			text : '고객별 작번 현황'
-		},
-		xAxis : {
-			categories : [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ],
-			crosshair : true
-		},
-		yAxis : {
-			min : 0,
-			title : {
-				text : '한국생산(台)'
-			}
-		},
-		tooltip : {
-			headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
-			pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' + '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
-			footerFormat : '</table>',
-			shared : true,
-			useHTML : true
-		},
-		plotOptions : {
-			column : {
-				pointPadding : 0.2,
-				borderWidth : 0
-			}
-		},
-		series : [ {
-			name : 'PYRO',
-			data : [ 49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4 ]
-
-		}, {
-			name : 'sZrO2',
-			data : [ 83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3 ]
-
-		}, {
-			name : 'HDPL',
-			data : [ 48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2 ]
-
-		}, {
-			name : 'HfO2',
-			data : [ 42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1 ]
-
-		} ]
-	});
+//Create the chart
+Highcharts.chart('container', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        align: 'left',
+        text: '막종별 작번 개수'
+    },
+//     subtitle: {
+//         align: 'left',
+//         text: 'Click the columns to view versions. Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
+//     },
+    accessibility: {
+        announceNewData: {
+            enabled: true
+        }
+    },
+    xAxis: {
+        type: 'category'
+    },
+    yAxis: {
+        title: {
+            text: '작번 개수'
+        }
+    },
+    plotOptions: {
+        series: {
+            borderWidth: 0,
+            dataLabels: {
+                enabled: true,
+                format: '{point.y}개'
+            },
+            pointWidth: 20,
+        }
+    },
+	legend : {
+		enabled : false
+	},
+    series: [
+        {
+        	name : '막종별 프로젝트',
+            colorByPoint: true,
+            events : {
+            	cursor: 'pointer',
+            	drillup : function(e) {
+            		console.log(this);
+            	}
+            },
+            data: [
+            	<%
+            		for(CommonCode mak : maks) {
+            	%>
+                {
+                    name: '<%=mak.getName()%>',
+                    y: <%=KoreaHelper.manager.yAxisValueForMak(mak)%>,
+                    drilldown: '<%=mak.getCode()%>'
+                },
+                <%
+            		}
+                %>
+            ]
+        }
+    ],
+    drilldown: {
+        breadcrumbs: {
+            position: {
+                align: 'right'
+            }
+        },
+        series: [
+        	<%
+        		for(CommonCode mak : maks) {
+        			ArrayList<CommonCode> details = KoreaHelper.manager.drillDownList(mak);
+        	%>
+            {
+                name: '<%=mak.getName()%>',
+                id: '<%=mak.getCode()%>',
+                data: [
+                <%
+                	for(CommonCode detail : details) {
+                %>
+                	['<%=detail.getName() %>', <%=KoreaHelper.manager.yAxisValueForDetail(detail) %>],
+                <%
+                	}
+                %>
+                ]
+            },
+            <%
+        		}
+            %>
+        ]
+    }
+});
 </script>
 <script type="text/javascript">
 	let myGridID;
@@ -98,12 +146,17 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 		dataField : "ins_location",
 		headerText : "설치장소",
 		dataType : "string",
-		width : 130
+		width : 100
 	}, {
 		dataField : "mak",
 		headerText : "막종",
 		dataType : "string",
-		width : 130
+		width : 100
+	}, {
+		dataField : "detail",
+		headerText : "막종상세",
+		dataType : "string",
+		width : 100
 	}, {
 		dataField : "kek_number",
 		headerText : "KEK 작번",
@@ -188,8 +241,7 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
 			showRowCheckColumn : true, // 체크 박스 출력
-			fixedColumnCount : 7,
-
+			fixedColumnCount : 8,
 			// 컨텍스트 메뉴 사용
 			useContextMenu : true,
 
@@ -235,17 +287,33 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 			break;
 		}
 	};
-
-	function loadGridData() {
+	
+	function clicked(name) {
 		let params = new Object();
 		let url = getCallUrl("/project/list");
+		params.mak = name;
 		AUIGrid.showAjaxLoader(myGridID);
+		parent.openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
-			parent.close();
+			parent.closeLayer();
+		})
+	}
+	
+	function loadGridData() {
+		let params = new Object();
+		let url = getCallUrl("/project/list");
+		AUIGrid.showAjaxLoader(myGridID);
+		parent.openLayer();
+		call(url, params, function(data) {
+			AUIGrid.removeAjaxLoader(myGridID);
+			$("input[name=sessionid]").val(data.sessionid);
+			$("input[name=curPage]").val(data.curPage);
+			AUIGrid.setGridData(myGridID, data.list);
+			parent.closeLayer();
 		})
 	}
 
@@ -266,7 +334,7 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 		params.end = (curPage * 30) + 30;
 		let url = getCallUrl("/appendData");
 		AUIGrid.showAjaxLoader(myGridID);
-		parent.open();
+		parent.openLayer();
 		call(url, params, function(data) {
 			if (data.list.length == 0) {
 				last = true;
@@ -277,13 +345,12 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 				AUIGrid.appendData(myGridID, data.list);
 				AUIGrid.removeAjaxLoader(myGridID);
 				$("input[name=curPage]").val(parseInt(curPage) + 1);
-				parent.close();
+				parent.closeLayer();
 			}
 		})
 	}
 
 	$(function() {
-
 		createAUIGrid(columns);
 
 		$("#searchBtn").click(function() {

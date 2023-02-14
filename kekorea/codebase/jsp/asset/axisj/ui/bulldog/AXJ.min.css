@@ -3365,8 +3365,8 @@ button, button:hover {
 	background: url(images/dx-slider-handle-min.png) no-repeat
 }
 
-.AXanchorSliderBox .AXanchorSliderHandleMin:active { -
-	-background: url(images/dx-slider-handle-min.png) no-repeat 0px -30px
+.AXanchorSliderBox .AXanchorSliderHandleMin:active { 
+	background: url(images/dx-slider-handle-min.png) no-repeat 0px -30px
 }
 
 .AXanchorSliderBox .AXanchorSliderHandleMinTitle {
@@ -3391,8 +3391,8 @@ button, button:hover {
 	top: 0
 }
 
-.AXanchorSliderBox .AXanchorSliderHandleMax:active { -
-	-background: url(images/dx-slider-handle-max.png) no-repeat 0px -30px
+.AXanchorSliderBox .AXanchorSliderHandleMax:active { 
+	background: url(images/dx-slider-handle-max.png) no-repeat 0px -30px
 }
 
 .AXanchorSliderBox .AXanchorSliderHandleMaxTitle {
@@ -6268,8 +6268,8 @@ button, button:hover {
 }
 
 .AXSelect, .AXSelectSmall {
-	border: 1px solid #c8c8c8;
-	/* 	border: 1px solid #e6e6e6; */
+/* 	border: 1px solid #c8c8c8; */
+	border: 1px solid #a6a6a6;
 	padding: 0;
 	vertical-align: middle;
 }

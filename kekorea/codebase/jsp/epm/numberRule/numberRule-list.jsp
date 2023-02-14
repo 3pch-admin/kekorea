@@ -218,12 +218,13 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 		let params = new Object();
 		let url = getCallUrl("/numberRule/list");
 		AUIGrid.showAjaxLoader(myGridID);
+		parent.openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
-			parent.close();
+			parent.closeLayer();
 		})
 	}
 
@@ -244,6 +245,7 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 		params.end = (curPage * 30) + 30;
 		let url = getCallUrl("/appendData");
 		AUIGrid.showAjaxLoader(myGridID);
+		parent.openLayer();
 		call(url, params, function(data) {
 			if (data.list.length == 0) {
 				last = true;
@@ -254,6 +256,7 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 				AUIGrid.removeAjaxLoader(myGridID);
 				$("input[name=curPage]").val(parseInt(curPage) + 1);
 			}
+			parent.closeLayer();
 		})
 	}
 

@@ -15,12 +15,13 @@ public class ProjectColumnData {
 
 	private String oid;
 	private String state;
-	private String ptype;
+	private String projectType;
 	private String customer;
-	private String ins_location;
+	private String install;
+	private String kekNumber;
+	private String keNumber;
 	private String mak;
-	private String kek_number;
-	private String ke_number;
+	private String detail;
 	private String userId;
 	private String description;
 	private Timestamp pdate;
@@ -48,12 +49,13 @@ public class ProjectColumnData {
 		String gate5 = ProjectHelper.manager.getStateIcon(project.getGate5() != null ? project.getGate5() : 0);
 		setState(gate1 + gate2 + gate3 + gate4 + gate5);
 
-		setPtype(project.getPType());
-		setCustomer(project.getCustomer());
-		setIns_location(project.getIns_location());
-		setMak(project.getMak());
-		setKek_number(project.getKekNumber());
-		setKe_number(project.getKeNumber());
+		setProjectType(project.getProjectType() != null ? project.getProjectType().getName() : "");
+		setCustomer(project.getCustomer() != null ? project.getCustomer().getName() : "");
+		setInstall(project.getInstall() != null ? project.getInstall().getName() : "");
+		setMak(project.getMak() != null ? project.getMak().getName() : "");
+		setDetail(project.getDetail() != null ? project.getDetail().getName() : "");
+		setKekNumber(project.getKekNumber());
+		setKeNumber(project.getKeNumber());
 		setUserId(project.getUserId());
 		setDescription(StringUtils.replaceToValue(project.getDescription()));
 		setPdate(project.getPDate());

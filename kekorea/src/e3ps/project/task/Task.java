@@ -23,6 +23,8 @@ import wt.util.WTException;
 
 		properties = {
 
+				@GeneratedProperty(name = "name", type = String.class, javaDoc = "태스크 명", constraints = @PropertyConstraints(required = true)),
+
 				@GeneratedProperty(name = "allocate", type = Integer.class, javaDoc = "할당율"),
 
 				@GeneratedProperty(name = "depth", type = Integer.class, javaDoc = "레벨", constraints = @PropertyConstraints(required = true)),

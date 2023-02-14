@@ -28,7 +28,6 @@ import wt.util.WTException;
 						constraints = @PropertyConstraints(required = true)),
 
 				myRole = @MyRole(name = "userLink", cardinality = Cardinality.ONE)),
-
 		}
 
 )

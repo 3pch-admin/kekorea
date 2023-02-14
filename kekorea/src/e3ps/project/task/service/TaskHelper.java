@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.project.Project;
 import e3ps.project.task.Task;
 import e3ps.project.template.Template;
 import wt.fc.PersistenceHelper;
@@ -97,6 +98,34 @@ public class TaskHelper {
 				template.getPersistInfo().getObjectIdentifier().getId());
 		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, Task.DEPTH, (depth + 1)); // grid 상 레벨이 하나 더 붙어서 간다..
 		QuerySpecUtils.toOrderBy(query, idx, Task.class, Task.SORT, true);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Task task = (Task) obj[0];
+			list.add(task);
+		}
+		return list;
+	}
+
+	public ArrayList<Task> getProjectTasks(Project project) throws Exception {
+		return getProjectTasks(project, null);
+	}
+
+	public ArrayList<Task> getProjectTasks(Project project, Task parentTask) throws Exception {
+		ArrayList<Task> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Task.class, true);
+
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "projectReference.key.id",
+				project.getPersistInfo().getObjectIdentifier().getId());
+		if (parentTask != null) {
+			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id",
+					parentTask.getPersistInfo().getObjectIdentifier().getId());
+		} else {
+			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id", 0L);
+		}
+		QuerySpecUtils.toOrderBy(query, idx, Task.class, Task.SORT, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();

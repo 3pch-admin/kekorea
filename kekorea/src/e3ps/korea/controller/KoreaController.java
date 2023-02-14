@@ -26,6 +26,8 @@ public class KoreaController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		ArrayList<CommonCode> installs = CommonCodeHelper.manager.getArrayCodeList("INSTALL");
+		ArrayList<CommonCode> maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
+		model.addObject("maks", maks);
 		model.addObject("installs", installs);
 		model.setViewName("/jsp/korea/korea-list.jsp");
 		return model;

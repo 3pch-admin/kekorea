@@ -7,6 +7,11 @@
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 String before = (String) request.getAttribute("before");
 String end = (String) request.getAttribute("end");
+ArrayList<CommonCode> customers = (ArrayList<CommonCode>) request.getAttribute("customers");
+ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("installs");
+ArrayList<CommonCode> projectTypes = (ArrayList<CommonCode>) request.getAttribute("projectTypes");
+ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks");
+ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("details");
 %>
 <!DOCTYPE html>
 <html>
@@ -62,9 +67,15 @@ String end = (String) request.getAttribute("end");
 			</td>
 			<th>거래처</th>
 			<td>
-				<!-- 							<input type="text" name="customer" class="AXInput wid200"> -->
 				<select name="customer" id="customer" class="AXSelect wid200">
 					<option value="">선택</option>
+					<%
+					for (CommonCode customer : customers) {
+					%>
+					<option value="<%=customer.getPersistInfo().getObjectIdentifier().getStringValue()%>"><%=customer.getName()%></option>
+					<%
+					}
+					%>
 				</select>
 			</td>
 			<th>설치장소</th>
@@ -79,6 +90,13 @@ String end = (String) request.getAttribute("end");
 			<td>
 				<select name="pType" id="pType" class="AXSelect wid200">
 					<option value="">선택</option>
+					<%
+					for (CommonCode projectType : projectTypes) {
+					%>
+					<option value="<%=projectType.getPersistInfo().getObjectIdentifier().getStringValue()%>"><%=projectType.getName()%></option>
+					<%
+					}
+					%>
 				</select>
 			</td>
 			<th>기계 담당자</th>
@@ -144,7 +162,7 @@ String end = (String) request.getAttribute("end");
 			type : "TemplateRenderer",
 		},
 	}, {
-		dataField : "ptype",
+		dataField : "projectType",
 		headerText : "작번유형",
 		dataType : "string",
 		width : 100
@@ -154,22 +172,27 @@ String end = (String) request.getAttribute("end");
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "ins_location",
+		dataField : "install",
 		headerText : "설치장소",
 		dataType : "string",
-		width : 130
+		width : 100
 	}, {
 		dataField : "mak",
 		headerText : "막종",
 		dataType : "string",
-		width : 130
+		width : 100
 	}, {
-		dataField : "kek_number",
+		dataField : "detail",
+		headerText : "막종상세",
+		dataType : "string",
+		width : 100
+	}, {
+		dataField : "kekNumber",
 		headerText : "KEK 작번",
 		dataType : "string",
 		width : 130
 	}, {
-		dataField : "ke_number",
+		dataField : "keNumber",
 		headerText : "KE 작번",
 		dataType : "string",
 		width : 130
@@ -247,17 +270,28 @@ String end = (String) request.getAttribute("end");
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
 			showRowCheckColumn : true, // 체크 박스 출력
-			fixedColumnCount : 7,
+			fixedColumnCount : 8,
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		loadGridData();
 		// LazyLoading 바인딩
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+	}
+
+	function auiCellClickHandler(event) {
+		let dataField = event.dataField;
+		let oid = event.item.oid;
+		if (dataField === "kekNumber" || dataField === "keNumber") {
+			let url = getCallUrl("/project/view?oid=" + oid);
+			popup(url);
+		}
 	}
 
 	function loadGridData() {
 		let params = new Object();
+		params = form(params, "search_table");
 		let url = getCallUrl("/project/list");
 		AUIGrid.showAjaxLoader(myGridID);
 		parent.openLayer();
@@ -287,6 +321,7 @@ String end = (String) request.getAttribute("end");
 		params.end = (curPage * 30) + 30;
 		let url = getCallUrl("/appendData");
 		AUIGrid.showAjaxLoader(myGridID);
+		parent.openLayer();
 		call(url, params, function(data) {
 			if (data.list.length == 0) {
 				last = true;
@@ -297,6 +332,7 @@ String end = (String) request.getAttribute("end");
 				AUIGrid.removeAjaxLoader(myGridID);
 				$("input[name=curPage]").val(parseInt(curPage) + 1);
 			}
+			parent.closeLayer();
 		})
 	}
 
@@ -313,6 +349,8 @@ String end = (String) request.getAttribute("end");
 			let url = getCallUrl("/project/create");
 			popup(url, 1200, 540);
 		})
+
+		rangeDate("postdate", "predate");
 
 	}).keypress(function(e) {
 		let keyCode = e.keyCode;

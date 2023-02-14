@@ -30,7 +30,7 @@ import wt.ownership.Ownership;
 
 				@GeneratedProperty(name = "endDate", type = Timestamp.class, javaDoc = "실제 종료일"),
 
-				@GeneratedProperty(name = "state", type = String.class, javaDoc = "상태", constraints = @PropertyConstraints(required = true)), }
+				@GeneratedProperty(name = "state", type = String.class, javaDoc = "상태", constraints = @PropertyConstraints(required = false)), }
 
 )
 public interface ProjectImpl extends _ProjectImpl {

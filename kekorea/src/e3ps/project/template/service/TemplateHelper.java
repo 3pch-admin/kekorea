@@ -73,7 +73,6 @@ public class TemplateHelper {
 		JSONArray list = new JSONArray();
 		JSONObject node = new JSONObject();
 		node.put("oid", template.getPersistInfo().getObjectIdentifier().getStringValue());
-		node.put("id", template.getPersistInfo().getObjectIdentifier().getId());
 		node.put("name", template.getName());
 		node.put("description", template.getDescription());
 		node.put("duration", template.getDuration());

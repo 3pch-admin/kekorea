@@ -1,33 +1,51 @@
 package e3ps.project.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import e3ps.admin.commonCode.CommonCode;
+import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.util.CommonUtils;
+import e3ps.common.util.DateUtils;
 import e3ps.common.util.MessageHelper;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.beans.ProjectColumnData;
+import e3ps.project.enums.ProjectStateType;
+import e3ps.project.task.Task;
+import e3ps.project.task.service.TaskHelper;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.method.RemoteAccess;
 import wt.org.WTUser;
+import wt.query.ClassAttribute;
+import wt.query.OrderBy;
 import wt.query.QuerySpec;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 
 public class ProjectHelper implements MessageHelper, RemoteAccess {
 
+	public static final String STAND = "준비중";
+	public static final String INWORK = "작업 중";
+	public static final String DELAY = "지연됨";
+	public static final String COMPLETE = "완료됨";
+	public static final String STOP = "중단됨";
+
 	public static final String[] GATE1 = { "공정계획서", "사양체크리스트", "DR자료", "Risk Management" };
 	public static final String[] GATE2 = { "1차_수배", "1차_수배" };
 	public static final String[] GATE3 = { "전기_제작사양서", "기계_제작사양서" };
 	public static final String[] GATE4 = { "2차_수배", "2차_수배" };
 	public static final String[] GATE5 = { "전기_작업지시서", "기계_작업지시서", "설비사양서" };
-
 	public static final String[] QTASK = { "사양체크리스트", "Risk Management", "견적설계검토서", "DR자료", "고객제출용자료" };
 
 	public static final String REQ_TASK_NAME = "의뢰서";
@@ -113,112 +131,113 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 //		}
 //	}
 //
-//	public int getKekProgress(Project project) throws Exception {
-//		int progress = 0;
-//
-//		ArrayList<Task> list = new ArrayList<Task>();
-//		list = getterProjectTask(project, list);
-//
-//		int sumAllocate = 0;
-//		int sumProgress = 0;
-//		// 모든 태스크 수집
-//
-//		for (Task task : list) {
-//
-//			if (task.getTaskType().equals("일반")) {
-//				continue;
-//			}
-//
-//			int allocate = task.getAllocate() != null ? task.getAllocate() : 0;
-//			int tprogress = task.getProgress() != null ? task.getProgress() : 0;
-//
-//			sumProgress += (allocate * tprogress);
-//
-//			sumAllocate += allocate;
-//
-//			// 기계 진행율 = SUM(기계Task 각각의 할당률xTask 진행률)/SUM(기계Task 각각의 할당률)
-//
-//			// 전기 진행율 = SUM(전기Task 각각의 할당률xTask 진행률)/SUM(전기Task 각각의 할당률)
-//			// 기계 진행율 = SUM(기계Task 각각의 할당률xTask 진행률)/SUM(기계Task 각각의 할당률)
-//			// 작번 진행율 = SUM(Task 각각의 할당률xTask 진행률)/SUM(Task 각각의 할당률)
-//
-//		}
-//
-//		if (sumAllocate != 0) {
-//			progress = sumProgress / sumAllocate;
-//		}
-//		return progress;
-//	}
-//
-//	public int getElecAllocateProgress(Project project) throws Exception {
-//		int progress = 0;
-//
-//		ArrayList<Task> list = new ArrayList<Task>();
-//		list = getterProjectTask(project, list);
-//
-//		int sumAllocate = 0;
-//		int sumProgress = 0;
-//		// 모든 태스크 수집
-//
-//		for (Task task : list) {
-//
-//			String taskType = task.getTaskType();
-//
-//			if ("전기".equals(taskType)) {
-//
-//				int allocate = task.getAllocate() != null ? task.getAllocate() : 0;
-//				int tprogress = task.getProgress() != null ? task.getProgress() : 0;
-//
-//				sumProgress += (allocate * tprogress);
-//
-//				sumAllocate += allocate;
-//
-//				// 기계 진행율 = SUM(기계Task 각각의 할당률xTask 진행률)/SUM(기계Task 각각의 할당률)
-//			}
-//
-//		}
-//
-//		if (sumAllocate != 0) {
-//			progress = sumProgress / sumAllocate;
-//		}
-//		return progress;
-//	}
-//
-//	public int getMachineAllocateProgress(Project project) throws Exception {
-//		int progress = 0;
-//
-//		ArrayList<Task> list = new ArrayList<Task>();
-//
-//		list = getterProjectTask(project, list);
-//
-//		int sumAllocate = 0;
-//		int sumProgress = 0;
-//		// 모든 태스크 수집
-//		for (Task task : list) {
-//
-//			String taskType = task.getTaskType();
-//
-//			if ("기계".equals(taskType)) {
-//
-//				int allocate = task.getAllocate() != null ? task.getAllocate() : 0;
-//				int tprogress = task.getProgress() != null ? task.getProgress() : 0;
-//
-//				sumProgress += (allocate * tprogress);
-//
-//				sumAllocate += allocate;
-//
-//				// 기계 진행율 = SUM(기계Task 각각의 할당률xTask 진행률)/SUM(기계Task 각각의 할당률)
-//			}
-//
-//		}
-//
-//		if (sumAllocate != 0) {
-//			progress = sumProgress / sumAllocate;
-//		}
-//		return progress;
-//	}
-//
-//	public ArrayList<Task> getterProjectNonSchduleTask(Project project, ArrayList<Task> list) throws Exception {
+	public int getKekProgress(Project project) throws Exception {
+		int progress = 0;
+
+		ArrayList<Task> list = new ArrayList<Task>();
+		list = getterProjectTask(project, list);
+
+		int sumAllocate = 0;
+		int sumProgress = 0;
+		// 모든 태스크 수집
+
+		for (Task task : list) {
+
+			if (task.getTaskType().getName().equals("일반")) {
+				continue;
+			}
+
+			int allocate = task.getAllocate() != null ? task.getAllocate() : 0;
+			int tprogress = task.getProgress() != null ? task.getProgress() : 0;
+
+			sumProgress += (allocate * tprogress);
+
+			sumAllocate += allocate;
+
+			// 기계 진행율 = SUM(기계Task 각각의 할당률xTask 진행률)/SUM(기계Task 각각의 할당률)
+
+			// 전기 진행율 = SUM(전기Task 각각의 할당률xTask 진행률)/SUM(전기Task 각각의 할당률)
+			// 기계 진행율 = SUM(기계Task 각각의 할당률xTask 진행률)/SUM(기계Task 각각의 할당률)
+			// 작번 진행율 = SUM(Task 각각의 할당률xTask 진행률)/SUM(Task 각각의 할당률)
+
+		}
+
+		if (sumAllocate != 0) {
+			progress = sumProgress / sumAllocate;
+		}
+		return progress;
+	}
+
+	public int getElecAllocateProgress(Project project) throws Exception {
+		int progress = 0;
+
+		ArrayList<Task> list = new ArrayList<Task>();
+		list = getterProjectTask(project, list);
+
+		int sumAllocate = 0;
+		int sumProgress = 0;
+		// 모든 태스크 수집
+
+		for (Task task : list) {
+
+			String taskType = task.getTaskType().getName();
+
+			if ("전기".equals(taskType)) {
+
+				int allocate = task.getAllocate() != null ? task.getAllocate() : 0;
+				int tprogress = task.getProgress() != null ? task.getProgress() : 0;
+
+				sumProgress += (allocate * tprogress);
+
+				sumAllocate += allocate;
+
+				// 기계 진행율 = SUM(기계Task 각각의 할당률xTask 진행률)/SUM(기계Task 각각의 할당률)
+			}
+
+		}
+
+		if (sumAllocate != 0) {
+			progress = sumProgress / sumAllocate;
+		}
+		return progress;
+	}
+
+	public int getMachineAllocateProgress(Project project) throws Exception {
+		int progress = 0;
+
+		ArrayList<Task> list = new ArrayList<Task>();
+
+		list = getterProjectTask(project, list);
+
+		int sumAllocate = 0;
+		int sumProgress = 0;
+		// 모든 태스크 수집
+		for (Task task : list) {
+
+			String taskType = task.getTaskType().getName();
+
+			if ("기계".equals(taskType)) {
+
+				int allocate = task.getAllocate() != null ? task.getAllocate() : 0;
+				int tprogress = task.getProgress() != null ? task.getProgress() : 0;
+
+				sumProgress += (allocate * tprogress);
+
+				sumAllocate += allocate;
+
+				// 기계 진행율 = SUM(기계Task 각각의 할당률xTask 진행률)/SUM(기계Task 각각의 할당률)
+			}
+
+		}
+
+		if (sumAllocate != 0) {
+			progress = sumProgress / sumAllocate;
+		}
+		return progress;
+	}
+
+	// public ArrayList<Task> getterProjectNonSchduleTask(Project project,
+	// ArrayList<Task> list) throws Exception {
 //
 //		QuerySpec query = new QuerySpec();
 //		int idx = query.appendClassList(Task.class, true);
@@ -294,78 +313,72 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 //		}
 //	}
 //
-//	/**
-//	 * 프로젝트 전체 태스크 가져오는 함수
-//	 * 
-//	 * @param project
-//	 * @param list
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	public ArrayList<Task> getterProjectTask(Project project, ArrayList<Task> list) throws Exception {
-//
-//		QuerySpec query = new QuerySpec();
-//		int idx = query.appendClassList(Task.class, true);
-//		long ids = project.getPersistInfo().getObjectIdentifier().getId();
-//		SearchCondition sc = new SearchCondition(Task.class, "projectReference.key.id", "=", ids);
-//		query.appendWhere(sc, new int[] { idx });
-//		query.appendAnd();
-//
-//		sc = new SearchCondition(Task.class, "parentTaskReference.key.id", "=", 0L);
-//		query.appendWhere(sc, new int[] { idx });
-//		query.appendAnd();
-//
-//		sc = new SearchCondition(Task.class, Task.DEPTH, "=", 1);
-//		query.appendWhere(sc, new int[] { idx });
-//
-//		ClassAttribute ca = new ClassAttribute(Task.class, Task.SORT);
-//		OrderBy orderBy = new OrderBy(ca, false);
-//		query.appendOrderBy(orderBy, new int[] { idx });
-//
-//		query.setAdvancedQueryEnabled(true);
-//		query.setDescendantQuery(false);
-//
-//		QueryResult result = PersistenceHelper.manager.find(query);
-//
-//		while (result.hasMoreElements()) {
-//			Object[] obj = (Object[]) result.nextElement();
-//			Task t = (Task) obj[0];
-//			list.add(t);
-//			getterTasks(t, project, list);
-//		}
-//		return list;
-//	}
-//
-//	public void getterTasks(Task parentTask, Project project, ArrayList<Task> list) throws Exception {
-//		QuerySpec query = new QuerySpec();
-//		int idx = query.appendClassList(Task.class, true);
-//
-//		long ids = parentTask.getPersistInfo().getObjectIdentifier().getId();
-//		long pids = project.getPersistInfo().getObjectIdentifier().getId();
-//
-//		SearchCondition sc = new SearchCondition(Task.class, "parentTaskReference.key.id", "=", ids);
-//		query.appendWhere(sc, new int[] { idx });
-//		query.appendAnd();
-//
-//		sc = new SearchCondition(Task.class, "projectReference.key.id", "=", pids);
-//		query.appendWhere(sc, new int[] { idx });
-//
-//		ClassAttribute ca = new ClassAttribute(Task.class, Task.SORT);
-//		OrderBy orderBy = new OrderBy(ca, false);
-//		query.appendOrderBy(orderBy, new int[] { idx });
-//
-//		query.setAdvancedQueryEnabled(true);
-//		query.setDescendantQuery(false);
-//
-//		QueryResult result = PersistenceHelper.manager.find(query);
-//
-//		while (result.hasMoreElements()) {
-//			Object[] obj = (Object[]) result.nextElement();
-//			Task t = (Task) obj[0];
-//			list.add(t);
-//			getterTasks(t, project, list);
-//		}
-//	}
+
+	public ArrayList<Task> getterProjectTask(Project project, ArrayList<Task> list) throws Exception {
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Task.class, true);
+		long ids = project.getPersistInfo().getObjectIdentifier().getId();
+		SearchCondition sc = new SearchCondition(Task.class, "projectReference.key.id", "=", ids);
+		query.appendWhere(sc, new int[] { idx });
+		query.appendAnd();
+
+		sc = new SearchCondition(Task.class, "parentTaskReference.key.id", "=", 0L);
+		query.appendWhere(sc, new int[] { idx });
+		query.appendAnd();
+
+		sc = new SearchCondition(Task.class, Task.DEPTH, "=", 1);
+		query.appendWhere(sc, new int[] { idx });
+
+		ClassAttribute ca = new ClassAttribute(Task.class, Task.SORT);
+		OrderBy orderBy = new OrderBy(ca, false);
+		query.appendOrderBy(orderBy, new int[] { idx });
+
+		query.setAdvancedQueryEnabled(true);
+		query.setDescendantQuery(false);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Task t = (Task) obj[0];
+			list.add(t);
+			getterTasks(t, project, list);
+		}
+		return list;
+	}
+
+	public void getterTasks(Task parentTask, Project project, ArrayList<Task> list) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Task.class, true);
+
+		long ids = parentTask.getPersistInfo().getObjectIdentifier().getId();
+		long pids = project.getPersistInfo().getObjectIdentifier().getId();
+
+		SearchCondition sc = new SearchCondition(Task.class, "parentTaskReference.key.id", "=", ids);
+		query.appendWhere(sc, new int[] { idx });
+		query.appendAnd();
+
+		sc = new SearchCondition(Task.class, "projectReference.key.id", "=", pids);
+		query.appendWhere(sc, new int[] { idx });
+
+		ClassAttribute ca = new ClassAttribute(Task.class, Task.SORT);
+		OrderBy orderBy = new OrderBy(ca, false);
+		query.appendOrderBy(orderBy, new int[] { idx });
+
+		query.setAdvancedQueryEnabled(true);
+		query.setDescendantQuery(false);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Task t = (Task) obj[0];
+			list.add(t);
+			getterTasks(t, project, list);
+		}
+	}
+
 //
 //	public Map<String, Object> checkKekNumberAction(Map<String, Object> param) throws Exception {
 //		String kekNumber = (String) param.get("kekNumber");
@@ -1674,72 +1687,24 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 //		return false;
 //	}
 //
-	public WTUser getUserTypeByProject(Project project, String userType) throws Exception {
-		WTUser user = null;
 
-		long ids = project.getPersistInfo().getObjectIdentifier().getId();
-
+	public WTUser getUserType(Project project, String userType) throws Exception {
+		CommonCode userTypeCode = CommonCodeHelper.manager.getCommonCode(userType, "USER_TYPE");
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ProjectUserLink.class, true);
-		SearchCondition sc = new SearchCondition(ProjectUserLink.class, ProjectUserLink.USER_TYPE, "=", userType);
-		query.appendWhere(sc, new int[] { idx });
-		query.appendAnd();
-
-		sc = new SearchCondition(ProjectUserLink.class, "roleAObjectRef.key.id", "=", ids);
-		query.appendWhere(sc, new int[] { idx });
+		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, "roleAObjectRef.key.id",
+				project.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, "userTypeReference.key.id",
+				userTypeCode.getPersistInfo().getObjectIdentifier().getId());
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			ProjectUserLink link = (ProjectUserLink) obj[0];
-			user = link.getUser();
+			return link.getUser();
 		}
-		return user;
+		return null;
 	}
 
-//
-//	public WTUser getPMByProject(Project project) throws Exception {
-//		WTUser pm = null;
-//
-//		long ids = project.getPersistInfo().getObjectIdentifier().getId();
-//
-//		QuerySpec query = new QuerySpec();
-//		int idx = query.appendClassList(ProjectUserLink.class, true);
-//		SearchCondition sc = new SearchCondition(ProjectUserLink.class, ProjectUserLink.USER_TYPE, "=", "PM");
-//		query.appendWhere(sc, new int[] { idx });
-//		query.appendAnd();
-//
-//		sc = new SearchCondition(ProjectUserLink.class, "roleAObjectRef.key.id", "=", ids);
-//		query.appendWhere(sc, new int[] { idx });
-//		QueryResult result = PersistenceHelper.manager.find(query);
-//		if (result.hasMoreElements()) {
-//			Object[] obj = (Object[]) result.nextElement();
-//			ProjectUserLink link = (ProjectUserLink) obj[0];
-//			pm = link.getUser();
-//		}
-//		return pm;
-//	}
-//
-//	public WTUser getSubPMByProject(Project project) throws Exception {
-//		WTUser subPm = null;
-//
-//		long ids = project.getPersistInfo().getObjectIdentifier().getId();
-//
-//		QuerySpec query = new QuerySpec();
-//		int idx = query.appendClassList(ProjectUserLink.class, true);
-//		SearchCondition sc = new SearchCondition(ProjectUserLink.class, ProjectUserLink.USER_TYPE, "=", "SUB_PM");
-//		query.appendWhere(sc, new int[] { idx });
-//		query.appendAnd();
-//
-//		sc = new SearchCondition(ProjectUserLink.class, "roleAObjectRef.key.id", "=", ids);
-//		query.appendWhere(sc, new int[] { idx });
-//		QueryResult result = PersistenceHelper.manager.find(query);
-//		if (result.hasMoreElements()) {
-//			Object[] obj = (Object[]) result.nextElement();
-//			ProjectUserLink link = (ProjectUserLink) obj[0];
-//			subPm = link.getUser();
-//		}
-//		return subPm;
-//	}
 //
 //	public int getProjectTaskProgress(Task task, boolean isNormalTask) throws Exception {
 //		int progress = 0;
@@ -1990,133 +1955,130 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 //		return list;
 //	}
 //
-//	public static double getPreferComp(Task task) throws Exception {
-//		double preferComp = 0;
-//
-//		Timestamp today = DateUtils.getCurrentTimestamp();
-//		String cdate = DateUtils.getDateString(today, "date");
-//		String sdate = DateUtils.getDateString(task.getPlanStartDate(), "date");
-//		String edate = DateUtils.getDateString(task.getPlanEndDate(), "date");
-//
-//		if (cdate.compareTo(sdate) < 0) {
-//			preferComp = 0;
-//		} else if (cdate.compareTo(edate) >= 0) {
-//			preferComp = 100;
-//		} else {
-//			double du = DateUtils.getPlanDurationHoliday(task.getPlanStartDate(), today);
-//			double planDuration = DateUtils.getPlanDurationHoliday(task.getPlanStartDate(), task.getPlanEndDate());
-//
-//			if (planDuration == 0) {
-//				preferComp = 0;
-//			} else {
-//				preferComp = (du / planDuration) * 100;
-//			}
-//		}
-//
-//		return preferComp;
-//	}
-//
-//	public static double getPreferComp(Project project) throws Exception {
-//		double preferComp = 0;
-//
-//		Timestamp today = DateUtils.getCurrentTimestamp();
-//		String cdate = DateUtils.getDateString(today, "date");
-//		String sdate = DateUtils.getDateString(project.getPlanStartDate(), "date");
-//		String edate = DateUtils.getDateString(project.getPlanEndDate(), "date");
-//
-//		if (cdate.compareTo(sdate) < 0) {
-//			preferComp = 0;
-//		} else if (cdate.compareTo(edate) >= 0) {
-//			preferComp = 100;
-//		} else {
-//			double du = DateUtils.getPlanDurationHoliday(project.getPlanStartDate(), today);
-//			double planDuration = DateUtils.getPlanDurationHoliday(project.getPlanStartDate(),
-//					project.getPlanEndDate());
-//
-//			if (planDuration == 0) {
-//				preferComp = 0;
-//			} else {
-//				preferComp = (du / planDuration) * 100;
-//			}
-//		}
-//
-//		return preferComp;
-//	}
-//
-//	public String getProjectStateBar(Project project) throws Exception {
-//
-//		// ProjectViewData dd = new ProjectViewData(project);
-//
-//		int progress = ProjectHelper.manager.getKekProgress(project);
-//		int comp = (int) ProjectHelper.getPreferComp(project);
-//
-//		int gap = progress - comp;
-//		String bar = "";
-//
-//		if (ProjectStateType.COMPLETE.getDisplay().equals(project.getState())) {
-//			bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
-//			bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
-//			bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
-//		} else {
-//
-//			if (progress != 100) {
-//
-//				// 프로젝트 시작
-//				if (!"준비".equals(project.getKekState())) {
-//					if (gap < 0 && gap >= -30) {
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
-//					} else if (gap < -30) {
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
-//					} else if (gap == 0) {
-//						bar += "<img class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
-//						bar += "<img class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
-//						bar += "<img class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
-//						bar += "<img class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
-//						bar += "<img class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
-//					} else if (gap > 0) {
-//						bar += "<img title='프로젝트 정상진행 중 입니다.' class='pos3' src='/Windchill/jsp/images/state_blue_bar.gif'>";
-//						bar += "<img title='프로젝트 정상진행 중 입니다.' class='pos3' src='/Windchill/jsp/images/state_blue_bar.gif'>";
-//						bar += "<img title='프로젝트 정상진행 중 입니다.' class='pos3' src='/Windchill/jsp/images/state_blue_bar.gif'>";
-//						bar += "<img title='프로젝트 정상진행 중 입니다.' class='pos3' src='/Windchill/jsp/images/state_blue_bar.gif'>";
-//						bar += "<img title='프로젝트 정상진행 중 입니다.' class='pos3' src='/Windchill/jsp/images/state_blue_bar.gif'>";
-//					}
-//				} else {
-//					if (gap > 0) {
-//						bar += "<img title='프로젝트 시작전 입니다.' class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
-//						bar += "<img title='프로젝트 시작전 입니다.' class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
-//						bar += "<img title='프로젝트 시작전 입니다.' class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
-//						bar += "<img title='프로젝트 시작전 입니다.' class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
-//						bar += "<img title='프로젝트 시작전 입니다.' class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
-//					} else if (gap < 0 && gap >= -30) {
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
-//					} else if (gap < -30) {
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
-//						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
-//					}
-//				}
-//			} else if (progress == 100) {
-//				bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
-//				bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
-//				bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
-//			}
-//		}
-//		return bar;
-//	}
+	public static double getPreferComp(Task task) throws Exception {
+		double preferComp = 0;
+		Timestamp today = DateUtils.getCurrentTimestamp();
+		String cdate = DateUtils.getDateString(today, "date");
+		String sdate = DateUtils.getDateString(task.getPlanStartDate(), "date");
+		String edate = DateUtils.getDateString(task.getPlanEndDate(), "date");
+
+		if (cdate.compareTo(sdate) < 0) {
+			preferComp = 0;
+		} else if (cdate.compareTo(edate) >= 0) {
+			preferComp = 100;
+		} else {
+			double du = DateUtils.getPlanDurationHoliday(task.getPlanStartDate(), today);
+			double planDuration = DateUtils.getPlanDurationHoliday(task.getPlanStartDate(), task.getPlanEndDate());
+
+			if (planDuration == 0) {
+				preferComp = 0;
+			} else {
+				preferComp = (du / planDuration) * 100;
+			}
+		}
+		return preferComp;
+	}
+
+	public static double getPreferComp(Project project) throws Exception {
+		double preferComp = 0;
+
+		Timestamp today = DateUtils.getCurrentTimestamp();
+		String cdate = DateUtils.getDateString(today, "date");
+		String sdate = DateUtils.getDateString(project.getPlanStartDate(), "date");
+		String edate = DateUtils.getDateString(project.getPlanEndDate(), "date");
+
+		if (cdate.compareTo(sdate) < 0) {
+			preferComp = 0;
+		} else if (cdate.compareTo(edate) >= 0) {
+			preferComp = 100;
+		} else {
+			double du = DateUtils.getPlanDurationHoliday(project.getPlanStartDate(), today);
+			double planDuration = DateUtils.getPlanDurationHoliday(project.getPlanStartDate(),
+					project.getPlanEndDate());
+
+			if (planDuration == 0) {
+				preferComp = 0;
+			} else {
+				preferComp = (du / planDuration) * 100;
+			}
+		}
+
+		return preferComp;
+	}
+
+	public String getProjectStateBar(Project project) throws Exception {
+
+		int progress = ProjectHelper.manager.getKekProgress(project);
+		int comp = (int) ProjectHelper.getPreferComp(project);
+
+		int gap = progress - comp;
+		String bar = "";
+
+		if (ProjectStateType.COMPLETE.getDisplay().equals(project.getState())) {
+			bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
+			bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
+			bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
+		} else {
+
+			if (progress != 100) {
+
+				// 프로젝트 시작
+				if (!"준비".equals(project.getKekState())) {
+					if (gap < 0 && gap >= -30) {
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
+					} else if (gap < -30) {
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
+					} else if (gap == 0) {
+						bar += "<img class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
+						bar += "<img class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
+						bar += "<img class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
+						bar += "<img class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
+						bar += "<img class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
+					} else if (gap > 0) {
+						bar += "<img title='프로젝트 정상진행 중 입니다.' class='pos3' src='/Windchill/jsp/images/state_blue_bar.gif'>";
+						bar += "<img title='프로젝트 정상진행 중 입니다.' class='pos3' src='/Windchill/jsp/images/state_blue_bar.gif'>";
+						bar += "<img title='프로젝트 정상진행 중 입니다.' class='pos3' src='/Windchill/jsp/images/state_blue_bar.gif'>";
+						bar += "<img title='프로젝트 정상진행 중 입니다.' class='pos3' src='/Windchill/jsp/images/state_blue_bar.gif'>";
+						bar += "<img title='프로젝트 정상진행 중 입니다.' class='pos3' src='/Windchill/jsp/images/state_blue_bar.gif'>";
+					}
+				} else {
+					if (gap > 0) {
+						bar += "<img title='프로젝트 시작전 입니다.' class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
+						bar += "<img title='프로젝트 시작전 입니다.' class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
+						bar += "<img title='프로젝트 시작전 입니다.' class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
+						bar += "<img title='프로젝트 시작전 입니다.' class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
+						bar += "<img title='프로젝트 시작전 입니다.' class='pos3' src='/Windchill/jsp/images/state_blank_bar.gif'>";
+					} else if (gap < 0 && gap >= -30) {
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.gif'>";
+					} else if (gap < -30) {
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
+						bar += "<img title='프로젝트 지연되고 있습니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.gif'>";
+					}
+				}
+			} else if (progress == 100) {
+				bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
+				bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
+				bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
+			}
+		}
+		return bar;
+	}
+
 //
 //	public Map<String, Object> findIssue(Map<String, Object> param) {
 //		Map<String, Object> map = new HashMap<String, Object>();
@@ -3188,10 +3150,22 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 		List<ProjectColumnData> list = new ArrayList<ProjectColumnData>();
 
 		String name = (String) params.get("name");
-		String codeType = (String) params.get("codeType");
+		String mak = (String) params.get("mak");
+		String detail = (String) params.get("detail");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);
+
+		if (!StringUtils.isNull(mak)) {
+			CommonCode makCode = CommonCodeHelper.manager.getCommonCode(mak, "MAK");
+			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "makReference.key.id",
+					makCode.getPersistInfo().getObjectIdentifier().getId());
+		}
+		if (!StringUtils.isNull(detail)) {
+			CommonCode detailCode = CommonCodeHelper.manager.getCommonCode(detail, "MAK_DETAIL");
+			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "detailReference.key.id",
+					detailCode.getPersistInfo().getObjectIdentifier().getId());
+		}
 
 		QuerySpecUtils.toOrderBy(query, idx, Project.class, Project.P_DATE, false);
 
@@ -3224,13 +3198,58 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 			Project project = (Project) obj[0];
 			map.put("kekNumber", kekNumber);
 			map.put("keNumber", project.getKeNumber());
-			map.put("mak", project.getMak());
-			map.put("install", project.getIns_location());
+			map.put("mak", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("install", project.getInstall() != null ? project.getInstall().getName() : "");
 			map.put("pDate", project.getPDate());
-			map.put("customer", project.getCustomer());
+			map.put("customer", project.getCustomer() != null ? project.getCustomer().getName() : "");
 			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
 		}
 
 		return map;
+	}
+
+	public JSONArray load(String oid) throws Exception {
+		Project project = (Project) CommonUtils.getObject(oid);
+		JSONArray list = new JSONArray();
+		JSONObject node = new JSONObject();
+		node.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+		node.put("name", project.getKekNumber());
+		node.put("description", project.getDescription());
+		node.put("duration", project.getDuration());
+		node.put("isNew", false);
+
+		JSONArray childrens = new JSONArray();
+		ArrayList<Task> taskList = TaskHelper.manager.getProjectTasks(project);
+		for (Task task : taskList) {
+			JSONObject children = new JSONObject();
+			children.put("oid", task.getPersistInfo().getObjectIdentifier().getStringValue());
+			children.put("name", task.getName());
+			children.put("description", task.getDescription());
+			children.put("duration", task.getDuration());
+			children.put("isNew", false);
+			children.put("taskType", task.getTaskType().getCode());
+			load(children, project, task);
+			childrens.add(children);
+		}
+		node.put("children", childrens);
+		list.add(node);
+		return list;
+	}
+
+	private void load(JSONObject node, Project project, Task parentTask) throws Exception {
+		JSONArray childrens = new JSONArray();
+		ArrayList<Task> taskList = TaskHelper.manager.getProjectTasks(project, parentTask);
+		for (Task task : taskList) {
+			JSONObject children = new JSONObject();
+			children.put("oid", task.getPersistInfo().getObjectIdentifier().getStringValue());
+			children.put("name", task.getName());
+			children.put("description", task.getDescription());
+			children.put("duration", task.getDuration());
+			children.put("isNew", false);
+			children.put("taskType", task.getTaskType().getCode());
+			load(children, project, task);
+			childrens.add(children);
+		}
+		node.put("children", childrens);
 	}
 }

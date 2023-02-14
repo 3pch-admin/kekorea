@@ -21,7 +21,15 @@ import e3ps.admin.sheetvariable.service.ItemsHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.controller.BaseController;
+import e3ps.project.Project;
+import e3ps.project.beans.ProjectViewData;
 import e3ps.project.service.ProjectHelper;
+import e3ps.project.task.Task;
+import e3ps.project.task.service.TaskHelper;
+import e3ps.project.template.Template;
+import e3ps.project.template.beans.TemplateViewData;
+import e3ps.project.template.service.TemplateHelper;
+import net.sf.json.JSONArray;
 
 @Controller
 @RequestMapping(value = "/project/**")
@@ -39,6 +47,17 @@ public class ProjectController extends BaseController {
 		String before = date.toString().substring(0, 10);
 		String end = DateUtils.getCurrentTimestamp().toString().substring(0, 10);
 
+		ArrayList<CommonCode> customers = CommonCodeHelper.manager.getArrayCodeList("CUSTOMER");
+		ArrayList<CommonCode> installs = CommonCodeHelper.manager.getArrayCodeList("INSTALL");
+		ArrayList<CommonCode> projectTypes = CommonCodeHelper.manager.getArrayCodeList("PROJECT_TYPE");
+		ArrayList<CommonCode> maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
+		ArrayList<CommonCode> details = CommonCodeHelper.manager.getArrayCodeList("MAK_DETAIL");
+
+		model.addObject("customers", customers);
+		model.addObject("installs", installs);
+		model.addObject("projectTypes", projectTypes);
+		model.addObject("maks", maks);
+		model.addObject("details", details);
 		model.addObject("before", before);
 		model.addObject("end", end);
 		model.addObject("isAdmin", isAdmin);
@@ -92,7 +111,7 @@ public class ProjectController extends BaseController {
 		model.setViewName("popup:/project/project-create");
 		return model;
 	}
-	
+
 	@Description(value = "그리드상 리모터로 프로젝트 정보 가져오기")
 	@ResponseBody
 	@RequestMapping(value = "/get", method = RequestMethod.GET)
@@ -108,7 +127,45 @@ public class ProjectController extends BaseController {
 		}
 		return result;
 	}
+
+	@Description(value = "프로젝트 정보 트리 페이지")
+	@RequestMapping(value = "/view", method = RequestMethod.GET)
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("oid", oid);
+		model.setViewName("popup:/project/project-view");
+		return model;
+	}
 	
+	@Description(value = "프로젝트 정보 페이지")
+	@RequestMapping(value = "/projectView", method = RequestMethod.GET)
+	public ModelAndView projectView(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Project project = (Project) CommonUtils.getObject(oid);
+		ProjectViewData data = new ProjectViewData(project);
+//		ArrayList<Task> list = TaskHelper.manager.getTemplateTaskDepth(template);
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
+//		model.addObject("list", list);
+		model.addObject("data", data);
+		model.setViewName("popup:/project/projectView");
+		return model;
+	}
+	
+	@Description(value = "프로젝트 트리")
+	@RequestMapping(value = "/load", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> load(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			JSONArray list = ProjectHelper.manager.load(oid);
+			result.put("list", list);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
 }
-
-
