@@ -105,10 +105,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				<%
 				if (!isAdmin) {
 				%>
-				<%=data.getPm() != null ? data.getPm() : ""%>
+				<%=data.getPm() != null ? data.getPm() + " [" + data.getSubPm().getName() + "]" : ""%>
 				<%
 				} else {
-				String value = data.getPm() != null ? data.getPm().getFullName() : "";
+				String value = data.getPm() != null ? data.getPm().getFullName() + " [" + data.getSubPm().getName() + "]" : "";
 				String poid = data.getPm() != null ? data.getPm().getPersistInfo().getObjectIdentifier().getStringValue() : "";
 				%>
 				<input type="text" name="pm" id="pm" class="AXInput wid200" data-dbl="true" value="<%=value%>">
@@ -123,10 +123,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				<%
 				if (!isAdmin) {
 				%>
-				<%=data.getSubPm() != null ? data.getSubPm() : ""%>
+				<%=data.getSubPm() != null ? data.getSubPm() + " [" + data.getSubPm().getName() + "]" : ""%>
 				<%
 				} else {
-				String value = data.getSubPm() != null ? data.getSubPm().getFullName() : "";
+				String value = data.getSubPm() != null ? data.getSubPm().getFullName() + " [" + data.getSubPm().getName() + "]" : "";
 				String poid = data.getSubPm() != null ? data.getSubPm().getPersistInfo().getObjectIdentifier().getStringValue() : "";
 				%>
 				<input type="text" name="sub_pm" id="sub_pm" class="AXInput wid200" data-dbl="true" value="<%=value%>">
@@ -169,8 +169,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				onsearch : function(id, objVal, cbm) {
 					let value = $("#" + id).val();
 					let params = new Object();
+					if (value.indexOf("[") > -1) {
+						let idx = value.indexOf("[");
+						value = value.substring(0, idx - 1);
+					}
 					params.value = value;
-					console.log(params);
 					let url = getCallUrl("/org/getUserBind");
 					call(url, params, function(data) {
 						cbm({
@@ -181,9 +184,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				onchange : function() {
 					let id = this.targetID;
 					let target = id + "Oid";
-					$("#" + target).remove();
-					$("#" + id).before("<input type=\"hidden\" name=\"" + target + "\" id=\"" + target + "\"> ");
-					$("#" + target).val(this.selectedOption.value);
+					if (this.selectedOption != null) {
+						value = this.selectedOption.value;
+						$("#" + target).remove();
+						$("#" + id).before("<input type=\"hidden\" name=\"" + target + "\" id=\"" + target + "\"> ");
+						$("#" + target).val(this.selectedOption.value);
+					}
 				},
 				finder : function() {
 

@@ -2,6 +2,7 @@ package e3ps.project.template;
 
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
+import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import e3ps.project.ProjectImpl;
 import wt.fc.WTObject;
@@ -10,6 +11,8 @@ import wt.util.WTException;
 @GenAsPersistable(superClass = WTObject.class, interfaces = { ProjectImpl.class },
 
 		properties = {
+
+				@GeneratedProperty(name = "name", type = String.class, javaDoc = "제목", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "enable", type = Boolean.class, initialValue = "true") }
 

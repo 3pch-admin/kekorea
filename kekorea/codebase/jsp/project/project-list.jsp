@@ -260,12 +260,13 @@ String end = (String) request.getAttribute("end");
 		let params = new Object();
 		let url = getCallUrl("/project/list");
 		AUIGrid.showAjaxLoader(myGridID);
+		parent.openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
-			parent.close();
+			parent.closeLayer();
 		})
 	}
 

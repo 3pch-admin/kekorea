@@ -329,7 +329,7 @@ public class OrgHelper implements MessageHelper {
 			People user = (People) obj[0];
 			Map<String, Object> userMap = new HashMap<String, Object>();
 			userMap.put("name", user.getName() + " [" + user.getId() + "]");
-			userMap.put("value", user.getPersistInfo().getObjectIdentifier().getStringValue());
+			userMap.put("value", user.getUser().getPersistInfo().getObjectIdentifier().getStringValue());
 			list.add(userMap);
 		}
 

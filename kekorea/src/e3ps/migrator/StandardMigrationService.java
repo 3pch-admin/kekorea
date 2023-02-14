@@ -1,12 +1,14 @@
 package e3ps.migrator;
 
-import e3ps.common.util.QuerySpecUtils;
+import java.util.HashMap;
+
+import e3ps.admin.commonCode.CommonCode;
 import e3ps.project.Project;
 import wt.fc.PersistenceHelper;
-import wt.fc.QueryResult;
 import wt.pom.Transaction;
-import wt.query.QuerySpec;
 import wt.services.StandardManager;
+import wt.session.SessionContext;
+import wt.session.SessionHelper;
 import wt.util.WTException;
 
 public class StandardMigrationService extends StandardManager implements MigrationService {
@@ -18,24 +20,21 @@ public class StandardMigrationService extends StandardManager implements Migrati
 	}
 
 	@Override
-	public void projectToMak() throws Exception {
+	public void projectToMak(HashMap<String, Object> map) throws Exception {
+		SessionContext prev = SessionContext.newContext();
+		Project project = (Project) map.get("project");
+		CommonCode makCode = (CommonCode) map.get("makCode");
+		CommonCode detailCode = (CommonCode) map.get("detailCode");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			QuerySpec query = new QuerySpec();
-			int idx = query.appendClassList(Project.class, true);
-			QuerySpecUtils.toOrderBy(query, idx, Project.class, Project.CREATE_TIMESTAMP, true);
-			QueryResult result = PersistenceHelper.manager.find(query);
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				Project project = (Project) obj[0];
-				String mak = project.getMak();
-				String[] codes = MigrationHelper.manager.orgToCode(mak);
-				String makCode = codes[0];
-				String detailCode = codes[1];
+			SessionHelper.manager.setAdministrator();
 
-			}
+			project.setMaks(makCode);
+			project.setDetail(detailCode);
+			PersistenceHelper.manager.modify(project);
+
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
@@ -45,6 +44,7 @@ public class StandardMigrationService extends StandardManager implements Migrati
 		} finally {
 			if (trs != null)
 				trs.rollback();
+			SessionContext.setContext(prev);
 		}
 	}
 }

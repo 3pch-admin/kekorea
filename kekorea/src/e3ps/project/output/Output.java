@@ -68,7 +68,7 @@ import wt.util.WTException;
 
 						foreignKeyRole = @ForeignKeyRole(name = "task", type = Task.class,
 
-								constraints = @PropertyConstraints(required = )),
+								constraints = @PropertyConstraints(required = true)),
 
 						myRole = @MyRole(name = "output", cardinality = Cardinality.ONE))
 

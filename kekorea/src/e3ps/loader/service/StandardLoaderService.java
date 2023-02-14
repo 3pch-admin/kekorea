@@ -26,7 +26,6 @@ public class StandardLoaderService extends StandardManager implements LoaderServ
 		try {
 			trs.start();
 
-			
 			SessionHelper.manager.setAdministrator();
 
 			CommonCode makCode = CommonCodeHelper.manager.getCommonCode(mak, "MAK");

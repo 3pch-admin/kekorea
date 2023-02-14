@@ -222,6 +222,10 @@ JSONArray taskTypes = (JSONArray) request.getAttribute("taskTypes");
 			}
 			AUIGrid.moveRowsToDown(myGridID);
 		})
+
+		$("#closeBtn").click(function() {
+			self.close();
+		})
 	})
 
 	$(window).resize(function() {

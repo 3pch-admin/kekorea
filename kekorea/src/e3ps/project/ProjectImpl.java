@@ -16,8 +16,6 @@ import wt.ownership.Ownership;
 
 		properties = {
 
-				@GeneratedProperty(name = "name", type = String.class, javaDoc = "제목", constraints = @PropertyConstraints(required = true)),
-
 				@GeneratedProperty(name = "description", type = String.class, javaDoc = "설명", constraints = @PropertyConstraints(upperLimit = 2000)),
 
 				@GeneratedProperty(name = "progress", type = Integer.class, javaDoc = "진행율", initialValue = "0"),

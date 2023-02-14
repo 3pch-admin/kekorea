@@ -17,18 +17,18 @@ import e3ps.doc.ReqDocumentProjectLink;
 import e3ps.doc.RequestDocument;
 import e3ps.doc.beans.DocumentViewData;
 import e3ps.org.People;
-import e3ps.project.Issue;
-import e3ps.project.IssueProjectLink;
-import e3ps.project.Output;
-import e3ps.project.ParentTaskChildTaskLink;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
-import e3ps.project.TargetTaskSourceTaskLink;
-import e3ps.project.Task;
 import e3ps.project.beans.ProjectViewData;
 import e3ps.project.enums.ProjectStateType;
 import e3ps.project.enums.ProjectUserType;
 import e3ps.project.enums.TaskStateType;
+import e3ps.project.issue.Issue;
+import e3ps.project.issue.IssueProjectLink;
+import e3ps.project.output.Output;
+import e3ps.project.task.ParentTaskChildTaskLink;
+import e3ps.project.task.TargetTaskSourceTaskLink;
+import e3ps.project.task.Task;
 import e3ps.project.template.Template;
 import wt.doc.WTDocument;
 import wt.fc.Persistable;
@@ -1950,7 +1950,6 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				task.setProject(project);
 				task.setOwnership(ownership);
 				int sort = ProjectHelper.manager.getMaxSort(project);
-
 
 				if ("text".equals(col)) {
 					task.setName(newValue);

@@ -230,15 +230,15 @@ public class StandardTemplateService extends StandardManager implements Template
 			}
 
 			if (!StringUtils.isNull(pmOid)) {
-				People user = (People) CommonUtils.getObject(pmOid);
-				TemplateUserLink link = TemplateUserLink.newTemplateUserLink(template, user.getUser());
+				WTUser user = (WTUser) CommonUtils.getObject(pmOid);
+				TemplateUserLink link = TemplateUserLink.newTemplateUserLink(template, user);
 				link.setUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
 				PersistenceHelper.manager.save(link);
 			}
 
 			if (!StringUtils.isNull(sub_pmOid)) {
-				People user = (People) CommonUtils.getObject(pmOid);
-				TemplateUserLink link = TemplateUserLink.newTemplateUserLink(template, user.getUser());
+				WTUser user = (WTUser) CommonUtils.getObject(pmOid);
+				TemplateUserLink link = TemplateUserLink.newTemplateUserLink(template, user);
 				link.setUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
 				PersistenceHelper.manager.save(link);
 			}
