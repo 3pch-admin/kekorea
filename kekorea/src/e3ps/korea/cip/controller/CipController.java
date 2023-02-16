@@ -1,5 +1,6 @@
 package e3ps.korea.cip.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,11 +10,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.controller.BaseController;
+import e3ps.korea.cip.beans.CipColumnData;
 import e3ps.korea.cip.service.CipHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -68,5 +71,16 @@ public class CipController extends BaseController {
 			result.put("result", FAIL);
 		}
 		return result;
+	}
+
+	@Description(value = "막종상세, 거래처, 설치라인 관련 CIP")
+	@RequestMapping(value = "/view", method = RequestMethod.GET)
+	public ModelAndView view(@RequestParam String detail_oid, @RequestParam String customer_oid,
+			@RequestParam String install_oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		ArrayList<CipColumnData> list = CipHelper.manager.view(detail_oid, customer_oid, install_oid);
+		model.addObject("list", list);
+		model.setViewName("popup:/korea/cip/cip-view");
+		return model;
 	}
 }

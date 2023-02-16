@@ -15,13 +15,23 @@ public class ProjectColumnData {
 
 	private String oid;
 	private String state;
-	private String projectType;
-	private String customer;
-	private String install;
+	private String projectType_code;
+	private String projectType_name;
+	private String projectType_oid;
+	private String customer_code;
+	private String customer_name;
+	private String customer_oid;
+	private String install_code;
+	private String install_name;
+	private String install_oid;
 	private String kekNumber;
 	private String keNumber;
-	private String mak;
-	private String detail;
+	private String mak_code;
+	private String mak_name;
+	private String mak_oid;
+	private String detail_name;
+	private String detail_code;
+	private String detail_oid;
 	private String userId;
 	private String description;
 	private Timestamp pdate;
@@ -49,11 +59,35 @@ public class ProjectColumnData {
 		String gate5 = ProjectHelper.manager.getStateIcon(project.getGate5() != null ? project.getGate5() : 0);
 		setState(gate1 + gate2 + gate3 + gate4 + gate5);
 
-		setProjectType(project.getProjectType() != null ? project.getProjectType().getName() : "");
-		setCustomer(project.getCustomer() != null ? project.getCustomer().getName() : "");
-		setInstall(project.getInstall() != null ? project.getInstall().getName() : "");
-		setMak(project.getMak() != null ? project.getMak().getName() : "");
-		setDetail(project.getDetail() != null ? project.getDetail().getName() : "");
+		if (project.getProjectType() != null) {
+			setProjectType_code(project.getProjectType().getCode());
+			setProjectType_name(project.getProjectType().getName());
+			setProjectType_oid(project.getProjectType().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+
+		if (project.getCustomer() != null) {
+			setCustomer_code(project.getCustomer().getCode());
+			setCustomer_name(project.getCustomer().getName());
+			setCustomer_oid(project.getCustomer().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+
+		if (project.getInstall() != null) {
+			setInstall_code(project.getInstall().getCode());
+			setInstall_name(project.getInstall().getName());
+		}
+
+		if (project.getMak() != null) {
+			setMak_code(project.getMak().getCode());
+			setMak_name(project.getMak().getName());
+			setMak_oid(project.getMak().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+
+		if (project.getDetail() != null) {
+			setDetail_code(project.getDetail().getCode());
+			setDetail_name(project.getDetail().getName());
+			setDetail_oid(project.getDetail().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+
 		setKekNumber(project.getKekNumber());
 		setKeNumber(project.getKeNumber());
 		setUserId(project.getUserId());
@@ -63,9 +97,9 @@ public class ProjectColumnData {
 		setEndDate(project.getCustomDate());
 		setModel(project.getModel());
 
-		WTUser machineUser = ProjectHelper.manager.getUserTypeByProject(project, "MACHINE");
-		WTUser elecUser = ProjectHelper.manager.getUserTypeByProject(project, "ELEC");
-		WTUser softUser = ProjectHelper.manager.getUserTypeByProject(project, "SOFT");
+		WTUser machineUser = ProjectHelper.manager.getUserType(project, "MACHINE");
+		WTUser elecUser = ProjectHelper.manager.getUserType(project, "ELEC");
+		WTUser softUser = ProjectHelper.manager.getUserType(project, "SOFT");
 
 		if (machineUser != null) {
 			setMachine(machineUser.getFullName());

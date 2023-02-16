@@ -133,7 +133,7 @@ Highcharts.chart('container', {
 			type : "TemplateRenderer",
 		},
 	}, {
-		dataField : "ptype",
+		dataField : "projectType",
 		headerText : "작번유형",
 		dataType : "string",
 		width : 100
@@ -143,7 +143,7 @@ Highcharts.chart('container', {
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "ins_location",
+		dataField : "install",
 		headerText : "설치장소",
 		dataType : "string",
 		width : 100
@@ -158,12 +158,12 @@ Highcharts.chart('container', {
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "kek_number",
+		dataField : "kekNumber",
 		headerText : "KEK 작번",
 		dataType : "string",
 		width : 130
 	}, {
-		dataField : "ke_number",
+		dataField : "keNumber",
 		headerText : "KE 작번",
 		dataType : "string",
 		width : 130

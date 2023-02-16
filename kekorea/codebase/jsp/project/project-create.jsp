@@ -1,10 +1,12 @@
+<%@page import="java.util.HashMap"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 ArrayList<CommonCode> customers = (ArrayList<CommonCode>) request.getAttribute("customers");
 ArrayList<CommonCode> projectTypes = (ArrayList<CommonCode>) request.getAttribute("projectTypes");
-ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("installs");
+ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks");
+ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) request.getAttribute("list");
 %>
 <table class="btn_table">
 	<tr>
@@ -58,6 +60,39 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 			<input type="text" name="userId" id="userId" class="AXInput wid300">
 		</td>
 		<th>
+			<font class="req">모델</font>
+		</th>
+		<td>
+			<input type="text" name="model" id="model" class="AXInput wid300">
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<font class="req">막종</font>
+		</th>
+		<td>
+			<select name="mak" id="mak" class="AXSelect wid200">
+				<option value="">선택</option>
+				<%
+				for (CommonCode mak : maks) {
+				%>
+				<option value="<%=mak.getPersistInfo().getObjectIdentifier().getStringValue()%>"><%=mak.getName()%></option>
+				<%
+				}
+				%>
+			</select>
+		</td>
+		<th>
+			<font class="req">막종상세</font>
+		</th>
+		<td>
+			<select name="detail" id="detail" class="AXSelect wid200">
+				<option value="">선택</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<th>
 			<font class="req">거래처</font>
 		</th>
 		<td>
@@ -72,37 +107,16 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 				%>
 			</select>
 		</td>
-	</tr>
-	<tr>
-		<th>
-			<font class="req">막종</font>
-		</th>
-		<td>
-			<input type="text" name="mak" id="mak" class="AXInput wid300">
-		</td>
 		<th>
 			<font class="req">설치 장소</font>
 		</th>
 		<td>
 			<select name="install" id="install" class="AXSelect wid200">
 				<option value="">선택</option>
-				<%
-				for (CommonCode install : installs) {
-				%>
-				<option value="<%=install.getName()%>"><%=install.getName()%></option>
-				<%
-				}
-				%>
 			</select>
 		</td>
 	</tr>
 	<tr>
-		<th>
-			<font class="req">모델</font>
-		</th>
-		<td>
-			<input type="text" name="model" id="model" class="AXInput wid300">
-		</td>
 		<th>
 			<font class="req">작번 유형</font>
 		</th>
@@ -118,12 +132,19 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 				%>
 			</select>
 		</td>
-	</tr>
-	<tr>
 		<th>작번 템플릿</th>
 		<td colspan="3">
 			<select name="pTemplate" id="pTemplate" class="AXSelect wid300">
 				<option value="">선택</option>
+				<%
+				for (HashMap<String, Object> map : list) {
+					String key = (String) map.get("value");
+					String value = (String) map.get(key);
+				%>
+				<option value="<%=key%>"><%=value %></option>
+				<%
+				}
+				%>
 			</select>
 		</td>
 	</tr>
@@ -138,11 +159,45 @@ ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("i
 </table>
 <script type="text/javascript">
 	$(function() {
+	
+		$("#pTemplate").bindSelect();
+		
+		$("#mak").bindSelect({
+			onchange : function() {
+				let oid = this.optionValue;
+				$("#detail").bindSelect({
+					ajaxUrl : getCallUrl("/commonCode/getChildrensByOid?parentOid=" + oid),
+					reserveKeys : {
+						options : "list",
+						optionValue : "value",
+						optionText : "name"
+					},
+					setValue : this.optionValue,
+					alwaysOnChange : true,
+				})
+			}
+		})
+
+		$("#customer").bindSelect({
+			onchange : function() {
+				let oid = this.optionValue;
+				$("#install").bindSelect({
+					ajaxUrl : getCallUrl("/commonCode/getChildrensByOid?parentOid=" + oid),
+					reserveKeys : {
+						options : "list",
+						optionValue : "value",
+						optionText : "name"
+					},
+					setValue : this.optionValue,
+					alwaysOnChange : true,
+				})
+			}
+		})
 
 		// select box bind
-		selectBox("customer")
-		selectBox("install")
-		selectBox("projectType")
+		selectBox("detail"); // 기본 바인딩만..
+		selectBox("install");
+		selectBox("projectType");
 
 		$("#closeBtn").click(function() {
 			self.close();

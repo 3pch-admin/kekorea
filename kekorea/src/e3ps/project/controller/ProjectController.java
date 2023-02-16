@@ -48,16 +48,12 @@ public class ProjectController extends BaseController {
 		String end = DateUtils.getCurrentTimestamp().toString().substring(0, 10);
 
 		ArrayList<CommonCode> customers = CommonCodeHelper.manager.getArrayCodeList("CUSTOMER");
-		ArrayList<CommonCode> installs = CommonCodeHelper.manager.getArrayCodeList("INSTALL");
 		ArrayList<CommonCode> projectTypes = CommonCodeHelper.manager.getArrayCodeList("PROJECT_TYPE");
 		ArrayList<CommonCode> maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
-		ArrayList<CommonCode> details = CommonCodeHelper.manager.getArrayCodeList("MAK_DETAIL");
 
 		model.addObject("customers", customers);
-		model.addObject("installs", installs);
 		model.addObject("projectTypes", projectTypes);
 		model.addObject("maks", maks);
-		model.addObject("details", details);
 		model.addObject("before", before);
 		model.addObject("end", end);
 		model.addObject("isAdmin", isAdmin);
@@ -104,8 +100,10 @@ public class ProjectController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		ArrayList<CommonCode> customers = CommonCodeHelper.manager.getArrayCodeList("CUSTOMER");
 		ArrayList<CommonCode> projectTypes = CommonCodeHelper.manager.getArrayCodeList("PROJECT_TYPE");
-		ArrayList<CommonCode> installs = CommonCodeHelper.manager.getArrayCodeList("INSTALL");
-		model.addObject("installs", installs);
+		ArrayList<CommonCode> maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
+		ArrayList<HashMap<String, Object>> list = TemplateHelper.manager.getTemplateArrayMap();
+		model.addObject("list", list);
+		model.addObject("maks", maks);
 		model.addObject("customers", customers);
 		model.addObject("projectTypes", projectTypes);
 		model.setViewName("popup:/project/project-create");
@@ -136,7 +134,7 @@ public class ProjectController extends BaseController {
 		model.setViewName("popup:/project/project-view");
 		return model;
 	}
-	
+
 	@Description(value = "프로젝트 정보 페이지")
 	@RequestMapping(value = "/projectView", method = RequestMethod.GET)
 	public ModelAndView projectView(@RequestParam String oid) throws Exception {
@@ -151,7 +149,7 @@ public class ProjectController extends BaseController {
 		model.setViewName("popup:/project/projectView");
 		return model;
 	}
-	
+
 	@Description(value = "프로젝트 트리")
 	@RequestMapping(value = "/load", method = RequestMethod.GET)
 	@ResponseBody

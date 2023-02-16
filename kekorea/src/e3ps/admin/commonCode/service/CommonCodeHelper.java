@@ -10,10 +10,9 @@ import org.json.JSONArray;
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.CommonCodeType;
 import e3ps.admin.commonCode.beans.CommonCodeColumnData;
-import e3ps.common.util.PageQueryUtils;
+import e3ps.common.util.CommonUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
-import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.query.ClassAttribute;
@@ -64,6 +63,14 @@ public class CommonCodeHelper {
 						new int[] { idx });
 				query.appendOr();
 				query.appendWhere(new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", "MAK_DETAIL"),
+						new int[] { idx });
+				query.appendCloseParen();
+			} else if (codeType.equals("CUSTOMER")) {
+				query.appendOpenParen();
+				query.appendWhere(new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", "CUSTOMER"),
+						new int[] { idx });
+				query.appendOr();
+				query.appendWhere(new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", "INSTALL"),
 						new int[] { idx });
 				query.appendCloseParen();
 			} else {
@@ -206,6 +213,26 @@ public class CommonCodeHelper {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("key", commonCode.getCode());
 			map.put("value", commonCode.getName());
+			list.add(map);
+		}
+		return list;
+	}
+
+	public ArrayList<Map<String, Object>> getChildrensByOid(String parentOid) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		CommonCode parent = (CommonCode) CommonUtils.getObject(parentOid);
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(CommonCode.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, "parentReference.key.id",
+				parent.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			CommonCode commonCode = (CommonCode) obj[0];
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("value", commonCode.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", commonCode.getName());
 			list.add(map);
 		}
 		return list;

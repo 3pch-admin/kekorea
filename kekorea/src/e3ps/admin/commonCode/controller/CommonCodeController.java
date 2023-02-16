@@ -102,4 +102,20 @@ public class CommonCodeController extends BaseController {
 		return result;
 	}
 
+	@Description(value = "코드의 자식 코드 가져오는 함수 (AXISJ Bind Select 용)")
+	@ResponseBody
+	@RequestMapping(value = "/getChildrensByOid", method = RequestMethod.POST)
+	public Map<String, Object> getChildrensByOid(@RequestParam String parentOid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ArrayList<Map<String, Object>> childrens = CommonCodeHelper.manager.getChildrensByOid(parentOid);
+			result.put("list", childrens);
+			result.put("result", "ok"); // AXISJ 전용 성공 값
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
 }

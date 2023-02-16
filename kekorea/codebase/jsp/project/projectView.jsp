@@ -24,179 +24,94 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			<td>
 				<div class="header_title">
 					<i class="axi axi-subtitles"></i>
-					<span>템플릿 정보</span>
+					<span>프로젝트 정보</span>
 				</div>
 			</td>
 		</tr>
 	</table>
-	<table class="view_table">
-		<colgroup>
-			<col width="130">
-			<col width="600">
-			<col width="130">
-			<col width="600">
-		</colgroup>
-		<tr>
-			<th>템플릿 이름</th>
-			<td><%=data.getName()%></td>
-			<th>총 기간</th>
-			<td><%=data.getDuration()%>일
-			</td>
-		</tr>
-		<tr>
-			<th>작성자</th>
-			<td><%=data.getCreator()%></td>
-			<th>작성일</th>
-			<td><%=data.getCreatedDate()%></td>
-		</tr>
-		<tr>
-			<th>설명</th>
-			<td colspan="3">
-				<textarea style="height: 200px !important;" class="view" readonly="readonly"><%=data.getDescription()%></textarea>
-			</td>
-		</tr>
-	</table>
-
-	<div class="header_title margin_top10">
-		<i class="axi axi-subtitles"></i>
-		<span>태스크 정보</span>
-	</div>
-
-	<table class="view_table">
-		<tr>
-			<th>태스크 명</th>
-			<th>태스크 타입</th>
-			<th>기간</th>
-			<th>할당율</th>
-			<th>계획시작일</th>
-			<th>계획종료일</th>
-		</tr>
+	<table class="project_table">
 		<%
-		for (Task task : list) {
+		if (!data.isQuotation()) {
 		%>
 		<tr>
-			<td class="left indent10 bl"><%=task.getName()%></td>
-			<td class="center"><%=task.getTaskType().getName()%></td>
-			<td class="center"><%=task.getDuration()%>일
+			<th class="min-wid150">KEK 작번</th>
+			<th class="min-wid150">거래처</th>
+			<th class="min-wid150">설치장소</th>
+			<th class="min-wid150">막종</th>
+			<th class="min-wid150">발행일</th>
+			<th class="min-wid150">요구 납기일</th>
+			<th rowspan="4" class="border-none bgnone min-wid20">&nbsp;</th>
+			<th rowspan="2" class="border-left min-wid100">진행률</th>
+			<td rowspan="2" class="center min-wid100 border-top-blue "><%=data.getKekProgress()%>%
 			</td>
-			<td class="center"><%=task.getAllocate() != null ? task.getAllocate() : ""%></td>
-			<td class="center"><%=CommonUtils.getPersistableTime(task.getPlanStartDate())%></td>
-			<td class="center"><%=CommonUtils.getPersistableTime(task.getPlanEndDate())%></td>
+		</tr>
+
+		<tr>
+			<td class="center"><%=data.getKekNumber()%></td>
+			<td class="center"><%=data.getCustomer_name()%></td>
+			<td class="center"><%=data.getInstall_name()%></td>
+			<td class="center"><%=data.getMak_name()%></td>
+			<td class="center"><%=data.getPDate_txt()%></td>
+			<td class="center"><%=data.getCustomDate_txt()%></td>
+		</tr>
+		<tr>
+			<th>KE 작번</th>
+			<th>USER ID</th>
+			<th>작번 유형</th>
+			<th>모델</th>
+			<th colspan="2">작업 내용</th>
+			<th class="border-left">기계</th>
+			<td class="center"><%=data.getMachineProgress()%>%
+			</td>
+		</tr>
+		<tr>
+			<td class="center"><%=data.getKekNumber()%></td>
+			<td class="center"><%=data.getUserID()%>
+			<td class="center"><%=data.getProjectType_name()%>
+			<td class="center"><%=data.getModel()%>
+			<td class="indent10" colspan="2"><%=data.getDescription()%></td>
+			<th class="border-left">전기</th>
+			<td class="center"><%=data.getElecProgress()%>%
+			</td>
+		</tr>
+		<%
+		} else {
+		%>
+		<tr>
+			<th class="min-wid150">KEK 작번</th>
+			<th class="min-wid150">거래선</th>
+			<th class="min-wid150">설치장소</th>
+			<th class="min-wid150">막종</th>
+			<th class="min-wid150">발행일</th>
+			<th class="min-wid150">요청 납기일</th>
+			<th rowspan="4" class="border-none bgnone min-wid20">&nbsp;</th>
+			<th rowspan="5" class="border-left min-wid100">진행률</th>
+			<td rowspan="5" class="center min-wid100 border-top-blue "><%=data.getKekProgress()%>%
+			</td>
+		</tr>
+		<tr>
+			<td class="center"><%=data.getKekNumber()%></td>
+			<td class="center"><%=data.getCustomer_name()%></td>
+			<td class="center"><%=data.getInstall_name()%></td>
+			<td class="center"><%=data.getMak_name()%></td>
+			<td class="center"><%=data.getPDate_txt()%></td>
+			<td class="center"><%=data.getCustomDate_txt()%></td>
+		</tr>
+		<tr>
+			<th>KE 작번</th>
+			<th>USER ID</th>
+			<th>작번 유형</th>
+			<th colspan="3">작업 내용</th>
+		</tr>
+		<tr>
+			<td class="center"><%=data.getKeNumber()%></td>
+			<td class="center"><%=data.getUserID()%>
+			<td class="center"><%=data.getProjectType_name()%>
+			<td class="indent10" colspan="3"><%=data.getDescription()%></td>
 		</tr>
 		<%
 		}
 		%>
 	</table>
-
-	<div class="header_title margin_top10">
-		<i class="axi axi-subtitles"></i>
-		<span>구성원 정보</span>
-	</div>
-
-	<table class="view_table">
-		<colgroup>
-			<col width="50%">
-			<col width="50%">
-		</colgroup>
-		<tr>
-			<th>총괄 책임자</th>
-			<th>세부일정 책임자</th>
-		<tr>
-			<td class="center bl">
-				<%
-				if (!isAdmin) {
-				%>
-				<%=data.getPm() != null ? data.getPm() + " [" + data.getSubPm().getName() + "]" : ""%>
-				<%
-				} else {
-				String value = data.getPm() != null ? data.getPm().getFullName() + " [" + data.getSubPm().getName() + "]" : "";
-				String poid = data.getPm() != null ? data.getPm().getPersistInfo().getObjectIdentifier().getStringValue() : "";
-				%>
-				<input type="text" name="pm" id="pm" class="AXInput wid200" data-dbl="true" value="<%=value%>">
-				<input type="hidden" name="pmOid" value="<%=poid%>" id="pmOid">
-				<i title="삭제" class="axi axi-ion-close-circled delete-text" data-prefix="Oid" data-target="pm"></i>
-				<img src="/Windchill/jsp/images/save.gif" style="position: relative; left: 6px; top: 4px; cursor: pointer;" class="saveBtn">
-				<%
-				}
-				%>
-			</td>
-			<td class="center">
-				<%
-				if (!isAdmin) {
-				%>
-				<%=data.getSubPm() != null ? data.getSubPm() + " [" + data.getSubPm().getName() + "]" : ""%>
-				<%
-				} else {
-				String value = data.getSubPm() != null ? data.getSubPm().getFullName() + " [" + data.getSubPm().getName() + "]" : "";
-				String poid = data.getSubPm() != null ? data.getSubPm().getPersistInfo().getObjectIdentifier().getStringValue() : "";
-				%>
-				<input type="text" name="sub_pm" id="sub_pm" class="AXInput wid200" data-dbl="true" value="<%=value%>">
-				<input type="hidden" name="sub_pmOid" value="<%=poid%>" id="sub_pmOid">
-				<i title="삭제" class="axi axi-ion-close-circled delete-text" data-prefix="Oid" data-target="sub_pm"></i>
-				<img src="/Windchill/jsp/images/save.gif" style="position: relative; left: 6px; top: 4px; cursor: pointer;" class="saveBtn">
-				<%
-				}
-				%>
-			</td>
-		</tr>
-	</table>
-	<script type="text/javascript">
-		$(function() {
-			$(".saveBtn").click(function() {
-				if (!confirm("저장 하시겠습니까?")) {
-					return false;
-				}
-				let url = getCallUrl("/template/saveUserLink");
-				let params = new Object();
-				params.pmOid = $("#pmOid").val();
-				params.sub_pmOid = $("#sub_pmOid").val();
-				params.oid = "<%=data.getOid()%>";
-				call(url, params, function(data) {
-					alert(data.msg);
-					if (data.result) {
-						document.location.reload();
-					} else {
-						parent.closeLayer();
-					}
-				}, "POST");
-			})
-
-			$("input[name=pm]").add("input[name=sub_pm]").bindSelector({
-				reserveKeys : {
-					options : "list",
-					optionValue : "value",
-					optionText : "name"
-				},
-				onsearch : function(id, objVal, cbm) {
-					let value = $("#" + id).val();
-					let params = new Object();
-					if (value.indexOf("[") > -1) {
-						let idx = value.indexOf("[");
-						value = value.substring(0, idx - 1);
-					}
-					params.value = value;
-					let url = getCallUrl("/org/getUserBind");
-					call(url, params, function(data) {
-						cbm({
-							options : data.list
-						})
-					}, "POST")
-				},
-				onchange : function() {
-					let id = this.targetID;
-					let target = id + "Oid";
-					if (this.selectedOption != null) {
-						value = this.selectedOption.value;
-						$("#" + target).remove();
-						$("#" + id).before("<input type=\"hidden\" name=\"" + target + "\" id=\"" + target + "\"> ");
-						$("#" + target).val(this.selectedOption.value);
-					}
-				},
-				finder : function() {
-
-				}
-			})
-		})
-	</script>
 </body>
 </html>

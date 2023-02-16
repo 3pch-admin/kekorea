@@ -8,7 +8,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 String before = (String) request.getAttribute("before");
 String end = (String) request.getAttribute("end");
 ArrayList<CommonCode> customers = (ArrayList<CommonCode>) request.getAttribute("customers");
-ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("installs");
 ArrayList<CommonCode> projectTypes = (ArrayList<CommonCode>) request.getAttribute("projectTypes");
 ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks");
 ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("details");
@@ -80,7 +79,7 @@ ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("de
 			</td>
 			<th>설치장소</th>
 			<td>
-				<select name="ins_location" id="ins_location" class="AXSelect wid209">
+				<select name="install" id="install" class="AXSelect wid209">
 					<option value="">선택</option>
 				</select>
 			</td>
@@ -88,7 +87,7 @@ ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("de
 		<tr>
 			<th>작번유형</th>
 			<td>
-				<select name="pType" id="pType" class="AXSelect wid200">
+				<select name="projectType" id="projectType" class="AXSelect wid200">
 					<option value="">선택</option>
 					<%
 					for (CommonCode projectType : projectTypes) {
@@ -121,10 +120,25 @@ ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("de
 		<tr>
 			<th>막종</th>
 			<td>
-				<input type="text" name="mak" id="mak" class="AXInput wid200">
+				<select name="mak" id="mak" class="AXSelect wid200">
+					<option value="">선택</option>
+					<%
+					for (CommonCode mak : maks) {
+					%>
+					<option value="<%=mak.getPersistInfo().getObjectIdentifier().getStringValue()%>"><%=mak.getName()%></option>
+					<%
+					}
+					%>
+				</select>
+			</td>
+			<th>막종상세</th>
+			<td>
+				<select name="detail" id="detail" class="AXSelect wid200">
+					<option value="">선택</option>
+				</select>
 			</td>
 			<th>작업내용</th>
-			<td colspan="5">
+			<td colspan="3">
 				<input type="text" name="description" class="AXInput wid500">
 			</td>
 		</tr>
@@ -162,27 +176,49 @@ ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("de
 			type : "TemplateRenderer",
 		},
 	}, {
-		dataField : "projectType",
+		dataField : "cip",
+		headerText : "CIP",
+		dataType : "string",
+		width : 60,
+		renderer : {
+			type : "IconRenderer",
+			iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+			iconHeight : 16,
+			iconTableRef : { // icon 값 참조할 테이블 레퍼런스
+				"default" : "/Windchill/jsp/images/search.gif" // default
+			},
+			onClick : function(event) {
+				let item = event.item;
+				console.log(item);
+				let detail_oid = item.detail_oid;
+				let customer_oid = item.customer_oid;
+				let install_oid = item.install_oid;
+				let url = getCallUrl("/cip/view?detail_oid=" + detail_oid + "&customer_oid=" + customer_oid + "&install_oid=" + install_oid);
+				popup(url);
+			}
+		}
+	}, {
+		dataField : "projectType_name",
 		headerText : "작번유형",
 		dataType : "string",
-		width : 100
+		width : 80
 	}, {
-		dataField : "customer",
+		dataField : "customer_name",
 		headerText : "거래처",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "install",
+		dataField : "install_name",
 		headerText : "설치장소",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "mak",
+		dataField : "mak_name",
 		headerText : "막종",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "detail",
+		dataField : "detail_name",
 		headerText : "막종상세",
 		dataType : "string",
 		width : 100
@@ -249,7 +285,12 @@ ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("de
 		headerText : "진행율",
 		dataType : "string",
 		postfix : "%",
-		width : 80
+		width : 80,
+		renderer : {
+			type : "BarRenderer",
+			min : 0,
+			max : 100
+		},
 	}, {
 		dataField : "kekState",
 		headerText : "작번상태",
@@ -270,7 +311,7 @@ ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("de
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
 			showRowCheckColumn : true, // 체크 박스 출력
-			fixedColumnCount : 8,
+			fixedColumnCount : 9,
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
@@ -339,6 +380,44 @@ ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("de
 	$(function() {
 
 		createAUIGrid(columns);
+
+		$("#mak").bindSelect({
+			onchange : function() {
+				let oid = this.optionValue;
+				$("#detail").bindSelect({
+					ajaxUrl : getCallUrl("/commonCode/getChildrensByOid?parentOid=" + oid),
+					reserveKeys : {
+						options : "list",
+						optionValue : "value",
+						optionText : "name"
+					},
+					setValue : this.optionValue,
+					alwaysOnChange : true,
+				})
+			}
+		})
+
+		$("#customer").bindSelect({
+			onchange : function() {
+				let oid = this.optionValue;
+				$("#install").bindSelect({
+					ajaxUrl : getCallUrl("/commonCode/getChildrensByOid?parentOid=" + oid),
+					reserveKeys : {
+						options : "list",
+						optionValue : "value",
+						optionText : "name"
+					},
+					setValue : this.optionValue,
+					alwaysOnChange : true,
+				})
+			}
+		})
+
+		// select box bind
+		selectBox("detail"); // 기본 바인딩만..
+		selectBox("install");
+		selectBox("projectType");
+		selectBox("kekState");
 
 		$("#searchBtn").click(function() {
 			loadGridData();

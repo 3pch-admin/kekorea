@@ -23,9 +23,9 @@ String oid = (String) request.getAttribute("oid");
 
 <table>
 	<colgroup>
-		<col width="50%">
+		<col width="20%">
 		<col width="30">
-		<col width="49%">
+		<col width="79%">
 	</colgroup>
 	<tr>
 		<td valign="top">
@@ -44,16 +44,12 @@ String oid = (String) request.getAttribute("oid");
 		headerText : "프로젝트 명",
 		dataType : "string",
 		style : "left indent10",
-		width : 300,
+// 		width : 300,
 	}, {
 		dataField : "taskType",
 		headerText : "태스크타입",
 		dataType : "string",
 		width : 100,
-	}, {
-		dataField : "description",
-		headerText : "설명",
-		dataType : "string",
 	}, {
 		dataField : "oid",
 		headerText : "oid",
@@ -79,13 +75,11 @@ String oid = (String) request.getAttribute("oid");
 			enableDrop : true,
 			enableUndoRedo : true,
 			editable : true,
-			// 			softRemoveRowMode : false,
 			selectionMode : "multipleCells",
-			// 			showRowCheckColumn : true,
 			treeLevelIndent : 15,
 			enableSorting : false,
-			// 			rowCheckToRadio : true,
 			showStateColumn : true,
+			fillColumnSizeMode : true
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);

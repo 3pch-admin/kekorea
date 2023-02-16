@@ -7,12 +7,15 @@ import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.korea.cip.Cip;
 import e3ps.korea.cip.beans.CipColumnData;
 import wt.fc.PagingQueryResult;
+import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.query.QuerySpec;
 import wt.services.ServiceFactory;
 
@@ -91,5 +94,37 @@ public class CipHelper {
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
 		return map;
+	}
+
+	public ArrayList<CipColumnData> view(String detail_oid, String customer_oid, String install_oid) throws Exception {
+		ArrayList<CipColumnData> list = new ArrayList<>();
+		CommonCode detail = (CommonCode) CommonUtils.getObject(detail_oid);
+		CommonCode customer = (CommonCode) CommonUtils.getObject(customer_oid);
+		CommonCode install = (CommonCode) CommonUtils.getObject(install_oid);
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Cip.class, true);
+
+		query.appendOpenParen();
+
+		QuerySpecUtils.toEqualsOr(query, idx, Cip.class, "detailReference.key.id",
+				detail.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsOr(query, idx, Cip.class, "customerReference.key.id",
+				customer.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsOr(query, idx, Cip.class, "installReference.key.id",
+				install.getPersistInfo().getObjectIdentifier().getId());
+
+		query.appendCloseParen();
+
+		QuerySpecUtils.toOrderBy(query, idx, Cip.class, Cip.CREATE_TIMESTAMP, false);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Cip cip = (Cip) obj[0];
+			list.add(new CipColumnData(cip));
+		}
+
+		return list;
 	}
 }

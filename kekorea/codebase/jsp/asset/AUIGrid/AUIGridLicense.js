@@ -1,9 +1,19 @@
 /*!
- * AUIGrid 3.0.12 License
- * License Type : Evaluation(Trial) Version
- * Authorized Domain(or IP) : localhost,127.0.0.1,plm.kekorea.co.kr
- * Expiration Date : 2023-02-16
- * www.auisoft.net
- */
- /* eslint-disable */
-AUIGridLicense = "eyJjdCI6IkU4Rk1ZZzhrV3VkQWdySUUwd3FNRmQrcThYbEV0R2xMK1k0aEhlY3FVK0JZckpCQlwvdllqWFQ1ZXFKSDFyWkNwWTlWTXkzdGUrbzFuVTYwUmhvNDdVY3RoNGU2VW1BU251UGUzTlRMaFZBVWtyc3cwS3dLV1dvbXA5OXBiNEZHaSIsIml2IjoiZjQ5ZjkyNDExMjc5YTE2ZDA2NTZkZGM0NTQ3NDNjZGYiLCJzIjoiYTQ2ZDQyNTFkMTBmZTlmNSJ9";
+
+* AUIGrid 3.0.12 License
+
+* License Type : Evaluation(Trial) Version
+
+* Authorized Domain(or IP) : localhost,127.0.0.1,plm.kekorea.co.kr
+
+* Expiration Date : 2023-04-30
+
+* www.auisoft.net
+
+*/
+
+/* eslint-disable */
+
+var AUIGridLicense = "eyJjdCI6IjRUSGFlYklrODRDN1BIdnRoWUp5NUdjdHVsQVQ1S1dYZ1dOZCtpR1pocWFySHdFRWRYRERONk1hSmx0UFJvcm0zams3WVhQcEVBV21IMzFwbjRKVDJ4dVExQStYMW5BWXFuRWhrTW8vRUVhbWZ4UWdBT0Nqd2tBYW54ekpCY1VLIiwiaXYiOiJlNWY2NTgyM2QxMWE0YzFlYzM3NjJkYTUxOGQ5NzIyNCIsInMiOiI2OGVlMjJlMzVmMDg3ZDUxIn0=";
+
+if (typeof window !== "undefined") window.AUIGridLicense = AUIGridLicense;

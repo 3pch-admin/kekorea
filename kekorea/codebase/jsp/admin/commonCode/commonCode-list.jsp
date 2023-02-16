@@ -33,7 +33,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 					<%
 					for (CommonCodeType codeType : codeTypes) {
 						String value = codeType.toString();
-						if(value.equals("MAK_DETAIL")) {
+						if(value.equals("MAK_DETAIL") || value.equals("INSTALL")) {
 							continue;
 						}
 					%>

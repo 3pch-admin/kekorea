@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import e3ps.admin.commonCode.CommonCode;
+import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.MessageHelper;
@@ -64,8 +67,9 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 		String mak = (String) param.get("mak");
 		String model = (String) param.get("model");
 		String customer = (String) param.get("customer");
-		String ins_location = (String) param.get("ins_location");
-		String pType = (String) param.get("pType");
+		String install = (String) param.get("install");
+		String detail = (String) param.get("detail");
+		String projectType = (String) param.get("projectType");
 		String pTemplate = (String) param.get("pTemplate");
 		String description = (String) param.get("description");
 
@@ -85,17 +89,15 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 			project.setKeNumber(keNumber);
 			project.setPDate(DateUtils.convertDate(pDate));
 			project.setUserId(userId);
-			project.setMak(mak);
+			project.setMak((CommonCode) CommonUtils.getObject(mak));
+			project.setDetail((CommonCode) CommonUtils.getObject(detail));
 			project.setModel(model);
-			project.setIns_location(ins_location);
-			project.setPType(pType);
-			// project.setPTemplate(pTemplate);
+			project.setInstall((CommonCode) CommonUtils.getObject(install));
+			project.setProjectType((CommonCode) CommonUtils.getObject(projectType));
 			project.setKekState("준비");
-			project.setCustomer(customer);
+			project.setCustomer((CommonCode) CommonUtils.getObject(customer));
 			project.setDescription(description);
 			project.setCustomDate(DateUtils.convertDate(customDate));
-			project.setSystemInfo(systemInfo);
-
 			project.setMachinePrice(0D);
 			project.setElecPrice(0D);
 
@@ -132,7 +134,7 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 					} else {
 						pm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectUserType.PM_ID);
 						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, pm);
-						userLink.setUserType(ProjectUserType.PM.name());
+						userLink.setUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
 						PersistenceHelper.manager.save(userLink);
 					}
 
@@ -2588,6 +2590,7 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 		String keNumber = (String) params.get("keNumber");
 		String userId = (String) params.get("userId");
 		String mak = (String) params.get("mak");
+		String detail = (String) params.get("detail");
 		String model = (String) params.get("model");
 		String customer = (String) params.get("customer");
 		String install = (String) params.get("install");
@@ -2610,16 +2613,15 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 			project.setKeNumber(keNumber);
 			project.setPDate(DateUtils.convertDate(pDate));
 			project.setUserId(userId);
-			project.setMak(mak);
+			project.setMak((CommonCode) CommonUtils.getObject(mak));
 			project.setModel(model);
-			project.setIns_location(install);
-			project.setPType(projectType);
+			project.setInstall((CommonCode) CommonUtils.getObject(install));
+			project.setProjectType((CommonCode) CommonUtils.getObject(projectType));
+			project.setDetail((CommonCode) CommonUtils.getObject(detail));
 			project.setKekState("준비");
-			project.setCustomer(customer);
+			project.setCustomer((CommonCode) CommonUtils.getObject(customer));
 			project.setDescription(description);
 			project.setCustomDate(DateUtils.convertDate(customDate));
-			project.setSystemInfo(systemInfo);
-
 			project.setMachinePrice(0D);
 			project.setElecPrice(0D);
 
@@ -2640,8 +2642,9 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 
 					Timestamp end = new Timestamp(eCa.getTime().getTime());
 					project.setPlanEndDate(end);
-
 					project.setTemplate(template);
+
+					project.setDuration(DateUtils.getDuration(start, end));
 
 					project = (Project) PersistenceHelper.manager.modify(project);
 
@@ -2651,24 +2654,24 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 					WTUser pm = TemplateHelper.manager.getPMByTemplate(template);
 					if (pm != null) {
 						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, pm);
-						userLink.setUserType(ProjectUserType.PM.name());
+						userLink.setUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
 						PersistenceHelper.manager.save(userLink);
 					} else {
-						pm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectUserType.PM_ID);
+						pm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectHelper.PM_ID);
 						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, pm);
-						userLink.setUserType(ProjectUserType.PM.name());
+						userLink.setUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
 						PersistenceHelper.manager.save(userLink);
 					}
 
 					WTUser subPm = TemplateHelper.manager.getSubPMByTemplate(template);
 					if (subPm != null) {
 						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, subPm);
-						userLink.setUserType(ProjectUserType.SUB_PM.name());
+						userLink.setUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
 						PersistenceHelper.manager.save(userLink);
 					} else {
-						subPm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectUserType.SUB_PM_ID);
+						subPm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectHelper.SUB_PM_ID);
 						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, subPm);
-						userLink.setUserType(ProjectUserType.SUB_PM.name());
+						userLink.setUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
 						PersistenceHelper.manager.save(userLink);
 					}
 				}
@@ -2680,9 +2683,10 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				Calendar eCa = Calendar.getInstance();
 				eCa.setTimeInMillis(start.getTime());
 				eCa.add(Calendar.DATE, 1);
-
 				Timestamp end = new Timestamp(eCa.getTime().getTime());
 				project.setPlanEndDate(end);
+
+				project.setDuration(DateUtils.getDuration(start, end));
 
 				PersistenceHelper.manager.modify(project);
 			}

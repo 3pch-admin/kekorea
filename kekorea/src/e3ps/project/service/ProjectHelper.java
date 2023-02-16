@@ -17,7 +17,6 @@ import e3ps.common.util.StringUtils;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.beans.ProjectColumnData;
-import e3ps.project.enums.ProjectStateType;
 import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
 import net.sf.json.JSONArray;
@@ -34,6 +33,9 @@ import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 
 public class ProjectHelper implements MessageHelper, RemoteAccess {
+
+	public final static String PM_ID = "yspark";
+	public final static String SUB_PM_ID = "19940009";
 
 	public static final String STAND = "준비중";
 	public static final String INWORK = "작업 중";
@@ -2014,7 +2016,7 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 		int gap = progress - comp;
 		String bar = "";
 
-		if (ProjectStateType.COMPLETE.getDisplay().equals(project.getState())) {
+		if (COMPLETE.equals(project.getState())) {
 			bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
 			bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
 			bar += "<img title='프로젝트 완료 되었습니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.gif'>";
@@ -3216,6 +3218,7 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 		node.put("name", project.getKekNumber());
 		node.put("description", project.getDescription());
 		node.put("duration", project.getDuration());
+		children.put("taskType", project.getProjectType().getName());
 		node.put("isNew", false);
 
 		JSONArray childrens = new JSONArray();
