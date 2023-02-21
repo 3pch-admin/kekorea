@@ -864,13 +864,10 @@ public class StandardCommonContentService extends StandardManager implements Com
 			String roleType = multi.getParameter("roleType");
 			String origin = multi.getOriginalFileName(roleType);
 			String name = multi.getFilesystemName(roleType);
-
-			String ext = FileUtil.getExtension(origin);
 			String fullPath = temp + File.separator + name;
 
 			map.put("name", origin);
 			map.put("fullPath", fullPath);
-			map.put("icon", CommonContentHelper.manager.getIconPath(ext));
 
 		} catch (Exception e) {
 			e.printStackTrace();

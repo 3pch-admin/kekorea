@@ -1,5 +1,6 @@
 package e3ps.project.service;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -8,6 +9,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.bind.DatatypeConverter;
+
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
@@ -32,6 +38,9 @@ import e3ps.project.output.Output;
 import e3ps.project.task.ParentTaskChildTaskLink;
 import e3ps.project.task.TargetTaskSourceTaskLink;
 import e3ps.project.task.Task;
+import e3ps.project.task.beans.TaskTreeNode;
+import e3ps.project.task.service.TaskHelper;
+import e3ps.project.task.variable.TaskStateVariable;
 import e3ps.project.template.Template;
 import wt.doc.WTDocument;
 import wt.fc.Persistable;
@@ -2689,6 +2698,113 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				project.setDuration(DateUtils.getDuration(start, end));
 
 				PersistenceHelper.manager.modify(project);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void save(Map<String, Object> params) throws Exception {
+		String json = (String) params.get("json");
+		ArrayList<Map<String, Object>> removeRows = (ArrayList<Map<String, Object>>) params.get("removeRows");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			for (Map<String, Object> removeRow : removeRows) {
+				String oid = (String) removeRow.get("oid");
+				Task task = (Task) CommonUtils.getObject(oid);
+				PersistenceHelper.manager.delete(task);
+			}
+
+			String parse = new String(DatatypeConverter.parseBase64Binary(json), "UTF-8");
+			Type listType = new TypeToken<ArrayList<TaskTreeNode>>() {
+			}.getType();
+
+			Gson gson = new Gson();
+			List<TaskTreeNode> nodes = gson.fromJson(parse, listType);
+			Project project = null;
+			for (TaskTreeNode node : nodes) {
+				String oid = node.getOid();
+				ArrayList<TaskTreeNode> childrens = node.getChildren();
+				String name = node.getName();
+				String d = node.getDescription();
+				project = (Project) CommonUtils.getObject(oid);
+				save(project, null, childrens);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+	
+	private void save(Project project, Task parentTask, ArrayList<TaskTreeNode> childrens) throws Exception {
+		Ownership ownership = CommonUtils.sessionOwner();
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			for (TaskTreeNode node : childrens) {
+				int depth = node.get_$depth();
+				String oid = node.getOid();
+				String name = node.getName();
+				String description = node.getDescription();
+				int duration = node.getDuration();
+				boolean isNew = node.isNew();
+				ArrayList<TaskTreeNode> n = node.getChildren();
+				int sort = TaskHelper.manager.getSort(project, parentTask);
+				String taskType = node.getTaskType();
+				Task t = null;
+				if (isNew) {
+					t = Task.newTask();
+					t.setName(name);
+					t.setDepth(depth);
+					t.setDescription(description);
+					t.setDuration(duration);
+					t.setOwnership(ownership);
+					t.setParentTask(parentTask);
+					t.setProject(project);
+					t.setState(TaskStateVariable.READY);
+					t.setPlanStartDate(project.getPlanStartDate());
+					t.setPlanEndDate(project.getPlanEndDate());
+					t.setDuration(DateUtils.getDuration(project.getPlanStartDate(), project.getPlanEndDate()));
+					t.setSort(sort);
+					t.setTaskType(CommonCodeHelper.manager.getCommonCode(taskType, "TASK_TYPE"));
+					PersistenceHelper.manager.save(t);
+				} else {
+					t = (Task) CommonUtils.getObject(oid);
+					t.setName(name);
+					t.setDepth(depth);
+					t.setState(TaskStateVariable.READY);
+					t.setDescription(description);
+					t.setDuration(duration);
+					t.setOwnership(ownership);
+					t.setParentTask(parentTask);
+					t.setProject(project);
+					t.setPlanStartDate(project.getPlanStartDate());
+					t.setPlanEndDate(project.getPlanEndDate());
+					t.setDuration(DateUtils.getDuration(project.getPlanStartDate(), project.getPlanEndDate()));
+					t.setSort(sort);
+					t.setTaskType(CommonCodeHelper.manager.getCommonCode(taskType, "TASK_TYPE"));
+					PersistenceHelper.manager.modify(t);
+				}
+				save(project, t, n);
 			}
 
 			trs.commit();

@@ -75,10 +75,10 @@ public class CipController extends BaseController {
 
 	@Description(value = "막종상세, 거래처, 설치라인 관련 CIP")
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
-	public ModelAndView view(@RequestParam String detail_oid, @RequestParam String customer_oid,
+	public ModelAndView view(@RequestParam String mak_oid, @RequestParam String detail_oid, @RequestParam String customer_oid,
 			@RequestParam String install_oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		ArrayList<CipColumnData> list = CipHelper.manager.view(detail_oid, customer_oid, install_oid);
+		ArrayList<CipColumnData> list = CipHelper.manager.view(mak_oid, detail_oid, customer_oid, install_oid);
 		model.addObject("list", list);
 		model.setViewName("popup:/korea/cip/cip-view");
 		return model;

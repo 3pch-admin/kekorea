@@ -74,6 +74,7 @@ public class ProjectColumnData {
 		if (project.getInstall() != null) {
 			setInstall_code(project.getInstall().getCode());
 			setInstall_name(project.getInstall().getName());
+			setInstall_oid(project.getInstall().getPersistInfo().getObjectIdentifier().getStringValue());
 		}
 
 		if (project.getMak() != null) {

@@ -81,8 +81,8 @@
 		width : 100,
 		renderer : {
 			type : "CheckBoxEditRenderer",
-			editable : true, // 체크박스 편집 활성화 여부(기본값 : false)
 		},
+		editable : false,
 		cellMerge : true,
 		mergeRef : "name",
 		mergePolicy : "restrict"

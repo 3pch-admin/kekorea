@@ -3151,22 +3151,73 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<ProjectColumnData> list = new ArrayList<ProjectColumnData>();
 
-		String name = (String) params.get("name");
+		String kekNumber = (String) params.get("kekNumber");
+		String keNumber = (String) params.get("keNumber");
 		String mak = (String) params.get("mak");
 		String detail = (String) params.get("detail");
+		String install = (String) params.get("install");
+		String customer = (String) params.get("customer");
+		String kekState = (String) params.get("kekState");
+		String model = (String) params.get("model");
+		String projectType = (String) params.get("projectType");
+		String predate = (String) params.get("predate");
+		String postdate = (String) params.get("postdate");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);
 
+		if (!StringUtils.isNull(kekNumber)) {
+			QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.KEK_NUMBER, kekNumber);
+		}
+
+		if (!StringUtils.isNull(keNumber)) {
+			QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.KE_NUMBER, keNumber);
+		}
+
+		if (!StringUtils.isNull(model)) {
+			QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.MODEL, model);
+		}
+
+		if (!StringUtils.isNull(kekState)) {
+			QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.KEK_STATE, kekState);
+		}
+
+		if (!StringUtils.isNull(projectType)) {
+			CommonCode projectTypeCode = (CommonCode) CommonUtils.getObject(projectType);
+			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "projectTypeReference.key.id",
+					projectTypeCode.getPersistInfo().getObjectIdentifier().getId());
+		}
+
 		if (!StringUtils.isNull(mak)) {
-			CommonCode makCode = CommonCodeHelper.manager.getCommonCode(mak, "MAK");
+			CommonCode makCode = (CommonCode) CommonUtils.getObject(mak);
 			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "makReference.key.id",
 					makCode.getPersistInfo().getObjectIdentifier().getId());
 		}
+
 		if (!StringUtils.isNull(detail)) {
-			CommonCode detailCode = CommonCodeHelper.manager.getCommonCode(detail, "MAK_DETAIL");
+			CommonCode detailCode = (CommonCode) CommonUtils.getObject(detail);
 			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "detailReference.key.id",
 					detailCode.getPersistInfo().getObjectIdentifier().getId());
+		}
+
+		if (!StringUtils.isNull(install)) {
+			CommonCode installCode = (CommonCode) CommonUtils.getObject(install);
+			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "installReference.key.id",
+					installCode.getPersistInfo().getObjectIdentifier().getId());
+		}
+
+		if (!StringUtils.isNull(customer)) {
+			CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer);
+			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "customerReference.key.id",
+					customerCode.getPersistInfo().getObjectIdentifier().getId());
+		}
+
+		if (!StringUtils.isNull(predate)) {
+
+		}
+
+		if (!StringUtils.isNull(postdate)) {
+
 		}
 
 		QuerySpecUtils.toOrderBy(query, idx, Project.class, Project.P_DATE, false);
@@ -3218,7 +3269,7 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 		node.put("name", project.getKekNumber());
 		node.put("description", project.getDescription());
 		node.put("duration", project.getDuration());
-		children.put("taskType", project.getProjectType().getName());
+		node.put("taskType", project.getProjectType().getName());
 		node.put("isNew", false);
 
 		JSONArray childrens = new JSONArray();

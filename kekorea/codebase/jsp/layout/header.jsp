@@ -46,63 +46,69 @@ UserData data = (UserData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-<!-- 						<a href="graph_flot.html">공지사항</a> -->
+						<!-- 						<a href="graph_flot.html">공지사항</a> -->
 						<a onclick="moveToPage(this, '/approval/listNotice');">공지사항</a>
 					</li>
 					<li>
 						<a href="graph_morris.html">나의작번</a>
 					</li>
 					<li>
-<!-- 						<a href="graph_rickshaw.html"> -->
-<!-- 							검토함 -->
-<!-- 							<span class="label label-info float-right">62</span> -->
-<!-- 						</a> -->
-						<a onclick="moveToPage(this, '/approval/listAgree');">검토함
+						<!-- 						<a href="graph_rickshaw.html"> -->
+						<!-- 							검토함 -->
+						<!-- 							<span class="label label-info float-right">62</span> -->
+						<!-- 						</a> -->
+						<a onclick="moveToPage(this, '/approval/listAgree');">
+							검토함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-<!-- 						<a href="graph_chartjs.html"> -->
-<!-- 							결재함 -->
-<!-- 							<span class="label label-info float-right">62</span> -->
-<!-- 						</a> -->
-						<a onclick="moveToPage(this, '/approval/listApproval');">결재함
+						<!-- 						<a href="graph_chartjs.html"> -->
+						<!-- 							결재함 -->
+						<!-- 							<span class="label label-info float-right">62</span> -->
+						<!-- 						</a> -->
+						<a onclick="moveToPage(this, '/approval/listApproval');">
+							결재함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-<!-- 						<a href="graph_chartist.html"> -->
-<!-- 							수신함 -->
-<!-- 							<span class="label label-info float-right">62</span> -->
-<!-- 						</a> -->
-						<a onclick="moveToPage(this, '/approval/listReceive');">수신함
+						<!-- 						<a href="graph_chartist.html"> -->
+						<!-- 							수신함 -->
+						<!-- 							<span class="label label-info float-right">62</span> -->
+						<!-- 						</a> -->
+						<a onclick="moveToPage(this, '/approval/listReceive');">
+							수신함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-<!-- 						<a href="c3.html"> -->
-<!-- 							진행함 -->
-<!-- 							<span class="label label-info float-right">62</span> -->
-<!-- 						</a> -->
-						<a onclick="moveToPage(this, '/approval/listIng');">진행함
+						<!-- 						<a href="c3.html"> -->
+						<!-- 							진행함 -->
+						<!-- 							<span class="label label-info float-right">62</span> -->
+						<!-- 						</a> -->
+						<a onclick="moveToPage(this, '/approval/listIng');">
+							진행함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-<!-- 						<a href="graph_peity.html"> -->
-<!-- 							완료함 -->
-<!-- 							<span class="label label-info float-right">62</span> -->
-<!-- 						</a> -->
-						<a onclick="moveToPage(this, '/approval/listComplete');">완료함
+						<!-- 						<a href="graph_peity.html"> -->
+						<!-- 							완료함 -->
+						<!-- 							<span class="label label-info float-right">62</span> -->
+						<!-- 						</a> -->
+						<a onclick="moveToPage(this, '/approval/listComplete');">
+							완료함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-<!-- 						<a href="graph_sparkline.html"> -->
-<!-- 							반려함 -->
-<!-- 							<span class="label label-info float-right">62</span> -->
-<!-- 						</a> -->
-						<a onclick="moveToPage(this, '/approval/listReturn');">반려함
+						<!-- 						<a href="graph_sparkline.html"> -->
+						<!-- 							반려함 -->
+						<!-- 							<span class="label label-info float-right">62</span> -->
+						<!-- 						</a> -->
+						<a onclick="moveToPage(this, '/approval/listReturn');">
+							반려함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
@@ -184,12 +190,15 @@ UserData data = (UserData) request.getAttribute("data");
 					<li>
 						<a href="projects.html">UNIT BOM 조회</a>
 					</li>
+					<li>
+						<a onclick="moveToPage(this, '/kepart/list');">KE 부품 조회</a>
+					</li>					
 					<!-- 					<li> -->
 					<!-- 						<a href="project_detail.html">UNIT BOM 등록</a> -->
 					<!-- 					</li> -->
-					<li>
-						<a href="activity_stream.html">EPLAN 결재</a>
-					</li>
+<!-- 					<li> -->
+<!-- 						<a href="activity_stream.html">EPLAN 결재</a> -->
+<!-- 					</li> -->
 				</ul>
 			</li>
 			<li>
@@ -206,30 +215,28 @@ UserData data = (UserData) request.getAttribute("data");
 						<a onclick="moveToPage(this, '/document/listOutput');">산출물 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/partlist/list');">수배표 조회</a>
-					</li>
-					<li>
-<!-- 						<a href="login.html">의뢰서 조회</a> -->
 						<a onclick="moveToPage(this, '/document/listRequestDocument');">의뢰서 조회</a>
 					</li>
-					<!-- 					<li> -->
-					<!-- 						<a href="login_two_columns.html">문서 등록</a> -->
-					<!-- 					</li> -->
-					<!-- 					<li> -->
-					<!-- 						<a href="forgot_password.html">산출물 등록</a> -->
-					<!-- 					</li> -->
-					<!-- 					<li> -->
-					<!-- 						<a href="register.html">수배표 등록</a> -->
-					<!-- 					</li> -->
-					<!-- 					<li> -->
-					<!-- 						<a href="404.html">의뢰서 등록</a> -->
-					<!-- 					</li> -->
 					<li>
 						<a href="500.html">문서 결재</a>
 					</li>
 					<li>
-<!-- 						<a href="empty_page.html">첨부파일 조회</a> -->
 						<a onclick="moveToPage(this, '/document/listContents');">첨부파일 조회</a>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<a href="#">
+					<i class="fa fa-files-o"></i>
+					<span class="nav-label">BOM 관리</span>
+					<span class="fa arrow"></span>
+				</a>
+				<ul class="nav nav-second-level collapse">
+					<li>
+						<a onclick="moveToPage(this, '/partlist/list');">수배표 조회</a>
+					</li>
+					<li>
+						<a onclick="moveToPage(this, '/tbom/list');">T-BOM 조회</a>
 					</li>
 				</ul>
 			</li>

@@ -1586,44 +1586,27 @@ table.create_table {
 	border-top: 2px solid #2b85c1;
 }
 
-table.create_table th:nth-child(odd) {
-	/* 	max-width: 100px !important; */
-	/* 	width: 100px !important; */
-	/* 	min-width: 100px !important; */
-	
-}
-
-table.create_table td:nth-child(even) {
-	/* 	min-width: 250px !important; */
-	/* 	max-width: 250px !important; */
-	/* 	width: 250px !important; */
-	
-}
-
 table.create_table th {
 	letter-spacing: 1px;
 	background-color: #f2f2f3;
 	line-height: 20px !important;
 	height: 22px;
 	font-size: 12px;
-	border-right: 1px solid #c8c8c8;
+/* 	border-right: 1px solid #c8c8c8; */
 	border-bottom: 1px solid #c8c8c8;
 }
 
 table.create_table th:first-child {
-	/* 	min-width: 130px; */
-	/* 	border-left: 2px solid #c8c8c8; */
-	/* 	min-width: 200px; */
 	border-left: 1px solid #c8c8c8;
 }
 
 table.create_table td {
-	line-height: 20px !important;
-	height: 22px;
+/* 	line-height: 20px !important; */
+/* 	height: 22px; */
 	font-size: 12px;
 	border-right: 1px solid #c8c8c8;
+	border-left: 1px solid #c8c8c8;
 	border-bottom: 1px solid #c8c8c8;
-	/* 	border-bottom: 2px solid #c8c8c8; */
 	padding: 5px;
 }
 
@@ -1652,7 +1635,6 @@ td.my_info {
 }
 
 div#my_info {
-	-webkit-box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
 	z-index: 2000;
 	background-color: white;
 	position: absolute;
@@ -2729,14 +2711,8 @@ span.vline {
 	height: 40px;
 }
 
-#fine-uploader-secondary {
-	/* 	height: 40px; */
-	
-}
-
 table.create_table_in {
 	width: 100%;
-	/* 	table-layout: fixed; */
 }
 
 table.create_table_in th {
@@ -2747,44 +2723,30 @@ table.create_table_in th {
 
 table.create_table_in>thead>tr>th#state {
 	width: 90px !important;
-	width-max: 90px !important;
-	width-min: 90px !important;
 }
 
 table.create_table_in>thead>tr>th#version {
 	width: 70px !important;
-	width-max: 70px !important;
-	width-min: 70px !important;
 }
 
 table.create_table_in>thead>tr>th#creator {
 	width: 130px !important;
-	width-max: 130px !important;
-	width-min: 130px !important;
 }
 
 table.create_table_in>thead>tr>th#createDate {
 	width: 130px !important;
-	width-max: 130px !important;
-	width-min: 130px !important;
 }
 
 table.create_table_in>thead>tr>th#modifier {
 	width: 130px !important;
-	width-max: 130px !important;
-	width-min: 130px !important;
 }
 
 table.create_table_in>thead>tr>th#modifyDate {
 	width: 130px !important;
-	width-max: 130px !important;
-	width-min: 130px !important;
 }
 
 table.create_table_in>thead>tr>th#checkbox {
 	width: 40px !important;
-	width-max: 40px !important;
-	width-min: 40px !important;
 }
 
 table.create_table_in th:first-child {

@@ -16,6 +16,14 @@ import e3ps.controller.BaseController;
 @RequestMapping(value = "/content/**")
 public class CommonContentController extends BaseController {
 
+	@Description("일반 첨부파일 업로드")
+	@RequestMapping(value = "/upload")
+	@ResponseBody
+	public Map<String, Object> upload(HttpServletRequest request) throws Exception {
+		return CommonContentHelper.service.upload(request);
+	}
+
+	
 	@Description("그리드 첨부파일 업로드")
 	@RequestMapping(value = "/aui/auiUpload")
 	@ResponseBody

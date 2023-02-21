@@ -250,4 +250,14 @@ public class DateUtils {
 		}
 		return isHoliday;
 	}
+
+	public static String getTodayString() throws Exception {
+		return getTodayString(4);
+	}
+
+	public static String getTodayString(int index) throws Exception {
+		Timestamp today = new Timestamp(new Date().getTime());
+		String s = today.toString().substring(0, index).replaceAll("-", "");
+		return s;
+	}
 }

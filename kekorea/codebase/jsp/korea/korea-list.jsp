@@ -77,17 +77,13 @@ Highcharts.chart('container', {
             	}
             },
             data: [
-            	<%
-            		for(CommonCode mak : maks) {
-            	%>
+            	<%for (CommonCode mak : maks) {%>
                 {
                     name: '<%=mak.getName()%>',
                     y: <%=KoreaHelper.manager.yAxisValueForMak(mak)%>,
                     drilldown: '<%=mak.getCode()%>'
                 },
-                <%
-            		}
-                %>
+                <%}%>
             ]
         }
     ],
@@ -98,26 +94,18 @@ Highcharts.chart('container', {
             }
         },
         series: [
-        	<%
-        		for(CommonCode mak : maks) {
-        			ArrayList<CommonCode> details = KoreaHelper.manager.drillDownList(mak);
-        	%>
+        	<%for (CommonCode mak : maks) {
+						ArrayList<CommonCode> details = KoreaHelper.manager.drillDownList(mak);%>
             {
                 name: '<%=mak.getName()%>',
                 id: '<%=mak.getCode()%>',
                 data: [
-                <%
-                	for(CommonCode detail : details) {
-                %>
-                	['<%=detail.getName() %>', <%=KoreaHelper.manager.yAxisValueForDetail(detail) %>],
-                <%
-                	}
-                %>
+                <%for (CommonCode detail : details) {%>
+                	['<%=detail.getName()%>', <%=KoreaHelper.manager.yAxisValueForDetail(detail)%>],
+                <%}%>
                 ]
             },
-            <%
-        		}
-            %>
+            <%}%>
         ]
     }
 });
@@ -133,27 +121,27 @@ Highcharts.chart('container', {
 			type : "TemplateRenderer",
 		},
 	}, {
-		dataField : "projectType",
+		dataField : "projectType_name",
 		headerText : "작번유형",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "customer",
+		dataField : "customer_name",
 		headerText : "거래처",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "install",
+		dataField : "install_name",
 		headerText : "설치장소",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "mak",
+		dataField : "mak_name",
 		headerText : "막종",
 		dataType : "string",
 		width : 100
 	}, {
-		dataField : "detail",
+		dataField : "detail_name",
 		headerText : "막종상세",
 		dataType : "string",
 		width : 100
@@ -176,7 +164,8 @@ Highcharts.chart('container', {
 		dataField : "description",
 		headerText : "작업 내용",
 		dataType : "string",
-		width : 450
+		width : 450,
+		style :  "left indent10"
 	}, {
 		dataField : "pdate",
 		headerText : "발행일",
@@ -248,6 +237,12 @@ Highcharts.chart('container', {
 			// 컨텍스트 메뉴 아이템들
 			contextMenuItems : [ {
 				label : "BOM 비교",
+				callback : contextHandler
+			}, {
+				label : "E-BOM 비교",
+				callback : contextHandler
+			}, {
+				label : "T-BOM 비교",
 				callback : contextHandler
 			}, {
 				label : "CONFIG 비교",

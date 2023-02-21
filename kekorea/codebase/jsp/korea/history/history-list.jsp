@@ -146,6 +146,7 @@ ArrayList<Map<String, Object>> headers = (ArrayList<Map<String, Object>>) reques
 				editable : true,
 				editableOnFixedCell : true,
 				showStateColumn : true,
+				noDataMessage : "검색 결과가 없습니다.",
 			};
 			myGridID = AUIGrid.create("#grid_wrap", columns, props);
 			// 그리드 데이터 로딩

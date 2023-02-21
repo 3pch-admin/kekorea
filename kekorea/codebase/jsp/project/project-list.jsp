@@ -189,11 +189,30 @@ ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("de
 			},
 			onClick : function(event) {
 				let item = event.item;
-				console.log(item);
+				let mak_oid = item.mak_oid;
 				let detail_oid = item.detail_oid;
 				let customer_oid = item.customer_oid;
 				let install_oid = item.install_oid;
-				let url = getCallUrl("/cip/view?detail_oid=" + detail_oid + "&customer_oid=" + customer_oid + "&install_oid=" + install_oid);
+				let url = getCallUrl("/cip/view?mak_oid=" + mak_oid + "&detail_oid=" + detail_oid + "&customer_oid=" + customer_oid + "&install_oid=" + install_oid);
+				popup(url);
+			}
+		}
+	}, {
+		dataField : "history",
+		headerText : "이력관리",
+		dataType : "string",
+		width : 60,
+		renderer : {
+			type : "IconRenderer",
+			iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+			iconHeight : 16,
+			iconTableRef : { // icon 값 참조할 테이블 레퍼런스
+				"default" : "/Windchill/jsp/images/search.gif" // default
+			},
+			onClick : function(event) {
+				let item = event.item;
+				let oid = item.oid;
+				let url = getCallUrl("/history/view?oid=" + oid);
 				popup(url);
 			}
 		}
@@ -305,13 +324,14 @@ ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("de
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-			rowIdField : "rowId",
+			rowIdField : "oid",
 			headerHeight : 30,
 			rowHeight : 30,
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
 			showRowCheckColumn : true, // 체크 박스 출력
-			fixedColumnCount : 9,
+			fixedColumnCount : 10,
+// 	fillColumnSizeMode : true, // 화면 꽉채우기
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);

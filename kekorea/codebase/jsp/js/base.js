@@ -31,6 +31,8 @@ function call(url, params, callBack, methodType) {
 		success: function(res) {
 			callBack(res);
 		},
+		complete: function() {
+		},
 		error: function(res) {
 			let status = res.status;
 			if (status == 405) {

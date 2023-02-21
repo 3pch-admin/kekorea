@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,6 +17,8 @@ import e3ps.admin.sheetvariable.service.CategoryHelper;
 import e3ps.admin.spec.service.SpecHelper;
 import e3ps.common.util.AUIGridUtils;
 import e3ps.controller.BaseController;
+import e3ps.korea.cip.beans.CipColumnData;
+import e3ps.korea.cip.service.CipHelper;
 import e3ps.korea.history.service.HistoryHelper;
 
 @Controller
@@ -64,7 +67,7 @@ public class HistoryController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description(value = "이력 관리 등록 함수")
 	@ResponseBody
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -80,5 +83,17 @@ public class HistoryController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "작번 관련 이력")
+	@RequestMapping(value = "/view", method = RequestMethod.GET)
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		ArrayList<Map<String, Object>> list = HistoryHelper.manager.view(oid);
+		ArrayList<Map<String, Object>> headers = SpecHelper.manager.getSpecKeyValue();
+		model.addObject("headers", headers);
+		model.addObject("list", list);
+		model.setViewName("popup:/korea/history/history-view");
+		return model;
 	}
 }

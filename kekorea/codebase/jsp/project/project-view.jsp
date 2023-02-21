@@ -3,6 +3,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 String oid = (String) request.getAttribute("oid");
+JSONArray taskTypes = (JSONArray) request.getAttribute("taskTypes");
 %>
 <!-- auigrid -->
 <%@include file="/jsp/include/auigrid.jsp"%>
@@ -39,6 +40,7 @@ String oid = (String) request.getAttribute("oid");
 </table>
 <script type="text/javascript">
 	let myGridID;
+	let taskTypes = <%=taskTypes%>
 	const columns = [ {
 		dataField : "name",
 		headerText : "프로젝트 명",
@@ -50,6 +52,37 @@ String oid = (String) request.getAttribute("oid");
 		headerText : "태스크타입",
 		dataType : "string",
 		width : 100,
+		editRenderer : {
+			type : "ComboBoxRenderer",
+			autoCompleteMode : true,
+			showEditorBtnOver : true,
+			list : taskTypes,
+			keyField : "key", // key 에 해당되는 필드명
+			valueField : "value", // value 에 해당되는 필드명,
+			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+				let isValid = false;
+				for (let i = 0, len = taskTypes.length; i < len; i++) { // keyValueList 있는 값만..
+					if (taskTypes[i]["value"] == newValue) {
+						isValid = true;
+						break;
+					}
+				}
+				return {
+					"validate" : isValid,
+					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+				};
+			},
+		},
+		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
+			let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+			for (let i = 0, len = taskTypes.length; i < len; i++) {
+				if (taskTypes[i]["key"] == value) {
+					retStr = taskTypes[i]["value"];
+					break;
+				}
+			}
+			return retStr == "" ? value : retStr;
+		},		
 	}, {
 		dataField : "oid",
 		headerText : "oid",

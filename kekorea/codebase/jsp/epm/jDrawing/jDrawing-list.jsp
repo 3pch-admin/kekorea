@@ -76,6 +76,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 </body>
 <script type="text/javascript">
 	let myGridID;
+	
 	const columns = [ {
 		dataField : "name",
 		headerText : "DRAWING TITLE",
@@ -88,18 +89,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		editable : false
 	}, {
 		dataField : "latest",
-		headerText : "최신버전여부",
+		headerText : "최신버전",
 		dataType : "string",
 		width : 100,
 		renderer : {
 			type : "CheckBoxEditRenderer",
 		},
-		editable : false
-	}, {
-		dataField : "version",
-		headerText : "REV",
-		dataType : "numeric",
-		width : 100,
 		editable : false
 	}, {
 		dataField : "creator",

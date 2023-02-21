@@ -2,7 +2,10 @@ package e3ps.korea.cip.beans;
 
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import e3ps.common.util.AUIGridUtils;
+import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.korea.cip.Cip;
 import lombok.Getter;
@@ -33,6 +36,7 @@ public class CipColumnData {
 	private String note;
 	private String creator;
 	private Timestamp createdDate;
+	private String createdDate_txt;
 	private String preView;
 	private String icons;
 
@@ -55,6 +59,7 @@ public class CipColumnData {
 		setNote(cip.getNote());
 		setCreator(cip.getOwnership().getOwner().getFullName());
 		setCreatedDate(cip.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(cip.getCreateTimestamp()));
 		setInstall_code(cip.getInstall().getCode());
 		setInstall_name(cip.getInstall().getName());
 		setInstall_oid(cip.getInstall().getPersistInfo().getObjectIdentifier().getStringValue());

@@ -134,4 +134,38 @@ public class TaskHelper {
 		}
 		return list;
 	}
+
+	public int getSort(Project project) throws Exception {
+		return getSort(project, null);
+	}
+
+	public int getSort(Project project, Task task) throws Exception {
+		int sort = 1;
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Task.class, false);
+		int idx_t = query.appendClassList(Project.class, false);
+		query.setAdvancedQueryEnabled(true);
+
+		ClassAttribute ca = new ClassAttribute(Task.class, Task.SORT);
+		SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.MAXIMUM, ca);
+		query.appendSelect(function, false);
+
+		QuerySpecUtils.toInnerJoin(query, Task.class, Project.class, "projectReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_t);
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "projectReference.key.id",
+				project.getPersistInfo().getObjectIdentifier().getId());
+		if (task != null) {
+			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, Task.DEPTH, task.getDepth());
+		}
+
+		QueryResult result = PersistenceServerHelper.manager.query(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			BigDecimal next = (BigDecimal) obj[0];
+			if (next != null) {
+				sort = next.intValue() + 1;
+			}
+		}
+		return sort;
+	}
 }

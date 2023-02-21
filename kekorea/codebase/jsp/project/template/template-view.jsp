@@ -40,8 +40,7 @@ JSONArray taskTypes = (JSONArray) request.getAttribute("taskTypes");
 </table>
 <script type="text/javascript">
 	let myGridID;
-	let taskTypes =
-<%=taskTypes%>
+	let taskTypes = <%=taskTypes%>
 	const columns = [ {
 		dataField : "name",
 		headerText : "템플릿 명",

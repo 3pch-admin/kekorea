@@ -96,8 +96,10 @@ public class CipHelper {
 		return map;
 	}
 
-	public ArrayList<CipColumnData> view(String detail_oid, String customer_oid, String install_oid) throws Exception {
+	public ArrayList<CipColumnData> view(String mak_oid, String detail_oid, String customer_oid, String install_oid)
+			throws Exception {
 		ArrayList<CipColumnData> list = new ArrayList<>();
+		CommonCode mak = (CommonCode) CommonUtils.getObject(mak_oid);
 		CommonCode detail = (CommonCode) CommonUtils.getObject(detail_oid);
 		CommonCode customer = (CommonCode) CommonUtils.getObject(customer_oid);
 		CommonCode install = (CommonCode) CommonUtils.getObject(install_oid);
@@ -106,7 +108,8 @@ public class CipHelper {
 		int idx = query.appendClassList(Cip.class, true);
 
 		query.appendOpenParen();
-
+		QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, "makReference.key.id",
+				mak.getPersistInfo().getObjectIdentifier().getId());
 		QuerySpecUtils.toEqualsOr(query, idx, Cip.class, "detailReference.key.id",
 				detail.getPersistInfo().getObjectIdentifier().getId());
 		QuerySpecUtils.toEqualsOr(query, idx, Cip.class, "customerReference.key.id",

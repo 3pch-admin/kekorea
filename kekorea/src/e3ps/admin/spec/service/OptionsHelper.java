@@ -93,7 +93,7 @@ public class OptionsHelper {
 		QuerySpecUtils.toInnerJoin(query, SpecOptionsLink.class, Options.class, "roleBObjectRef.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_o);
 		QuerySpecUtils.toEqualsAnd(query, idx_s, Spec.class, Spec.COLUMN_KEY, columnKey);
-		QuerySpecUtils.toLike(query, idx_o, Options.class, Options.NAME, term);
+		QuerySpecUtils.toLikeAnd(query, idx_o, Options.class, Options.NAME, term);
 		QuerySpecUtils.toOrderBy(query, idx_o, Options.class, Options.SORT, false);
 
 		QueryResult result = PersistenceHelper.manager.find(query);

@@ -311,4 +311,6 @@ public interface ProjectService {
 	public abstract Map<String, Object> completeStepAction(Map<String, Object> param) throws WTException;
 
 	public abstract void create(Map<String, Object> params) throws Exception;
+
+	public abstract void save(Map<String, Object> params) throws Exception;
 }

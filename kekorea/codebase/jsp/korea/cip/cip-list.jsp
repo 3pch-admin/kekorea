@@ -165,7 +165,7 @@ String name = (String) request.getAttribute("name");
 			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 				let isValid = false;
 				for (let i = 0, len = list.length; i < len; i++) { // keyValueList 있는 값만..
-					if (list[i]["value"] == newValue) {
+					if (list[i] == newValue) {
 						isValid = true;
 						break;
 					}
@@ -180,7 +180,7 @@ String name = (String) request.getAttribute("name");
 			showIcon : true
 		}
 	}, {
-		dataField : "mak",
+		dataField : "mak_code",
 		headerText : "막종",
 		width : 150,
 		editRenderer : {
@@ -189,7 +189,7 @@ String name = (String) request.getAttribute("name");
 			list : maks, //key-value Object 로 구성된 리스트
 			keyField : "key", // key 에 해당되는 필드명
 			valueField : "value", // value 에 해당되는 필드명,
-			descendants : [ "detail" ], // 자손 필드들
+			descendants : [ "detail_code" ], // 자손 필드들
 			descendantDefaultValues : [ "-" ], // 변경 시 자손들에게 기본값 지정
 			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 				let isValid = false;
@@ -220,7 +220,7 @@ String name = (String) request.getAttribute("name");
 			showIcon : true
 		}
 	}, {
-		dataField : "detail",
+		dataField : "detail_code",
 		headerText : "막종상세",
 		width : 150,
 		editRenderer : {
@@ -229,7 +229,7 @@ String name = (String) request.getAttribute("name");
 			keyField : "key", // key 에 해당되는 필드명
 			valueField : "value", // value 에 해당되는 필드명,
 			listFunction : function(rowIndex, columnIndex, item, dataField) {
-				var param = item.mak;
+				var param = item.mak_code;
 				var dd = subListMap[param]; // param으로 보관된 리스트가 있는지 여부
 				if(dd === undefined) {
 					return [];
@@ -238,9 +238,11 @@ String name = (String) request.getAttribute("name");
 			},			
 			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 				let isValid = false;
-				let param = item.mak;
+				let param = item.mak_code;
 				let dd = subListMap[param]; // param으로 보관된 리스트가 있는지 여부
-				if(dd === undefined) return value;
+				if(dd === undefined) {
+					return "-";
+				}
 				for (let i = 0, len = dd.length; i < len; i++) { // keyValueList 있는 값만..
 					if (dd[i]["value"] == newValue) {
 						isValid = true;
@@ -256,7 +258,7 @@ String name = (String) request.getAttribute("name");
 		},
 		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
 			let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
-			let param = item.mak;
+			let param = item.mak_code;
 			let dd = subListMap[param]; // param으로 보관된 리스트가 있는지 여부
 			if(dd === undefined) return value;
 			for (let i = 0, len = dd.length; i < len; i++) {
@@ -271,45 +273,7 @@ String name = (String) request.getAttribute("name");
 			showIcon : true
 		}
 	}, {
-		dataField : "install",
-		headerText : "설치장소",
-		width : 150,
-		editRenderer : {
-			type : "ComboBoxRenderer",
-			autoCompleteMode : true,
-			list : installs, //key-value Object 로 구성된 리스트
-			keyField : "key", // key 에 해당되는 필드명
-			valueField : "value",
-			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
-				let isValid = false;
-				for (let i = 0, len = installs.length; i < len; i++) { // keyValueList 있는 값만..
-					if (installs[i]["value"] == newValue) {
-						isValid = true;
-						break;
-					}
-				}
-				// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-				return {
-					"validate" : isValid,
-					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
-				};
-			}
-		},
-		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
-			let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
-			for (let i = 0, len = installs.length; i < len; i++) {
-				if (installs[i]["key"] == value) {
-					retStr = installs[i]["value"];
-					break;
-				}
-			}
-			return retStr == "" ? value : retStr;
-		},
-		filter : {
-			showIcon : true
-		}
-	}, {
-		dataField : "customer",
+		dataField : "customer_code",
 		headerText : "거래처",
 		width : 150,
 		editRenderer : {
@@ -338,6 +302,44 @@ String name = (String) request.getAttribute("name");
 			for (let i = 0, len = customers.length; i < len; i++) {
 				if (customers[i]["key"] == value) {
 					retStr = customers[i]["value"];
+					break;
+				}
+			}
+			return retStr == "" ? value : retStr;
+		},
+		filter : {
+			showIcon : true
+		}
+	}, {
+		dataField : "install_code",
+		headerText : "설치장소",
+		width : 150,
+		editRenderer : {
+			type : "ComboBoxRenderer",
+			autoCompleteMode : true,
+			list : installs, //key-value Object 로 구성된 리스트
+			keyField : "key", // key 에 해당되는 필드명
+			valueField : "value",
+			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+				let isValid = false;
+				for (let i = 0, len = installs.length; i < len; i++) { // keyValueList 있는 값만..
+					if (installs[i]["value"] == newValue) {
+						isValid = true;
+						break;
+					}
+				}
+				// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
+				return {
+					"validate" : isValid,
+					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+				};
+			}
+		},
+		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
+			let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+			for (let i = 0, len = installs.length; i < len; i++) {
+				if (installs[i]["key"] == value) {
+					retStr = installs[i]["value"];
 					break;
 				}
 			}
@@ -463,9 +465,8 @@ String name = (String) request.getAttribute("name");
 		let dataField = event.dataField;
 		let item = event.item;
 		let rowIndex = event.rowIndex;
-		let mak = item.mak;
-		if(dataField === "mak") {
-			let mak = item.mak;
+		if(dataField === "mak_code") {
+			let mak = item.mak_code;
 			let url = getCallUrl("/commonCode/getChildrens?parentCode=" + mak + "&codeType=MAK");
 			call(url, null, function(data) {
 				subListMap[mak] = data.list;

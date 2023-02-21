@@ -130,6 +130,8 @@ public class ProjectController extends BaseController {
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
+		org.json.JSONArray taskTypes = CommonCodeHelper.manager.parseJson("TASK_TYPE");
+		model.addObject("taskTypes", taskTypes);
 		model.addObject("oid", oid);
 		model.setViewName("popup:/project/project-view");
 		return model;
@@ -165,5 +167,49 @@ public class ProjectController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "프로젝트 트리 저장")
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> save(@RequestBody Map<String, Object> params) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ProjectHelper.service.save(params);
+			result.put("msg", SAVE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "프로젝트 추가 페이지")
+	@RequestMapping(value = "/popup", method = RequestMethod.GET)
+	public ModelAndView popup(@RequestParam String method) throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, -4);
+		Timestamp date = new Timestamp(calendar.getTime().getTime());
+		String before = date.toString().substring(0, 10);
+		String end = DateUtils.getCurrentTimestamp().toString().substring(0, 10);
+
+		ArrayList<CommonCode> customers = CommonCodeHelper.manager.getArrayCodeList("CUSTOMER");
+		ArrayList<CommonCode> projectTypes = CommonCodeHelper.manager.getArrayCodeList("PROJECT_TYPE");
+		ArrayList<CommonCode> maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
+
+		model.addObject("customers", customers);
+		model.addObject("projectTypes", projectTypes);
+		model.addObject("maks", maks);
+		model.addObject("before", before);
+		model.addObject("end", end);
+		model.addObject("method", method);
+		model.addObject("isAdmin", isAdmin);
+		model.setViewName("popup:/project/project-popup");
+		return model;
 	}
 }
