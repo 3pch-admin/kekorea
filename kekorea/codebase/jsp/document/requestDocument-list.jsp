@@ -7,10 +7,6 @@ String root = DocumentHelper.REQUEST_ROOT;
 // admin
 boolean isAdmin = CommonUtils.isAdmin();
 
-boolean isBox = false;
-if (isAdmin) {
-	isBox = true;
-}
 %>
 <!DOCTYPE html>
 <html>

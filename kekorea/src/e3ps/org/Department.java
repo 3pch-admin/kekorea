@@ -38,9 +38,10 @@ import wt.util.WTException;
 						myRole = @MyRole(name = "child", cardinality = Cardinality.ZERO_TO_ONE))
 
 		})
-public class Department extends _Department {
+public class Department extends _Department{
 
 	static final long serialVersionUID = 1;
+//	public static final String CODE = null;
 
 	public static Department newDepartment() throws WTException {
 		Department instance = new Department();

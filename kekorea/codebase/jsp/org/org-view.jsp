@@ -4,14 +4,8 @@
 <%
 // dept root
 String root = OrgHelper.DEPARTMENT_ROOT;
-
 // admin
 boolean isAdmin = CommonUtils.isAdmin();
-
-boolean isBox = true;
-if (isAdmin) {
-	isBox = true;
-}
 %>
 <!DOCTYPE html>
 <html>
@@ -31,7 +25,7 @@ if (isAdmin) {
 		<i class="axi axi-subtitles"></i>
 		<span>조직도</span>
 		<!-- info search -->
-		<jsp:include page="/jsp/common/search_info.jsp"></jsp:include>
+		<jsp:include page="/jsp/common/search_info.jsp"/>
 	</div>
 	<table class="container_table">
 		<tr>
@@ -130,6 +124,7 @@ if (isAdmin) {
 
 		dataField : "oid",
 		headerText : "oid",
+		dataType  : "string",
 		visible : false
 	} ];
 
@@ -141,26 +136,28 @@ if (isAdmin) {
 			showRowCheckColumn : true,
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
-			fillColumnSizeMode : true, // 화면 꽉채우기
+			fillColumnSizeMode : true // 화면 꽉채우기
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
-		loadGridData();
 		// LazyLoading 바인딩
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+		loadGridData();
 	}
 
 	function loadGridData() {
 		let params = new Object();
 		let url = getCallUrl("/org/viewOrg");
 		AUIGrid.showAjaxLoader(myGridID);
+// 		params = form(params, "container_table");
+		parent.openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
-			parent.close();
-		})
-	}
+			parent.closeLayer();
+		});
+	};
 
 	let last = false;
 	function vScrollChangeHandler(event) {
@@ -202,7 +199,7 @@ if (isAdmin) {
 	}).keypress(function(e) {
 		let keyCode = e.keyCode;
 		if (keyCode == 13) {
-			loadGridData();
+// 			loadGridData();
 		}
 	})
 

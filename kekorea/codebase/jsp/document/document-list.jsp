@@ -198,12 +198,14 @@ String root = DocumentHelper.ROOT;
 		let params = new Object();
 		let url = getCallUrl("/document/list");
 		AUIGrid.showAjaxLoader(myGridID);
+		parent.openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
-			parent.close();
+// 			parent.close();
+			parent.closeLayer();
 		})
 	}
 

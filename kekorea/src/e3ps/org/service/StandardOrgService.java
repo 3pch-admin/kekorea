@@ -100,6 +100,7 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 	@Override
 	public Department makeRoot() throws WTException {
 		Department department = null;
+//		Department department = new Department();
 		SessionContext prev = SessionContext.newContext();
 		Transaction trs = new Transaction();
 		try {

@@ -93,7 +93,7 @@ public class OrgHelper implements MessageHelper {
 			if (result.hasMoreElements()) {
 				Object[] obj = (Object[]) result.nextElement();
 				root = (Department) obj[0];
-			} else {
+			} if (root == null) {
 				root = OrgHelper.service.makeRoot();
 			}
 		} catch (Exception e) {

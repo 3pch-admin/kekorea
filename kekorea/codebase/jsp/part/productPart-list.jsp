@@ -46,6 +46,7 @@ if ("product".equals(context)) {
 <%@include file="/jsp/common/layouts/include_script.jsp"%>
 <!-- auigrid -->
 <%@include file="/jsp/include/auigrid.jsp"%>
+</head>
 <body>
 	<input type="hidden" name="sessionid" id="sessionid">
 	<input type="hidden" name="curPage" id="curPage">
@@ -417,12 +418,13 @@ if ("product".equals(context)) {
 	url = "/Windchill/plm/part/listEplan";
 <%}%>
 	AUIGrid.showAjaxLoader(myGridID);
+	parent.openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
-			parent.close();
+			parent.closeLayer();
 			console.log();
 		});
 	};
