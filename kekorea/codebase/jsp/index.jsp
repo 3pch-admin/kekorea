@@ -5,7 +5,10 @@
 			<a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#" id="toggle" data-open="open">
 				<i class="fa fa-bars"></i>
 			</a>
-			<span class="loc"><strong>홈</strong> &gt; 문서관리 &gt; 문서목록</span>
+			<span class="loc">
+				<strong>홈</strong> >
+				<span id="subLoc">> 문서관리 > 문서목록</span>
+			</span>
 		</div>
 		<ul class="nav navbar-top-links navbar-right">
 			<li class="dropdown">

@@ -67,7 +67,7 @@ if (dept != null) {
 	<tr>
 		<th>설명</th>
 		<td colspan="3">
-			<textarea class="AXTextarea" name="descriptionDoc" id="descriptionDoc" rows="" cols=""></textarea>
+			<textarea class="AXTextarea" name="description" id="description" rows="" cols=""></textarea>
 		</td>
 	</tr>
 	<tr>
@@ -171,7 +171,9 @@ if (dept != null) {
 					showRowCheckColumn : true, // 체크 박스 출력,
 					showStateColumn : true,
 					editable : true,
-					fillColumnSizeMode : true
+					fillColumnSizeMode : true,
+					selectionMode : "multipleCells",
+					$compaEventOnPaste : true
 				};
 
 				function auiAddRowHandler(event) {
@@ -180,7 +182,7 @@ if (dept != null) {
 						return;
 					}
 					let rowIndex = selected[0];
-					let colIndex = AUIGrid.getColumnIndexByDataField(tbomGridID, "lotNo");
+					let colIndex = AUIGrid.getColumnIndexByDataField(tbomGridID, "kePartNumber");
 					AUIGrid.setSelectionByIndex(tbomGridID, rowIndex, colIndex);
 					AUIGrid.openInputer(tbomGridID);
 				}
@@ -232,7 +234,6 @@ if (dept != null) {
 					})
 
 					$("#saveBtn").click(function() {
-						openLayer();
 						let url = getCallUrl("/tbom/create");
 						let _addRows = AUIGrid.getAddedRowItems(projectGridID);
 						let addRows = AUIGrid.getAddedRowItems(tbomGridID);
@@ -240,7 +241,7 @@ if (dept != null) {
 						params = form(params, "create_table");
 						params.addRows = addRows;
 						params._addRows = _addRows;
-						console.log(params);
+						openLayer();
 						call(url, params, function(data) {
 							alert(data.msg);
 							if (data.result) {

@@ -9,7 +9,6 @@ import e3ps.admin.ParentChildLink;
 import e3ps.admin.PasswordSetting;
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.CommonCodeType;
-import e3ps.common.util.MessageHelper;
 import e3ps.common.util.StringUtils;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -24,7 +23,7 @@ import wt.session.SessionContext;
 import wt.session.SessionHelper;
 import wt.util.WTException;
 
-public class StandardAdminService extends StandardManager implements AdminService, MessageHelper {
+public class StandardAdminService extends StandardManager implements AdminService {
 
 	private static final long serialVersionUID = -7119229681449826200L;
 
@@ -105,11 +104,11 @@ public class StandardAdminService extends StandardManager implements AdminServic
 				code.setSort(0);
 				code.setCode(codeType);
 				CommonCodeType cct = CommonCodeType.CUSTOMER;
-				if( "CUSTOMER".equals(codeType)) {
+				if ("CUSTOMER".equals(codeType)) {
 					cct = CommonCodeType.CUSTOMER;
-				}else if( "INSTALL".equals(codeType)) {
+				} else if ("INSTALL".equals(codeType)) {
 					cct = CommonCodeType.INSTALL;
-				}else if( "PROJECT".equals(codeType)) {
+				} else if ("PROJECT".equals(codeType)) {
 					cct = CommonCodeType.PROJECT;
 				}
 				code.setCodeType(cct);
@@ -193,7 +192,7 @@ public class StandardAdminService extends StandardManager implements AdminServic
 		CommonCode code = null;
 		ReferenceFactory rf = new ReferenceFactory();
 		try {
-			if(poid != null ) {
+			if (poid != null) {
 				pCode = (CommonCode) rf.getReference(poid).getObject();
 			}
 			boolean isExist = false;
@@ -213,16 +212,16 @@ public class StandardAdminService extends StandardManager implements AdminServic
 			} else {
 				code = CommonCode.newCommonCode();
 				code.setParent(pCode);
-				
+
 				CommonCodeType cct = CommonCodeType.CUSTOMER;
-				if( "CUSTOMER".equals(codeType)) {
+				if ("CUSTOMER".equals(codeType)) {
 					cct = CommonCodeType.CUSTOMER;
-				}else if( "INSTALL".equals(codeType)) {
+				} else if ("INSTALL".equals(codeType)) {
 					cct = CommonCodeType.INSTALL;
-				}else if( "PROJECT".equals(codeType)) {
+				} else if ("PROJECT".equals(codeType)) {
 					cct = CommonCodeType.PROJECT;
 				}
-				
+
 				code.setCodeType(cct);
 				code.setDepth(depths);
 				code.setSort(0);

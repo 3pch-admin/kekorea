@@ -7,26 +7,25 @@ import java.util.List;
 import java.util.Map;
 
 import e3ps.approval.service.ApprovalHelper;
+import e3ps.bom.partlist.MasterDataLink;
+import e3ps.bom.partlist.PartListData;
+import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
-import e3ps.common.util.MessageHelper;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.service.DocumentHelper;
-import e3ps.partlist.MasterDataLink;
-import e3ps.partlist.PartListData;
-import e3ps.partlist.PartListMaster;
-import e3ps.partlist.PartListMasterProjectLink;
-import e3ps.project.DocumentOutputLink;
-import e3ps.project.Output;
 import e3ps.project.Project;
-import e3ps.project.ProjectOutputLink;
-import e3ps.project.Task;
-import e3ps.project.TaskOutputLink;
 import e3ps.project.enums.ProjectStateType;
 import e3ps.project.enums.TaskStateType;
+import e3ps.project.output.DocumentOutputLink;
+import e3ps.project.output.Output;
+import e3ps.project.output.ProjectOutputLink;
+import e3ps.project.output.TaskOutputLink;
 import e3ps.project.service.ProjectHelper;
+import e3ps.project.task.Task;
 import wt.clients.folder.FolderTaskLogic;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -42,7 +41,7 @@ import wt.services.StandardManager;
 import wt.session.SessionHelper;
 import wt.util.WTException;
 
-public class StandardPartListMasterService extends StandardManager implements PartListMasterService, MessageHelper {
+public class StandardPartListMasterService extends StandardManager implements PartListMasterService {
 
 	private static final long serialVersionUID = -4881738189892868701L;
 
@@ -407,7 +406,7 @@ public class StandardPartListMasterService extends StandardManager implements Pa
 			ArrayList<PartListMasterProjectLink> lists = PartListMasterHelper.manager
 					.getPartListMasterProjectLink(master);
 			System.out.println("klists=" + lists.size());
-			
+
 			// 관련작번 삭제
 			master = (PartListMaster) PersistenceHelper.manager.modify(master);
 

@@ -6,10 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import e3ps.approval.ApprovalUserLine;
-import e3ps.common.util.MessageHelper;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.korea.cip.Cip;
+import e3ps.korea.cip.beans.CipColumnData;
 import e3ps.org.Department;
 import e3ps.org.People;
 import e3ps.org.UserTableSet;
@@ -31,41 +32,21 @@ import wt.query.QuerySpec;
 import wt.query.SQLFunction;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
-import wt.session.SessionContext;
 import wt.session.SessionHelper;
 import wt.util.WTAttributeNameIfc;
 
-public class OrgHelper implements MessageHelper {
+public class OrgHelper {
 
-	/**
-	 * 직급
-	 */
-	// public static final String[] dutys = new String[] { "대표이사", "TW연구소 소장",
-	// "TW연구소 부소장", "그룹장", "팀장", "팀원" };
 	public static final String[] dutys = new String[] { "사장", "전무", "수석연구원", "책임연구원", "선임연구원", "전임연구원", "주임연구원", "연구원",
 			"상무", "상무(보)", "차장", "부장" };
 
-	/**
-	 * 직위, 직책..
-	 */
 	public static final String[] ranks = new String[] { "사장", "전무", "수석연구원", "책임연구원", "선임연구원", "전임연구원", "주임연구원", "연구원",
 			"상무", "상무(보)", "차장", "부장" };
 
-	/**
-	 * access service
-	 */
 	public static final OrgService service = ServiceFactory.getService(OrgService.class);
-
-	/**
-	 * access helper
-	 */
 	public static final OrgHelper manager = new OrgHelper();
 
 	public static final String DEPARTMENT_ROOT = "국제엘렉트릭코리아";
-
-	private static final String DEFAULT_PAGING = "50";
-
-	private static final String DEFAULT_THUMNAIL_PAGING = "16";
 
 	public boolean isDeptUser(String name) throws Exception {
 		boolean isDeptUser = false;
@@ -93,7 +74,8 @@ public class OrgHelper implements MessageHelper {
 			if (result.hasMoreElements()) {
 				Object[] obj = (Object[]) result.nextElement();
 				root = (Department) obj[0];
-			} if (root == null) {
+			}
+			if (root == null) {
 				root = OrgHelper.service.makeRoot();
 			}
 		} catch (Exception e) {
@@ -156,33 +138,6 @@ public class OrgHelper implements MessageHelper {
 			e.printStackTrace();
 		}
 		return department;
-	}
-
-	public boolean duplicate(String code) {
-		SessionContext prev = SessionContext.newContext();
-		boolean isDuplicate = false;
-		try {
-
-			SessionHelper.manager.setAdministrator();
-
-			QuerySpec query = new QuerySpec();
-			int idx = query.appendClassList(Department.class, true);
-
-			SearchCondition sc = new SearchCondition(Department.class, Department.CODE, "=", code);
-			query.appendWhere(sc, new int[] { idx });
-
-			QueryResult result = PersistenceHelper.manager.find(query);
-
-			if (result.hasMoreElements()) {
-				isDuplicate = true;
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			SessionContext.setContext(prev);
-		}
-		return isDuplicate;
 	}
 
 	public List<Map<Object, Object>> userList(Map<String, Object> param) {
@@ -329,11 +284,10 @@ public class OrgHelper implements MessageHelper {
 			People user = (People) obj[0];
 			Map<String, Object> userMap = new HashMap<String, Object>();
 			userMap.put("name", user.getName() + " [" + user.getId() + "]");
-			userMap.put("value", user.getUser().getPersistInfo().getObjectIdentifier().getStringValue());
+			userMap.put("value", user.getWtUser().getPersistInfo().getObjectIdentifier().getStringValue());
 			list.add(userMap);
 		}
 
-		map.put("result", SUCCESS);
 		map.put("list", list);
 		return map;
 	}
@@ -420,34 +374,6 @@ public class OrgHelper implements MessageHelper {
 			map.put("msg", FAIL_DATA_LOAD);
 		}
 		return map;
-	}
-
-	public UserTableSet getUserTableSet(String module) {
-		UserTableSet userTableSet = null;
-		try {
-			WTUser user = (WTUser) SessionHelper.manager.getPrincipal();
-
-			QuerySpec query = new QuerySpec();
-
-			int idx = query.appendClassList(UserTableSet.class, true);
-			long ids = user.getPersistInfo().getObjectIdentifier().getId();
-			SearchCondition sc = new SearchCondition(UserTableSet.class, "wtuserReference.key.id", "=", ids);
-			query.appendWhere(sc, new int[] { idx });
-			query.appendAnd();
-
-			sc = new SearchCondition(UserTableSet.class, UserTableSet.MODULE, "=", module);
-			query.appendWhere(sc, new int[] { idx });
-
-			QueryResult result = PersistenceHelper.manager.find(query);
-			if (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				userTableSet = (UserTableSet) obj[0];
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return userTableSet;
 	}
 
 	public boolean isUserTableSet(String module) {
@@ -992,18 +918,16 @@ public class OrgHelper implements MessageHelper {
 		return departments;
 	}
 
-	public People getUser(String id) throws Exception {
+	public People getUser(String userId) throws Exception {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(People.class, true);
-		SearchCondition sc = new SearchCondition(People.class, People.ID, "=", id);
-		query.appendWhere(sc, new int[] { idx });
+		QuerySpecUtils.toEqualsAnd(query, idx, People.class, People.ID, userId);
 		QueryResult result = PersistenceHelper.manager.find(query);
-		People user = null;
 		if (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
-			user = (People) obj[0];
+			return (People) obj[0];
 		}
-		return user;
+		return null;
 	}
 
 	public ArrayList<Department> getSubDepartment(Department dd, ArrayList<Department> departments) throws Exception {
@@ -1215,5 +1139,47 @@ public class OrgHelper implements MessageHelper {
 			e.printStackTrace();
 		}
 		return indexs;
+	}
+
+	public Map<String, Object> list(Map<String, Object> params) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		ArrayList<UserColumnData> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(People.class, true);
+
+		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, true);
+
+		PageQueryUtils pager = new PageQueryUtils(params, query);
+		PagingQueryResult result = pager.find();
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			People people = (People) obj[0];
+			UserColumnData column = new UserColumnData(people);
+			list.add(column);
+		}
+		map.put("list", list);
+		map.put("sessionid", pager.getSessionId());
+		map.put("curPage", pager.getCpage());
+
+		return map;
+	}
+
+	public ArrayList<HashMap<String, Object>> getDepartmentMap() throws Exception {
+		ArrayList<HashMap<String, Object>> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Department.class, true);
+		QuerySpecUtils.toOrderBy(query, idx, Department.class, Department.DEPTH, false);
+		QuerySpecUtils.toOrderBy(query, idx, Department.class, Department.SORT, true);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Department department = (Department) obj[0];
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("name", department.getName());
+			map.put("oid", department.getPersistInfo().getObjectIdentifier().getStringValue());
+			list.add(map);
+		}
+		return list;
 	}
 }

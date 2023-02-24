@@ -80,27 +80,47 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	const columns = [ {
 		dataField : "lotNo",
 		headerText : "LOT",
-		dataType : "string",
-		width : 100
+		dataType : "nemeric",
+		width : 100,
+		formatString : "###0",
+		editRenderer : {
+			type : "InputEditRenderer",
+			onlyNumeric : true, // 0~9만 입력가능
+		},		
+		filter : {
+			showIcon : true
+		}		
 	}, {
 		dataField : "code",
 		headerText : "중간코드",
 		dataType : "string",
 		width : 130,
+		filter : {
+			showIcon : true
+		}		
 	}, {
 		dataField : "kePartNumber",
 		headerText : "부품번호",
 		dataType : "string",
 		width : 130,
+		filter : {
+			showIcon : true
+		}		
 	}, {
 		dataField : "kePartName",
 		headerText : "부품명",
 		dataType : "string",
-		width : 200
+		width : 200,
+		filter : {
+			showIcon : true
+		}		
 	}, {
 		dataField : "model",
 		headerText : "KokusaiModel",
 		dataType : "string",
+		filter : {
+			showIcon : true
+		}		
 	}, {
 		dataField : "latest",
 		headerText : "최신버전",
@@ -108,8 +128,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		width : 80,
 		renderer : {
 			type : "CheckBoxEditRenderer",
+			edtiable : true
 		},
-		editable : false
+		editable : true
 	},{
 		dataField : "state",
 		headerText : "상태",
@@ -134,32 +155,47 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				};
 			}
 		},
+		filter : {
+			showIcon : true
+		}		
 	},{
 		dataField : "creator",
 		headerText : "등록자",
 		dataType : "string",
 		width : 80,
-		editable : false
+		editable : false,
+		filter : {
+			showIcon : true
+		}		
 	}, {
 		dataField : "createdDate",
 		headerText : "등록일",
 		dataType : "date",
 		formatString : "yyyy-mm-dd",
 		width : 80,
-		editable : false
+		editable : false,
+		filter : {
+			showIcon : true
+		}		
 	}, {
 		dataField : "modifier",
 		headerText : "수정자",
 		dataType : "string",
 		width : 80,
-		editable : false
+		editable : false,
+		filter : {
+			showIcon : true
+		}		
 	}, {
 		dataField : "modifiedDate",
 		headerText : "수정일",
 		dataType : "date",
 		formatString : "yyyy-mm-dd",
 		width : 80,
-		editable : false
+		editable : false,
+		filter : {
+			showIcon : true
+		}		
 	}, {
 		dataField : "primary",
 		headerText : "도면파일",
@@ -207,6 +243,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			showRowCheckColumn : true,
 			noDataMessage : "검색 결과가 없습니다.",
 			editable : true,
+			enableFilter : true,
+			selectionMode : "multipleCells"
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
@@ -214,6 +252,20 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		// LazyLoading 바인딩
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 		AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
+		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEnd);
+	}
+	
+	function auiCellEditEnd(event) {
+		let dataField = event.dataField;
+		if(dataField === "kePartNumber") {
+			let item = {
+					latest : true,
+					state : "상태값1"
+			}
+			console.log(item);
+			console.log(event.rowIndex);
+			AUIGrid.updateRow(myGridID, item, event.rowIndex);
+		}
 	}
 
 	function loadGridData() {
@@ -250,7 +302,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		call(url, params, function(data) {
 			if (data.list.length == 0) {
 				last = true;
-				alert("마지막 데이터 입니다.");
 				AUIGrid.removeAjaxLoader(myGridID);
 			} else {
 				AUIGrid.appendData(myGridID, data.list);
@@ -309,6 +360,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		})
 
 		$("#saveBtn").click(function() {
+// 			let data = AUIGrid.getGridData(myGridID);
+// 			for(let i=0; i<data.length; i++) {
+// 				let isUnique = AUIGrid.isUniqueValue(myGridID, "oid", data[i].kePartNumber);
+// 				console.log(isUnique);
+// 				if(!isUnique) {
+// 					AUIGrid.showToastMessage(myGridID, i, 2,  "중복된 번호입니다.");
+// 				}
+// 			}
+			
 			let url = getCallUrl("/kepart/create");
 			let addRows = AUIGrid.getAddedRowItems(myGridID);
 			let removeRows = AUIGrid.getRemovedItems(myGridID);

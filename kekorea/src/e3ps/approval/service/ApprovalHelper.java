@@ -48,7 +48,7 @@ import wt.services.ServiceFactory;
 import wt.session.SessionHelper;
 import wt.util.WTAttributeNameIfc;
 
-public class ApprovalHelper implements MessageHelper {
+public class ApprovalHelper {
 
 	// 직렬 병렬
 	public static final String SERIES = "series";

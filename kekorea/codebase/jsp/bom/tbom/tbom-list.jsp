@@ -99,13 +99,13 @@
 	<table class="btn_table">
 		<tr>
 			<td class="left">
-				<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
+				<input type="button" value="등록" class="redBtn" id="createBtn" title="등록">
+				<input type="button" value="삭제" class="orangeBtn" id="deleteRowBtn" title="삭제">
+				<input type="button" value="저장" class="blueBtn" id="saveBtn" title="저장">
+				<input type="button" value="비교" id="compareBtn" title="비교">
 			</td>
 			<td class="right">
-				<input type="button" value="삭제" class="redBtn" id="deletePartListBtn" title="삭제">
-				<input type="button" value="상세조회" class="orangeBtn" id="detailEpmBtn" title="상세조회">
 				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
-				<%-- 				<input type="button" value="초기화" class="" id="initGrid" title="초기화" data-location="<%=root %>"> --%>
 			</td>
 		</tr>
 	</table>
@@ -130,11 +130,6 @@
 			iconTableRef : { // icon 값 참조할 테이블 레퍼런스
 				"default" : "/Windchill/jsp/images/details.gif" // default
 			},
-			onClick : function(event) {
-				let oid = event.item.oid;
-				let url = getCallUrl("/tbom/view?oid=" + oid);
-				popup(url);
-			}
 		}
 	}, {
 		dataField : "name",
@@ -219,14 +214,25 @@
 			showRowCheckColumn : true,
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
-			// 			fillColumnSizeMode : true, // 화면 꽉채우기
 			noDataMessage : "검색 결과가 없습니다.",
+			showStateColumn : true,
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		loadGridData();
 		// LazyLoading 바인딩
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+	}
 
+	function auiCellClickHandler(event) {
+		let dataField = event.dataField;
+		if(dataField === "info") {
+			
+		} else if(dataField === "name") {
+			let oid = event.item.oid;
+			let url = getCallUrl("/tbom/view?oid=" + oid);
+			popup(url);
+		}
 	}
 
 	function loadGridData() {
@@ -264,7 +270,6 @@
 		call(url, params, function(data) {
 			if (data.list.length == 0) {
 				last = true;
-				alert("마지막 데이터 입니다.");
 				AUIGrid.removeAjaxLoader(myGridID);
 			} else {
 				AUIGrid.appendData(myGridID, data.list);
@@ -286,6 +291,51 @@
 			let url = getCallUrl("/tbom/create");
 			popup(url);
 		});
+
+		// 그리드 행 삭제
+		$("#deleteRowBtn").click(function() {
+			let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+			for (let i = checkedItems.length - 1; i >= 0; i--) {
+				let rowIndex = checkedItems[i].rowIndex;
+				AUIGrid.removeRow(myGridID, rowIndex);
+			}
+		})
+
+		$("#saveBtn").click(function() {
+			let url = getCallUrl("/tbom/save");
+			let removeRows = AUIGrid.getRemovedItems(myGridID);
+			let params = new Object();
+			params.removeRows = removeRows;
+			parent.openLayer();
+			call(url, params, function(data) {
+				alert(data.msg);
+				if (data.result) {
+					loadGridData();
+				} else {
+					parent.closeLayer();
+				}
+			}, "POST");
+		})
+
+		$("#compareBtn").click(function() {
+			let checkedItems = AUIGrid.getCheckedRowItemsAll(myGridID);
+			let count = checkedItems.length;
+			let url = getCallUrl("/tbom/compare");
+			for (let i = 0; i < checkedItems.length; i++) {
+				let item = checkedItems[i];
+				if (i == 0) {
+					url += "?poid" + i + "=" + item.poid + "&oid" + i + "=" + item.oid;
+				} else {
+					url += "&poid" + i + "=" + item.poid + "&oid" + i + "=" + item.oid;
+				}
+			}
+			url += "&count=" + count;
+
+			if (!confirm("총(" + count + ")개의 T-BOM을 비교하시겠습니까?")) {
+				return false;
+			}
+			popup(url);
+		})
 
 	}).keypress(function(e) {
 		let keyCode = e.keyCode;

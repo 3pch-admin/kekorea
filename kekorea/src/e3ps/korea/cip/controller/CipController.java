@@ -43,6 +43,7 @@ public class CipController extends BaseController {
 		return model;
 	}
 
+	@Description(value = "CIP 조회 함수")
 	@ResponseBody
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -57,7 +58,7 @@ public class CipController extends BaseController {
 		return result;
 	}
 
-	@Description("CIP 등록")
+	@Description(value = "CIP 등록")
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> create(@RequestBody Map<String, Object> params) throws Exception {
@@ -75,8 +76,8 @@ public class CipController extends BaseController {
 
 	@Description(value = "막종상세, 거래처, 설치라인 관련 CIP")
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
-	public ModelAndView view(@RequestParam String mak_oid, @RequestParam String detail_oid, @RequestParam String customer_oid,
-			@RequestParam String install_oid) throws Exception {
+	public ModelAndView view(@RequestParam String mak_oid, @RequestParam String detail_oid,
+			@RequestParam String customer_oid, @RequestParam String install_oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		ArrayList<CipColumnData> list = CipHelper.manager.view(mak_oid, detail_oid, customer_oid, install_oid);
 		model.addObject("list", list);

@@ -11,7 +11,7 @@ import lombok.Setter;
 public class TBOMColumnData {
 
 	private String oid;
-	private String lotNo;
+	private int lotNo;
 	private String code;
 	private String kePartNumber;
 	private String kePartName;
@@ -26,7 +26,7 @@ public class TBOMColumnData {
 	}
 
 	public TBOMColumnData(TBOMData data) throws Exception {
-		KePartMaster master = data.getKePart().getKePartMaster();
+		KePartMaster master = data.getKePart().getMaster();
 		setOid(data.getPersistInfo().getObjectIdentifier().getStringValue());
 		setLotNo(master.getLotNo());
 		setCode(master.getCode());

@@ -4,10 +4,24 @@
 TBOMMasterViewData data = (TBOMMasterViewData) request.getAttribute("data");
 %>
 <%@include file="/jsp/include/auigrid.jsp"%>
-<div id="tbom_grid_wrap" style="height: 550px; border-top: 1px solid #3180c3; margin-top: 5px;"></div>
+<table class="btn_table">
+	<tr>
+		<td>
+			<div class="header_title">
+				<i class="axi axi-subtitles"></i>
+				<span>T-BOM 정보</span>
+			</div>
+		</td>
+		<td class="right">
+			<input type="button" value="닫기" id="closeBtn" title="닫기" class="redBtn">
+		</td>
+	</tr>
+</table>
+
+<div id="grid_wrap" style="height: 860px; border-top: 1px solid #3180c3; margin-top: 5px;"></div>
 <script type="text/javascript">
-	let tbomGridID;
-	const tbom_columns = [ {
+	let myGridID;
+	const columns = [ {
 		dataField : "lotNo",
 		headerText : "LOT",
 		dataType : "string",
@@ -63,7 +77,7 @@ TBOMMasterViewData data = (TBOMMasterViewData) request.getAttribute("data");
 		visible : false
 	} ]
 
-	const tbom_props = {
+	const props = {
 		headerHeight : 30,
 		rowHeight : 30,
 		showRowNumColumn : true,
@@ -73,11 +87,17 @@ TBOMMasterViewData data = (TBOMMasterViewData) request.getAttribute("data");
 	};
 
 	$(function() {
-		tbomGridID = AUIGrid.create("#tbom_grid_wrap", tbom_columns, tbom_props);
-		AUIGrid.setGridData(tbomGridID, <%=data.getTbomArr()%>);
+		myGridID = AUIGrid.create("#grid_wrap", columns, props);
+		AUIGrid.setGridData(myGridID, <%=data.getTbomArr()%>);
+		
+		
+		$("#closeBtn").click(function() {
+			self.close();
+		})
+		
 	})
 
 	$(window).resize(function() {
-		AUIGrid.resize(tbomGridID);
+		AUIGrid.resize(myGridID);
 	})
 </script>

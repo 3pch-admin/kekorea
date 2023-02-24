@@ -22,7 +22,6 @@ public class PartController extends BaseController{
 	@RequestMapping(value = "/listPart", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		
 		model.setViewName("/jsp/part/productPart-list.jsp");
 		return model;
 	}

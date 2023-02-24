@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import e3ps.bom.partlist.service.PartListMasterHelper;
 import e3ps.controller.BaseController;
-import e3ps.partlist.service.PartListMasterHelper;
 
 @Controller
 @RequestMapping(value = "/partlist/**")
 public class PartListController extends BaseController {
 
-	@Description("수배표 조회 페이지")
+	@Description(value = "수배표 조회 페이지")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -26,7 +26,7 @@ public class PartListController extends BaseController {
 		return model;
 	}
 
-	@Description("수배표 조회")
+	@Description(value = "수배표 조회")
 	@ResponseBody
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -42,7 +42,7 @@ public class PartListController extends BaseController {
 		return result;
 	}
 
-	@Description("수배표 등록")
+	@Description(value = "수배표 등록")
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public ModelAndView create() throws Exception {
 		ModelAndView model = new ModelAndView();

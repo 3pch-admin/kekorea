@@ -12,6 +12,7 @@ import lombok.Setter;
 public class TBOMMasterColumnData {
 
 	private String oid;
+	private String poid;
 	private String projectType_code;
 	private String projectType_name;
 	private String projectType_oid;
@@ -38,9 +39,10 @@ public class TBOMMasterColumnData {
 	private Timestamp createdDate;
 	private String state;
 
-	public TBOMMasterColumnData(TBOMMaster tbomMaster, Project project) throws Exception {
-		setOid(tbomMaster.getPersistInfo().getObjectIdentifier().getStringValue());
-		setName(tbomMaster.getName());
+	public TBOMMasterColumnData(TBOMMaster master, Project project) throws Exception {
+		setOid(master.getPersistInfo().getObjectIdentifier().getStringValue());
+		setPoid(project.getPersistInfo().getObjectIdentifier().getStringValue());
+		setName(master.getName());
 		if (project.getProjectType() != null) {
 			setProjectType_code(project.getProjectType().getCode());
 			setProjectType_name(project.getProjectType().getName());
@@ -51,7 +53,7 @@ public class TBOMMasterColumnData {
 			setMak_name(project.getMak().getName());
 			setMak_oid(project.getMak().getPersistInfo().getObjectIdentifier().getStringValue());
 		}
-		if(project.getDetail() != null) {
+		if (project.getDetail() != null) {
 			setDetail_code(project.getDetail().getCode());
 			setDetail_name(project.getDetail().getName());
 			setDetail_oid(project.getDetail().getPersistInfo().getObjectIdentifier().getStringValue());
@@ -72,8 +74,8 @@ public class TBOMMasterColumnData {
 		}
 		setPdate(project.getPDate());
 		setModel(project.getModel());
-		setState(tbomMaster.getLifeCycleState().getDisplay());
-		setCreator(tbomMaster.getCreatorFullName());
-		setCreatedDate(tbomMaster.getCreateTimestamp());
+		setState(master.getLifeCycleState().getDisplay());
+		setCreator(master.getCreatorFullName());
+		setCreatedDate(master.getCreateTimestamp());
 	}
 }

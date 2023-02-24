@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import e3ps.common.util.CommonUtils;
+import e3ps.epm.jDrawing.JDrawing;
+import e3ps.epm.jDrawing.service.JDrawingHelper;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import wt.fc.PersistenceHelper;
@@ -32,7 +34,7 @@ public class StandardKePartService extends StandardManager implements KePartServ
 			Ownership ownership = CommonUtils.sessionOwner();
 
 			for (Map<String, Object> addRow : addRows) {
-				String lotNo = (String) addRow.get("lotNo");
+				int lotNo = (int) addRow.get("lotNo");
 				String kePartName = (String) addRow.get("kePartName");
 				String kePartNumber = (String) addRow.get("kePartNumber");
 				String state = (String) addRow.get("state");
@@ -49,7 +51,7 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				PersistenceHelper.manager.save(master);
 
 				KePart kePart = KePart.newKePart();
-				kePart.setKePartMaster(master);
+				kePart.setMaster(master);
 				kePart.setState(state);
 				kePart.setLatest(true);
 				kePart.setVersion(1);
@@ -58,7 +60,19 @@ public class StandardKePartService extends StandardManager implements KePartServ
 			}
 
 			for (Map<String, Object> removeRow : removeRows) {
-
+				String oid = (String) removeRow.get("oid");
+				KePart kePart = (KePart) CommonUtils.getObject(oid);
+				boolean isLast = KePartHelper.manager.isLast(kePart.getMaster());
+				if (isLast) {
+					PersistenceHelper.manager.delete(kePart.getMaster());
+					PersistenceHelper.manager.delete(kePart);
+				} else {
+					// 이전 버전을 최신 버전으로 만드는 작업..
+					KePart prePart = KePartHelper.manager.getPreKePart(kePart);
+					prePart.setLatest(true);
+					PersistenceHelper.manager.modify(prePart);
+					PersistenceHelper.manager.delete(kePart);
+				}
 			}
 
 			for (Map<String, Object> editRow : editRows) {

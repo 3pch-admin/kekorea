@@ -19,6 +19,7 @@ import e3ps.project.ProjectUserLink;
 import e3ps.project.beans.ProjectColumnData;
 import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
+import e3ps.project.template.Template;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.fc.PagingQueryResult;
@@ -3162,6 +3163,7 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 		String projectType = (String) params.get("projectType");
 		String predate = (String) params.get("predate");
 		String postdate = (String) params.get("postdate");
+		String template = (String) params.get("template");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);
@@ -3210,6 +3212,12 @@ public class ProjectHelper implements MessageHelper, RemoteAccess {
 			CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer);
 			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "customerReference.key.id",
 					customerCode.getPersistInfo().getObjectIdentifier().getId());
+		}
+
+		if (!StringUtils.isNull(template)) {
+			Template t = (Template) CommonUtils.getObject(template);
+			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "templateReference.key.id",
+					t.getPersistInfo().getObjectIdentifier().getId());
 		}
 
 		if (!StringUtils.isNull(predate)) {

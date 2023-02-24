@@ -8,7 +8,6 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
-import e3ps.epm.numberRule.NumberRuleMaster;
 import wt.content.ContentHolder;
 import wt.content.FormatContentHolder;
 import wt.fc.Item;
@@ -34,7 +33,7 @@ import wt.util.WTException;
 
 				@GeneratedForeignKey(name = "KePartMasterLink",
 
-						foreignKeyRole = @ForeignKeyRole(name = "kePartMaster", type = KePartMaster.class,
+						foreignKeyRole = @ForeignKeyRole(name = "master", type = KePartMaster.class,
 
 								constraints = @PropertyConstraints(required = true)),
 

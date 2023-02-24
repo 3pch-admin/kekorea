@@ -15,22 +15,20 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import e3ps.bom.partlist.MasterDataLink;
+import e3ps.bom.partlist.PartListData;
+import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.PartListMasterProjectLink;
+import e3ps.bom.partlist.beans.PartListColumnData;
+import e3ps.bom.partlist.beans.PartListDataViewData;
+import e3ps.bom.tbom.beans.TBOMMasterColumnData;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.korea.cip.Cip;
-import e3ps.korea.cip.beans.CipColumnData;
 import e3ps.org.People;
-import e3ps.partlist.MasterDataLink;
-import e3ps.partlist.PartListData;
-import e3ps.partlist.PartListMaster;
-import e3ps.partlist.PartListMasterProjectLink;
-import e3ps.partlist.beans.PartListColumnData;
-import e3ps.partlist.beans.PartListDataViewData;
-import e3ps.partlist.column.PartListMasterColumnData;
 import e3ps.project.Project;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
@@ -627,9 +625,6 @@ public class PartListMasterHelper {
 		ClassAttribute ca = new ClassAttribute(PartListMasterProjectLink.class, WTAttributeNameIfc.CREATE_STAMP_NAME);
 		OrderBy by = new OrderBy(ca, false);
 		query.appendOrderBy(by, new int[] { idx });
-		// QueryResult result = PersistenceHelper.manager.navigate(master, "project",
-		// PartListMasterProjectLink.class,
-		// false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();

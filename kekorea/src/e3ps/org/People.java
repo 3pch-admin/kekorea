@@ -21,31 +21,25 @@ import wt.util.WTException;
 		properties = {
 				@GeneratedProperty(name = "name", type = String.class, javaDoc = "이름", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "id", type = String.class, javaDoc = "아이디", constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(unique = true)),
+				@GeneratedProperty(name = "id", type = String.class, javaDoc = "아이디", constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(index = true, unique = true)),
 
 				@GeneratedProperty(name = "email", type = String.class, javaDoc = "이메일"),
 
 				@GeneratedProperty(name = "duty", type = String.class, javaDoc = "직급"),
 
-				@GeneratedProperty(name = "rank", type = String.class, javaDoc = "직위 및 직책"),
-
-				@GeneratedProperty(name = "phone", type = String.class, javaDoc = "전화번호"),
-
-				@GeneratedProperty(name = "mobile", type = String.class, javaDoc = "핸드폰 번호"),
-
 				@GeneratedProperty(name = "resign", type = Boolean.class, javaDoc = "퇴사 처리", initialValue = "false"), },
 
 		foreignKeys = {
-				// front target object, before source user
-				@GeneratedForeignKey(name = "WTUserPeopleLink",
 
-						foreignKeyRole = @ForeignKeyRole(name = "user", type = WTUser.class,
+				@GeneratedForeignKey(name = "PeopleWTUserLink",
 
-								constraints = @PropertyConstraints(required = false)),
+						foreignKeyRole = @ForeignKeyRole(name = "wtUser", type = WTUser.class,
+
+								constraints = @PropertyConstraints(required = true)),
 
 						myRole = @MyRole(name = "people", cardinality = Cardinality.ONE)),
 
-				@GeneratedForeignKey(name = "DepartmentPeopleLink",
+				@GeneratedForeignKey(name = "PeopleDepartmentLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "department", type = Department.class,
 

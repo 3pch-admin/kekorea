@@ -19,6 +19,10 @@
 </table>
 
 <table class="create_table">
+	<colgroup>
+		<col width="130">
+		<col width="*">
+	</colgroup>
 	<tr>
 		<th>
 			<font class="req">작업 일람표 명</font>
@@ -29,12 +33,12 @@
 	</tr>
 	<tr>
 		<th>
-			<font class="req">작업 일람표 번호</font>
+			<font class="req">KEK 작번</font>
 		</th>
-		<td>
-			<input type="text" name="number" id="number" class="AXInput wid300">
+		<td colspan="3">
+			<jsp:include page="/jsp/include/include-project.jsp"></jsp:include>
 		</td>
-	</tr>
+	</tr>	
 	<tr>
 		<th>
 			<font class="req">작업 내용</font>
@@ -101,10 +105,7 @@
 			rowNumHeaderText : "번호",
 			fillColumnSizeMode : true
 		};
-
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
-		// LazyLoading 바인딩
-		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 	}
 
 	$(function() {

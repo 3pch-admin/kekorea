@@ -11,10 +11,10 @@ import e3ps.approval.ApprovalContract;
 import e3ps.approval.ApprovalContractPersistableLink;
 import e3ps.approval.ApprovalLine;
 import e3ps.approval.ApprovalMaster;
+import e3ps.bom.partlist.PartListMaster;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.IBAUtils;
-import e3ps.common.util.MessageHelper;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.PRJDocument;
 import e3ps.doc.ReqDocumentProjectLink;
@@ -27,17 +27,16 @@ import e3ps.org.WTUserPeopleLink;
 import e3ps.org.beans.UserViewData;
 import e3ps.part.beans.PartViewData;
 import e3ps.part.service.PartHelper;
-import e3ps.partlist.PartListMaster;
-import e3ps.project.DocumentOutputLink;
-import e3ps.project.Output;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
-import e3ps.project.Task;
-import e3ps.project.TaskOutputLink;
 import e3ps.project.enums.ProjectStateType;
 import e3ps.project.enums.ProjectUserType;
 import e3ps.project.enums.TaskStateType;
+import e3ps.project.output.DocumentOutputLink;
+import e3ps.project.output.Output;
+import e3ps.project.output.TaskOutputLink;
 import e3ps.project.service.ProjectHelper;
+import e3ps.project.task.Task;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.epm.structure.EPMReferenceLink;
@@ -57,7 +56,7 @@ import wt.services.StandardManager;
 import wt.session.SessionHelper;
 import wt.util.WTException;
 
-public class StandardApprovalService extends StandardManager implements ApprovalService, MessageHelper {
+public class StandardApprovalService extends StandardManager implements ApprovalService {
 
 	private static final long serialVersionUID = -3473333219484101189L;
 
@@ -261,9 +260,9 @@ public class StandardApprovalService extends StandardManager implements Approval
 						} else if (pers instanceof EPMDocument) {
 							EPMDocument epm = (EPMDocument) pers;
 							epm = (EPMDocument) CommonUtils.getLatestVersion(epm);
-							
-							System.out.println("epm="+epm.getNumber());
-							
+
+							System.out.println("epm=" + epm.getNumber());
+
 							State s = State.toState("UNDERAPPROVAL");
 							LifeCycleHelper.service.setLifeCycleState(epm, s);
 
@@ -1418,7 +1417,7 @@ public class StandardApprovalService extends StandardManager implements Approval
 			trs.start();
 			System.out.println("=====반려 삭제 시작=====");
 			for (String oid : list) {
-				System.out.println("ViewDisabled is true, ApprovalMaster OID : " + oid );
+				System.out.println("ViewDisabled is true, ApprovalMaster OID : " + oid);
 				master = (ApprovalMaster) rf.getReference(oid).getObject();
 
 				master.setViewDisabled(true);

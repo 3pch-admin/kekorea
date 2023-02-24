@@ -10,11 +10,11 @@ import com.infoengine.SAK.Task;
 
 import e3ps.approval.ApprovalUserLine;
 import e3ps.common.mail.MailUtils;
-import e3ps.common.util.MessageHelper;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.org.Department;
 import e3ps.org.People;
-import e3ps.org.WTUserPeopleLink;
+import e3ps.org.PeopleWTUserLink;
 import e3ps.org.beans.UserViewData;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -37,9 +37,7 @@ import wt.session.SessionHelper;
 import wt.util.WTException;
 import wt.util.WTProperties;
 
-public class StandardOrgService extends StandardManager implements OrgService, MessageHelper {
-
-	private static final long serialVersionUID = 6434143991228325882L;
+public class StandardOrgService extends StandardManager implements OrgService {
 
 	private static String userAdapter;
 	private static String userDirectory;
@@ -88,19 +86,15 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 	protected synchronized void performStartupProcess() throws ManagerException {
 		super.performStartupProcess();
 		try {
-			// root department create
 			Department department = makeRoot();
-			// user create object
 			inspectUser(department);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	@Override
-	public Department makeRoot() throws WTException {
+	private Department makeRoot() throws Exception {
 		Department department = null;
-//		Department department = new Department();
 		SessionContext prev = SessionContext.newContext();
 		Transaction trs = new Transaction();
 		try {
@@ -108,33 +102,28 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 
 			SessionHelper.manager.setAdministrator();
 
-			if (!OrgHelper.manager.duplicate("ROOT")) {
-
+			QuerySpec query = new QuerySpec();
+			int idx = query.appendClassList(Department.class, true);
+			QuerySpecUtils.toEqualsAnd(query, idx, Department.class, Department.CODE, "ROOT");
+			QueryResult result = PersistenceHelper.manager.find(query);
+			// 루트 부서가 있을 경우
+			if (result.hasMoreElements()) {
+				Object[] obj = (Object[]) result.nextElement();
+				department = (Department) obj[0];
+			} else {
+				// 루트 부서가 없을 경우
 				department = Department.newDepartment();
 				department.setName("국제엘렉트릭코리아");
 				department.setCode("ROOT");
 				department.setDescription("국제엘렉트릭코리아");
 				department = (Department) PersistenceHelper.manager.save(department);
-			} else {
-
-				QuerySpec query = new QuerySpec();
-				int idx = query.appendClassList(Department.class, true);
-
-				SearchCondition sc = new SearchCondition(Department.class, Department.CODE, "=", "ROOT");
-				query.appendWhere(sc, new int[] { idx });
-
-				QueryResult result = PersistenceHelper.manager.find(query);
-				if (result.hasMoreElements()) {
-					Object[] obj = (Object[]) result.nextElement();
-					department = (Department) obj[0];
-				}
 			}
-
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
 			e.printStackTrace();
 			trs.rollback();
+			throw e;
 		} finally {
 			if (trs != null)
 				trs.rollback();
@@ -184,7 +173,7 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 				Object[] obj = (Object[]) result.nextElement();
 				WTUser wtuser = (WTUser) obj[0];
 
-				QueryResult qr = PersistenceHelper.manager.navigate(wtuser, "people", WTUserPeopleLink.class);
+				QueryResult qr = PersistenceHelper.manager.navigate(wtuser, "people", PeopleWTUserLink.class);
 				// not value...
 				People user = null;
 
@@ -192,7 +181,7 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 					user = People.newPeople();
 					// set foreignKey
 					user.setDepartment(department);
-					user.setUser(wtuser);
+					user.setWtUser(wtuser);
 
 					String a = wtuser.getName();
 					user.setName(wtuser.getFullName());
@@ -230,11 +219,9 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 			String a = sessionUser.getName();
 			user.setId(a);
 			user.setEmail(sessionUser.getEMail() != null ? sessionUser.getEMail() : "");
-			user.setUser(sessionUser);
+			user.setWtUser(sessionUser);
 			user.setDuty("사원");
 			user.setDepartment(OrgHelper.manager.getDepartment("ROOT"));
-			user.setPhone(null);
-			user.setMobile(null);
 
 			user = (People) PersistenceHelper.manager.save(user);
 
@@ -275,16 +262,12 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 			task.invoke();
 
 			// success
-			map.put("result", SUCCESS);
 			map.put("msg", user.getFullName() + " 사용자의 비밀번호가 변경 되었습니다.");
-			map.put("url", BASE_URL + "/org/logout");
 
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			map.put("msg", user.getFullName() + " 사용자의 비밀번호 변경 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
-			map.put("url", BASE_URL + "/org/changePassword");
 			e.printStackTrace();
 			trs.rollback();
 		} finally {
@@ -323,7 +306,7 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 				}
 			}
 
-			String id = user.getUser().getName();
+			String id = user.getWtUser().getName();
 			String uid = DirContext.getMapping(userAdapter, "user.uniqueIdAttribute",
 					DirContext.getMapping(userAdapter, "user.uid"));
 			String object = uid + "=" + id + "," + userSearch;
@@ -346,15 +329,11 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 			}
 
 			// success
-			map.put("result", SUCCESS);
 			map.put("msg", user.getName() + " 사용자의 비밀번호가 초기화되었습니다.");
-			map.put("url", BASE_URL + "/admin/initPassword");
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			map.put("msg", user.getName() + " 사용자의 비밀번호 초기화 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
-			map.put("url", BASE_URL + "/admin/initPassword");
 			// fail..
 			e.printStackTrace();
 			trs.rollback();
@@ -394,11 +373,9 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 
 			trs.commit();
 			trs = null;
-			map.put("result", SUCCESS);
 			map.put("msg", "개인 결재선이 저장 되었습니다.");
 			map.put("url", "/Windchill/plm/org/addLine?lineType=" + lineType);
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			map.put("msg", "개인 결재선 저장 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
 			map.put("url", "/Windchill/plm/org/addLine?lineType=" + lineType);
 			e.printStackTrace();
@@ -427,13 +404,11 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 				PersistenceHelper.manager.delete(userLine);
 			}
 
-			map.put("result", SUCCESS);
 			map.put("msg", "개인 결재선이 삭제 되었습니다.");
 			map.put("url", "/Windchill/plm/org/addLine?lineType=" + lineType);
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			map.put("msg", "개인 결재선 삭제 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
 			map.put("url", "/Windchill/plm/org/addLine?lineType=" + lineType);
 			e.printStackTrace();
@@ -470,19 +445,17 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 				user.setResign(true);
 				PersistenceHelper.manager.modify(user);
 
-				boolean success = OrganizationServicesHelper.manager.addMember(group, user.getUser());
+				boolean success = OrganizationServicesHelper.manager.addMember(group, user.getWtUser());
 				if (success) {
-					System.out.println("퇴사자 그룹에 할당된 사용자 이름 : " + user.getUser().getFullName() + ", 아이디 :  "
-							+ user.getUser().getName());
+					System.out.println("퇴사자 그룹에 할당된 사용자 이름 : " + user.getWtUser().getFullName() + ", 아이디 :  "
+							+ user.getWtUser().getName());
 				}
 			}
 
-			map.put("result", SUCCESS);
 			map.put("msg", "선택한 사용자들의 퇴사 처리가 되었습니다.");
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			map.put("msg", "사용자 퇴사 처리 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
 			e.printStackTrace();
 			trs.rollback();
@@ -511,12 +484,10 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 					udata.resign, udata.createDate };
 			data.add(s);
 
-			map.put("result", SUCCESS);
 			map.put("list", data);
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			map.put("msg", "사용자 추가 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요");
 			map.put("url", "/Windchill/plm/approval/addUser");
 			e.printStackTrace();
@@ -544,26 +515,23 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 
 			user = (People) rf.getReference(oid).getObject();
 			user.setName(name);
-			user.setRank(rank);
 			user.setDuty(duty);
 			user.setEmail(email + email_prefix);
 
-			wtuser = user.getUser();
+			wtuser = user.getWtUser();
 			wtuser.setFullName(name);
 			wtuser.setEMail(email + email_prefix);
 			PersistenceHelper.manager.modify(wtuser);
 
-			user.setUser(wtuser);
+			user.setWtUser(wtuser);
 
 			PersistenceHelper.manager.modify(user);
 
-			map.put("result", SUCCESS);
 			map.put("msg", "사용자 정보가 수정 되었습니다.");
 			map.put("url", "/Windchill/plm/org/viewUser?oid=" + oid);
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			map.put("msg", "사용자 정보 수정 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요");
 			map.put("url", "/Windchill/plm/org/modifyUser?oid=" + oid);
 			e.printStackTrace();
@@ -591,11 +559,9 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 				PersistenceHelper.manager.modify(user);
 			}
 
-			map.put("result", SUCCESS);
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			e.printStackTrace();
 			trs.rollback();
 		} finally {
@@ -626,11 +592,9 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 				PersistenceHelper.manager.modify(user);
 			}
 
-			map.put("result", SUCCESS);
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
 			e.printStackTrace();
 			trs.rollback();
 		} finally {
@@ -648,15 +612,12 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 			trs.start();
 
 			People user = People.newPeople();
-			user.setUser(wtuser);
+			user.setWtUser(wtuser);
 			user.setName(wtuser.getFullName());
 			user.setId(wtuser.getName());
 			user.setEmail(wtuser.getEMail());
 			user.setDepartment(OrgHelper.manager.getRoot());
 			user.setDuty("사원");
-			user.setRank("지정안됨");
-			user.setPhone(wtuser.getTelephoneNumber());
-			user.setMobile(wtuser.getMobilePhoneNumber());
 			PersistenceHelper.manager.save(user);
 
 			trs.commit();
@@ -681,8 +642,6 @@ public class StandardOrgService extends StandardManager implements OrgService, M
 			user.setName(wtuser.getFullName());
 			user.setId(wtuser.getName());
 			user.setEmail(wtuser.getEMail());
-			user.setPhone(wtuser.getTelephoneNumber());
-			user.setMobile(wtuser.getMobilePhoneNumber());
 			PersistenceHelper.manager.modify(user);
 
 			trs.commit();

@@ -9,4 +9,5 @@ public interface TBOMService {
 
 	public abstract void create(Map<String, Object> params) throws Exception;
 
+	public abstract void save(Map<String, Object> params) throws Exception;
 }

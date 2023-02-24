@@ -16,20 +16,19 @@ import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
-import e3ps.common.util.MessageHelper;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.ReqDocumentProjectLink;
 import e3ps.doc.RequestDocument;
 import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.doc.beans.DocumentViewData;
-import e3ps.project.DocumentOutputLink;
-import e3ps.project.Output;
 import e3ps.project.Project;
-import e3ps.project.ProjectOutputLink;
-import e3ps.project.Task;
-import e3ps.project.TaskOutputLink;
 import e3ps.project.enums.TaskStateType;
+import e3ps.project.output.DocumentOutputLink;
+import e3ps.project.output.Output;
+import e3ps.project.output.ProjectOutputLink;
+import e3ps.project.output.TaskOutputLink;
 import e3ps.project.service.ProjectHelper;
+import e3ps.project.task.Task;
 import wt.clients.folder.FolderTaskLogic;
 import wt.clients.vc.CheckInOutTaskLogic;
 import wt.doc.WTDocument;
@@ -58,7 +57,7 @@ import wt.vc.Versioned;
 import wt.vc.wip.CheckoutLink;
 import wt.vc.wip.WorkInProgressHelper;
 
-public class StandardDocumentService extends StandardManager implements DocumentService, MessageHelper {
+public class StandardDocumentService extends StandardManager implements DocumentService {
 
 	private static final long serialVersionUID = -3547027986128094246L;
 

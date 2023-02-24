@@ -13,11 +13,15 @@ import e3ps.common.util.FolderUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.MessageHelper;
 import e3ps.common.util.PageQueryUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.ViewerData;
+import e3ps.epm.beans.EpmColumnData;
 import e3ps.epm.column.EpmLibraryColumnData;
 import e3ps.epm.column.EpmProductColumnData;
 import e3ps.epm.column.ViewerColumnData;
+import e3ps.korea.cip.Cip;
+import e3ps.korea.cip.beans.CipColumnData;
 import e3ps.org.People;
 import wt.clients.folder.FolderTaskLogic;
 import wt.epm.EPMDocument;
@@ -252,7 +256,7 @@ public class EpmHelper implements MessageHelper {
 
 		String remark = (String) param.get("remark");
 		String partCode = (String) param.get("partCode");
-		
+
 		String referenceDrwing = (String) param.get("referenceDrwing");
 
 		try {
@@ -427,8 +431,8 @@ public class EpmHelper implements MessageHelper {
 			if (!StringUtils.isNull(remark)) {
 				IBAUtils.addIBAConditionLike(query, EPMDocument.class, idx, "REMARKS", remark);
 			}
-			
-			if(!StringUtils.isNull(referenceDrwing)) {
+
+			if (!StringUtils.isNull(referenceDrwing)) {
 				IBAUtils.addIBAConditionLike(query, EPMDocument.class, idx, "REF_NO", referenceDrwing);
 			}
 
@@ -443,7 +447,6 @@ public class EpmHelper implements MessageHelper {
 			if (!StringUtils.isNull(MASTER_TYPE)) {
 				IBAUtils.addIBAConditionLike(query, EPMDocument.class, idx, "MASTER_TYPE", MASTER_TYPE);
 			}
-
 
 			if ("true".equals(latest)) {
 				if (query.getConditionCount() > 0)
@@ -657,5 +660,33 @@ public class EpmHelper implements MessageHelper {
 			e.printStackTrace();
 		}
 		return isYcode;
+	}
+
+	public Map<String, Object> list(Map<String, Object> params) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<EpmColumnData> list = new ArrayList<EpmColumnData>();
+		QuerySpec query = new QuerySpec();
+
+		int idx = query.appendClassList(EPMDocument.class, true);
+		int idx_m = query.appendClassList(EPMDocumentMaster.class, false);
+
+		QuerySpecUtils.toCI(query, idx, EPMDocument.class);
+		QuerySpecUtils.toInnerJoin(query, EPMDocument.class, EPMDocumentMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_m);
+		QuerySpecUtils.toOrderBy(query, idx, EPMDocument.class, EPMDocument.MODIFY_TIMESTAMP, true);
+
+		PageQueryUtils pager = new PageQueryUtils(params, query);
+		PagingQueryResult result = pager.find();
+
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			EPMDocument epm = (EPMDocument) obj[0];
+			EpmColumnData column = new EpmColumnData(epm);
+			list.add(column);
+		}
+		map.put("list", list);
+		map.put("sessionid", pager.getSessionId());
+		map.put("curPage", pager.getCpage());
+		return map;
 	}
 }

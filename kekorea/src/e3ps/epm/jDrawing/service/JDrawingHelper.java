@@ -49,14 +49,14 @@ public class JDrawingHelper {
 		return map;
 	}
 
-	public boolean isLast(JDrawingMaster jDrawingMaster) throws Exception {
+	public boolean isLast(JDrawingMaster master) throws Exception {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(JDrawing.class, true);
 		int idx_m = query.appendClassList(JDrawingMaster.class, false);
 		QuerySpecUtils.toInnerJoin(query, JDrawing.class, JDrawingMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
 		QuerySpecUtils.toEqualsAnd(query, idx, JDrawing.class, "masterReference.key.id",
-				jDrawingMaster.getPersistInfo().getObjectIdentifier().getId());
+				master.getPersistInfo().getObjectIdentifier().getId());
 		QueryResult result = PersistenceHelper.manager.find(query);
 		return result.size() == 1 ? true : false;
 	}

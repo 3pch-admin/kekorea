@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,9 +19,9 @@ import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.beans.TBOMMasterViewData;
 import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.controller.BaseController;
-import e3ps.korea.cip.beans.CipColumnData;
-import e3ps.korea.cip.service.CipHelper;
+import net.sf.json.JSONArray;
 
 @Controller
 @RequestMapping(value = "/tbom/**")
@@ -82,6 +84,37 @@ public class TBOMController extends BaseController {
 		TBOMMasterViewData data = new TBOMMasterViewData(master);
 		model.addObject("data", data);
 		model.setViewName("popup:/bom/tbom/tbom-view");
+		return model;
+	}
+
+	@Description(value = "T-BOM 그리드 저장 함수")
+	@ResponseBody
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	public Map<String, Object> save(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			TBOMHelper.service.save(params);
+			result.put("msg", SAVE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "T-BOM 비교")
+	@RequestMapping(value = "/compare", method = RequestMethod.GET)
+	public ModelAndView compare(HttpServletRequest request) throws Exception {
+		int count = StringUtils.parseInt(request.getParameter("count"));
+		ModelAndView model = new ModelAndView();
+		ArrayList<Map<String, Object>> headers = TBOMHelper.manager.headers(request, count);
+		ArrayList<Map<String, Object>> compareData = TBOMHelper.manager.compare(request, count);
+		model.addObject("compareData", JSONArray.fromObject(compareData));
+		model.addObject("headers", headers);
+		model.addObject("count", count);
+		model.setViewName("popup:/bom/tbom/tbom-compare");
 		return model;
 	}
 }

@@ -21,14 +21,14 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "description", type = String.class, javaDoc = "부서 설명", constraints = @PropertyConstraints(upperLimit = 4000)),
 
-				@GeneratedProperty(name = "depth", type = int.class, javaDoc = "부서 레벨", initialValue = "0"),
+				@GeneratedProperty(name = "depth", type = Integer.class, javaDoc = "부서 레벨", initialValue = "0"),
 
-				@GeneratedProperty(name = "sort", type = int.class, javaDoc = "부서 정렬", initialValue = "0")
+				@GeneratedProperty(name = "sort", type = Integer.class, javaDoc = "부서 정렬", initialValue = "0")
 
 		},
 
 		foreignKeys = {
-				// front target object, before source user
+
 				@GeneratedForeignKey(name = "ParentChildLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "parent", type = Department.class,
@@ -38,10 +38,9 @@ import wt.util.WTException;
 						myRole = @MyRole(name = "child", cardinality = Cardinality.ZERO_TO_ONE))
 
 		})
-public class Department extends _Department{
+public class Department extends _Department {
 
 	static final long serialVersionUID = 1;
-//	public static final String CODE = null;
 
 	public static Department newDepartment() throws WTException {
 		Department instance = new Department();

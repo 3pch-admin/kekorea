@@ -6,14 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import e3ps.bom.partlist.PartListMasterProjectLink;
+import javax.servlet.http.HttpServletRequest;
+
 import e3ps.bom.tbom.TBOMData;
 import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.TBOMMasterDataLink;
 import e3ps.bom.tbom.TBOMMasterProjectLink;
 import e3ps.bom.tbom.beans.TBOMColumnData;
 import e3ps.bom.tbom.beans.TBOMMasterColumnData;
-import e3ps.bom.tbom.beans.TBOMMasterViewData;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.PageQueryUtils;
@@ -112,5 +112,111 @@ public class TBOMHelper {
 			list.add(column);
 		}
 		return JSONArray.fromObject(list);
+	}
+
+	public ArrayList<TBOMMasterDataLink> getLinks(TBOMMaster master) throws Exception {
+		ArrayList<TBOMMasterDataLink> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(TBOMMasterDataLink.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, TBOMMasterDataLink.class, "roleAObjectRef.key.id",
+				master.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			TBOMMasterDataLink link = (TBOMMasterDataLink) obj[0];
+			list.add(link);
+		}
+		return list;
+	}
+
+	public ArrayList<TBOMData> getData(TBOMMaster master) throws Exception {
+		ArrayList<TBOMData> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(TBOMMasterDataLink.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, TBOMMasterDataLink.class, "roleAObjectRef.key.id",
+				master.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			TBOMMasterDataLink link = (TBOMMasterDataLink) obj[0];
+			list.add(link.getData());
+		}
+		return list;
+	}
+
+	public HashMap<String, ArrayList<TBOMMasterDataLink>> getCompareData(HttpServletRequest request, int count)
+			throws Exception {
+		HashMap<String, ArrayList<TBOMMasterDataLink>> map = new HashMap<>();
+		for (int i = 0; i < count; i++) {
+			String oid = request.getParameter("oid" + i);
+			TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
+			ArrayList<TBOMMasterDataLink> link = getLinks(master);
+			map.put("compareData" + i, link);
+		}
+		return map;
+	}
+
+	public ArrayList<Map<String, Object>> headers(HttpServletRequest request, int count) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		for (int i = 0; i < count; i++) {
+			String poid = request.getParameter("poid" + i);
+			String oid = request.getParameter("oid" + i);
+			Project project = (Project) CommonUtils.getObject(poid);
+			TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("kekNumber" + i, project.getKekNumber());
+			map.put("name" + i, master.getName());
+			list.add(map);
+		}
+		return list;
+	}
+
+	public ArrayList<Map<String, Object>> compare(HttpServletRequest request, int count) throws Exception {
+
+		String oid0 = request.getParameter("oid0");
+		String oid1 = request.getParameter("oid1");
+
+		TBOMMaster m = (TBOMMaster) CommonUtils.getObject(oid0);
+		TBOMMaster m1 = (TBOMMaster) CommonUtils.getObject(oid1);
+
+		ArrayList<TBOMData> link = TBOMHelper.manager.getData(m);
+		ArrayList<TBOMData> link1 = TBOMHelper.manager.getData(m1);
+		ArrayList<Map<String, Object>> compareData = new ArrayList<>();
+		for (TBOMData data : link) {
+			boolean isEquals = false;
+			for (TBOMData data1 : link1) {
+				String num = data.getKePart().getMaster().getKePartNumber();
+				String num1 = data1.getKePart().getMaster().getKePartNumber();
+
+				if (num.equals(num1)) {
+					Map<String, Object> map = new HashMap<>();
+					map.put("lotNo", data.getKePart().getMaster().getLotNo());
+					map.put("kePartNumber0", data.getKePart().getMaster().getKePartNumber());
+					map.put("kePartNumber1", data1.getKePart().getMaster().getKePartNumber());
+					map.put("kePartName0", data.getKePart().getMaster().getKePartName());
+					map.put("kePartName1", data1.getKePart().getMaster().getKePartName());
+					map.put("code", data.getKePart().getMaster().getCode());
+					map.put("qty0", data.getQty());
+					map.put("qty1", data1.getQty());
+					compareData.add(map);
+					link1.remove(data1);
+					isEquals = true;
+					break;
+				}
+			}
+			if (!isEquals) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("lotNo", data.getKePart().getMaster().getLotNo());
+				map.put("kePartNumber0", data.getKePart().getMaster().getKePartNumber());
+				map.put("kePartNumber1", "");
+				map.put("kePartName0", data.getKePart().getMaster().getKePartName());
+				map.put("kePartName1", "");
+				map.put("code", data.getKePart().getMaster().getCode());
+				map.put("qty0", data.getQty());
+				map.put("qty1", "");
+				compareData.add(map);
+			}
+		}
+		return compareData;
 	}
 }

@@ -1,5 +1,6 @@
 package e3ps.org.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import e3ps.common.util.CommonUtils;
 import e3ps.controller.BaseController;
+import e3ps.korea.cip.service.CipHelper;
 import e3ps.org.Department;
 import e3ps.org.service.OrgHelper;
 import net.sf.json.JSONArray;
@@ -36,17 +39,38 @@ public class OrgController extends BaseController {
 		}
 		return result;
 	}
-	
-	@Description("조직도 페이지")
-	@RequestMapping(value = "/viewOrg", method=RequestMethod.GET)
-	public ModelAndView viewOrg() throws Exception {
+
+	@Description(value = "조직도 페이지")
+	@RequestMapping(value = "/organization", method = RequestMethod.GET)
+	public ModelAndView organization() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/org/org-view.jsp");
+		boolean isAdmin = CommonUtils.isAdmin();
+		ArrayList<HashMap<String, Object>> list = OrgHelper.manager.getDepartmentMap();
+		model.addObject("list", list);
+		model.addObject("isAdmin", isAdmin);
+		model.setViewName("/jsp/org/organization-list.jsp");
 		return model;
 	}
 	
+	
+	@Description(value = "사용자 조회 함수")
+	@ResponseBody
+	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = OrgHelper.manager.list(params);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+	
+
 	@Description("조직도 ")
-	@RequestMapping(value = "/viewOrg", method=RequestMethod.POST)
+	@RequestMapping(value = "/viewOrg", method = RequestMethod.POST)
 	public Map<String, Object> viewOrg(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 //		Map<String, Object> result = null;
@@ -60,7 +84,7 @@ public class OrgController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description("폴더트리 부서 가져오기")
 	@RequestMapping(value = "/getDeptTree")
 	@ResponseBody
@@ -77,7 +101,7 @@ public class OrgController extends BaseController {
 		}
 		return node;
 	}
-	
+
 //	@Description("부서 별 유저")
 //	@RequestMapping(value = "getUserForDept")
 //	@ResponseBody

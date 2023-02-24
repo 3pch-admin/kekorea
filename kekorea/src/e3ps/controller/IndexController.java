@@ -17,7 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.util.ColumnParseUtils;
 import e3ps.common.util.ContentUtils;
-import e3ps.org.beans.UserData;
+import e3ps.common.util.StringUtils;
+import e3ps.org.beans.UserViewData;
 import wt.fc.PagingQueryResult;
 import wt.fc.PagingSessionHelper;
 import wt.org.WTUser;
@@ -26,7 +27,7 @@ import wt.session.SessionHelper;
 @Controller
 public class IndexController extends BaseController {
 
-	@Description("메인 페이지")
+	@Description(value = "메인 페이지")
 	@RequestMapping(value = "/index")
 	public ModelAndView index(HttpServletRequest request) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -34,18 +35,18 @@ public class IndexController extends BaseController {
 		return model;
 	}
 
-	@Description("헤더 페이지")
+	@Description(value = "헤더 페이지")
 	@RequestMapping(value = "/header")
 	public ModelAndView header(HttpServletRequest request) throws Exception {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		UserData data = new UserData(sessionUser);
+		UserViewData data = new UserViewData(sessionUser);
 		model.addObject("data", data);
 		model.setViewName("/jsp/layout/header.jsp");
 		return model;
 	}
 
-	@Description("푸터 페이지")
+	@Description(value = "푸터 페이지")
 	@RequestMapping(value = "/footer")
 	public ModelAndView footer(HttpServletRequest request) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -53,7 +54,7 @@ public class IndexController extends BaseController {
 		return model;
 	}
 
-	@Description("그리드 리스트서 주 첨부파일 추가 페이지")
+	@Description(value = "그리드 리스트서 주 첨부파일 추가 페이지")
 	@RequestMapping(value = "/aui/primary", method = RequestMethod.GET)
 	public ModelAndView primary(@RequestParam(required = false) String oid, @RequestParam String method)
 			throws Exception {
@@ -64,7 +65,7 @@ public class IndexController extends BaseController {
 		return model;
 	}
 
-	@Description("그리드 리스트서 첨부파일 추가 페이지")
+	@Description(value = "그리드 리스트서 첨부파일 추가 페이지")
 	@RequestMapping(value = "/aui/secondary", method = RequestMethod.GET)
 	public ModelAndView create(@RequestParam(required = false) String oid, @RequestParam String method)
 			throws Exception {
@@ -75,7 +76,7 @@ public class IndexController extends BaseController {
 		return model;
 	}
 
-	@Description("그리드 리스트서 주 프리뷰 추가 페이지")
+	@Description(value = "그리드 리스트서 주 프리뷰 추가 페이지")
 	@RequestMapping(value = "/aui/preview", method = RequestMethod.GET)
 	public ModelAndView preview(@RequestParam(required = false) String oid, @RequestParam String method)
 			throws Exception {
@@ -86,7 +87,7 @@ public class IndexController extends BaseController {
 		return model;
 	}
 
-	@Description("그리드 썸네일 보기 페이지")
+	@Description(value = "그리드 썸네일 보기 페이지")
 	@RequestMapping(value = "/aui/thumbnail", method = RequestMethod.GET)
 	public ModelAndView thumbnail(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -96,15 +97,16 @@ public class IndexController extends BaseController {
 		return model;
 	}
 
+	@Description(value = "그리드 리스트 상에서 Lazy Load 시 호출 하는 함수")
 	@RequestMapping(value = "/appendData")
 	@ResponseBody
 	public Map<String, Object> appendData(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
-		String sessionid = (String) params.get("sessionid");
+		long sessionid = StringUtils.parseLong((String) params.get("sessionid"));
 		int start = (int) params.get("start");
 		int end = (int) params.get("end");
 		try {
-			PagingQueryResult qr = PagingSessionHelper.fetchPagingSession(start, end, Long.parseLong(sessionid));
+			PagingQueryResult qr = PagingSessionHelper.fetchPagingSession(start, end, sessionid);
 			ArrayList list = ColumnParseUtils.parse(qr);
 			result.put("list", list);
 			result.put("result", SUCCESS);

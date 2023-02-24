@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import e3ps.admin.FunctionControl;
 import e3ps.admin.LoginHistory;
 import e3ps.admin.PasswordSetting;
 import e3ps.admin.column.CodeColumnData;
@@ -33,7 +32,7 @@ import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
 
-public class AdminHelper implements MessageHelper {
+public class AdminHelper {
 
 	// master_type==erp
 	public static final String[] INIT_CODE_LIST = new String[] { "MACHINE_TYPE", "MAKER", "TREATMENT" };

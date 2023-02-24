@@ -3,6 +3,9 @@ package e3ps.common.util;
 import java.util.ArrayList;
 import java.util.Map;
 
+import com.ptc.wvs.server.util.FileHelper;
+import com.ptc.wvs.server.util.PublishUtils;
+
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.admin.spec.service.OptionsHelper;
 import e3ps.admin.spec.service.SpecHelper;
@@ -12,8 +15,13 @@ import wt.content.ApplicationData;
 import wt.content.ContentHelper;
 import wt.content.ContentHolder;
 import wt.content.ContentRoleType;
+import wt.epm.EPMDocument;
+import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.fc.ReferenceFactory;
+import wt.representation.Representable;
+import wt.representation.Representation;
 import wt.util.FileUtil;
 
 public class AUIGridUtils {
@@ -62,5 +70,15 @@ public class AUIGridUtils {
 			template += "<a><img src=" + icon + "></a>&nbsp;";
 		}
 		return template;
+	}
+
+	public static String getThumnailSmall(EPMDocument epm) throws Exception {
+		String thumnail_mini = FileHelper.getViewContentURLForType(PublishUtils.findRepresentable(epm),
+				ContentRoleType.THUMBNAIL_SMALL);
+
+		if (thumnail_mini == null) {
+			thumnail_mini = "/Windchill/jsp/images/productview_publish_24.png";
+		}
+		return thumnail_mini;
 	}
 }

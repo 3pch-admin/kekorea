@@ -62,7 +62,7 @@ import wt.session.SessionHelper;
 import wt.util.FileUtil;
 import wt.util.WTException;
 
-public class StandardErpService extends StandardManager implements ErpService, MessageHelper {
+public class StandardErpService extends StandardManager implements ErpService {
 
 	// private static final String erpOutputDir = "P:\\";
 

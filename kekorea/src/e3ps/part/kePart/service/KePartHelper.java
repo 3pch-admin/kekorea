@@ -6,8 +6,6 @@ import java.util.Map;
 
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.korea.cip.Cip;
-import e3ps.korea.cip.beans.CipColumnData;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import e3ps.part.kePart.beans.KePartColumnData;
@@ -32,7 +30,7 @@ public class KePartHelper {
 		int idx = query.appendClassList(KePart.class, true);
 		int idx_m = query.appendClassList(KePartMaster.class, false);
 
-		QuerySpecUtils.toInnerJoin(query, KePart.class, KePartMaster.class, "kePartMasterReference.key.id",
+		QuerySpecUtils.toInnerJoin(query, KePart.class, KePartMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
 		QuerySpecUtils.toBoolean(query, idx, KePart.class, KePart.LATEST, SearchCondition.IS_TRUE);
 		QuerySpecUtils.toOrderBy(query, idx, KePart.class, KePart.CREATE_TIMESTAMP, true);
@@ -58,7 +56,7 @@ public class KePartHelper {
 		int idx = query.appendClassList(KePart.class, true);
 		int idx_m = query.appendClassList(KePartMaster.class, true);
 
-		QuerySpecUtils.toInnerJoin(query, KePart.class, KePartMaster.class, "kePartMasterReference.key.id",
+		QuerySpecUtils.toInnerJoin(query, KePart.class, KePartMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
 		QuerySpecUtils.toEqualsAnd(query, idx_m, KePartMaster.class, KePartMaster.KE_PART_NUMBER, kePartNumber);
 		QuerySpecUtils.toBoolean(query, idx, KePart.class, KePart.LATEST, SearchCondition.IS_TRUE);
@@ -80,5 +78,29 @@ public class KePartHelper {
 			map.put("kePartNumber", kePartNumber);
 		}
 		return map;
+	}
+
+	public boolean isLast(KePartMaster master) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(KePart.class, true);
+		int idx_m = query.appendClassList(KePartMaster.class, false);
+		QuerySpecUtils.toInnerJoin(query, KePart.class, KePartMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_m);
+		QuerySpecUtils.toEqualsAnd(query, idx, KePart.class, "masterReference.key.id",
+				master.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult result = PersistenceHelper.manager.find(query);
+		return result.size() == 1 ? true : false;
+	}
+
+	public KePart getPreKePart(KePart kePart) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(KePart.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, KePart.class, KePart.VERSION, kePart.getVersion() - 1);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			return (KePart) obj[0];
+		}
+		return null;
 	}
 }

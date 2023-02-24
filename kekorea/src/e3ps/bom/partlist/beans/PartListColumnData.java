@@ -2,13 +2,10 @@ package e3ps.bom.partlist.beans;
 
 import java.sql.Timestamp;
 
-import e3ps.common.util.ContentUtils;
-import e3ps.common.util.StringUtils;
-import e3ps.partlist.PartListMaster;
+import e3ps.bom.partlist.PartListMaster;
 import e3ps.project.Project;
 import lombok.Getter;
 import lombok.Setter;
-import wt.session.SessionHelper;
 
 @Getter
 @Setter

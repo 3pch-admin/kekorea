@@ -90,4 +90,36 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 		}
 
 	}
+
+	@Override
+	public void save(Map<String, Object> params) throws Exception {
+		ArrayList<Map<String, Object>> removeRows = (ArrayList<Map<String, Object>>) params.get("removeRows");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			for (Map<String, Object> removeRow : removeRows) {
+				String oid = (String) removeRow.get("oid");
+				TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
+
+				ArrayList<TBOMMasterDataLink> list = TBOMHelper.manager.getLinks(master);
+				for (TBOMMasterDataLink link : list) {
+					PersistenceHelper.manager.delete(link);
+				}
+
+				PersistenceHelper.manager.delete(master);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+
+	}
 }

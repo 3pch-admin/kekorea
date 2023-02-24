@@ -6,7 +6,6 @@ import java.util.Map;
 
 import e3ps.approval.Notice;
 import e3ps.common.util.ContentUtils;
-import e3ps.common.util.MessageHelper;
 import e3ps.common.util.StringUtils;
 import e3ps.org.Department;
 import e3ps.org.service.OrgHelper;
@@ -19,7 +18,7 @@ import wt.services.StandardManager;
 import wt.session.SessionHelper;
 import wt.util.WTException;
 
-public class StandardNoticeService extends StandardManager implements NoticeService, MessageHelper {
+public class StandardNoticeService extends StandardManager implements NoticeService {
 
 	private static final long serialVersionUID = 787890950145750745L;
 

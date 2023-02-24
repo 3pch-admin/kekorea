@@ -1,3 +1,4 @@
+<%@page import="java.util.HashMap"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.admin.commonCode.CommonCodeType"%>
@@ -11,6 +12,7 @@ ArrayList<CommonCode> customers = (ArrayList<CommonCode>) request.getAttribute("
 ArrayList<CommonCode> projectTypes = (ArrayList<CommonCode>) request.getAttribute("projectTypes");
 ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks");
 ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("details");
+ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) request.getAttribute("list");
 %>
 <!DOCTYPE html>
 <html>
@@ -137,9 +139,24 @@ ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("de
 					<option value="">선택</option>
 				</select>
 			</td>
+			<th>작번 템플릿</th>
+			<td>
+				<select name="template" id="template" class="AXSelect wid200">
+					<option value="">선택</option>
+					<%
+					for (HashMap<String, Object> map : list) {
+						String key = (String) map.get("value");
+						String value = (String) map.get(key);
+					%>
+					<option value="<%=key%>"><%=value%></option>
+					<%
+					}
+					%>
+				</select>
+			</td>
 			<th>작업내용</th>
-			<td colspan="3">
-				<input type="text" name="description" class="AXInput wid500">
+			<td>
+				<input type="text" name="description" class="AXInput wid200">
 			</td>
 		</tr>
 	</table>
@@ -260,7 +277,8 @@ ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("de
 		dataField : "description",
 		headerText : "작업 내용",
 		dataType : "string",
-		width : 450
+		width : 450,
+		style : "left indent10"
 	}, {
 		dataField : "pdate",
 		headerText : "발행일",
@@ -331,7 +349,7 @@ ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("de
 			rowNumHeaderText : "번호",
 			showRowCheckColumn : true, // 체크 박스 출력
 			fixedColumnCount : 10,
-// 	fillColumnSizeMode : true, // 화면 꽉채우기
+		// 	fillColumnSizeMode : true, // 화면 꽉채우기
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
@@ -438,6 +456,7 @@ ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("de
 		selectBox("install");
 		selectBox("projectType");
 		selectBox("kekState");
+		selectBox("template");
 
 		$("#searchBtn").click(function() {
 			loadGridData();

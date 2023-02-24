@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import e3ps.admin.spec.Spec;
 import e3ps.admin.spec.SpecOptionsLink;
 import e3ps.epm.ViewerData;
+import wt.epm.EPMDocument;
 import wt.query.ClassAttribute;
 import wt.query.ColumnExpression;
 import wt.query.ConstantExpression;
@@ -13,6 +14,7 @@ import wt.query.QuerySpec;
 import wt.query.SQLFunction;
 import wt.query.SearchCondition;
 import wt.util.WTAttributeNameIfc;
+import wt.vc.wip.WorkInProgressHelper;
 
 public class QuerySpecUtils {
 
@@ -171,5 +173,14 @@ public class QuerySpecUtils {
 		}
 		SearchCondition sc = new SearchCondition(clazz, column, SearchCondition.NOT_EQUAL, value);
 		query.appendWhere(sc, new int[] { idx });
+	}
+
+	public static void toCI(QuerySpec query, int idx, Class clazz) throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+		SearchCondition sc = WorkInProgressHelper.getSearchCondition_CI(clazz);
+		query.appendWhere(sc, new int[] { idx });
+		sc = WorkInProgressHelper.getSearchCondition_CI(EPMDocument.class);
 	}
 }

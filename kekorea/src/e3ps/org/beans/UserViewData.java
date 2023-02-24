@@ -1,41 +1,41 @@
 package e3ps.org.beans;
 
-import java.util.Vector;
-
-import e3ps.common.util.ContentUtils;
+import e3ps.common.util.CommonUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.org.People;
+import e3ps.org.service.OrgHelper;
+import lombok.Getter;
+import lombok.Setter;
 import wt.org.WTUser;
 
+@Getter
+@Setter
 public class UserViewData {
 
-	public WTUser wtuser;
-	public String oid;
-	public String name;
-	public String id;
-	public String email;
-	public String duty;
-	public String rank;
-	public String departmentName;
-	public String createDate;
-	public String mobile;
-	// 기타
-	public String iconPath;
-	public String resign;
-	public Vector<String[]> photo;
+	private WTUser wtuser;
+	private String woid;
+	private String oid;
+	private String name;
+	private String id;
+	private String email;
+	private String duty;
+	private String departmentName;
+	private String createdDate;
+	private String resign;
 
-	public UserViewData(People user) throws Exception {
-		this.wtuser = user.getUser();
-		this.oid = user.getPersistInfo().getObjectIdentifier().getStringValue();
-		this.name = user.getName();
-		this.id = user.getId();
-		this.email = user.getEmail() != null ? user.getEmail() : "";
-		this.duty = user.getDuty() != null ? user.getDuty() : "지정안됨";
-		this.rank = user.getRank() != null ? user.getRank() : "지정안됨";
-		this.departmentName = user.getDepartment() != null ? user.getDepartment().getName() : "지정안됨";
-		this.createDate = user.getCreateTimestamp().toString().substring(0, 10);
-		this.mobile = user.getMobile() != null ? user.getMobile() : "등록안됨";
-		this.iconPath = "/Windchill/jsp/images/user.gif";
-		this.resign = user.getResign() == true ? "퇴사" : "재직중";
-		this.photo = ContentUtils.getSecondary(this.wtuser);
+	public UserViewData(WTUser wtUser) throws Exception {
+		People user = OrgHelper.manager.getUser(wtUser.getName());
+		setWtuser(wtUser);
+		setWoid(wtUser.getPersistInfo().getObjectIdentifier().getStringValue());
+		setOid(user.getPersistInfo().getObjectIdentifier().getStringValue());
+		setName(user.getName());
+		setId(user.getId());
+		setEmail(StringUtils.replaceToValue(user.getEmail()));
+		setDuty(StringUtils.replaceToValue(user.getDuty(), "지정안됨"));
+		if (user.getDepartment() != null) {
+			setDepartmentName(user.getDepartment().getName());
+		}
+		setCreatedDate(CommonUtils.getPersistableTime(user.getCreateTimestamp()));
+		setResign(user.getResign() == true ? "퇴사" : "재직중");
 	}
 }

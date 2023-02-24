@@ -451,7 +451,8 @@ String name = (String) request.getAttribute("name");
 			noDataMessage : "검색 결과가 없습니다.",
 			enableFilter : true,
 			fixedColumnCount : 3,
-			editableOnFixedCell : true
+			editableOnFixedCell : true,
+			selectionMode : "multipleCells"
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		loadGridData();
@@ -518,7 +519,6 @@ String name = (String) request.getAttribute("name");
 		call(url, params, function(data) {
 			if (data.list.length == 0) {
 				last = true;
-				alert("마지막 데이터 입니다.");
 				AUIGrid.removeAjaxLoader(myGridID);
 			} else {
 				AUIGrid.appendData(myGridID, data.list);
@@ -594,7 +594,7 @@ String name = (String) request.getAttribute("name");
 		$("#addRowBtn").click(function() {
 			let item = new Object();
 			item.createdDate = new Date();
-			item.creator = "<%=name %>";
+			item.creator = "<%=name%>";
 			AUIGrid.addRow(myGridID, item, "first");
 		})
 

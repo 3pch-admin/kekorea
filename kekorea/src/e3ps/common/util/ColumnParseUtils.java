@@ -8,13 +8,16 @@ import e3ps.admin.sheetvariable.Category;
 import e3ps.admin.sheetvariable.CategoryItemsLink;
 import e3ps.admin.sheetvariable.beans.CategoryColumnData;
 import e3ps.admin.spec.Spec;
-import e3ps.admin.spec.beans.SpecColumnData;
 import e3ps.doc.column.DocumentColumnData;
+import e3ps.epm.beans.EpmColumnData;
 import e3ps.korea.cip.Cip;
 import e3ps.korea.cip.beans.CipColumnData;
+import e3ps.part.kePart.KePart;
+import e3ps.part.kePart.beans.KePartColumnData;
 import e3ps.project.Project;
 import e3ps.project.beans.ProjectColumnData;
 import wt.doc.WTDocument;
+import wt.epm.EPMDocument;
 import wt.fc.PagingQueryResult;
 import wt.fc.Persistable;
 
@@ -50,9 +53,25 @@ public class ColumnParseUtils {
 			} else if (per instanceof Cip) {
 				CipColumnData data = parse((Cip) per);
 				list.add(data);
+				// kepart
+			} else if (per instanceof KePart) {
+				KePartColumnData data = parse((KePart) per);
+				list.add(data);
+				// epm
+			} else if (per instanceof EPMDocument) {
+				EpmColumnData data = parse((EPMDocument) per);
+				list.add(data);
 			}
 		}
 		return list;
+	}
+
+	private static EpmColumnData parse(EPMDocument per) throws Exception {
+		return new EpmColumnData(per);
+	}
+
+	private static KePartColumnData parse(KePart per) throws Exception {
+		return new KePartColumnData(per);
 	}
 
 	private static CategoryColumnData parse(Category per, CategoryItemsLink link) throws Exception {

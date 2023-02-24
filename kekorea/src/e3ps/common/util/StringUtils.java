@@ -4,9 +4,6 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
-import wt.query.ColumnExpression;
-import wt.query.ConstantExpression;
-
 /**
  * @author jhkim
  */
@@ -166,76 +163,6 @@ public class StringUtils {
 		return bool;
 	}
 
-	/**
-	 * @param query : query 문
-	 * @return boolean
-	 *         <p>
-	 *         query 문 앞뒤로 * 있을 경우 true<br>
-	 *         그외 false
-	 *         </p>
-	 */
-//	private static boolean isAsterisk(String query) {
-//		boolean isAsterisk = false;
-//
-//		String start = query.substring(0, 1);
-//		if ("*".equalsIgnoreCase(start)) {
-//			isAsterisk = true;
-//		}
-//
-//		String end = query.substring(query.length() - 1);
-//		if ("*".equalsIgnoreCase(end)) {
-//			isAsterisk = true;
-//		}
-//
-//		return isAsterisk;
-//	}
-
-	/**
-	 * 
-	 * @param query : query 문
-	 * @return ColumnExpression
-	 *         <p>
-	 *         query 문에 * 있을 경우 % 변경 및 toUpperCase 처리(대문자)
-	 *         </p>
-	 */
-	public static ColumnExpression getUpperColumnExpression(String query) {
-		ColumnExpression ce = null;
-
-//		 StringBuilder builder = new StringBuilder(query);
-//		 boolean isAsterisk = isAsterisk(query);
-//		 if (isAsterisk) {
-//			 builder.setCharAt(0, '%');
-//			 builder.setCharAt(query.length() - 1, '%');
-//			 ce = ConstantExpression.newExpression(builder.toString().toUpperCase());
-//		 } else {
-		ce = ConstantExpression.newExpression("%" + query.toUpperCase() + "%");
-//		 }
-		return ce;
-	}
-
-	/**
-	 * 
-	 * @param query : query 문
-	 * @return ColumnExpression
-	 *         <p>
-	 *         query 문에 * 있을 경우 % 변경 및 toLowerCase 처리(소문자)
-	 *         </p>
-	 */
-	public static ColumnExpression getLowerColumnExpression(String query) {
-		ColumnExpression ce = null;
-
-//		 StringBuilder builder = new StringBuilder(query);
-//		 boolean isAsterisk = isAsterisk(query);
-//		 if (isAsterisk) {
-//			 builder.setCharAt(0, '%');
-//			 builder.setCharAt(query.length() - 1, '%');
-//			 ce = ConstantExpression.newExpression(builder.toString().toLowerCase());
-//		 } else {
-		ce = ConstantExpression.newExpression("%" + query.toLowerCase() + "%");
-//		 }
-		return ce;
-	}
-
 	public static String numberFormat(String param, String format) {
 		if (param.indexOf(",") > -1) {
 			param = param.replaceAll(",", "");
@@ -272,5 +199,27 @@ public class StringUtils {
 			return defaultStr;
 		else
 			return str.trim();
+	}
+
+	public static int parseInt(String value) {
+		return parseInt(value, 0);
+	}
+
+	public static int parseInt(String value, int defaultValue) {
+		if (isNull(value)) {
+			return defaultValue;
+		}
+		return Integer.parseInt(value);
+	}
+
+	public static long parseLong(String value) {
+		return parseLong(value, 0);
+	}
+
+	public static long parseLong(String value, long defaultValue) {
+		if (isNull(value)) {
+			return defaultValue;
+		}
+		return Long.parseLong(value);
 	}
 }

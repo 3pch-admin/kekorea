@@ -50,7 +50,9 @@ public class ProjectController extends BaseController {
 		ArrayList<CommonCode> customers = CommonCodeHelper.manager.getArrayCodeList("CUSTOMER");
 		ArrayList<CommonCode> projectTypes = CommonCodeHelper.manager.getArrayCodeList("PROJECT_TYPE");
 		ArrayList<CommonCode> maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
+		ArrayList<HashMap<String, Object>> list = TemplateHelper.manager.getTemplateArrayMap();
 
+		model.addObject("list", list);
 		model.addObject("customers", customers);
 		model.addObject("projectTypes", projectTypes);
 		model.addObject("maks", maks);

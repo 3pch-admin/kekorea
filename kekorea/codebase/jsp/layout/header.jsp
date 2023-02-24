@@ -1,11 +1,11 @@
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="e3ps.org.beans.UserData"%>
+<%@page import="e3ps.org.beans.UserViewData"%>
 <%@page import="wt.session.SessionHelper"%>
 <%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-UserData data = (UserData) request.getAttribute("data");
+UserViewData data = (UserViewData) request.getAttribute("data");
 %>
 <nav class="navbar-default navbar-static-side" role="navigation">
 	<div class="sidebar-collapse">
@@ -41,79 +41,54 @@ UserData data = (UserData) request.getAttribute("data");
 			<li>
 				<a href="#">
 					<i class="fa fa-envelope"></i>
-					<span class="nav-label">나의업무</span>
+					<span class="nav-label">나의 업무</span>
 					<span class="fa arrow"></span>
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<!-- 						<a href="graph_flot.html">공지사항</a> -->
 						<a onclick="moveToPage(this, '/approval/listNotice');">공지사항</a>
 					</li>
 					<li>
 						<a href="graph_morris.html">나의작번</a>
 					</li>
 					<li>
-						<!-- 						<a href="graph_rickshaw.html"> -->
-						<!-- 							검토함 -->
-						<!-- 							<span class="label label-info float-right">62</span> -->
-						<!-- 						</a> -->
 						<a onclick="moveToPage(this, '/approval/listAgree');">
 							검토함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-						<!-- 						<a href="graph_chartjs.html"> -->
-						<!-- 							결재함 -->
-						<!-- 							<span class="label label-info float-right">62</span> -->
-						<!-- 						</a> -->
 						<a onclick="moveToPage(this, '/approval/listApproval');">
 							결재함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-						<!-- 						<a href="graph_chartist.html"> -->
-						<!-- 							수신함 -->
-						<!-- 							<span class="label label-info float-right">62</span> -->
-						<!-- 						</a> -->
 						<a onclick="moveToPage(this, '/approval/listReceive');">
 							수신함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-						<!-- 						<a href="c3.html"> -->
-						<!-- 							진행함 -->
-						<!-- 							<span class="label label-info float-right">62</span> -->
-						<!-- 						</a> -->
 						<a onclick="moveToPage(this, '/approval/listIng');">
 							진행함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-						<!-- 						<a href="graph_peity.html"> -->
-						<!-- 							완료함 -->
-						<!-- 							<span class="label label-info float-right">62</span> -->
-						<!-- 						</a> -->
 						<a onclick="moveToPage(this, '/approval/listComplete');">
 							완료함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-						<!-- 						<a href="graph_sparkline.html"> -->
-						<!-- 							반려함 -->
-						<!-- 							<span class="label label-info float-right">62</span> -->
-						<!-- 						</a> -->
 						<a onclick="moveToPage(this, '/approval/listReturn');">
 							반려함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/org/viewOrg');">조직도</a>
+						<a onclick="moveToPage(this, '/org/organization', '나의 업무 > 조직도');">조직도</a>
 					</li>
 				</ul>
 			</li>
@@ -146,7 +121,7 @@ UserData data = (UserData) request.getAttribute("data");
 						<a onclick="moveToPage(this, '/numberRule/list');">KEK 도번 조회</a>
 					</li>
 					<li>
-						<a href="form_basic.html">KEK 도면 조회</a>
+						<a onclick="moveToPage(this, '/epm/list', '도면 관리 > KEK 도면 조회');">KEK 도면 조회</a>
 					</li>
 					<li>
 						<a href="form_advanced.html">라이브러리 조회</a>
@@ -192,13 +167,13 @@ UserData data = (UserData) request.getAttribute("data");
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/kepart/list');">KE 부품 조회</a>
-					</li>					
+					</li>
 					<!-- 					<li> -->
 					<!-- 						<a href="project_detail.html">UNIT BOM 등록</a> -->
 					<!-- 					</li> -->
-<!-- 					<li> -->
-<!-- 						<a href="activity_stream.html">EPLAN 결재</a> -->
-<!-- 					</li> -->
+					<!-- 					<li> -->
+					<!-- 						<a href="activity_stream.html">EPLAN 결재</a> -->
+					<!-- 					</li> -->
 				</ul>
 			</li>
 			<li>

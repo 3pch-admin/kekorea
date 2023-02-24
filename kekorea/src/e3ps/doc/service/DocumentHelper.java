@@ -8,13 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.PartListMaster;
 import e3ps.common.content.Contents;
 import e3ps.common.content.ContentsPersistablesLink;
 import e3ps.common.content.column.ContentsColumnData;
-import e3ps.common.util.CommonUtils;
-import e3ps.common.util.DateUtils;
-import e3ps.common.util.FolderUtils;
-import e3ps.common.util.MessageHelper;
+import e3ps.common.util.CoUts;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.SearchUtils;
 import e3ps.common.util.StringUtils;
@@ -27,13 +27,11 @@ import e3ps.doc.column.DocumentColumnData;
 import e3ps.doc.column.OldOutputColumnData;
 import e3ps.doc.column.OutputColumnData;
 import e3ps.doc.column.RequestDocumentColumnData;
-import e3ps.org.People;
-import e3ps.partlist.PartListMaster;
-import e3ps.project.DocumentOutputLink;
-import e3ps.project.Output;
-import e3ps.project.Project;
-import e3ps.project.ProjectOutputLink;
-import wt.clients.folder.FolderTaskLogic;
+import e3ps.org.Peo.Output;
+import e3ps.project.
+import e3ps.project.output.DocumentOutputLink;
+import e3ps.project.output.Output;
+import e3ps.project.output.ProjectOutputLink;derTaskLogic;
 import wt.doc.WTDocument;
 import wt.doc.WTDocumentMaster;
 import wt.fc.PagingQueryResult;
@@ -60,7 +58,7 @@ import wt.vc.wip.WorkInProgressHelper;
  * @since 2018-11-28
  * @version 1.0
  */
-public class DocumentHelper implements MessageHelper {
+public class DocumentHelper {
 
 	public static final String[] DOC_STATE_DISPLAY = new String[] { "작업 중", "승인 중", "승인됨", "반려됨" };
 
