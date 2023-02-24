@@ -11,6 +11,13 @@ import wt.util.WTException;
 @RemoteInterface
 public interface OrgService {
 
+	/**
+	 * AUIGrid 리스트 저장
+	 * @param params : AUIGrid 데이터
+	 * @throws Exception
+	 */
+	public abstract void save(Map<String, Object> params) throws Exception;
+
 	public abstract void inspectUser(Department department) throws WTException;
 
 	public abstract People createUser(WTUser sessionUser) throws WTException;

@@ -46,7 +46,7 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/approval/listNotice');">공지사항</a>
+						<a onclick="moveToPage(this, '/notice/list', '나의 업무 > 공지사항');">공지사항</a>
 					</li>
 					<li>
 						<a href="graph_morris.html">나의작번</a>
@@ -115,7 +115,7 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/jDrawing/list');">KE 도면 조회</a>
+						<a onclick="moveToPage(this, '/keDrawing/list');">KE 도면 조회</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/numberRule/list');">KEK 도번 조회</a>

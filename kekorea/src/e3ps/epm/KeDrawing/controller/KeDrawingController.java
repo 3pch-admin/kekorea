@@ -1,9 +1,8 @@
-package e3ps.epm.jDrawing.controller;
+package e3ps.epm.KeDrawing.controller;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,16 +11,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.controller.BaseController;
-import e3ps.epm.jDrawing.service.JDrawingHelper;
-import e3ps.epm.numberRule.service.NumberRuleHelper;
+import e3ps.epm.KeDrawing.service.KeDrawingHelper;
 import wt.org.WTUser;
 
 @Controller
-@RequestMapping(value = "/jDrawing/**")
-public class JDrawingController extends BaseController {
+@RequestMapping(value = "/keDrawing/**")
+public class KeDrawingController extends BaseController {
 
 	@Description(value = "KE 리스트 페이지")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -39,7 +36,7 @@ public class JDrawingController extends BaseController {
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = JDrawingHelper.manager.list(params);
+			result = KeDrawingHelper.manager.list(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -55,7 +52,7 @@ public class JDrawingController extends BaseController {
 	public Map<String, Object> create(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			JDrawingHelper.service.create(params);
+			KeDrawingHelper.service.create(params);
 			result.put("msg", SAVE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

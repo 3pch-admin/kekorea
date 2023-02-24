@@ -655,4 +655,10 @@ public class StandardOrgService extends StandardManager implements OrgService {
 				trs.rollback();
 		}
 	}
+
+	@Override
+	public void save(Map<String, Object> params) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -16,8 +16,8 @@ import wt.fc.WTObject;
 import wt.ownership.Ownable;
 import wt.util.WTException;
 
-@GenAsPersistable(superClass = WTObject.class, interfaces = { FormatContentHolder.class, ContentHolder.class,
-		Ownable.class, PolicyAccessControlled.class },
+@GenAsPersistable(superClass = WTObject.class, interfaces = { FormatContentHolder.class, Ownable.class,
+		PolicyAccessControlled.class },
 
 		properties = {
 

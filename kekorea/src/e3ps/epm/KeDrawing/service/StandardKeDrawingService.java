@@ -1,28 +1,23 @@
-package e3ps.epm.jDrawing.service;
+package e3ps.epm.KeDrawing.service;
 
 import java.util.ArrayList;
 import java.util.Map;
 
-import e3ps.admin.commonCode.CommonCode;
-import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
-import e3ps.epm.jDrawing.JDrawing;
-import e3ps.epm.jDrawing.JDrawingMaster;
+import e3ps.epm.KeDrawing.KeDrawing;
+import e3ps.epm.KeDrawing.KeDrawingMaster;
 import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.fc.PersistenceHelper;
-import wt.fc.QueryResult;
-import wt.ownership.Ownership;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
-import wt.session.SessionHelper;
 import wt.util.WTException;
 
-public class StandardJDrawingService extends StandardManager implements JDrawingService {
+public class StandardKeDrawingService extends StandardManager implements KeDrawingService {
 
-	public static StandardJDrawingService newStandardJDrawingService() throws WTException {
-		StandardJDrawingService instance = new StandardJDrawingService();
+	public static StandardKeDrawingService newStandardKeDrawingService() throws WTException {
+		StandardKeDrawingService instance = new StandardKeDrawingService();
 		instance.initialize();
 		return instance;
 	}
@@ -43,32 +38,32 @@ public class StandardJDrawingService extends StandardManager implements JDrawing
 				String lot = (String) addRow.get("lot");
 				String primaryPath = (String) addRow.get("primaryPath");
 
-				JDrawingMaster master = JDrawingMaster.newJDrawingMaster();
-				master.setNumber(number);
+				KeDrawingMaster master = KeDrawingMaster.newKeDrawingMaster();
+				master.setKeNumber(number);
 				master.setName(name);
 				master.setOwnership(CommonUtils.sessionOwner());
-				master = (JDrawingMaster) PersistenceHelper.manager.save(master);
+				master = (KeDrawingMaster) PersistenceHelper.manager.save(master);
 
-				JDrawing jDrawing = JDrawing.newJDrawing();
-				jDrawing.setLot(lot);
-				jDrawing.setOwnership(CommonUtils.sessionOwner());
-				jDrawing.setVersion(version);
-				jDrawing.setMaster(master);
-				jDrawing.setLatest(true);
-				PersistenceHelper.manager.save(jDrawing);
+				KeDrawing keDrawing = KeDrawing.newKeDrawing();
+				keDrawing.setLot(lot);
+				keDrawing.setOwnership(CommonUtils.sessionOwner());
+				keDrawing.setVersion(version);
+				keDrawing.setMaster(master);
+				keDrawing.setLatest(true);
+				PersistenceHelper.manager.save(keDrawing);
 
-				ApplicationData dd = ApplicationData.newApplicationData(jDrawing);
+				ApplicationData dd = ApplicationData.newApplicationData(keDrawing);
 				dd.setRole(ContentRoleType.PRIMARY);
-				dd = (ApplicationData) ContentServerHelper.service.updateContent(jDrawing, dd, primaryPath);
+				dd = (ApplicationData) ContentServerHelper.service.updateContent(keDrawing, dd, primaryPath);
 			}
 
 			for (Map<String, Object> removeRow : removeRows) {
 				String oid = (String) removeRow.get("oid");
-				JDrawing jDrawing = (JDrawing) CommonUtils.getObject(oid);
-				boolean isLast = JDrawingHelper.manager.isLast(jDrawing.getMaster());
+				KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
+				boolean isLast = KeDrawingHelper.manager.isLast(keDrawing.getMaster());
 				if (isLast) {
-					PersistenceHelper.manager.delete(jDrawing.getMaster());
-					PersistenceHelper.manager.delete(jDrawing);
+					PersistenceHelper.manager.delete(keDrawing.getMaster());
+					PersistenceHelper.manager.delete(keDrawing);
 				} else {
 					// 이전 버전을 최신 버전으로 만드는 작업..
 				}
@@ -76,9 +71,8 @@ public class StandardJDrawingService extends StandardManager implements JDrawing
 
 			for (Map<String, Object> editRow : editRows) {
 				String oid = (String) editRow.get("oid");
-				JDrawing jDrawing = (JDrawing) CommonUtils.getObject(oid);
-
-				PersistenceHelper.manager.modify(jDrawing);
+				KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
+				PersistenceHelper.manager.modify(keDrawing);
 			}
 
 			trs.commit();
