@@ -125,6 +125,18 @@ function form(params, table) {
 		params[key] = value;
 	})
 
+	let radio = $("." + table + " input[type=radio]");
+	$.each(radio, function(idx) {
+		if (radio.eq(idx).prop("checked")) {
+			let key = radio.eq(idx).attr("name");
+			if (key === undefined) {
+				return true;
+			}
+			let value = radio.eq(idx).val();
+			params[key] = value;
+		}
+	})
+
 	let textarea = $("." + table + " textarea");
 	$.each(textarea, function(idx) {
 		let key = textarea.eq(idx).attr("name");
@@ -169,3 +181,42 @@ function rangeDate(name, startName) {
 	}
 	$("input[name=" + name + "]").bindTwinDate(config);
 }
+
+/**
+ * AUIGrid 칼럼 저장 
+ */
+function saveColumnLayout(gridID) {
+	let columns = AUIGrid.getColumnLayout(myGridID);
+	let columnJson = JSON.stringify(columns);
+	localStorage.setItem("auigridLayout", columnJson);
+	alert("현재 그리드의 상태가 보관되었습니다.\r\n브라우저를 종료하거나 F5 로 갱신했을 때 현재 상태로 그리드가 출력됩니다.");
+}
+
+/**
+ * AUIGrid 컬럼 가져오기
+ */
+function loadColumnLayout() {
+	let columnLayout = null;
+	let column = getLocalStorageValue("auigridLayout");
+	if (column && typeof column != "undefined") {
+		columnLayout = JSON.parse(column);
+		//감춰진 칼럼에 따라 데모 상에 보이는 체크박스 동기화 시킴.
+		//		syncCheckbox(columnLayout);
+	}
+
+	if (!columnLayout) {
+		columnLayout = _layout();
+	}
+	return columnLayout;
+};
+
+/**
+ * 로컬 스토리지 가져오기
+ */
+function getLocalStorageValue(key) {
+	if (typeof (Storage) != "undefined") {
+		return localStorage.getItem(key);
+	} else {
+		alert("localStorage 를 지원하지 않는 브라우저입니다.");
+	}
+};

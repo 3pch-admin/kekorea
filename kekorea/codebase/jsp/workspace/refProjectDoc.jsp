@@ -11,7 +11,7 @@
 <%@page import="wt.fc.Persistable"%>
 <%@page import="wt.fc.QueryResult"%>
 <%@page import="e3ps.approval.beans.ApprovalLineViewData"%>
-<%@page import="e3ps.approval.ApprovalLine"%>
+<%@page import="e3ps.workspace.ApprovalLine"%>
 <%@page import="wt.fc.ReferenceFactory"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>

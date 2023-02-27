@@ -15,7 +15,9 @@ public class UserColumnData {
 	private String id;
 	private String email;
 	private String duty;
-	private String departmentName;
+	private String department_oid;
+	private String department_name;
+	private String department_code;
 	private Timestamp createdDate;
 	private boolean resign;
 
@@ -30,7 +32,9 @@ public class UserColumnData {
 		setEmail(people.getEmail());
 		setDuty(people.getDuty());
 		if (people.getDepartment() != null) {
-			setDepartmentName(people.getDepartment().getName());
+			setDepartment_oid(people.getDepartment().getPersistInfo().getObjectIdentifier().getStringValue());
+			setDepartment_name(people.getDepartment().getName());
+			setDepartment_code(people.getDepartment().getCode());
 		}
 		setCreatedDate(people.getCreateTimestamp());
 		setResign(people.getResign());

@@ -16,9 +16,9 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import e3ps.approval.ApprovalLine;
-import e3ps.approval.ApprovalMaster;
 import e3ps.approval.service.ApprovalHelper;
+import e3ps.workspace.ApprovalLine;
+import e3ps.workspace.ApprovalMaster;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.fc.Persistable;

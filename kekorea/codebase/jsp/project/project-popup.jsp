@@ -1,3 +1,4 @@
+<%@page import="java.util.HashMap"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.admin.commonCode.CommonCodeType"%>
@@ -11,6 +12,7 @@ ArrayList<CommonCode> customers = (ArrayList<CommonCode>) request.getAttribute("
 ArrayList<CommonCode> projectTypes = (ArrayList<CommonCode>) request.getAttribute("projectTypes");
 ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks");
 ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("details");
+ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) request.getAttribute("list");
 String method = (String) request.getAttribute("method");
 %>
 <!-- auigrid -->
@@ -139,9 +141,24 @@ String method = (String) request.getAttribute("method");
 				<option value="">선택</option>
 			</select>
 		</td>
+		<th>작번 템플릿</th>
+		<td>
+			<select name="template" id="template" class="AXSelect wid200">
+				<option value="">선택</option>
+				<%
+				for (HashMap<String, Object> map : list) {
+					String key = (String) map.get("value");
+					String value = (String) map.get(key);
+				%>
+				<option value="<%=key%>"><%=value%></option>
+				<%
+				}
+				%>
+			</select>
+		</td>
 		<th>작업내용</th>
-		<td colspan="3">
-			<input type="text" name="description" class="AXInput wid500">
+		<td>
+			<input type="text" name="description" class="AXInput wid200">
 		</td>
 	</tr>
 </table>
@@ -150,11 +167,11 @@ String method = (String) request.getAttribute("method");
 	<tr>
 		<td class="left">
 			<input type="button" value="추가" class="blueBtn" id="addBtn" title="추가">
-			<input type="button" value="닫기" class="" id="closeBtn" title="닫기">
 		</td>
 		<td class="right">
 			<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
 			<input type="button" value="초기화" class="" id="initGrid" title="초기화">
+			<input type="button" value="닫기" class="" id="closeBtn" title="닫기">
 		</td>
 	</tr>
 </table>
@@ -432,16 +449,17 @@ String method = (String) request.getAttribute("method");
 		selectBox("install");
 		selectBox("projectType");
 		selectBox("kekState");
+		selectBox("template");
 
 		$("#searchBtn").click(function() {
 			loadGridData();
 		})
 
 		rangeDate("postdate", "predate");
-		
+
 		$("#addBtn").click(function() {
 			let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-			if(checkedItems.length == 0) {
+			if (checkedItems.length == 0) {
 				return;
 			}
 			opener.<%=method%>(checkedItems);
@@ -450,7 +468,7 @@ String method = (String) request.getAttribute("method");
 		$("#closeBtn").click(function() {
 			self.close();
 		})
-		
+
 	}).keypress(function(e) {
 		let keyCode = e.keyCode;
 		if (keyCode == 13) {

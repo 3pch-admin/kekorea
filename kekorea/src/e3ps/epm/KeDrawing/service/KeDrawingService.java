@@ -9,4 +9,6 @@ public interface KeDrawingService {
 
 	public abstract void create(Map<String, Object> params) throws Exception;
 
+	public abstract void revise(Map<String, Object> params) throws Exception;
+
 }

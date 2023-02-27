@@ -1,3 +1,4 @@
+<%@page import="org.json.JSONArray"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.org.service.OrgHelper"%>
@@ -6,6 +7,8 @@
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) request.getAttribute("list");
+JSONArray maks = (JSONArray)request.getAttribute("maks");
+JSONArray departments = new JSONArray(list);
 %>
 <!DOCTYPE html>
 <html>
@@ -89,6 +92,8 @@ ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) r
 </body>
 <script type="text/javascript">
 	let myGridID;
+	let maks = <%=maks%>;
+	let departments = <%=departments%>;
 	const columns = [ {
 		dataField : "name",
 		headerText : "사용자 이름",
@@ -98,14 +103,15 @@ ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) r
 		dataField : "id",
 		headerText : "사용자 아이디",
 		dataType : "string",
-		width : 100
+		width : 100,
+		editable : false
 	}, {
 		dataField : "duty",
 		headerText : "직급",
 		dataType : "string",
 		width : 130
 	}, {
-		dataField : "departmentName",
+		dataField : "department_name",
 		headerText : "부서",
 		dataType : "string",
 		width : 180
@@ -114,7 +120,40 @@ ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) r
 		headerText : "관련막종",
 		dataType : "string",
 		width : 200,
-		style : "left indent10"
+		style : "left indent10",
+		renderer: {
+			type: "IconRenderer",
+			iconWidth: 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+			iconHeight: 16,
+			iconPosition: "aisleRight",
+			iconTableRef: { // icon 값 참조할 테이블 레퍼런스
+				"default": "/Windchill/jsp/asset/AUIGrid/images/list-icon.png" // default
+			},
+			onClick: function (event) {
+				// 아이콘을 클릭하면 수정으로 진입함.
+				AUIGrid.openInputer(event.pid);
+			}
+		},		
+		editRenderer: {
+			type: "DropDownListRenderer",
+			showEditorBtn: false,
+			showEditorBtnOver: false, // 마우스 오버 시 에디터버턴 보이기
+			multipleMode: true, // 다중 선택 모드(기본값 : false)
+			showCheckAll: true, // 다중 선택 모드에서 전체 체크 선택/해제 표시(기본값:false);
+			list: maks,
+			keyField : "key", // key 에 해당되는 필드명
+			valueField : "value", // value 에 해당되는 필드명,			
+		},
+		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
+			let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+			for (let i = 0, len = maks.length; i < len; i++) {
+				if (maks[i]["key"] == value) {
+					retStr = maks[i]["value"];
+					break;
+				}
+			}
+			return retStr == "" ? value : retStr;
+		},		
 	}, {
 		dataField : "email",
 		headerText : "이메일",
@@ -155,6 +194,7 @@ ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) r
 			noDataMessage : "검색 결과가 없습니다.",
 			selectionMode : "multipleCells",
 			enableFilter : true,
+			editable : true
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
@@ -214,9 +254,23 @@ ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) r
 			loadGridData();
 		})
 
+		$("#saveBtn").click(function() {
+			let editRows = AUIGrid.getEditedRowItems(myGridID);
+			let params = new Object();
+			let url = getCallUrl("/org/save");
+			params.editRows = editRows;
+			parent.openLayer();
+			call(url, params, function(data) {
+				alert(data.msg);
+				if (data.result) {
+					loadGridData();
+				}
+			}, "POST");
+		})
+		
+		
 	}).keypress(function(e) {
 		let keyCode = e.keyCode;
-		alert(keyCode);
 		if (keyCode == 13) {
 			loadGridData();
 		}

@@ -10,17 +10,6 @@ if (dept != null) {
 	deptName = dept.getName();
 }
 %>
-<script type="text/javascript">
-	$(function() {
-
-		selectBox("engType");
-
-		$("#closeBtn").click(function() {
-			self.close();
-		})
-	})
-</script>
-<!-- create header title -->
 <%@include file="/jsp/include/auigrid.jsp"%>
 <table class="btn_table">
 	<tr>
@@ -250,8 +239,14 @@ if (dept != null) {
 							}
 						}, "POST");
 					})
+
+					selectBox("engType");
+
+					$("#closeBtn").click(function() {
+						self.close();
+					})
 				})
-				
+
 				$(window).resize(function() {
 					AUIGrid.resize(tbomGridID);
 				})

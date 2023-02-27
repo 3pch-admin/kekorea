@@ -52,37 +52,37 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 						<a href="graph_morris.html">나의작번</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/approval/listAgree');">
+						<a onclick="moveToPage(this, '/workspace/agree', '나의 업무 > 검토함');">
 							검토함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/approval/listApproval');">
+						<a onclick="moveToPage(this, '/workspace/approval', '나의 업무 > 결재함');">
 							결재함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/approval/listReceive');">
+						<a onclick="moveToPage(this, '/workspace/receive', '나의 업무 > 수신함');">
 							수신함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/approval/listIng');">
+						<a onclick="moveToPage(this, '/workspace/progress', '나의 업무 > 진행함');">
 							진행함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/approval/listComplete');">
+						<a onclick="moveToPage(this, '/workspace/complete', '나의 업무 > 완료함');">
 							완료함
 							<span class="label label-info float-right">62</span>
 						</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/approval/listReturn');">
+						<a onclick="moveToPage(this, '/workspace/reject', '나의 업무 > 반려함');">
 							반려함
 							<span class="label label-info float-right">62</span>
 						</a>
@@ -115,7 +115,7 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/keDrawing/list');">KE 도면 조회</a>
+						<a onclick="moveToPage(this, '/keDrawing/list', '도면 관리 > KE 도면 조회');">KE 도면 조회</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/numberRule/list');">KEK 도번 조회</a>

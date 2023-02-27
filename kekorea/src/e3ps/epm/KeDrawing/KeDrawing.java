@@ -14,10 +14,8 @@ import wt.ownership.Ownable;
 import wt.util.WTException;
 
 @GenAsPersistable(superClass = Item.class, interfaces = { Ownable.class, FormatContentHolder.class },
-		// 수정자...
-		properties = {
 
-				@GeneratedProperty(name = "lot", type = String.class, javaDoc = "LOT"),
+		properties = {
 
 				@GeneratedProperty(name = "version", type = Integer.class, javaDoc = "버전", constraints = @PropertyConstraints(required = true)),
 

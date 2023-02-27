@@ -16,8 +16,6 @@ import java.util.Map;
 
 import com.ptc.wvs.server.util.PublishUtils;
 
-import e3ps.approval.ApprovalLine;
-import e3ps.approval.ApprovalMaster;
 import e3ps.approval.beans.ApprovalLineViewData;
 import e3ps.approval.beans.ApprovalMasterViewData;
 import e3ps.approval.service.ApprovalHelper;
@@ -42,6 +40,8 @@ import e3ps.partlist.service.PartListMasterHelper;
 import e3ps.project.DocumentOutputLink;
 import e3ps.project.Output;
 import e3ps.project.Project;
+import e3ps.workspace.ApprovalLine;
+import e3ps.workspace.ApprovalMaster;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
 import wt.content.ContentItem;

@@ -1,7 +1,5 @@
 package e3ps.org;
 
-import java.sql.Timestamp;
-
 import com.ptc.windchill.annotations.metadata.Cardinality;
 import com.ptc.windchill.annotations.metadata.ColumnProperties;
 import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
@@ -11,12 +9,12 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
-import wt.content.ContentHolder;
+import wt.content.FormatContentHolder;
 import wt.fc.Item;
 import wt.org.WTUser;
 import wt.util.WTException;
 
-@GenAsPersistable(superClass = Item.class, interfaces = { ContentHolder.class },
+@GenAsPersistable(superClass = Item.class, interfaces = { FormatContentHolder.class },
 
 		properties = {
 				@GeneratedProperty(name = "name", type = String.class, javaDoc = "이름", constraints = @PropertyConstraints(required = true)),

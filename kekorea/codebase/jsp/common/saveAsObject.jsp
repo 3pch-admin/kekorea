@@ -4,7 +4,7 @@
 <%@page import="wt.enterprise.RevisionControlled"%>
 <%@page import="wt.util.SortedEnumeration"%>
 <%@page import="e3ps.approval.beans.ApprovalLineViewData"%>
-<%@page import="e3ps.approval.ApprovalLine"%>
+<%@page import="e3ps.workspace.ApprovalLine"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.approval.beans.ApprovalMasterViewData"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>

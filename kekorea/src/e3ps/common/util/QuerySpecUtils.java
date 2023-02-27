@@ -131,11 +131,30 @@ public class QuerySpecUtils {
 		query.appendOrderBy(orderBy, new int[] { idx });
 	}
 
-	public static void toBoolean(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
+	public static void toBoolean(QuerySpec query, int idx, Class clazz, String column, boolean value) throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
-		SearchCondition sc = new SearchCondition(clazz, column, value.toUpperCase());
+		SearchCondition sc = null;
+		if (value) {
+			sc = new SearchCondition(clazz, column, SearchCondition.IS_TRUE);
+		} else {
+			sc = new SearchCondition(clazz, column, SearchCondition.IS_FALSE);
+		}
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	public static void toBooleanOr(QuerySpec query, int idx, Class clazz, String column, boolean value)
+			throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendOr();
+		}
+		SearchCondition sc = null;
+		if (value) {
+			sc = new SearchCondition(clazz, column, SearchCondition.IS_TRUE);
+		} else {
+			sc = new SearchCondition(clazz, column, SearchCondition.IS_FALSE);
+		}
 		query.appendWhere(sc, new int[] { idx });
 	}
 
@@ -146,6 +165,24 @@ public class QuerySpecUtils {
 		}
 		SearchCondition sc = new SearchCondition(left, leftKey, right, rightKey);
 		query.appendWhere(sc, new int[] { leftIdx, rightIdx });
+	}
+
+	public static void toTimeGreaterEqualsThan(QuerySpec query, int idx, Class clazz, String column, Timestamp time)
+			throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+		SearchCondition sc = new SearchCondition(clazz, column, SearchCondition.GREATER_THAN_OR_EQUAL, time);
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	public static void toTimeLessEqualsThan(QuerySpec query, int idx, Class clazz, String column, Timestamp time)
+			throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+		SearchCondition sc = new SearchCondition(clazz, column, SearchCondition.LESS_THAN_OR_EQUAL, time);
+		query.appendWhere(sc, new int[] { idx });
 	}
 
 	public static void toTimeGreaterThan(QuerySpec query, int idx, Class clazz, String column, Timestamp time)

@@ -14,7 +14,7 @@
 		</td>
 		<td class="right">
 			<input type="button" value="삭제" class="orangeBtn" id="deleteRowBtn" title="삭제">
-			<input type="button" value="개점" id="createBtn" title="개정">
+			<input type="button" value="개정" id="createBtn" title="개정">
 			<input type="button" value="닫기" id="closeBtn" title="닫기" class="blueBtn">
 		</td>
 	</tr>

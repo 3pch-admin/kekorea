@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.epm.KeDrawing.KeDrawing;
 import e3ps.epm.KeDrawing.KeDrawingMaster;
 import wt.content.ApplicationData;
+import wt.content.ContentHelper;
+import wt.content.ContentHolder;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
 import wt.util.WTException;
@@ -35,17 +39,17 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				String name = (String) addRow.get("name");
 				String number = (String) addRow.get("number");
 				int version = (int) addRow.get("version");
-				String lot = (String) addRow.get("lot");
+				int lotNo = (int) addRow.get("lotNo");
 				String primaryPath = (String) addRow.get("primaryPath");
 
 				KeDrawingMaster master = KeDrawingMaster.newKeDrawingMaster();
 				master.setKeNumber(number);
 				master.setName(name);
+				master.setLotNo(lotNo);
 				master.setOwnership(CommonUtils.sessionOwner());
 				master = (KeDrawingMaster) PersistenceHelper.manager.save(master);
 
 				KeDrawing keDrawing = KeDrawing.newKeDrawing();
-				keDrawing.setLot(lot);
 				keDrawing.setOwnership(CommonUtils.sessionOwner());
 				keDrawing.setVersion(version);
 				keDrawing.setMaster(master);
@@ -63,16 +67,77 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				boolean isLast = KeDrawingHelper.manager.isLast(keDrawing.getMaster());
 				if (isLast) {
 					PersistenceHelper.manager.delete(keDrawing.getMaster());
-					PersistenceHelper.manager.delete(keDrawing);
 				} else {
-					// 이전 버전을 최신 버전으로 만드는 작업..
+					KeDrawing pre = KeDrawingHelper.manager.getPreKeDrawing(keDrawing);
+					pre.setLatest(true);
+					PersistenceHelper.manager.modify(pre);
 				}
+				PersistenceHelper.manager.delete(keDrawing);
 			}
 
 			for (Map<String, Object> editRow : editRows) {
 				String oid = (String) editRow.get("oid");
+				String name = (String) editRow.get("name");
+				int lotNo = (int) editRow.get("lotNo");
+				String primaryPath = (String) editRow.get("primaryPath");
 				KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
+				KeDrawingMaster master = keDrawing.getMaster();
+				master.setName(name);
+				master.setLotNo(lotNo);
 				PersistenceHelper.manager.modify(keDrawing);
+
+				if (!StringUtils.isNull(primaryPath)) {
+					QueryResult result = ContentHelper.service.getContentsByRole(keDrawing, ContentRoleType.PRIMARY);
+					if (result.hasMoreElements()) {
+						ApplicationData data = (ApplicationData) result.nextElement();
+						ContentServerHelper.service.deleteContent(keDrawing, data);
+					}
+
+					ApplicationData dd = ApplicationData.newApplicationData(keDrawing);
+					dd.setRole(ContentRoleType.PRIMARY);
+					dd = (ApplicationData) ContentServerHelper.service.updateContent(keDrawing, dd, primaryPath);
+				}
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+
+	}
+
+	@Override
+	public void revise(Map<String, Object> params) throws Exception {
+		ArrayList<Map<String, Object>> addRows = (ArrayList<Map<String, Object>>) params.get("addRows");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			for (Map<String, Object> addRow : addRows) {
+				String oid = (String) addRow.get("oid");
+				int next = (int) addRow.get("next");
+				String primaryPath = (String) addRow.get("primaryPath");
+
+				KeDrawing pre = (KeDrawing) CommonUtils.getObject(oid);
+				pre.setLatest(false);
+				pre = (KeDrawing) PersistenceHelper.manager.modify(pre);
+
+				KeDrawing latest = KeDrawing.newKeDrawing();
+				latest.setLatest(true);
+				latest.setVersion(next);
+				latest.setMaster(pre.getMaster());
+				latest.setOwnership(CommonUtils.sessionOwner());
+				PersistenceHelper.manager.save(latest);
+
+				ApplicationData dd = ApplicationData.newApplicationData(latest);
+				dd.setRole(ContentRoleType.PRIMARY);
+				dd = (ApplicationData) ContentServerHelper.service.updateContent(latest, dd, primaryPath);
 			}
 
 			trs.commit();

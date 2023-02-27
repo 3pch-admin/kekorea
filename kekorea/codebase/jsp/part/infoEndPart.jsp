@@ -1,6 +1,6 @@
 <%@page import="e3ps.part.beans.PartViewData"%>
 <%@page import="e3ps.approval.beans.ApprovalLineViewData"%>
-<%@page import="e3ps.approval.ApprovalLine"%>
+<%@page import="e3ps.workspace.ApprovalLine"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.approval.beans.ApprovalMasterViewData"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>

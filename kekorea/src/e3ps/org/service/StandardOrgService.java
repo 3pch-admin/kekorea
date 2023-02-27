@@ -658,7 +658,25 @@ public class StandardOrgService extends StandardManager implements OrgService {
 
 	@Override
 	public void save(Map<String, Object> params) throws Exception {
-		// TODO Auto-generated method stub
-		
+		ArrayList<Map<String, Object>> editRow = (ArrayList<Map<String, Object>>) params.get("editRows");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			editRow.forEach(map -> {
+				String name = (String)map.get("name"); 
+				ㄴ
+			});
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
 	}
 }

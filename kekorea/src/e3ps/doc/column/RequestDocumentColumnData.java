@@ -2,12 +2,12 @@ package e3ps.doc.column;
 
 import java.util.ArrayList;
 
-import e3ps.approval.ApprovalLine;
-import e3ps.approval.ApprovalMaster;
 import e3ps.approval.service.ApprovalHelper;
 import e3ps.common.util.ContentUtils;
 import e3ps.doc.RequestDocument;
 import e3ps.project.Project;
+import e3ps.workspace.ApprovalLine;
+import e3ps.workspace.ApprovalMaster;
 import wt.session.SessionHelper;
 
 public class RequestDocumentColumnData {

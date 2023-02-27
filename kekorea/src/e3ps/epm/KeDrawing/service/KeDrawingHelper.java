@@ -6,13 +6,16 @@ import java.util.Map;
 
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.epm.KeDrawing.KeDrawing;
 import e3ps.epm.KeDrawing.KeDrawingMaster;
 import e3ps.epm.KeDrawing.beans.KeDrawingColumnData;
+import e3ps.part.kePart.KePart;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.query.QuerySpec;
+import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
 
@@ -24,9 +27,19 @@ public class KeDrawingHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		ArrayList<KeDrawingColumnData> list = new ArrayList<>();
 		Map<String, Object> map = new HashMap<String, Object>();
+		String latest = (String) params.get("latest");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(KeDrawing.class, true);
+
+		if (!StringUtils.isNull(latest) && Boolean.parseBoolean(latest)) {
+			QuerySpecUtils.toBoolean(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
+		} else if (!StringUtils.isNull(latest) && !Boolean.parseBoolean(latest)) {
+			query.appendOpenParen();
+			QuerySpecUtils.toBooleanOr(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
+			QuerySpecUtils.toBooleanOr(query, idx, KeDrawing.class, KeDrawing.LATEST, false);
+			query.appendCloseParen();
+		}
 
 		QuerySpecUtils.toOrderBy(query, idx, KeDrawing.class, KeDrawing.CREATE_TIMESTAMP, true);
 
@@ -56,5 +69,17 @@ public class KeDrawingHelper {
 				master.getPersistInfo().getObjectIdentifier().getId());
 		QueryResult result = PersistenceHelper.manager.find(query);
 		return result.size() == 1 ? true : false;
+	}
+
+	public KeDrawing getPreKeDrawing(KeDrawing keDrawing) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(KeDrawing.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, KeDrawing.class, KeDrawing.VERSION, keDrawing.getVersion() - 1);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			return (KeDrawing) obj[0];
+		}
+		return null;
 	}
 }

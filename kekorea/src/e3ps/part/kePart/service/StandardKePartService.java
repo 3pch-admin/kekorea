@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import e3ps.common.util.CommonUtils;
-import e3ps.epm.KeDrawing.KeDrawing;
-import e3ps.epm.jDrawing.service.JDrawingHelper;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import wt.fc.PersistenceHelper;
@@ -65,14 +63,13 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				boolean isLast = KePartHelper.manager.isLast(kePart.getMaster());
 				if (isLast) {
 					PersistenceHelper.manager.delete(kePart.getMaster());
-					PersistenceHelper.manager.delete(kePart);
 				} else {
 					// 이전 버전을 최신 버전으로 만드는 작업..
 					KePart prePart = KePartHelper.manager.getPreKePart(kePart);
 					prePart.setLatest(true);
 					PersistenceHelper.manager.modify(prePart);
-					PersistenceHelper.manager.delete(kePart);
 				}
+				PersistenceHelper.manager.delete(kePart);
 			}
 
 			for (Map<String, Object> editRow : editRows) {

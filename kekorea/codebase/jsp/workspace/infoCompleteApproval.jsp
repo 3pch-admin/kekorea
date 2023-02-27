@@ -1,7 +1,7 @@
-<%@page import="e3ps.approval.ApprovalLine"%>
+<%@page import="e3ps.workspace.ApprovalLine"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="wt.fc.Persistable"%>
-<%@page import="e3ps.approval.ApprovalContract"%>
+<%@page import="e3ps.workspace.ApprovalContract"%>
 <%@page import="wt.epm.EPMDocument"%>
 <%@page import="e3ps.partlist.PartListMaster"%>
 <%@page import="e3ps.approval.beans.ApprovalMasterViewData"%>

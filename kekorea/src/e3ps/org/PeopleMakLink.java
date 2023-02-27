@@ -1,6 +1,5 @@
 package e3ps.org;
 
-import com.ptc.oslc.windchill.property.JCAProperties.COMMON;
 import com.ptc.windchill.annotations.metadata.GenAsBinaryLink;
 import com.ptc.windchill.annotations.metadata.GeneratedRole;
 
@@ -11,7 +10,7 @@ import wt.fc.ObjectToObjectLink;
 
 		roleA = @GeneratedRole(name = "people", type = People.class),
 
-		roleB = @GeneratedRole(name = "mak", type = COMMON.class)
+		roleB = @GeneratedRole(name = "mak", type = CommonCode.class)
 
 )
 

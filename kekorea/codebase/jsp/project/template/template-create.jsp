@@ -48,8 +48,8 @@ ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) r
 				<option value="">선택</option>
 				<%
 				for (HashMap<String, Object> map : list) {
-					String key = (String) map.get("value");
-					String value = (String) map.get(key);
+					String key = (String) map.get("key");
+					String value = (String) map.get("value");
 				%>
 				<option value="<%=key%>"><%=value %></option>
 				<%

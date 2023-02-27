@@ -109,10 +109,17 @@
 	function createAUIGrid(columnLayout) {
 		const props = {
 			rowIdField : "oid",
-			headerHeight : 30,
-			rowHeight : 30,
-			showRowNumColumn : true,
-			rowNumHeaderText : "번호",
+			// 공통 속성 시작
+			headerHeight : 30, // 헤더높이
+			rowHeight : 30, // 행 높이
+			showRowNumColumn : true, // 번호 행 출력 여부
+			showStateColumn : true, // 상태표시 행 출력 여부
+			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
+			noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
+			enableFilter : true, // 필터 사용 여부
+			showRowCheckColumn : true, // 엑스트라 체크 박스 사용 여부
+			selectionMode : "multiCells",
+			// 공통 속성 끝
 			fillColumnSizeMode : true, // 화면 꽉채우기
 			enableCellMerge : true,
 			cellMergePolicy : "withNull"
@@ -127,7 +134,7 @@
 
 	function loadGridData() {
 		let params = new Object();
-		let url = getCallUrl("/approval/listApproval");
+		let url = getCallUrl("/workspace/approval");
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
@@ -158,7 +165,6 @@
 		call(url, params, function(data) {
 			if (data.list.length == 0) {
 				last = true;
-				alert("마지막 데이터 입니다.");
 				AUIGrid.removeAjaxLoader(myGridID);
 			} else {
 				AUIGrid.appendData(myGridID, data.list);

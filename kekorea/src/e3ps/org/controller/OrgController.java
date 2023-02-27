@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,12 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.controller.BaseController;
-import e3ps.korea.cip.service.CipHelper;
-import e3ps.org.Department;
 import e3ps.org.service.OrgHelper;
-import net.sf.json.JSONArray;
 
 @Controller
 @RequestMapping(value = "/org/**")
@@ -46,13 +45,14 @@ public class OrgController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		ArrayList<HashMap<String, Object>> list = OrgHelper.manager.getDepartmentMap();
+		JSONArray maks = CommonCodeHelper.manager.parseJson("MAK");
+		model.addObject("maks", maks);
 		model.addObject("list", list);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/jsp/org/organization-list.jsp");
 		return model;
 	}
-	
-	
+
 	@Description(value = "사용자 조회 함수")
 	@ResponseBody
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
@@ -67,7 +67,6 @@ public class OrgController extends BaseController {
 		}
 		return result;
 	}
-	
 
 	@Description("조직도 ")
 	@RequestMapping(value = "/viewOrg", method = RequestMethod.POST)

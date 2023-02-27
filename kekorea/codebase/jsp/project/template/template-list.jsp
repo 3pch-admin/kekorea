@@ -72,6 +72,7 @@
 		dataField : "description",
 		headerText : "설명",
 		dataType : "string",
+		style : "left indent10"
 	}, {
 		dataField : "enable",
 		headerText : "사용여부",

@@ -21,7 +21,7 @@ import wt.org.WTUser;
 @RequestMapping(value = "/kepart/**")
 public class KePartController extends BaseController {
 
-	@Description("KePart 조회 페이지")
+	@Description(value = "KePart 조회 페이지")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -31,7 +31,7 @@ public class KePartController extends BaseController {
 		return model;
 	}
 
-	@Description("KePart 조회")
+	@Description(value = "KePart 조회")
 	@ResponseBody
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -46,7 +46,7 @@ public class KePartController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description(value = "KePart 등록 함수")
 	@ResponseBody
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -64,7 +64,7 @@ public class KePartController extends BaseController {
 		return result;
 	}
 
-	@Description("KePartNumber로 KePart 조회")
+	@Description(value = "KePartNumber로 KePart 조회")
 	@ResponseBody
 	@RequestMapping(value = "/get", method = RequestMethod.GET)
 	public Map<String, Object> get(@RequestParam String kePartNumber) throws Exception {

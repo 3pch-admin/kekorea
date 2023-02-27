@@ -16,7 +16,7 @@ public class KeDrawingColumnData {
 	private String name;
 	private String keNumber;
 	private int version;
-	private String lot;
+	private int lotNo;
 	private String creator;
 	private Timestamp createdDate;
 	private String modifier;
@@ -34,7 +34,7 @@ public class KeDrawingColumnData {
 		setName(master.getName());
 		setKeNumber(master.getKeNumber());
 		setVersion(keDrawing.getVersion());
-		setLot(keDrawing.getLot());
+		setLotNo(master.getLotNo());
 		setLatest(keDrawing.getLatest());
 		setCreator(master.getOwnership().getOwner().getFullName());
 		setCreatedDate(master.getCreateTimestamp());

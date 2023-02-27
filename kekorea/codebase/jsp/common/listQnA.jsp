@@ -1,4 +1,4 @@
-<%@page import="e3ps.approval.ObjTypeKeys"%>
+<%@page import="e3ps.workspace.ObjTypeKeys"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.document.column.DocumentColumnKeys"%>
 <%@page import="e3ps.document.service.DocumentHelper"%>

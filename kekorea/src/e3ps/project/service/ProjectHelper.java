@@ -10,7 +10,6 @@ import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
-import e3ps.common.util.MessageHelper;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
@@ -25,7 +24,6 @@ import net.sf.json.JSONObject;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
-import wt.method.RemoteAccess;
 import wt.org.WTUser;
 import wt.query.ClassAttribute;
 import wt.query.OrderBy;
@@ -33,7 +31,7 @@ import wt.query.QuerySpec;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 
-public class ProjectHelper implements MessageHelper, RemoteAccess {
+public class ProjectHelper {
 
 	public final static String PM_ID = "yspark";
 	public final static String SUB_PM_ID = "19940009";

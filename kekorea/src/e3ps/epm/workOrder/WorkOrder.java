@@ -1,7 +1,5 @@
 package e3ps.epm.workOrder;
 
-import org.kie.api.definition.type.PropertyReactive;
-
 import com.ptc.windchill.annotations.metadata.ColumnProperties;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
