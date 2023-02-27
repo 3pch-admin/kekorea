@@ -8,11 +8,8 @@ import java.util.Map;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.korea.cip.Cip;
-import e3ps.korea.cip.beans.CipColumnData;
 import e3ps.org.Department;
 import e3ps.org.People;
-import e3ps.org.beans.UserColumnData;
 import e3ps.workspace.ApprovalUserLine;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -1179,5 +1176,30 @@ public class OrgHelper {
 			list.add(map);
 		}
 		return list;
+	}
+
+	public org.json.JSONArray getDepartmentUser(String code) throws Exception {
+		ArrayList<WTUser> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WTUser.class, true);
+		int idx_d = query.appendClassList(Department.class, false);
+		int idx_p = query.appendClassList(People.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, WTUser.class, People.class, WTAttributeNameIfc.ID_NAME,
+				"wtUserReference.key.id", idx, idx_p);
+		QuerySpecUtils.toInnerJoin(query, People.class, Department.class, "departmentReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx_p, idx_d);
+
+		QuerySpecUtils.toEqualsAnd(query, idx_d, Department.class, Department.CODE, code);
+		QuerySpecUtils.toOrderBy(query, idx, WTUser.class, WTUser.FULL_NAME, false);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WTUser wtUser = (WTUser) obj[0];
+			list.add(wtUser);
+			return new org.json.JSONArray(list);
+		}
+		return new org.json.JSONArray();
 	}
 }

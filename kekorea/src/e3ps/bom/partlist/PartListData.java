@@ -1,7 +1,10 @@
 package e3ps.bom.partlist;
 
+import java.sql.Timestamp;
+
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
+import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import wt.fc.WTObject;
 import wt.util.WTException;
@@ -10,7 +13,7 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "lotNo", type = String.class, javaDoc = "LOT NO"),
+				@GeneratedProperty(name = "lotNo", type = String.class, javaDoc = "LOT NO", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "unitName", type = String.class, javaDoc = "UNIT NAME"),
 
@@ -24,19 +27,19 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "customer", type = String.class, javaDoc = "거래처"),
 
-				@GeneratedProperty(name = "quantity", type = String.class, javaDoc = "수량"),
+				@GeneratedProperty(name = "quantity", type = Integer.class, javaDoc = "수량"),
 
 				@GeneratedProperty(name = "unit", type = String.class, javaDoc = "단위"),
 
-				@GeneratedProperty(name = "price", type = String.class, javaDoc = "단가"),
+				@GeneratedProperty(name = "price", type = Double.class, javaDoc = "단가"),
 
 				@GeneratedProperty(name = "currency", type = String.class, javaDoc = "화폐"),
 
 				@GeneratedProperty(name = "won", type = Double.class, javaDoc = "원화금액"),
 
-				@GeneratedProperty(name = "partListDate", type = String.class, javaDoc = "수배일자"),
+				@GeneratedProperty(name = "partListDate", type = Timestamp.class, javaDoc = "수배일자"),
 
-				@GeneratedProperty(name = "exchangeRate", type = String.class, javaDoc = "환율"),
+				@GeneratedProperty(name = "exchangeRate", type = Double.class, javaDoc = "환율"),
 
 				@GeneratedProperty(name = "referDrawing", type = String.class, javaDoc = "참고도면"),
 

@@ -17,17 +17,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.admin.sheetvariable.service.ItemsHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.controller.BaseController;
+import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
 import e3ps.project.beans.ProjectViewData;
 import e3ps.project.service.ProjectHelper;
-import e3ps.project.task.Task;
-import e3ps.project.task.service.TaskHelper;
-import e3ps.project.template.Template;
-import e3ps.project.template.beans.TemplateViewData;
 import e3ps.project.template.service.TemplateHelper;
 import net.sf.json.JSONArray;
 
@@ -52,6 +48,13 @@ public class ProjectController extends BaseController {
 		ArrayList<CommonCode> maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
 		ArrayList<HashMap<String, Object>> list = TemplateHelper.manager.getTemplateArrayMap();
 
+		org.json.JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
+		org.json.JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
+		org.json.JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
+
+		model.addObject("elecs", elecs);
+		model.addObject("softs", softs);
+		model.addObject("machines", machines);
 		model.addObject("list", list);
 		model.addObject("customers", customers);
 		model.addObject("projectTypes", projectTypes);

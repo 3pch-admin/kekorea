@@ -6,15 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import e3ps.approval.PersistableLineMasterLink;
-import e3ps.approval.beans.ApprovalLineColumnData;
-import e3ps.approval.column.AgreeColumnData;
-import e3ps.approval.column.ApprovalColumnData;
-import e3ps.approval.column.CompleteColumnData;
-import e3ps.approval.column.ErrorReportColumnData;
-import e3ps.approval.column.IngColumnData;
-import e3ps.approval.column.ReceiveColumnData;
-import e3ps.approval.column.ReturnColumnData;
+import com.ptc.wpcfg.engine2.validate.impl.ErrorReport;
+
 import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.common.util.CommonUtils;
@@ -24,14 +17,13 @@ import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.RequestDocument;
-import e3ps.korea.cip.Cip;
-import e3ps.korea.cip.beans.CipColumnData;
 import e3ps.org.People;
 import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
-import e3ps.workspace.ErrorReport;
+import e3ps.workspace.PersistableLineMasterLink;
+import e3ps.workspace.beans.ApprovalLineColumnData;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.fc.PagingQueryResult;
@@ -114,8 +106,7 @@ public class ApprovalHelper {
 	 * ColumnData 구분 상수 값
 	 */
 	private static final String COLUMN_APPROVAL = "COLUMN_APPROVAL";
-	
-	
+
 	public static final ApprovalService service = ServiceFactory.getService(ApprovalService.class);
 	public static final ApprovalHelper manager = new ApprovalHelper();
 
@@ -1671,7 +1662,7 @@ public class ApprovalHelper {
 
 	public Map<String, Object> approval(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-
+		ArrayList<ApprovalLineColumnData> list = new ArrayList<>();
 		boolean isAdmin = CommonUtils.isAdmin();
 		String name = (String) params.get("name");
 		String creatorsOid = (String) params.get("creatorsOid");
@@ -1716,7 +1707,6 @@ public class ApprovalHelper {
 			Timestamp post = DateUtils.convertStartDate(postdate);
 			QuerySpecUtils.toTimeLessEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, post);
 		}
-
 
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, true);
 		PageQueryUtils pager = new PageQueryUtils(params, query);

@@ -1,50 +1,52 @@
 package e3ps.bom.partlist.beans;
 
-import e3ps.common.util.StringUtils;
-import e3ps.partlist.PartListData;
+import java.sql.Timestamp;
 
+import e3ps.bom.partlist.PartListData;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class PartListDataViewData {
 
-	public PartListData data;
-	public String oid;
-	public String lotNo;
-	public String unitName;
-	public String partNo;
-	public String partName;
-	public String standard;
-	public String maker;
-	public String customer;
-	public String quantity;
-	public String unit;
-	public String price;
-	public String currency;
-	public double won;
-	public String partListDate;
-	public String exchangeRate;
-	public String referDrawing;
-	public String classification;
-	public String note;
+	private String oid;
+	private String lotNo;
+	private String unitName;
+	private String partNo;
+	private String partName;
+	private String standard;
+	private String maker;
+	private String customer;
+	private int quantity;
+	private String unit;
+	private double price;
+	private String currency;
+	private double won;
+	private Timestamp partListDate;
+	private double exchangeRate;
+	private String referDrawing;
+	private String classification;
+	private String note;
 
 	public PartListDataViewData(PartListData data) throws Exception {
-		this.data = data;
-		this.oid = data.getPersistInfo().getObjectIdentifier().getStringValue();
-		this.lotNo = StringUtils.replaceToValue(data.getLotNo());
-		this.unitName = StringUtils.replaceToValue(data.getUnitName());
-		this.partNo = StringUtils.replaceToValue(data.getPartNo());
-		this.partName = StringUtils.replaceToValue(data.getPartName());
-		this.standard = StringUtils.replaceToValue(data.getStandard());
-		this.maker = StringUtils.replaceToValue(data.getMaker());
-		this.customer = StringUtils.replaceToValue(data.getCustomer());
-		this.quantity = StringUtils.replaceToValue(data.getQuantity());
-		this.unit = StringUtils.replaceToValue(data.getUnit());
-		this.price = StringUtils.replaceToValue(data.getPrice());
-		this.currency = StringUtils.replaceToValue(data.getCurrency());
-		this.won = data.getWon() != null ? data.getWon() : 0D;
-		this.partListDate = StringUtils.replaceToValue(data.getPartListDate());
-		this.exchangeRate = StringUtils.replaceToValue(data.getExchangeRate());
-		this.referDrawing = StringUtils.replaceToValue(data.getReferDrawing());
-		this.classification = StringUtils.replaceToValue(data.getClassification());
-		this.note = StringUtils.replaceToValue(data.getNote());
-
+		setOid(data.getPersistInfo().getObjectIdentifier().getStringValue());
+		setLotNo(data.getLotNo());
+		setUnitName(data.getUnitName());
+		setPartNo(data.getPartNo());
+		setPartName(data.getPartName());
+		setStandard(data.getStandard());
+		setMaker(data.getMaker());
+		setCustomer(data.getCustomer());
+		setQuantity(data.getQuantity());
+		setUnit(data.getUnit());
+		setPrice(data.getPrice());
+		setCurrency(data.getCurrency());
+		setWon(data.getWon());
+		setPartListDate(data.getPartListDate());
+		setExchangeRate(data.getExchangeRate());
+		setReferDrawing(data.getReferDrawing());
+		setClassification(data.getClassification());
+		setNote(data.getNote());
 	}
 }

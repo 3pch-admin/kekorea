@@ -5,7 +5,6 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="wt.doc.WTDocument"%>
-<%@page import="e3ps.common.util.HtmlUtils"%>
 <%@page import="e3ps.common.util.ColumnUtils"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.common.util.CommonUtils"%>
@@ -87,7 +86,7 @@
 		<tr class="detailEpm">
 			<th>상태</th>
 			<td>
-				<select name="statesEpm" id="statesEpm" class="AXSelect wid200">
+				<select name="state" id="state" class="AXSelect wid200">
 					<option value="">선택</option>
 					<%
 					String[] displays = EpmHelper.EPM_STATE_DISPLAY;

@@ -54,7 +54,7 @@ public class TemplateHelper {
 		ArrayList<HashMap<String, Object>> list = new ArrayList<>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Template.class, true);
-		QuerySpecUtils.toBoolean(query, idx, Template.class, Template.ENABLE, SearchCondition.IS_TRUE);
+		QuerySpecUtils.toBoolean(query, idx, Template.class, Template.ENABLE, true);
 		QuerySpecUtils.toOrderBy(query, idx, Template.class, Template.CREATE_TIMESTAMP, true);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {

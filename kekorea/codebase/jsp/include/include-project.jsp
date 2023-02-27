@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<input type="button" value="추가" id="projectAddBtn" title="추가">
-<input type="button" value="삭제" id="projectDeleteBtn" title="삭제" class="redBtn">
+<input type="button" value="작번 추가" id="projectAddBtn" title="작번 추가">
+<input type="button" value="작번 삭제" id="projectDeleteBtn" title="박전 삭제" class="redBtn">
 <div id="project_grid_wrap" style="height: 150px; border-top: 1px solid #3180c3; margin-top: 5px;"></div>
 <script type="text/javascript">
 	let projectGridID;

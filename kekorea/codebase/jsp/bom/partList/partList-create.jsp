@@ -10,8 +10,6 @@ if (dept != null) {
 	deptName = dept.getName();
 }
 
-boolean isPopup = Boolean.parseBoolean((String) request.getParameter("popup"));
-
 String poid = (String) request.getParameter("poid");
 String progress = (String) request.getParameter("progress");
 String tname = (String) request.getParameter("tname");
@@ -30,15 +28,11 @@ if (!StringUtils.isNull(poid)) {
 					e.preventDefault();
 				}
 		 });
-// 		upload.pageStart(null, null, "primary");
-		upload.pageStart(null, null, "secondary");
-		$("input").checks();
 
 		$("#engType").bindSelect();
 		
 		<%if (!StringUtils.isNull(tname)) {%>
-		$("#engType").bindSelectSetValue("<%=tname%>
-	");
+		$("#engType").bindSelectSetValue("<%=tname%>");
 		$("#engType").bindSelectDisabled(true);
 <%}%>
 	})
@@ -51,8 +45,7 @@ if (!StringUtils.isNull(poid)) {
 <%
 }
 %>
-<input type="hidden" name="popup" value="<%=isPopup%>">
-<!-- create header title -->
+<%@include file="/jsp/include/auigrid.jsp"%>
 <table class="btn_table">
 	<tr>
 		<td>
@@ -65,7 +58,7 @@ if (!StringUtils.isNull(poid)) {
 		</td>
 		<td class="right">
 			<input type="button" value="저장" id="createPartListBtn" title="저장" data-output="<%=isOutput%>" data-progress="<%=progress%>">
-			<input type="button" value="닫기" id="closePartList" title="닫기" class="redBtn" onclick="self.close()">
+			<input type="button" value="닫기" id="closeBtn" title="닫기" class="redBtn">
 		</td>
 	</tr>
 </table>
@@ -73,23 +66,18 @@ if (!StringUtils.isNull(poid)) {
 <!-- create table -->
 <table class="create_table">
 	<colgroup>
-		<col width="100">
-		<col>
+		<col width="130">
+		<col width="800">
+		<col width="130">
+		<col width="800">
 	</colgroup>
 	<tr>
 		<th class="min-wid100">
 			<font class="req">수배표 제목</font>
 		</th>
-		<td colspan="3">
+		<td>
 			<input type="text" name="name" id="name" class="AXInput wid500">
 		</td>
-		<!-- 			<th>수배표 번호</th> -->
-		<!-- 			<td> -->
-		<!-- 				<input type="text" name="number" id="number" class="AXInput wid300"> -->
-		<!-- 				<input type="text" name="MODEL_NAME" id="MODEL_NAME" class="AXInput wid200"> -->
-		<!-- 			</td>			 -->
-	</tr>
-	<tr>
 		<th>
 			<font class="req">설계구분</font>
 		</th>
@@ -103,194 +91,174 @@ if (!StringUtils.isNull(poid)) {
 		</td>
 	</tr>
 	<tr>
-		<th>
-			설명
-			<br>
-			<span id="descDocCnt">0</span>
-			/1000
-		</th>
+		<th>설명</th>
 		<td colspan="3">
-			<!-- rows 세로, cols 가로 -->
-			<textarea class="AXTextarea" name="descriptionDoc" id="descriptionDoc" rows="" cols=""></textarea>
+			<textarea name="description" id="description" rows="7" cols=""></textarea>
 		</td>
 	</tr>
 	<tr>
 		<th>
 			<font class="req">KEK 작번</font>
-			<br>
-			(
-			<span id="descProjectCnt">0</span>
-			&nbsp;개 )
 		</th>
 		<td colspan="3">
-			<table class="in_btn_table">
-				<tr>
-					<td class="add">
-						<input type="button" value="작번 추가" title="작번 추가" id="addProjects" data-context="product" data-dbl="true">
-						<input type="button" value="작번 삭제" title="작번 삭제" id="delProjects" class="blueBtn">
-					</td>
-				</tr>
-			</table>
-			<table id="tblBackground">
-				<tr>
-					<td>
-						<div id="projects_container">
-							<table class="create_table_in fix_table">
-								<colgroup>
-									<col width="40">
-									<col width="80">
-									<col width="180">
-									<col width="180">
-									<col width="100">
-									<col width="120">
-									<col width="*">
-								</colgroup>
-								<thead>
-									<tr>
-										<th>
-											<input type="checkbox" name="allProjects" id="allProjects">
-										</th>
-										<th>작번 유형</th>
-										<th>KEK 작번</th>
-										<th>KE 작번</th>
-										<th>고객사</th>
-										<th>막종</th>
-										<th>작업내용</th>
-									</tr>
-								</thead>
-								<tbody id="addProjectsBody">
-									<tr id="nodataProjects">
-										<td class="nodata" colspan="7">관련 작번이 없습니다.</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</td>
-				</tr>
-			</table>
+			<jsp:include page="/jsp/include/include-project.jsp"></jsp:include>
 		</td>
 	</tr>
 	<!-- 결재 -->
-	<jsp:include page="/jsp/common/appLine.jsp">
-		<jsp:param value="true" name="required" />
-	</jsp:include>
+<%-- 	<jsp:include page="/jsp/common/appLine.jsp"> --%>
+<%-- 		<jsp:param value="true" name="required" /> --%>
+<%-- 	</jsp:include> --%>
 	<tr>
-		<th>
-			첨부파일
-			<span id="fileCount"></span>
-		</th>
+		<th>첨부파일</th>
 		<td colspan="3">
-			<!-- upload.js see -->
-			<div class="AXUpload5" id="secondary_layer"></div>
-			<div class="AXUpload5QueueBox_list" id="uploadQueueBox"></div>
+			<jsp:include page="/jsp/include/include-secondary.jsp" />
 		</td>
 	</tr>
 	<tr>
 		<th>
 			<font class="req">수배표 등록</font>
 		</th>
-		<td colspan="3">
-			<table id="tblBackground">
-				<tr>
-					<td>
-						<div id="spreadsheet"></div>
-						<script>
-							var jexcels = jexcel(document.getElementById('spreadsheet'), {
-								// 							data : [{}],
-								rowResize : false,
-								columnDrag : false,
-								onchange : partlists.changedCheckERP,
-								columns : [ {
-									type : 'text',
-									title : '체크',
-									width : 40,
-									readOnly : true
-								}, {
-									type : 'text',
-									title : 'LOT_NO',
-									width : 60
-								}, {
-									type : 'text',
-									title : 'UNIT_NAME',
-									width : 130
-								}, {
-									type : 'text',
-									title : '부품번호',
-									width : 100
-								}, {
-									type : 'text',
-									title : '부품명',
-									width : 240,
-									readOnly : true
-								}, {
-									type : 'text',
-									title : '규격',
-									width : 300,
-									readOnly : true
-								}, {
-									type : 'text',
-									title : 'MAKER',
-									width : 100
-								}, {
-									type : 'text',
-									title : '거래처',
-									width : 100
-								}, {
-									type : 'text',
-									title : '수량',
-									width : 40
-								}, {
-									type : 'text',
-									title : '단위',
-									width : 40,
-									readOnly : true
-								}, {
-									type : 'text',
-									title : '단가',
-									width : 90,
-									readOnly : true
-								}, {
-									type : 'dropdown',
-									title : '화폐',
-									width : 50,
-									readOnly : true,
-									source : [ "KRW", "JPY" ]
-								}, {
-									type : 'numeric',
-									title : '원화금액',
-									width : 100,
-									readOnly : true
-								}, {
-									type : 'text',
-									title : '수배일자',
-									width : 80,
-									readOnly : true
-								}, {
-									type : 'text',
-									title : '환율',
-									width : 60,
-									readOnly : true
-								}, {
-									type : 'text',
-									title : '참고도면',
-									width : 100
-								}, {
-									type : 'text',
-									title : '조달구분',
-									width : 100
-								}, {
-									type : 'text',
-									title : '비고',
-									width : 150
-								}, ],
-							// 						     style: {
-							// 						         A0:'background-color: #e0f0fd;',
-							// 						     },
-							});
-						</script>
-					</td>
-				</tr>
-			</table>
+		<td  colspan="3">
+		<div id="partlist_grid_wrap" style="height: 550px; border-top: 1px solid #3180c3; margin-top: 5px;"></div>
+		<script type="text/javascript">
+				let partlistGridID;
+				const partlist_columns = [ {
+					dataField : "ok",
+					headerText : "검증",
+					width : 80,
+					renderer : {
+						type : "CheckBoxEditRenderer",
+					},
+					editable : false
+				}, {
+					dataField : "lotNo",
+					headerText : "LOT",
+					dataType : "string",
+					width : 100,
+					editable : false
+				}, {
+					dataField : "unitName",
+					headerText : "UNIT_NAME",
+					dataType : "string",
+					width : 130,
+					editable : false
+				}, {
+					dataField : "partNumber",
+					headerText : "부품번호",
+					dataType : "string",
+					width : 150,
+				}, {
+					dataField : "partName",
+					headerText : "부품명",
+					dataType : "string",
+					width : 270,
+					editable : false
+				}, {
+					dataField : "model",
+					headerText : "규격",
+					dataType : "string",
+					editable : false
+				}, {
+					dataField : "model",
+					headerText : "MAKER",
+					dataType : "string",
+					editable : false
+				}, {
+					dataField : "model",
+					headerText : "거래처",
+					dataType : "string",
+					editable : false
+				}, {
+					dataField : "model",
+					headerText : "수량",
+					dataType : "string",
+					width : 100,
+					formatString : "###0",
+					editRenderer : {
+						type : "InputEditRenderer",
+						onlyNumeric : true, // 0~9만 입력가능
+					},					
+				}, {
+					dataField : "model",
+					headerText : "단위",
+					dataType : "string",
+					editable : false
+				}, {
+					dataField : "model",
+					headerText : "단가",
+					dataType : "string",
+					editable : false
+				}, {
+					dataField : "model",
+					headerText : "화폐",
+					dataType : "string",
+					editable : false
+				}, {
+					dataField : "model",
+					headerText : "원화금액",
+					dataType : "string",
+					editable : false
+				}, {
+					dataField : "model",
+					headerText : "수배일자",
+					dataType : "string",
+					editable : false
+				},{
+					dataField : "model",
+					headerText : "환율",
+					dataType : "string",
+					editable : false
+				},{
+					dataField : "model",
+					headerText : "참고도면",
+					dataType : "string",
+					editable : false
+				},{
+					dataField : "model",
+					headerText : "조달구분",
+					dataType : "string",
+					editable : false
+				}, {
+					dataField : "discontinue",
+					headerText : "비고",
+					dataType : "string",
+					width : 200
+				}, {
+					dataField : "oid",
+					headerText : "oid",
+					dataType : "string",
+					visible : false
+				} ]
+				
+				const partlist_props = {
+						headerHeight : 30,
+						rowHeight : 30,
+						showRowNumColumn : true,
+						rowNumHeaderText : "번호",
+						softRemoveRowMode : false,
+						showRowCheckColumn : true, // 체크 박스 출력,
+						showStateColumn : true,
+						editable : true,
+						fillColumnSizeMode : true,
+						selectionMode : "multipleCells",
+						$compaEventOnPaste : true
+					};
+				
+				$(function() {
+					partlistGridID = AUIGrid.create("#partlist_grid_wrap", partlist_columns, partlist_props);
+					AUIGrid.addRow(partlistGridID, new Object(), "first");
+// 					AUIGrid.bind(tbomGridID, "addRowFinish", auiAddRowHandler);
+// 					AUIGrid.bind(tbomGridID, "cellEditEnd", auiCellEditEndHandler);
+
+					$("#closeBtn").click(function() {
+						self.close();
+					})
+				})
+				
+				$(window).resize(function() {
+					AUIGrid.resize(partlistGridID);
+				})
+			</script>
 		</td>
 	</tr>
 </table>

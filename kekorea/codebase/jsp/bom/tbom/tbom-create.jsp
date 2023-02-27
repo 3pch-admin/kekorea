@@ -56,7 +56,7 @@ if (dept != null) {
 	<tr>
 		<th>설명</th>
 		<td colspan="3">
-			<textarea class="AXTextarea" name="description" id="description" rows="" cols=""></textarea>
+			<textarea class="AXTextarea" name="description" id="description" rows="7" cols=""></textarea>
 		</td>
 	</tr>
 	<tr>

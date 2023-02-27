@@ -13,6 +13,9 @@ ArrayList<CommonCode> projectTypes = (ArrayList<CommonCode>) request.getAttribut
 ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks");
 ArrayList<CommonCode> details = (ArrayList<CommonCode>) request.getAttribute("details");
 ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) request.getAttribute("list");
+JSONArray elecs = (JSONArray)request.getAttribute("elecs");
+JSONArray softs = (JSONArray)request.getAttribute("softs");
+JSONArray machines = (JSONArray)request.getAttribute("machines");
 %>
 <!DOCTYPE html>
 <html>
@@ -164,6 +167,7 @@ ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) r
 	<table class="btn_table">
 		<tr>
 			<td class="left">
+				<input type="button" value="테이블 저장" class="orangeBtn" id="saveColumnBtn" title="테이블 저장" onclick="saveColumnLayout('project');">
 				<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
 			</td>
 			<td class="right">
@@ -184,175 +188,297 @@ ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) r
 </body>
 <script type="text/javascript">
 	let myGridID;
-	const columns = [ {
-		dataField : "state",
-		headerText : "진행상태",
-		dataType : "string",
-		width : 80,
-		renderer : {
-			type : "TemplateRenderer",
-		},
-	}, {
-		dataField : "cip",
-		headerText : "CIP",
-		dataType : "string",
-		width : 60,
-		renderer : {
-			type : "IconRenderer",
-			iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
-			iconHeight : 16,
-			iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-				"default" : "/Windchill/jsp/images/search.gif" // default
+	let elecs = <%=elecs%>;
+	let softs = <%=softs%>;
+	let machines = <%=machines%>;
+	function _layout() {
+		return [ {
+			dataField : "state",
+			headerText : "진행상태",
+			dataType : "string",
+			width : 80,
+			editable : false,
+			renderer : {
+				type : "TemplateRenderer",
 			},
-			onClick : function(event) {
-				let item = event.item;
-				let mak_oid = item.mak_oid;
-				let detail_oid = item.detail_oid;
-				let customer_oid = item.customer_oid;
-				let install_oid = item.install_oid;
-				let url = getCallUrl("/cip/view?mak_oid=" + mak_oid + "&detail_oid=" + detail_oid + "&customer_oid=" + customer_oid + "&install_oid=" + install_oid);
-				popup(url);
+		}, {
+			dataField : "cip",
+			headerText : "CIP",
+			dataType : "string",
+			width : 60,
+			editable : false,
+			renderer : {
+				type : "IconRenderer",
+				iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+				iconHeight : 16,
+				iconTableRef : { // icon 값 참조할 테이블 레퍼런스
+					"default" : "/Windchill/jsp/images/search.gif" // default
+				},
+				onClick : function(event) {
+					let item = event.item;
+					let mak_oid = item.mak_oid;
+					let detail_oid = item.detail_oid;
+					let customer_oid = item.customer_oid;
+					let install_oid = item.install_oid;
+					let url = getCallUrl("/cip/view?mak_oid=" + mak_oid + "&detail_oid=" + detail_oid + "&customer_oid=" + customer_oid + "&install_oid=" + install_oid);
+					popup(url);
+				}
 			}
-		}
-	}, {
-		dataField : "history",
-		headerText : "이력관리",
-		dataType : "string",
-		width : 60,
-		renderer : {
-			type : "IconRenderer",
-			iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
-			iconHeight : 16,
-			iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-				"default" : "/Windchill/jsp/images/search.gif" // default
+		}, {
+			dataField : "history",
+			headerText : "이력관리",
+			dataType : "string",
+			width : 60,
+			editable : false,
+			renderer : {
+				type : "IconRenderer",
+				iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+				iconHeight : 16,
+				iconTableRef : { // icon 값 참조할 테이블 레퍼런스
+					"default" : "/Windchill/jsp/images/search.gif" // default
+				},
+				onClick : function(event) {
+					let item = event.item;
+					let oid = item.oid;
+					let url = getCallUrl("/history/view?oid=" + oid);
+					popup(url);
+				}
+			}
+		}, {
+			dataField : "projectType_name",
+			headerText : "작번유형",
+			dataType : "string",
+			width : 80,
+			editable : false
+		}, {
+			dataField : "customer_name",
+			headerText : "거래처",
+			dataType : "string",
+			width : 100,
+			editable : false
+		}, {
+			dataField : "install_name",
+			headerText : "설치장소",
+			dataType : "string",
+			width : 100,
+			editable : false
+		}, {
+			dataField : "mak_name",
+			headerText : "막종",
+			dataType : "string",
+			width : 100,
+			editable : false
+		}, {
+			dataField : "detail_name",
+			headerText : "막종상세",
+			dataType : "string",
+			width : 100,
+			editable : false
+		}, {
+			dataField : "kekNumber",
+			headerText : "KEK 작번",
+			dataType : "string",
+			width : 130,
+			editable : false
+		}, {
+			dataField : "keNumber",
+			headerText : "KE 작번",
+			dataType : "string",
+			width : 130,
+			editable : false
+		}, {
+			dataField : "userId",
+			headerText : "USER ID",
+			dataType : "string",
+			width : 100,
+			editable : false
+		}, {
+			dataField : "description",
+			headerText : "작업 내용",
+			dataType : "string",
+			width : 450,
+			style : "left indent10",
+			editable : false
+		}, {
+			dataField : "pdate",
+			headerText : "발행일",
+			dataType : "date",
+			formatString : "yyyy-mm-dd",
+			width : 100,
+			editable : false
+		}, {
+			dataField : "completeDate",
+			headerText : "설계 완료일",
+			dataType : "date",
+			formatString : "yyyy-mm-dd",
+			width : 100,
+			editable : false
+		}, {
+			dataField : "endDate",
+			headerText : "요구 납기일",
+			dataType : "date",
+			formatString : "yyyy-mm-dd",
+			width : 100,
+			editable : false
+		}, {
+			dataField : "model",
+			headerText : "모델",
+			dataType : "string",
+			width : 130,
+			editable : false
+		}, {
+			dataField : "machine",
+			headerText : "기계 담당자",
+			dataType : "string",
+			width : 100,
+			editRenderer : {
+				type : "ComboBoxRenderer",
+				autoCompleteMode : true,
+				list : machines, //key-value Object 로 구성된 리스트
+				keyField : "key", // key 에 해당되는 필드명
+				valueField : "value", // value 에 해당되는 필드명,
+				validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+					let isValid = false;
+					for (let i = 0, len = machines.length; i < len; i++) { // keyValueList 있는 값만..
+						if (machines[i]["value"] == newValue) {
+							isValid = true;
+							break;
+						}
+					}
+					// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
+					return {
+						"validate" : isValid,
+						"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+					};
+				}
 			},
-			onClick : function(event) {
-				let item = event.item;
-				let oid = item.oid;
-				let url = getCallUrl("/history/view?oid=" + oid);
-				popup(url);
-			}
-		}
-	}, {
-		dataField : "projectType_name",
-		headerText : "작번유형",
-		dataType : "string",
-		width : 80
-	}, {
-		dataField : "customer_name",
-		headerText : "거래처",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "install_name",
-		headerText : "설치장소",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "mak_name",
-		headerText : "막종",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "detail_name",
-		headerText : "막종상세",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "kekNumber",
-		headerText : "KEK 작번",
-		dataType : "string",
-		width : 130
-	}, {
-		dataField : "keNumber",
-		headerText : "KE 작번",
-		dataType : "string",
-		width : 130
-	}, {
-		dataField : "userId",
-		headerText : "USER ID",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "description",
-		headerText : "작업 내용",
-		dataType : "string",
-		width : 450,
-		style : "left indent10"
-	}, {
-		dataField : "pdate",
-		headerText : "발행일",
-		dataType : "date",
-		formatString : "yyyy-mm-dd",
-		width : 100
-	}, {
-		dataField : "completeDate",
-		headerText : "설계 완료일",
-		dataType : "date",
-		formatString : "yyyy-mm-dd",
-		width : 100
-	}, {
-		dataField : "endDate",
-		headerText : "요구 납기일",
-		dataType : "date",
-		formatString : "yyyy-mm-dd",
-		width : 100
-	}, {
-		dataField : "model",
-		headerText : "모델",
-		dataType : "string",
-		width : 130
-	}, {
-		dataField : "machine",
-		headerText : "기계 담당자",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "elec",
-		headerText : "전기 담당자",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "soft",
-		headerText : "SW 담당자",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "kekProgress",
-		headerText : "진행율",
-		dataType : "string",
-		postfix : "%",
-		width : 80,
-		renderer : {
-			type : "BarRenderer",
-			min : 0,
-			max : 100
-		},
-	}, {
-		dataField : "kekState",
-		headerText : "작번상태",
-		dataType : "string",
-		width : 80
-	}, {
-		dataField : "oid",
-		headerText : "oid",
-		dataType : "string",
-		visible : false
-	} ]
+			labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
+				let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+				for (let i = 0, len = machines.length; i < len; i++) {
+					if (machines[i]["key"] == value) {
+						retStr = machines[i]["value"];
+						break;
+					}
+				}
+				return retStr == "" ? value : retStr;
+			},			
+		}, {
+			dataField : "elec",
+			headerText : "전기 담당자",
+			dataType : "string",
+			width : 100,
+			editRenderer : {
+				type : "ComboBoxRenderer",
+				autoCompleteMode : true,
+				list : elecs, //key-value Object 로 구성된 리스트
+				keyField : "key", // key 에 해당되는 필드명
+				valueField : "value", // value 에 해당되는 필드명,
+				validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+					let isValid = false;
+					for (let i = 0, len = elecs.length; i < len; i++) { // keyValueList 있는 값만..
+						if (elecs[i]["value"] == newValue) {
+							isValid = true;
+							break;
+						}
+					}
+					// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
+					return {
+						"validate" : isValid,
+						"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+					};
+				}
+			},
+			labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
+				let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+				for (let i = 0, len = elecs.length; i < len; i++) {
+					if (elecs[i]["key"] == value) {
+						retStr = elecs[i]["value"];
+						break;
+					}
+				}
+				return retStr == "" ? value : retStr;
+			},			
+		}, {
+			dataField : "soft",
+			headerText : "SW 담당자",
+			dataType : "string",
+			width : 100,
+			editRenderer : {
+				type : "ComboBoxRenderer",
+				autoCompleteMode : true,
+				list : softs, //key-value Object 로 구성된 리스트
+				keyField : "key", // key 에 해당되는 필드명
+				valueField : "value", // value 에 해당되는 필드명,
+				validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+					let isValid = false;
+					for (let i = 0, len = softs.length; i < len; i++) { // keyValueList 있는 값만..
+						if (softs[i]["value"] == newValue) {
+							isValid = true;
+							break;
+						}
+					}
+					// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
+					return {
+						"validate" : isValid,
+						"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+					};
+				}
+			},
+			labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
+				let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+				for (let i = 0, len = softs.length; i < len; i++) {
+					if (softs[i]["key"] == value) {
+						retStr = softs[i]["value"];
+						break;
+					}
+				}
+				return retStr == "" ? value : retStr;
+			},			
+		}, {
+			dataField : "kekProgress",
+			headerText : "진행율",
+			dataType : "string",
+			postfix : "%",
+			width : 80,
+			renderer : {
+				type : "BarRenderer",
+				min : 0,
+				max : 100
+			},
+			editable : false
+		}, {
+			dataField : "kekState",
+			headerText : "작번상태",
+			dataType : "string",
+			width : 80,
+			editable : false
+		}, {
+			dataField : "oid",
+			headerText : "oid",
+			dataType : "string",
+			visible : false
+		} ]
+	};
 
 	function createAUIGrid(columnLayout) {
 		const props = {
 			rowIdField : "oid",
-			headerHeight : 30,
-			rowHeight : 30,
-			showRowNumColumn : true,
-			rowNumHeaderText : "번호",
-			showRowCheckColumn : true, // 체크 박스 출력
-			fixedColumnCount : 10,
-		// 	fillColumnSizeMode : true, // 화면 꽉채우기
+			// 공통 시작
+			headerHeight : 30, // 헤더높이
+			rowHeight : 30, // 행 높이
+			showRowNumColumn : true, // 번호 행 출력 여부
+			showStateColumn : true, // 상태표시 행 출력 여부
+			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
+			noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
+			enableFilter : true, // 필터 사용 여부
+			showRowCheckColumn : true, // 엑스트라 체크 박스 사용 여부
+			selectionMode : "multiCells",
+			enableMovingColumn : true,
+			// 공통 끝
+			editable : true
 		};
 
-		myGridID = AUIGrid.create("#grid_wrap", columns, props);
+		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		loadGridData();
 		// LazyLoading 바인딩
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
@@ -416,14 +542,14 @@ ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) r
 	}
 
 	$(function() {
-
+		let columns = loadColumnLayout("project");
 		createAUIGrid(columns);
 
 		$("#mak").bindSelect({
 			onchange : function() {
 				let oid = this.optionValue;
 				$("#detail").bindSelect({
-					ajaxUrl : getCallUrl("/commonCode/getChildrensByOid?parentOid=" + oid),
+					ajaxUrl : getCallUrl("/commonCode/getChildrens?parentOid=" + oid),
 					reserveKeys : {
 						options : "list",
 						optionValue : "value",
@@ -439,7 +565,7 @@ ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) r
 			onchange : function() {
 				let oid = this.optionValue;
 				$("#install").bindSelect({
-					ajaxUrl : getCallUrl("/commonCode/getChildrensByOid?parentOid=" + oid),
+					ajaxUrl : getCallUrl("/commonCode/getChildrens?parentOid=" + oid),
 					reserveKeys : {
 						options : "list",
 						optionValue : "value",

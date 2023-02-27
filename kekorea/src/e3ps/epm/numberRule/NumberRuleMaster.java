@@ -10,8 +10,8 @@ import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import e3ps.admin.commonCode.CommonCode;
-import e3ps.epm.KeDrawing.KeDrawingMaster;
 import e3ps.epm.jDrawing._JDrawingMaster;
+import e3ps.epm.keDrawing.KeDrawingMaster;
 import wt.fc.WTObject;
 import wt.ownership.Ownable;
 import wt.util.WTException;

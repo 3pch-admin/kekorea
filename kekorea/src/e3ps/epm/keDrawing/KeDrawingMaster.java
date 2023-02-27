@@ -1,4 +1,4 @@
-package e3ps.epm.KeDrawing;
+package e3ps.epm.keDrawing;
 
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;

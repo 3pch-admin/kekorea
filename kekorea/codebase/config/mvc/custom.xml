@@ -8,17 +8,11 @@ http://www.ptc.com/schema/mvc http://www.ptc.com/schema/mvc/mvc-10.0.xsd">
 	<!-- Configurations in this file override all other configurations -->
 
 	<!-- EPLAN -->
-	<!--  bean id="com.eplan.service.mvc.CreateArticleAttributesBuilder" class="com.eplan.service.mvc.CreateArticleAttributes" />
-	<bean id="com.eplan.service.mvc.ConvertArticleAttributesBuilder" class="com.eplan.service.mvc.ConvertArticleAttributes" />
-	<bean id="com.eplan.service.mvc.CreateEPLANHarnessProjectAttributesBuilder" class="com.eplan.service.mvc.CreateProjectAttributesHARNESS" />
-	<bean id="com.eplan.service.mvc.CreateEPLANProjectAttributesBuilder" class="com.eplan.service.mvc.CreateProjectAttributesELECTRIC" />
-	<bean id="com.eplan.service.mvc.SaveAsEPLANHarnessProjectAttributesBuilder" class="com.eplan.service.mvc.SaveAsProjectAttributesHARNESS" />
-	<bean id="com.eplan.service.mvc.SaveAsEPLANProjectAttributesBuilder" class="com.eplan.service.mvc.SaveAsProjectAttributesELECTRIC" />
-	<bean id="com.eplan.service.mvc.SaveAsEPLANHarnessProjectTemplateAttributesBuilder" class="com.eplan.service.mvc.SaveAsProjectTemplateAttributesHARNESS" />
-	<bean id="com.eplan.service.mvc.SaveAsEPLANProjectTemplateAttributesBuilder" class="com.eplan.service.mvc.SaveAsProjectTemplateAttributesELECTRIC" />
-	<bean id="com.eplan.service.mvc.SelectEPLANHarnessProjectTemplateBuilder" class="com.eplan.service.mvc.SelectProjectTemplateHARNESS" />
-	<bean id="com.eplan.service.mvc.SelectEPLANProjectTemplateBuilder" class="com.eplan.service.mvc.SelectProjectTemplateELECTRIC" />
-	<bean id="com.eplan.service.mvc.CustomActionBuilderHandler" class="com.eplan.service.mvc.CustomActionBuilderHandler" /-->
+	<!-- bean id="com.eplan.service.mvc.CreateArticleAttributesBuilder" class="com.eplan.service.mvc.CreateArticleAttributes" /> <bean id="com.eplan.service.mvc.ConvertArticleAttributesBuilder" class="com.eplan.service.mvc.ConvertArticleAttributes" /> <bean id="com.eplan.service.mvc.CreateEPLANHarnessProjectAttributesBuilder" 
+		class="com.eplan.service.mvc.CreateProjectAttributesHARNESS" /> <bean id="com.eplan.service.mvc.CreateEPLANProjectAttributesBuilder" class="com.eplan.service.mvc.CreateProjectAttributesELECTRIC" /> <bean id="com.eplan.service.mvc.SaveAsEPLANHarnessProjectAttributesBuilder" class="com.eplan.service.mvc.SaveAsProjectAttributesHARNESS" 
+		/> <bean id="com.eplan.service.mvc.SaveAsEPLANProjectAttributesBuilder" class="com.eplan.service.mvc.SaveAsProjectAttributesELECTRIC" /> <bean id="com.eplan.service.mvc.SaveAsEPLANHarnessProjectTemplateAttributesBuilder" class="com.eplan.service.mvc.SaveAsProjectTemplateAttributesHARNESS" /> <bean id="com.eplan.service.mvc.SaveAsEPLANProjectTemplateAttributesBuilder" 
+		class="com.eplan.service.mvc.SaveAsProjectTemplateAttributesELECTRIC" /> <bean id="com.eplan.service.mvc.SelectEPLANHarnessProjectTemplateBuilder" class="com.eplan.service.mvc.SelectProjectTemplateHARNESS" /> <bean id="com.eplan.service.mvc.SelectEPLANProjectTemplateBuilder" class="com.eplan.service.mvc.SelectProjectTemplateELECTRIC" 
+		/> <bean id="com.eplan.service.mvc.CustomActionBuilderHandler" class="com.eplan.service.mvc.CustomActionBuilderHandler" / -->
 
 	<context:component-scan base-package="e3ps">
 		<context:include-filter type="regex" expression="(service|controller)\..*" />
@@ -35,6 +29,36 @@ http://www.ptc.com/schema/mvc http://www.ptc.com/schema/mvc/mvc-10.0.xsd">
 				<value>/config/tiles/layout.xml</value>
 			</list>
 		</property>
+	</bean>
+
+
+	<!-- myBatis -->
+	<bean id="myBatisProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="location">
+			<value>classpath:config/kekorea/myBatis/myBatis.properties</value>
+		</property>
+	</bean>
+	<bean id="kekoreaDataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+		<property name="driverClassName" value="#{myBatisProperties.driver}" />
+		<property name="url" value="#{myBatisProperties.url}" />
+		<property name="username" value="#{myBatisProperties.username}" />
+		<property name="password" value="#{myBatisProperties.password}" />
+		<property name="maxTotal" value="30" />
+	</bean>
+	<bean id="sqlSessionFactory" class="e3ps.common.myBatis.refresh.RefreshableSqlSessionFactoryBean">
+		<property name="dataSource" ref="kekoreaDataSource" />
+		<property name="typeAliasesPackage" value="e3ps.**.beans.**DTO" />
+		<property name="mapperLocations" value="classpath:config/kekorea/myBatis/query/*.xml" />
+		<property name="interval" value="2000" />
+		<property name="plugins">
+			<array>
+				<ref bean="MybatisLogInterceptor" />
+			</array>
+		</property>
+	</bean>
+	<bean id="MybatisLogInterceptor" name="MybatisLogInterceptor" class="e3ps.common.myBatis.interceptor.MyBatisLogInterceptor" />
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactory" />
 	</bean>
 
 

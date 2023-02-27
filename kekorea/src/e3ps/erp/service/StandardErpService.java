@@ -14,37 +14,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import com.ptc.wvs.server.util.PublishUtils;
 
-import e3ps.approval.beans.ApprovalLineViewData;
-import e3ps.approval.beans.ApprovalMasterViewData;
-import e3ps.approval.service.ApprovalHelper;
+import e3ps.bom.partlist.PartListData;
+import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.PartListMasterProjectLink;
+import e3ps.bom.partlist.service.PartListMasterHelper;
+om.partlist.service.PartListMasterHelper;
 import e3ps.common.db.DBCPManager;
-import e3ps.common.db.DBConnectionManager;
-import e3ps.common.util.CommonUtils;
-import e3ps.common.util.ContentUtils;
-import e3ps.common.util.IBAUtils;
-import e3ps.common.util.MessageHelper;
+import e3ps.common.db.DBConnectionMan
+import e3ps.common.myBatis.MyBatisQueryDao;
+import e3ps.common.util.IBAUtils;ls;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.epm.service.EpmHelper;
 import e3ps.part.UnitBom;
 import e3ps.part.UnitBomPartLink;
 import e3ps.part.UnitSubPart;
-import e3ps.part.beans.PartViewData;
-import e3ps.part.service.PartHelper;
-import e3ps.partlist.PartListData;
-import e3ps.partlist.PartListMaster;
-import e3ps.partlist.PartListMasterProjectLink;
-import e3ps.partlist.service.PartListMasterHelper;
-import e3ps.project.DocumentOutputLink;
-import e3ps.project.Output;
-import e3ps.project.Project;
+import e3ps.part.beans.PartViewDa
+import e3ps.project.output.DocumentOutputLink;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
-import wt.content.ApplicationData;
-import wt.content.ContentHelper;
-import wt.content.ContentItem;
+ent.ContentHelper;
+import wt.cont
+import e3ps.workspace.beans.ApprovalLineViewData;
+import e3ps.workspace.beans.ApprovalMasterViewData;
+import e3
+;workspace.service.ApprovalHelper;
+Helper;ent.ContentItem;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.doc.WTDocument;
@@ -64,6 +63,9 @@ import wt.util.WTException;
 
 public class StandardErpService extends StandardManager implements ErpService {
 
+	@Inject
+	private MyBatisQueryDao dao;
+	
 	// private static final String erpOutputDir = "P:\\";
 
 	// 절대 경로..

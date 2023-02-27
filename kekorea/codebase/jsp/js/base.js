@@ -185,19 +185,19 @@ function rangeDate(name, startName) {
 /**
  * AUIGrid 칼럼 저장 
  */
-function saveColumnLayout(gridID) {
+function saveColumnLayout(storageID) {
 	let columns = AUIGrid.getColumnLayout(myGridID);
 	let columnJson = JSON.stringify(columns);
-	localStorage.setItem("auigridLayout", columnJson);
+	localStorage.setItem(storageID, columnJson);
 	alert("현재 그리드의 상태가 보관되었습니다.\r\n브라우저를 종료하거나 F5 로 갱신했을 때 현재 상태로 그리드가 출력됩니다.");
 }
 
 /**
  * AUIGrid 컬럼 가져오기
  */
-function loadColumnLayout() {
+function loadColumnLayout(storageID) {
 	let columnLayout = null;
-	let column = getLocalStorageValue("auigridLayout");
+	let column = getLocalStorageValue(storageID);
 	if (column && typeof column != "undefined") {
 		columnLayout = JSON.parse(column);
 		//감춰진 칼럼에 따라 데모 상에 보이는 체크박스 동기화 시킴.
@@ -213,9 +213,9 @@ function loadColumnLayout() {
 /**
  * 로컬 스토리지 가져오기
  */
-function getLocalStorageValue(key) {
+function getLocalStorageValue(storageID) {
 	if (typeof (Storage) != "undefined") {
-		return localStorage.getItem(key);
+		return localStorage.getItem(storageID);
 	} else {
 		alert("localStorage 를 지원하지 않는 브라우저입니다.");
 	}

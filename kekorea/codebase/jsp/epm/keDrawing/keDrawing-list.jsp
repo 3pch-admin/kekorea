@@ -72,7 +72,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 	<table class="btn_table">
 		<tr>
 			<td class="left">
-				<input type="button" value="테이블 저장" class="orangeBtn" id="saveColumnBtn" title="테이블 저장" onclick="saveColumnLayout('myGridID');">
+				<input type="button" value="테이블 저장" class="orangeBtn" id="saveColumnBtn" title="테이블 저장" onclick="saveColumnLayout('keDrawing');">
 				<input type="button" value="추가" class="redBtn" id="addRowBtn" title="추가">
 				<%
 				if (isAdmin) {
@@ -294,7 +294,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 	}
 
 	$(function() {
-		let columns = loadColumnLayout();
+		let columns = loadColumnLayout("keDrawing");
 		createAUIGrid(columns);
 
 		$("#addRowBtn").click(function() {

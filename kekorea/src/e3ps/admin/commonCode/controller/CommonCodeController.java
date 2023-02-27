@@ -7,6 +7,8 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -87,7 +89,7 @@ public class CommonCodeController extends BaseController {
 
 	@Description(value = "코드의 자식 코드 가져오는 함수")
 	@ResponseBody
-	@RequestMapping(value = "/getChildrens", method = RequestMethod.GET)
+	@GetMapping(value = "/getChildrens")
 	public Map<String, Object> getChildrens(@RequestParam String parentCode, String codeType) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -104,11 +106,11 @@ public class CommonCodeController extends BaseController {
 
 	@Description(value = "코드의 자식 코드 가져오는 함수 (AXISJ Bind Select 용)")
 	@ResponseBody
-	@RequestMapping(value = "/getChildrensByOid", method = RequestMethod.POST)
-	public Map<String, Object> getChildrensByOid(@RequestParam String parentOid) throws Exception {
+	@PostMapping(value = "/getChildrens")
+	public Map<String, Object> getChildrens(@RequestParam String parentOid) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			ArrayList<Map<String, Object>> childrens = CommonCodeHelper.manager.getChildrensByOid(parentOid);
+			ArrayList<Map<String, Object>> childrens = CommonCodeHelper.manager.getChildrens(parentOid);
 			result.put("list", childrens);
 			result.put("result", "ok"); // AXISJ 전용 성공 값
 		} catch (Exception e) {

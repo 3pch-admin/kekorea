@@ -31,7 +31,7 @@ public class NumberRuleHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(NumberRule.class, true);
 
-		QuerySpecUtils.toBoolean(query, idx, NumberRule.class, NumberRule.LATEST, SearchCondition.IS_TRUE);
+		QuerySpecUtils.toBoolean(query, idx, NumberRule.class, NumberRule.LATEST, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -56,7 +56,7 @@ public class NumberRuleHelper {
 		String seq2 = df.format(00001);
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(NumberRuleMaster.class, true);
-		QuerySpecUtils.toLikeRight(query, idx, NumberRuleMaster.class, NumberRuleMaster.NUMBER, number);
+		QuerySpecUtils.toLikeRightAnd(query, idx, NumberRuleMaster.class, NumberRuleMaster.NUMBER, number);
 		QuerySpecUtils.toOrderBy(query, idx, NumberRuleMaster.class, NumberRuleMaster.NUMBER, true);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		String next = "00001";

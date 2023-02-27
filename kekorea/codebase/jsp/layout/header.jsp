@@ -256,9 +256,6 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 						<a onclick="moveToPage(this, '/password/list');">비밀번호 세팅</a>
 					</li>
 					<li>
-						<a href="#">설치장소 생성</a>
-					</li>
-					<li>
 						<a href="#">산출물 연동</a>
 					</li>
 					<li>

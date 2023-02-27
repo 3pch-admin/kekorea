@@ -3,7 +3,7 @@ package e3ps;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.epm.KeDrawing.KeDrawing;
+import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.org.Department;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;

@@ -20,8 +20,6 @@ import e3ps.epm.beans.EpmColumnData;
 import e3ps.epm.column.EpmLibraryColumnData;
 import e3ps.epm.column.EpmProductColumnData;
 import e3ps.epm.column.ViewerColumnData;
-import e3ps.korea.cip.Cip;
-import e3ps.korea.cip.beans.CipColumnData;
 import e3ps.org.People;
 import wt.clients.folder.FolderTaskLogic;
 import wt.epm.EPMDocument;
@@ -47,7 +45,7 @@ import wt.util.WTAttributeNameIfc;
 import wt.vc.VersionControlHelper;
 import wt.vc.wip.WorkInProgressHelper;
 
-public class EpmHelper implements MessageHelper {
+public class EpmHelper {
 
 	public static final String[] CADTYPE_DISPLAY = new String[] { "어셈블리 (ASSEMBLY)", "파트 (PART)", "도면 (DRAWING)" };
 
@@ -600,10 +598,8 @@ public class EpmHelper implements MessageHelper {
 			}
 
 			map.put("is2D", is2D);
-			map.put("result", SUCCESS);
 		} catch (Exception e) {
 			map.put("msg", "도면 검증에 실패 하였습니다\n시스템 관리자에게 문의하세요.");
-			map.put("result", FAIL);
 			e.printStackTrace();
 		}
 		return map;

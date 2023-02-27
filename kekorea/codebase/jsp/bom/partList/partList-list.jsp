@@ -20,15 +20,8 @@
 			</td>
 			<th>상태</th>
 			<td>
-				<select name="statesDoc" id="statesDoc" class="AXSelect wid200">
+				<select name="state" id="state" class="AXSelect wid200">
 					<option value="">선택</option>
-					<%-- 					<% --%>
-					<!--  						for(StateKeys state : states) { -->
-					<%-- 					%> --%>
-					<%-- 					<option value="<%=state.name() %>"><%=state.getDisplay() %></option> --%>
-					<%-- 					<% --%>
-					<!--  						} -->
-					<%-- 					%> --%>
 				</select>
 			</td>
 			<th>KEK 작번</th>
@@ -78,7 +71,7 @@
 			<td>
 				<input type="text" name="predate" id="predate" class="AXInput">
 				~
-				<input type="text" name="postdate" id="postdate" class="AXInput twinDatePicker" data-start="predate">
+				<input type="text" name="postdate" id="postdate" class="AXInput" data-start="predate">
 				<i title="삭제" class="axi axi-ion-close-circled delete-calendar" data-start="predate" data-end="postdate"></i>
 			</td>
 			<th>수정자</th>
@@ -90,7 +83,7 @@
 			<td>
 				<input type="text" name="predate_m" id="predate_m" class="AXInput">
 				~
-				<input type="text" name="pstdate_m" id="postdate_m" class="AXInput twinDatePicker_m" data-start="predate_m">
+				<input type="text" name="postdate_m" id="postdate_m" class="AXInput" data-start="predate_m">
 				<i title="삭제" class="axi axi-ion-close-circled delete-calendar" data-start="predate_m" data-end="postdate_m"></i>
 			</td>
 		</tr>
@@ -99,6 +92,7 @@
 	<table class="btn_table">
 		<tr>
 			<td class="left">
+				<input type="button" value="테이블 저장" class="orangeBtn" id="saveColumnBtn" title="테이블 저장" onclick="saveColumnLayout('partlist');">
 				<input type="button" value="등록" class="blueBtn" id="createBtn" title="등록">
 			</td>
 			<td class="right">
@@ -113,104 +107,112 @@
 </body>
 <script type="text/javascript">
 	let myGridID;
-	const columns = [ {
-		dataField : "pjtType",
-		headerText : "설계구분",
-		dataType : "string",
-		width : 80
-	}, {
-		dataField : "info",
-		headerText : "",
-		dataType : "string",
-		width : 40
-	}, {
-		dataField : "name",
-		headerText : "수배표제목",
-		dataType : "string",
-		style : "left",
-		width : 300
-	}, {
-		dataField : "mak",
-		headerText : "막종",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "kekNumber",
-		headerText : "KEK 작번",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "keNumber",
-		headerText : "KE 작번",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "user_id",
-		headerText : "USER ID",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "kek_description",
-		headerText : "작업내용",
-		dataType : "string",
-		width : 300
-	}, {
-		dataField : "customer",
-		headerText : "거래처",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "ins_location",
-		headerText : "설치 장소",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "pDate",
-		headerText : "발행일",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "model",
-		headerText : "모델",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "creator",
-		headerText : "작성자",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "createDate",
-		headerText : "작성일",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "modifyDate",
-		headerText : "수정일",
-		dataType : "string",
-		width : 100
-	}, {
-		dataField : "state",
-		headerText : "상태",
-		dataType : "string",
-		width : 100
-	} ]
+	function _layout() {
+		return [ {
+			dataField : "pjtType",
+			headerText : "설계구분",
+			dataType : "string",
+			width : 80
+		}, {
+			dataField : "info",
+			headerText : "",
+			dataType : "string",
+			width : 40
+		}, {
+			dataField : "name",
+			headerText : "수배표제목",
+			dataType : "string",
+			style : "left",
+			width : 300
+		}, {
+			dataField : "mak",
+			headerText : "막종",
+			dataType : "string",
+			width : 100
+		}, {
+			dataField : "kekNumber",
+			headerText : "KEK 작번",
+			dataType : "string",
+			width : 100
+		}, {
+			dataField : "keNumber",
+			headerText : "KE 작번",
+			dataType : "string",
+			width : 100
+		}, {
+			dataField : "user_id",
+			headerText : "USER ID",
+			dataType : "string",
+			width : 100
+		}, {
+			dataField : "kek_description",
+			headerText : "작업내용",
+			dataType : "string",
+			width : 300
+		}, {
+			dataField : "customer",
+			headerText : "거래처",
+			dataType : "string",
+			width : 100
+		}, {
+			dataField : "ins_location",
+			headerText : "설치 장소",
+			dataType : "string",
+			width : 100
+		}, {
+			dataField : "pDate",
+			headerText : "발행일",
+			dataType : "string",
+			width : 100
+		}, {
+			dataField : "model",
+			headerText : "모델",
+			dataType : "string",
+			width : 100
+		}, {
+			dataField : "creator",
+			headerText : "작성자",
+			dataType : "string",
+			width : 100
+		}, {
+			dataField : "createDate",
+			headerText : "작성일",
+			dataType : "string",
+			width : 100
+		}, {
+			dataField : "modifyDate",
+			headerText : "수정일",
+			dataType : "string",
+			width : 100
+		}, {
+			dataField : "state",
+			headerText : "상태",
+			dataType : "string",
+			width : 100
+		} ]
+	};
 
 	function createAUIGrid(columnLayout) {
 		const props = {
 			rowIdField : "oid",
-			headerHeight : 30,
-			rowHeight : 30,
-			showRowCheckColumn : true,
-			showRowNumColumn : true,
-			rowNumHeaderText : "번호",
-			fillColumnSizeMode : true, // 화면 꽉채우기
+			// 공통 시작
+			headerHeight : 30, // 헤더높이
+			rowHeight : 30, // 행 높이
+			showRowNumColumn : true, // 번호 행 출력 여부
+			showStateColumn : true, // 상태표시 행 출력 여부
+			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
+			noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
+			enableFilter : true, // 필터 사용 여부
+			showRowCheckColumn : true, // 엑스트라 체크 박스 사용 여부
+			selectionMode : "multiCells",
+			enableMovingColumn : true,
+			// 공통 끝
+// 			fillColumnSizeMode : true, // 화면 꽉채우기
 		};
-		myGridID = AUIGrid.create("#grid_wrap", columns, props);
+		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		loadGridData();
 		// LazyLoading 바인딩
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
-
 	}
 
 	function loadGridData() {
@@ -258,6 +260,7 @@
 	}
 
 	$(function() {
+		let columns = loadColumnLayout("partlist");
 		createAUIGrid(columns);
 
 		$("#searchBtn").click(function() {
@@ -266,8 +269,13 @@
 
 		$("#createBtn").click(function() {
 			let url = getCallUrl("/partlist/create");
-			popup(url, 1400, 570);
+			popup(url);
 		});
+
+		selectBox("engType");
+		selectBox("state");
+		rangeDate("postdate", "predate");
+		rangeDate("postdate_m", "predate_m");
 
 	}).keypress(function(e) {
 		let keyCode = e.keyCode;
