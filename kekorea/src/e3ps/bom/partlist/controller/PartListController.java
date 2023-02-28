@@ -15,7 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.bom.partlist.service.PartListMasterHelper;
+import e3ps.bom.partlist.service.PartListHelper;
 import e3ps.controller.BaseController;
 
 @Controller
@@ -36,7 +36,7 @@ public class PartListController extends BaseController {
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = PartListMasterHelper.manager.list(params);
+			result = PartListHelper.manager.list(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();

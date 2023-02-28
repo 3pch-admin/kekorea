@@ -30,36 +30,4 @@ http://www.ptc.com/schema/mvc http://www.ptc.com/schema/mvc/mvc-10.0.xsd">
 			</list>
 		</property>
 	</bean>
-
-
-	<!-- myBatis -->
-	<bean id="myBatisProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-		<property name="location">
-			<value>classpath:config/kekorea/myBatis/myBatis.properties</value>
-		</property>
-	</bean>
-	<bean id="kekoreaDataSource" class="org.apache.commons.dbcp2.BasicDataSource">
-		<property name="driverClassName" value="#{myBatisProperties.driver}" />
-		<property name="url" value="#{myBatisProperties.url}" />
-		<property name="username" value="#{myBatisProperties.username}" />
-		<property name="password" value="#{myBatisProperties.password}" />
-		<property name="maxTotal" value="30" />
-	</bean>
-	<bean id="sqlSessionFactory" class="e3ps.common.myBatis.refresh.RefreshableSqlSessionFactoryBean">
-		<property name="dataSource" ref="kekoreaDataSource" />
-		<property name="typeAliasesPackage" value="e3ps.**.beans.**DTO" />
-		<property name="mapperLocations" value="classpath:config/kekorea/myBatis/query/*.xml" />
-		<property name="interval" value="2000" />
-		<property name="plugins">
-			<array>
-				<ref bean="MybatisLogInterceptor" />
-			</array>
-		</property>
-	</bean>
-	<bean id="MybatisLogInterceptor" name="MybatisLogInterceptor" class="e3ps.common.myBatis.interceptor.MyBatisLogInterceptor" />
-	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
-		<constructor-arg ref="sqlSessionFactory" />
-	</bean>
-
-
 </beans>

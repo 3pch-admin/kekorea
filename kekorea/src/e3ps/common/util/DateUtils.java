@@ -260,4 +260,9 @@ public class DateUtils {
 		String s = today.toString().substring(0, index).replaceAll("-", "");
 		return s;
 	}
+
+	public static Timestamp today() throws Exception {
+		Date date = new Date();
+		return new Timestamp(date.getTime());
+	}
 }

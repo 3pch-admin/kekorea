@@ -31,11 +31,11 @@ public class PartListMasterViewData {
 		this.number = master.getNumber();
 		this.description = StringUtils.replaceToValue(master.getDescription());
 		this.engType = master.getEngType();
-		this.list = PartListMasterHelper.manager.getPartListData(this.master);
+		this.list = PartListHelper.manager.getPartListData(this.master);
 
 		this.isCreator = isCreator(master);
 		
-		this.jsonList = PartListMasterHelper.manager.getJsonList(master);
+		this.jsonList = PartListHelper.manager.getJsonList(master);
 	}
 	
 	public static boolean isCreator(PartListMaster rc) throws Exception {

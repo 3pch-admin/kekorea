@@ -21,19 +21,18 @@ if (!StringUtils.isNull(poid)) {
 %>
 <!-- script area -->
 <script type="text/javascript">
-	 $(document).ready(function() {
-		 
-		 $('#name').keydown(function(e){
-			 if(e.keyCode == 13){
-					e.preventDefault();
-				}
-		 });
+	$(document).ready(function() {
+
+		$('#name').keydown(function(e) {
+			if (e.keyCode == 13) {
+				e.preventDefault();
+			}
+		});
 
 		$("#engType").bindSelect();
-		
-		<%if (!StringUtils.isNull(tname)) {%>
-		$("#engType").bindSelectSetValue("<%=tname%>");
-		$("#engType").bindSelectDisabled(true);
+<%if (!StringUtils.isNull(tname)) {%>
+$("#engType").bindSelectSetValue("<%=tname%>");
+$("#engType").bindSelectDisabled(true);
 <%}%>
 	})
 </script>
@@ -105,9 +104,9 @@ if (!StringUtils.isNull(poid)) {
 		</td>
 	</tr>
 	<!-- 결재 -->
-<%-- 	<jsp:include page="/jsp/common/appLine.jsp"> --%>
-<%-- 		<jsp:param value="true" name="required" /> --%>
-<%-- 	</jsp:include> --%>
+	<%-- 	<jsp:include page="/jsp/common/appLine.jsp"> --%>
+	<%-- 		<jsp:param value="true" name="required" /> --%>
+	<%-- 	</jsp:include> --%>
 	<tr>
 		<th>첨부파일</th>
 		<td colspan="3">
@@ -118,10 +117,11 @@ if (!StringUtils.isNull(poid)) {
 		<th>
 			<font class="req">수배표 등록</font>
 		</th>
-		<td  colspan="3">
-		<div id="partlist_grid_wrap" style="height: 550px; border-top: 1px solid #3180c3; margin-top: 5px;"></div>
-		<script type="text/javascript">
+		<td colspan="3">
+			<div id="partlist_grid_wrap" style="height: 550px; border-top: 1px solid #3180c3; margin-top: 5px;"></div>
+			<script type="text/javascript">
 				let partlistGridID;
+				let list = [ "KRW", "JPY" ];
 				const partlist_columns = [ {
 					dataField : "ok",
 					headerText : "검증",
@@ -143,7 +143,7 @@ if (!StringUtils.isNull(poid)) {
 					width : 130,
 					editable : false
 				}, {
-					dataField : "partNumber",
+					dataField : "partNo",
 					headerText : "부품번호",
 					dataType : "string",
 					width : 150,
@@ -154,72 +154,83 @@ if (!StringUtils.isNull(poid)) {
 					width : 270,
 					editable : false
 				}, {
-					dataField : "model",
+					dataField : "standard",
 					headerText : "규격",
 					dataType : "string",
+					width : 150,
 					editable : false
 				}, {
-					dataField : "model",
+					dataField : "maker",
 					headerText : "MAKER",
 					dataType : "string",
+					width : 150,
 					editable : false
 				}, {
-					dataField : "model",
+					dataField : "customer",
 					headerText : "거래처",
 					dataType : "string",
+					width : 150,
 					editable : false
 				}, {
-					dataField : "model",
+					dataField : "quantity",
 					headerText : "수량",
-					dataType : "string",
-					width : 100,
+					dataType : "numeric",
+					width : 80,
 					formatString : "###0",
 					editRenderer : {
 						type : "InputEditRenderer",
 						onlyNumeric : true, // 0~9만 입력가능
-					},					
+					},
 				}, {
-					dataField : "model",
+					dataField : "unit",
 					headerText : "단위",
 					dataType : "string",
+					width : 80,
 					editable : false
 				}, {
-					dataField : "model",
+					dataField : "price",
 					headerText : "단가",
-					dataType : "string",
-					editable : false
+					dataType : "numeric",
+					editable : false,
+					width : 130,
+					formatString : "#,###",
 				}, {
-					dataField : "model",
+					dataField : "currency",
 					headerText : "화폐",
 					dataType : "string",
-					editable : false
+					width : 80,
+					editable : false,
 				}, {
-					dataField : "model",
+					dataField : "won",
 					headerText : "원화금액",
-					dataType : "string",
+					dataType : "numeric",
+					editable : false,
+					width : 130,
+					formatString : "#,###",
+				}, {
+					dataField : "partListDate",
+					headerText : "수배일자",
+					dataType : "date",
+					formatString : "yyyy-mm-dd",
 					editable : false
 				}, {
-					dataField : "model",
-					headerText : "수배일자",
-					dataType : "string",
-					editable : false
-				},{
-					dataField : "model",
+					dataField : "exchangeRate",
 					headerText : "환율",
-					dataType : "string",
+					dataType : "numeric",
+					formatString : "#,###",
 					editable : false
-				},{
-					dataField : "model",
+				}, {
+					dataField : "referDrawing",
 					headerText : "참고도면",
 					dataType : "string",
-					editable : false
-				},{
-					dataField : "model",
+					width : 200
+				}, {
+					dataField : "classification",
 					headerText : "조달구분",
 					dataType : "string",
-					editable : false
+					width : 200
 				}, {
-					dataField : "discontinue",
+					dataField : "note",
 					headerText : "비고",
 					dataType : "string",
 					width : 200
@@ -229,32 +240,42 @@ if (!StringUtils.isNull(poid)) {
 					dataType : "string",
 					visible : false
 				} ]
-				
+
 				const partlist_props = {
-						headerHeight : 30,
-						rowHeight : 30,
-						showRowNumColumn : true,
-						rowNumHeaderText : "번호",
-						softRemoveRowMode : false,
-						showRowCheckColumn : true, // 체크 박스 출력,
-						showStateColumn : true,
-						editable : true,
-						fillColumnSizeMode : true,
-						selectionMode : "multipleCells",
-						$compaEventOnPaste : true
-					};
-				
+					headerHeight : 30,
+					rowHeight : 30,
+					showRowNumColumn : true,
+					rowNumHeaderText : "번호",
+					softRemoveRowMode : false,
+					showRowCheckColumn : true, // 체크 박스 출력,
+					showStateColumn : true,
+					editable : true,
+					selectionMode : "multipleCells",
+					$compaEventOnPaste : true
+				};
+
 				$(function() {
 					partlistGridID = AUIGrid.create("#partlist_grid_wrap", partlist_columns, partlist_props);
 					AUIGrid.addRow(partlistGridID, new Object(), "first");
-// 					AUIGrid.bind(tbomGridID, "addRowFinish", auiAddRowHandler);
-// 					AUIGrid.bind(tbomGridID, "cellEditEnd", auiCellEditEndHandler);
+					AUIGrid.bind(partlistGridID, "cellEditEnd", auiCellEditEndHandler);
 
 					$("#closeBtn").click(function() {
 						self.close();
 					})
 				})
-				
+
+				function auiCellEditEndHandler(event) {
+					let dataField = event.dataField;
+					let item = event.item;
+					console.log(item);
+					if (dataField === "partNo" || dataField === "quantity") {
+						let url = getCallUrl("/erp/partListItemValue?partNo=" + item.partNo + "&quantity=" + item.quantity);
+						call(url, null, function(data) {
+							console.log(data);
+						}, "GET");
+					}
+				}
+
 				$(window).resize(function() {
 					AUIGrid.resize(partlistGridID);
 				})

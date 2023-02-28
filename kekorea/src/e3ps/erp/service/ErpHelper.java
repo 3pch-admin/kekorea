@@ -8,31 +8,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import e3ps.common.db.DBCPManager;
+import e3ps.common.myBatis.service.QueryDao;
 import e3ps.common.util.DateUtils;
-import e3ps.common.util.MessageHelper;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.service.EpmHelper;
 import wt.services.ServiceFactory;
 
-public class ErpHelper implements MessageHelper {
+public class ErpHelper {
+
+
+	// ERP 연동 여부 상수
+	public static final boolean isOperation = true;
 
 	public static final String OUTPUT_PATH = "";
 
 	public static final String EPM_PATH = "";
 
 	public static boolean isSendERP = true;
-	
+
 	public static final String erpName = "erp";
 
-	/**
-	 * access service
-	 */
 	public static final ErpService service = ServiceFactory.getService(ErpService.class);
-
-	/**
-	 * access helper
-	 */
 	public static final ErpHelper manager = new ErpHelper();
 
 	public String[] getKEK_VDAItem(String yCode) throws Exception {
@@ -338,7 +337,7 @@ public class ErpHelper implements MessageHelper {
 		}
 		return values;
 	}
-	
+
 	public String[] getKEK_VPJTProject_NAME(String pjtSeq) throws Exception {
 		String[] values = new String[3];
 		Connection con = null;
@@ -532,7 +531,7 @@ public class ErpHelper implements MessageHelper {
 		}
 		return values;
 	}
-	
+
 	/**
 	 * 메이커
 	 * 
@@ -541,16 +540,15 @@ public class ErpHelper implements MessageHelper {
 	 * @throws Exception
 	 */
 	public ArrayList<Map<String, Object>> getAllKEK_VDAMAKER() throws Exception {
-		
+
 		Map<String, Object> map = new HashMap<String, Object>();
-		
+
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		try {
-			
-			
+
 			con = DBCPManager.getConnection(erpName);
 			st = con.createStatement();
 
@@ -564,15 +562,15 @@ public class ErpHelper implements MessageHelper {
 				String MakerName = (String) rs.getString(2);
 
 				Map<String, Object> mapp = new HashMap<String, Object>();
-				
+
 				mapp.put("id", MakerSeq);
 				mapp.put("name", MakerName);
 				list.add(mapp);
 			}
-			
+
 			map.put("result", SUCCESS);
 			map.put("list", list);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			map.put("result", FAIL);
@@ -631,9 +629,9 @@ public class ErpHelper implements MessageHelper {
 			con = DBCPManager.getConnection(erpName);
 			st = con.createStatement();
 			String sql = "SELECT MAX(SEerpName " + tableName;
-			System.out.println("### getDevMaxSeq = "+sql);
+			System.out.println("### getDevMaxSeq = " + sql);
 			rs = st.executeQuery(sql);
-			
+
 			while (rs.next()) {
 				seq = rs.getInt(1);
 				// System.out.println(rs.getInt(1));
@@ -670,7 +668,7 @@ public class ErpHelper implements MessageHelper {
 		}
 		return seq + 1;
 	}
-	
+
 	public boolean searchPartSpec(String spec) {
 		boolean reValue = false;
 
@@ -682,20 +680,19 @@ public class ErpHelper implements MessageHelper {
 			// TCW_PART_IF
 			con = DBCPManager.getConnection(erpName);
 			st = con.createStatement();
-			String sql = "SELECT COUNT(*)  from KEK_VDAItem WHERE SPEC = '"+spec+"' ";
+			String sql = "SELECT COUNT(*)  from KEK_VDAItem WHERE SPEC = '" + spec + "' ";
 
 			rs = st.executeQuery(sql);
-			
-			
+
 			while (rs.next()) {
 				seq = rs.getInt(1);
 				// System.out.println(rs.getInt(1));
 			}
-			
-			if( seq > 1) {
+
+			if (seq > 1) {
 				reValue = true;
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -713,7 +710,6 @@ public class ErpHelper implements MessageHelper {
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-
 
 			if (!StringUtils.isNull(lotNo)) {
 
@@ -862,7 +858,6 @@ public class ErpHelper implements MessageHelper {
 		ResultSet rs = null;
 		try {
 
-
 			if (!StringUtils.isNull(yCode)) {
 				con = DBCPManager.getConnection(erpName);
 				st = con.createStatement();
@@ -896,93 +891,94 @@ public class ErpHelper implements MessageHelper {
 		}
 		return map;
 	}
-	
+
 	public Map<String, Object> getOutputList(Map<String, Object> param) {
 		Map<String, Object> map = new HashMap<String, Object>(); // json
 //		String lotNo = (String) param.get("lotNo");
-		int index = 0;//(int) param.get("index");
+		int index = 0;// (int) param.get("index");
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
-		String stdNo =  (String) param.get("stdNo");
-		String pjtSeq =  (String) param.get("pjtSeq");
-		String stdReportSeq =  (String) param.get("stdReportSeq");
+		String stdNo = (String) param.get("stdNo");
+		String pjtSeq = (String) param.get("pjtSeq");
+		String stdReportSeq = (String) param.get("stdReportSeq");
 		String ifFlag = (String) param.get("ifFlag");
-		
+
 		String predate = (String) param.get("predate");
 		String postdate = (String) param.get("postdate");
-		
+
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
-		
+
 		try {
 			String pjtSeqValue = "";
-			if( pjtSeq != null && pjtSeq.length() > 0) {
-				pjtSeq= pjtSeq.trim().toUpperCase();
+			if (pjtSeq != null && pjtSeq.length() > 0) {
+				pjtSeq = pjtSeq.trim().toUpperCase();
 				String[] ss = ErpHelper.manager.getKEK_VPJTProject(pjtSeq);
-				
-				if( ss != null ) {
-					if( ss[0] != null) {
+
+				if (ss != null) {
+					if (ss[0] != null) {
 						pjtSeqValue = ss[0];
 					}
 				}
 			}
-			
+
 			con = DBCPManager.getConnection(erpName);
 			st = con.createStatement();
 
 			StringBuffer sql = new StringBuffer();
 
-			sql.append(" SELECT STDNO, (SELECT PJTNO FROM KEK_VPJTProject WHERE A1.PJTSEQ=PJTSEQ), (SELECT STDREPORTNAME FROM KEK_VPJTOutputStdRpt WHERE A1.STDREPORTSEQ=STDREPORTSEQ), CREATE_TIME, FLAG, INTERFACE_DATE, RESULT, USERID ");
+			sql.append(
+					" SELECT STDNO, (SELECT PJTNO FROM KEK_VPJTProject WHERE A1.PJTSEQ=PJTSEQ), (SELECT STDREPORTNAME FROM KEK_VPJTOutputStdRpt WHERE A1.STDREPORTSEQ=STDREPORTSEQ), CREATE_TIME, FLAG, INTERFACE_DATE, RESULT, USERID ");
 			sql.append(" FROM KEK_TPJTOutputRptDo_IF A1 ");
 			sql.append(" WHERE ");
-			if("true".equals(ifFlag)) {
+			if ("true".equals(ifFlag)) {
 				sql.append(" FLAG = '0'");
-			}else {
+			} else {
 				sql.append(" FLAG IS NULL");
 			}
-			if( stdNo != null && stdNo.length() > 0 ) {
-				sql.append(" AND STDNO= '"+stdNo+"'");
+			if (stdNo != null && stdNo.length() > 0) {
+				sql.append(" AND STDNO= '" + stdNo + "'");
 			}
-			if( pjtSeqValue != null && pjtSeqValue.length() > 0 ) {
-				sql.append(" AND PJTSEQ= '"+pjtSeqValue+"'");
+			if (pjtSeqValue != null && pjtSeqValue.length() > 0) {
+				sql.append(" AND PJTSEQ= '" + pjtSeqValue + "'");
 			}
-			if( stdReportSeq != null && stdReportSeq.length() > 0 ) {
-				sql.append(" AND STDREPORTSEQ = '"+stdReportSeq+"'");
+			if (stdReportSeq != null && stdReportSeq.length() > 0) {
+				sql.append(" AND STDREPORTSEQ = '" + stdReportSeq + "'");
 			}
-			
-			if( predate != null && predate.length() > 0 &&
-					postdate != null && postdate.length() > 0) {
-				
-				sql.append(" AND CREATE_TIME BETWEEN '" + DateUtils.convertStartDate(predate) + "' AND '" + DateUtils.convertStartDate(postdate) + "'");
+
+			if (predate != null && predate.length() > 0 && postdate != null && postdate.length() > 0) {
+
+				sql.append(" AND CREATE_TIME BETWEEN '" + DateUtils.convertStartDate(predate) + "' AND '"
+						+ DateUtils.convertStartDate(postdate) + "'");
 			}
-			
+
 			sql.append(" ORDER BY CREATE_TIME");
-			
-			System.out.println("### sql = "+sql);
-			
+
+			System.out.println("### sql = " + sql);
+
 			rs = st.executeQuery(sql.toString());
 			while (rs.next()) {
-				//STDNO, PJTSEQ, STDREPORTSEQ,  CREATE_TIME, FLAG,
+				// STDNO, PJTSEQ, STDREPORTSEQ, CREATE_TIME, FLAG,
 				// INTERFACE_DATE, RESULT, USERID
-				
-				String 	re1 = (String) rs.getString(1);
-				String 	re2 = (String) rs.getString(2);
-				String 	re3 = (String) rs.getString(3);
-				String 	re4 = (String) rs.getString(4);
-				String 	re5 = (String) rs.getString(5);
-				
-				String 	re6 = (String) rs.getString(6);
-				
-				//String re6Va	= DateUtils.getDateString(re6, "yyyy-MM-dd");
-				
-				String 	re7 = (String) rs.getString(7);
-				String 	re8 = (String) rs.getString(8);
-				
-				//System.out.println("## ="+re1+"//"+re2+"//"+re3+"//"+re4+"//"+re5+"//"+re6+"//"+re7);
-				
-				
+
+				String re1 = (String) rs.getString(1);
+				String re2 = (String) rs.getString(2);
+				String re3 = (String) rs.getString(3);
+				String re4 = (String) rs.getString(4);
+				String re5 = (String) rs.getString(5);
+
+				String re6 = (String) rs.getString(6);
+
+				// String re6Va = DateUtils.getDateString(re6, "yyyy-MM-dd");
+
+				String re7 = (String) rs.getString(7);
+				String re8 = (String) rs.getString(8);
+
+				// System.out.println("##
+				// ="+re1+"//"+re2+"//"+re3+"//"+re4+"//"+re5+"//"+re6+"//"+re7);
+
 				Map<String, Object> reMap = new HashMap<String, Object>(); // json
-				
+
 				reMap.put("STDNO", re1);
 				reMap.put("PJTSEQ", re2);
 				reMap.put("STDREPORTSEQ", re3);
@@ -1006,35 +1002,34 @@ public class ErpHelper implements MessageHelper {
 		}
 		return map;
 	}
-	
+
 	public Map<String, Object> getPjtBomAction(Map<String, Object> param) {
 		Map<String, Object> map = new HashMap<String, Object>(); // json
 		int index = 0;
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
-		
-		
-		String resultMsg =  (String) param.get("resultMsg");
-		String pjtSeq =  (String) param.get("pjtSeq");
-		String stdReportSeq =  (String) param.get("stdReportSeq");
+
+		String resultMsg = (String) param.get("resultMsg");
+		String pjtSeq = (String) param.get("pjtSeq");
+		String stdReportSeq = (String) param.get("stdReportSeq");
 		String ifFlag = (String) param.get("ifFlag");
-		
+
 		String predate = (String) param.get("predate");
 		String postdate = (String) param.get("postdate");
-		
-		System.out.println("##"+resultMsg+"--"+pjtSeq+"--"+stdReportSeq+"--"+ifFlag);
-		
+
+		System.out.println("##" + resultMsg + "--" + pjtSeq + "--" + stdReportSeq + "--" + ifFlag);
+
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
-		
+
 		try {
 			String pjtSeqValue = "";
-			if( pjtSeq != null && pjtSeq.length() > 0) {
-				pjtSeq= pjtSeq.trim().toUpperCase();
+			if (pjtSeq != null && pjtSeq.length() > 0) {
+				pjtSeq = pjtSeq.trim().toUpperCase();
 				String[] ss = ErpHelper.manager.getKEK_VPJTProject(pjtSeq);
-				
-				if( ss != null ) {
-					if( ss[0] != null) {
+
+				if (ss != null) {
+					if (ss[0] != null) {
 						pjtSeqValue = ss[0];
 					}
 				}
@@ -1043,67 +1038,67 @@ public class ErpHelper implements MessageHelper {
 			st = con.createStatement();
 
 			StringBuffer sql = new StringBuffer();
-			sql.append(" SELECT DISNO, (SELECT PJTNO FROM KEK_VPJTProject WHERE A1.PJTSEQ=PJTSEQ), REMARKM, DISTRIBUTIONNO, CREATE_TIME, FLAG, INTERFACE_DATE, RESULT, USERID, ITEMSEQ ");
+			sql.append(
+					" SELECT DISNO, (SELECT PJTNO FROM KEK_VPJTProject WHERE A1.PJTSEQ=PJTSEQ), REMARKM, DISTRIBUTIONNO, CREATE_TIME, FLAG, INTERFACE_DATE, RESULT, USERID, ITEMSEQ ");
 			sql.append(" FROM KEK_TPJTBOM_IF A1 ");
 			sql.append(" WHERE ");
-			if("2".equals(ifFlag)) {
+			if ("2".equals(ifFlag)) {
 				sql.append(" FLAG = '0' ");
-			}else if("3".equals(ifFlag)) {
+			} else if ("3".equals(ifFlag)) {
 				sql.append(" FLAG ='1' ");
-			}else {
+			} else {
 				sql.append(" FLAG IS NULL ");
 			}
-			if( resultMsg != null && resultMsg.length() > 0 ) {
-				sql.append(" AND RESULT= '"+resultMsg+"'");
+			if (resultMsg != null && resultMsg.length() > 0) {
+				sql.append(" AND RESULT= '" + resultMsg + "'");
 			}
-			if( pjtSeq != null && pjtSeq.length() > 0 ) {
-				sql.append(" AND PJTSEQ= '"+pjtSeqValue+"'");
+			if (pjtSeq != null && pjtSeq.length() > 0) {
+				sql.append(" AND PJTSEQ= '" + pjtSeqValue + "'");
 			}
-			if( stdReportSeq != null && stdReportSeq.length() > 0 ) {
-				sql.append(" AND STDREPORTSEQ = '"+stdReportSeq+"'");
+			if (stdReportSeq != null && stdReportSeq.length() > 0) {
+				sql.append(" AND STDREPORTSEQ = '" + stdReportSeq + "'");
 			}
-			
-			if( predate != null && predate.length() > 0 &&
-					postdate != null && postdate.length() > 0) {
-				
-				sql.append(" AND CREATE_TIME BETWEEN '" + DateUtils.convertStartDate(predate) + "' AND '" + DateUtils.convertStartDate(postdate) + "'");
+
+			if (predate != null && predate.length() > 0 && postdate != null && postdate.length() > 0) {
+
+				sql.append(" AND CREATE_TIME BETWEEN '" + DateUtils.convertStartDate(predate) + "' AND '"
+						+ DateUtils.convertStartDate(postdate) + "'");
 			}
-			
+
 			sql.append(" ORDER BY CREATE_TIME");
-			
-			System.out.println("### sql = "+sql);
-			
+
+			System.out.println("### sql = " + sql);
+
 			rs = st.executeQuery(sql.toString());
 			while (rs.next()) {
-				//DISNO, (SELECT PJTNO FROM KEK_VPJTProject WHERE A1.PJTSEQ=PJTSEQ), REMARKM, 
-				//DISTRIBUTIONNO, CREATE_TIME, FLAG, 
-				//INTERFACE_DATE, RESULT, USERID
-				
-				
-				String 	re1 = (String) rs.getString(1);
-				String 	re2 = (String) rs.getString(2);
-				String 	re3 = (String) rs.getString(3);
-				String 	re4 = (String) rs.getString(4);
-				
-				String 	re5 = (String) rs.getString(5);
-				
-				String 	re6 = (String) rs.getString(6);
-				
-				String 	re7 = (String) rs.getString(7);
-				String 	re8 = (String) rs.getString(8);
-				String 	re9 = (String) rs.getString(9);
-				int 	re10 = (int) rs.getInt(10);
-				//System.out.println("## ="+re1+"//"+re2+"//"+re3+"//"+re4+"//"+re5+"//"+re6+"//"+re7+"//"+re8);
-				
-				
+				// DISNO, (SELECT PJTNO FROM KEK_VPJTProject WHERE A1.PJTSEQ=PJTSEQ), REMARKM,
+				// DISTRIBUTIONNO, CREATE_TIME, FLAG,
+				// INTERFACE_DATE, RESULT, USERID
+
+				String re1 = (String) rs.getString(1);
+				String re2 = (String) rs.getString(2);
+				String re3 = (String) rs.getString(3);
+				String re4 = (String) rs.getString(4);
+
+				String re5 = (String) rs.getString(5);
+
+				String re6 = (String) rs.getString(6);
+
+				String re7 = (String) rs.getString(7);
+				String re8 = (String) rs.getString(8);
+				String re9 = (String) rs.getString(9);
+				int re10 = (int) rs.getInt(10);
+				// System.out.println("##
+				// ="+re1+"//"+re2+"//"+re3+"//"+re4+"//"+re5+"//"+re6+"//"+re7+"//"+re8);
+
 				Map<String, Object> reMap = new HashMap<String, Object>(); // json
-				
+
 				reMap.put("DISNO", re1);
 				reMap.put("PJTSEQ", re2);
 				reMap.put("REMARKM", re3);
 				reMap.put("DISTRIBUTIONNO", re4);
 				reMap.put("CREATE_TIME", re5);
-				
+
 				reMap.put("FLAG", re6);
 				reMap.put("INTERFACE_DATE", re7);
 				reMap.put("RESULT", re8);
@@ -1124,96 +1119,95 @@ public class ErpHelper implements MessageHelper {
 		}
 		return map;
 	}
-	
+
 	public Map<String, Object> getErpPartAction(Map<String, Object> param) {
 		Map<String, Object> map = new HashMap<String, Object>(); // json
 		int index = 0;
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
-		
-		
-		String resultMsg =  (String) param.get("resultMsg");
-		String partSpec =  (String) param.get("partSpec");
-		String stdReportSeq =  (String) param.get("stdReportSeq");
+
+		String resultMsg = (String) param.get("resultMsg");
+		String partSpec = (String) param.get("partSpec");
+		String stdReportSeq = (String) param.get("stdReportSeq");
 		String ifFlag = (String) param.get("ifFlag");
-		
+
 		String predate = (String) param.get("predate");
 		String postdate = (String) param.get("postdate");
-		
-		System.out.println("##"+resultMsg+"--"+partSpec+"--"+stdReportSeq+"--"+ifFlag);
-		
+
+		System.out.println("##" + resultMsg + "--" + partSpec + "--" + stdReportSeq + "--" + ifFlag);
+
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
-		
+
 		try {
 			con = DBCPManager.getConnection(erpName);
 			st = con.createStatement();
 
 			StringBuffer sql = new StringBuffer();
-			sql.append(" SELECT A1.PART_NO, A1.PART_NAME, A1.PART_SPEC, A1.USERID, A1.FLAG, A1.CREATE_DATE, A1.INTERFACE_DATE, A1.RESULT  ");
+			sql.append(
+					" SELECT A1.PART_NO, A1.PART_NAME, A1.PART_SPEC, A1.USERID, A1.FLAG, A1.CREATE_DATE, A1.INTERFACE_DATE, A1.RESULT  ");
 			sql.append(" FROM KEK_TDAItem_IF A1 ");
 			sql.append(" WHERE ");
-			if("2".equals(ifFlag)) {
-				//정상처리
+			if ("2".equals(ifFlag)) {
+				// 정상처리
 				sql.append(" FLAG = '0' ");
-			}else if("3".equals(ifFlag)) {
-				//오류처리
+			} else if ("3".equals(ifFlag)) {
+				// 오류처리
 				sql.append(" FLAG ='1' ");
-			}else if("1".equals(ifFlag)) {
+			} else if ("1".equals(ifFlag)) {
 				sql.append(" FLAG IS NULL ");
 			}
-			if( resultMsg != null && resultMsg.length() > 0 ) {
-				sql.append(" AND RESULT= '"+resultMsg+"'");
+			if (resultMsg != null && resultMsg.length() > 0) {
+				sql.append(" AND RESULT= '" + resultMsg + "'");
 			}
-			if( partSpec != null && partSpec.length() > 0 ) {
-				sql.append(" AND A1.PART_SPEC= '"+partSpec+"'");
+			if (partSpec != null && partSpec.length() > 0) {
+				sql.append(" AND A1.PART_SPEC= '" + partSpec + "'");
 			}
-			if( stdReportSeq != null && stdReportSeq.length() > 0 ) {
-				sql.append(" AND STDREPORTSEQ = '"+stdReportSeq+"'");
+			if (stdReportSeq != null && stdReportSeq.length() > 0) {
+				sql.append(" AND STDREPORTSEQ = '" + stdReportSeq + "'");
 			}
-			
-			if( predate != null && predate.length() > 0 &&
-					postdate != null && postdate.length() > 0) {
-				
-				sql.append(" AND A1.CREATE_DATE BETWEEN '" + DateUtils.convertStartDate(predate) + "' AND '" + DateUtils.convertStartDate(postdate) + "'");
+
+			if (predate != null && predate.length() > 0 && postdate != null && postdate.length() > 0) {
+
+				sql.append(" AND A1.CREATE_DATE BETWEEN '" + DateUtils.convertStartDate(predate) + "' AND '"
+						+ DateUtils.convertStartDate(postdate) + "'");
 			}
-			
+
 			sql.append(" ORDER BY CREATE_DATE");
-			
-			System.out.println("### sql = "+sql);
-			
+
+			System.out.println("### sql = " + sql);
+
 			rs = st.executeQuery(sql.toString());
 			while (rs.next()) {
-				//A1.PART_NO, A1.PART_NAME, A1.PART_SPEC, 
-				//A1.USERID, A1.FLAG, A1.CREATE_DATE, 
-				//A1.INTERFACE_DATE, A1.RESULT
-				
-				
-				String 	re1 = (String) rs.getString(1);
-				String 	re2 = (String) rs.getString(2);
-				String 	re3 = (String) rs.getString(3);
-				
-				String 	re4 = (String) rs.getString(4);
-				String 	re5 = (String) rs.getString(5);
-				String 	re6 = (String) rs.getString(6);
-				
-				String 	re7 = (String) rs.getString(7);
-				String 	re8 = (String) rs.getString(8);
-				//System.out.println("## ="+re1+"//"+re2+"//"+re3+"//"+re4+"//"+re5+"//"+re6+"//"+re7+"//"+re8);
-				
-				
+				// A1.PART_NO, A1.PART_NAME, A1.PART_SPEC,
+				// A1.USERID, A1.FLAG, A1.CREATE_DATE,
+				// A1.INTERFACE_DATE, A1.RESULT
+
+				String re1 = (String) rs.getString(1);
+				String re2 = (String) rs.getString(2);
+				String re3 = (String) rs.getString(3);
+
+				String re4 = (String) rs.getString(4);
+				String re5 = (String) rs.getString(5);
+				String re6 = (String) rs.getString(6);
+
+				String re7 = (String) rs.getString(7);
+				String re8 = (String) rs.getString(8);
+				// System.out.println("##
+				// ="+re1+"//"+re2+"//"+re3+"//"+re4+"//"+re5+"//"+re6+"//"+re7+"//"+re8);
+
 				Map<String, Object> reMap = new HashMap<String, Object>(); // json
-				
+
 				reMap.put("PART_NO", re1);
 				reMap.put("PART_NAME", re2);
 				reMap.put("PART_SPEC", re3);
 				reMap.put("USERID", re4);
 				reMap.put("FLAG", re5);
-				
+
 				reMap.put("CREATE_TIME", re6);
 				reMap.put("INTERFACE_DATE", re7);
 				reMap.put("RESULT", re8);
-				
+
 				list.add(reMap);
 			}
 			map.put("result", SUCCESS);
@@ -1229,18 +1223,16 @@ public class ErpHelper implements MessageHelper {
 		}
 		return map;
 	}
-	
+
 	public Map<String, Object> getMainDataAction() {
 		Map<String, Object> map = new HashMap<String, Object>(); // json
 		int index = 0;
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
-		
-		
+
 //		String flagSql = "";
-		
-		
+
 //		String[] tableName = {
 //				
 //				"KEK_TPJTOutputRptDo_IF",
@@ -1249,9 +1241,9 @@ public class ErpHelper implements MessageHelper {
 //				"KEK_TPJTUnitBOM_IF"
 //		
 //		};
-		
+
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
-		
+
 		try {
 
 			con = DBCPManager.getConnection(erpName);
@@ -1259,24 +1251,22 @@ public class ErpHelper implements MessageHelper {
 
 			StringBuffer sql = new StringBuffer();
 			/*
-			 * SELECT count(distinct(disno))
-			FROM KEK_TPJTBOM_IF WHERE FLAG IS NOT NULL
-			AND   RESULT!= '정상처리';
+			 * SELECT count(distinct(disno)) FROM KEK_TPJTBOM_IF WHERE FLAG IS NOT NULL AND
+			 * RESULT!= '정상처리';
 			 */
 			sql.append(" SELECT COUNT(*) ");
 			sql.append(" FROM KEK_TPJTBOM_IF ");
 			sql.append(" WHERE ");
-			
-			
+
 			rs = st.executeQuery(sql.toString());
 			while (rs.next()) {
 //				int re1 = (int) rs.getInt(1);
-				
+
 				Map<String, Object> reMap = new HashMap<String, Object>(); // json
-				
+
 				list.add(reMap);
 			}
-			
+
 			map.put("result", SUCCESS);
 			map.put("index", index);
 			map.put("list", list);
@@ -1290,4 +1280,5 @@ public class ErpHelper implements MessageHelper {
 		}
 		return map;
 	}
+
 }

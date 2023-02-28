@@ -9,13 +9,15 @@ import wt.util.WTException;
 
 @GenAsBinaryLink(superClass = ObjectToObjectLink.class,
 
+		roleA = @GeneratedRole(name = "master", type = PartListMaster.class),
+
+		roleB = @GeneratedRole(name = "data", type = PartListData.class),
+
 		properties = {
 
-				@GeneratedProperty(name = "sort", type = Integer.class, javaDoc = "순서"), },
+				@GeneratedProperty(name = "sort", type = Integer.class, javaDoc = "순서"),
 
-		roleA = @GeneratedRole(name = "partListMaster", type = PartListMaster.class),
-
-		roleB = @GeneratedRole(name = "partListData", type = PartListData.class)
+		}
 
 )
 

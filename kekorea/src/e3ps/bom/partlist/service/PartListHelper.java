@@ -48,17 +48,17 @@ import wt.util.WTProperties;
 import wt.vc.VersionControlHelper;
 import wt.vc.wip.WorkInProgressHelper;
 
-public class PartListMasterHelper {
+public class PartListHelper {
 
 	/**
 	 * access service
 	 */
-	public static final PartListMasterService service = ServiceFactory.getService(PartListMasterService.class);
+	public static final PartListService service = ServiceFactory.getService(PartListService.class);
 
 	/**
 	 * access helper
 	 */
-	public static final PartListMasterHelper manager = new PartListMasterHelper();
+	public static final PartListHelper manager = new PartListHelper();
 
 	public static String excelFormLoc;
 	static {
@@ -442,7 +442,7 @@ public class PartListMasterHelper {
 																				// "EUC-KR");
 		Map<String, String> headerList = new HashMap<String, String>();
 		Map<String, String> list = new HashMap<String, String>();
-		ArrayList<PartListData> data = PartListMasterHelper.manager.getPartListData(master);
+		ArrayList<PartListData> data = PartListHelper.manager.getPartListData(master);
 		// headerList를 세팅할 만큼 세팅합니다.
 		headerList.put("0", "NO");
 		headerList.put("1", "LOT_NO");
