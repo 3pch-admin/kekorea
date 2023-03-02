@@ -1,4 +1,9 @@
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+	WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+	boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -53,11 +58,14 @@
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('keDrawing-list');">
-					<input type="button" value="조회" title="조회" onclick="loadGridData();">
+					<input type="button" value="저장" title="저장" onclick="create();">
+					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 				</td>
-				<td class="right"></td>
+				<td class="right">
+					<input type="button" value="조회" title="조회" onclick="loadGridData();">
+				</td>
 			</tr>
 		</table>
 
@@ -70,8 +78,13 @@
 				return [ {
 					dataField : "lotNo",
 					headerText : "LOT",
-					dataType : "string",
+					dataType : "numeric",
 					width : 100,
+					formatString : "###0",
+					editRenderer : {
+						type : "InputEditRenderer",
+						onlyNumeric : true, // 0~9만 입력가능
+					},
 					filter : {
 						showIcon : true,
 						useExMenu : true
@@ -84,12 +97,14 @@
 					dataField : "number",
 					headerText : "DWG. NO",
 					dataType : "string",
-					width : 200
+					width : 200,
+					editable : false,
 				}, {
 					dataField : "version",
 					headerText : "버전",
-					dataType : "string",
-					width : 80
+					dataType : "numeric",
+					width : 80,
+					editable : false,
 				}, {
 					dataField : "latest",
 					headerText : "최신버전",
@@ -97,34 +112,40 @@
 					width : 100,
 					renderer : {
 						type : "CheckBoxEditRenderer"
-					}
+					},
+					editable : false,
 				}, {
 					dataField : "creator",
 					headerText : "작성자",
 					dataType : "string",
-					width : 100
+					width : 100,
+					editable : false,
 				}, {
 					dataField : "createdDate",
 					headerText : "작성일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
-					width : 100
+					width : 100,
+					editable : false,
 				}, {
 					dataField : "modifier",
 					headerText : "수정자",
 					dataType : "string",
-					width : 100
+					width : 100,
+					editable : false,
 				}, {
 					dataField : "modifiedDate",
 					headerText : "수정일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
-					width : 100
+					width : 100,
+					editable : false,
 				}, {
 					dataField : "primary",
 					headerText : "도면파일",
 					dataType : "string",
 					width : 100,
+					editable : false,
 					renderer : {
 						type : "TemplateRenderer",
 					},
@@ -166,7 +187,8 @@
 					selectionMode : "multiCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
-				// 그리드 공통속성 끝
+					// 그리드 공통속성 끝
+					editable : true
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
@@ -223,6 +245,8 @@
 				let item = new Object();
 				item.createdDate = new Date();
 				item.modifiedDate = new Date();
+				item.creator = "<%=sessionUser.getFullName() %>";
+				item.modifier = "<%=sessionUser.getFullName() %>";
 				item.latest = true;
 				AUIGrid.addRow(myGridID, item, "first");
 			}
@@ -236,7 +260,6 @@
 				}
 			}
 			
-
 			function attach(data) {
 				let name = data.name;
 				let start = name.indexOf("-");
@@ -257,6 +280,43 @@
 			// 로딩 레이어 삭제
 			parent.closeLayer();
 			
+			// 저장
+			function create() {
+				
+				if(!confirm("저장 하시겠습니까?")) {
+					return false;
+				}
+				
+				let url = getCallUrl("/keDrawing/create");
+				let params = new Object();
+				let addRows = AUIGrid.getAddedRowItems(myGridID);
+				let removeRows = AUIGrid.getRemovedItems(myGridID);
+				let editRows = AUIGrid.getEditedRowItems(myGridID);
+				params.addRows = addRows;
+				params.removeRows = removeRows;
+				params.editRows = editRows;
+				console.log(params);
+				call(url, params, function(data) {
+					alert(data.msg);
+					if (data.result) {
+						loadGridData();
+					}
+				}, "POST");
+			}
+
+			function revise() {
+				let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				if (checkedItems.length == 0) {
+					alert("개정할 도면을 선택하세요.");
+					return false;
+				}
+				let url = getCallUrl("/keDrawing/revise");
+				let panel;
+				panel = popup(url, 1600, 550);
+				panel.list = checkedItems;
+			}
+			
+			
 			// jquery 모든 DOM구조 로딩 후 
 			$(function() {
 				// 로컬 스토리지에 저장된 컬럼 값 불러오기 see - base.js
@@ -265,6 +325,7 @@
 			}).keypress(function(e) {
 				let keyCode = e.keyCode;
 				if (keyCode === 13) {
+					loadGridData();
 				}
 			})
 		</script>

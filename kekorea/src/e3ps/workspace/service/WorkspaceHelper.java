@@ -1657,6 +1657,26 @@ public class WorkspaceHelper {
 
 	public Map<String, Object> agree(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
+		ArrayList<ApprovalLineColumnData> list = new ArrayList<>();
+		// 쿼리문 작성
+		QuerySpec query = new QuerySpec();
+		// 상태가 = 대기중
+		// 결재타입 = 검토라인
+		
+		
+		
+		
+		// 
+		
+		PageQueryUtils pager = new PageQueryUtils(params, query);
+		PagingQueryResult result = pager.find();
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			
+		}
+		map.put("list", list);
+		map.put("sessionid", pager.getSessionId());
+		map.put("curPage", pager.getCpage());
 		return map;
 	}
 

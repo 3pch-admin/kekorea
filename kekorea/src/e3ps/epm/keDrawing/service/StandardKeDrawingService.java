@@ -83,7 +83,7 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				KeDrawingMaster master = keDrawing.getMaster();
 				master.setName(name);
 				master.setLotNo(lotNo);
-				PersistenceHelper.manager.modify(keDrawing);
+				PersistenceHelper.manager.modify(master);
 
 				if (!StringUtils.isNull(primaryPath)) {
 					QueryResult result = ContentHelper.service.getContentsByRole(keDrawing, ContentRoleType.PRIMARY);

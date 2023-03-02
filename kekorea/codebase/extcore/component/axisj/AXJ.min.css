@@ -9256,7 +9256,7 @@ button, button:hover {
 	white-space: nowrap;
 	position: relative !important;
 	padding: 0 !important;
-	top: 2px;
+	top: 5px;
 	padding-left: 4px !important;
 	padding-right: 4px !important;
 	overflow: hidden;
@@ -9273,7 +9273,7 @@ button, button:hover {
 
 .AXUpload5 .AXFileDisplay .AXUploadItem .AXUploadTit {
 	position: relative !important;
-	top: 5px;
+	top: 2px;
 	text-indent: 46px;
 	font-size: 12px;
 	line-height: 24px;
@@ -9292,7 +9292,7 @@ button, button:hover {
 .AXUpload5 .AXFileDisplay .AXUploadItem .AXUploadBtns .AXUploadBtnsA {
 	z-index: 1000;
 	position: relative !important;
-	top: 6px;
+	top: 3px;
 	display: block;
 	width: 24px;
 	height: 24px;
@@ -9312,7 +9312,7 @@ button, button:hover {
 .AXUpload5 .AXFileDisplay .AXUploadItem .AXUploadLabel .AXUploadDownload {
 	z-index: 1000;
 	position: relative !important;
-	top: 6px;
+	top: 3px;
 	display: block;
 	width: 16px;
 	height: 16px;
