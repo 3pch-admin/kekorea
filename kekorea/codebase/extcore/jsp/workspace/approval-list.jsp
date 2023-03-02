@@ -27,7 +27,7 @@
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th>결재제목</th>
+				<th>결재 제목</th>
 				<td>
 					<input type="text" name="fileName" class="AXInput">
 				</td>
@@ -65,6 +65,7 @@
 					width : 80,
 					filter : {
 						showIcon : false,
+						useExMenu : false,
 						inline : false
 					},
 					renderer : {
@@ -74,39 +75,74 @@
 					dataField : "type",
 					headerText : "구분",
 					dataType : "string",
-					width : 80
+					width : 80,
+					filter : {
+						showIcon : true,
+						useExMenu : true,
+						inline : true
+					},
 				}, {
 					dataField : "role",
 					headerText : "역할",
 					dataType : "string",
-					width : 80
+					width : 80,
+					filter : {
+						showIcon : true,
+						useExMenu : true,
+						inline : true
+					},
 				}, {
 					dataField : "name",
 					headerText : "결재 제목",
 					dataType : "string",
-					style : "left indent10 underline"
+					style : "left indent10 underline",
+					filter : {
+						showIcon : true,
+						useExMenu : true,
+						inline : true
+					},
 				}, {
 					dataField : "material",
 					headerText : "진행단계",
 					dataType : "string",
-					width : 150
+					width : 150,
+					filter : {
+						showIcon : true,
+						useExMenu : true,
+						inline : true
+					},
 				}, {
 					dataField : "creator",
 					headerText : "기안자",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						useExMenu : true,
+						inline : true
+					},
 				}, {
 					dataField : "state",
 					headerText : "상태",
 					dataType : "string",
-					width : 80
+					width : 80,
+					filter : {
+						showIcon : true,
+						useExMenu : true,
+						inline : true
+					},
 				}, {
 					dataField : "createdDate",
 					headerText : "수신일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd HH:MM:ss",
-					width : 150
+					width : 150,
 				// 시간 표현시 130
+					filter : {
+						showIcon : true,
+						useExMenu : true,
+						inline : true
+					},
 				} ]
 			}
 

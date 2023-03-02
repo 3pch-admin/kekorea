@@ -27,7 +27,7 @@
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th>결재제목</th>
+				<th>결재 제목</th>
 				<td>
 					<input type="text" name="fileName" class="AXInput">
 				</td>
@@ -46,7 +46,7 @@
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('notice-list');">
+					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('agree-list');">
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 				<td class="right"></td>
@@ -65,6 +65,7 @@
 					width : 80,
 					filter : {
 						showIcon : false,
+						useExMenu : false,
 						inline : false
 					},
 					renderer : {
@@ -77,7 +78,8 @@
 					width : 80,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						useExMenu : true,
+						inline : true
 					},
 				}, {
 					dataField : "role",
@@ -86,17 +88,19 @@
 					width : 80,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						useExMenu : true,
+						inline : true
 					},
 				}, {
 					dataField : "name",
 					headerText : "결재 제목",
 					dataType : "string",
 					style : "left indent10 underline",
-						filter : {
-							showIcon : true,
-							useExMenu : true
-						},
+					filter : {
+						showIcon : true,
+						useExMenu : true,
+						inline : true
+					},
 				}, {
 					dataField : "material",
 					headerText : "진행단계",
@@ -104,7 +108,8 @@
 					width : 150,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						useExMenu : true,
+						inline : true
 					},
 				}, {
 					dataField : "submiter",
@@ -113,7 +118,8 @@
 					width : 100,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						useExMenu : true,
+						inline : true
 					},
 				}, {
 					dataField : "state",
@@ -122,7 +128,8 @@
 					width : 80,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						useExMenu : true,
+						inline : true
 					},
 				}, {
 					dataField : "receiveTime",
@@ -132,7 +139,8 @@
 					width : 150,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						useExMenu : true,
+						inline : true
 					},
 				} ]
 			}
@@ -209,7 +217,7 @@
 			// jquery 모든 DOM구조 로딩 후 
 			$(function() {
 				// 로컬 스토리지에 저장된 컬럼 값 불러오기 see - base.js
-				let columns = loadColumnLayout("notice-list");
+				let columns = loadColumnLayout("agree-list");
 				createAUIGrid(columns);
 			}).keypress(function(e) {
 				let keyCode = e.keyCode;

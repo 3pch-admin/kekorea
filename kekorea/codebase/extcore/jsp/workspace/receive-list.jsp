@@ -27,7 +27,7 @@
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th>결재제목</th>
+				<th>결재 제목</th>
 				<td>
 					<input type="text" name="fileName" class="AXInput">
 				</td>
@@ -46,7 +46,7 @@
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('approval-list');">
+					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('receive-list');">
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 				<td class="right"></td>
@@ -65,6 +65,7 @@
 					width : 80,
 					filter : {
 						showIcon : false,
+						useExMenu : false,
 						inline : false
 					},
 					renderer : {
@@ -77,7 +78,8 @@
 					width : 80,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						useExMenu : true,
+						inline : true
 					},
 				}, {
 					dataField : "role",
@@ -86,7 +88,8 @@
 					width : 80,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						useExMenu : true,
+						inline : true
 					},
 				}, {
 					dataField : "name",
@@ -95,7 +98,8 @@
 					style : "left indent10 underline",
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						useExMenu : true,
+						inline : true
 					},
 				}, {
 					dataField : "material",
@@ -104,7 +108,8 @@
 					width : 150,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						useExMenu : true,
+						inline : true
 					},
 				}, {
 					dataField : "creator",
@@ -113,7 +118,8 @@
 					width : 100,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						useExMenu : true,
+						inline : true
 					},
 				}, {
 					dataField : "state",
@@ -122,7 +128,8 @@
 					width : 80,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						useExMenu : true,
+						inline : true
 					},
 				}, {
 					dataField : "createdDate",
@@ -133,7 +140,8 @@
 					// 시간 표현시 130
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						useExMenu : true,
+						inline : true
 					},
 				} ]
 			}
@@ -209,7 +217,7 @@
 			// jquery 모든 DOM구조 로딩 후 
 			$(function() {
 				// 로컬 스토리지에 저장된 컬럼 값 불러오기 see - base.js
-				let columns = loadColumnLayout("approval-list");
+				let columns = loadColumnLayout("receive-list");
 				createAUIGrid(columns);
 			}).keypress(function(e) {
 				let keyCode = e.keyCode;
