@@ -1,4 +1,4 @@
-package e3ps.epm.keDrawing.service;
+package e3ps.epm.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
-import e3ps.epm.keDrawing.beans.KeDrawingColumnData;
+import e3ps.epm.beans.KeDrawingColumnData;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;

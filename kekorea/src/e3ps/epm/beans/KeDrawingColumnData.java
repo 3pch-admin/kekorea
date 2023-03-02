@@ -1,4 +1,4 @@
-package e3ps.epm.keDrawing.beans;
+package e3ps.epm.beans;
 
 import java.sql.Timestamp;
 

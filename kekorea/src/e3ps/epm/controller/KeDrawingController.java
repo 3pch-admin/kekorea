@@ -1,4 +1,4 @@
-package e3ps.epm.keDrawing.controller;
+package e3ps.epm.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.util.CommonUtils;
 import e3ps.controller.BaseController;
-import e3ps.epm.keDrawing.service.KeDrawingHelper;
+import e3ps.epm.service.KeDrawingHelper;
 import wt.org.WTUser;
 
 @Controller
