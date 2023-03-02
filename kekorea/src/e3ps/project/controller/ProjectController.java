@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,7 +34,7 @@ import net.sf.json.JSONArray;
 public class ProjectController extends BaseController {
 
 	@Description(value = "프로젝트 리스트 페이지")
-	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
@@ -62,13 +64,13 @@ public class ProjectController extends BaseController {
 		model.addObject("before", before);
 		model.addObject("end", end);
 		model.addObject("isAdmin", isAdmin);
-		model.setViewName("/jsp/project/project-list.jsp");
+		model.setViewName("/extcore/jsp/project/project-list.jsp");
 		return model;
 	}
 
 	@Description(value = "프로젝트 리스트 가져 오는 함수")
 	@ResponseBody
-	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {

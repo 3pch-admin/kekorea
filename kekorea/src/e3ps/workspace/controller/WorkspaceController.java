@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.controller.BaseController;
-import e3ps.workspace.service.ApprovalHelper;
+import e3ps.workspace.service.WorkspaceHelper;
 
 @Controller
 @RequestMapping(value = "/workspace/**")
@@ -22,7 +22,7 @@ public class WorkspaceController extends BaseController {
 	@RequestMapping(value = "/agree", method = RequestMethod.GET)
 	public ModelAndView agree() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/workspace/agree-list.jsp");
+		model.setViewName("/extcore/jsp/workspace/agree-list.jsp");
 		return model;
 	}
 
@@ -32,7 +32,7 @@ public class WorkspaceController extends BaseController {
 	public Map<String, Object> agree(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = ApprovalHelper.manager.agree(params);
+			result = WorkspaceHelper.manager.agree(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -45,7 +45,7 @@ public class WorkspaceController extends BaseController {
 	@RequestMapping(value = "/approval", method = RequestMethod.GET)
 	public ModelAndView approval() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/workspace/approval-list.jsp");
+		model.setViewName("/extcore/jsp/workspace/approval-list.jsp");
 		return model;
 	}
 
@@ -55,7 +55,7 @@ public class WorkspaceController extends BaseController {
 	public Map<String, Object> approval(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = ApprovalHelper.manager.approval(params);
+			result = WorkspaceHelper.manager.approval(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -68,7 +68,7 @@ public class WorkspaceController extends BaseController {
 	@RequestMapping(value = "/receive", method = RequestMethod.GET)
 	public ModelAndView receive() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/workspace/receive-list.jsp");
+		model.setViewName("/extcore/jsp/workspace/receive-list.jsp");
 		return model;
 	}
 
@@ -78,7 +78,7 @@ public class WorkspaceController extends BaseController {
 	public Map<String, Object> receive(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = ApprovalHelper.manager.receive(params);
+			result = WorkspaceHelper.manager.receive(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -91,7 +91,7 @@ public class WorkspaceController extends BaseController {
 	@RequestMapping(value = "/progress", method = RequestMethod.GET)
 	public ModelAndView progress() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/workspace/progress-list.jsp");
+		model.setViewName("/extcore/jsp/workspace/progress-list.jsp");
 		return model;
 	}
 
@@ -101,7 +101,7 @@ public class WorkspaceController extends BaseController {
 	public Map<String, Object> progress(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = ApprovalHelper.manager.progress(params);
+			result = WorkspaceHelper.manager.progress(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -114,7 +114,7 @@ public class WorkspaceController extends BaseController {
 	@RequestMapping(value = "/complete", method = RequestMethod.GET)
 	public ModelAndView complete() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/workspace/complete-list.jsp");
+		model.setViewName("/extcore/jsp/workspace/complete-list.jsp");
 		return model;
 	}
 
@@ -124,7 +124,7 @@ public class WorkspaceController extends BaseController {
 	public Map<String, Object> complete(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = ApprovalHelper.manager.complete(params);
+			result = WorkspaceHelper.manager.complete(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -137,7 +137,7 @@ public class WorkspaceController extends BaseController {
 	@RequestMapping(value = "/reject", method = RequestMethod.GET)
 	public ModelAndView reject() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/workspace/reject-list.jsp");
+		model.setViewName("/extcore/jsp/workspace/reject-list.jsp");
 		return model;
 	}
 
@@ -147,7 +147,7 @@ public class WorkspaceController extends BaseController {
 	public Map<String, Object> reject(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = ApprovalHelper.manager.reject(params);
+			result = WorkspaceHelper.manager.reject(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -9,9 +9,13 @@ import e3ps.admin.sheetvariable.CategoryItemsLink;
 import e3ps.admin.sheetvariable.beans.CategoryColumnData;
 import e3ps.admin.spec.Spec;
 import e3ps.doc.column.DocumentColumnData;
+import e3ps.doc.request.RequestDocument;
+import e3ps.doc.request.RequestDocumentProjectLink;
+import e3ps.doc.request.beans.RequestDocumentColumnData;
 import e3ps.epm.beans.EpmColumnData;
 import e3ps.korea.cip.Cip;
 import e3ps.korea.cip.beans.CipColumnData;
+import e3ps.part.beans.PartColumnData;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.beans.KePartColumnData;
 import e3ps.project.Project;
@@ -20,6 +24,7 @@ import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.fc.PagingQueryResult;
 import wt.fc.Persistable;
+import wt.part.WTPart;
 
 public class ColumnParseUtils {
 
@@ -28,8 +33,14 @@ public class ColumnParseUtils {
 		while (qr.hasMoreElements()) {
 			Object[] obj = (Object[]) qr.nextElement();
 			Persistable per = (Persistable) obj[0];
-			// 문서
-			if (per instanceof WTDocument) {
+
+			// 의뢰서
+			if (per instanceof RequestDocument) {
+				RequestDocumentProjectLink link = (RequestDocumentProjectLink) obj[1];
+				RequestDocumentColumnData data = parse(link);
+				list.add(data);
+				// 문서
+			} else if (per instanceof WTDocument) {
 				DocumentColumnData data = parse((WTDocument) per);
 				list.add(data);
 				// 코드
@@ -61,9 +72,17 @@ public class ColumnParseUtils {
 			} else if (per instanceof EPMDocument) {
 				EpmColumnData data = parse((EPMDocument) per);
 				list.add(data);
+				// wtpart
+			} else if (per instanceof WTPart) {
+				PartColumnData data = parse((WTPart) per);
+				list.add(data);
 			}
 		}
 		return list;
+	}
+
+	private static PartColumnData parse(WTPart per) throws Exception {
+		return new PartColumnData(per);
 	}
 
 	private static EpmColumnData parse(EPMDocument per) throws Exception {
@@ -84,6 +103,10 @@ public class ColumnParseUtils {
 
 	private static CommonCodeColumnData parse(CommonCode per) throws Exception {
 		return new CommonCodeColumnData(per);
+	}
+
+	private static RequestDocumentColumnData parse(RequestDocumentProjectLink per) throws Exception {
+		return new RequestDocumentColumnData(per);
 	}
 
 	private static DocumentColumnData parse(WTDocument per) throws Exception {

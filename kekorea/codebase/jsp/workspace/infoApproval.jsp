@@ -7,7 +7,7 @@
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	// popup check
+// popup check
 	String popup = (String) request.getParameter("popup");
 	boolean isPopup = Boolean.parseBoolean(popup);
 
@@ -16,7 +16,7 @@
 	// isAdmin
 	boolean isAdmin = CommonUtils.isAdmin();
 	if("확인안함".equals(data.read)) {
-		ApprovalHelper.manager.read(data.approvalLine);
+		WorkspaceHelper.manager.read(data.approvalLine);
 	}
 
 	String btnKey = "listAppBtn";
@@ -47,8 +47,8 @@
 %>
 <script type="text/javascript" src="/Windchill/jsp/js/approvals.js"></script>
 <td valign="top">
-	<input type="hidden" name="oid" id="oid" value="<%=data.oid %>">
-	<input type="hidden" name="popup" id="popup" value="<%=isPopup %>">
+	<input type="hidden" name="oid" id="oid" value="<%=data.oid%>">
+	<input type="hidden" name="popup" id="popup" value="<%=isPopup%>">
 
 
 	<table class="btn_table">
@@ -60,67 +60,67 @@
 			</td>
 			<td>
 				<%
-					if(isPopup) {
+				if(isPopup) {
 				%>
 				<div class="right">
 					<%
-						if(data.appBtn && !isComplete) {
+					if(data.appBtn && !isComplete) {
 					%>
 					<input type="button" value="승인" id="approvalBtn" title="승인">
 					<input type="button" value="반려" id="returnBtn" title="반려" class="redBtn">
 					<%
-						}
+					}
 					%>
 					<%
-						if(data.agreeBtn && !isComplete) {
+					if(data.agreeBtn && !isComplete) {
 					%>
 					<input type="button" value="검토완료" id="agreeBtn" title="검토완료">
 					<input type="button" value="검토반려" id="unagreeBtn" title="검토반려" class="redBtn">
 					<%
-						}
+					}
 					%>
 					<%
-						if(data.receiveBtn || ApprovalHelper.LINE_RECEIVE_STAND.equals(data.state)) {
+					if(data.receiveBtn || WorkspaceHelper.LINE_RECEIVE_STAND.equals(data.state)) {
 					%>
 					<input type="button" value="수신확인" id="receiveBtn" title="수신확인">
 					<%
-						}
+					}
 					%>		
 					<input type="button" value="닫기" id="closeDocBtn" title="닫기" class="redBtn">
 				</div>
 				<%
-					}
+				}
 				%>
 				
 				<%
-					if(!isPopup) {
-				%>
+								if(!isPopup) {
+								%>
 						<td class="right">
 						<%
-							if(data.appBtn && !isComplete) {
+						if(data.appBtn && !isComplete) {
 						%>
 							<input type="button" value="승인" id="approvalBtn" title="승인">
 							<input type="button" value="반려" id="returnBtn" title="반려" class="redBtn">		
 						<%
-							}
-							if(data.agreeBtn && !isComplete) {
-						%>
+								}
+													if(data.agreeBtn && !isComplete) {
+								%>
 						<input type="button" value="검토완료" id="agreeBtn" title="검토완료">
 						<input type="button" value="검토반려" id="unagreeBtn" title="검토반려" class="redBtn">
 						<%
-							}
+						}
 						%>
 						<%
-							if(data.receiveBtn) {
+						if(data.receiveBtn) {
 						%>
 						<input type="button" value="수신확인" id="receiveBtn" title="수신확인">
 						<%
-							}
+						}
 						%>
-						<input type="button" value="목록" id="<%=btnKey %>" title="목록" class="blueBtn">				
+						<input type="button" value="목록" id="<%=btnKey%>" title="목록" class="blueBtn">				
 				<%
-					}
-				%>
+								}
+								%>
 				</td>
 			</tr>
 		</table>
@@ -133,46 +133,46 @@
 		</colgroup>
 		<tr>
 			<th>결재 제목</th>
-			<td colspan="3"><%=data.name %></td>
+			<td colspan="3"><%=data.name%></td>
 		</tr>
 		<tr>
 			<th>담당자</th>
-			<td><%=data.creator %></td>
+			<td><%=data.creator%></td>
 			<th>수신일</th>
-			<td><%=data.startTime %></td>			
+			<td><%=data.startTime%></td>			
 		</tr>		
 		<tr>
 			<th>구분</th>
-			<td><%=data.type %></td>
+			<td><%=data.type%></td>
 			<th>역할</th>
-			<td><%=data.role %></td>			
+			<td><%=data.role%></td>			
 		</tr>	
 		<tr>
 			<th>기안자</th>
-			<td><%=data.submiter %></td>
+			<td><%=data.submiter%></td>
 			<th>상태</th>
-			<td><%=data.state %></td>			
+			<td><%=data.state%></td>			
 		</tr>			
 		<%
-			// 결재라인만 위임 가능하도록..
-			if(isApp || isAgree) {
-		%>
+					// 결재라인만 위임 가능하도록..
+						if(isApp || isAgree) {
+					%>
 		<tr>
 			<th>위임</th>
 			<td colspan="3">
 				<input type="text" name="reassignUser" id="reassignUser" class="AXInput wid200" data-dbl="true"> 
 				<input type="hidden" name="reassignUserOid" id="reassignUserOid" >
-				<input type="button" title="위임" class="pos2" value="위임" id="reassignApprovalBtn" data-oid="<%=data.oid %>">
+				<input type="button" title="위임" class="pos2" value="위임" id="reassignApprovalBtn" data-oid="<%=data.oid%>">
 				<i title="삭제" class="axi axi-ion-close-circled delete-text" data-prefix="Oid" data-target="reassignUser"></i>			
 			</td>
 		</tr>			
 		<%
-			}
-		%>	
+					}
+					%>	
 		<tr>
 			<th>결재의견</th>
 			<td colspan="3">
-				<textarea name="description" id="description" rows="3" cols="" class="AXTextarea" <%if(isComplete){ %> readonly="readonly" <%} %> ><%=data.description %></textarea>
+				<textarea name="description" id="description" rows="3" cols="" class="AXTextarea" <%if(isComplete){%> readonly="readonly" <%}%> ><%=data.description%></textarea>
 			</td>			
 		</tr>					
 	</table>
@@ -182,9 +182,9 @@
 			<i class="axi axi-subtitles"></i><span>결재객체</span>
 		</div>
 	<%
-		if(data.per instanceof ApprovalContract) {
-			Persistable perData = ApprovalHelper.manager.getPersist((ApprovalContract)data.per);
-			if(perData instanceof EPMDocument) {
+	if(data.per instanceof ApprovalContract) {
+		Persistable perData = WorkspaceHelper.manager.getPersist((ApprovalContract)data.per);
+		if(perData instanceof EPMDocument) {
 	%>
 		<jsp:include page="/jsp/approval/refAppEpmObject.jsp">
 			<jsp:param value="<%=data.oid %>" name="oid"/>

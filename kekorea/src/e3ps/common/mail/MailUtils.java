@@ -144,7 +144,7 @@ public class MailUtils {
 
 		// 기안자 에게로
 
-		ApprovalLine line = ApprovalHelper.manager.getFirstLine(master);
+		ApprovalLine line = WorkspaceHelper.manager.getFirstLine(master);
 
 		String toMail = line.getOwnership().getOwner().getEMail();
 		InternetAddress to = new InternetAddress();
@@ -180,7 +180,7 @@ public class MailUtils {
 
 		// 기안자 에게로
 
-		ApprovalLine line = ApprovalHelper.manager.getFirstLine(master);
+		ApprovalLine line = WorkspaceHelper.manager.getFirstLine(master);
 
 		String toMail = line.getOwnership().getOwner().getEMail();
 		InternetAddress to = new InternetAddress();

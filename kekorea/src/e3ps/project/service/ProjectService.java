@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Map;
 
-import e3ps.doc.RequestDocument;
+import e3ps.doc.request.RequestDocument;
 import e3ps.project.Project;
 import e3ps.project.task.Task;
 import e3ps.project.template.Template;

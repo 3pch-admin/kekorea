@@ -8,7 +8,6 @@ import java.util.Random;
 
 import com.infoengine.SAK.Task;
 
-import e3ps.approval.ApprovalUserLine;
 import e3ps.common.mail.MailUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
@@ -16,6 +15,7 @@ import e3ps.org.Department;
 import e3ps.org.People;
 import e3ps.org.PeopleWTUserLink;
 import e3ps.org.beans.UserViewData;
+import e3ps.workspace.ApprovalUserLine;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.fc.ReferenceFactory;

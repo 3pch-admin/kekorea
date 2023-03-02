@@ -1,0 +1,120 @@
+@charset "UTF-8";
+
+/** 검색 테이블 CSS **/
+table.search-table {
+	width: 100%;
+	border-spacing: 0;
+	border-top: 2px solid #86bff9;
+	border-collapse: collapse;
+	font-size: 12px;
+}
+
+table.search-table th {
+	background-color: #f2f2f2;
+	height: 30px;
+	border-bottom: 1px solid #a6a6a6;
+	border-left: 1px solid #a6a6a6;
+	padding-bottom: 4px;
+	max-width: 130px;
+	min-width: 130px;
+	width: 130px;
+}
+
+table.search-table td {
+	height: 30px;
+	border-bottom: 1px solid #a6a6a6;
+	border-left: 1px solid #a6a6a6;
+	border-right: 1px solid #a6a6a6;
+	text-indent: 5px;
+}
+
+/** 버튼 테이블 CSS **/
+table.button-table {
+	width: 100%;
+	border-spacing: 0;
+	border-collapse: collapse;
+	font-size: 12px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+/** TD 태그 CSS **/
+td.left {
+	text-align: left;
+}
+
+td.right {
+	text-align: right;
+}
+
+td.indent10 {
+	text-indent: 10px;
+}
+
+td.underline:hover {
+	text-decoration: underline;
+	color: blue !important;
+	cursor: pointer;
+}
+
+/** 버튼 꾸밈 CSS **/
+input[type="button"] {
+	display: inline-block;
+	border-radius: 5px;
+	text-align: center;
+	cursor: pointer;
+	height: 24px;
+	color: white;
+	font-weight: bold;
+	letter-spacing: 1px;
+	line-height: 26px !important;
+	-webkit-line-height: 26px !important;
+	padding: 0px 10px 25px 10px;
+	border: 1px solid #00c192;
+	background: #00c192;
+}
+
+input[type="button"].red {
+	display: inline-block;
+	border-radius: 5px;
+	text-align: center;
+	cursor: pointer;
+	height: 24px;
+	color: white;
+	font-weight: bold;
+	letter-spacing: 1px;
+	line-height: 20px;
+	padding: 0px 10px 25px 10px;
+	border: 1px solid #00c192;
+	background: #ff5555;
+}
+
+input[type="button"].blue {
+	display: inline-block;
+	border-radius: 5px;
+	text-align: center;
+	cursor: pointer;
+	height: 24px;
+	color: white;
+	font-weight: bold;
+	letter-spacing: 1px;
+	line-height: 20px;
+	padding: 0px 10px 25px 10px;
+	border: 1px solid #00c192;
+	background: #3f3ff1;
+}
+
+input[type="button"].orange {
+	display: inline-block;
+	border-radius: 5px;
+	text-align: center;
+	cursor: pointer;
+	height: 24px;
+	color: white;
+	font-weight: bold;
+	letter-spacing: 1px;
+	line-height: 20px;
+	padding: 0px 10px 25px 10px;
+	border: 1px solid #00c192;
+	background: #ff7f00;
+}

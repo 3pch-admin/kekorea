@@ -12,7 +12,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-	String oid = request.getParameter("oid");
+String oid = request.getParameter("oid");
 	ReferenceFactory rf = new ReferenceFactory();
 	ApprovalLine line = (ApprovalLine)rf.getReference(oid).getObject();
 	ApprovalLineViewData data = new ApprovalLineViewData(line);
@@ -25,13 +25,13 @@
 // 	out.println(result);
 	if(result != null) {
 		int size = result.size();
-		String prefix = ApprovalHelper.manager.getPrefix(data.per);
+		String prefix = WorkspaceHelper.manager.getPrefix(data.per);
 	if(size >= 6) {
 %>
 <div class="clear5"></div>
 <!-- <div class="refAppObject_container" id="refAppObject_container"> -->
 <%
-	}
+}
 %>
 	<table class="in_list_table left-border2" id="refAppObject_table">
 		<colgroup>
@@ -55,34 +55,34 @@
 			</tr>
 		</thead>
 		<%
-			int cnt = 1;
+		int cnt = 1;
 			while(result.hasMoreElements()) {
 				Project project = (Project) result.nextElement();
 				String poid = project.getPersistInfo().getObjectIdentifier().getStringValue();
 		%>
 			<tr>
-				<td class="center"><%=cnt++ %></td>
-				<td class="center"><%=project.getPType() %></td>
-				<td class="center infoProject" data-oid="<%=poid %>"><%=project.getKekNumber() %></td>
-				<td class="center infoProject" data-oid="<%=poid %>"><%=project.getKeNumber() %></td>
-				<td class="center"><%=project.getCustomer() %></td>
-				<td class="center"><%=project.getMak() %></td>
-				<td class="left indent10"><%=project.getDescription() %></td>
+				<td class="center"><%=cnt++%></td>
+				<td class="center"><%=project.getPType()%></td>
+				<td class="center infoProject" data-oid="<%=poid%>"><%=project.getKekNumber()%></td>
+				<td class="center infoProject" data-oid="<%=poid%>"><%=project.getKeNumber()%></td>
+				<td class="center"><%=project.getCustomer()%></td>
+				<td class="center"><%=project.getMak()%></td>
+				<td class="left indent10"><%=project.getDescription()%></td>
 			</tr>
 		<%
-			}
+		}
 		%>
 	</table>
 	<%
-		if(size >= 6) {
+	if(size >= 6) {
 	%>
 <!-- </div> -->
 <%
-		}
+}
 	}
 	// 단일 결재
 	if(result == null) {
-		String prefix = ApprovalHelper.manager.getPrefix(data.per);
+		String prefix = WorkspaceHelper.manager.getPrefix(data.per);
 %>
 <table class="in_list_table left-border2" id="refAppObject_table">
 	<colgroup>
@@ -94,18 +94,18 @@
 		<col width="130">
 	</colgroup>
 	<tr>
-		<th><%=prefix %>번호</th>
-		<th><%=prefix %>제목</th>
+		<th><%=prefix%>번호</th>
+		<th><%=prefix%>제목</th>
 		<th>상태</th>
 		<th>버전</th>	
 		<th>수정자</th>
 		<th>수정일</th>			
 	</tr>
 	<%
-		String[] ss = ApprovalHelper.manager.getContractObjData(data.per);
-		int idx = 1;
-		String poid = data.per.getPersistInfo().getObjectIdentifier().getStringValue();
-		String iconPath = ContentUtils.getStandardIcon(poid);
+	String[] ss = WorkspaceHelper.manager.getContractObjData(data.per);
+			int idx = 1;
+			String poid = data.per.getPersistInfo().getObjectIdentifier().getStringValue();
+			String iconPath = ContentUtils.getStandardIcon(poid);
 	%>
 	<tr>
 		<td class="infoPer left" data-oid="<%=poid %>"><img src="<%=iconPath %>" class="pos3">&nbsp;<%=ss[idx++] %></td>

@@ -6,7 +6,7 @@ import com.amazonaws.services.dynamodbv2.model.QueryResult;
 
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
-import e3ps.workspace.service.ApprovalHelper;
+import e3ps.workspace.service.WorkspaceHelper;
 import wt.org.WTUser;
 
 public class ApprovalMasterViewData {
@@ -49,9 +49,9 @@ public class ApprovalMasterViewData {
 		this.createDate = approvalMaster.getCreateTimestamp().toString().substring(0, 16);
 		this.state = approvalMaster.getState();
 
-		this.appLines = ApprovalHelper.manager.getAppLines(this.approvalMaster);
-		this.agreeLines = ApprovalHelper.manager.getAgreeLines(this.approvalMaster);
-		this.receiveLines = ApprovalHelper.manager.getReceiveLines(this.approvalMaster);
+		this.appLines = WorkspaceHelper.manager.getAppLines(this.approvalMaster);
+		this.agreeLines = WorkspaceHelper.manager.getAgreeLines(this.approvalMaster);
+		this.receiveLines = WorkspaceHelper.manager.getReceiveLines(this.approvalMaster);
 
 		this.size = appLines.size() + agreeLines.size() + receiveLines.size();
 

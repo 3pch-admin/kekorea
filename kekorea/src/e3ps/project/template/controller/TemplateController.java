@@ -31,7 +31,7 @@ public class TemplateController extends BaseController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/project/template/template-list.jsp");
+		model.setViewName("/extcore/jsp/project/template/template-list.jsp");
 		return model;
 	}
 

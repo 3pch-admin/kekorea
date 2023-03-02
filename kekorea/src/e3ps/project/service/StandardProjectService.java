@@ -20,18 +20,14 @@ import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
-import e3ps.common.util.MessageHelper;
 import e3ps.common.util.StringUtils;
-import e3ps.doc.ReqDocumentProjectLink;
-import e3ps.doc.RequestDocument;
 import e3ps.doc.beans.DocumentViewData;
+import e3ps.doc.request.RequestDocument;
+import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.org.People;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.beans.ProjectViewData;
-import e3ps.project.enums.ProjectStateType;
-import e3ps.project.enums.ProjectUserType;
-import e3ps.project.enums.TaskStateType;
 import e3ps.project.issue.Issue;
 import e3ps.project.issue.IssueProjectLink;
 import e3ps.project.output.Output;
@@ -57,7 +53,7 @@ import wt.session.SessionContext;
 import wt.session.SessionHelper;
 import wt.util.WTException;
 
-public class StandardProjectService extends StandardManager implements ProjectService, MessageHelper {
+public class StandardProjectService extends StandardManager implements ProjectService {
 
 	public static StandardProjectService newStandardProjectService() throws WTException {
 		StandardProjectService instance = new StandardProjectService();
@@ -425,7 +421,7 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 						PersistenceHelper.manager.save(links);
 					}
 
-					ReqDocumentProjectLink link = ReqDocumentProjectLink.newReqDocumentProjectLink(reqDoc, project);
+					RequestDocumentProjectLink link = RequestDocumentProjectLink.newReqDocumentProjectLink(reqDoc, project);
 					PersistenceHelper.manager.save(link);
 				}
 

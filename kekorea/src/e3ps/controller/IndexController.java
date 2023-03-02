@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -98,7 +99,7 @@ public class IndexController extends BaseController {
 	}
 
 	@Description(value = "그리드 리스트 상에서 Lazy Load 시 호출 하는 함수")
-	@RequestMapping(value = "/appendData")
+	@PostMapping(value = "/appendData")
 	@ResponseBody
 	public Map<String, Object> appendData(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();

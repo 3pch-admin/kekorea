@@ -24,7 +24,7 @@ public class NoticeHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Notice.class, true);
 
-		QuerySpecUtils.toOrderBy(query, idx, Notice.class, Notice.CREATE_TIMESTAMP, false);
+		QuerySpecUtils.toOrderBy(query, idx, Notice.class, Notice.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();

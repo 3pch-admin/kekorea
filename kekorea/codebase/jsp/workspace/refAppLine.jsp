@@ -43,50 +43,50 @@
 			</tr>
 		</thead>
 		<%
-			ArrayList<ApprovalLine> subMit = new ApprovalMasterViewData(line.getMaster()).appLines;
+		ArrayList<ApprovalLine> subMit = new ApprovalMasterViewData(line.getMaster()).appLines;
 			for(ApprovalLine appLine : subMit) {
 				ApprovalLineViewData datas = new ApprovalLineViewData(appLine);
-				if(!datas.role.equals(ApprovalHelper.WORKING_SUBMIT)) {
+				if(!datas.role.equals(WorkspaceHelper.WORKING_SUBMIT)) {
 					continue;
 				}
 		%>
 		<tr>
 			<input type="hidden" id="hckim_appline" value="<%=appLine%>"/>
-			<td><font color="blue"><%=datas.type %></font></td>
-			<td><%=datas.role %></td>
-			<td><%=datas.name %></td>
-			<td><%=datas.state %></td>
-			<td><%=datas.creator %></td>
-			<td><%=datas.startTime %></td>
-			<td><%=datas.completeTime %></td>
-			<td class="left indent5 ellipsis250" title="<%=datas.description %>"><%=datas.description %></td>
+			<td><font color="blue"><%=datas.type%></font></td>
+			<td><%=datas.role%></td>
+			<td><%=datas.name%></td>
+			<td><%=datas.state%></td>
+			<td><%=datas.creator%></td>
+			<td><%=datas.startTime%></td>
+			<td><%=datas.completeTime%></td>
+			<td class="left indent5 ellipsis250" title="<%=datas.description%>"><%=datas.description%></td>
 		</tr>		
 		<%
-			}
-			ArrayList<ApprovalLine> agreeLines = new ApprovalMasterViewData(line.getMaster()).agreeLines;
-			for(ApprovalLine agreeLine : agreeLines) {
-				ApprovalLineViewData datas = new ApprovalLineViewData(agreeLine);
-		%>
+				}
+					ArrayList<ApprovalLine> agreeLines = new ApprovalMasterViewData(line.getMaster()).agreeLines;
+					for(ApprovalLine agreeLine : agreeLines) {
+						ApprovalLineViewData datas = new ApprovalLineViewData(agreeLine);
+				%>
 		<tr>
 			<input type="hidden" id="hckim_agreeline" value="<%=agreeLine%>"/>
-			<td><font color="green"><%=datas.type %></font></td>
-			<td><%=datas.role %></td>
-			<td><%=datas.name %></td>
-			<td><%=datas.state %></td>
-			<td><%=datas.creator %></td>
-			<td><%=datas.startTime %></td>
-			<td><%=datas.completeTime %></td>
-			<td class="left indent5 ellipsis250" title="<%=datas.description %>"><%=datas.description %></td>
+			<td><font color="green"><%=datas.type%></font></td>
+			<td><%=datas.role%></td>
+			<td><%=datas.name%></td>
+			<td><%=datas.state%></td>
+			<td><%=datas.creator%></td>
+			<td><%=datas.startTime%></td>
+			<td><%=datas.completeTime%></td>
+			<td class="left indent5 ellipsis250" title="<%=datas.description%>"><%=datas.description%></td>
 		</tr>		
 		<%
-			}
-			ArrayList<ApprovalLine> appLines = new ApprovalMasterViewData(line.getMaster()).appLines;
-			for(ApprovalLine appLine : appLines) {
-				ApprovalLineViewData datas = new ApprovalLineViewData(appLine);
-				if(datas.role.equals(ApprovalHelper.WORKING_SUBMIT)) {
-					continue;
 				}
-		%>
+					ArrayList<ApprovalLine> appLines = new ApprovalMasterViewData(line.getMaster()).appLines;
+					for(ApprovalLine appLine : appLines) {
+						ApprovalLineViewData datas = new ApprovalLineViewData(appLine);
+						if(datas.role.equals(WorkspaceHelper.WORKING_SUBMIT)) {
+							continue;
+						}
+				%>
 		<tr>
 			<input type="hidden" id="hckim_appline2" value="<%=appLine%>"/>
 			<td><font color="blue"><%=datas.type %></font></td>

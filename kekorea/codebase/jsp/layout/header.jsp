@@ -49,7 +49,7 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 						<a onclick="moveToPage(this, '/notice/list', '나의 업무 > 공지사항');">공지사항</a>
 					</li>
 					<li>
-						<a href="graph_morris.html">나의작번</a>
+						<a href="graph_morris.html">나의 작번</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/workspace/agree', '나의 업무 > 검토함');">
@@ -100,10 +100,10 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/project/list');">작번 조회</a>
+						<a onclick="moveToPage(this, '/project/list', '작번 관리 > 작번 조회');">작번 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/template/list');">템플릿 조회</a>
+						<a onclick="moveToPage(this, '/template/list', '작번 관리 > 템플릿 조회');">템플릿 조회</a>
 					</li>
 				</ul>
 			</li>
@@ -118,16 +118,16 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 						<a onclick="moveToPage(this, '/keDrawing/list', '도면 관리 > KE 도면 조회');">KE 도면 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/numberRule/list');">KEK 도번 조회</a>
+						<a onclick="moveToPage(this, '/numberRule/list', '도면 관리 > KEK 도번 조회');">KEK 도번 조회</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/epm/list', '도면 관리 > KEK 도면 조회');">KEK 도면 조회</a>
 					</li>
+<!-- 					<li> -->
+<!-- 						<a href="form_advanced.html">라이브러리 조회</a> -->
+<!-- 					</li> -->
 					<li>
-						<a href="form_advanced.html">라이브러리 조회</a>
-					</li>
-					<li>
-						<a onclick="moveToPage(this, '/workOrder/list');">도면 일람표 조회</a>
+						<a onclick="moveToPage(this, '/workOrder/list', '도면 관리 > 도면 일람표 조회');">도면 일람표 조회</a>
 					</li>
 					<li>
 						<a href="form_wizard.html">도면 결재</a>
@@ -151,14 +151,14 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/part/listPart');">부품 조회</a>
+						<a onclick="moveToPage(this, '/part/listPart', '부품 관리 > 부품 조회');">부품 조회</a>
 					</li>
 					<li>
 						<a href="profile.html">코드 생성</a>
 					</li>
-					<!-- 					<li> -->
-					<!-- 						<a href="profile_2.html">부품 일괄 등록</a> -->
-					<!-- 					</li> -->
+					<li>
+						<a onclick="moveToPage(this, '/part/bundle', '부품 관리 > 부품 일괄 등록');">부품 일괄 등록</a>
+					</li>
 					<!-- 					<li> -->
 					<!-- 						<a href="contacts_2.html">제작사양서 등록</a> -->
 					<!-- 					</li> -->
@@ -184,20 +184,20 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/document/list');">문서 조회</a>
+						<a onclick="moveToPage(this, '/doc/list', '문서 관리 > 문서 조회');">문서 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/document/listOutput');">산출물 조회</a>
+						<a onclick="moveToPage(this, '/output/list', '문서 관리 > 산출물 조회');">산출물 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/document/listRequestDocument');">의뢰서 조회</a>
+						<a onclick="moveToPage(this, '/request/list', '문서 관리 > 의뢰서 조회');">의뢰서 조회</a>
 					</li>
 					<li>
 						<a href="500.html">문서 결재</a>
 					</li>
-					<li>
-						<a onclick="moveToPage(this, '/document/listContents');">첨부파일 조회</a>
-					</li>
+<!-- 					<li> -->
+<!-- 						<a onclick="moveToPage(this, '/document/listContents');">첨부파일 조회</a> -->
+<!-- 					</li> -->
 				</ul>
 			</li>
 			<li>
@@ -208,10 +208,10 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/partlist/list');">수배표 조회</a>
+						<a onclick="moveToPage(this, '/partlist/list', 'BOM 관리 > 수배표 조회');">수배표 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/tbom/list');">T-BOM 조회</a>
+						<a onclick="moveToPage(this, '/tbom/list', 'BOM 관리 > T-BOM 조회');">T-BOM 조회</a>
 					</li>
 				</ul>
 			</li>
@@ -223,16 +223,28 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/korea/list');">한국 생산</a>
+						<a onclick="moveToPage(this, '/korea/list', '한국 생산 > 한국 생상');">한국 생산</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/cssheet/list');">CS SHEET 조회</a>
+						<a onclick="moveToPage(this, '/cssheet/list', '한국 생산 > CS SHEET 조회');">CS SHEET 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/cip/list');">CIP 조회</a>
+						<a onclick="moveToPage(this, '/cip/list', '한국 생산 > CIP 조회');">CIP 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/history/list');">이력 관리 조회</a>
+						<a onclick="moveToPage(this, '/history/list', '한국 생산 > 이력 관리 조회');">이력 관리 조회</a>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<a href="#">
+					<i class="fa fa-sitemap"></i>
+					<span class="nav-label">ERP 로그</span>
+					<span class="fa arrow"></span>
+				</a>
+				<ul class="nav nav-second-level collapse">
+					<li>
+						<a onclick="moveToPage(this, '/erp/list', 'ERP 로그 > ERP 전송 로그');">ERP 전송 로그</a>
 					</li>
 				</ul>
 			</li>
@@ -244,28 +256,16 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/commonCode/list');">코드 관리</a>
+						<a onclick="moveToPage(this, '/commonCode/list', '관리자 > 코드 관리');">코드 관리</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/spec/list');">사양 관리</a>
+						<a onclick="moveToPage(this, '/spec/list', '관리자 > 사양 관리');">사양 관리</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/category/list');">CS 카테고리</a>
+						<a onclick="moveToPage(this, '/category/list', '관리자 > CS 카테고리');">CS 카테고리</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/password/list');">비밀번호 세팅</a>
-					</li>
-					<li>
-						<a href="#">산출물 연동</a>
-					</li>
-					<li>
-						<a href="#">수배표 연동</a>
-					</li>
-					<li>
-						<a href="#">품목 연동</a>
-					</li>
-					<li>
-						<a href="#">UNIT BOM 연동</a>
+						<a onclick="moveToPage(this, '/password/list', '관리자 > 비밀번호 세팅');">비밀번호 세팅</a>
 					</li>
 				</ul>
 			</li>

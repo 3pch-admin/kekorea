@@ -5,9 +5,12 @@ import java.util.Map;
 
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,34 +19,32 @@ import e3ps.part.service.PartHelper;
 
 @Controller
 @RequestMapping(value = "/part/**")
-public class PartController extends BaseController{
+public class PartController extends BaseController {
 
-	@Description("부품 조회 페이지")
+	@Description(value = "부품 조회 페이지")
 	@RequestMapping(value = "/listPart", method = RequestMethod.GET)
+	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/part/productPart-list.jsp");
+		model.setViewName("/extcore//jsp/part/part-list.jsp");
 		return model;
 	}
-	
-	@Description("부품 조회")
+
+	@Description(value = "부품 조회")
 	@ResponseBody
-	@RequestMapping(value = "/listPart", method = RequestMethod.POST)
+	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
-//		Map<String, Object> result = null;
 		try {
-			params.put("context", PartHelper.PRODUCT_CONTEXT);
-			result = PartHelper.manager.find(params);
+			result = PartHelper.manager.list(params);
 			result.put("result", true);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			result.put("result", false);
-//			result.put("msg", e.toString());
 			e.printStackTrace();
 		}
 		return result;
 	}
-	
+
 	@Description("EPLAN 결재 페이지")
 	@RequestMapping(value = "/approval", method = RequestMethod.GET)
 	public ModelAndView approval() throws Exception {
@@ -51,7 +52,7 @@ public class PartController extends BaseController{
 		model.setViewName("/jsp/part/approvalEplan.jsp");
 		return model;
 	}
-	
+
 	@Description("EPLAN 결재")
 	@RequestMapping(value = "/approval", method = RequestMethod.POST)
 	@ResponseBody
@@ -59,6 +60,44 @@ public class PartController extends BaseController{
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			result = PartHelper.service.approvalEplanAction(params);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			result.put("result", FAIL);
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Description(value = "부품 일괄 등록 리스트 페이지")
+	@GetMapping(value = "/bundle")
+	public ModelAndView bundle() throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("/extcore/jsp/part/part-bundle.jsp");
+		return model;
+	}
+
+	@Description(value = "부품 일괄 등록 검증 검증 함수")
+	@GetMapping(value = "/bundleValidatorNumber")
+	@ResponseBody
+	public Map<String, Object> bundleValidatorNumber(@RequestParam String number) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = PartHelper.manager.bundleValidatorNumber(number);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			result.put("result", FAIL);
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Description(value = "부품 일괄 등록 규격 검증 함수")
+	@GetMapping(value = "/bundleValidatorSpec")
+	@ResponseBody
+	public Map<String, Object> bundleValidatorSpec(@RequestParam String spec) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = PartHelper.manager.bundleValidatorSpec(spec);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			result.put("result", FAIL);

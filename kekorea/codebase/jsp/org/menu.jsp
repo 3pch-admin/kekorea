@@ -3,7 +3,7 @@
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	int[] count = ApprovalHelper.manager.getLineCount();
+int[] count = WorkspaceHelper.manager.getLineCount();
 	boolean isKO = true;
 	String ll = (String)session.getAttribute("locales");
 	

@@ -9,12 +9,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import e3ps.bom.partlist.MasterDataLink;
+import e3ps.bom.partlist.PartListData;
+import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.FolderUtils;
 import e3ps.common.util.IBAUtils;
-import e3ps.common.util.MessageHelper;
 import e3ps.common.util.PageQueryUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.doc.column.DocumentColumnData;
@@ -25,6 +29,7 @@ import e3ps.part.UnitSubPart;
 import e3ps.part.beans.BomBroker;
 import e3ps.part.beans.BomCompare;
 import e3ps.part.beans.BomTreeData;
+import e3ps.part.beans.PartColumnData;
 import e3ps.part.beans.PartTreeData;
 import e3ps.part.beans.PartViewData;
 import e3ps.part.column.BomColumnData;
@@ -32,10 +37,6 @@ import e3ps.part.column.PartLibraryColumnData;
 import e3ps.part.column.PartListDataColumnData;
 import e3ps.part.column.PartProductColumnData;
 import e3ps.part.column.UnitBomColumnData;
-import e3ps.partlist.MasterDataLink;
-import e3ps.partlist.PartListData;
-import e3ps.partlist.PartListMaster;
-import e3ps.partlist.PartListMasterProjectLink;
 import e3ps.project.Project;
 import jxl.Workbook;
 import jxl.format.Alignment;
@@ -94,7 +95,7 @@ import wt.vc.wip.WorkInProgressHelper;
  * @since 2018-11-28
  * @version 1.0
  */
-public class PartHelper implements MessageHelper {
+public class PartHelper {
 
 	// public static final String[] CADTYPE_DISPLAY = new String[] { "어셈블리
 	// (ASSEMBLY)", "파트 (PART)", "도면 (CADDRAWING)" };
@@ -1896,8 +1897,7 @@ public class PartHelper implements MessageHelper {
 		// search param
 //		String number = (String) param.get("number");
 //		String name = (String) param.get("name");
-		
-		
+
 		String uCode = (String) param.get("uCode");
 		String yCode = (String) param.get("yCode");
 		String uSpec = (String) param.get("uSpec");
@@ -1928,7 +1928,7 @@ public class PartHelper implements MessageHelper {
 
 		try {
 			query = new QuerySpec();
-			
+
 			SearchCondition sc = null;
 			ClassAttribute ca = null;
 			if (StringUtils.isNull(sort)) {
@@ -1938,10 +1938,10 @@ public class PartHelper implements MessageHelper {
 			if (StringUtils.isNull(sortKey)) {
 				sortKey = WTAttributeNameIfc.CREATE_STAMP_NAME;
 			}
-			
+
 			int idx = query.appendClassList(UnitBom.class, true);
 			query.setAdvancedQueryEnabled(true);
-		
+
 			if (!StringUtils.isNull(uCode)) {
 				if (query.getConditionCount() > 0)
 					query.appendAnd();
@@ -1952,7 +1952,7 @@ public class PartHelper implements MessageHelper {
 				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
 				query.appendWhere(sc, new int[] { idx });
 			}
-			
+
 			if (!StringUtils.isNull(uSpec)) {
 				if (query.getConditionCount() > 0)
 					query.appendAnd();
@@ -1963,7 +1963,7 @@ public class PartHelper implements MessageHelper {
 				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
 				query.appendWhere(sc, new int[] { idx });
 			}
-			
+
 			if (!StringUtils.isNull(uPartName)) {
 				if (query.getConditionCount() > 0)
 					query.appendAnd();
@@ -1974,28 +1974,29 @@ public class PartHelper implements MessageHelper {
 				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
 				query.appendWhere(sc, new int[] { idx });
 			}
-			
+
 			if (!StringUtils.isNull(yCode) || !StringUtils.isNull(ySpec) || !StringUtils.isNull(yPartName)) {
 				QuerySpec subQs = searchSubQuery(yCode, ySpec, yPartName);
-				SubSelectExpression subfrom =  new SubSelectExpression(subQs);
-				subfrom.setFromAlias(new String[]{"C0"}, 0);
-				
+				SubSelectExpression subfrom = new SubSelectExpression(subQs);
+				subfrom.setFromAlias(new String[] { "C0" }, 0);
+
 				int subIndex = query.appendFrom(subfrom);
-				
-				if(query.getConditionCount() > 0)
-					query.appendAnd(); 
-				 
-				SearchCondition sc2 = new SearchCondition(new ClassAttribute(UnitBom.class, "thePersistInfo.theObjectIdentifier.id"),"=",
-		        		new KeywordExpression(query.getFromClause().getAliasAt(subIndex) + ".IDA3A5"));
-				
-				sc2.setFromIndicies(new int[]{idx,subIndex},0);
-			    sc2.setOuterJoin(0);
-			    query.appendWhere(sc2, new int[] { idx, subIndex });
+
+				if (query.getConditionCount() > 0)
+					query.appendAnd();
+
+				SearchCondition sc2 = new SearchCondition(
+						new ClassAttribute(UnitBom.class, "thePersistInfo.theObjectIdentifier.id"), "=",
+						new KeywordExpression(query.getFromClause().getAliasAt(subIndex) + ".IDA3A5"));
+
+				sc2.setFromIndicies(new int[] { idx, subIndex }, 0);
+				sc2.setOuterJoin(0);
+				query.appendWhere(sc2, new int[] { idx, subIndex });
 			}
-		    ca = new ClassAttribute(UnitBom.class, sortKey);
+			ca = new ClassAttribute(UnitBom.class, sortKey);
 			OrderBy orderBy = new OrderBy(ca, Boolean.parseBoolean(sort));
 			query.appendOrderBy(orderBy, new int[] { idx });
-			
+
 			PageQueryUtils pager = new PageQueryUtils(param, query);
 			PagingQueryResult result = pager.find();
 			while (result.hasMoreElements()) {
@@ -2004,9 +2005,7 @@ public class PartHelper implements MessageHelper {
 				UnitBomColumnData data = new UnitBomColumnData(unitBom);
 				list.add(data);
 			}
-			
-			
-			
+
 			map.put("list", list);
 			map.put("lastPage", pager.getLastPage());
 			map.put("topListCount", pager.getTotal());
@@ -2020,48 +2019,49 @@ public class PartHelper implements MessageHelper {
 		}
 		return map;
 	}
-	
+
 	private QuerySpec searchSubQuery(String yCode, String ySpec, String yPartName) throws Exception {
 		QuerySpec subQs = new QuerySpec();
 		int idx = subQs.appendClassList(UnitSubPart.class, false);
 		int link_idx = subQs.appendClassList(UnitBomPartLink.class, false);
-		
+
 		subQs.setDistinct(true);
 		subQs.setAdvancedQueryEnabled(true);
 		subQs.appendSelect(new ClassAttribute(UnitBomPartLink.class, "roleAObjectRef.key.id"), false);
-		
-		SearchCondition sc = new SearchCondition(new ClassAttribute(UnitSubPart.class, "thePersistInfo.theObjectIdentifier.id"), "=",
+
+		SearchCondition sc = new SearchCondition(
+				new ClassAttribute(UnitSubPart.class, "thePersistInfo.theObjectIdentifier.id"), "=",
 				new ClassAttribute(UnitBomPartLink.class, "roleBObjectRef.key.id"));
 		sc.setOuterJoin(0);
 		subQs.appendWhere(sc, new int[] { idx, link_idx });
-		
+
 		if (!StringUtils.isNull(yCode)) {
-			if(subQs.getConditionCount() > 0)
+			if (subQs.getConditionCount() > 0)
 				subQs.appendAnd();
-			
+
 			SearchCondition sc2 = new SearchCondition(UnitSubPart.class, UnitSubPart.PART_NO, SearchCondition.LIKE,
 					"%" + yCode.toUpperCase() + "%");
 			subQs.appendWhere(sc2, new int[] { idx });
 		}
-		
+
 		if (!StringUtils.isNull(ySpec)) {
-			if(subQs.getConditionCount() > 0)
+			if (subQs.getConditionCount() > 0)
 				subQs.appendAnd();
-			
+
 			SearchCondition sc2 = new SearchCondition(UnitSubPart.class, UnitSubPart.STANDARD, SearchCondition.LIKE,
 					"%" + ySpec.toUpperCase() + "%");
 			subQs.appendWhere(sc2, new int[] { idx });
 		}
-		
+
 		if (!StringUtils.isNull(yPartName)) {
-			if(subQs.getConditionCount() > 0)
+			if (subQs.getConditionCount() > 0)
 				subQs.appendAnd();
-			
+
 			SearchCondition sc2 = new SearchCondition(UnitSubPart.class, UnitSubPart.PART_NAME, SearchCondition.LIKE,
 					"%" + yPartName.toUpperCase() + "%");
 			subQs.appendWhere(sc2, new int[] { idx });
 		}
-		
+
 		return subQs;
 	}
 
@@ -2125,15 +2125,15 @@ public class PartHelper implements MessageHelper {
 			node.put("customer", sp.getCustomer());
 			node.put("lotNo", sp.getLotNo());
 			node.put("unitName", sp.getUnitName());
-			
+
 			node.put("unit", sp.getUnit());
 			node.put("price", sp.getPrice());
 			node.put("currency", sp.getCurrency());
 			node.put("won", sp.getWon());
-			
+
 			node.put("classification", sp.getClassification());
 			node.put("note", sp.getNote());
-			
+
 			node.put("icon", "/Windchill/wtcore/images/part.gif");
 			node.put("folder", true);
 			node.put("expanded", true);
@@ -2145,4 +2145,56 @@ public class PartHelper implements MessageHelper {
 		return jsonArray;
 	}
 
+	public Map<String, Object> bundleValidatorNumber(String number) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		QuerySpec _query = new QuerySpec();
+		int _idx = _query.appendClassList(WTPart.class, true);
+		QuerySpecUtils.toIBAEquals(_query, _idx, WTPart.class, "PART_CODE", number);
+		QueryResult qr = PersistenceHelper.manager.find(_query);
+
+		if (qr.size() > 0) {
+			map.put("ycode_check", false);
+		} else {
+			map.put("ycode_check", true);
+		}
+		return map;
+	}
+
+	public Map<String, Object> bundleValidatorSpec(String spec) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WTPartMaster.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, WTPartMaster.class, WTPartMaster.NUMBER, spec);
+		QueryResult qr = PersistenceHelper.manager.find(query);
+
+		if (qr.size() > 0) {
+			map.put("dwg_check", false);
+		} else {
+			map.put("dwg_check", true);
+		}
+		return map;
+	}
+
+	public Map<String, Object> list(Map<String, Object> params) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		ArrayList<PartColumnData> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WTPart.class, true);
+
+		QuerySpecUtils.toOrderBy(query, idx, WTPart.class, WTPart.CREATE_TIMESTAMP, false);
+		PageQueryUtils pager = new PageQueryUtils(params, query);
+		PagingQueryResult result = pager.find();
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WTPart part = (WTPart) obj[0];
+			PartColumnData column = new PartColumnData(part);
+			list.add(column);
+		}
+		map.put("list", list);
+		map.put("sessionid", pager.getSessionId());
+		map.put("curPage", pager.getCpage());
+		return map;
+	}
 }

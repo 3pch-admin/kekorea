@@ -80,7 +80,7 @@ public class StandardDocumentService extends StandardManager implements Document
 			for (String oid : list) {
 				document = (WTDocument) rf.getReference(oid).getObject();
 
-				ApprovalHelper.service.deleteAllLine(document);
+				WorkspaceHelper.service.deleteAllLine(document);
 
 				String state = document.getLifeCycleState().toString();
 				if (state.equalsIgnoreCase("APPROVED")) {
@@ -95,7 +95,7 @@ public class StandardDocumentService extends StandardManager implements Document
 					PersistenceHelper.manager.delete(link);
 				}
 
-				ApprovalHelper.service.deleteAllLine(document);
+				WorkspaceHelper.service.deleteAllLine(document);
 
 				PersistenceHelper.manager.delete(document);
 			}
@@ -149,11 +149,11 @@ public class StandardDocumentService extends StandardManager implements Document
 			ContentUtils.updateContents(param, document);
 
 			if (isApp) {
-				ApprovalHelper.service.submitApp(document, param);
+				WorkspaceHelper.service.submitApp(document, param);
 			}
 
 			if (self) {
-				ApprovalHelper.service.selfApproval((Persistable) document);
+				WorkspaceHelper.service.selfApproval((Persistable) document);
 			}
 
 			for (int i = 0; partOids != null && i < partOids.size(); i++) {
@@ -251,7 +251,7 @@ public class StandardDocumentService extends StandardManager implements Document
 			contract = ApprovalContract.newApprovalContract();
 			contract.setName(name);
 			contract.setStartTime(new Timestamp(new Date().getTime()));
-			contract.setState(ApprovalHelper.LINE_APPROVING);
+			contract.setState(WorkspaceHelper.LINE_APPROVING);
 			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
 
 			for (int i = 0; i < docOids.size(); i++) {
@@ -262,7 +262,7 @@ public class StandardDocumentService extends StandardManager implements Document
 				PersistenceHelper.manager.save(aLink);
 			}
 
-			ApprovalHelper.service.submitApp(contract, param);
+			WorkspaceHelper.service.submitApp(contract, param);
 
 			map.put("reload", true);
 			map.put("result", SUCCESS);
@@ -306,9 +306,9 @@ public class StandardDocumentService extends StandardManager implements Document
 
 			// 기존 결재 삭제
 			if (isApp) {
-				ApprovalHelper.service.deleteAllLine((Persistable) document);
+				WorkspaceHelper.service.deleteAllLine((Persistable) document);
 			} else {
-				mm = ApprovalHelper.manager.getMaster(document);
+				mm = WorkspaceHelper.manager.getMaster(document);
 			}
 
 			Folder cFolder = CheckInOutTaskLogic.getCheckoutFolder();
@@ -332,11 +332,11 @@ public class StandardDocumentService extends StandardManager implements Document
 			if (!isApp) {
 				if (mm != null) {
 
-					String appName = ApprovalHelper.manager.getLineName(document);
+					String appName = WorkspaceHelper.manager.getLineName(document);
 					mm.setPersist(document);
 					mm.setName(appName);
 
-					ArrayList<ApprovalLine> al = ApprovalHelper.manager.getAllLines(mm);
+					ArrayList<ApprovalLine> al = WorkspaceHelper.manager.getAllLines(mm);
 					for (ApprovalLine lines : al) {
 						lines.setName(appName);
 						PersistenceHelper.manager.modify(lines);
@@ -356,7 +356,7 @@ public class StandardDocumentService extends StandardManager implements Document
 			ContentUtils.updateSecondary(param, document);
 
 			if (appList.size() > 0) {
-				ApprovalHelper.service.submitApp(document, param);
+				WorkspaceHelper.service.submitApp(document, param);
 			}
 
 			// 기존 링크 제거?
@@ -474,12 +474,12 @@ public class StandardDocumentService extends StandardManager implements Document
 				output.setOwnership(ownership);
 				output = (Output) PersistenceHelper.manager.save(output);
 
-				ReqDocumentProjectLink link = ReqDocumentProjectLink.newReqDocumentProjectLink(req, project);
+				RequestDocumentProjectLink link = RequestDocumentProjectLink.newReqDocumentProjectLink(req, project);
 				PersistenceHelper.manager.save(link);
 			}
 
 			if (isApp) {
-				ApprovalHelper.service.submitApp(req, param);
+				WorkspaceHelper.service.submitApp(req, param);
 			}
 
 			// oid add
@@ -626,7 +626,7 @@ public class StandardDocumentService extends StandardManager implements Document
 				}
 				project = (Project) PersistenceHelper.manager.modify(project);
 
-				ReqDocumentProjectLink link = ReqDocumentProjectLink.newReqDocumentProjectLink(reqDoc, project);
+				RequestDocumentProjectLink link = RequestDocumentProjectLink.newReqDocumentProjectLink(reqDoc, project);
 				PersistenceHelper.manager.save(link);
 
 				Task task = ProjectHelper.manager.getReqTask(project);
@@ -644,7 +644,7 @@ public class StandardDocumentService extends StandardManager implements Document
 			}
 
 			if (isApp) {
-				ApprovalHelper.service.submitApp(reqDoc, param);
+				WorkspaceHelper.service.submitApp(reqDoc, param);
 			}
 
 			map.put("reload", true);
@@ -706,11 +706,11 @@ public class StandardDocumentService extends StandardManager implements Document
 			ContentUtils.updateContents(param, document);
 
 			if (isApp) {
-				ApprovalHelper.service.submitApp(document, param);
+				WorkspaceHelper.service.submitApp(document, param);
 			}
 
 			if (isSelf) {
-				ApprovalHelper.service.selfApproval((Persistable) document);
+				WorkspaceHelper.service.selfApproval((Persistable) document);
 			}
 
 			for (int i = 0; projectOids != null && i < projectOids.size(); i++) {
@@ -882,9 +882,9 @@ public class StandardDocumentService extends StandardManager implements Document
 			document = (WTDocument) rf.getReference(oid).getObject();
 
 			if (isApp) {
-				ApprovalHelper.service.deleteAllLine((Persistable) document);
+				WorkspaceHelper.service.deleteAllLine((Persistable) document);
 			} else {
-				mm = ApprovalHelper.manager.getMaster(document);
+				mm = WorkspaceHelper.manager.getMaster(document);
 			}
 
 			Folder cFolder = CheckInOutTaskLogic.getCheckoutFolder();
@@ -909,11 +909,11 @@ public class StandardDocumentService extends StandardManager implements Document
 				if (mm != null) {
 					mm.setPersist(document);
 
-					String appName = ApprovalHelper.manager.getLineName(document);
+					String appName = WorkspaceHelper.manager.getLineName(document);
 					mm.setPersist(document);
 					mm.setName(appName);
 
-					ArrayList<ApprovalLine> al = ApprovalHelper.manager.getAllLines(mm);
+					ArrayList<ApprovalLine> al = WorkspaceHelper.manager.getAllLines(mm);
 					for (ApprovalLine lines : al) {
 						lines.setName(appName);
 						PersistenceHelper.manager.modify(lines);
@@ -933,7 +933,7 @@ public class StandardDocumentService extends StandardManager implements Document
 			ContentUtils.updateSecondary(param, document);
 
 			if (appList.size() > 0) {
-				ApprovalHelper.service.submitApp(document, param);
+				WorkspaceHelper.service.submitApp(document, param);
 			}
 
 			for (int i = 0; projectOids != null && i < projectOids.size(); i++) {

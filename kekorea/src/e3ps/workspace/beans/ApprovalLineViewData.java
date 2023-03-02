@@ -4,7 +4,7 @@ import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
-import e3ps.workspace.service.ApprovalHelper;
+import e3ps.workspace.service.WorkspaceHelper;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -69,8 +69,8 @@ public class ApprovalLineViewData {
 		this.creator = approvalLine.getOwnership().getOwner().getFullName();
 		this.createDate = approvalLine.getCreateTimestamp().toString().substring(0, 16);
 
-		this.ingPoint = ApprovalHelper.manager.isIngPoint(this.state);
-		this.returnPoint = ApprovalHelper.manager.isReturnPoint(this.state);
+		this.ingPoint = WorkspaceHelper.manager.isIngPoint(this.state);
+		this.returnPoint = WorkspaceHelper.manager.isReturnPoint(this.state);
 
 		if (this.per instanceof ApprovalContract) {
 			ApprovalContract contract = (ApprovalContract) this.per;
@@ -84,30 +84,30 @@ public class ApprovalLineViewData {
 	}
 
 	private void isLineComplete() {
-		this.isLineComplete = this.state.equals(ApprovalHelper.LINE_APPROVAL_COMPLETE);
+		this.isLineComplete = this.state.equals(WorkspaceHelper.LINE_APPROVAL_COMPLETE);
 	}
 
 	private void setBtn() {
 
-		if (this.type.equals(ApprovalHelper.APP_LINE)) {
+		if (this.type.equals(WorkspaceHelper.APP_LINE)) {
 			this.appBtn = true;
 		}
 
-		if (this.type.equals(ApprovalHelper.AGREE_LINE)) {
+		if (this.type.equals(WorkspaceHelper.AGREE_LINE)) {
 			this.agreeBtn = true;
 		}
 
-		if (this.type.equals(ApprovalHelper.RECEIVE_LINE)
-				&& (this.master.getState().equals(ApprovalHelper.MASTER_APPROVING))) {
+		if (this.type.equals(WorkspaceHelper.RECEIVE_LINE)
+				&& (this.master.getState().equals(WorkspaceHelper.MASTER_APPROVING))) {
 			this.receiveBtn = true;
 		}
 
 		// 결재가 진행중일 경우.. 부재중 버튼 보이게
-		if (this.state.equals(ApprovalHelper.LINE_APPROVING)) {
+		if (this.state.equals(WorkspaceHelper.LINE_APPROVING)) {
 			this.absenceBtn = true;
 		}
 
-		if (ApprovalHelper.manager.isNextLine(this.master, this.sort)) {
+		if (WorkspaceHelper.manager.isNextLine(this.master, this.sort)) {
 			this.isNextLine = true;
 		}
 	}
@@ -136,23 +136,23 @@ public class ApprovalLineViewData {
 
 	private boolean completeView() {
 		// 추가
-		if (this.state.equals(ApprovalHelper.LINE_RECEIVE_COMPLETE)) {
+		if (this.state.equals(WorkspaceHelper.LINE_RECEIVE_COMPLETE)) {
 			this.completeView = true;
 		}
 
-		if (this.state.equals(ApprovalHelper.LINE_AGREE_COMPLETE)) {
+		if (this.state.equals(WorkspaceHelper.LINE_AGREE_COMPLETE)) {
 			this.completeView = true;
 		}
 
-		if (this.state.equals(ApprovalHelper.LINE_AGREE_REJECT)) {
+		if (this.state.equals(WorkspaceHelper.LINE_AGREE_REJECT)) {
 			this.completeView = true;
 		}
 
-		if (this.state.equals(ApprovalHelper.LINE_RETURN_COMPLETE)) {
+		if (this.state.equals(WorkspaceHelper.LINE_RETURN_COMPLETE)) {
 			this.completeView = true;
 		}
 
-		if (this.state.equals(ApprovalHelper.LINE_APPROVAL_COMPLETE)) {
+		if (this.state.equals(WorkspaceHelper.LINE_APPROVAL_COMPLETE)) {
 			this.completeView = true;
 		}
 

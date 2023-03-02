@@ -36,7 +36,7 @@ public class ProjectColumnData {
 	private String description;
 	private Timestamp pdate;
 	private Timestamp completeDate;
-	private Timestamp endDate;
+	private Timestamp customDate;
 	private String model;
 	private String machine;
 	private String elec;
@@ -92,10 +92,10 @@ public class ProjectColumnData {
 		setKekNumber(project.getKekNumber());
 		setKeNumber(project.getKeNumber());
 		setUserId(project.getUserId());
-		setDescription(StringUtils.replaceToValue(project.getDescription()));
+		setDescription(project.getDescription());
 		setPdate(project.getPDate());
 		setCompleteDate(project.getEndDate());
-		setEndDate(project.getCustomDate());
+		setCustomDate(project.getCustomDate());
 		setModel(project.getModel());
 
 		WTUser machineUser = ProjectHelper.manager.getUserType(project, "MACHINE");

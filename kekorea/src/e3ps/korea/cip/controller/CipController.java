@@ -7,6 +7,7 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,7 +27,7 @@ import wt.session.SessionHelper;
 public class CipController extends BaseController {
 
 	@Description(value = "CIP 리스트 페이지")
-	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		JSONArray maks = CommonCodeHelper.manager.parseJson("MAK");
@@ -39,7 +40,7 @@ public class CipController extends BaseController {
 		model.addObject("maks", maks);
 		model.addObject("installs", installs);
 		model.addObject("customers", customers);
-		model.setViewName("/jsp/korea/cip/cip-list.jsp");
+		model.setViewName("/extcore/jsp/korea/cip/cip-list.jsp");
 		return model;
 	}
 

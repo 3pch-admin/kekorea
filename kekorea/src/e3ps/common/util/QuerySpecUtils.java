@@ -6,6 +6,9 @@ import e3ps.admin.spec.Spec;
 import e3ps.admin.spec.SpecOptionsLink;
 import e3ps.epm.ViewerData;
 import wt.epm.EPMDocument;
+import wt.iba.definition.litedefinition.AttributeDefDefaultView;
+import wt.iba.definition.service.IBADefinitionHelper;
+import wt.iba.value.StringValue;
 import wt.query.ClassAttribute;
 import wt.query.ColumnExpression;
 import wt.query.ConstantExpression;
@@ -220,4 +223,28 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 		sc = WorkInProgressHelper.getSearchCondition_CI(EPMDocument.class);
 	}
+
+	public static void toIBAEquals(QuerySpec query, int idx, Class clazz, String name, String value) throws Exception {
+		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath(name);
+		if (aview != null) {
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+
+			int _idx = query.appendClassList(StringValue.class, false);
+			SearchCondition sc = new SearchCondition(
+					new ClassAttribute(StringValue.class, "theIBAHolderReference.key.id"), "=",
+					new ClassAttribute(clazz, "thePersistInfo.theObjectIdentifier.id"));
+			sc.setFromIndicies(new int[] { _idx, idx }, 0);
+			sc.setOuterJoin(0);
+			query.appendWhere(sc, new int[] { _idx, idx });
+			query.appendAnd();
+			sc = new SearchCondition(StringValue.class, "definitionReference.key.id", "=", aview.getObjectID().getId());
+			query.appendWhere(sc, new int[] { _idx });
+			query.appendAnd();
+			sc = new SearchCondition(StringValue.class, StringValue.VALUE, "=", value);
+			query.appendWhere(sc, new int[] { _idx });
+		}
+	}
+
 }

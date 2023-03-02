@@ -2,20 +2,16 @@ package e3ps.erp;
 
 import com.ptc.windchill.annotations.metadata.GenAsBinaryLink;
 import com.ptc.windchill.annotations.metadata.GeneratedRole;
-import com.ptc.windchill.annotations.metadata.TableProperties;
 
 import wt.fc.ObjectToObjectLink;
 import wt.fc.Persistable;
-import wt.ownership.Ownable;
 import wt.util.WTException;
 
-@GenAsBinaryLink(superClass = ObjectToObjectLink.class, interfaces = { Ownable.class },
+@GenAsBinaryLink(superClass = ObjectToObjectLink.class,
 
 		roleA = @GeneratedRole(name = "history", type = ErpSendHistory.class),
 
-		roleB = @GeneratedRole(name = "persist", type = Persistable.class),
-
-		tableProperties = @TableProperties(tableName = "J_ERPSENDHISTORYLINK")
+		roleB = @GeneratedRole(name = "persist", type = Persistable.class)
 
 )
 public class ErpSendHistoryLink extends _ErpSendHistoryLink {

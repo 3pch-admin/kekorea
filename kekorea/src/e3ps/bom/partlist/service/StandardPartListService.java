@@ -325,7 +325,7 @@ public class StandardPartListService extends StandardManager implements PartList
 			// ErpHelper.service.sendPartListToERP(master);
 
 			if (isApp) {
-				ApprovalHelper.service.submitApp(master, param);
+				WorkspaceHelper.service.submitApp(master, param);
 			}
 
 			// oid add
@@ -401,7 +401,7 @@ public class StandardPartListService extends StandardManager implements PartList
 			// ContentUtils.updatePrimary(param, master);
 			ContentUtils.updateSecondary(param, master);
 
-			ApprovalHelper.service.deleteAllLine(master);
+			WorkspaceHelper.service.deleteAllLine(master);
 
 			ArrayList<PartListMasterProjectLink> lists = PartListHelper.manager.getPartListMasterProjectLink(master);
 			System.out.println("klists=" + lists.size());
@@ -664,7 +664,7 @@ public class StandardPartListService extends StandardManager implements PartList
 				}
 			}
 			if (isApp) {
-				ApprovalHelper.service.submitApp(master, param);
+				WorkspaceHelper.service.submitApp(master, param);
 			}
 
 			map.put("reload", true);
@@ -700,7 +700,7 @@ public class StandardPartListService extends StandardManager implements PartList
 			for (String oid : list) {
 				partList = (PartListMaster) rf.getReference(oid).getObject();
 
-				ApprovalHelper.service.deleteAllLine(partList);
+				WorkspaceHelper.service.deleteAllLine(partList);
 
 				String state = partList.getLifeCycleState().toString();
 				if (state.equalsIgnoreCase("APPROVED")) {
@@ -716,7 +716,7 @@ public class StandardPartListService extends StandardManager implements PartList
 					PersistenceHelper.manager.delete(link);
 				}
 
-				ApprovalHelper.service.deleteAllLine(partList);
+				WorkspaceHelper.service.deleteAllLine(partList);
 
 				PersistenceHelper.manager.delete(partList);
 			}
@@ -757,7 +757,6 @@ public class StandardPartListService extends StandardManager implements PartList
 			master.setNumber(number);
 			master.setName(name);
 			master.setDescription(description);
-			master.setEngType(engType);
 			master.setOwnership(CommonUtils.sessionOwner());
 			// 위치는 기계 수배표 전기 수배표로 몰빵..
 			Folder folder = FolderTaskLogic.getFolder(location, CommonUtils.getContainer());
@@ -767,8 +766,7 @@ public class StandardPartListService extends StandardManager implements PartList
 			// ContentUtils.updatePrimary(param, master);
 //				ContentUtils.updateSecondary(param, master);
 
-			double totalPrice = 0D;
-
+			double total = 0D;
 			int sort = 0;
 			for (int i = 0; i < _addRows.size(); i++) {
 				Map<String, Object> _addRow = (Map<String, Object>) _addRows.get(i);
@@ -813,30 +811,31 @@ public class StandardPartListService extends StandardManager implements PartList
 				data = (PartListData) PersistenceHelper.manager.save(data);
 
 				
-				MasterDataLink link = MasterDataLink.new
-				
+				MasterDataLink link = MasterDataLink.newMasterDataLink(master, data);
 				link.setSort(sort);
 				PersistenceHelper.manager.save(link);
 
-				totalPrice += data.getWon();
-
+				total += data.getWon();
 				sort++;
-				
 			}
+			
+			
+			for(Map<String, Object> addRow : addRows) {
+				String oid = (String)addRow.get("oid");
+				Project project = (Project)CommonUtils.getObject(oid);
 
-			for (int i = 0; projectOids != null && i < projectOids.size(); i++) {
-				String projectOid = (String) projectOids.get(i);
-				Project project = (Project) rf.getReference(projectOid).getObject();
-
+				
+				
+				
 				if ("기계".equals(engType)) {
 					double outputMachinePrice = project.getOutputMachinePrice() != null
 							? project.getOutputMachinePrice()
 							: 0D;
-					outputMachinePrice += totalPrice;
+					outputMachinePrice += total;
 					project.setOutputMachinePrice(outputMachinePrice);
 				} else if ("전기".equals(engType)) {
 					double outputElecPrice = project.getOutputElecPrice() != null ? project.getOutputElecPrice() : 0D;
-					outputElecPrice += totalPrice;
+					outputElecPrice += total;
 					project.setOutputElecPrice(outputElecPrice);
 				}
 
@@ -987,7 +986,7 @@ public class StandardPartListService extends StandardManager implements PartList
 			// ErpHelper.service.sendPartListToERP(master);
 
 			if (isApp) {
-				ApprovalHelper.service.submitApp(master, param);
+				WorkspaceHelper.service.submitApp(master, param);
 			}
 
 			// oid add

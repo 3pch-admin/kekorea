@@ -24,7 +24,7 @@ public class WorkOrderController extends BaseController {
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/epm/workOrder/workOrder-list.jsp");
+		model.setViewName("/extcore/jsp/epm/workOrder/workOrder-list.jsp");
 		return model;
 	}
 

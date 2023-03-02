@@ -3,7 +3,6 @@ package e3ps.project;
 import java.sql.Timestamp;
 
 import com.ptc.windchill.annotations.metadata.Cardinality;
-import com.ptc.windchill.annotations.metadata.ColumnProperties;
 import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedForeignKey;
@@ -15,7 +14,6 @@ import com.ptc.windchill.annotations.metadata.TableProperties;
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.project.template.Template;
 import wt.content.ContentHolder;
-import wt.doc.WTDocument;
 import wt.fc.WTObject;
 import wt.util.WTException;
 

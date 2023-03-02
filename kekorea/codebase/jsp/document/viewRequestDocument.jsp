@@ -6,13 +6,13 @@
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	// popup check
+// popup check
 	String popup = (String) request.getParameter("popup");
 	boolean isPopup = Boolean.parseBoolean(popup);
 
 	// data
 	RequestDocumentViewData data = (RequestDocumentViewData) request.getAttribute("data");
-	ArrayList<ReqDocumentProjectLink> projectList = (ArrayList<ReqDocumentProjectLink>) request.getAttribute("projectList");
+	ArrayList<RequestDocumentProjectLink> projectList = (ArrayList<RequestDocumentProjectLink>) request.getAttribute("projectList");
 	// isAdmin
 	boolean isAdmin = CommonUtils.isAdmin();
 %>
@@ -22,8 +22,8 @@
 	$(document).ready(function() {
 	})
 	</script>
-	<input type="hidden" name="oid" id="oid" value="<%=data.oid %>">
-	<input type="hidden" name="popup" id="popup" value="<%=isPopup %>">
+	<input type="hidden" name="oid" id="oid" value="<%=data.oid%>">
+	<input type="hidden" name="popup" id="popup" value="<%=isPopup%>">
 	<table class="btn_table">
 		<tr>
 			<td>
@@ -37,24 +37,24 @@
 			<td>
 				<div class="right">
 				<%
-					if(CommonUtils.isLatestVersion(data.reqDoc)) {
+				if(CommonUtils.isLatestVersion(data.reqDoc)) {
 				%>
-				<input type="button" value="수정" id="modifyReqBtn" title="수정" data-oid="<%=data.oid %>">
+				<input type="button" value="수정" id="modifyReqBtn" title="수정" data-oid="<%=data.oid%>">
 				<%
-					}
-				if(isPopup) {
+				}
+						if(isPopup) {
 				%>
 				<input type="button" value="결재이력" data-oid="<%=data.oid%>" class="infoApprovalHistory" id="infoApprovalHistory" title="결재이력">
 					<!-- <div class="right"> -->
 						<input type="button" value="닫기" id="closeDocBtn" title="닫기" class="redBtn">
 					<!-- </div> -->
 				<%
-					}else{
+				}else{
 				%>
 					<input type="button" value="뒤로" id="b" title="뒤로" class="blueBtn">		
 				<%
-					}
-				%>
+						}
+						%>
 <!-- 		<input type="button" value="닫기" id="closeDocBtn" title="닫기" class="redBtn"> -->
 				</div>
 			</td>
@@ -67,19 +67,19 @@
 	<table class="view_table">
 		<tr>
 			<th class="min-wid200">의뢰서 제목</th>
-			<td><%=data.name %></td>
+			<td><%=data.name%></td>
 		</tr>
 		<tr>
 			<th>설명<br><span id="descDocCnt">0</span>/4000</th>
 			<td colspan="3">
-				<textarea rows="3" cols="" class="AXTextarea bgk" readonly="readonly"><%=data.description %></textarea>
+				<textarea rows="3" cols="" class="AXTextarea bgk" readonly="readonly"><%=data.description%></textarea>
 			</td>			
 		</tr>
 		<tr>
 			<th>주 첨부파일</th>
 			<td>
 				<jsp:include page="/jsp/common/primary.jsp">
-					<jsp:param value="<%=data.oid %>" name="oid"/>
+					<jsp:param value="<%=data.oid%>" name="oid"/>
 				</jsp:include>
 			</td>
 		</tr>						
@@ -87,7 +87,7 @@
 			<th>첨부파일</th>
 			<td>
 				<jsp:include page="/jsp/common/secondary.jsp">
-					<jsp:param value="<%=data.oid %>" name="oid"/>
+					<jsp:param value="<%=data.oid%>" name="oid"/>
 				</jsp:include>
 			</td>
 		</tr>				
@@ -100,7 +100,7 @@
 						<div id="spreadsheet"></div>
 						<script>
 						var jexcels = jexcel(document.getElementById('spreadsheet'), {
-							data : <%=data.jsonList %>,
+							data : <%=data.jsonList%>,
 							rowResize:false,
 						    columnDrag:false,
 						    tableOverflow:true,
@@ -145,9 +145,9 @@
 								</thead>
 								<tbody id="addOutputsBody">
 								<%
- 									for(ReqDocumentProjectLink projectLink : projectList) { 
- 										Project project = projectLink.getProject(); 
- 										String ooid = project.getPersistInfo().getObjectIdentifier().getStringValue(); 
+								for(RequestDocumentProjectLink projectLink : projectList) { 
+								 										Project project = projectLink.getProject(); 
+								 										String ooid = project.getPersistInfo().getObjectIdentifier().getStringValue();
 								%> 
 								<tr>
 									<td class="center"><%=project.getPType() %></td>

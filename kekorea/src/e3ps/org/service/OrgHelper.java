@@ -10,6 +10,7 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.org.Department;
 import e3ps.org.People;
+import e3ps.org.beans.UserColumnData;
 import e3ps.workspace.ApprovalUserLine;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -56,26 +57,26 @@ public class OrgHelper {
 	}
 
 	public Department getRoot() {
-		Department root = null;
-		QuerySpec query = null;
-		try {
-			query = new QuerySpec();
-			int idx = query.appendClassList(Department.class, true);
-
-			SearchCondition sc = new SearchCondition(Department.class, Department.CODE, "=", "ROOT");
-			query.appendWhere(sc, new int[] { idx });
-
-			QueryResult result = PersistenceHelper.manager.find(query);
-			if (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				root = (Department) obj[0];
-			}
-			if (root == null) {
-				root = OrgHelper.service.makeRoot();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		Department root = null;
+//		QuerySpec query = null;
+//		try {
+//			query = new QuerySpec();
+//			int idx = query.appendClassList(Department.class, true);
+//
+//			SearchCondition sc = new SearchCondition(Department.class, Department.CODE, "=", "ROOT");
+//			query.appendWhere(sc, new int[] { idx });
+//
+//			QueryResult result = PersistenceHelper.manager.find(query);
+//			if (result.hasMoreElements()) {
+//				Object[] obj = (Object[]) result.nextElement();
+//				root = (Department) obj[0];
+//			}
+//			if (root == null) {
+//				root = OrgHelper.service.makeRoot();
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		return root;
 	}
 
@@ -1143,7 +1144,8 @@ public class OrgHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(People.class, true);
 
-		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, true);
+		QuerySpecUtils.toBoolean(query, idx, People.class, People.RESIGN, false);
+		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, false);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();

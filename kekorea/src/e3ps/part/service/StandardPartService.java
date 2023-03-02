@@ -150,7 +150,7 @@ public class StandardPartService extends StandardManager implements PartService,
 			contract = ApprovalContract.newApprovalContract();
 			contract.setName(name);
 			contract.setStartTime(new Timestamp(new Date().getTime()));
-			contract.setState(ApprovalHelper.LINE_APPROVING);
+			contract.setState(WorkspaceHelper.LINE_APPROVING);
 			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
 
 			for (int i = 0; i < partOids.size(); i++) {
@@ -161,7 +161,7 @@ public class StandardPartService extends StandardManager implements PartService,
 				PersistenceHelper.manager.save(aLink);
 			}
 
-			ApprovalHelper.service.submitApp(contract, param);
+			WorkspaceHelper.service.submitApp(contract, param);
 
 			map.put("result", SUCCESS);
 			map.put("msg", "구매품 결재가 등록 되었습니다.");
@@ -247,7 +247,7 @@ public class StandardPartService extends StandardManager implements PartService,
 			}
 
 			if (isApp) {
-				ApprovalHelper.service.submitApp(part, param);
+				WorkspaceHelper.service.submitApp(part, param);
 			}
 
 			EPMDocument epm = null;
@@ -552,7 +552,7 @@ public class StandardPartService extends StandardManager implements PartService,
 			}
 
 			if (isApp) {
-				ApprovalHelper.service.submitApp(part, param);
+				WorkspaceHelper.service.submitApp(part, param);
 			}
 
 			EPMDocument epm = null;
@@ -1712,7 +1712,7 @@ public class StandardPartService extends StandardManager implements PartService,
 			ContentUtils.updateSecondary(param, part);
 
 			if (appList.size() > 0) {
-				ApprovalHelper.service.submitApp(part, param);
+				WorkspaceHelper.service.submitApp(part, param);
 			}
 
 			QueryResult result = PersistenceHelper.manager.navigate(part, "document", WTDocumentWTPartLink.class,
@@ -2142,7 +2142,7 @@ public class StandardPartService extends StandardManager implements PartService,
 			contract.setName(name);
 			contract.setStartTime(new Timestamp(new Date().getTime()));
 			// contract.setState(ApprovalHelper.LINE_APPROVING);
-			contract.setState(ApprovalHelper.LINE_APPROVAL_COMPLETE);
+			contract.setState(WorkspaceHelper.LINE_APPROVAL_COMPLETE);
 
 			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
 
@@ -2176,7 +2176,7 @@ public class StandardPartService extends StandardManager implements PartService,
 			Timestamp startTime = new Timestamp(new Date().getTime());
 
 			ApprovalMaster master = null;
-			name = ApprovalHelper.manager.getLineName(contract);
+			name = WorkspaceHelper.manager.getLineName(contract);
 
 			Ownership ownership = Ownership.newOwnership(SessionHelper.manager.getPrincipal());
 
@@ -2189,7 +2189,7 @@ public class StandardPartService extends StandardManager implements PartService,
 			master.setOwnership(ownership);
 			master.setPersist(contract);
 			master.setStartTime(startTime);
-			master.setState(ApprovalHelper.LINE_SUBMIT_COMPLETE);
+			master.setState(WorkspaceHelper.LINE_SUBMIT_COMPLETE);
 			master.setCompleteUserID(completeUser.getName());
 			master = (ApprovalMaster) PersistenceHelper.manager.save(master);
 
@@ -2201,12 +2201,12 @@ public class StandardPartService extends StandardManager implements PartService,
 			startLine.setReads(true);
 			startLine.setSort(-50);
 			startLine.setStartTime(startTime);
-			startLine.setType(ApprovalHelper.APP_LINE);
+			startLine.setType(WorkspaceHelper.APP_LINE);
 			// 기안자
-			startLine.setRole(ApprovalHelper.WORKING_SUBMIT);
+			startLine.setRole(WorkspaceHelper.WORKING_SUBMIT);
 			startLine.setDescription(ownership.getOwner().getFullName() + " 사용자가 결재를 제출 하였습니다.");
 			startLine.setCompleteUserID(completeUser.getName());
-			startLine.setState(ApprovalHelper.LINE_SUBMIT_COMPLETE);
+			startLine.setState(WorkspaceHelper.LINE_SUBMIT_COMPLETE);
 			startLine.setCompleteTime(startTime);
 
 			startLine = (ApprovalLine) PersistenceHelper.manager.save(startLine);
@@ -2217,12 +2217,12 @@ public class StandardPartService extends StandardManager implements PartService,
 			appLine.setCompleteTime(startTime);
 			appLine.setDescription("자가 결재");
 			appLine.setMaster(master);
-			appLine.setType(ApprovalHelper.APP_LINE);
+			appLine.setType(WorkspaceHelper.APP_LINE);
 			appLine.setReads(true);
-			appLine.setRole(ApprovalHelper.WORKING_APPROVAL);
+			appLine.setRole(WorkspaceHelper.WORKING_APPROVAL);
 			appLine.setSort(0);
 			appLine.setStartTime(startTime);
-			appLine.setState(ApprovalHelper.LINE_APPROVAL_COMPLETE);
+			appLine.setState(WorkspaceHelper.LINE_APPROVAL_COMPLETE);
 			appLine = (ApprovalLine) PersistenceHelper.manager.save(appLine);
 
 			map.put("reload", true);
@@ -2262,7 +2262,7 @@ public class StandardPartService extends StandardManager implements PartService,
 			contract = ApprovalContract.newApprovalContract();
 			contract.setName(name);
 			contract.setStartTime(new Timestamp(new Date().getTime()));
-			contract.setState(ApprovalHelper.LINE_APPROVING);
+			contract.setState(WorkspaceHelper.LINE_APPROVING);
 			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
 
 			for (int i = 0; i < libraryOids.size(); i++) {
@@ -2285,7 +2285,7 @@ public class StandardPartService extends StandardManager implements PartService,
 				PersistenceHelper.manager.save(aLink);
 			}
 
-			ApprovalHelper.service.submitApp(contract, param);
+			WorkspaceHelper.service.submitApp(contract, param);
 
 			map.put("result", SUCCESS);
 			map.put("reload", true);
@@ -2437,7 +2437,7 @@ public class StandardPartService extends StandardManager implements PartService,
 			contract.setName(name);
 			contract.setStartTime(new Timestamp(new Date().getTime()));
 			// contract.setState(ApprovalHelper.LINE_APPROVING);
-			contract.setState(ApprovalHelper.LINE_APPROVAL_COMPLETE);
+			contract.setState(WorkspaceHelper.LINE_APPROVAL_COMPLETE);
 
 			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
 
@@ -2452,7 +2452,7 @@ public class StandardPartService extends StandardManager implements PartService,
 			Timestamp startTime = new Timestamp(new Date().getTime());
 
 			ApprovalMaster master = null;
-			name = ApprovalHelper.manager.getLineName(contract);
+			name = WorkspaceHelper.manager.getLineName(contract);
 
 			Ownership ownership = Ownership.newOwnership(SessionHelper.manager.getPrincipal());
 
@@ -2465,7 +2465,7 @@ public class StandardPartService extends StandardManager implements PartService,
 			master.setOwnership(ownership);
 			master.setPersist(contract);
 			master.setStartTime(startTime);
-			master.setState(ApprovalHelper.LINE_SUBMIT_COMPLETE);
+			master.setState(WorkspaceHelper.LINE_SUBMIT_COMPLETE);
 			master.setCompleteUserID(completeUser.getName());
 			master = (ApprovalMaster) PersistenceHelper.manager.save(master);
 
@@ -2477,12 +2477,12 @@ public class StandardPartService extends StandardManager implements PartService,
 			startLine.setReads(true);
 			startLine.setSort(-50);
 			startLine.setStartTime(startTime);
-			startLine.setType(ApprovalHelper.APP_LINE);
+			startLine.setType(WorkspaceHelper.APP_LINE);
 			// 기안자
-			startLine.setRole(ApprovalHelper.WORKING_SUBMIT);
+			startLine.setRole(WorkspaceHelper.WORKING_SUBMIT);
 			startLine.setDescription(ownership.getOwner().getFullName() + " 사용자가 결재를 제출 하였습니다.");
 			startLine.setCompleteUserID(completeUser.getName());
-			startLine.setState(ApprovalHelper.LINE_SUBMIT_COMPLETE);
+			startLine.setState(WorkspaceHelper.LINE_SUBMIT_COMPLETE);
 			startLine.setCompleteTime(startTime);
 
 			startLine = (ApprovalLine) PersistenceHelper.manager.save(startLine);
@@ -2493,12 +2493,12 @@ public class StandardPartService extends StandardManager implements PartService,
 			appLine.setCompleteTime(startTime);
 			appLine.setDescription("자가 결재");
 			appLine.setMaster(master);
-			appLine.setType(ApprovalHelper.APP_LINE);
+			appLine.setType(WorkspaceHelper.APP_LINE);
 			appLine.setReads(true);
-			appLine.setRole(ApprovalHelper.WORKING_APPROVAL);
+			appLine.setRole(WorkspaceHelper.WORKING_APPROVAL);
 			appLine.setSort(0);
 			appLine.setStartTime(startTime);
-			appLine.setState(ApprovalHelper.LINE_APPROVAL_COMPLETE);
+			appLine.setState(WorkspaceHelper.LINE_APPROVAL_COMPLETE);
 			appLine = (ApprovalLine) PersistenceHelper.manager.save(appLine);
 
 			map.put("reload", true);

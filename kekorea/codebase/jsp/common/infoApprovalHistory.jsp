@@ -53,51 +53,51 @@
 			<th>결재의견</th>
 		</tr>
 		<%
-			if(data != null) {
+		if(data != null) {
 				
 				ArrayList<ApprovalLine> subMit = data.appLines;
 				for(ApprovalLine appLine : subMit) {
 					ApprovalLineViewData datas = new ApprovalLineViewData(appLine);
-					if(!datas.role.equals(ApprovalHelper.WORKING_SUBMIT)) {
+					if(!datas.role.equals(WorkspaceHelper.WORKING_SUBMIT)) {
 						continue;
 					}
-			%>
-			<tr>
-				<td><font color="blue"><%=datas.type %></font></td>
-				<td><%=datas.role %></td>
-				<td class="ellipsis250" title="<%=datas.name %>"><%=datas.name%></td>
-				<td><%=datas.state %></td>
-				<td><%=datas.creator %></td>
-				<td><%=datas.startTime %></td>
-				<td><%=datas.completeTime %></td>
-				<td class="left ellipsis250" title="<%=datas.description %>"><%=datas.description%></td>
-			</tr>					
-		<%			
-				}
-				ArrayList<ApprovalLine> appLines = data.agreeLines;
-				for(ApprovalLine appLine : appLines) {
-					ApprovalLineViewData datas = new ApprovalLineViewData(appLine);
 		%>
+			<tr>
+				<td><font color="blue"><%=datas.type%></font></td>
+				<td><%=datas.role%></td>
+				<td class="ellipsis250" title="<%=datas.name%>"><%=datas.name%></td>
+				<td><%=datas.state%></td>
+				<td><%=datas.creator%></td>
+				<td><%=datas.startTime%></td>
+				<td><%=datas.completeTime%></td>
+				<td class="left ellipsis250" title="<%=datas.description%>"><%=datas.description%></td>
+			</tr>					
+		<%
+							}
+									ArrayList<ApprovalLine> appLines = data.agreeLines;
+									for(ApprovalLine appLine : appLines) {
+										ApprovalLineViewData datas = new ApprovalLineViewData(appLine);
+							%>
 		<tr>
 			<td><font color="blue"><%=datas.type%></font></td>
 			<td><%=datas.role%></td>
-			<td class="ellipsis250" title="<%=datas.name %>"><%=datas.name%></td>
+			<td class="ellipsis250" title="<%=datas.name%>"><%=datas.name%></td>
 			<td><%=datas.state%></td>
 			<td><%=datas.creator%></td>
 			<td><%=datas.startTime%></td>
 			<td><%=datas.completeTime%></td>
-			<td class="left ellipsis250" title="<%=datas.description %>"><%=datas.description%></td>
+			<td class="left ellipsis250" title="<%=datas.description%>"><%=datas.description%></td>
 		</tr>		
 		<%
 				}
-				ArrayList<ApprovalLine> agreeLines = data.appLines;
-				for(ApprovalLine agreeLine : agreeLines) {
-					ApprovalLineViewData datas = new ApprovalLineViewData(agreeLine);
-					if(datas.role.equals(ApprovalHelper.WORKING_SUBMIT)) {
-						continue;
-					}					
-					System.out.println(datas.master.getPersistInfo().getObjectIdentifier().getStringValue());
-		%>
+						ArrayList<ApprovalLine> agreeLines = data.appLines;
+						for(ApprovalLine agreeLine : agreeLines) {
+							ApprovalLineViewData datas = new ApprovalLineViewData(agreeLine);
+							if(datas.role.equals(WorkspaceHelper.WORKING_SUBMIT)) {
+								continue;
+							}					
+							System.out.println(datas.master.getPersistInfo().getObjectIdentifier().getStringValue());
+				%>
 		<tr>
 			<td><font color="green"><%=datas.type%></font></td>
 			<td><%=datas.role%></td>

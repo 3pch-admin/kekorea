@@ -7,6 +7,8 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,7 +42,7 @@ public class OrgController extends BaseController {
 	}
 
 	@Description(value = "조직도 페이지")
-	@RequestMapping(value = "/organization", method = RequestMethod.GET)
+	@GetMapping(value = "/organization")
 	public ModelAndView organization() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
@@ -49,13 +51,13 @@ public class OrgController extends BaseController {
 		model.addObject("maks", maks);
 		model.addObject("list", list);
 		model.addObject("isAdmin", isAdmin);
-		model.setViewName("/jsp/org/organization-list.jsp");
+		model.setViewName("/extcore/jsp/org/organization-list.jsp");
 		return model;
 	}
 
 	@Description(value = "사용자 조회 함수")
+	@PostMapping(value = "/list")
 	@ResponseBody
-	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {

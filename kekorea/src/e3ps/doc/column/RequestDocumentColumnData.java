@@ -46,7 +46,7 @@ public class RequestDocumentColumnData {
 		this.keNumber = project.getKeNumber();
 		this.user_id = project.getUserId();// IBAUtils.getStringValue(project, "USER_ID");
 		this.pdescription = project.getDescription();
-		ApprovalMaster master = ApprovalHelper.manager.getMaster(requestDocument);
+		ApprovalMaster master = WorkspaceHelper.manager.getMaster(requestDocument);
 		this.ingPoint = getIngPoint(master);
 		this.state = requestDocument.getLifeCycleState().getDisplay(SessionHelper.getLocale());
 		this.version = requestDocument.getVersionIdentifier().getSeries().getValue() + "."
@@ -66,10 +66,10 @@ public class RequestDocumentColumnData {
 	private String getIngPoint(ApprovalMaster master) {
 		String s = "";
 
-		ArrayList<ApprovalLine> agreeLine = ApprovalHelper.manager.getAgreeLines(master);
+		ArrayList<ApprovalLine> agreeLine = WorkspaceHelper.manager.getAgreeLines(master);
 		for (ApprovalLine aLine : agreeLine) {
 			boolean bool = false;
-			if (aLine.getState().equals(ApprovalHelper.LINE_AGREE_STAND)) {
+			if (aLine.getState().equals(WorkspaceHelper.LINE_AGREE_STAND)) {
 				bool = true;
 			}
 			s += aLine.getOwnership().getOwner().getFullName() + "&" + bool + ",";

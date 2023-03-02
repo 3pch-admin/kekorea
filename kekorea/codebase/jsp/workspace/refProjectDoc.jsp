@@ -16,7 +16,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-	String oid = request.getParameter("oid");
+String oid = request.getParameter("oid");
 	ReferenceFactory rf = new ReferenceFactory();
 	ApprovalLine line = (ApprovalLine)rf.getReference(oid).getObject();
 	ApprovalLineViewData data = new ApprovalLineViewData(line);
@@ -25,7 +25,7 @@
 	
 	ArrayList<ProjectOutputLink> projectList = DocumentHelper.manager.getProjectOutputLink(m);
 	
-	String prefix = ApprovalHelper.manager.getPrefix(data.per);
+	String prefix = WorkspaceHelper.manager.getPrefix(data.per);
 %>
 <table class="in_list_table left-border2" id="refAppObject_table">
 	<colgroup>

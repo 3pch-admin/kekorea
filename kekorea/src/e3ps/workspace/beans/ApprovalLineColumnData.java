@@ -33,7 +33,7 @@ public class ApprovalLineColumnData {
 			setType(line.getType());
 			setRole(line.getRole());
 			setName(line.getName());
-			setCreator(line.getOwnership().getOwner().getFullName());
+			setCreator(line.getMaster().getOwnership().getOwner().getFullName());
 			setState(line.getState());
 			setCreatedDate(line.getCreateTimestamp());
 		}

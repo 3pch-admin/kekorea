@@ -5,13 +5,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
 import e3ps.epm.workOrder.WorkOrder;
+import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.epm.workOrder.beans.WorkOrderColumnData;
+import e3ps.project.Project;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -33,6 +37,15 @@ public class WorkOrderHelper {
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WorkOrder.class, true);
+		int idx_link = query.appendClassList(WorkOrderProjectLink.class, true);
+		int idx_p = query.appendClassList(Project.class, true);
+
+		QuerySpecUtils.toInnerJoin(query, WorkOrderProjectLink.class, WorkOrder.class, "roleAObjectRef.key.id",
+				WTAttributeNameIfc.ID_NAME, idx_link, idx);
+		QuerySpecUtils.toInnerJoin(query, WorkOrderProjectLink.class, Project.class, "roleBObjectRef.key.id",
+				WTAttributeNameIfc.ID_NAME, idx_link, idx_p);
+
+		QuerySpecUtils.toOrderBy(query, idx, PartListMaster.class, PartListMaster.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -91,7 +104,7 @@ public class WorkOrderHelper {
 			int idx_m = query.appendClassList(KeDrawingMaster.class, true);
 			QuerySpecUtils.toInnerJoin(query, KeDrawing.class, KeDrawingMaster.class, "masterReference.key.id",
 					WTAttributeNameIfc.ID_NAME, idx, idx_m);
-			QuerySpecUtils.toBoolean(query, idx, KeDrawing.class, KeDrawing.LATEST, SearchCondition.IS_TRUE);
+			QuerySpecUtils.toBooleanAnd(query, idx, KeDrawing.class, KeDrawing.LATEST, SearchCondition.IS_TRUE);
 			QuerySpecUtils.toEqualsAnd(query, idx_m, KeDrawingMaster.class, KeDrawingMaster.KE_NUMBER, number);
 			QueryResult result = PersistenceHelper.manager.find(query);
 			if (result.hasMoreElements()) {

@@ -1018,7 +1018,7 @@ public class StandardEpmService extends StandardManager implements EpmService, M
 			contract.setName(name);
 			contract.setDescription(comment);
 			contract.setStartTime(new Timestamp(new Date().getTime()));
-			contract.setState(ApprovalHelper.LINE_APPROVING);
+			contract.setState(WorkspaceHelper.LINE_APPROVING);
 			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
 
 			for (int i = 0; i < epmOids.size(); i++) {
@@ -1035,7 +1035,7 @@ public class StandardEpmService extends StandardManager implements EpmService, M
 				PersistenceHelper.manager.save(aLink);
 			}
 
-			ApprovalHelper.service.submitApp(contract, param);
+			WorkspaceHelper.service.submitApp(contract, param);
 
 			map.put("result", SUCCESS);
 			map.put("reload", true);
@@ -1073,7 +1073,7 @@ public class StandardEpmService extends StandardManager implements EpmService, M
 			contract = ApprovalContract.newApprovalContract();
 			contract.setName(name);
 			contract.setStartTime(new Timestamp(new Date().getTime()));
-			contract.setState(ApprovalHelper.LINE_APPROVING);
+			contract.setState(WorkspaceHelper.LINE_APPROVING);
 			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
 
 			for (int i = 0; i < epmOids.size(); i++) {
@@ -1092,7 +1092,7 @@ public class StandardEpmService extends StandardManager implements EpmService, M
 			}
 
 			if (self) {
-				ApprovalHelper.service.selfApproval((Persistable) contract);
+				WorkspaceHelper.service.selfApproval((Persistable) contract);
 			}
 
 			map.put("result", SUCCESS);

@@ -2594,21 +2594,18 @@ public class ProjectHelper {
 //	}
 //
 	public String getStateIcon(int type) throws Exception {
-
-		String icon = "";
-
 		if (type == 0) {
-			icon = "<img title='태스크 시작전 입니다.' class='pos3' src='/Windchill/jsp/images/state_blank_bar.png'>";
+			return "<img title='태스크 시작전 입니다.' style='position: relative; top: 2px;' src='/Windchill/extcore/images/project/state_blank_bar.png'>";
 		} else if (type == 1) {
-			icon = "<img title='태스크가 계획 종료일 보다 초과 되서 진행 중 입니다.' class='pos3' src='/Windchill/jsp/images/state_red_bar.png'>";
+			return "<img title='태스크가 계획 종료일 보다 초과 되서 진행 중 입니다.' class='' src='/Windchill/extcore/images/project/state_red_bar.png'>";
 		} else if (type == 2) {
-			icon = "<img title='태스크가 진행 중 입니다.' class='pos3' src='/Windchill/jsp/images/state_yellow_bar.png'>";
+			return "<img title='태스크가 진행 중 입니다.' style='position: relative; top: 2px;' src='/Windchill/extcore/images/project/state_yellow_bar.png'>";
 		} else if (type == 3) {
-			icon = "<img title='태스크 지연 입니다.' class='pos3' src='/Windchill/jsp/images/state_orange_bar.png'>";
+			return "<img title='태스크 지연 입니다.' style='position: relative; top: 2px;' src='/Windchill/extcore/images/project/state_orange_bar.png'>";
 		} else if (type == 4) {
-			icon = "<img title='태스크 완료 입니다.' class='pos3' src='/Windchill/jsp/images/state_green_bar.png'>";
+			return "<img title='태스크 완료 입니다.' style='position: relative; top: 2px;' src='/Windchill/extcore/images/project/state_green_bar.png'>";
 		}
-		return icon;
+		return "";
 	}
 
 //
