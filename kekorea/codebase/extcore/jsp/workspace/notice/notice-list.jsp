@@ -82,8 +82,7 @@
 					style : "left",
 					filter : {
 						showIcon : true,
-						useExMenu : true,
-						inline : true
+						useExMenu : true
 					},
 				}, {
 					dataField : "creator",
@@ -92,8 +91,7 @@
 					width : 100,
 					filter : {
 						showIcon : true,
-						useExMenu : true,
-						inline : true
+						useExMenu : true
 					},
 				}, {
 					dataField : "createdDate",
@@ -103,8 +101,7 @@
 					width : 100,
 					filter : {
 						showIcon : true,
-						useExMenu : true,
-						inline : true
+						useExMenu : true
 					},
 				}, {
 					dataField : "primary",
@@ -112,9 +109,8 @@
 					dataType : "string",
 					width : 80,
 					filter : {
-						showIcon : true,
-						useExMenu : true,
-						inline : true
+						showIcon : false,
+						inline : false
 					},
 				} ]
 			}

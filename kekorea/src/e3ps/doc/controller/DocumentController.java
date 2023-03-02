@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.code.service.CommonCodeHelper;
-import e3ps.controller.BaseController;
+import e3ps.common.controller.BaseController;
 import e3ps.doc.service.DocumentHelper;
 import e3ps.project.template.Template;
 

@@ -47,6 +47,10 @@ td.right {
 	text-align: right;
 }
 
+td.indent5 {
+	text-indent: 5px;
+}
+
 td.indent10 {
 	text-indent: 10px;
 }
@@ -117,4 +121,49 @@ input[type="button"].orange {
 	padding: 0px 10px 25px 10px;
 	border: 1px solid #00c192;
 	background: #ff7f00;
+}
+
+/** 로딩 레이어 CSS **/
+div#loading{
+	z-index: 999999;
+	display: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+/** 등록 테이블 CSS **/
+table.create-table {
+	width: 100%;
+	border-spacing: 0;
+	border-top: 2px solid #86bff9;
+	border-collapse: collapse;
+	font-size: 12px;	
+}
+
+table.create-table th {
+	background-color: #f2f2f2;
+	height: 30px;
+	border-bottom: 1px solid #a6a6a6;
+	border-left: 1px solid #a6a6a6;
+	padding-bottom: 4px;
+	max-width: 130px;
+	min-width: 130px;
+	width: 130px;
+}
+
+table.create-table td {
+	height: 30px;
+	border-bottom: 1px solid #a6a6a6;
+	border-left: 1px solid #a6a6a6;
+	border-right: 1px solid #a6a6a6;
+}
+
+table.create-table textarea {
+	width: calc(100% - 15px);
+	border: 1px solid #a6a6a6;
+	margin-top: 3px;
+	font-size: 14px;
+	font-family: inherit;
 }

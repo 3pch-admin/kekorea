@@ -1,4 +1,4 @@
-package e3ps.epm.controller;
+package e3ps.epm.keDrawing.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.controller.BaseController;
-import e3ps.epm.service.KeDrawingHelper;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import wt.org.WTUser;
 
 @Controller
@@ -29,7 +29,7 @@ public class KeDrawingController extends BaseController {
 		boolean isAdmin = CommonUtils.isAdmin();
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
-		model.setViewName("/jsp/epm/keDrawing/keDrawing-list.jsp");
+		model.setViewName("/extcore/jsp/epm/keDrawing/keDrawing-list.jsp");
 		return model;
 	}
 

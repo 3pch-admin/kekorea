@@ -1,4 +1,4 @@
-package e3ps.controller;
+package e3ps.common.controller;
 
 public class BaseController {
 

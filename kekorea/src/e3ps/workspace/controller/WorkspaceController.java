@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.controller.BaseController;
+import e3ps.common.controller.BaseController;
 import e3ps.workspace.service.WorkspaceHelper;
 
 @Controller

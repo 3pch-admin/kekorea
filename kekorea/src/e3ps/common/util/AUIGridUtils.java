@@ -1,14 +1,19 @@
 package e3ps.common.util;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import com.ptc.wvs.server.util.FileHelper;
 import com.ptc.wvs.server.util.PublishUtils;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.admin.spec.service.OptionsHelper;
-import e3ps.admin.spec.service.SpecHelper;
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.project.service.ProjectHelper;
 import wt.content.ApplicationData;
@@ -16,16 +21,26 @@ import wt.content.ContentHelper;
 import wt.content.ContentHolder;
 import wt.content.ContentRoleType;
 import wt.epm.EPMDocument;
-import wt.fc.Persistable;
-import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
-import wt.fc.ReferenceFactory;
 import wt.part.WTPart;
-import wt.representation.Representable;
-import wt.representation.Representation;
 import wt.util.FileUtil;
+import wt.util.WTProperties;
 
 public class AUIGridUtils {
+
+	private static String TEMP;
+	static {
+		try {
+			TEMP = WTProperties.getLocalProperties().getProperty("wt.home") + File.separator + "temp" + File.separator
+					+ "upload";
+			File dir = new File(TEMP);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	private AUIGridUtils() {
 
@@ -91,5 +106,55 @@ public class AUIGridUtils {
 			thumnail_mini = "/Windchill/jsp/images/productview_publish_24.png";
 		}
 		return thumnail_mini;
+	}
+
+	public static Map<String, Object> upload(HttpServletRequest request) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+
+			int limit = 1024 * 1024 * 1024;
+			MultipartRequest multi = new MultipartRequest(request, TEMP, limit, "UTF-8", new DefaultFileRenamePolicy());
+
+			String roleType = multi.getParameter("roleType");
+			String origin = multi.getOriginalFileName(roleType);
+			String name = multi.getFilesystemName(roleType);
+
+			String ext = FileUtil.getExtension(origin);
+			String fullPath = TEMP + File.separator + name;
+
+			map.put("name", origin);
+			map.put("fullPath", fullPath);
+			map.put("icon", CommonContentHelper.manager.getIconPath(ext));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return map;
+	}
+
+	public static Map<String, Object> preview(HttpServletRequest request) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+
+			int limit = 1024 * 1024 * 1024;
+			MultipartRequest multi = new MultipartRequest(request, TEMP, limit, "UTF-8", new DefaultFileRenamePolicy());
+
+			String roleType = multi.getParameter("roleType");
+			String origin = multi.getOriginalFileName(roleType);
+			String name = multi.getFilesystemName(roleType);
+
+			String ext = FileUtil.getExtension(origin);
+			String fullPath = TEMP + File.separator + name;
+
+			map.put("name", origin);
+			map.put("fullPath", fullPath);
+			map.put("base64", ContentUtils.imageToBase64(new File(fullPath), ext));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return map;
 	}
 }

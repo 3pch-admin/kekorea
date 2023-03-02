@@ -111,8 +111,4 @@ public interface CommonContentService {
 
 	public abstract Map<String, Object> upload(HttpServletRequest request) throws Exception;
 
-	public abstract Map<String, Object> auiPreview(HttpServletRequest request) throws Exception;
-
-	public abstract Map<String, Object> auiUpload(HttpServletRequest request) throws Exception;
-
 }

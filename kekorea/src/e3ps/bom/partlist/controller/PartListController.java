@@ -16,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.bom.partlist.service.PartListHelper;
-import e3ps.controller.BaseController;
+import e3ps.common.controller.BaseController;
 
 @Controller
 @RequestMapping(value = "/partlist/**")

@@ -3,7 +3,7 @@
         "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"  
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
-	<definition name="layout" template="/jsp/layout/layout.jsp">
+	<definition name="layout" template="/extcore/layout/layout.jsp">
 		<put-attribute name="title" value="국제엘렉트릭코리아 PLM 시스템"></put-attribute>
 		<put-attribute name="header" value="/plm/header"></put-attribute>
 		<!-- <put-attribute name="menu" value="/jsp/menu.jsp"></put-attribute> -->
@@ -12,7 +12,7 @@
 	</definition>
 
 
-	<definition name="popup" template="/jsp/layout/popup.jsp">
+	<definition name="popup" template="/extcore/layout/popup.jsp">
 		<put-attribute name="title" value="국제엘렉트릭코리아 PLM 시스템"></put-attribute>
 		<put-attribute name="body" value=""></put-attribute>
 	</definition>
@@ -31,18 +31,18 @@
 	</definition>
 
 	<definition name="popup:/*" extends="popup">
-		<put-attribute name="body" value="/jsp/{1}.jsp"></put-attribute>
+		<put-attribute name="body" value="/extcore/jsp/{1}.jsp"></put-attribute>
 	</definition>
 
 	<definition name="popup:/*/*" extends="popup">
-		<put-attribute name="body" value="/jsp/{1}/{2}.jsp"></put-attribute>
+		<put-attribute name="body" value="/extcore/jsp/{1}/{2}.jsp"></put-attribute>
 	</definition>
 
 	<definition name="popup:/*/*/*" extends="popup">
-		<put-attribute name="body" value="/jsp/{1}/{2}/{3}.jsp"></put-attribute>
+		<put-attribute name="body" value="/extcore/jsp/{1}/{2}/{3}.jsp"></put-attribute>
 	</definition>
 
 	<definition name="popup:/*/*/*/*" extends="popup">
-		<put-attribute name="body" value="/jsp/{1}/{2}/{3}/{4}.jsp"></put-attribute>
+		<put-attribute name="body" value="/extcore/jsp/{1}/{2}/{3}/{4}.jsp"></put-attribute>
 	</definition>
 </tiles-definitions>

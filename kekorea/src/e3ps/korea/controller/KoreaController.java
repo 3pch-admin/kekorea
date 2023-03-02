@@ -14,7 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.controller.BaseController;
+import e3ps.common.controller.BaseController;
 import e3ps.korea.service.KoreaHelper;
 
 @Controller

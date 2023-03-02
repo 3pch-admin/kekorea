@@ -9,7 +9,6 @@ import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
-import wt.content.ContentHolder;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.fc.PersistenceHelper;
