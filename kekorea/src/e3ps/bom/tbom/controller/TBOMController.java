@@ -18,9 +18,9 @@ import org.springframework.web.servlet.ModelAndView;
 import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.beans.TBOMMasterViewData;
 import e3ps.bom.tbom.service.TBOMHelper;
+import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.controller.BaseController;
 import net.sf.json.JSONArray;
 
 @Controller

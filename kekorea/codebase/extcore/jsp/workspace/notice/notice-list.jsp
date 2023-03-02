@@ -72,29 +72,46 @@
 					style : "left underline",
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						useExMenu : true,
+						inline : true
 					},
 				}, {
 					dataField : "description",
 					headerText : "내용",
 					dataType : "string",
-					style : "left"
+					style : "left",
+					filter : {
+						showIcon : true,
+						useExMenu : true
+					},
 				}, {
 					dataField : "creator",
 					headerText : "작성자",
 					dataType : "string", // 날짜 및 사람명 컬럼 사이즈 100
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						useExMenu : true
+					},
 				}, {
 					dataField : "createdDate",
 					headerText : "작성일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						useExMenu : true
+					},
 				}, {
 					dataField : "primary",
 					headerText : "첨부파일",
 					dataType : "string",
-					width : 80
+					width : 80,
+					filter : {
+						showIcon : false,
+						inline : false
+					},
 				} ]
 			}
 

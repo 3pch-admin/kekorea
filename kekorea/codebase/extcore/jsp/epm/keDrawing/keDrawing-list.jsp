@@ -52,9 +52,10 @@
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('workOrder-list');">
+					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('keDrawing-list');">
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
-					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
+					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
+					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 				</td>
 				<td class="right"></td>
 			</tr>
@@ -64,83 +65,39 @@
 		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
+			let recentGridItem = null;
 			function _layout() {
 				return [ {
-					dataField : "projectType_name",
-					headerText : "작번유형",
+					dataField : "lotNo",
+					headerText : "LOT",
 					dataType : "string",
-					width : 80,
+					width : 100,
 					filter : {
 						showIcon : true,
 						useExMenu : true
 					},
 				}, {
 					dataField : "name",
-					headerText : "도면일람표 제목",
+					headerText : "DRAWING TITLE",
 					dataType : "string",
-					width : 350,
-					style : "left underline",
-					filter : {
-						showIcon : true,
-						useExMenu : true
-					},
 				}, {
-					dataField : "customer_name",
-					headerText : "거래처",
+					dataField : "number",
+					headerText : "DWG. NO",
 					dataType : "string",
-					width : 100
+					width : 200
 				}, {
-					dataField : "install_name",
-					headerText : "설치장소",
-					dataType : "string",
-					width : 100
-				}, {
-					dataField : "mak_name",
-					headerText : "막종",
-					dataType : "string",
-					width : 100
-				}, {
-					dataField : "detail_name",
-					headerText : "막종상세",
-					dataType : "string",
-					width : 100
-				}, {
-					dataField : "kekNumber",
-					headerText : "KEK 작번",
-					dataType : "string",
-					width : 130
-				}, {
-					dataField : "keNumber",
-					headerText : "KE 작번",
-					dataType : "string",
-					width : 130
-				}, {
-					dataField : "userId",
-					headerText : "USER ID",
-					dataType : "string",
-					width : 100
-				}, {
-					dataField : "description",
-					headerText : "작업 내용",
-					dataType : "string",
-					width : 450,
-					style : "left indent10"
-				}, {
-					dataField : "state",
-					headerText : "상태",
+					dataField : "version",
+					headerText : "버전",
 					dataType : "string",
 					width : 80
 				}, {
-					dataField : "model",
-					headerText : "모델",
-					dataType : "string",
-					width : 100
-				}, {
-					dataField : "pdate",
-					headerText : "발행일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
-					width : 100
+					dataField : "latest",
+					headerText : "최신버전",
+					dataType : "boolean",
+					width : 100,
+					renderer : {
+						type : "CheckBoxEditRenderer"
+					}
 				}, {
 					dataField : "creator",
 					headerText : "작성자",
@@ -152,6 +109,44 @@
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
 					width : 100
+				}, {
+					dataField : "modifier",
+					headerText : "수정자",
+					dataType : "string",
+					width : 100
+				}, {
+					dataField : "modifiedDate",
+					headerText : "수정일",
+					dataType : "date",
+					formatString : "yyyy-mm-dd",
+					width : 100
+				}, {
+					dataField : "primary",
+					headerText : "도면파일",
+					dataType : "string",
+					width : 100,
+					renderer : {
+						type : "TemplateRenderer",
+					},
+				}, {
+					dataField : "",
+					headerText : "",
+					width : 100,
+					editable : false,
+					renderer : {
+						type : "ButtonRenderer",
+						labelText : "파일선택",
+						onclick : function(rowIndex, columnIndex, value, item) {
+							recentGridItem = item;
+							let oid = item.oid;
+							let url = getCallUrl("/aui/primary?oid=" + oid + "&method=attach");
+							popup(url, 1000, 200);
+						}
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},					
 				} ]
 			}
 
@@ -171,19 +166,20 @@
 					selectionMode : "multiCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
-					// 그리드 공통속성 끝
+				// 그리드 공통속성 끝
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				//화면 첫 진입시 리스트 호출 함수
-				loadGridData();
+				// 화면 첫 진입시 리스트 호출 함수
+				// 등록이 있는곳은 제외 한다.
+				// loadGridData();
 				// Lazy Loading 이벤트 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 			}
 
 			function loadGridData() {
 				let params = new Object();
-				let url = getCallUrl("/workOrder/list");
+				let url = getCallUrl("/keDrawing/list");
 				AUIGrid.showAjaxLoader(myGridID);
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
@@ -222,15 +218,49 @@
 				})
 			}
 
-			function create() {
-				let url = getCallUrl("/workOrder/create");
-				popup(url);
+			// 행 추가
+			function addRow() {
+				let item = new Object();
+				item.createdDate = new Date();
+				item.modifiedDate = new Date();
+				item.latest = true;
+				AUIGrid.addRow(myGridID, item, "first");
 			}
 
+			// 행 삭제
+			function deleteRow() {
+				let checked = AUIGrid.getCheckedRowItems(myGridID);
+				for (let i = 0; i < checked.length; i++) {
+					let rowIndex = checked[i].rowIndex;
+					AUIGrid.removeRow(myGridID, rowIndex);
+				}
+			}
+			
+
+			function attach(data) {
+				let name = data.name;
+				let start = name.indexOf("-");
+				let end = name.lastIndexOf(".");
+				let number = name.substring(0, start);
+				let version = name.substring(start + 1, end);
+				let template = "<img src='" + data.icon + "' style='position: relative; top: 2px;'>";
+				AUIGrid.updateRowsById(myGridID, {
+					oid : recentGridItem.oid,
+					number : number,
+					version : Number(version),
+					file : name,
+					primary : template,
+					primaryPath : data.fullPath
+				});
+			}
+			
+			// 로딩 레이어 삭제
+			parent.closeLayer();
+			
 			// jquery 모든 DOM구조 로딩 후 
 			$(function() {
 				// 로컬 스토리지에 저장된 컬럼 값 불러오기 see - base.js
-				let columns = loadColumnLayout("workOrder-list");
+				let columns = loadColumnLayout("keDrawing-list");
 				createAUIGrid(columns);
 			}).keypress(function(e) {
 				let keyCode = e.keyCode;

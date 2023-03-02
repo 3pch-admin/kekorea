@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import e3ps.bom.partlist.PartListMaster;
-import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
@@ -45,15 +43,15 @@ public class WorkOrderHelper {
 		QuerySpecUtils.toInnerJoin(query, WorkOrderProjectLink.class, Project.class, "roleBObjectRef.key.id",
 				WTAttributeNameIfc.ID_NAME, idx_link, idx_p);
 
-		QuerySpecUtils.toOrderBy(query, idx, PartListMaster.class, PartListMaster.CREATE_TIMESTAMP, true);
+		QuerySpecUtils.toOrderBy(query, idx, WorkOrder.class, WorkOrder.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
-			WorkOrder workOrder = (WorkOrder) obj[0];
-			WorkOrderColumnData column = new WorkOrderColumnData(workOrder);
+			WorkOrderProjectLink link = (WorkOrderProjectLink) obj[1];
+			WorkOrderColumnData column = new WorkOrderColumnData(link);
 			list.add(column);
 		}
 
@@ -104,7 +102,7 @@ public class WorkOrderHelper {
 			int idx_m = query.appendClassList(KeDrawingMaster.class, true);
 			QuerySpecUtils.toInnerJoin(query, KeDrawing.class, KeDrawingMaster.class, "masterReference.key.id",
 					WTAttributeNameIfc.ID_NAME, idx, idx_m);
-			QuerySpecUtils.toBooleanAnd(query, idx, KeDrawing.class, KeDrawing.LATEST, SearchCondition.IS_TRUE);
+			QuerySpecUtils.toBoolean(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
 			QuerySpecUtils.toEqualsAnd(query, idx_m, KeDrawingMaster.class, KeDrawingMaster.KE_NUMBER, number);
 			QueryResult result = PersistenceHelper.manager.find(query);
 			if (result.hasMoreElements()) {

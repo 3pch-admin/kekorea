@@ -12,9 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+<<<<<<< HEAD:kekorea/src/e3ps/epm/controller/KeDrawingController.java
 import e3ps.controller.BaseController;
 import e3ps.epm.service.KeDrawingHelper;
+=======
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
+>>>>>>> ff8a0dc (수정):kekorea/src/e3ps/epm/KeDrawing/controller/KeDrawingController.java
 import wt.org.WTUser;
 
 @Controller
@@ -29,7 +34,7 @@ public class KeDrawingController extends BaseController {
 		boolean isAdmin = CommonUtils.isAdmin();
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
-		model.setViewName("/jsp/epm/keDrawing/keDrawing-list.jsp");
+		model.setViewName("/extcore/jsp/epm/keDrawing/keDrawing-list.jsp");
 		return model;
 	}
 

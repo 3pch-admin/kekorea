@@ -18,8 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.CommonCodeType;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.controller.BaseController;
 import e3ps.common.util.AUIGridUtils;
-import e3ps.controller.BaseController;
 
 @Controller
 @RequestMapping(value = "/commonCode/**")

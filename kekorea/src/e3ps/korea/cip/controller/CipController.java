@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.controller.BaseController;
+import e3ps.common.controller.BaseController;
 import e3ps.korea.cip.beans.CipColumnData;
 import e3ps.korea.cip.service.CipHelper;
 import wt.org.WTUser;
