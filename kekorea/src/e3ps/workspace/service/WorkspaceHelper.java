@@ -1670,6 +1670,15 @@ public class WorkspaceHelper {
 //		SearchCondition sc = new SearchCondition(ApprovalImpl.class, ApprovalImpl.STATE, "=", APPROVAL_READY);
 //		query.appendWhere(sc, new int[] { idx_state });
 //		query.appendAnd();
+			
+		
+		// select a0.*, a1.* from approvalline a0, approvalmaster a1
+		// where a0.classnamekeya5 = a1.ida2a2
+		// and a0.state = '대기중' and a0.type = '검토라인'
+		
+		// 위에 처럼 쿼리 나오게
+		
+		
 		int idx_type= query.appendClassList(ApprovalLine.class, true);
 		SearchCondition sc = new SearchCondition(ApprovalLine.class, ApprovalLine.ROLE, "=", WORKING_AGREE);
 		query.appendWhere(sc, new int[] { idx_type });

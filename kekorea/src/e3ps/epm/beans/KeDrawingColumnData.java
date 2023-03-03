@@ -23,6 +23,7 @@ public class KeDrawingColumnData {
 	private Timestamp modifiedDate;
 	private boolean latest;
 	private String primary;
+	private String note;
 
 	public KeDrawingColumnData() {
 
@@ -41,5 +42,6 @@ public class KeDrawingColumnData {
 		setModifier(keDrawing.getOwnership().getOwner().getFullName());
 		setModifiedDate(keDrawing.getModifyTimestamp());
 		setPrimary(AUIGridUtils.primaryTemplate(keDrawing));
+		setNote(keDrawing.getNote());
 	}
 }

@@ -36,13 +36,13 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 
 			for (Map<String, Object> addRow : addRows) {
 				String name = (String) addRow.get("name");
-				String number = (String) addRow.get("number");
+				String keNumber = (String) addRow.get("keNumber");
 				int version = (int) addRow.get("version");
 				int lotNo = (int) addRow.get("lotNo");
 				String primaryPath = (String) addRow.get("primaryPath");
 
 				KeDrawingMaster master = KeDrawingMaster.newKeDrawingMaster();
-				master.setKeNumber(number);
+				master.setKeNumber(keNumber);
 				master.setName(name);
 				master.setLotNo(lotNo);
 				master.setOwnership(CommonUtils.sessionOwner());
@@ -122,6 +122,7 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				String oid = (String) addRow.get("oid");
 				int next = (int) addRow.get("next");
 				String primaryPath = (String) addRow.get("primaryPath");
+				String note = (String)addRow.get("note");
 
 				KeDrawing pre = (KeDrawing) CommonUtils.getObject(oid);
 				pre.setLatest(false);

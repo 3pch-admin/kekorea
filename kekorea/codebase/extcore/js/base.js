@@ -220,3 +220,27 @@ function getLocalStorageValue(storageID) {
 		alert("localStorage 를 지원하지 않는 브라우저입니다.");
 	}
 };
+
+
+// 행 삭제
+function deleteRow(gridID) {
+	if (gridID === undefined) {
+		gridID = "#grid_wrap";
+	}
+
+	let checked = AUIGrid.getCheckedRowItems(myGridID);
+	for (let i = checked.length - 1; i >= 0; i--) {
+		let rowIndex = checked[i].rowIndex;
+		AUIGrid.removeRow(myGridID, rowIndex);
+	}
+};
+
+// 팝업창 공통 호출
+function appendData(type, method) {
+	if (type === "project") {
+		let url = getCallUrl("/project/popup?method=" + method);
+		popup(url);
+	}
+
+
+}

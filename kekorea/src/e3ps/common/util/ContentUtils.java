@@ -405,41 +405,18 @@ public class ContentUtils {
 		return dwg;
 	}
 
-	public static String getFileIcon(String name) {
-		String icon = "/Windchill/jsp/images/fileicon/file_notepad.gif";
-		if (!StringUtils.isNull(name)) {
-			String ext = FileUtil.getExtension(name);
-			if (ext.equalsIgnoreCase("pdf")) {
-				icon = "/Windchill/jsp/images/fileicon/file_pdf.gif";
-			} else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx")) {
-				icon = "/Windchill/jsp/images/fileicon/file_excel.gif";
-			} else if (ext.equalsIgnoreCase("ppt") || ext.equalsIgnoreCase("pptx")) {
-				icon = "/Windchill/jsp/images/fileicon/file_ppoint.gif";
-			} else if (ext.equalsIgnoreCase("doc") || ext.equalsIgnoreCase("docs")) {
-				icon = "/Windchill/jsp/images/fileicon/file_msword.gif";
-			} else if (ext.equalsIgnoreCase("html") || ext.equalsIgnoreCase("htm")) {
-				icon = "/Windchill/jsp/images/fileicon/file_html.gif";
-			} else if (ext.equalsIgnoreCase("gif")) {
-				icon = "/Windchill/jsp/images/fileicon/file_gif.gif";
-			} else if (ext.equalsIgnoreCase("png")) {
-				icon = "/Windchill/jsp/images/fileicon/file_png.gif";
-			} else if (ext.equalsIgnoreCase("bmp")) {
-				icon = "/Windchill/jsp/images/fileicon/file_bmp.gif";
-			} else if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
-				icon = "/Windchill/jsp/images/fileicon/file_jpg.jpg";
-			} else if (ext.equalsIgnoreCase("zip") || ext.equalsIgnoreCase("rar") || ext.equalsIgnoreCase("jar")) {
-				icon = "/Windchill/jsp/images/fileicon/file_zip.gif";
-			} else if (ext.equalsIgnoreCase("tar") || ext.equalsIgnoreCase("gz")) {
-				icon = "/Windchill/jsp/images/fileicon/file_zip.gif";
-			} else if (ext.equalsIgnoreCase("exe")) {
-				icon = "/Windchill/jsp/images/fileicon/file_exe.gif";
-			} else if (ext.equalsIgnoreCase("dwg")) {
-				icon = "/Windchill/jsp/images/fileicon/file_dwg.gif";
-			} else if (ext.equalsIgnoreCase("xml")) {
-				icon = "/Windchill/jsp/images/fileicon/file_xml.png";
-			}
+	/**
+	 * 파일 확장자로 첨부 파일 이미지를 가져 오는 함수
+	 * 
+	 * @param ext : 파일 확장자
+	 * @return String
+	 * @throws Exception
+	 */
+	public static String getFileIcon(String ext) throws Exception {
+		if (ext.equalsIgnoreCase("pdf")) {
+			return "/Windchill/extcore/images/fileicon/file_pdf.gif";
 		}
-		return icon;
+		return "/Windchill/extcore/images/fileicon/file_generic.gif";
 	}
 
 	public static Vector<String[]> getSecondary(ContentHolder holder) throws Exception {

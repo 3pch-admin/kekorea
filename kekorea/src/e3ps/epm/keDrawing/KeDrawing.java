@@ -21,6 +21,8 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "latest", type = Boolean.class, javaDoc = "최신여부", initialValue = "true", constraints = @PropertyConstraints(required = true)),
 
+				@GeneratedProperty(name = "note", type = String.class, constraints = @PropertyConstraints(upperLimit = 2000))
+
 		},
 
 		foreignKeys = {

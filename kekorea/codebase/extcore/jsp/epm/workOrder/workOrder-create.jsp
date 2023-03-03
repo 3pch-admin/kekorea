@@ -22,7 +22,7 @@
 			<font class="req">도면 일람표 명</font>
 		</th>
 		<td class="indent5">
-			<input type="text" name="name" id="name" class="AXInput">
+			<input type="text" name="name" id="name" class="AXInput width-500">
 		</td>
 	</tr>
 	<tr>
@@ -30,7 +30,7 @@
 			<font class="req">KEK 작번</font>
 		</th>
 		<td class="indent5">
-			<jsp:include page="/jsp/include/include-project.jsp"></jsp:include>
+			<jsp:include page="/extcore/include/project-include.jsp"></jsp:include>
 		</td>
 	</tr>
 	<tr>
@@ -51,7 +51,7 @@
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<input type="button" value="행 추가" title="행 추가" class="blut" onclick="addRow();">
+			<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 			<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 		</td>
 	</tr>
@@ -126,7 +126,8 @@
 			fillColumnSizeMode : true,
 			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
 			// 복사 후 편집 이벤트 발생하는 속성
-			$compaEventOnPaste : true
+			$compaEventOnPaste : true,
+			showRowCheckColumn : true,
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 	}
@@ -171,15 +172,6 @@
 		AUIGrid.addRow(myGridID, item, "first");
 	}
 
-	// 행 삭제
-	function deleteRow() {
-		let checked = AUIGrid.getCheckedRowItems(myGridID);
-		for (let i = 0; i < checked.length; i++) {
-			let rowIndex = checked[i].rowIndex;
-			AUIGrid.removeRow(myGridID, rowIndex);
-		}
-	}
-
 	// 등록
 	function create() {
 
@@ -187,9 +179,11 @@
 
 	$(function() {
 		createAUIGrid(columns);
+		_createAUIGrid(_columns)
 	})
 
 	$(window).resize(function() {
 		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
 	})
 </script>

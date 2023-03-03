@@ -64,44 +64,70 @@ public class AUIGridUtils {
 		return list;
 	}
 
+	/**
+	 * AUIGrid 주 첨부파일 아이콘으로 표시 하기 위한 함수
+	 * 
+	 * @param holder : 주 첨부파일과 관련된 객체
+	 * @return String
+	 * @throws Exception
+	 */
 	public static String primaryTemplate(ContentHolder holder) throws Exception {
 		String template = "";
 		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
 		if (result.hasMoreElements()) {
 			ApplicationData data = (ApplicationData) result.nextElement();
 			String ext = FileUtil.getExtension(data.getFileName());
-			String icon = CommonContentHelper.manager.getIconPath(ext);
-			template += "<a><img src=" + icon + "></a>&nbsp;";
+			String icon = CommonContentHelper.manager.getIcon(ext);
+			template += "<a><img src=" + icon + " style='position: relative; top: 2px;'></a>&nbsp;";
 		}
 		return template;
 	}
 
+	/**
+	 * AUIGrid 첨부파일 아이콘으로 표시 하기 위한 함수
+	 * 
+	 * @param holder : 첨부파일과 관련된 객체
+	 * @return String
+	 * @throws Exception
+	 */
 	public static String secondaryTemplate(ContentHolder holder) throws Exception {
 		String template = "";
 		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.SECONDARY);
 		while (result.hasMoreElements()) {
 			ApplicationData data = (ApplicationData) result.nextElement();
 			String ext = FileUtil.getExtension(data.getFileName());
-			String icon = CommonContentHelper.manager.getIconPath(ext);
-			template += "<a><img src=" + icon + "></a>&nbsp;";
+			String icon = CommonContentHelper.manager.getIcon(ext);
+			template += "<a><img src=" + icon + " style='position: relative; top: 2px;'></a>&nbsp;";
 		}
 		return template;
 	}
 
+	/**
+	 * 뷰어블 파일을 AUIGrid 상 표기 위한 함수
+	 * 
+	 * @param epm : 도면 객체
+	 * @return String
+	 * @throws Exception
+	 */
 	public static String getThumnailSmall(EPMDocument epm) throws Exception {
 		String thumnail_mini = FileHelper.getViewContentURLForType(PublishUtils.findRepresentable(epm),
 				ContentRoleType.THUMBNAIL_SMALL);
-
 		if (thumnail_mini == null) {
 			thumnail_mini = "/Windchill/jsp/images/productview_publish_24.png";
 		}
 		return thumnail_mini;
 	}
 
+	/**
+	 * 뷰어블 파일을 AUIGrid 상 표기 위한 함수
+	 * 
+	 * @param part : 부품 객체
+	 * @return String
+	 * @throws Exception
+	 */
 	public static String getThumnailSmall(WTPart part) throws Exception {
 		String thumnail_mini = FileHelper.getViewContentURLForType(PublishUtils.findRepresentable(part),
 				ContentRoleType.THUMBNAIL_SMALL);
-
 		if (thumnail_mini == null) {
 			thumnail_mini = "/Windchill/jsp/images/productview_publish_24.png";
 		}
@@ -124,7 +150,7 @@ public class AUIGridUtils {
 
 			map.put("name", origin);
 			map.put("fullPath", fullPath);
-			map.put("icon", CommonContentHelper.manager.getIconPath(ext));
+			map.put("icon", CommonContentHelper.manager.getIcon(ext));
 
 		} catch (Exception e) {
 			e.printStackTrace();

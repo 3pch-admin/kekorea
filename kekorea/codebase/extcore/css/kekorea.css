@@ -61,6 +61,27 @@ td.underline:hover {
 	cursor: pointer;
 }
 
+/** 텍스트 박스 사이즈 CSS **/
+input[type=text].width-100 {
+	width: 100px;
+}
+
+input[type=text].width-200 {
+	width: 200px;
+}
+
+input[type=text].width-300 {
+	width: 300px;
+}
+
+input[type=text].width-400 {
+	width: 400px;
+}
+
+input[type=text].width-500 {
+	width: 500px;
+}
+
 /** 버튼 꾸밈 CSS **/
 input[type="button"] {
 	display: inline-block;
@@ -124,7 +145,7 @@ input[type="button"].orange {
 }
 
 /** 로딩 레이어 CSS **/
-div#loading{
+div#loading {
 	z-index: 999999;
 	display: none;
 	position: absolute;
@@ -139,7 +160,7 @@ table.create-table {
 	border-spacing: 0;
 	border-top: 2px solid #86bff9;
 	border-collapse: collapse;
-	font-size: 12px;	
+	font-size: 12px;
 }
 
 table.create-table th {
@@ -148,9 +169,6 @@ table.create-table th {
 	border-bottom: 1px solid #a6a6a6;
 	border-left: 1px solid #a6a6a6;
 	padding-bottom: 4px;
-	max-width: 130px;
-	min-width: 130px;
-	width: 130px;
 }
 
 table.create-table td {

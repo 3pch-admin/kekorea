@@ -1,17 +1,14 @@
 package e3ps.common.content.service;
 
-import java.io.File;
-
 import wt.services.ServiceFactory;
-import wt.util.WTProperties;
 
 public class CommonContentHelper {
 
 	public static final CommonContentHelper manager = new CommonContentHelper();
 	public static final CommonContentService service = ServiceFactory.getService(CommonContentService.class);
 
-	public String getIconPath(String ext) throws Exception {
-		String path = "/Windchill/jsp/images/fileicon/";
+	public String getIcon(String ext) throws Exception {
+		String path = "/Windchill/extcore/images/fileicon/";
 		String icon = "file_generic.gif";
 
 		if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {

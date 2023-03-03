@@ -53,10 +53,11 @@
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('workOrder-list');">
-					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
-				<td class="right"></td>
+				<td class="right">
+					<input type="button" value="조회" title="조회" onclick="loadGridData();">
+				</td>
 			</tr>
 		</table>
 
@@ -176,7 +177,7 @@
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				//화면 첫 진입시 리스트 호출 함수
-				loadGridData();
+				// loadGridData();
 				// Lazy Loading 이벤트 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 			}
@@ -227,6 +228,7 @@
 				popup(url);
 			}
 
+			parent.closeLayer();
 			// jquery 모든 DOM구조 로딩 후 
 			$(function() {
 				// 로컬 스토리지에 저장된 컬럼 값 불러오기 see - base.js
@@ -235,6 +237,7 @@
 			}).keypress(function(e) {
 				let keyCode = e.keyCode;
 				if (keyCode === 13) {
+					loadGridData();
 				}
 			})
 		</script>

@@ -129,7 +129,7 @@
 }
 
 .aui-grid-left-main-panel .aui-grid-header-panel .aui-grid-table tr td:last-child {
-	border-right: none;
+/* 	border-right: none; */
 }
 
 /* 그리드 수평 라인 만들기 - 그룹형  헤더 */

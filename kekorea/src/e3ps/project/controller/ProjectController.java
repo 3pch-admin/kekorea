@@ -194,7 +194,7 @@ public class ProjectController extends BaseController {
 	}
 
 	@Description(value = "프로젝트 추가 페이지")
-	@RequestMapping(value = "/popup", method = RequestMethod.GET)
+	@GetMapping(value = "/popup")
 	public ModelAndView popup(@RequestParam String method) throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();

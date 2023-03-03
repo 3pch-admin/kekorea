@@ -1,8 +1,8 @@
 <%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
-	boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
 <!DOCTYPE html>
 <html>
@@ -94,7 +94,7 @@
 					headerText : "DRAWING TITLE",
 					dataType : "string",
 				}, {
-					dataField : "number",
+					dataField : "keNumber",
 					headerText : "DWG. NO",
 					dataType : "string",
 					width : 200,
@@ -168,6 +168,12 @@
 						showIcon : false,
 						inline : false
 					},					
+				}, {
+					dataField : "note",
+					headerText : "개정사유",
+					dateType : "string",
+					width : 250,
+					editable : false
 				} ]
 			}
 
@@ -188,7 +194,8 @@
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					// 그리드 공통속성 끝
-					editable : true
+					editable : true,
+					showRowCheckColumn : true,
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
@@ -245,21 +252,12 @@
 				let item = new Object();
 				item.createdDate = new Date();
 				item.modifiedDate = new Date();
-				item.creator = "<%=sessionUser.getFullName() %>";
-				item.modifier = "<%=sessionUser.getFullName() %>";
+				item.creator = "<%=sessionUser.getFullName()%>";
+				item.modifier = "<%=sessionUser.getFullName()%>";
 				item.latest = true;
 				AUIGrid.addRow(myGridID, item, "first");
 			}
 
-			// 행 삭제
-			function deleteRow() {
-				let checked = AUIGrid.getCheckedRowItems(myGridID);
-				for (let i = 0; i < checked.length; i++) {
-					let rowIndex = checked[i].rowIndex;
-					AUIGrid.removeRow(myGridID, rowIndex);
-				}
-			}
-			
 			function attach(data) {
 				let name = data.name;
 				let start = name.indexOf("-");
@@ -276,17 +274,17 @@
 					primaryPath : data.fullPath
 				});
 			}
-			
+
 			// 로딩 레이어 삭제
 			parent.closeLayer();
-			
+
 			// 저장
 			function create() {
-				
-				if(!confirm("저장 하시겠습니까?")) {
+
+				if (!confirm("저장 하시겠습니까?")) {
 					return false;
 				}
-				
+
 				let url = getCallUrl("/keDrawing/create");
 				let params = new Object();
 				let addRows = AUIGrid.getAddedRowItems(myGridID);
@@ -315,8 +313,7 @@
 				panel = popup(url, 1600, 550);
 				panel.list = checkedItems;
 			}
-			
-			
+
 			// jquery 모든 DOM구조 로딩 후 
 			$(function() {
 				// 로컬 스토리지에 저장된 컬럼 값 불러오기 see - base.js

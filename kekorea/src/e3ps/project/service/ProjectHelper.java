@@ -2597,7 +2597,7 @@ public class ProjectHelper {
 		if (type == 0) {
 			return "<img title='태스크 시작전 입니다.' style='position: relative; top: 2px;' src='/Windchill/extcore/images/project/state_blank_bar.png'>";
 		} else if (type == 1) {
-			return "<img title='태스크가 계획 종료일 보다 초과 되서 진행 중 입니다.' class='' src='/Windchill/extcore/images/project/state_red_bar.png'>";
+			return "<img title='태스크가 계획 종료일 보다 초과 되서 진행 중 입니다.' style='position: relative; top: 2px;' class='' src='/Windchill/extcore/images/project/state_red_bar.png'>";
 		} else if (type == 2) {
 			return "<img title='태스크가 진행 중 입니다.' style='position: relative; top: 2px;' src='/Windchill/extcore/images/project/state_yellow_bar.png'>";
 		} else if (type == 3) {

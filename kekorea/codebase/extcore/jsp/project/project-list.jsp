@@ -52,10 +52,11 @@
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('project'-list');">
+					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('project-list');">
+				</td>
+				<td class="right">
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
-				<td class="right"></td>
 			</tr>
 		</table>
 
