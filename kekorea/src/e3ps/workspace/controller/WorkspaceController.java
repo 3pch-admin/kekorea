@@ -21,7 +21,7 @@ import e3ps.workspace.service.WorkspaceHelper;
 public class WorkspaceController extends BaseController {
 
 	@Description(value = "검토함 리스트 페이지")
-	@GetMapping(value="/agree")
+	@GetMapping(value = "/agree")
 	public ModelAndView agree() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("/extcore/jsp/workspace/agree-list.jsp");
@@ -30,7 +30,7 @@ public class WorkspaceController extends BaseController {
 
 	@Description(value = "검토함 리스트 함수")
 	@ResponseBody
-	@PostMapping(value="/agree")
+	@PostMapping(value = "/agree")
 	public Map<String, Object> agree(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -44,7 +44,7 @@ public class WorkspaceController extends BaseController {
 	}
 
 	@Description(value = "결재함 리스트 페이지")
-	@GetMapping(value="/approval")
+	@GetMapping(value = "/approval")
 	public ModelAndView approval() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("/extcore/jsp/workspace/approval-list.jsp");
@@ -53,7 +53,7 @@ public class WorkspaceController extends BaseController {
 
 	@Description(value = "결재함 리스트 함수")
 	@ResponseBody
-	@PostMapping(value="/approval")
+	@PostMapping(value = "/approval")
 	public Map<String, Object> approval(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -67,7 +67,7 @@ public class WorkspaceController extends BaseController {
 	}
 
 	@Description(value = "수신함 페이지")
-	@GetMapping(value="/receive")
+	@GetMapping(value = "/receive")
 	public ModelAndView receive() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("/extcore/jsp/workspace/receive-list.jsp");
@@ -76,7 +76,7 @@ public class WorkspaceController extends BaseController {
 
 	@Description(value = "수신함 리스트 함수")
 	@ResponseBody
-	@PostMapping(value="/receive")
+	@PostMapping(value = "/receive")
 	public Map<String, Object> receive(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -90,7 +90,7 @@ public class WorkspaceController extends BaseController {
 	}
 
 	@Description(value = "진행함 리스트 페이지")
-	@GetMapping(value="/progress")
+	@GetMapping(value = "/progress")
 	public ModelAndView progress() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("/extcore/jsp/workspace/progress-list.jsp");
@@ -98,7 +98,7 @@ public class WorkspaceController extends BaseController {
 	}
 
 	@Description(value = "진행함 리스트 함수")
-	@PostMapping(value="/progress")
+	@PostMapping(value = "/progress")
 	@ResponseBody
 	public Map<String, Object> progress(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -113,7 +113,7 @@ public class WorkspaceController extends BaseController {
 	}
 
 	@Description(value = "완료함 리스트 페이지")
-	@GetMapping(value="/complete")
+	@GetMapping(value = "/complete")
 	public ModelAndView complete() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("/extcore/jsp/workspace/complete-list.jsp");
@@ -122,7 +122,7 @@ public class WorkspaceController extends BaseController {
 
 	@Description(value = "완료함 리스트 함수")
 	@ResponseBody
-	@PostMapping(value="/complete")
+	@PostMapping(value = "/complete")
 	public Map<String, Object> complete(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -136,7 +136,7 @@ public class WorkspaceController extends BaseController {
 	}
 
 	@Description(value = "반려함 페이지")
-	@GetMapping(value="/reject")
+	@GetMapping(value = "/reject")
 	public ModelAndView reject() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("/extcore/jsp/workspace/reject-list.jsp");
@@ -145,7 +145,7 @@ public class WorkspaceController extends BaseController {
 
 	@Description(value = "반려함 리스트 함수")
 	@ResponseBody
-	@PostMapping(value="/receive")
+	@PostMapping(value = "/reject")
 	public Map<String, Object> reject(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {

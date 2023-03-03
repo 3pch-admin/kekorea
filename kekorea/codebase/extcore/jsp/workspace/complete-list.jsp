@@ -142,7 +142,7 @@
 
 			function loadGridData() {
 				let params = new Object();
-				let url = getCallUrl("/workspace/approval");
+				let url = getCallUrl("/workspace/complete");
 				AUIGrid.showAjaxLoader(myGridID);
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);

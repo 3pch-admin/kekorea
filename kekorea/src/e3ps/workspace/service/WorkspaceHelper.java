@@ -16,7 +16,7 @@ import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.doc.RequestDocument;
+import e3ps.doc.request.RequestDocument;
 import e3ps.org.People;
 import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
@@ -86,7 +86,7 @@ public class WorkspaceHelper {
 
 	/**
 	 * 수신 라인 상태값 상수
-	 */
+	 */ 
 	public static final String RECEIVE_READY = "수신확인중";
 	public static final String RECEIVE_COMPLETE = "수신완료";
 
@@ -1665,18 +1665,22 @@ public class WorkspaceHelper {
 		// 결재타입 = 검토라인
 		// ApprovalImpl state = APPROVAL_READY
 		// ApprovalLine type = WORKING_AGREE
-		int idx_state= query.appendClassList(ApprovalImpl.class, true);
+//		int idx_state= query.appendClassList(ApprovalImpl.class, true);
+		
+//		SearchCondition sc = new SearchCondition(ApprovalImpl.class, ApprovalImpl.STATE, "=", APPROVAL_READY);
+//		query.appendWhere(sc, new int[] { idx_state });
+//		query.appendAnd();
 		int idx_type= query.appendClassList(ApprovalLine.class, true);
-		SearchCondition sc = new SearchCondition(ApprovalImpl.class, ApprovalImpl.STATE, "=", APPROVAL_READY);
-		query.appendWhere(sc, new int[] { idx_state });
-		query.appendAnd();
-		sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=", WORKING_AGREE);
+		SearchCondition sc = new SearchCondition(ApprovalLine.class, ApprovalLine.ROLE, "=", WORKING_AGREE);
 		query.appendWhere(sc, new int[] { idx_type });
 		
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
+			ApprovalLine approvalLine = (ApprovalLine) obj[0];
+			ApprovalLineColumnData column = new ApprovalLineColumnData(approvalLine, COLUMN_APPROVAL);
+			list.add(column);
 		}
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
