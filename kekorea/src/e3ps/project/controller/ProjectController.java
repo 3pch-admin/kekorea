@@ -24,7 +24,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
-import e3ps.project.beans.ProjectViewData;
+import e3ps.project.dto.ProjectViewData;
 import e3ps.project.service.ProjectHelper;
 import e3ps.project.template.service.TemplateHelper;
 import net.sf.json.JSONArray;

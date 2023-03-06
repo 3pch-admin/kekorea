@@ -1,4 +1,4 @@
-package e3ps.admin.spec.beans;
+package e3ps.admin.spec.dto;
 
 import e3ps.admin.spec.Options;
 import e3ps.admin.spec.Spec;
@@ -8,18 +8,18 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OptionsColumnData {
+public class OptionsDTO {
 
 	private String oid;
 	private String sname;
 	private String name;
 	private int sort;
 
-	public OptionsColumnData() {
+	public OptionsDTO() {
 
 	}
 
-	public OptionsColumnData(SpecOptionsLink link) throws Exception {
+	public OptionsDTO(SpecOptionsLink link) throws Exception {
 		Spec spec = link.getSpec();
 		Options options = link.getOptions();
 		setOid(options.getPersistInfo().getObjectIdentifier().getStringValue());

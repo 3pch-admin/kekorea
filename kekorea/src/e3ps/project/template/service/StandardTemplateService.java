@@ -19,7 +19,7 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.org.People;
 import e3ps.project.task.Task;
-import e3ps.project.task.beans.TaskTreeNode;
+import e3ps.project.task.dto.TaskTreeNode;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.task.variable.TaskStateVariable;
 import e3ps.project.template.Template;

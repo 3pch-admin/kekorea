@@ -8,7 +8,7 @@ import java.util.Map;
 import e3ps.admin.spec.Options;
 import e3ps.admin.spec.Spec;
 import e3ps.admin.spec.SpecOptionsLink;
-import e3ps.admin.spec.beans.SpecColumnData;
+import e3ps.admin.spec.dto.SpecDTO;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import wt.fc.PagingQueryResult;
@@ -28,7 +28,7 @@ public class SpecHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<SpecColumnData> list = new ArrayList<SpecColumnData>();
+		List<SpecDTO> list = new ArrayList<SpecDTO>();
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Spec.class, true);
@@ -72,7 +72,7 @@ public class SpecHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			Spec spec = (Spec) obj[0];
 			SpecOptionsLink link = (SpecOptionsLink) obj[1];
-			SpecColumnData column = new SpecColumnData(spec, link);
+			SpecDTO column = new SpecDTO(spec, link);
 			list.add(column);
 		}
 

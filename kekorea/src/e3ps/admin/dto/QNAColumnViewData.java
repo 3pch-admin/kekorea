@@ -1,4 +1,4 @@
-package e3ps.admin.beans;
+package e3ps.admin.dto;
 
 import e3ps.admin.QNA;
 import e3ps.common.util.ContentUtils;

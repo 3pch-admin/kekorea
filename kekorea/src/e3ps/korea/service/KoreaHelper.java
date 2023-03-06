@@ -9,7 +9,7 @@ import e3ps.admin.commonCode.CommonCode;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.project.Project;
-import e3ps.project.beans.ProjectDTO;
+import e3ps.project.dto.ProjectDTO;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;

@@ -8,7 +8,7 @@ import java.util.Map;
 import e3ps.admin.spec.Options;
 import e3ps.admin.spec.Spec;
 import e3ps.admin.spec.SpecOptionsLink;
-import e3ps.admin.spec.beans.OptionsColumnData;
+import e3ps.admin.spec.dto.OptionsDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
@@ -29,7 +29,7 @@ public class OptionsHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<OptionsColumnData> list = new ArrayList<OptionsColumnData>();
+		List<OptionsDTO> list = new ArrayList<OptionsDTO>();
 
 		String oid = (String) params.get("oid");
 		Spec spec = (Spec) CommonUtils.getObject(oid);
@@ -68,7 +68,7 @@ public class OptionsHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			SpecOptionsLink link = (SpecOptionsLink) obj[0];
-			OptionsColumnData column = new OptionsColumnData(link);
+			OptionsDTO column = new OptionsDTO(link);
 			list.add(column);
 		}
 

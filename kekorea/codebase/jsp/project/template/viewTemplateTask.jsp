@@ -1,5 +1,5 @@
-<%@page import="e3ps.project.beans.TaskViewData"%>
-<%@page import="e3ps.project.beans.TemplateViewData"%>
+<%@page import="e3ps.project.dto.TaskViewData"%>
+<%@page import="e3ps.project.dto.TemplateViewData"%>
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%

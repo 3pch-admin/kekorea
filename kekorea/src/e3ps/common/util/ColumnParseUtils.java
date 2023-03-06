@@ -3,7 +3,7 @@ package e3ps.common.util;
 import java.util.ArrayList;
 
 import e3ps.admin.commonCode.CommonCode;
-import e3ps.admin.commonCode.beans.CommonCodeColumnData;
+import e3ps.admin.commonCode.dto.CommonCodeDTO;
 import e3ps.admin.sheetvariable.Category;
 import e3ps.admin.sheetvariable.CategoryItemsLink;
 import e3ps.admin.sheetvariable.beans.CategoryColumnData;
@@ -19,7 +19,7 @@ import e3ps.part.beans.PartColumnData;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.beans.KePartColumnData;
 import e3ps.project.Project;
-import e3ps.project.beans.ProjectDTO;
+import e3ps.project.dto.ProjectDTO;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.fc.PagingQueryResult;
@@ -45,7 +45,7 @@ public class ColumnParseUtils {
 				list.add(data);
 				// 코드
 			} else if (per instanceof CommonCode) {
-				CommonCodeColumnData data = parse((CommonCode) per);
+				CommonCodeDTO data = parse((CommonCode) per);
 				list.add(data);
 				// 사양
 			} else if (per instanceof Spec) {
@@ -101,8 +101,8 @@ public class ColumnParseUtils {
 //		return new SpecColumnData(per);
 //	}
 
-	private static CommonCodeColumnData parse(CommonCode per) throws Exception {
-		return new CommonCodeColumnData(per);
+	private static CommonCodeDTO parse(CommonCode per) throws Exception {
+		return new CommonCodeDTO(per);
 	}
 
 	private static RequestDocumentDTO parse(RequestDocumentProjectLink per) throws Exception {

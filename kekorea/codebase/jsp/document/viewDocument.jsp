@@ -1,7 +1,7 @@
 <%@page import="e3ps.project.Project"%>
 <%@page import="e3ps.project.ProjectOutputLink"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="e3ps.doc.beans.DocumentViewData"%>
+<%@page import="e3ps.doc.dto.DocumentViewData"%>
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%

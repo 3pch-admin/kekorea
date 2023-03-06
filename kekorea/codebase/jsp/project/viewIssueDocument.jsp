@@ -1,8 +1,8 @@
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@page import="e3ps.project.Issue"%>
 <%@page import="e3ps.project.Project"%>
-<%@page import="e3ps.doc.beans.DocumentViewData"%>
-<%@page import="e3ps.project.beans.ProjectViewData"%>
+<%@page import="e3ps.doc.dto.DocumentViewData"%>
+<%@page import="e3ps.project.dto.ProjectViewData"%>
 <%@page import="e3ps.project.IssueProjectLink"%>
 <%@page import="e3ps.project.ProjectOutputLink"%>
 <%@page import="java.util.ArrayList"%>

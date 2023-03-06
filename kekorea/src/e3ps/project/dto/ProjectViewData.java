@@ -1,5 +1,5 @@
 
-package e3ps.project.beans;
+package e3ps.project.dto;
 
 import java.sql.Timestamp;
 

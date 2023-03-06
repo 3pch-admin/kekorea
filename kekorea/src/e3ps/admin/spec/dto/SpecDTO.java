@@ -1,4 +1,4 @@
-package e3ps.admin.spec.beans;
+package e3ps.admin.spec.dto;
 
 import java.sql.Timestamp;
 
@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SpecColumnData {
+public class SpecDTO {
 
 	private String oid;
 	private String name;
@@ -22,11 +22,11 @@ public class SpecColumnData {
 	private String oname;
 	private int osort;
 
-	public SpecColumnData() {
+	public SpecDTO() {
 
 	}
 
-	public SpecColumnData(Spec spec, SpecOptionsLink link) throws Exception {
+	public SpecDTO(Spec spec, SpecOptionsLink link) throws Exception {
 		setOid(spec.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(spec.getName());
 		setSort(spec.getSort());

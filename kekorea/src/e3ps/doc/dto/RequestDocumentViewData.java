@@ -1,4 +1,4 @@
-package e3ps.doc.beans;
+package e3ps.doc.dto;
 
 import e3ps.common.util.StringUtils;
 import e3ps.doc.RequestDocument;

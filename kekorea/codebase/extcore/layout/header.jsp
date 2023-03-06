@@ -1,11 +1,11 @@
+<%@page import="e3ps.org.dto.UserDTO"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="e3ps.org.dto.UserViewData"%>
 <%@page import="wt.session.SessionHelper"%>
 <%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-UserViewData data = (UserViewData) request.getAttribute("data");
+UserDTO data = (UserDTO) request.getAttribute("data");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
 <nav class="navbar-default navbar-static-side" role="navigation">

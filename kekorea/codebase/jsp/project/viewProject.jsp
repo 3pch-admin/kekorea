@@ -18,8 +18,8 @@
 <%@page import="java.math.BigDecimal"%>
 <%@page import="e3ps.project.Project"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="e3ps.project.beans.ProjectViewData"%>
-<%@page import="e3ps.project.beans.TemplateViewData"%>
+<%@page import="e3ps.project.dto.ProjectViewData"%>
+<%@page import="e3ps.project.dto.TemplateViewData"%>
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>

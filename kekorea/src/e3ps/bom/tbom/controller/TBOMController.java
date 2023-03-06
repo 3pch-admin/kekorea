@@ -8,9 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,17 +28,17 @@ import net.sf.json.JSONArray;
 @RequestMapping(value = "/tbom/**")
 public class TBOMController extends BaseController {
 
-	@Description("T-BOM 조회 페이지")
-	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	@Description(value = "T-BOM 조회 페이지")
+	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("/jsp/bom/tbom/tbom-list.jsp");
 		return model;
 	}
 
-	@Description("T-BOM 조회")
+	@Description(value = "T-BOM 조회")
 	@ResponseBody
-	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -51,8 +52,8 @@ public class TBOMController extends BaseController {
 		return result;
 	}
 
-	@Description("T-BOM 등록")
-	@RequestMapping(value = "/create", method = RequestMethod.GET)
+	@Description(value = "T-BOM 등록")
+	@GetMapping(value = "/create")
 	public ModelAndView create() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("popup:/bom/tbom/tbom-create");
@@ -61,7 +62,7 @@ public class TBOMController extends BaseController {
 
 	@Description(value = "T-BOM 등록 함수")
 	@ResponseBody
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	@PostMapping(value = "/create")
 	public Map<String, Object> create(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -77,7 +78,7 @@ public class TBOMController extends BaseController {
 	}
 
 	@Description(value = "T-BOM 상세")
-	@RequestMapping(value = "/view", method = RequestMethod.GET)
+	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
@@ -89,7 +90,7 @@ public class TBOMController extends BaseController {
 
 	@Description(value = "T-BOM 그리드 저장 함수")
 	@ResponseBody
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	@PostMapping(value = "/save")
 	public Map<String, Object> save(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -105,7 +106,7 @@ public class TBOMController extends BaseController {
 	}
 
 	@Description(value = "T-BOM 비교")
-	@RequestMapping(value = "/compare", method = RequestMethod.GET)
+	@GetMapping(value = "/compare")
 	public ModelAndView compare(HttpServletRequest request) throws Exception {
 		int count = StringUtils.parseInt(request.getParameter("count"));
 		ModelAndView model = new ModelAndView();

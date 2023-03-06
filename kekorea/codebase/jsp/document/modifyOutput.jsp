@@ -1,6 +1,6 @@
 <%@page import="e3ps.project.Project"%>
 <%@page import="e3ps.project.ProjectOutputLink"%>
-<%@page import="e3ps.doc.beans.OutputViewData"%>
+<%@page import="e3ps.doc.dto.OutputViewData"%>
 <%@page import="e3ps.doc.service.DocumentHelper"%>
 <%@page import="e3ps.part.column.PartProductColumnData"%>
 <%@page import="wt.part.WTPart"%>

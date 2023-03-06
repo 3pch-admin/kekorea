@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.ContentUtils;
 

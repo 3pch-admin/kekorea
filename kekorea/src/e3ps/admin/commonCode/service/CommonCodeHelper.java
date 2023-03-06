@@ -9,7 +9,7 @@ import org.json.JSONArray;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.CommonCodeType;
-import e3ps.admin.commonCode.beans.CommonCodeColumnData;
+import e3ps.admin.commonCode.dto.CommonCodeDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
@@ -28,7 +28,7 @@ public class CommonCodeHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<CommonCodeColumnData> list = new ArrayList<CommonCodeColumnData>();
+		List<CommonCodeDTO> list = new ArrayList<CommonCodeDTO>();
 
 		String name = (String) params.get("name");
 		String code = (String) params.get("code");
@@ -87,7 +87,7 @@ public class CommonCodeHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			CommonCode commonCode = (CommonCode) obj[0];
-			CommonCodeColumnData column = new CommonCodeColumnData(commonCode);
+			CommonCodeDTO column = new CommonCodeDTO(commonCode);
 			list.add(column);
 		}
 

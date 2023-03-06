@@ -16,7 +16,7 @@ import e3ps.common.util.StringUtils;
 import e3ps.doc.ReqDocumentProjectLink;
 import e3ps.doc.RequestDocument;
 import e3ps.doc.WTDocumentWTPartLink;
-import e3ps.doc.beans.DocumentViewData;
+import e3ps.doc.dto.DocumentViewData;
 import e3ps.project.Project;
 import e3ps.project.enums.TaskStateType;
 import e3ps.project.output.DocumentOutputLink;

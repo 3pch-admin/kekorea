@@ -1,7 +1,7 @@
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.project.service.ProjectHelper"%>
 <%@page import="wt.epm.EPMDocument"%>
-<%@page import="e3ps.project.beans.TaskViewData"%>
+<%@page import="e3ps.project.dto.TaskViewData"%>
 <%@page import="e3ps.project.service.TemplateHelper"%>
 <%@page import="e3ps.project.TargetTaskSourceTaskLink"%>
 <%@page import="e3ps.project.Task"%>

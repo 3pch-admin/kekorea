@@ -1,5 +1,5 @@
 <%@page import="e3ps.doc.service.DocumentHelper"%>
-<%@page import="e3ps.doc.beans.DocumentViewData"%>
+<%@page import="e3ps.doc.dto.DocumentViewData"%>
 <%@page import="e3ps.part.column.PartProductColumnData"%>
 <%@page import="wt.part.WTPart"%>
 <%@page import="java.util.ArrayList"%>

@@ -15,7 +15,7 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
-import e3ps.project.beans.ProjectDTO;
+import e3ps.project.dto.ProjectDTO;
 import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.template.Template;

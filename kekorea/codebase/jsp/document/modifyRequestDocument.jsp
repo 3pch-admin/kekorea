@@ -1,4 +1,4 @@
-<%@page import="e3ps.doc.beans.RequestDocumentViewData"%>
+<%@page import="e3ps.doc.dto.RequestDocumentViewData"%>
 <%@page import="e3ps.doc.RequestDocument"%>
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>

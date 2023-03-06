@@ -17,7 +17,7 @@ import e3ps.project.TargetTaskSourceTaskLink;
 import e3ps.project.Task;
 import e3ps.project.Template;
 import e3ps.project.TemplateUserLink;
-import e3ps.project.beans.TemplateViewData;
+import e3ps.project.dto.TemplateViewData;
 import e3ps.project.enums.ProjectUserType;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;

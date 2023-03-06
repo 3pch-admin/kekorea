@@ -1,4 +1,4 @@
-package e3ps.project.beans;
+package e3ps.project.dto;
 
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;

@@ -1,4 +1,4 @@
-package e3ps.admin.commonCode.beans;
+package e3ps.admin.commonCode.dto;
 
 import java.sql.Timestamp;
 
@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CommonCodeColumnData {
+public class CommonCodeDTO {
 
 	private String oid;
 	private String name;
@@ -21,11 +21,11 @@ public class CommonCodeColumnData {
 	private Timestamp createDate;
 	private String parent;
 
-	public CommonCodeColumnData() {
+	public CommonCodeDTO() {
 
 	}
 
-	public CommonCodeColumnData(CommonCode commonCode) throws Exception {
+	public CommonCodeDTO(CommonCode commonCode) throws Exception {
 		setOid(commonCode.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(commonCode.getName());
 		setCode(commonCode.getCode());

@@ -1,4 +1,4 @@
-package e3ps.project.task.beans;
+package e3ps.project.task.dto;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-<%@page import="e3ps.project.beans.ProjectViewData"%>
+<%@page import="e3ps.project.dto.ProjectViewData"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@page import="e3ps.project.task.Task"%>

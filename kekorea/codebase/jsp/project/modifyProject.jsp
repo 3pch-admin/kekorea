@@ -1,4 +1,4 @@
-<%@page import="e3ps.project.beans.ProjectViewData"%>
+<%@page import="e3ps.project.dto.ProjectViewData"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.project.Template"%>
 <%@page import="e3ps.doc.service.DocumentHelper"%>
