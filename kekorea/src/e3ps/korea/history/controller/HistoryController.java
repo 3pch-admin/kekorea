@@ -17,7 +17,7 @@ import e3ps.admin.sheetvariable.service.CategoryHelper;
 import e3ps.admin.spec.service.SpecHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.AUIGridUtils;
-import e3ps.korea.cip.beans.CipColumnData;
+import e3ps.korea.cip.dto.CipDTO;
 import e3ps.korea.cip.service.CipHelper;
 import e3ps.korea.history.service.HistoryHelper;
 

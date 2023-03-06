@@ -1,10 +1,10 @@
 <%@page import="e3ps.echange.EBOM"%>
 <%@page import="e3ps.common.util.ContentUtils"%>
-<%@page import="e3ps.epm.beans.PRODUCTAttr"%>
+<%@page import="e3ps.epm.dto.PRODUCTAttr"%>
 <%@page import="e3ps.common.util.IBAUtils"%>
-<%@page import="e3ps.epm.beans.CADAttr"%>
+<%@page import="e3ps.epm.dto.CADAttr"%>
 <%@page import="e3ps.common.util.CommonUtils"%>
-<%@page import="e3ps.epm.beans.EpmViewData"%>
+<%@page import="e3ps.epm.dto.EpmViewData"%>
 <%@page import="e3ps.part.beans.PartViewData"%>
 <%@page import="wt.part.WTPart"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>

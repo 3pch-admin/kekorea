@@ -24,7 +24,7 @@ import e3ps.common.util.JExcelUtils;
 import e3ps.common.util.MessageHelper;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.WTDocumentWTPartLink;
-import e3ps.epm.beans.PROEAttr;
+import e3ps.epm.dto.PROEAttr;
 import e3ps.epm.service.EpmHelper;
 import e3ps.erp.service.ErpHelper;
 import e3ps.part.UnitBom;

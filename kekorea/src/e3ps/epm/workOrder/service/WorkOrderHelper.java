@@ -12,7 +12,7 @@ import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
-import e3ps.epm.workOrder.beans.WorkOrderColumnData;
+import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.project.Project;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
@@ -30,7 +30,7 @@ public class WorkOrderHelper {
 	public static final WorkOrderService service = ServiceFactory.getService(WorkOrderService.class);
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
-		ArrayList<WorkOrderColumnData> list = new ArrayList<>();
+		ArrayList<WorkOrderDTO> list = new ArrayList<>();
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		QuerySpec query = new QuerySpec();
@@ -51,7 +51,7 @@ public class WorkOrderHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			WorkOrderProjectLink link = (WorkOrderProjectLink) obj[1];
-			WorkOrderColumnData column = new WorkOrderColumnData(link);
+			WorkOrderDTO column = new WorkOrderDTO(link);
 			list.add(column);
 		}
 

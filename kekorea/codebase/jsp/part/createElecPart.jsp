@@ -1,7 +1,7 @@
 <%@page import="e3ps.part.service.PartHelper"%>
-<%@page import="e3ps.epm.beans.PRODUCTAttr"%>
+<%@page import="e3ps.epm.dto.PRODUCTAttr"%>
 <%@page import="e3ps.common.util.IBAUtils"%>
-<%@page import="e3ps.epm.beans.CADAttr"%>
+<%@page import="e3ps.epm.dto.CADAttr"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 	String root = PartHelper.ELEC_ROOT;

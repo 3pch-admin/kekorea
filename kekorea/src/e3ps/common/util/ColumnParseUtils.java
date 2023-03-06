@@ -11,10 +11,10 @@ import e3ps.admin.spec.Spec;
 import e3ps.doc.column.DocumentColumnData;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
-import e3ps.doc.request.beans.RequestDocumentColumnData;
-import e3ps.epm.beans.EpmColumnData;
+import e3ps.doc.request.dto.RequestDocumentDTO;
+import e3ps.epm.dto.EpmColumnData;
 import e3ps.korea.cip.Cip;
-import e3ps.korea.cip.beans.CipColumnData;
+import e3ps.korea.cip.dto.CipDTO;
 import e3ps.part.beans.PartColumnData;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.beans.KePartColumnData;
@@ -37,7 +37,7 @@ public class ColumnParseUtils {
 			// 의뢰서
 			if (per instanceof RequestDocument) {
 				RequestDocumentProjectLink link = (RequestDocumentProjectLink) obj[1];
-				RequestDocumentColumnData data = parse(link);
+				RequestDocumentDTO data = parse(link);
 				list.add(data);
 				// 문서
 			} else if (per instanceof WTDocument) {
@@ -62,7 +62,7 @@ public class ColumnParseUtils {
 				list.add(data);
 				// Cip
 			} else if (per instanceof Cip) {
-				CipColumnData data = parse((Cip) per);
+				CipDTO data = parse((Cip) per);
 				list.add(data);
 				// kepart
 			} else if (per instanceof KePart) {
@@ -105,8 +105,8 @@ public class ColumnParseUtils {
 		return new CommonCodeColumnData(per);
 	}
 
-	private static RequestDocumentColumnData parse(RequestDocumentProjectLink per) throws Exception {
-		return new RequestDocumentColumnData(per);
+	private static RequestDocumentDTO parse(RequestDocumentProjectLink per) throws Exception {
+		return new RequestDocumentDTO(per);
 	}
 
 	private static DocumentColumnData parse(WTDocument per) throws Exception {
@@ -117,7 +117,7 @@ public class ColumnParseUtils {
 		return new ProjectDTO(per);
 	}
 
-	private static CipColumnData parse(Cip per) throws Exception {
-		return new CipColumnData(per);
+	private static CipDTO parse(Cip per) throws Exception {
+		return new CipDTO(per);
 	}
 }

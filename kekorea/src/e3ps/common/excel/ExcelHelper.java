@@ -379,9 +379,9 @@ public class ExcelHelper {
 				map = QueryExcelHelper.manager.getSelectNotice(param);
 			}
 
-			ArrayList<NoticeColumnData> list = (ArrayList<NoticeColumnData>) map.get("list");
+			ArrayList<NoticeDTO> list = (ArrayList<NoticeDTO>) map.get("list");
 			int total = list.size();
-			for (NoticeColumnData data : list) {
+			for (NoticeDTO data : list) {
 				int idx = 1;
 				sheet.addCell(new Label(0, rows, String.valueOf(total), format));
 				for (String key : columns) {

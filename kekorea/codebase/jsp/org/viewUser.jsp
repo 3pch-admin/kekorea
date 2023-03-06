@@ -5,7 +5,7 @@
 <%@page import="wt.content.ContentRoleType"%>
 <%@page import="wt.content.ContentHelper"%>
 <%@page import="wt.fc.QueryResult"%>
-<%@page import="e3ps.org.beans.UserViewData"%>
+<%@page import="e3ps.org.dto.UserViewData"%>
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%

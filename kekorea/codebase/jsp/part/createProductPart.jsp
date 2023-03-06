@@ -1,5 +1,5 @@
-<%@page import="e3ps.epm.beans.CADAttr"%>
-<%@page import="e3ps.epm.beans.PRODUCTAttr"%>
+<%@page import="e3ps.epm.dto.CADAttr"%>
+<%@page import="e3ps.epm.dto.PRODUCTAttr"%>
 <%@page import="e3ps.part.service.PartHelper"%>
 <%@page import="e3ps.document.service.DocumentHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"

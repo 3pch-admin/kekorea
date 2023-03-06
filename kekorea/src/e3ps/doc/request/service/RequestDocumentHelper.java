@@ -8,7 +8,7 @@ import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
-import e3ps.doc.request.beans.RequestDocumentColumnData;
+import e3ps.doc.request.dto.RequestDocumentDTO;
 import e3ps.project.Project;
 import wt.fc.PagingQueryResult;
 import wt.query.QuerySpec;
@@ -22,7 +22,7 @@ public class RequestDocumentHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		ArrayList<RequestDocumentColumnData> list = new ArrayList<>();
+		ArrayList<RequestDocumentDTO> list = new ArrayList<>();
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(RequestDocument.class, true);
@@ -42,7 +42,7 @@ public class RequestDocumentHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			RequestDocumentProjectLink link = (RequestDocumentProjectLink)obj[1];
-			RequestDocumentColumnData column = new RequestDocumentColumnData(link);
+			RequestDocumentDTO column = new RequestDocumentDTO(link);
 			list.add(column);
 		}
 

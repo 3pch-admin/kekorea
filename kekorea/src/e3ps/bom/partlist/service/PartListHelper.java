@@ -19,9 +19,9 @@ import e3ps.bom.partlist.MasterDataLink;
 import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
-import e3ps.bom.partlist.beans.PartListColumnData;
-import e3ps.bom.partlist.beans.PartListDataViewData;
-import e3ps.bom.tbom.beans.TBOMMasterColumnData;
+import e3ps.bom.partlist.dto.PartListDTO;
+import e3ps.bom.partlist.dto.PartListDataViewData;
+import e3ps.bom.tbom.dto.TBOMMasterDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.IBAUtils;
@@ -149,7 +149,7 @@ public class PartListHelper {
 	public Map<String, Object> findPartList(Map<String, Object> param) throws Exception {
 
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<TBOMMasterColumnData> list = new ArrayList<TBOMMasterColumnData>();
+		List<TBOMMasterDTO> list = new ArrayList<TBOMMasterDTO>();
 		QuerySpec query = null;
 
 		// search param
@@ -342,7 +342,7 @@ public class PartListHelper {
 				Object[] obj = (Object[]) result.nextElement();
 				PartListMaster master = (PartListMaster) obj[0];
 				Project project = (Project) obj[2];
-				TBOMMasterColumnData data = new TBOMMasterColumnData(master, project);
+				TBOMMasterDTO data = new TBOMMasterDTO(master, project);
 				list.add(data);
 			}
 			map.put("list", list);
@@ -638,7 +638,7 @@ public class PartListHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<PartListColumnData> list = new ArrayList<>();
+		List<PartListDTO> list = new ArrayList<>();
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(PartListMaster.class, true);
@@ -658,7 +658,7 @@ public class PartListHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			PartListMaster master = (PartListMaster) obj[0];
 			Project project = (Project) obj[2];
-			PartListColumnData column = new PartListColumnData(master, project);
+			PartListDTO column = new PartListDTO(master, project);
 			list.add(column);
 		}
 		map.put("list", list);

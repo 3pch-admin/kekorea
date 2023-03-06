@@ -7,7 +7,7 @@ import java.util.Map;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.workspace.notice.Notice;
-import e3ps.workspace.notice.beans.NoticeColumnData;
+import e3ps.workspace.notice.dto.NoticeDTO;
 import wt.fc.PagingQueryResult;
 import wt.query.QuerySpec;
 import wt.services.ServiceFactory;
@@ -19,7 +19,7 @@ public class NoticeHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		ArrayList<NoticeColumnData> list = new ArrayList<>();
+		ArrayList<NoticeDTO> list = new ArrayList<>();
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Notice.class, true);
@@ -32,7 +32,7 @@ public class NoticeHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			Notice notice = (Notice) obj[0];
-			NoticeColumnData column = new NoticeColumnData(notice);
+			NoticeDTO column = new NoticeDTO(notice);
 			list.add(column);
 		}
 		map.put("list", list);

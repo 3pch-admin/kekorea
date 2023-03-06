@@ -23,7 +23,7 @@
 <%@page import="e3ps.document.beans.DocumentViewData"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="java.util.HashMap"%>
-<%@page import="e3ps.epm.beans.EpmViewData"%>
+<%@page import="e3ps.epm.dto.EpmViewData"%>
 <%@page import="wt.epm.EPMDocument"%>
 <%@page import="wt.util.WTAttributeNameIfc"%>
 <%@page import="wt.fc.PagingQueryResult"%>

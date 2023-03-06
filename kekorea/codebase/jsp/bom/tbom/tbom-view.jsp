@@ -1,4 +1,4 @@
-<%@page import="e3ps.bom.tbom.beans.TBOMMasterViewData"%>
+<%@page import="e3ps.bom.tbom.dto.TBOMMasterViewData"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 TBOMMasterViewData data = (TBOMMasterViewData) request.getAttribute("data");

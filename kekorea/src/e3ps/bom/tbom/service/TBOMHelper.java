@@ -12,8 +12,8 @@ import e3ps.bom.tbom.TBOMData;
 import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.TBOMMasterDataLink;
 import e3ps.bom.tbom.TBOMMasterProjectLink;
-import e3ps.bom.tbom.beans.TBOMColumnData;
-import e3ps.bom.tbom.beans.TBOMMasterColumnData;
+import e3ps.bom.tbom.dto.TBOMDTO;
+import e3ps.bom.tbom.dto.TBOMMasterDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.PageQueryUtils;
@@ -37,7 +37,7 @@ public class TBOMHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<TBOMMasterColumnData> list = new ArrayList<>();
+		List<TBOMMasterDTO> list = new ArrayList<>();
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(TBOMMaster.class, true);
@@ -57,7 +57,7 @@ public class TBOMHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			TBOMMaster master = (TBOMMaster) obj[0];
 			Project project = (Project) obj[2];
-			TBOMMasterColumnData column = new TBOMMasterColumnData(master, project);
+			TBOMMasterDTO column = new TBOMMasterDTO(master, project);
 			list.add(column);
 		}
 		map.put("list", list);
@@ -97,7 +97,7 @@ public class TBOMHelper {
 	}
 
 	public JSONArray auiArray(TBOMMaster master) throws Exception {
-		ArrayList<TBOMColumnData> list = new ArrayList<>();
+		ArrayList<TBOMDTO> list = new ArrayList<>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(TBOMMasterDataLink.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, TBOMMasterDataLink.class, "roleAObjectRef.key.id",
@@ -108,7 +108,7 @@ public class TBOMHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			TBOMMasterDataLink link = (TBOMMasterDataLink) obj[0];
 			TBOMData data = link.getData();
-			TBOMColumnData column = new TBOMColumnData(data);
+			TBOMDTO column = new TBOMDTO(data);
 			list.add(column);
 		}
 		return JSONArray.fromObject(list);

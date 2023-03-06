@@ -22,7 +22,7 @@ import e3ps.common.util.ColumnParseUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.org.beans.UserViewData;
+import e3ps.org.dto.UserViewData;
 import wt.fc.PagingQueryResult;
 import wt.fc.PagingSessionHelper;
 import wt.org.WTUser;

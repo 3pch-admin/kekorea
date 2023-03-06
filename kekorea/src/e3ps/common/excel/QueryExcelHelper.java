@@ -724,11 +724,11 @@ public class QueryExcelHelper {
 		List<String> dataList = (List<String>) param.get("list");
 		Notice notice = null;
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<NoticeColumnData> list = new ArrayList<NoticeColumnData>();
+		List<NoticeDTO> list = new ArrayList<NoticeDTO>();
 		try {
 			for (String oid : dataList) {
 				notice = (Notice) rf.getReference(oid).getObject();
-				NoticeColumnData data = new NoticeColumnData(notice);
+				NoticeDTO data = new NoticeDTO(notice);
 				list.add(data);
 			}
 			map.put("list", list);
@@ -763,7 +763,7 @@ public class QueryExcelHelper {
 
 	public Map<String, Object> getAllNotice() throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<NoticeColumnData> list = new ArrayList<NoticeColumnData>();
+		List<NoticeDTO> list = new ArrayList<NoticeDTO>();
 
 		try {
 			QuerySpec query = new QuerySpec();
@@ -786,7 +786,7 @@ public class QueryExcelHelper {
 			while (result.hasMoreElements()) {
 				Object[] obj = (Object[]) result.nextElement();
 				Notice notice = (Notice) obj[0];
-				NoticeColumnData data = new NoticeColumnData(notice);
+				NoticeDTO data = new NoticeDTO(notice);
 				list.add(data);
 			}
 			map.put("list", list);

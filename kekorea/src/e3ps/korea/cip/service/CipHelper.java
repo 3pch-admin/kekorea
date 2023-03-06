@@ -12,7 +12,7 @@ import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.korea.cip.Cip;
-import e3ps.korea.cip.beans.CipColumnData;
+import e3ps.korea.cip.dto.CipDTO;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -36,7 +36,7 @@ public class CipHelper {
 		String customerCode = (String) params.get("customer");
 		String note = (String) params.get("note");
 
-		List<CipColumnData> list = new ArrayList<CipColumnData>();
+		List<CipDTO> list = new ArrayList<CipDTO>();
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Cip.class, true);
@@ -87,7 +87,7 @@ public class CipHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			Cip cip = (Cip) obj[0];
-			CipColumnData column = new CipColumnData(cip);
+			CipDTO column = new CipDTO(cip);
 			list.add(column);
 		}
 		map.put("list", list);
@@ -96,9 +96,9 @@ public class CipHelper {
 		return map;
 	}
 
-	public ArrayList<CipColumnData> view(String mak_oid, String detail_oid, String customer_oid, String install_oid)
+	public ArrayList<CipDTO> view(String mak_oid, String detail_oid, String customer_oid, String install_oid)
 			throws Exception {
-		ArrayList<CipColumnData> list = new ArrayList<>();
+		ArrayList<CipDTO> list = new ArrayList<>();
 		CommonCode mak = (CommonCode) CommonUtils.getObject(mak_oid);
 		CommonCode detail = (CommonCode) CommonUtils.getObject(detail_oid);
 		CommonCode customer = (CommonCode) CommonUtils.getObject(customer_oid);
@@ -125,7 +125,7 @@ public class CipHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			Cip cip = (Cip) obj[0];
-			list.add(new CipColumnData(cip));
+			list.add(new CipDTO(cip));
 		}
 
 		return list;

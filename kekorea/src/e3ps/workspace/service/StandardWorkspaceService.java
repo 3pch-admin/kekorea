@@ -20,7 +20,7 @@ import e3ps.erp.service.ErpHelper;
 import e3ps.migrator.MigratorHelper;
 import e3ps.org.People;
 import e3ps.org.WTUserPeopleLink;
-import e3ps.org.beans.UserViewData;
+import e3ps.org.dto.UserViewData;
 import e3ps.part.beans.PartViewData;
 import e3ps.part.service.PartHelper;
 import e3ps.project.Project;

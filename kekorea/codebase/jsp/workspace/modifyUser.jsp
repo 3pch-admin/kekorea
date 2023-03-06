@@ -1,4 +1,4 @@
-<%@page import="e3ps.org.beans.UserViewData"%>
+<%@page import="e3ps.org.dto.UserViewData"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@page import="java.util.Vector"%>

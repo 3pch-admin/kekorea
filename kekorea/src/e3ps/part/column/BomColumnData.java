@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.IBAUtils;
-import e3ps.epm.beans.CADAttr;
-import e3ps.epm.beans.PRODUCTAttr;
+import e3ps.epm.dto.CADAttr;
+import e3ps.epm.dto.PRODUCTAttr;
 import e3ps.part.beans.BOMAttr;
 import wt.part.WTPart;
 import wt.part.WTPartUsageLink;

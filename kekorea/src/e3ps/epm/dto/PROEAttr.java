@@ -1,0 +1,6 @@
+package e3ps.epm.dto;
+
+public enum PROEAttr {
+	NAME_OF_PARTS, DWG_NO, MATERIAL, REMARKS, PART_CODE, STD_UNIT, MAKER, CUSTNAME, PRICE, CURRNAME,
+	REF_NO
+}

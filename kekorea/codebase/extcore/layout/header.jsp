@@ -1,6 +1,6 @@
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="e3ps.org.beans.UserViewData"%>
+<%@page import="e3ps.org.dto.UserViewData"%>
 <%@page import="wt.session.SessionHelper"%>
 <%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>

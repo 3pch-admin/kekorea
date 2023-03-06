@@ -1,4 +1,4 @@
-<%@page import="e3ps.epm.beans.EpmViewData"%>
+<%@page import="e3ps.epm.dto.EpmViewData"%>
 <%@page import="wt.epm.EPMDocument"%>
 <%@page import="wt.fc.Persistable"%>
 <%@page import="wt.fc.QueryResult"%>

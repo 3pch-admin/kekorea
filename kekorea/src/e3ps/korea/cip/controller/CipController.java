@@ -17,7 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
-import e3ps.korea.cip.beans.CipColumnData;
+import e3ps.korea.cip.dto.CipDTO;
 import e3ps.korea.cip.service.CipHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -80,7 +80,7 @@ public class CipController extends BaseController {
 	public ModelAndView view(@RequestParam String mak_oid, @RequestParam String detail_oid,
 			@RequestParam String customer_oid, @RequestParam String install_oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		ArrayList<CipColumnData> list = CipHelper.manager.view(mak_oid, detail_oid, customer_oid, install_oid);
+		ArrayList<CipDTO> list = CipHelper.manager.view(mak_oid, detail_oid, customer_oid, install_oid);
 		model.addObject("list", list);
 		model.setViewName("popup:/korea/cip/cip-view");
 		return model;

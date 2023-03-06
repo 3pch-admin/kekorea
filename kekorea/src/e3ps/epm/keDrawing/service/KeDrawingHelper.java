@@ -9,7 +9,7 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
-import e3ps.epm.beans.KeDrawingColumnData;
+import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -23,7 +23,7 @@ public class KeDrawingHelper {
 	public static final KeDrawingService service = ServiceFactory.getService(KeDrawingService.class);
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
-		ArrayList<KeDrawingColumnData> list = new ArrayList<>();
+		ArrayList<KeDrawingDTO> list = new ArrayList<>();
 		Map<String, Object> map = new HashMap<String, Object>();
 		String latest = (String) params.get("latest");
 
@@ -47,7 +47,7 @@ public class KeDrawingHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			KeDrawing keDrawing = (KeDrawing) obj[0];
-			KeDrawingColumnData column = new KeDrawingColumnData(keDrawing);
+			KeDrawingDTO column = new KeDrawingDTO(keDrawing);
 			list.add(column);
 		}
 

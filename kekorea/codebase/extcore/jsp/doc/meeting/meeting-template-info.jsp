@@ -1,5 +1,5 @@
 <%@page import="com.lowagie.text.Meta"%>
-<%@page import="e3ps.doc.meeting.beans.MeetingTemplateDTO"%>
+<%@page import="e3ps.doc.meeting.dto.MeetingTemplateDTO"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>

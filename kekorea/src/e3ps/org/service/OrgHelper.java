@@ -10,7 +10,7 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.org.Department;
 import e3ps.org.People;
-import e3ps.org.beans.UserColumnData;
+import e3ps.org.dto.UserDTO;
 import e3ps.workspace.ApprovalUserLine;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -762,7 +762,7 @@ public class OrgHelper {
 
 	public Map<String, Object> find(Map<String, Object> param) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<UserColumnData> list = new ArrayList<UserColumnData>();
+		List<UserDTO> list = new ArrayList<UserDTO>();
 		QuerySpec query = null;
 		// 전체 검색
 		String id = (String) param.get("id");
@@ -875,7 +875,7 @@ public class OrgHelper {
 			while (result.hasMoreElements()) {
 				Object[] obj = (Object[]) result.nextElement();
 				People user = (People) obj[0];
-				UserColumnData data = new UserColumnData(user);
+				UserDTO data = new UserDTO(user);
 				list.add(data);
 			}
 			map.put("list", list);
@@ -1139,7 +1139,7 @@ public class OrgHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		ArrayList<UserColumnData> list = new ArrayList<>();
+		ArrayList<UserDTO> list = new ArrayList<>();
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(People.class, true);
@@ -1152,7 +1152,7 @@ public class OrgHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			People people = (People) obj[0];
-			UserColumnData column = new UserColumnData(people);
+			UserDTO column = new UserDTO(people);
 			list.add(column);
 		}
 		map.put("list", list);

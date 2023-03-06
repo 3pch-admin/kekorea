@@ -1,9 +1,9 @@
 <%@page import="net.sf.json.JSONArray"%>
-<%@page import="e3ps.korea.cip.beans.CipColumnData"%>
+<%@page import="e3ps.korea.cip.dto.CipDTO"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-ArrayList<CipColumnData> list = (ArrayList<CipColumnData>) request.getAttribute("list");
+ArrayList<CipDTO> list = (ArrayList<CipDTO>) request.getAttribute("list");
 JSONArray data = JSONArray.fromObject(list);
 %>
 <%@include file="/jsp/include/auigrid.jsp"%>

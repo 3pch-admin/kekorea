@@ -24,7 +24,7 @@ import e3ps.workspace.ApprovalImpl;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
 import e3ps.workspace.PersistableLineMasterLink;
-import e3ps.workspace.beans.ApprovalLineColumnData;
+import e3ps.workspace.dto.ApprovalLineDTO;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.fc.PagingQueryResult;
@@ -1658,7 +1658,7 @@ public class WorkspaceHelper {
 
 	public Map<String, Object> agree(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		ArrayList<ApprovalLineColumnData> list = new ArrayList<>();
+		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
 		// 쿼리문 작성
 		QuerySpec query = new QuerySpec();
 		// 상태가 = 대기중
@@ -1688,7 +1688,7 @@ public class WorkspaceHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			ApprovalLine approvalLine = (ApprovalLine) obj[0];
-			ApprovalLineColumnData column = new ApprovalLineColumnData(approvalLine, COLUMN_APPROVAL);
+			ApprovalLineDTO column = new ApprovalLineDTO(approvalLine, COLUMN_APPROVAL);
 			list.add(column);
 		}
 		map.put("list", list);
@@ -1699,7 +1699,7 @@ public class WorkspaceHelper {
 
 	public Map<String, Object> approval(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		ArrayList<ApprovalLineColumnData> list = new ArrayList<>();
+		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
 		boolean isAdmin = CommonUtils.isAdmin();
 		String name = (String) params.get("name");
 		String creatorsOid = (String) params.get("creatorsOid");
@@ -1752,7 +1752,7 @@ public class WorkspaceHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			ApprovalLine approvalLine = (ApprovalLine) obj[0];
-			ApprovalLineColumnData column = new ApprovalLineColumnData(approvalLine, COLUMN_APPROVAL);
+			ApprovalLineDTO column = new ApprovalLineDTO(approvalLine, COLUMN_APPROVAL);
 			list.add(column);
 		}
 		map.put("list", list);

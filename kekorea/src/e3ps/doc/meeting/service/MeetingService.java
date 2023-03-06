@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import e3ps.doc.meeting.beans.MeetingDTO;
-import e3ps.doc.meeting.beans.MeetingTemplateDTO;
+import e3ps.doc.meeting.dto.MeetingDTO;
+import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import wt.method.RemoteInterface;
 
 @RemoteInterface

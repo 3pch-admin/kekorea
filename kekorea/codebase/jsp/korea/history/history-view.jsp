@@ -1,6 +1,6 @@
 <%@page import="java.util.Map"%>
 <%@page import="net.sf.json.JSONArray"%>
-<%@page import="e3ps.korea.cip.beans.CipColumnData"%>
+<%@page import="e3ps.korea.cip.dto.CipDTO"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%

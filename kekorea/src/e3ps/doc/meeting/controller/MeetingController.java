@@ -21,13 +21,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.doc.meeting.Meeting;
 import e3ps.doc.meeting.MeetingProjectLink;
 import e3ps.doc.meeting.MeetingTemplate;
-import e3ps.doc.meeting.beans.MeetingDTO;
-import e3ps.doc.meeting.beans.MeetingTemplateDTO;
+import e3ps.doc.meeting.dto.MeetingDTO;
+import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.doc.meeting.service.MeetingHelper;
-import e3ps.project.Project;
 
 @Controller
 @RequestMapping(value = "/meeting/**")
