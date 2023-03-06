@@ -32,7 +32,7 @@ public class KePartHelper {
 
 		QuerySpecUtils.toInnerJoin(query, KePart.class, KePartMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
-		QuerySpecUtils.toBoolean(query, idx, KePart.class, KePart.LATEST, SearchCondition.IS_TRUE);
+		QuerySpecUtils.toBooleanAnd(query, idx, KePart.class, KePart.LATEST, SearchCondition.IS_TRUE);
 		QuerySpecUtils.toOrderBy(query, idx, KePart.class, KePart.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
@@ -59,7 +59,7 @@ public class KePartHelper {
 		QuerySpecUtils.toInnerJoin(query, KePart.class, KePartMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
 		QuerySpecUtils.toEqualsAnd(query, idx_m, KePartMaster.class, KePartMaster.KE_PART_NUMBER, kePartNumber);
-		QuerySpecUtils.toBoolean(query, idx, KePart.class, KePart.LATEST, SearchCondition.IS_TRUE);
+		QuerySpecUtils.toBooleanAnd(query, idx, KePart.class, KePart.LATEST, SearchCondition.IS_TRUE);
 
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {

@@ -88,7 +88,7 @@
 			showRowNumColumn : true, // 번호 행 출력 여부
 			showStateColumn : true, // 상태표시 행 출력 여부
 			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-			selectionMode : "multiCells",
+			selectionMode : "multipleCells",
 			editable : true,
 			showRowCheckColumn : true,
 		};

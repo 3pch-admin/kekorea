@@ -15,7 +15,7 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
-import e3ps.project.beans.ProjectColumnData;
+import e3ps.project.beans.ProjectDTO;
 import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.template.Template;
@@ -3145,7 +3145,7 @@ public class ProjectHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<ProjectColumnData> list = new ArrayList<ProjectColumnData>();
+		List<ProjectDTO> list = new ArrayList<ProjectDTO>();
 
 		String kekNumber = (String) params.get("kekNumber");
 		String keNumber = (String) params.get("keNumber");
@@ -3230,7 +3230,7 @@ public class ProjectHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			Project project = (Project) obj[0];
-			ProjectColumnData column = new ProjectColumnData(project);
+			ProjectDTO column = new ProjectDTO(project);
 			list.add(column);
 		}
 

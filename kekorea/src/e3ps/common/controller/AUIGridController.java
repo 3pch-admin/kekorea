@@ -66,7 +66,7 @@ public class AUIGridController extends BaseController {
 	}
 	
 	@Description(value = "그리드 첨부파일 업로드")
-	@PostMapping(value = "/upload")
+	@GetMapping(value = "/upload")
 	@ResponseBody
 	public Map<String, Object> upload(HttpServletRequest request) throws Exception {
 		return AUIGridUtils.upload(request);

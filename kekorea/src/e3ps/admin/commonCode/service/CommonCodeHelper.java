@@ -52,7 +52,7 @@ public class CommonCodeHelper {
 		}
 
 		if (!StringUtils.isNull(enable)) {
-			QuerySpecUtils.toBoolean(query, idx, CommonCode.class, CommonCode.ENABLE, Boolean.parseBoolean(enable));
+			QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, Boolean.parseBoolean(enable));
 		}
 
 		if (!StringUtils.isNull(codeType)) {

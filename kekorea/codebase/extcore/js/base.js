@@ -70,10 +70,10 @@ function checkBox(name) {
 
 /**
  * SELECTBOX 박스 바인딩
- * 변수 SELECTBOX 박스 NAME 값
+ * 변수 SELECTBOX 박스 ID 값
  */
-function selectBox(name) {
-	$("select[name=" + name + "]").bindSelect();
+function selectBox(id) {
+	$("#" + id).bindSelect();
 }
 
 /**
@@ -169,7 +169,7 @@ function date(name) {
  * BIND PRE TO AFTER DATE
  */
 function rangeDate(name, startName) {
-	const config = {
+	let config = {
 		align: "left",
 		valign: "top",
 		buttonText: "확인",
@@ -222,25 +222,20 @@ function getLocalStorageValue(storageID) {
 };
 
 
-// 행 삭제
-function deleteRow(gridID) {
-	if (gridID === undefined) {
-		gridID = "#grid_wrap";
-	}
-
-	let checked = AUIGrid.getCheckedRowItems(myGridID);
-	for (let i = checked.length - 1; i >= 0; i--) {
-		let rowIndex = checked[i].rowIndex;
-		AUIGrid.removeRow(myGridID, rowIndex);
-	}
-};
-
 // 팝업창 공통 호출
 function appendData(type, method) {
 	if (type === "project") {
 		let url = getCallUrl("/project/popup?method=" + method);
 		popup(url);
 	}
+}
 
-
+// 태그 NAME이 여러개인 것을 배열 객체로 리턴 해주는 함수
+function toArray(name) {
+	let array = new Array();
+	let list = document.getElementsByName(name);
+	for (let i = 0; i < list.length; i++) {
+		array.push(list[i].value);
+	}
+	return array;
 }

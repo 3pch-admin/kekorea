@@ -31,7 +31,7 @@ public class NumberRuleHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(NumberRule.class, true);
 
-		QuerySpecUtils.toBoolean(query, idx, NumberRule.class, NumberRule.LATEST, true);
+		QuerySpecUtils.toBooleanAnd(query, idx, NumberRule.class, NumberRule.LATEST, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();

@@ -134,7 +134,7 @@ public class QuerySpecUtils {
 		query.appendOrderBy(orderBy, new int[] { idx });
 	}
 
-	public static void toBoolean(QuerySpec query, int idx, Class clazz, String column, boolean value) throws Exception {
+	public static void toBooleanAnd(QuerySpec query, int idx, Class clazz, String column, boolean value) throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -147,7 +147,7 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
-	public static void toBooleanOr(QuerySpec query, int idx, Class clazz, String column, boolean value)
+	public static void toBooleanAndOr(QuerySpec query, int idx, Class clazz, String column, boolean value)
 			throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendOr();

@@ -19,7 +19,7 @@ public class Test {
 
 		SearchCondition sc = new SearchCondition(KeDrawing.class, KeDrawing.LATEST, SearchCondition.IS_TRUE);
 		query.appendWhere(sc, new int[] { idx });
-//		QuerySpecUtils.toBoolean(query, idx, KeDrawing.class, KeDrawing.LATEST, "true");
+//		QuerySpecUtils.toBooleanAnd(query, idx, KeDrawing.class, KeDrawing.LATEST, "true");
 
 		QuerySpecUtils.toOrderBy(query, idx, KeDrawing.class, KeDrawing.CREATE_TIMESTAMP, true);
 		System.out.println(query);

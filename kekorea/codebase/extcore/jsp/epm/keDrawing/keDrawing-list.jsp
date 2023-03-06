@@ -190,7 +190,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					rowNumHeaderText : "번호", // 번호 행 텍스트 설정
 					noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
 					enableFilter : true, // 필터 사용 여부
-					selectionMode : "multiCells",
+					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					// 그리드 공통속성 끝
@@ -293,7 +293,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				params.addRows = addRows;
 				params.removeRows = removeRows;
 				params.editRows = editRows;
-				console.log(params);
 				call(url, params, function(data) {
 					alert(data.msg);
 					if (data.result) {

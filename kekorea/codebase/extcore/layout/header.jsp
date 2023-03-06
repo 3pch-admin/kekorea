@@ -6,6 +6,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 UserViewData data = (UserViewData) request.getAttribute("data");
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
 <nav class="navbar-default navbar-static-side" role="navigation">
 	<div class="sidebar-collapse">
@@ -193,6 +194,9 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 						<a onclick="moveToPage(this, '/request/list', '문서 관리 > 의뢰서 조회');">의뢰서 조회</a>
 					</li>
 					<li>
+						<a onclick="moveToPage(this, '/meeting/list', '문서 관리 > 회의록 조회');">회의록 조회</a>
+					</li>					
+					<li>
 						<a href="500.html">문서 결재</a>
 					</li>
 <!-- 					<li> -->
@@ -248,6 +252,9 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 					</li>
 				</ul>
 			</li>
+			<%
+				if(isAdmin) {
+			%>
 			<li>
 				<a href="css_animation.html">
 					<i class="fa fa-magic"></i>
@@ -267,8 +274,14 @@ UserViewData data = (UserViewData) request.getAttribute("data");
 					<li>
 						<a onclick="moveToPage(this, '/password/list', '관리자 > 비밀번호 세팅');">비밀번호 세팅</a>
 					</li>
+					<li>
+						<a onclick="moveToPage(this, '/meeting/template', '관리자 > 회의록 템플릿');">회의록 템플릿</a>
+					</li>					
 				</ul>
 			</li>
+			<%
+				}
+			%>
 		</ul>
 	</div>
 </nav>

@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.ColumnParseUtils;
+import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.org.beans.UserViewData;
@@ -32,7 +33,7 @@ public class IndexController extends BaseController {
 
 	@Description(value = "메인 페이지")
 	@GetMapping(value = "/index")
-	public ModelAndView index(HttpServletRequest request) throws Exception {
+	public ModelAndView index() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("content:/index");
 		return model;
@@ -40,10 +41,12 @@ public class IndexController extends BaseController {
 
 	@Description(value = "헤더 페이지")
 	@GetMapping(value = "/header")
-	public ModelAndView header(HttpServletRequest request) throws Exception {
+	public ModelAndView header() throws Exception {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		UserViewData data = new UserViewData(sessionUser);
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
 		model.setViewName("/extcore/layout/header.jsp");
 		return model;
@@ -51,7 +54,7 @@ public class IndexController extends BaseController {
 
 	@Description(value = "푸터 페이지")
 	@GetMapping(value = "/footer")
-	public ModelAndView footer(HttpServletRequest request) throws Exception {
+	public ModelAndView footer() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("/extcore/layout/footer.jsp");
 		return model;

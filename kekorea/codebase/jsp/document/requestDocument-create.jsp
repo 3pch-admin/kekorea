@@ -150,7 +150,6 @@ String toid = (String) request.getParameter("toid");
 				<span id="fileCount"></span>
 			</th>
 			<td colspan="3">
-				<!-- upload.js see -->
 				<div class="AXUpload5" id="allUpload_layer"></div>
 				<div class="AXUpload5QueueBox_list" id="uploadQueueBox"></div>
 			</td>

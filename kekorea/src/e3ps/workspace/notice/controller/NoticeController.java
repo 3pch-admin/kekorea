@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
+import e3ps.common.util.CommonUtils;
 import e3ps.workspace.notice.service.NoticeHelper;;
 
 @Controller
@@ -23,6 +24,8 @@ public class NoticeController extends BaseController {
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/workspace/notice/notice-list.jsp");
 		return model;
 	}

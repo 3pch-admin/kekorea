@@ -185,7 +185,7 @@ String method = (String) request.getAttribute("method");
 			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
 			noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
 			enableFilter : true, // 필터 사용 여부
-			selectionMode : "multiCells",
+			selectionMode : "multipleCells",
 			enableMovingColumn : true,
 			showInlineFilter : true,
 			showRowCheckColumn : true
@@ -197,8 +197,24 @@ String method = (String) request.getAttribute("method");
 		loadGridData();
 		// Lazy Loading 이벤트 바인딩
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 	}
-
+	
+	function auiCellClickHandler(event) {
+		let item = event.item;
+		rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); // rowIdField 얻기
+		rowId = item[rowIdField];
+		
+		// 이미 체크 선택되었는지 검사
+		if(AUIGrid.isCheckedRowById(event.pid, rowId)) {
+			// 엑스트라 체크박스 체크해제 추가
+			AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
+		} else {
+			// 엑스트라 체크박스 체크 추가
+			AUIGrid.addCheckedRowsByIds(event.pid, rowId);
+		}
+	}
+	
 	function loadGridData() {
 		let params = new Object();
 		let url = getCallUrl("/project/list");

@@ -102,7 +102,7 @@ public class WorkOrderHelper {
 			int idx_m = query.appendClassList(KeDrawingMaster.class, true);
 			QuerySpecUtils.toInnerJoin(query, KeDrawing.class, KeDrawingMaster.class, "masterReference.key.id",
 					WTAttributeNameIfc.ID_NAME, idx, idx_m);
-			QuerySpecUtils.toBoolean(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
+			QuerySpecUtils.toBooleanAnd(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
 			QuerySpecUtils.toEqualsAnd(query, idx_m, KeDrawingMaster.class, KeDrawingMaster.KE_NUMBER, number);
 			QueryResult result = PersistenceHelper.manager.find(query);
 			if (result.hasMoreElements()) {
@@ -114,6 +114,7 @@ public class WorkOrderHelper {
 				map.put("lotNo", master.getLotNo());
 				map.put("current", keDrawing.getVersion());
 				map.put("ok", true);
+				map.put("oid", keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
 			}
 		}
 		return map;

@@ -31,11 +31,11 @@ public class KeDrawingHelper {
 		int idx = query.appendClassList(KeDrawing.class, true);
 
 		if (!StringUtils.isNull(latest) && Boolean.parseBoolean(latest)) {
-			QuerySpecUtils.toBoolean(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
+			QuerySpecUtils.toBooleanAnd(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
 		} else if (!StringUtils.isNull(latest) && !Boolean.parseBoolean(latest)) {
 			query.appendOpenParen();
-			QuerySpecUtils.toBooleanOr(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
-			QuerySpecUtils.toBooleanOr(query, idx, KeDrawing.class, KeDrawing.LATEST, false);
+			QuerySpecUtils.toBooleanAndOr(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
+			QuerySpecUtils.toBooleanAndOr(query, idx, KeDrawing.class, KeDrawing.LATEST, false);
 			query.appendCloseParen();
 		}
 

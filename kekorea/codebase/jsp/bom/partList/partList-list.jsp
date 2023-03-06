@@ -204,7 +204,7 @@
 			noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
 			enableFilter : true, // 필터 사용 여부
 			showRowCheckColumn : true, // 엑스트라 체크 박스 사용 여부
-			selectionMode : "multiCells",
+			selectionMode : "multipleCells",
 			enableMovingColumn : true,
 			// 공통 끝
 // 			fillColumnSizeMode : true, // 화면 꽉채우기

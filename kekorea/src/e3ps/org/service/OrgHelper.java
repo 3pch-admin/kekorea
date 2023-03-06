@@ -271,7 +271,7 @@ public class OrgHelper {
 			query.appendCloseParen();
 		}
 
-		QuerySpecUtils.toBoolean(query, idx, People.class, People.RESIGN, SearchCondition.IS_FALSE);
+		QuerySpecUtils.toBooleanAnd(query, idx, People.class, People.RESIGN, SearchCondition.IS_FALSE);
 		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, false);
 
 		QueryResult result = PersistenceHelper.manager.find(query);
@@ -1144,7 +1144,7 @@ public class OrgHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(People.class, true);
 
-		QuerySpecUtils.toBoolean(query, idx, People.class, People.RESIGN, false);
+		QuerySpecUtils.toBooleanAnd(query, idx, People.class, People.RESIGN, false);
 		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, false);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);

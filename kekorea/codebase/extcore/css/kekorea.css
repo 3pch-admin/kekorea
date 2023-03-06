@@ -55,7 +55,7 @@ td.indent10 {
 	text-indent: 10px;
 }
 
-td.underline:hover {
+td.underline {
 	text-decoration: underline;
 	color: blue !important;
 	cursor: pointer;
@@ -178,10 +178,54 @@ table.create-table td {
 	border-right: 1px solid #a6a6a6;
 }
 
+table.create-table th.req {
+	color: red;
+	font-weight: 800;
+}
+
+
 table.create-table textarea {
 	width: calc(100% - 15px);
 	border: 1px solid #a6a6a6;
 	margin-top: 3px;
 	font-size: 14px;
 	font-family: inherit;
+}
+
+/** textarea box CSS **/
+textarea {
+	resize: none;
+}
+
+/** select box CSS **/
+select.width-100 {
+	width: 100px;
+}
+
+select.width-200 {
+	width: 200px;
+}
+
+select.width-300 {
+	width: 300px;
+}
+
+/** upload queue box CSS **/
+#uploadQueueBox {
+	width: calc(100% - 15px);
+	margin: 3px 5px 3px 5px;
+}
+
+#secondary_layer {
+	margin-top: 3px;
+}
+
+/** anchor CSS **/
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+	color: blue;
 }

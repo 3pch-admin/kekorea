@@ -19,7 +19,7 @@ import e3ps.part.beans.PartColumnData;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.beans.KePartColumnData;
 import e3ps.project.Project;
-import e3ps.project.beans.ProjectColumnData;
+import e3ps.project.beans.ProjectDTO;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.fc.PagingQueryResult;
@@ -58,7 +58,7 @@ public class ColumnParseUtils {
 				list.add(data);
 				// 프로젝트
 			} else if (per instanceof Project) {
-				ProjectColumnData data = parse((Project) per);
+				ProjectDTO data = parse((Project) per);
 				list.add(data);
 				// Cip
 			} else if (per instanceof Cip) {
@@ -113,8 +113,8 @@ public class ColumnParseUtils {
 		return new DocumentColumnData(per);
 	}
 
-	private static ProjectColumnData parse(Project per) throws Exception {
-		return new ProjectColumnData(per);
+	private static ProjectDTO parse(Project per) throws Exception {
+		return new ProjectDTO(per);
 	}
 
 	private static CipColumnData parse(Cip per) throws Exception {

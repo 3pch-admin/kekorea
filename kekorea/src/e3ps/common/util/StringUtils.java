@@ -4,60 +4,57 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author jhkim
- */
 public class StringUtils {
 
-	/**
-	 * 기본 공백 변수
-	 */
+	// 공백 상수 변수
 	private static final String EPMTY_CHAR = "";
 
-	/**
-	 * 객체 생성 방지
-	 */
+	// 객체 생성 방지
 	private StringUtils() {
 
 	}
 
+	// start 2023 year code refactoring
+
 	/**
-	 * @param value : parameter String 값
-	 * @return boolean : String 값이 null 일 경우 true, not null 일 경우 false
-	 *         <p>
-	 *         String 값이 null 인지 체크 하는 함수
-	 *         </p>
+	 * String 값이 null 인지 체크하는 함수
+	 * 
+	 * @param value : null 체크를 하려는 값
+	 * @return boolean
 	 */
 	public static boolean isNull(String value) {
-		boolean isNull = false;
-		if (value == null || value.trim().length() == 0 || value.trim().equalsIgnoreCase("null")) {
-			isNull = true;
+		if (value == null || value.length() == 0) {
+			return true;
 		}
-		return isNull;
+		return false;
 	}
 
 	/**
-	 * @param obj : parameter Object 객체
-	 * @return boolean : Object 객체가 null 일 경우 true, not null 일 경우 false
-	 *         <p>
-	 *         Object 객체가 null 인지 체크 하는 함수
-	 *         </p>
+	 * String 변수의 값이 null 인지 체크 후 null 일 경우 공백, 값이 있을 경우 기존의 변수 값을 그대로 리턴하는 함수
+	 * 
+	 * @param arg : 체크 하려는 String 값
+	 * @return String
 	 */
-	public static boolean isNull(Object obj) {
-		boolean isNull = false;
-
-		if (obj instanceof List) {
-			List list = (List) obj;
-			isNull = isArrayNull(list);
-		} else if (obj instanceof Map) {
-			Map map = (Map) obj;
-			isNull = isMapNull(map);
-		} else {
-			if (obj == null) {
-				isNull = true;
-			}
+	public static String getParameter(String arg) {
+		if (isNull(arg)) {
+			return EPMTY_CHAR;
 		}
-		return isNull;
+		return arg;
+	}
+
+	/**
+	 * String 변수의 값이 null 인지 체크 후 null 일 경우 두 번째 인자의 값을 리턴, 값이 있을 경우 기존의 변수 값을 그대로
+	 * 리턴하는 함수
+	 * 
+	 * @param arg  : 체크 하려는 String 값
+	 * @param init : 체크 한 값이 null 일 경우 리턴할 값
+	 * @return String
+	 */
+	public static String getParameter(String arg, String init) {
+		if (isNull(arg)) {
+			return EPMTY_CHAR;
+		}
+		return arg;
 	}
 
 	/**
@@ -88,37 +85,6 @@ public class StringUtils {
 			isNull = true;
 		}
 		return isNull;
-	}
-
-	/**
-	 * @param value : parameter String 값
-	 * @return String
-	 *         <p>
-	 *         String 값이 null 일 경우 공백 값 return <br>
-	 *         String 값이 not null 일 경우 parameter로 들어온 String 값 return
-	 *         </p>
-	 */
-	public static String getParameter(String value) {
-		if (isNull(value)) {
-			return EPMTY_CHAR;
-		}
-		return value.trim();
-	}
-
-	/**
-	 * @param value  : parameter String 값
-	 * @param dValue : parameter value가 null 일 경우 return 될 String 값
-	 * @return String
-	 *         <p>
-	 *         parameter String 값이 null 일 parameter dValue 값 return <br>
-	 *         parameter String 값이 not null 일 경우 parameter로 들어온 String 값 return
-	 *         </p>
-	 */
-	public static String getParameter(String value, String dValue) {
-		if (isNull(value)) {
-			return dValue.trim();
-		}
-		return value.trim();
 	}
 
 	/**
