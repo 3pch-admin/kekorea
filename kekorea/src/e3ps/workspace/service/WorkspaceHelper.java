@@ -1665,23 +1665,27 @@ public class WorkspaceHelper {
 		// 결재타입 = 검토라인
 		// ApprovalImpl state = APPROVAL_READY
 		// ApprovalLine type = WORKING_AGREE
-//		int idx_state= query.appendClassList(ApprovalImpl.class, true);
 		
-//		SearchCondition sc = new SearchCondition(ApprovalImpl.class, ApprovalImpl.STATE, "=", APPROVAL_READY);
-//		query.appendWhere(sc, new int[] { idx_state });
-//		query.appendAnd();
-			
+        int idx_Line= query.appendClassList(ApprovalLine.class, true);
+        int idx_Master= query.appendClassList(ApprovalMaster.class, true);
+        SearchCondition sc = new SearchCondition(ApprovalLine.class, "masterReference.key.classname",ApprovalMaster.class,"thePersistInfo.theObjectIdentifier.classname");
+        query.appendWhere(sc, new int[] { idx_Line, idx_Master });
+        
+        query.appendAnd();
+        
+        sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=",RECEIVE_COMPLETE);
+        query.appendWhere(sc, new int[] { idx_Line });
+
+        query.appendAnd();
+        
+        sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=", RECEIVE_LINE);
+        query.appendWhere(sc, new int[] { idx_Line });
+        System.out.println("@@@@@ " + query);
 		
 		// select a0.*, a1.* from approvalline a0, approvalmaster a1
 		// where a0.classnamekeya5 = a1.ida2a2
 		// and a0.state = '대기중' and a0.type = '검토라인'
-		
 		// 위에 처럼 쿼리 나오게
-		
-		
-		int idx_type= query.appendClassList(ApprovalLine.class, true);
-		SearchCondition sc = new SearchCondition(ApprovalLine.class, ApprovalLine.ROLE, "=", WORKING_AGREE);
-		query.appendWhere(sc, new int[] { idx_type });
 		
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();

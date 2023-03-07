@@ -9,6 +9,7 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
+import lombok.Getter;
 import wt.fc.WTObject;
 import wt.util.WTException;
 
@@ -19,6 +20,8 @@ import wt.util.WTException;
 				@GeneratedProperty(name = "sort", type = Integer.class, javaDoc = "결재 순서", initialValue = "0", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "type", type = String.class, javaDoc = "결재 타입", constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(columnName = "approvalType")),
+				
+                @GeneratedProperty(name = "state", type = String.class, javaDoc = "결재 상태", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "role", type = String.class, javaDoc = "결재 역할", constraints = @PropertyConstraints(required = true)),
 
@@ -43,7 +46,6 @@ import wt.util.WTException;
 						myRole = @MyRole(name = "line", cardinality = Cardinality.ONE_TO_MANY))
 
 		})
-
 public class ApprovalLine extends _ApprovalLine {
 	static final long serialVersionUID = 1;
 
