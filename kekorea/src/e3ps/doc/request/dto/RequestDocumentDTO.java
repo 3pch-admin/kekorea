@@ -1,6 +1,10 @@
 package e3ps.doc.request.dto;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
@@ -26,11 +30,21 @@ public class RequestDocumentDTO {
 	private String version;
 	private String state;
 	private String model;
+
+	@JsonIgnore
 	private Timestamp pdate;
+
 	private String creator;
+	@JsonIgnore
 	private Timestamp createdDate;
+
 	private String modifier;
+	@JsonIgnore
 	private Timestamp modifiedDate;
+
+	// 변수 담기 용도
+	private ArrayList<Map<String, String>> addRows = new ArrayList<>();
+	private String[] secondarys = null;
 
 	public RequestDocumentDTO() {
 

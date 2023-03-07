@@ -3,7 +3,7 @@
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@page import="e3ps.project.task.Task"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="e3ps.project.template.beans.TemplateViewData"%>
+<%@page import="e3ps.project.template.dto.TemplateViewData"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 ProjectViewData data = (ProjectViewData) request.getAttribute("data");

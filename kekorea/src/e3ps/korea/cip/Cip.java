@@ -9,15 +9,12 @@ import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import e3ps.admin.commonCode.CommonCode;
-import wt.access.PolicyAccessControlled;
-import wt.content.ContentHolder;
 import wt.content.FormatContentHolder;
-import wt.fc.WTObject;
+import wt.fc.Item;
 import wt.ownership.Ownable;
 import wt.util.WTException;
 
-@GenAsPersistable(superClass = WTObject.class, interfaces = { FormatContentHolder.class, Ownable.class,
-		PolicyAccessControlled.class },
+@GenAsPersistable(superClass = Item.class, interfaces = { FormatContentHolder.class, Ownable.class },
 
 		properties = {
 

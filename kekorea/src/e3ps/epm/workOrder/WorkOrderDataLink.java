@@ -18,7 +18,9 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "current", type = Integer.class, constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(columnName = "version"))
+				@GeneratedProperty(name = "current", type = Integer.class, constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(columnName = "version")),
+
+				@GeneratedProperty(name = "sort", type = Integer.class, constraints = @PropertyConstraints(required = true), initialValue = "1")
 
 		}
 

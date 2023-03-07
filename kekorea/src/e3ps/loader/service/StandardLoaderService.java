@@ -4,8 +4,12 @@ import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.CommonCodeType;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.QuerySpecUtils;
+import e3ps.org.Department;
 import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.pom.Transaction;
+import wt.query.QuerySpec;
 import wt.services.StandardManager;
 import wt.session.SessionContext;
 import wt.session.SessionHelper;
@@ -52,6 +56,100 @@ public class StandardLoaderService extends StandardManager implements LoaderServ
 				detailCode.setOwnership(CommonUtils.sessionOwner());
 				detailCode.setParent(makCode);
 				detailCode = (CommonCode) PersistenceHelper.manager.save(detailCode);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+			SessionContext.setContext(pre);
+		}
+	}
+
+	@Override
+	public void loadeInstall(String customer, String install) throws Exception {
+		SessionContext pre = SessionContext.newContext();
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			SessionHelper.manager.setAdministrator();
+
+			CommonCode customerCode = CommonCodeHelper.manager.getCommonCode(customer, "CUSTOMER");
+			CommonCode installCode = CommonCodeHelper.manager.getCommonCode(install, "INSTALL");
+
+			if (customerCode == null) {
+				customerCode = CommonCode.newCommonCode();
+				customerCode.setCode(customer);
+				customerCode.setDescription(customer);
+				customerCode.setCodeType(CommonCodeType.toCommonCodeType("CUSTOMER"));
+				customerCode.setName(customer);
+				customerCode.setEnable(true);
+				customerCode.setOwnership(CommonUtils.sessionOwner());
+				customerCode = (CommonCode) PersistenceHelper.manager.save(customerCode);
+			}
+
+			if (installCode == null) {
+				installCode = CommonCode.newCommonCode();
+				installCode.setCode(install);
+				installCode.setDescription(install);
+				installCode.setCodeType(CommonCodeType.toCommonCodeType("INSTALL"));
+				installCode.setName(install);
+				installCode.setEnable(true);
+				installCode.setOwnership(CommonUtils.sessionOwner());
+				installCode.setParent(customerCode);
+				installCode = (CommonCode) PersistenceHelper.manager.save(installCode);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+			SessionContext.setContext(pre);
+		}
+	}
+
+	@Override
+	public void loaderDepartment() throws Exception {
+		String[] deptCodes = new String[] { "MANAGER", "MACHINE", "ELEC", "SOFT", "GUEST" };
+		String[] deptNames = new String[] { "설계관리", "기계설계", "전기설계", "SW설계", "GUEST" };
+		SessionContext pre = SessionContext.newContext();
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			SessionHelper.manager.setAdministrator();
+
+			Department root = null;
+			QuerySpec query = new QuerySpec();
+			int idx = query.appendClassList(Department.class, true);
+			QuerySpecUtils.toEqualsAnd(query, idx, Department.class, Department.CODE, "ROOT");
+			QueryResult result = PersistenceHelper.manager.find(query);
+			if (result.hasMoreElements()) {
+				Object[] obj = (Object[]) result.nextElement();
+				root = (Department) obj[0];
+			}
+
+			for (int i = 0; i < deptCodes.length; i++) {
+				String deptCode = deptCodes[i];
+				String deptName = deptNames[i];
+				Department department = Department.newDepartment();
+				department.setCode(deptCode);
+				department.setName(deptName);
+				department.setParent(root);
+				department.setSort(i);
+				department.setDepth(root.getDepth() + 1);
+				PersistenceHelper.manager.save(department);
 			}
 
 			trs.commit();

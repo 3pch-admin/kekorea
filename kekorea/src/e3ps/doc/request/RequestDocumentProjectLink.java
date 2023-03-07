@@ -19,7 +19,7 @@ public class RequestDocumentProjectLink extends _RequestDocumentProjectLink {
 
 	static final long serialVersionUID = 1;
 
-	public static RequestDocumentProjectLink newReqDocumentProjectLink(RequestDocument request, Project project)
+	public static RequestDocumentProjectLink newRequestDocumentProjectLink(RequestDocument request, Project project)
 			throws WTException {
 		RequestDocumentProjectLink instance = new RequestDocumentProjectLink();
 		instance.initialize(request, project);

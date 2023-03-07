@@ -97,8 +97,6 @@ public class StandardEventService extends StandardManager implements EventServic
 			Trigger trigger = TriggerBuilder.newTrigger().withIdentity("dummyTriggerName", "group1")
 					.withSchedule(CronScheduleBuilder.cronSchedule("0 0 2 * * ?")).build();
 
-			System.out.print("새벽 2시 시작");
-
 			// schedule it
 			Scheduler scheduler = new StdSchedulerFactory().getScheduler();
 			scheduler.start();

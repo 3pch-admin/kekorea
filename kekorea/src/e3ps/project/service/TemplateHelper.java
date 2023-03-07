@@ -16,7 +16,7 @@ import e3ps.project.TargetTaskSourceTaskLink;
 import e3ps.project.Task;
 import e3ps.project.template.Template;
 import e3ps.project.template.TemplateUserLink;
-import e3ps.project.template.beans.TemplateColumnData;
+import e3ps.project.template.dto.TemplateDTO;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.fc.PagingQueryResult;
@@ -113,7 +113,7 @@ public class TemplateHelper implements MessageHelper {
 
 	public Map<String, Object> find(Map<String, Object> param) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<TemplateColumnData> list = new ArrayList<TemplateColumnData>();
+		List<TemplateDTO> list = new ArrayList<TemplateDTO>();
 		QuerySpec query = null;
 
 		// search param
@@ -238,7 +238,7 @@ public class TemplateHelper implements MessageHelper {
 			while (result.hasMoreElements()) {
 				Object[] obj = (Object[]) result.nextElement();
 				Template template = (Template) obj[0];
-				TemplateColumnData data = new TemplateColumnData(template);
+				TemplateDTO data = new TemplateDTO(template);
 				list.add(data);
 			}
 			map.put("list", list);

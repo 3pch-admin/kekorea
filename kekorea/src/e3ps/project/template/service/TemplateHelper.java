@@ -14,7 +14,7 @@ import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.template.Template;
 import e3ps.project.template.TemplateUserLink;
-import e3ps.project.template.beans.TemplateColumnData;
+import e3ps.project.template.dto.TemplateDTO;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.fc.PagingQueryResult;
@@ -22,7 +22,6 @@ import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.WTUser;
 import wt.query.QuerySpec;
-import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 
 public class TemplateHelper {
@@ -32,7 +31,7 @@ public class TemplateHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<TemplateColumnData> list = new ArrayList<TemplateColumnData>();
+		List<TemplateDTO> list = new ArrayList<TemplateDTO>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Template.class, true);
 		QuerySpecUtils.toOrderBy(query, idx, Template.class, Template.CREATE_TIMESTAMP, true);
@@ -41,7 +40,7 @@ public class TemplateHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			Template template = (Template) obj[0];
-			TemplateColumnData column = new TemplateColumnData(template);
+			TemplateDTO column = new TemplateDTO(template);
 			list.add(column);
 		}
 		map.put("list", list);
@@ -50,8 +49,8 @@ public class TemplateHelper {
 		return map;
 	}
 
-	public ArrayList<HashMap<String, Object>> getTemplateArrayMap() throws Exception {
-		ArrayList<HashMap<String, Object>> list = new ArrayList<>();
+	public ArrayList<HashMap<String, String>> getTemplateArrayMap() throws Exception {
+		ArrayList<HashMap<String, String>> list = new ArrayList<>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Template.class, true);
 		QuerySpecUtils.toBooleanAnd(query, idx, Template.class, Template.ENABLE, true);
@@ -59,7 +58,7 @@ public class TemplateHelper {
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
-			HashMap<String, Object> map = new HashMap<>();
+			HashMap<String, String> map = new HashMap<>();
 			Template template = (Template) obj[0];
 			map.put("key", template.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("value", template.getName());

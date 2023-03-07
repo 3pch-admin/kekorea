@@ -74,8 +74,8 @@
 						type : "TemplateRenderer",
 					},
 					filter : {
-						showIcon : true,
-						useExMenu : true
+						showIcon : false,
+						inline : false
 					},
 				}, {
 					dataField : "cip",
@@ -98,7 +98,11 @@
 							let url = getCallUrl("/cip/view?mak_oid=" + mak_oid + "&detail_oid=" + detail_oid + "&customer_oid=" + customer_oid + "&install_oid=" + install_oid);
 							popup(url);
 						}
-					}
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
 				}, {
 					dataField : "history",
 					headerText : "이력관리",
@@ -117,59 +121,105 @@
 							let url = getCallUrl("/history/view?oid=" + oid);
 							popup(url);
 						}
-					}
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
 				}, {
 					dataField : "projectType_name",
 					headerText : "작번유형",
 					dataType : "string",
 					width : 80,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "customer_name",
 					headerText : "거래처",
 					dataType : "string",
 					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "install_name",
 					headerText : "설치장소",
 					dataType : "string",
 					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "mak_name",
 					headerText : "막종",
 					dataType : "string",
 					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "detail_name",
 					headerText : "막종상세",
 					dataType : "string",
 					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "kekNumber",
 					headerText : "KEK 작번",
 					dataType : "string",
 					width : 130,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "keNumber",
 					headerText : "KE 작번",
 					dataType : "string",
 					width : 130,
+					style : "underline",
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "userId",
 					headerText : "USER ID",
 					dataType : "string",
 					width : 100,
+					style : "underline",
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "description",
 					headerText : "작업 내용",
 					dataType : "string",
 					width : 450,
-					style : "left indent10"
+					style : "left indent10",
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "pdate",
 					headerText : "발행일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "completeDate",
 					headerText : "설계 완료일",
@@ -182,26 +232,46 @@
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
 					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "model",
 					headerText : "모델",
 					dataType : "string",
 					width : 130,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "machine",
 					headerText : "기계 담당자",
 					dataType : "string",
 					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "elec",
 					headerText : "전기 담당자",
 					dataType : "string",
 					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "soft",
 					headerText : "SW 담당자",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "kekProgress",
 					headerText : "진행율",
@@ -212,11 +282,19 @@
 						min : 0,
 						max : 100
 					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
 				}, {
 					dataField : "kekState",
 					headerText : "작번상태",
 					dataType : "string",
 					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				} ]
 			}
 
@@ -250,10 +328,11 @@
 				let params = new Object();
 				let url = getCallUrl("/project/list");
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
-					$("input[name=sessionid]").val(data.sessionid);
-					$("input[name=curPage]").val(data.curPage);
+					document.getElementById("sessionid").value = data.sessionid;
+					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
@@ -270,33 +349,45 @@
 
 			function requestAdditionalData() {
 				let params = new Object();
-				let curPage = $("input[name=curPage]").val();
-				params.sessionid = $("input[name=sessionid]").val();
+				let curPage = document.getElementById("curPage").value
+				let sessionid = document.getElementById("sessionid").value;
+				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/appendData");
+				let url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					if (data.list.length == 0) {
 						last = true;
 					} else {
 						AUIGrid.appendData(myGridID, data.list);
-						$("input[name=curPage]").val(parseInt(curPage) + 1);
+						document.getElementById("curPage").value = parseInt(curPage) + 1;
 					}
 					AUIGrid.removeAjaxLoader(myGridID);
+					parent.closeLayer();
 				})
 			}
 
-			// jquery 모든 DOM구조 로딩 후 
-			$(function() {
-				// 로컬 스토리지에 저장된 컬럼 값 불러오기 see - base.js
+			// jquery 삭제를 해가는 쪽으로 한다..
+			document.addEventListener("DOMContentLoaded", function() {
+				// DOM이 로드된 후 실행할 코드 작성
 				let columns = loadColumnLayout("project-list");
 				createAUIGrid(columns);
-			}).keypress(function(e) {
-				let keyCode = e.keyCode;
+				AUIGrid.resize(myGridID);
+			});
+
+			document.addEventListener("keydown", function(event) {
+				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
+				let keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
+					loadGridData();
 				}
 			})
+
+			window.addEventListener("resize", function() {
+				AUIGrid.resize(myGridID);
+			});
 		</script>
 	</form>
 </body>

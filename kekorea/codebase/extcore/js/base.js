@@ -26,12 +26,15 @@ function call(url, params, callBack, methodType) {
 		dataType: "JSON",
 		crossDomain: true,
 		data: params,
-		async: false,
+		async: true,
 		contentType: "application/json; charset=UTF-8",
+		beforeSend : function() {
+		},
 		success: function(res) {
 			callBack(res);
 		},
-		complete: function() {
+		complete: function(res) {
+
 		},
 		error: function(res) {
 			let status = res.status;

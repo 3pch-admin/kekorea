@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
+import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
 
 @Controller
@@ -47,10 +48,10 @@ public class WorkOrderController extends BaseController {
 	@Description(value = "작업지시서 등록 함수")
 	@ResponseBody
 	@PostMapping(value = "/create")
-	public Map<String, Object> create(@RequestBody Map<String, Object> params) throws Exception {
+	public Map<String, Object> create(@RequestBody WorkOrderDTO dto) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			WorkOrderHelper.service.create(params);
+			WorkOrderHelper.service.create(dto);
 			result.put("msg", SAVE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

@@ -4,17 +4,15 @@ import java.sql.Timestamp;
 
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.ContentUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.ThumnailUtils;
 import lombok.Getter;
 import lombok.Setter;
 import wt.epm.EPMDocument;
-import wt.session.SessionHelper;
 
 @Getter
 @Setter
-public class EpmColumnData {
+public class EpmDTO {
 
 	private String oid;
 	private String cadType;
@@ -34,13 +32,13 @@ public class EpmColumnData {
 	private String state;
 	private String location;
 	private String[] primary;
-	private String creoView;
+//	private String creoView;
 
-	public EpmColumnData() {
+	public EpmDTO() {
 
 	}
 
-	public EpmColumnData(EPMDocument epm) throws Exception {
+	public EpmDTO(EPMDocument epm) throws Exception {
 		setOid(epm.getPersistInfo().getObjectIdentifier().getStringValue());
 		setCadType(epm.getAuthoringApplication().toString());
 		setThumnail(AUIGridUtils.getThumnailSmall(epm));
@@ -66,6 +64,6 @@ public class EpmColumnData {
 		setCreatedDate(epm.getCreateTimestamp());
 		setState(epm.getLifeCycleState().getDisplay());
 		setLocation(epm.getLocation());
-		setCreoView(ThumnailUtils.creoViewURL(this.oid));
+//		setCreoView(ThumnailUtils.creoViewURL(this.oid));
 	}
 }

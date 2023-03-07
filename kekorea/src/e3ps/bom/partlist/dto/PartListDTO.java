@@ -2,6 +2,8 @@ package e3ps.bom.partlist.dto;
 
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.project.Project;
 import lombok.Getter;
@@ -32,9 +34,11 @@ public class PartListDTO {
 	private String install_code;
 	private String install_name;
 	private String install_oid;
+	@JsonIgnore
 	private Timestamp pdate;
 	private String model;
 	private String creator;
+	@JsonIgnore
 	private Timestamp createdDate;
 	private String state;
 
@@ -51,7 +55,7 @@ public class PartListDTO {
 			setMak_name(project.getMak().getName());
 			setMak_oid(project.getMak().getPersistInfo().getObjectIdentifier().getStringValue());
 		}
-		if(project.getDetail() != null) {
+		if (project.getDetail() != null) {
 			setDetail_code(project.getDetail().getCode());
 			setDetail_name(project.getDetail().getName());
 			setDetail_oid(project.getDetail().getPersistInfo().getObjectIdentifier().getStringValue());

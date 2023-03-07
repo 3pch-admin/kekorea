@@ -1,6 +1,7 @@
 package e3ps.epm.workOrder.service;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Map;
 
 import e3ps.common.Constants;
@@ -8,6 +9,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
+import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.project.Project;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
@@ -24,11 +26,11 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 	}
 
 	@Override
-	public void create(Map<String, Object> params) throws Exception {
-		String name = (String) params.get("name");
-		String description = (String) params.get("description");
-		ArrayList<Map<String, Object>> addRows = (ArrayList<Map<String, Object>>) params.get("addRows"); // 도면 일람표
-		ArrayList<Map<String, Object>> _addRows = (ArrayList<Map<String, Object>>) params.get("_addRows"); // 프로젝트
+	public void create(WorkOrderDTO dto) throws Exception {
+		String name = dto.getName();
+		String description = dto.getDescription();
+		ArrayList<Map<String, Object>> addRows = dto.getAddRows(); // 도면 일람표
+		ArrayList<Map<String, String>> _addRows = dto.get_addRows(); // 작번
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
@@ -41,21 +43,26 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			workOrder.setState(Constants.State.INWORK);
 			PersistenceHelper.manager.save(workOrder);
 
-			for (Map<String, Object> _addRow : _addRows) {
-				String oid = (String) _addRow.get("oid");
+			for (Map<String, String> _addRow : _addRows) {
+				String oid = _addRow.get("oid");
 				Project project = (Project) CommonUtils.getObject(oid);
 				WorkOrderProjectLink link = WorkOrderProjectLink.newWorkOrderProjectLink(workOrder, project);
 				PersistenceHelper.manager.save(link);
 			}
 
+			int sort = 0;
 			for (Map<String, Object> addRow : addRows) {
 				String oid = (String) addRow.get("oid");
 				int current = (int) addRow.get("current");
 				Persistable persistable = (Persistable) CommonUtils.getObject(oid);
 				WorkOrderDataLink link = WorkOrderDataLink.newWorkOrderDataLink(workOrder, persistable);
+				link.setSort(sort);
 				link.setCurrent(current);
 				PersistenceHelper.manager.save(link);
+				sort++;
 			}
+
+			WorkOrderHelper.manager.postAfterAction(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
 
 			trs.commit();
 			trs = null;
@@ -67,7 +74,5 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			if (trs != null)
 				trs.rollback();
 		}
-
 	}
-
 }

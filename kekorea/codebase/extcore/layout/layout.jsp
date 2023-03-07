@@ -40,7 +40,6 @@
 			for (let i = 0; i < menu.length; i++) {
 				menu[i].classList.remove("menu");
 			}
-			openLayer();
 			obj.classList.add("menu");
 			$("#subLoc").html(loc);
 			iframe.src = "/Windchill/plm" + url;
@@ -59,12 +58,12 @@
 		})
 
 		function openLayer() {
-			$("#loading_layer").show();
+			document.getElementById("loading_layer").style.display = "block";
 			cover.open();
 		}
 
 		function closeLayer() {
-			$("#loading_layer").hide();
+			document.getElementById("loading_layer").style.display = "none";
 			cover.close();
 		}
 	</script>

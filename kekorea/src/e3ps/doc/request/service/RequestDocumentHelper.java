@@ -11,6 +11,8 @@ import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.dto.RequestDocumentDTO;
 import e3ps.project.Project;
 import wt.fc.PagingQueryResult;
+import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.query.QuerySpec;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
@@ -19,6 +21,9 @@ public class RequestDocumentHelper {
 
 	public static final RequestDocumentHelper manager = new RequestDocumentHelper();
 	public static final RequestDocumentService service = ServiceFactory.getService(RequestDocumentService.class);
+
+	// 의뢰서 저장폴더 
+	public static final String REQUEST_DOCUMENT_ROOT = "/Default/프로젝트/의뢰서";
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -41,7 +46,7 @@ public class RequestDocumentHelper {
 
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
-			RequestDocumentProjectLink link = (RequestDocumentProjectLink)obj[1];
+			RequestDocumentProjectLink link = (RequestDocumentProjectLink) obj[1];
 			RequestDocumentDTO column = new RequestDocumentDTO(link);
 			list.add(column);
 		}
@@ -50,5 +55,23 @@ public class RequestDocumentHelper {
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
 		return map;
+	}
+
+	public ArrayList<RequestDocumentProjectLink> getLinks(RequestDocument requestDocument) throws Exception {
+		ArrayList<RequestDocumentProjectLink> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(RequestDocument.class, true);
+		int idx_link = query.appendClassList(RequestDocumentProjectLink.class, true);
+		QuerySpecUtils.toInnerJoin(query, RequestDocument.class, RequestDocumentProjectLink.class,
+				WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, RequestDocumentProjectLink.class, "roleAObjectRef.key.id",
+				requestDocument.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			RequestDocumentProjectLink link = (RequestDocumentProjectLink) obj[1];
+			list.add(link);
+		}
+		return list;
 	}
 }

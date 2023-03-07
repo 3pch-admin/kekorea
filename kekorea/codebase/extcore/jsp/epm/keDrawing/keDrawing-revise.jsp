@@ -151,8 +151,8 @@
 			}
 		}); // POST 메소드 생략한다
 	}
-
-	$(function() {
+	
+	document.addEventListener("DOMContentLoaded", function() {
 		createAUIGrid(columns);
-	})
+	});
 </script>

@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import e3ps.org.People;
 import e3ps.org.PeopleWTUserLink;
+import e3ps.org.service.OrgHelper;
 import lombok.Getter;
 import lombok.Setter;
 import wt.fc.PersistenceHelper;
@@ -25,7 +26,8 @@ public class UserDTO {
 	private String department_code;
 	private Timestamp createdDate;
 	private boolean resign;
-
+	private String mak;
+	
 	public UserDTO() {
 
 	}
@@ -49,6 +51,7 @@ public class UserDTO {
 		}
 		setCreatedDate(people.getCreateTimestamp());
 		setResign(people.getResign());
+		setMak(OrgHelper.manager.getUserMaks(people));
 	}
 
 	public UserDTO(People people) throws Exception {
@@ -65,5 +68,6 @@ public class UserDTO {
 		}
 		setCreatedDate(people.getCreateTimestamp());
 		setResign(people.getResign());
+		setMak(OrgHelper.manager.getUserMaks(people));
 	}
 }

@@ -106,6 +106,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<li>
 						<a onclick="moveToPage(this, '/template/list', '작번 관리 > 템플릿 조회');">템플릿 조회</a>
 					</li>
+					<li>
+						<a onclick="moveToPage(this, '/issue/list', '작번 관리 > 특이사항 조회');">특이사항 조회</a>
+					</li>
 				</ul>
 			</li>
 			<li>
@@ -124,24 +127,24 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<li>
 						<a onclick="moveToPage(this, '/epm/list', '도면 관리 > KEK 도면 조회');">KEK 도면 조회</a>
 					</li>
-<!-- 					<li> -->
-<!-- 						<a href="form_advanced.html">라이브러리 조회</a> -->
-<!-- 					</li> -->
+					<!-- 					<li> -->
+					<!-- 						<a href="form_advanced.html">라이브러리 조회</a> -->
+					<!-- 					</li> -->
 					<li>
 						<a onclick="moveToPage(this, '/workOrder/list', '도면 관리 > 도면 일람표 조회');">도면 일람표 조회</a>
 					</li>
 					<li>
-						<a href="form_wizard.html">도면 결재</a>
+						<a onclick="moveToPage(this, '/epm/register', '도면 관리 > 도면 결재')">도면 결재</a>
 					</li>
-					<li>
-						<a href="form_file_upload.html">도면 출력</a>
-					</li>
+					<!-- 					<li> -->
+					<!-- 						<a href="form_file_upload.html">도면 출력</a> -->
+					<!-- 					</li> -->
 					<!-- 					<li> -->
 					<!-- 						<a href="form_editors.html">뷰어 등록</a> -->
 					<!-- 					</li> -->
-					<li>
-						<a href="form_autocomplete.html">뷰어 조회</a>
-					</li>
+					<!-- 					<li> -->
+					<!-- 						<a href="form_autocomplete.html">뷰어 조회</a> -->
+					<!-- 					</li> -->
 				</ul>
 			</li>
 			<li>
@@ -195,13 +198,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/meeting/list', '문서 관리 > 회의록 조회');">회의록 조회</a>
-					</li>					
+					</li>
 					<li>
 						<a href="500.html">문서 결재</a>
 					</li>
-<!-- 					<li> -->
-<!-- 						<a onclick="moveToPage(this, '/document/listContents');">첨부파일 조회</a> -->
-<!-- 					</li> -->
+					<!-- 					<li> -->
+					<!-- 						<a onclick="moveToPage(this, '/document/listContents');">첨부파일 조회</a> -->
+					<!-- 					</li> -->
 				</ul>
 			</li>
 			<li>
@@ -253,7 +256,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				</ul>
 			</li>
 			<%
-				if(isAdmin) {
+			if (isAdmin) {
 			%>
 			<li>
 				<a href="css_animation.html">
@@ -276,11 +279,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/meeting/template', '관리자 > 회의록 템플릿');">회의록 템플릿</a>
-					</li>					
+					</li>
 				</ul>
 			</li>
 			<%
-				}
+			}
 			%>
 		</ul>
 	</div>

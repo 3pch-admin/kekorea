@@ -12,7 +12,7 @@ import e3ps.doc.column.DocumentColumnData;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.dto.RequestDocumentDTO;
-import e3ps.epm.dto.EpmColumnData;
+import e3ps.epm.dto.EpmDTO;
 import e3ps.korea.cip.Cip;
 import e3ps.korea.cip.dto.CipDTO;
 import e3ps.part.beans.PartColumnData;
@@ -70,7 +70,7 @@ public class ColumnParseUtils {
 				list.add(data);
 				// epm
 			} else if (per instanceof EPMDocument) {
-				EpmColumnData data = parse((EPMDocument) per);
+				EpmDTO data = parse((EPMDocument) per);
 				list.add(data);
 				// wtpart
 			} else if (per instanceof WTPart) {
@@ -85,8 +85,8 @@ public class ColumnParseUtils {
 		return new PartColumnData(per);
 	}
 
-	private static EpmColumnData parse(EPMDocument per) throws Exception {
-		return new EpmColumnData(per);
+	private static EpmDTO parse(EPMDocument per) throws Exception {
+		return new EpmDTO(per);
 	}
 
 	private static KePartColumnData parse(KePart per) throws Exception {

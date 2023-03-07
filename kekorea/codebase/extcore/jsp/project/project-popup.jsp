@@ -242,7 +242,7 @@ String method = (String) request.getAttribute("method");
 		params.sessionid = $("input[name=sessionid]").val();
 		params.start = (curPage * 100);
 		params.end = (curPage * 100) + 100;
-		let url = getCallUrl("/appendData");
+		let url = getCallUrl("/aui/appendData");
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			if (data.list.length == 0) {

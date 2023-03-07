@@ -18,25 +18,21 @@
 		<col width="*">
 	</colgroup>
 	<tr>
-		<th>
-			<font class="req">도면 일람표 명</font>
-		</th>
+		<th class="req">도면 일람표 명</th>
 		<td class="indent5">
 			<input type="text" name="name" id="name" class="AXInput width-500">
 		</td>
 	</tr>
 	<tr>
-		<th>
-			<font class="req">KEK 작번</font>
-		</th>
+		<th class="req">KEK 작번</th>
 		<td class="indent5">
-			<jsp:include page="/extcore/include/project-include.jsp"></jsp:include>
+			<jsp:include page="/extcore/include/project-include.jsp">
+				<jsp:param value="create" name="mode" />
+			</jsp:include>
 		</td>
 	</tr>
 	<tr>
-		<th>
-			<font class="req">작업 내용</font>
-		</th>
+		<th class="req">작업 내용</th>
 		<td class="indent5">
 			<textarea name="description" id="description" rows="8"></textarea>
 		</td>
@@ -46,6 +42,7 @@
 		<td class="indent5">
 			<jsp:include page="/extcore/include/secondary-include.jsp">
 				<jsp:param value="" name="oid" />
+				<jsp:param value="create" name="mode" />
 			</jsp:include>
 		</td>
 	</tr>
@@ -191,9 +188,9 @@
 			return false;
 		}
 		let params = new Object();
-		params = form(params, "create-table");
 		let addRows = AUIGrid.getAddedRowItems(myGridID); // 도면 일람표
 		let _addRows = AUIGrid.getAddedRowItems(_myGridID); // 프로젝트
+		params.name = document.getElementById("name").value;
 		params.addRows = addRows;
 		params._addRows = _addRows;
 		let url = getCallUrl("/workOrder/create");

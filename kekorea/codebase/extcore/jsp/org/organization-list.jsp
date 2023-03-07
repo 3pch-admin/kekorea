@@ -53,13 +53,13 @@ JSONArray departments = new JSONArray(list);
 					<select name="department" id="department" class="AXSelect">
 						<option value="">선택</option>
 						<%
-							for(HashMap<String, Object> map : list) {
-								String oid = (String)map.get("oid");
-								String name = (String)map.get("name");
+						for (HashMap<String, Object> map : list) {
+							String oid = (String) map.get("oid");
+							String name = (String) map.get("name");
 						%>
-						<option value="<%=oid %>"><%=name %></option>
+						<option value="<%=oid%>"><%=name%></option>
 						<%
-							}
+						}
 						%>
 					</select>
 				</td>
@@ -74,17 +74,12 @@ JSONArray departments = new JSONArray(list);
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('part-list');">
-					<input type="button" value="조회" title="조회" onclick="loadGridData();">
-					<%
-					if (isAdmin) {
-					%>
-					<input type="button" value="퇴사처리" title="퇴사처리" onclick="fire();" class="red">
-					<%
-					}
-					%>
+					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('organization-list');">
+					<input type="button" value="저장" title="저장" onclick="save();">
 				</td>
-				<td class="right"></td>
+				<td class="right">
+					<input type="button" value="조회" title="조회" onclick="loadGridData();">
+				</td>
 			</tr>
 		</table>
 
@@ -92,38 +87,112 @@ JSONArray departments = new JSONArray(list);
 		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
-			let maks = <%=maks%>;
-			let departments = <%=departments%>;
+			let maks =
+		<%=maks%>
+			let departments =
+		<%=departments%>
+			let dutys = [ "사장", "부사장", "PL", "TL" ];
 			function _layout() {
 				return [ {
 					dataField : "name",
 					headerText : "이름",
 					dataType : "string",
 					width : 100,
+					editable : false,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						inline : true
 					},
 				}, {
 					dataField : "id",
 					headerText : "아이디",
 					dataType : "string",
-					width : 100
+					width : 100,
+					editable : false,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
-					dataField : "dufy",
+					dataField : "duty",
 					headerText : "직급",
 					dataType : "string", // 날짜 및 사람명 컬럼 사이즈 100
-					width : 130
+					width : 130,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+					editable : true,
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+						},
+						onClick : function(event) {
+							// 아이콘을 클릭하면 수정으로 진입함.
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "DropDownListRenderer",
+						showEditorBtn : false,
+						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
+						multipleMode : false, // 다중 선택 모드(기본값 : false)
+						showCheckAll : false, // 다중 선택 모드에서 전체 체크 선택/해제 표시(기본값:false);
+						list : dutys,
+					},
 				}, {
-					dataField : "department_name",
+					dataField : "department_oid",
 					headerText : "부서",
 					dataType : "string",
-					width : 150
+					width : 150,
+					editable : true,
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+						},
+						onClick : function(event) {
+							// 아이콘을 클릭하면 수정으로 진입함.
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "DropDownListRenderer",
+						showEditorBtn : false,
+						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
+						multipleMode : false, // 다중 선택 모드(기본값 : false)
+						showCheckAll : false, // 다중 선택 모드에서 전체 체크 선택/해제 표시(기본값:false);
+						list : departments,
+						keyField : "oid", // key 에 해당되는 필드명
+						valueField : "name", // value 에 해당되는 필드명,			
+					},
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
+						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+						for (let i = 0, len = departments.length; i < len; i++) {
+							if (departments[i]["oid"] == value) {
+								retStr = departments[i]["name"];
+								break;
+							}
+						}
+						return retStr == "" ? value : retStr;
+					},
 				}, {
 					dataField : "mak",
 					headerText : "관련막종",
 					dataType : "string",
 					style : "left indent10",
+					editable : true,
+					headerTooltip : {
+						show : true,
+						tooltipHtml : "한국 생산의 차트에서 사용자가 원하는 막종만 볼 수 있도록 설정 하는 컬럼입니다."
+					},
 					renderer : {
 						type : "IconRenderer",
 						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
@@ -157,25 +226,43 @@ JSONArray departments = new JSONArray(list);
 						}
 						return retStr == "" ? value : retStr;
 					},
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "email",
 					headerText : "이메일",
 					dataType : "string",
 					width : 250,
+					editable : true,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "resign",
 					headerText : "퇴사여부",
 					dataType : "boolean",
 					width : 100,
 					renderer : {
-						type : "CheckBoxEditRenderer"
-					}
+						type : "CheckBoxEditRenderer",
+						editable : true
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
 				}, {
 					dataField : "createdDate",
 					headerText : "등록일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				} ]
 			}
 
@@ -197,6 +284,7 @@ JSONArray departments = new JSONArray(list);
 					showInlineFilter : true,
 					// 그리드 공통속성 끝
 					showRowCheckColumn : true, // 엑스트라 체크 박스 사용 여부
+					editable : true
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
@@ -210,10 +298,11 @@ JSONArray departments = new JSONArray(list);
 				let params = new Object();
 				let url = getCallUrl("/org/list");
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
-					$("input[name=sessionid]").val(data.sessionid);
-					$("input[name=curPage]").val(data.curPage);
+					document.getElementById("sessionid").value = data.sessionid;
+					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
@@ -230,37 +319,68 @@ JSONArray departments = new JSONArray(list);
 
 			function requestAdditionalData() {
 				let params = new Object();
-				let curPage = $("input[name=curPage]").val();
-				params.sessionid = $("input[name=sessionid]").val();
+				let curPage = document.getElementById("curPage").value
+				let sessionid = document.getElementById("sessionid").value
+				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/appendData");
+				let url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					if (data.list.length == 0) {
 						last = true;
 					} else {
 						AUIGrid.appendData(myGridID, data.list);
-						$("input[name=curPage]").val(parseInt(curPage) + 1);
+						document.getElementById("curPage").value = parseInt(curPage) + 1;
 					}
 					AUIGrid.removeAjaxLoader(myGridID);
+					parent.closeLayer();
 				})
 			}
 
-			// jquery 모든 DOM구조 로딩 후 
-			$(function() {
-				// 로컬 스토리지에 저장된 컬럼 값 불러오기 see - base.js
-				let columns = loadColumnLayout("part-list");
+			function save() {
+				if (!confirm("저장 하시겠습니까?")) {
+					return false;
+				}
+
+				let params = new Object();
+				let editRows = AUIGrid.getEditedRowItems(myGridID);
+				let url = getCallUrl("/org/save");
+				params.editRows = editRows;
+				parent.openLayer();
+				call(url, params, function(data) {
+					alert(data.msg);
+					// 레이더 닫고
+					parent.closeLayer();
+					if (data.result) {
+						// 다시 안에서 레이어 오픈..
+						loadGridData();
+					} else {
+						// 실패 처리..
+					}
+				})
+			}
+
+			// jquery 삭제를 해가는 쪽으로 한다..
+			document.addEventListener("DOMContentLoaded", function() {
+				// DOM이 로드된 후 실행할 코드 작성
+				let columns = loadColumnLayout("organization-list");
 				createAUIGrid(columns);
-				
-				// 셀렉트박스 바인딩
-				selectBox("department");
-				
-			}).keypress(function(e) {
-				let keyCode = e.keyCode;
+				AUIGrid.resize(myGridID);
+			});
+
+			document.addEventListener("keydown", function(event) {
+				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
+				let keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
+					loadGridData();
 				}
 			})
+
+			window.addEventListener("resize", function() {
+				AUIGrid.resize(myGridID);
+			});
 		</script>
 	</form>
 </body>

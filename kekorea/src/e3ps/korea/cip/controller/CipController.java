@@ -2,18 +2,23 @@ package e3ps.korea.cip.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
@@ -46,7 +51,7 @@ public class CipController extends BaseController {
 
 	@Description(value = "CIP 조회 함수")
 	@ResponseBody
-	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -60,12 +65,43 @@ public class CipController extends BaseController {
 	}
 
 	@Description(value = "CIP 등록")
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	@PostMapping(value = "/save")
 	@ResponseBody
-	public Map<String, Object> create(@RequestBody Map<String, Object> params) throws Exception {
+	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
+			throws Exception {
+		ArrayList<LinkedHashMap<String, Object>> addRows = params.get("addRows");
+		ArrayList<LinkedHashMap<String, Object>> editRows = params.get("editRows");
+		ArrayList<LinkedHashMap<String, Object>> removeRows = params.get("removeRows");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			CipHelper.service.create(params);
+
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+			ArrayList<CipDTO> addRow = new ArrayList<>();
+			for (LinkedHashMap<String, Object> add : addRows) {
+				CipDTO dto = mapper.convertValue(add, CipDTO.class);
+				addRow.add(dto);
+			}
+
+			ArrayList<CipDTO> editRow = new ArrayList<>();
+			for (LinkedHashMap<String, Object> edit : editRows) {
+				CipDTO dto = mapper.convertValue(edit, CipDTO.class);
+				editRow.add(dto);
+			}
+
+			ArrayList<CipDTO> removeRow = new ArrayList<>();
+			for (LinkedHashMap<String, Object> remove : removeRows) {
+				CipDTO dto = mapper.convertValue(remove, CipDTO.class);
+				removeRow.add(dto);
+			}
+
+			HashMap<String, List<CipDTO>> dataMap = new HashMap<>();
+			dataMap.put("addRows", addRow); // 삭제행
+			dataMap.put("editRows", editRow); // 삭제행
+			dataMap.put("removeRows", removeRow); // 삭제행
+
+			CipHelper.service.save(dataMap);
 			result.put("result", SUCCESS);
 			result.put("msg", SAVE_MSG);
 		} catch (Exception e) {
@@ -76,7 +112,7 @@ public class CipController extends BaseController {
 	}
 
 	@Description(value = "막종상세, 거래처, 설치라인 관련 CIP")
-	@RequestMapping(value = "/view", method = RequestMethod.GET)
+	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String mak_oid, @RequestParam String detail_oid,
 			@RequestParam String customer_oid, @RequestParam String install_oid) throws Exception {
 		ModelAndView model = new ModelAndView();

@@ -1,6 +1,5 @@
 package e3ps.bom.partlist.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,20 +12,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.admin.commonCode.CommonCode;
-import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.bom.partlist.service.PartListHelper;
+import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.common.controller.BaseController;
 
 @Controller
 @RequestMapping(value = "/partlist/**")
-public class PartListController extends BaseController {
+public class PartlistController extends BaseController {
 
 	@Description(value = "수배표 조회 페이지")
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/bom/partList/partList-list.jsp");
+		model.setViewName("/extcore/jsp/bom/partlist/partlist-list.jsp");
 		return model;
 	}
 
@@ -36,7 +33,7 @@ public class PartListController extends BaseController {
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = PartListHelper.manager.list(params);
+			result = PartlistHelper.manager.list(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,13 +1,15 @@
 package e3ps.korea.cip.service;
 
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.korea.cip.Cip;
+import e3ps.korea.cip.dto.CipDTO;
 import wt.fc.PersistenceHelper;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
@@ -20,26 +22,26 @@ public class StandardCipService extends StandardManager implements CipService {
 	}
 
 	@Override
-	public void create(Map<String, Object> params) throws Exception {
-		ArrayList<Map<String, Object>> addRows = (ArrayList<Map<String, Object>>) params.get("addRows");
-		ArrayList<Map<String, Object>> editRows = (ArrayList<Map<String, Object>>) params.get("editRows");
-		ArrayList<Map<String, Object>> removeRows = (ArrayList<Map<String, Object>>) params.get("removeRows");
+	public void save(HashMap<String, List<CipDTO>> dataMap) throws Exception {
+		List<CipDTO> addRows = dataMap.get("addRows");
+		List<CipDTO> editRows = dataMap.get("editRows");
+		List<CipDTO> removeRows = dataMap.get("removeRows");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			for (Map<String, Object> addRow : addRows) {
-				String item = (String) addRow.get("item");
-				String improvements = (String) addRow.get("improvements");
-				String improvement = (String) addRow.get("improvement");
-				String apply = (String) addRow.get("apply");
-				String note = (String) addRow.get("note");
-				String mak = (String) addRow.get("mak_code");
-				String detail = (String) addRow.get("detail_code");
-				String customer = (String) addRow.get("customer_code");
-				String install = (String) addRow.get("install_code");
-				String preViewPath = (String) addRow.get("preViewPath");
-				ArrayList<String> secondaryPaths = (ArrayList<String>) addRow.get("secondaryPaths");
+			for (CipDTO dto : addRows) {
+				String item = dto.getItem();
+				String improvements = dto.getImprovements();
+				String improvement = dto.getImprovement();
+				String apply = dto.getApply();
+				String note = dto.getNote();
+				String mak = dto.getMak_code();
+				String detail = dto.getDetail_code();
+				String customer = dto.getCustomer_code();
+				String install = dto.getInstall_code();
+				String preViewPath = dto.getPreViewPath();
+				ArrayList<String> secondaryPaths = dto.getSecondaryPaths();
 
 				Cip cip = Cip.newCip();
 				cip.setOwnership(CommonUtils.sessionOwner());
@@ -64,25 +66,25 @@ public class StandardCipService extends StandardManager implements CipService {
 
 			}
 
-			for (Map<String, Object> removeRow : removeRows) {
-				String oid = (String) removeRow.get("oid");
+			for (CipDTO dto : removeRows) {
+				String oid = dto.getOid();
 				Cip cip = (Cip) CommonUtils.getObject(oid);
 				PersistenceHelper.manager.delete(cip);
 			}
 
-			for (Map<String, Object> editRow : editRows) {
-				String item = (String) editRow.get("item");
-				String improvements = (String) editRow.get("improvements");
-				String improvement = (String) editRow.get("improvement");
-				String apply = (String) editRow.get("apply");
-				String note = (String) editRow.get("note");
-				String mak = (String) editRow.get("mak_code");
-				String detail = (String) editRow.get("detail_code");
-				String customer = (String) editRow.get("customer_code");
-				String install = (String) editRow.get("install_code");
-				String oid = (String) editRow.get("oid");
-				String preViewPath = (String) editRow.get("preViewPath");
-				ArrayList<String> secondaryPaths = (ArrayList<String>) editRow.get("secondaryPaths");
+			for (CipDTO dto : editRows) {
+				String item = dto.getItem();
+				String improvements = dto.getImprovements();
+				String improvement = dto.getImprovement();
+				String apply = dto.getApply();
+				String note = dto.getNote();
+				String mak = dto.getMak_code();
+				String detail = dto.getDetail_code();
+				String customer = dto.getCustomer_code();
+				String install = dto.getInstall_code();
+				String oid = dto.getOid();
+				String preViewPath = dto.getPreViewPath();
+				ArrayList<String> secondaryPaths = dto.getSecondaryPaths();
 
 				Cip cip = (Cip) CommonUtils.getObject(oid);
 				cip.setItem(item);

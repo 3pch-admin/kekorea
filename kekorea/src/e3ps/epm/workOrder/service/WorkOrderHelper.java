@@ -3,6 +3,7 @@ package e3ps.epm.workOrder.service;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import e3ps.common.util.DateUtils;
@@ -17,17 +18,25 @@ import e3ps.project.Project;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.org.WTPrincipal;
 import wt.query.ClassAttribute;
 import wt.query.OrderBy;
 import wt.query.QuerySpec;
 import wt.query.SearchCondition;
+import wt.queue.ProcessingQueue;
+import wt.queue.QueueHelper;
 import wt.services.ServiceFactory;
+import wt.session.SessionHelper;
 import wt.util.WTAttributeNameIfc;
 
 public class WorkOrderHelper {
 
 	public static final WorkOrderHelper manager = new WorkOrderHelper();
 	public static final WorkOrderService service = ServiceFactory.getService(WorkOrderService.class);
+
+	private static final String processQueueName = "WorkOrderProcessQueue";
+	private static final String className = "e3ps.common.aspose.AsposeUtils";
+	private static final String methodName = "attachMergePdf";
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		ArrayList<WorkOrderDTO> list = new ArrayList<>();
@@ -118,5 +127,18 @@ public class WorkOrderHelper {
 			}
 		}
 		return map;
+	}
+
+	public void postAfterAction(String oid) throws Exception {
+		WTPrincipal principal = SessionHelper.manager.getPrincipal();
+		ProcessingQueue queue = (ProcessingQueue) QueueHelper.manager.getQueue(processQueueName, ProcessingQueue.class);
+
+		Hashtable<String, String> hash = new Hashtable<>();
+		hash.put("oid", oid);
+
+		Class[] argClasses = { Hashtable.class };
+		Object[] argObjects = { hash };
+
+		queue.addEntry(principal, methodName, className, argClasses, argObjects);
 	}
 }

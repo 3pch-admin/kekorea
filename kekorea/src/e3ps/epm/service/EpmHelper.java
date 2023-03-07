@@ -19,7 +19,7 @@ import e3ps.epm.ViewerData;
 import e3ps.epm.column.EpmLibraryColumnData;
 import e3ps.epm.column.EpmProductColumnData;
 import e3ps.epm.column.ViewerColumnData;
-import e3ps.epm.dto.EpmColumnData;
+import e3ps.epm.dto.EpmDTO;
 import e3ps.org.People;
 import wt.clients.folder.FolderTaskLogic;
 import wt.epm.EPMDocument;
@@ -660,7 +660,7 @@ public class EpmHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<EpmColumnData> list = new ArrayList<EpmColumnData>();
+		List<EpmDTO> list = new ArrayList<EpmDTO>();
 		QuerySpec query = new QuerySpec();
 
 		int idx = query.appendClassList(EPMDocument.class, true);
@@ -677,7 +677,7 @@ public class EpmHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			EPMDocument epm = (EPMDocument) obj[0];
-			EpmColumnData column = new EpmColumnData(epm);
+			EpmDTO column = new EpmDTO(epm);
 			list.add(column);
 		}
 		map.put("list", list);

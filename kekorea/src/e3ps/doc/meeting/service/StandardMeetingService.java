@@ -60,7 +60,6 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 
 	@Override
 	public void create(MeetingDTO dto) throws Exception {
-		System.out.println(dto.toString());
 		String name = dto.getName();
 		String content = dto.getContent();
 		String template = dto.getTemplate();

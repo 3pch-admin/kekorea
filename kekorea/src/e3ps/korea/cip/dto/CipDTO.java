@@ -1,8 +1,10 @@
 package e3ps.korea.cip.dto;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
@@ -10,9 +12,11 @@ import e3ps.common.util.ContentUtils;
 import e3ps.korea.cip.Cip;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class CipDTO {
 
 	private String oid;
@@ -20,7 +24,6 @@ public class CipDTO {
 	private String improvements;
 	private String improvement;
 	private String apply;
-
 	private String mak_code;
 	private String mak_name;
 	private String mak_oid;
@@ -35,10 +38,17 @@ public class CipDTO {
 	private String customer_oid;
 	private String note;
 	private String creator;
+
+	@JsonIgnore
 	private Timestamp createdDate;
+
 	private String createdDate_txt;
 	private String preView;
 	private String icons;
+
+	// 변수 담기용
+	private String preViewPath;
+	private ArrayList<String> secondaryPaths = new ArrayList<>();
 
 	public CipDTO() {
 

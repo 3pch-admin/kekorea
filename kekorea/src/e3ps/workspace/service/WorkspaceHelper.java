@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ptc.wpcfg.engine2.validate.impl.ErrorReport;
-
 import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.common.util.CommonUtils;
@@ -47,12 +45,6 @@ import wt.util.WTAttributeNameIfc;
 
 public class WorkspaceHelper {
 
-	// 직렬 병렬
-	public static final String SERIES = "series";
-	public static final String PARALLEL = "parallel";
-
-	public static final String MODULE = "approval";
-
 	/**
 	 * 결재 타입 상수 모음
 	 */
@@ -63,6 +55,7 @@ public class WorkspaceHelper {
 	public static final String MASTER_APPROVING = "승인중";
 	public static final String MASTER_APPROVAL_COMPLETE = "결재완료";
 	public static final String MASTER_RETURN = "반려됨";
+	public static final String MASTER_REJECT = "검토반려";
 
 	/**
 	 * 기안 라인 상태값 상수
@@ -86,7 +79,7 @@ public class WorkspaceHelper {
 
 	/**
 	 * 수신 라인 상태값 상수
-	 */ 
+	 */
 	public static final String RECEIVE_READY = "수신확인중";
 	public static final String RECEIVE_COMPLETE = "수신완료";
 
@@ -107,6 +100,11 @@ public class WorkspaceHelper {
 	 * ColumnData 구분 상수 값
 	 */
 	private static final String COLUMN_APPROVAL = "COLUMN_APPROVAL";
+	private static final String COLUMN_AGREE = "COLUMN_AGREE";
+	private static final String COLUMN_RECEIVE = "COLUMN_RECEIVE";
+	private static final String COLUMN_COMPLETE = "COLUMN_COMPLETE";
+	private static final String COLUMN_REJECT = "COLUMN_REJECT";
+	private static final String COLUMN_PROGRESS = "COLUMN_PROGRESS";
 
 	public static final WorkspaceService service = ServiceFactory.getService(WorkspaceService.class);
 	public static final WorkspaceHelper manager = new WorkspaceHelper();
@@ -259,339 +257,6 @@ public class WorkspaceHelper {
 			e.printStackTrace();
 		}
 		return list;
-	}
-
-	public PagingQueryResult findAgreeAndApprovalList() {
-		QuerySpec query = null;
-		PagingQueryResult result = null;
-
-		try {
-
-			query = new QuerySpec();
-			int idx = query.appendClassList(ApprovalLine.class, true);
-			int idx_m = query.appendClassList(ApprovalMaster.class, true);
-
-			WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-
-			SearchCondition sc = null;
-
-			ClassAttribute ca = null;
-			ClassAttribute ca_m = null;
-
-			ca = new ClassAttribute(ApprovalLine.class, "masterReference.key.id");
-			ca_m = new ClassAttribute(ApprovalMaster.class, "thePersistInfo.theObjectIdentifier.id");
-
-			sc = new SearchCondition(ca, "=", ca_m);
-			query.appendWhere(sc, new int[] { idx, idx_m });
-
-			if (query.getConditionCount() > 0)
-				query.appendAnd();
-			long ids = sessionUser.getPersistInfo().getObjectIdentifier().getId();
-			sc = new SearchCondition(ApprovalLine.class, "ownership.owner.key.id", "=", ids);
-			query.appendWhere(sc, new int[] { idx });
-
-			if (query.getConditionCount() > 0)
-				query.appendAnd();
-
-			query.appendOpenParen();
-
-			sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", LINE_APPROVING);
-			query.appendWhere(sc, new int[] { idx });
-			query.appendOr();
-
-			sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", LINE_AGREE_STAND);
-			query.appendWhere(sc, new int[] { idx });
-
-			query.appendCloseParen();
-
-			if (query.getConditionCount() > 0)
-				query.appendAnd();
-
-			query.appendOpenParen();
-
-			sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=", AGREE_LINE);
-			query.appendWhere(sc, new int[] { idx });
-			query.appendOr();
-
-			sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=", APP_LINE);
-			query.appendWhere(sc, new int[] { idx });
-
-			query.appendCloseParen();
-
-			ca = new ClassAttribute(ApprovalLine.class, WTAttributeNameIfc.CREATE_STAMP_NAME);
-			OrderBy orderBy = new OrderBy(ca, true);
-			query.appendOrderBy(orderBy, new int[] { idx });
-
-			result = PagingSessionHelper.openPagingSession(0, 24, query);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
-
-	public Map<String, Object> findApprovalList(Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<ApprovalColumnData> list = new ArrayList<ApprovalColumnData>();
-		QuerySpec query = null;
-
-		String name = (String) param.get("name");
-		String creatorsOid = (String) param.get("creatorsOid");
-		String predate = (String) param.get("predate");
-		String postdate = (String) param.get("postdate");
-
-		String sub_data = (String) param.get("sub_data");
-
-		// 정렬
-		String sort = (String) param.get("sort");
-		String sortKey = (String) param.get("sortKey");
-		try {
-
-			query = new QuerySpec();
-			int idx = query.appendClassList(ApprovalLine.class, true);
-			int idx_m = query.appendClassList(ApprovalMaster.class, true);
-
-			WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-
-			SearchCondition sc = null;
-
-			ClassAttribute ca = null;
-			ClassAttribute ca_m = null;
-
-			ca = new ClassAttribute(ApprovalLine.class, "masterReference.key.id");
-			ca_m = new ClassAttribute(ApprovalMaster.class, "thePersistInfo.theObjectIdentifier.id");
-
-			sc = new SearchCondition(ca, "=", ca_m);
-			query.appendWhere(sc, new int[] { idx, idx_m });
-
-			// 대소문자 구분
-			if (!StringUtils.isNull(name)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ca = new ClassAttribute(ApprovalLine.class, ApprovalLine.NAME);
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(name);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-//			if (!CommonUtils.isAdmin()) {
-			if (!"wcadmin".equals(sessionUser.getFullName())) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				long ids = sessionUser.getPersistInfo().getObjectIdentifier().getId();
-				sc = new SearchCondition(ApprovalLine.class, "ownership.owner.key.id", "=", ids);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(sub_data)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				query.appendOpenParen();
-
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", LINE_APPROVAL_COMPLETE);
-				query.appendWhere(sc, new int[] { idx });
-				query.appendOr();
-
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", LINE_APPROVING);
-				query.appendWhere(sc, new int[] { idx });
-				query.appendOr();
-
-				// sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=",
-				// LINE_SUBMIT_COMPLETE);
-				// query.appendWhere(sc, new int[] { idx });
-				// query.appendOr();
-
-				// sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=",
-				// LINE_STAND);
-				// query.appendWhere(sc, new int[] { idx });
-
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", LINE_RETURN_COMPLETE);
-				query.appendWhere(sc, new int[] { idx });
-
-				query.appendCloseParen();
-
-			} else {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", LINE_APPROVING);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (query.getConditionCount() > 0)
-				query.appendAnd();
-
-			sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=", APP_LINE);
-			query.appendWhere(sc, new int[] { idx });
-
-			if (!StringUtils.isNull(creatorsOid)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ReferenceFactory rf = new ReferenceFactory();
-				People user = (People) rf.getReference(creatorsOid).getObject();
-				long user_ids = user.getUser().getPersistInfo().getObjectIdentifier().getId();
-				sc = new SearchCondition(ApprovalMaster.class, "ownership.owner.key.id", SearchCondition.EQUAL,
-						user_ids);
-				query.appendWhere(sc, new int[] { idx_m });
-
-			}
-
-			if (!StringUtils.isNull(predate)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp start = DateUtils.convertStartDate(predate);
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP,
-						SearchCondition.GREATER_THAN_OR_EQUAL, start);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(postdate)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp end = DateUtils.convertEndDate(postdate);
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP,
-						SearchCondition.LESS_THAN_OR_EQUAL, end);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (StringUtils.isNull(sort)) {
-				sort = "true";
-			}
-
-			if (StringUtils.isNull(sortKey)) {
-				// sortKey = WTAttributeNameIfc.MODIFY_STAMP_NAME;
-				sortKey = ApprovalLine.CREATE_TIMESTAMP;
-			}
-
-			ca = new ClassAttribute(ApprovalLine.class, sortKey);
-			OrderBy orderBy = new OrderBy(ca, Boolean.parseBoolean(sort));
-			query.appendOrderBy(orderBy, new int[] { idx });
-
-			PageQueryUtils pager = new PageQueryUtils(param, query);
-			PagingQueryResult result = pager.find();
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				ApprovalLine line = (ApprovalLine) obj[0];
-				ApprovalColumnData data = new ApprovalColumnData(line);
-				list.add(data);
-			}
-
-			map.put("size", pager.getTotalSize());
-			map.put("list", list);
-			map.put("lastPage", pager.getLastPage());
-			map.put("topListCount", pager.getTotal());
-			map.put("sessionid", pager.getSessionId());
-			map.put("curPage", pager.getCpage());
-			map.put("total", pager.getTotalSize());
-			map.put("result", "SUCCESS");
-
-		} catch (Exception e) {
-			map.put("result", "FAIL");
-			e.printStackTrace();
-		}
-		return map;
-	}
-
-	public Map<String, Object> findIng(Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<IngColumnData> list = new ArrayList<IngColumnData>();
-		QuerySpec query = null;
-		String name = (String) param.get("name");
-		// 정렬
-		String sort = (String) param.get("sort");
-		String sortKey = (String) param.get("sortKey");
-		try {
-
-			query = new QuerySpec();
-			int idx = query.appendClassList(ApprovalMaster.class, true);
-
-			SearchCondition sc = null;
-
-			// 대소문자 구분
-			if (!StringUtils.isNull(name)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ClassAttribute ca = new ClassAttribute(ApprovalMaster.class, ApprovalMaster.NAME);
-				// ColumnExpression ce = ConstantExpression.newExpression("%" +
-				// name.toUpperCase() + "%");
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(name);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			// if (!StringUtils.isNull(objType)) {
-			// if (query.getConditionCount() > 0)
-			// query.appendAnd();
-			// sc = new SearchCondition(ApprovalMaster.class, ApprovalMaster.OBJ_TYPE, "=",
-			// objType);
-			// query.appendWhere(sc, new int[] { idx });
-			// }
-
-			WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-//			if (!CommonUtils.isAdmin()) {
-			if (!"wcadmin".equals(sessionUser.getFullName())) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				long ids = sessionUser.getPersistInfo().getObjectIdentifier().getId();
-				sc = new SearchCondition(ApprovalMaster.class, "ownership.owner.key.id", "=", ids);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (query.getConditionCount() > 0)
-				query.appendAnd();
-
-			query.appendOpenParen();
-			sc = new SearchCondition(ApprovalMaster.class, ApprovalMaster.STATE, SearchCondition.EQUAL, LINE_APPROVING);
-			query.appendWhere(sc, new int[] { idx });
-
-			query.appendOr();
-			sc = new SearchCondition(ApprovalMaster.class, ApprovalMaster.STATE, SearchCondition.EQUAL,
-					LINE_AGREE_STAND);
-			query.appendWhere(sc, new int[] { idx });
-
-			query.appendCloseParen();
-
-			if (StringUtils.isNull(sort)) {
-				sort = "true";
-			}
-
-			if (StringUtils.isNull(sortKey)) {
-				// sortKey = WTAttributeNameIfc.CREATE_STAMP_NAME;
-				sortKey = WTAttributeNameIfc.MODIFY_STAMP_NAME;
-			}
-
-			ClassAttribute ca = new ClassAttribute(ApprovalMaster.class, sortKey);
-			OrderBy orderBy = new OrderBy(ca, Boolean.parseBoolean(sort));
-			query.appendOrderBy(orderBy, new int[] { idx });
-
-			PageQueryUtils pager = new PageQueryUtils(param, query);
-			PagingQueryResult result = pager.find();
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				ApprovalMaster master = (ApprovalMaster) obj[0];
-				IngColumnData data = new IngColumnData(master);
-				list.add(data);
-			}
-
-			map.put("size", pager.getTotalSize());
-			map.put("list", list);
-			map.put("lastPage", pager.getLastPage());
-			map.put("topListCount", pager.getTotal());
-			map.put("sessionid", pager.getSessionId());
-			map.put("curPage", pager.getCpage());
-			map.put("total", pager.getTotalSize());
-			map.put("result", "SUCCESS");
-		} catch (Exception e) {
-			map.put("result", "FAIL");
-			e.printStackTrace();
-		}
-		return map;
 	}
 
 	public String[] getContractEpmData(Persistable per) throws Exception {
@@ -765,577 +430,6 @@ public class WorkspaceHelper {
 			isCheckPoint = true;
 		}
 		return isCheckPoint;
-	}
-
-	public Map<String, Object> findCompleteList(Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<CompleteColumnData> list = new ArrayList<CompleteColumnData>();
-
-		QuerySpec query = null;
-		String name = (String) param.get("name");
-		String creatorsOid = (String) param.get("creatorsOid");
-		String predate = (String) param.get("predate");
-		String postdate = (String) param.get("postdate");
-		String type = (String) param.get("type");
-		// 정렬
-		String sort = (String) param.get("sort");
-		String sortKey = (String) param.get("sortKey");
-		try {
-
-			query = new QuerySpec();
-			// int idx = query.appendClassList(ApprovalLine.class, true);
-			int idx_m = query.appendClassList(ApprovalMaster.class, true);
-
-			WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-
-			SearchCondition sc = null;
-
-			ClassAttribute ca = null;
-//			ClassAttribute ca_m = null;
-
-			// ca = new ClassAttribute(ApprovalLine.class, "masterReference.key.id");
-			// ca_m = new ClassAttribute(ApprovalMaster.class,
-			// "thePersistInfo.theObjectIdentifier.id");
-
-			// sc = new SearchCondition(ca, "=", ca_m);
-			// query.appendWhere(sc, new int[] { idx, idx_m });
-
-			// 대소문자 구분
-			if (!StringUtils.isNull(name)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ca = new ClassAttribute(ApprovalMaster.class, ApprovalMaster.NAME);
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(name);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx_m });
-			}
-
-			if (!StringUtils.isNull(type)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ca = new ClassAttribute(ApprovalMaster.class, ApprovalMaster.TYPE);
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(type);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx_m });
-			}
-
-//			if (!CommonUtils.isAdmin()) {
-			if (!"wcadmin".equals(sessionUser.getFullName())) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				long ids = sessionUser.getPersistInfo().getObjectIdentifier().getId();
-				sc = new SearchCondition(ApprovalMaster.class, "ownership.owner.key.id", "=", ids);
-				query.appendWhere(sc, new int[] { idx_m });
-			}
-
-			if (query.getConditionCount() > 0)
-				query.appendAnd();
-
-			// query.appendOpenParen();
-			//
-			// sc = new SearchCondition(ApprovalLine.class, ApprovalLine.COMPLETE_USER_ID,
-			// "=", sessionUser.getName());
-			// query.appendWhere(sc, new int[] { idx });
-			// query.appendAnd();
-			//
-			// sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=",
-			// APP_LINE);
-			// query.appendWhere(sc, new int[] { idx });
-			// query.appendAnd();
-			//
-			// sc = new SearchCondition(ApprovalLine.class, ApprovalLine.ROLE, "=",
-			// WORKING_SUBMIT);
-			// query.appendWhere(sc, new int[] { idx });
-			//
-			// query.appendCloseParen();
-
-			sc = new SearchCondition(ApprovalMaster.class, ApprovalMaster.STATE, "=", MASTER_APPROVAL_COMPLETE);
-			query.appendWhere(sc, new int[] { idx_m });
-
-			if (!StringUtils.isNull(creatorsOid)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ReferenceFactory rf = new ReferenceFactory();
-				People user = (People) rf.getReference(creatorsOid).getObject();
-				long user_ids = user.getUser().getPersistInfo().getObjectIdentifier().getId();
-				sc = new SearchCondition(ApprovalMaster.class, "ownership.owner.key.id", SearchCondition.EQUAL,
-						user_ids);
-				query.appendWhere(sc, new int[] { idx_m });
-
-			}
-
-			if (!StringUtils.isNull(predate)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp start = DateUtils.convertStartDate(predate);
-				sc = new SearchCondition(ApprovalMaster.class, ApprovalMaster.CREATE_TIMESTAMP,
-						SearchCondition.GREATER_THAN_OR_EQUAL, start);
-				query.appendWhere(sc, new int[] { idx_m });
-			}
-
-			if (!StringUtils.isNull(postdate)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp end = DateUtils.convertEndDate(postdate);
-				sc = new SearchCondition(ApprovalMaster.class, ApprovalMaster.CREATE_TIMESTAMP,
-						SearchCondition.LESS_THAN_OR_EQUAL, end);
-				query.appendWhere(sc, new int[] { idx_m });
-			}
-
-			if (StringUtils.isNull(sort)) {
-				sort = "true";
-			}
-
-			if (StringUtils.isNull(sortKey)) {
-				sortKey = WTAttributeNameIfc.MODIFY_STAMP_NAME;
-			}
-
-			ca = new ClassAttribute(ApprovalMaster.class, sortKey);
-			OrderBy orderBy = new OrderBy(ca, Boolean.parseBoolean(sort));
-			query.appendOrderBy(orderBy, new int[] { idx_m });
-
-			PageQueryUtils pager = new PageQueryUtils(param, query);
-			PagingQueryResult result = pager.find();
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				ApprovalMaster master = (ApprovalMaster) obj[0];
-				CompleteColumnData data = new CompleteColumnData(master);
-				list.add(data);
-			}
-
-			map.put("size", pager.getTotalSize());
-			map.put("list", list);
-			map.put("lastPage", pager.getLastPage());
-			map.put("topListCount", pager.getTotal());
-			map.put("sessionid", pager.getSessionId());
-			map.put("curPage", pager.getCpage());
-			map.put("total", pager.getTotalSize());
-			map.put("result", "SUCCESS");
-		} catch (Exception e) {
-			map.put("result", "FAIL");
-			e.printStackTrace();
-		}
-		return map;
-	}
-
-	// 반려함
-	public Map<String, Object> findReturnList(Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<ReturnColumnData> list = new ArrayList<ReturnColumnData>();
-		QuerySpec query = null;
-		String name = (String) param.get("name");
-		// 내가 결재완료한 라인들...
-		// 정렬
-		String sort = (String) param.get("sort");
-		String sortKey = (String) param.get("sortKey");
-		try {
-
-			query = new QuerySpec();
-			int idx = query.appendClassList(ApprovalMaster.class, true);
-
-			WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-
-			SearchCondition sc = null;
-
-			// 대소문자 구분
-			if (!StringUtils.isNull(name)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ClassAttribute ca = new ClassAttribute(ApprovalMaster.class, ApprovalMaster.NAME);
-				// ColumnExpression ce = ConstantExpression.newExpression("%" +
-				// name.toUpperCase() + "%");
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(name);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			// if (!StringUtils.isNull(objType)) {
-			// if (query.getConditionCount() > 0)
-			// query.appendAnd();
-			// sc = new SearchCondition(ApprovalMaster.class, ApprovalMaster.OBJ_TYPE, "=",
-			// objType);
-			// query.appendWhere(sc, new int[] { idx });
-			// }
-
-			// if (!CommonUtils.isAdmin()) {
-			if (!"wcadmin".equals(sessionUser.getFullName())) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				long ids = sessionUser.getPersistInfo().getObjectIdentifier().getId();
-				sc = new SearchCondition(ApprovalMaster.class, "ownership.owner.key.id", "=", ids);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (query.getConditionCount() > 0)
-				query.appendAnd();
-
-			query.appendOpenParen();
-
-			sc = new SearchCondition(ApprovalMaster.class, ApprovalMaster.STATE, "=", LINE_RETURN_COMPLETE);
-			query.appendWhere(sc, new int[] { idx });
-			query.appendOr();
-			sc = new SearchCondition(ApprovalMaster.class, ApprovalMaster.STATE, "=", LINE_AGREE_REJECT);
-			query.appendWhere(sc, new int[] { idx });
-			query.appendCloseParen();
-
-			if (query.getConditionCount() > 0) {
-				query.appendAnd();
-			}
-			sc = new SearchCondition(ApprovalMaster.class, ApprovalMaster.VIEW_DISABLED, SearchCondition.IS_FALSE);
-			query.appendWhere(sc, new int[] { idx });
-
-			if (StringUtils.isNull(sort)) {
-				sort = "true";
-			}
-
-			if (StringUtils.isNull(sortKey)) {
-				// sortKey = WTAttributeNameIfc.CREATE_STAMP_NAME;
-				sortKey = WTAttributeNameIfc.MODIFY_STAMP_NAME;
-			}
-
-			ClassAttribute ca = new ClassAttribute(ApprovalMaster.class, sortKey);
-			OrderBy orderBy = new OrderBy(ca, Boolean.parseBoolean(sort));
-			query.appendOrderBy(orderBy, new int[] { idx });
-
-			PageQueryUtils pager = new PageQueryUtils(param, query);
-			PagingQueryResult result = pager.find();
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				ApprovalMaster master = (ApprovalMaster) obj[0];
-				ReturnColumnData data = new ReturnColumnData(master);
-				list.add(data);
-			}
-
-			map.put("size", pager.getTotalSize());
-			map.put("list", list);
-			map.put("lastPage", pager.getLastPage());
-			map.put("topListCount", pager.getTotal());
-			map.put("sessionid", pager.getSessionId());
-			map.put("curPage", pager.getCpage());
-			map.put("total", pager.getTotalSize());
-			map.put("result", "SUCCESS");
-		} catch (Exception e) {
-			map.put("result", "FAIL");
-			e.printStackTrace();
-		}
-		return map;
-	}
-
-	// 합의
-	public Map<String, Object> findAgreeList(Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<AgreeColumnData> list = new ArrayList<AgreeColumnData>();
-		QuerySpec query = null;
-		String creatorsOid = (String) param.get("creatorsOid");
-		String name = (String) param.get("name");
-		String predate = (String) param.get("predate");
-		String postdate = (String) param.get("postdate");
-
-		String sub_data = (String) param.get("sub_data");
-
-		// 정렬
-		String sort = (String) param.get("sort");
-		String sortKey = (String) param.get("sortKey");
-		try {
-
-			query = new QuerySpec();
-			int idx = query.appendClassList(ApprovalLine.class, true);
-			int idx_m = query.appendClassList(ApprovalMaster.class, true);
-
-			WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-
-			SearchCondition sc = null;
-
-			ClassAttribute ca = null;
-			ClassAttribute ca_m = null;
-
-			ca = new ClassAttribute(ApprovalLine.class, "masterReference.key.id");
-			ca_m = new ClassAttribute(ApprovalMaster.class, "thePersistInfo.theObjectIdentifier.id");
-
-			sc = new SearchCondition(ca, "=", ca_m);
-			query.appendWhere(sc, new int[] { idx, idx_m });
-
-			// 대소문자 구분
-			if (!StringUtils.isNull(name)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ca = new ClassAttribute(ApprovalLine.class, ApprovalLine.NAME);
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(name);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!"wcadmin".equals(sessionUser.getFullName())) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				long ids = sessionUser.getPersistInfo().getObjectIdentifier().getId();
-				sc = new SearchCondition(ApprovalLine.class, "ownership.owner.key.id", "=", ids);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			// 승인중. 합의중.. 수신확인
-			// 체크면..
-			if (!StringUtils.isNull(sub_data)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				query.appendOpenParen();
-
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", LINE_AGREE_STAND);
-				query.appendWhere(sc, new int[] { idx });
-				query.appendOr();
-
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", LINE_AGREE_COMPLETE);
-				query.appendWhere(sc, new int[] { idx });
-				query.appendOr();
-
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", LINE_AGREE_REJECT);
-				query.appendWhere(sc, new int[] { idx });
-
-				query.appendCloseParen();
-
-			} else {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", LINE_AGREE_STAND);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (query.getConditionCount() > 0)
-				query.appendAnd();
-
-			sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=", AGREE_LINE);
-			query.appendWhere(sc, new int[] { idx });
-
-			if (!StringUtils.isNull(creatorsOid)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ReferenceFactory rf = new ReferenceFactory();
-				People user = (People) rf.getReference(creatorsOid).getObject();
-				long user_ids = user.getUser().getPersistInfo().getObjectIdentifier().getId();
-				sc = new SearchCondition(ApprovalMaster.class, "ownership.owner.key.id", SearchCondition.EQUAL,
-						user_ids);
-				query.appendWhere(sc, new int[] { idx_m });
-
-			}
-
-			if (!StringUtils.isNull(predate)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp start = DateUtils.convertStartDate(predate);
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP,
-						SearchCondition.GREATER_THAN_OR_EQUAL, start);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(postdate)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp end = DateUtils.convertEndDate(postdate);
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP,
-						SearchCondition.LESS_THAN_OR_EQUAL, end);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (StringUtils.isNull(sort)) {
-				sort = "true";
-			}
-
-			if (StringUtils.isNull(sortKey)) {
-				// sortKey = WTAttributeNameIfc.MODIFY_STAMP_NAME;
-				sortKey = ApprovalLine.CREATE_TIMESTAMP;
-			}
-
-			ca = new ClassAttribute(ApprovalLine.class, sortKey);
-			OrderBy orderBy = new OrderBy(ca, Boolean.parseBoolean(sort));
-			query.appendOrderBy(orderBy, new int[] { idx });
-
-			PageQueryUtils pager = new PageQueryUtils(param, query);
-			PagingQueryResult result = pager.find();
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				ApprovalLine line = (ApprovalLine) obj[0];
-				AgreeColumnData data = new AgreeColumnData(line);
-				list.add(data);
-			}
-
-			map.put("size", pager.getTotalSize());
-			map.put("list", list);
-			map.put("lastPage", pager.getLastPage());
-			map.put("topListCount", pager.getTotal());
-			map.put("sessionid", pager.getSessionId());
-			map.put("curPage", pager.getCpage());
-			map.put("total", pager.getTotalSize());
-			map.put("result", "SUCCESS");
-		} catch (Exception e) {
-			map.put("result", "FAIL");
-			e.printStackTrace();
-		}
-		return map;
-	}
-
-	// 수신라인
-	public Map<String, Object> findReceiveList(Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<ReceiveColumnData> list = new ArrayList<ReceiveColumnData>();
-		QuerySpec query = null;
-		String name = (String) param.get("name");
-		String creatorsOid = (String) param.get("creatorsOid");
-		String predate = (String) param.get("predate");
-		String postdate = (String) param.get("postdate");
-
-		String sub_data = (String) param.get("sub_data");
-
-		// 정렬
-		String sort = (String) param.get("sort");
-		String sortKey = (String) param.get("sortKey");
-		try {
-
-			query = new QuerySpec();
-			int idx = query.appendClassList(ApprovalLine.class, true);
-			int idx_m = query.appendClassList(ApprovalMaster.class, true);
-
-			WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-
-			SearchCondition sc = null;
-
-			ClassAttribute ca = null;
-			ClassAttribute ca_m = null;
-
-			ca = new ClassAttribute(ApprovalLine.class, "masterReference.key.id");
-			ca_m = new ClassAttribute(ApprovalMaster.class, "thePersistInfo.theObjectIdentifier.id");
-
-			sc = new SearchCondition(ca, "=", ca_m);
-			query.appendWhere(sc, new int[] { idx, idx_m });
-
-			// 대소문자 구분
-			if (!StringUtils.isNull(name)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ca = new ClassAttribute(ApprovalLine.class, ApprovalLine.NAME);
-				// ColumnExpression ce = ConstantExpression.newExpression("%" +
-				// name.toUpperCase() + "%");
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(name);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			// if (!CommonUtils.isAdmin()) {
-			if (!"wcadmin".equals(sessionUser.getFullName())) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				long ids = sessionUser.getPersistInfo().getObjectIdentifier().getId();
-				sc = new SearchCondition(ApprovalLine.class, "ownership.owner.key.id", "=", ids);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(sub_data)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				query.appendOpenParen();
-
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", LINE_RECEIVE_COMPLETE);
-				query.appendWhere(sc, new int[] { idx });
-				query.appendOr();
-
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", LINE_RECEIVE_STAND);
-				query.appendWhere(sc, new int[] { idx });
-
-				query.appendCloseParen();
-
-			} else {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", LINE_RECEIVE_STAND);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (query.getConditionCount() > 0)
-				query.appendAnd();
-			// 승인중. 합의중.. 수신확인
-			sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=", RECEIVE_LINE);
-			query.appendWhere(sc, new int[] { idx });
-
-			if (!StringUtils.isNull(creatorsOid)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ReferenceFactory rf = new ReferenceFactory();
-				People user = (People) rf.getReference(creatorsOid).getObject();
-				long user_ids = user.getUser().getPersistInfo().getObjectIdentifier().getId();
-				sc = new SearchCondition(ApprovalMaster.class, "ownership.owner.key.id", SearchCondition.EQUAL,
-						user_ids);
-				query.appendWhere(sc, new int[] { idx_m });
-
-			}
-
-			if (!StringUtils.isNull(predate)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp start = DateUtils.convertStartDate(predate);
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP,
-						SearchCondition.GREATER_THAN_OR_EQUAL, start);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(postdate)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp end = DateUtils.convertEndDate(postdate);
-				sc = new SearchCondition(ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP,
-						SearchCondition.LESS_THAN_OR_EQUAL, end);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (StringUtils.isNull(sort)) {
-				sort = "true";
-			}
-
-			if (StringUtils.isNull(sortKey)) {
-				sortKey = WTAttributeNameIfc.MODIFY_STAMP_NAME;
-			}
-
-			ca = new ClassAttribute(ApprovalLine.class, sortKey);
-			OrderBy orderBy = new OrderBy(ca, Boolean.parseBoolean(sort));
-			query.appendOrderBy(orderBy, new int[] { idx });
-
-			PageQueryUtils pager = new PageQueryUtils(param, query);
-			PagingQueryResult result = pager.find();
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				ApprovalLine line = (ApprovalLine) obj[0];
-				ReceiveColumnData data = new ReceiveColumnData(line);
-				list.add(data);
-			}
-
-			map.put("size", pager.getTotalSize());
-			map.put("list", list);
-			map.put("lastPage", pager.getLastPage());
-			map.put("topListCount", pager.getTotal());
-			map.put("sessionid", pager.getSessionId());
-			map.put("curPage", pager.getCpage());
-			map.put("total", pager.getTotalSize());
-			map.put("result", "SUCCESS");
-		} catch (Exception e) {
-			map.put("result", "FAIL");
-			e.printStackTrace();
-		}
-		return map;
 	}
 
 	public boolean isNextLine(ApprovalMaster master, int sort) {
@@ -1582,117 +676,40 @@ public class WorkspaceHelper {
 		return isEndAgree;
 	}
 
-	public Map<String, Object> findErrorReport(Map<String, Object> param) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<ErrorReportColumnData> list = new ArrayList<ErrorReportColumnData>();
-		QuerySpec query = null;
-
-		// search param
-////		String number = (String) param.get("number");
-//		String name = (String) param.get("name");
-
-//		String dwg_no = (String) param.get("dwg_no");
-//		String predate = (String) param.get("predate");
-//		String statesPart = (String) param.get("statesPart");
-//		String postdate = (String) param.get("postdate");
-//		String predate_m = (String) param.get("predate_m");
-//		String postdate_m = (String) param.get("postdate_m");
-
-//		String creatorsOid = (String) param.get("creatorsOid");
-//		String modifierOid = (String) param.get("modifierOid");
-
-		String latest = (String) param.get("latest");
-		if (StringUtils.isNull(latest)) {
-			latest = "true";
-		}
-
-//		String location = (String) param.get("location");
-//		ReferenceFactory rf = new ReferenceFactory();
-		// 정렬
-		String sort = (String) param.get("sort");
-		String sortKey = (String) param.get("sortKey");
-//		String fileName = (String) param.get("fileName");
-		// context
-//		String context = (String) param.get("context");
-
-		// String partTypes = (String) param.get("partTypes");
-
-		try {
-			query = new QuerySpec();
-
-			int idx = query.appendClassList(ErrorReport.class, true);
-
-			if (StringUtils.isNull(sort)) {
-				sort = "true";
-			}
-
-			if (StringUtils.isNull(sortKey)) {
-				sortKey = WTAttributeNameIfc.CREATE_STAMP_NAME;
-			}
-
-			ClassAttribute ca = new ClassAttribute(PartListData.class, sortKey);
-			OrderBy orderBy = new OrderBy(ca, Boolean.parseBoolean(sort));
-			query.appendOrderBy(orderBy, new int[] { idx });
-
-			PageQueryUtils pager = new PageQueryUtils(param, query);
-			PagingQueryResult result = pager.find();
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				ErrorReport error = (ErrorReport) obj[0];
-				ErrorReportColumnData data = new ErrorReportColumnData(error);
-				list.add(data);
-			}
-			map.put("list", list);
-			map.put("lastPage", pager.getLastPage());
-			map.put("topListCount", pager.getTotal());
-			map.put("sessionid", pager.getSessionId());
-			map.put("curPage", pager.getCpage());
-			map.put("total", pager.getTotalSize());
-			map.put("result", "SUCCESS");
-		} catch (Exception e) {
-			map.put("result", "FAIL");
-			e.printStackTrace();
-		}
-		return map;
-	}
-
+	/**
+	 * 검토함
+	 * 
+	 * @param params : 검색 조건을 담고 있는 객체
+	 * @return Map<String, Object>
+	 * @throws Exception
+	 */
 	public Map<String, Object> agree(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
+
 		// 쿼리문 작성
 		QuerySpec query = new QuerySpec();
-		// 상태가 = 대기중
-		// 결재타입 = 검토라인
-		// ApprovalImpl state = APPROVAL_READY
-		// ApprovalLine type = WORKING_AGREE
-		
-        int idx_Line= query.appendClassList(ApprovalLine.class, true);
-        int idx_Master= query.appendClassList(ApprovalMaster.class, true);
-        SearchCondition sc = new SearchCondition(ApprovalLine.class, "masterReference.key.classname",ApprovalMaster.class,"thePersistInfo.theObjectIdentifier.classname");
-        query.appendWhere(sc, new int[] { idx_Line, idx_Master });
-        
-        query.appendAnd();
-        
-        sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=",RECEIVE_COMPLETE);
-        query.appendWhere(sc, new int[] { idx_Line });
+		int idx = query.appendClassList(ApprovalLine.class, true);
+		int idx_master = query.appendClassList(ApprovalMaster.class, true);
 
-        query.appendAnd();
-        
-        sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=", RECEIVE_LINE);
-        query.appendWhere(sc, new int[] { idx_Line });
-        System.out.println("@@@@@ " + query);
-		
-		// select a0.*, a1.* from approvalline a0, approvalmaster a1
-		// where a0.classnamekeya5 = a1.ida2a2
-		// and a0.state = '대기중' and a0.type = '검토라인'
-		// 위에 처럼 쿼리 나오게
-		
+		QuerySpecUtils.toInnerJoin(query, ApprovalLine.class, ApprovalMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_master);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, AGREE_READY);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, AGREE_LINE);
+
+		WTUser sessionUser = CommonUtils.sessionUser();
+		if (!CommonUtils.isAdmin()) {
+			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, "ownership.owner.key.id",
+					sessionUser.getPersistInfo().getObjectIdentifier().getId());
+		}
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.MODIFY_TIMESTAMP, false);
+
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			ApprovalLine approvalLine = (ApprovalLine) obj[0];
-			ApprovalLineDTO column = new ApprovalLineDTO(approvalLine, COLUMN_APPROVAL);
+			ApprovalLineDTO column = new ApprovalLineDTO(approvalLine, COLUMN_AGREE);
 			list.add(column);
 		}
 		map.put("list", list);
@@ -1701,6 +718,13 @@ public class WorkspaceHelper {
 		return map;
 	}
 
+	/**
+	 * 결재함
+	 * 
+	 * @param params : 검색 조건을 담고 있는 객체
+	 * @return Map<String, Object>
+	 * @throws Exception
+	 */
 	public Map<String, Object> approval(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
@@ -1720,7 +744,6 @@ public class WorkspaceHelper {
 		// 쿼리 수정할 예정
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, APPROVAL_APPROVING);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, APPROVAL_LINE);
-		;
 
 		if (!StringUtils.isNull(name)) {
 			QuerySpecUtils.toLikeAnd(query, idx, ApprovalLine.class, ApprovalLine.NAME, name);
@@ -1765,23 +788,159 @@ public class WorkspaceHelper {
 		return map;
 	}
 
+	/**
+	 * 수신함
+	 * 
+	 * @param params : 검색 조건을 담고 있는 객체
+	 * @return Map<String, Object>
+	 * @throws Exception
+	 */
 	public Map<String, Object> receive(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
+		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ApprovalLine.class, true);
+		int idx_master = query.appendClassList(ApprovalMaster.class, true);
+
+		QuerySpecUtils.toInnerJoin(query, ApprovalLine.class, ApprovalMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_master);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, RECEIVE_READY);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, RECEIVE_LINE);
+
+		WTUser sessionUser = CommonUtils.sessionUser();
+		if (!CommonUtils.isAdmin()) {
+			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, "ownership.owner.key.id",
+					sessionUser.getPersistInfo().getObjectIdentifier().getId());
+		}
+
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.MODIFY_TIMESTAMP, false);
+
+		PageQueryUtils pager = new PageQueryUtils(params, query);
+		PagingQueryResult result = pager.find();
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			ApprovalLine line = (ApprovalLine) obj[0];
+			ApprovalLineDTO column = new ApprovalLineDTO(line, COLUMN_RECEIVE);
+			list.add(column);
+		}
+		map.put("list", list);
+		map.put("sessionid", pager.getSessionId());
+		map.put("curPage", pager.getCpage());
 		return map;
 	}
 
+	/**
+	 * 진행함
+	 * 
+	 * @param params : 검색 조건을 담고 있는 객체
+	 * @return Map<String, Object>
+	 * @throws Exception
+	 */
 	public Map<String, Object> progress(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
+		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ApprovalMaster.class, true);
+
+		WTUser sessionUser = CommonUtils.sessionUser();
+		if (!CommonUtils.isAdmin()) {
+			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, "ownership.owner.key.id",
+					sessionUser.getPersistInfo().getObjectIdentifier().getId());
+		}
+
+		query.appendOpenParen();
+		QuerySpecUtils.toEqualsOr(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, APPROVAL_APPROVING);
+		QuerySpecUtils.toEqualsOr(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, AGREE_READY);
+		query.appendCloseParen();
+
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.MODIFY_TIMESTAMP, false);
+		PageQueryUtils pager = new PageQueryUtils(params, query);
+		PagingQueryResult result = pager.find();
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			ApprovalMaster master = (ApprovalMaster) obj[0];
+			ApprovalLineDTO column = new ApprovalLineDTO(master, COLUMN_PROGRESS);
+			list.add(column);
+		}
+		map.put("list", list);
+		map.put("sessionid", pager.getSessionId());
+		map.put("curPage", pager.getCpage());
 		return map;
 	}
 
+	/**
+	 * 완료함
+	 * 
+	 * @param params : 검색 조건을 담고 있는 객체
+	 * @return Map<String, Object>
+	 * @throws Exception
+	 */
 	public Map<String, Object> complete(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
+		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ApprovalMaster.class, true);
+
+		WTUser sessionUser = CommonUtils.sessionUser();
+		if (!CommonUtils.isAdmin()) {
+			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, "ownership.owner.key.id",
+					sessionUser.getPersistInfo().getObjectIdentifier().getId());
+		}
+
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, MASTER_APPROVAL_COMPLETE);
+
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.MODIFY_TIMESTAMP, false);
+		PageQueryUtils pager = new PageQueryUtils(params, query);
+		PagingQueryResult result = pager.find();
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			ApprovalMaster master = (ApprovalMaster) obj[0];
+			ApprovalLineDTO column = new ApprovalLineDTO(master, COLUMN_COMPLETE);
+			list.add(column);
+		}
+		map.put("list", list);
+		map.put("sessionid", pager.getSessionId());
+		map.put("curPage", pager.getCpage());
 		return map;
 	}
 
-	public Map<String, Object> reject(Map<String, Object> params) {
+	/**
+	 * 반려함
+	 * 
+	 * @param params : 검색 조건을 담고 있는 객체
+	 * @return Map<String, Object>
+	 * @throws Exception
+	 */
+	public Map<String, Object> reject(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
+		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ApprovalMaster.class, true);
+
+		WTUser sessionUser = CommonUtils.sessionUser();
+		if (!CommonUtils.isAdmin()) {
+			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, "ownership.owner.key.id",
+					sessionUser.getPersistInfo().getObjectIdentifier().getId());
+		}
+
+		query.appendOpenParen();
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, MASTER_REJECT);
+		QuerySpecUtils.toEqualsOr(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, MASTER_RETURN);
+		query.appendCloseParen();
+
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.MODIFY_TIMESTAMP, false);
+		PageQueryUtils pager = new PageQueryUtils(params, query);
+		PagingQueryResult result = pager.find();
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			ApprovalMaster master = (ApprovalMaster) obj[0];
+			ApprovalLineDTO column = new ApprovalLineDTO(master, COLUMN_REJECT);
+			list.add(column);
+		}
+		map.put("list", list);
+		map.put("sessionid", pager.getSessionId());
+		map.put("curPage", pager.getCpage());
 		return map;
 	}
 }

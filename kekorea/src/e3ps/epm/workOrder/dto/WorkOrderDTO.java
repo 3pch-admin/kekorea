@@ -1,7 +1,10 @@
 package e3ps.epm.workOrder.dto;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Map;
 
+import e3ps.common.util.AUIGridUtils;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.project.Project;
@@ -13,6 +16,8 @@ import lombok.Setter;
 public class WorkOrderDTO {
 
 	private String oid;
+	private String loid;
+	private String poid;
 	private String projectType_name;
 	private String name;
 	private String customer_name;
@@ -28,6 +33,11 @@ public class WorkOrderDTO {
 	private Timestamp pdate;
 	private String creator;
 	private Timestamp createdDate;
+	private String primary;
+
+	// 변수용
+	private ArrayList<Map<String, Object>> addRows = new ArrayList<>(); // 도면 일람표
+	private ArrayList<Map<String, String>> _addRows = new ArrayList<>(); // 작번
 
 	public WorkOrderDTO() {
 
@@ -38,6 +48,9 @@ public class WorkOrderDTO {
 		Project project = link.getProject();
 
 		setOid(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
+		setLoid(link.getPersistInfo().getObjectIdentifier().getStringValue());
+		setPoid(project.getPersistInfo().getObjectIdentifier().getStringValue());
+
 		if (project.getProjectType() != null) {
 			setProjectType_name(project.getProjectType().getName());
 		}
@@ -68,6 +81,7 @@ public class WorkOrderDTO {
 		setModel(project.getModel());
 		setPdate(project.getPDate());
 		setCreator(workOrder.getOwnership().getOwner().getFullName());
+		setPrimary(AUIGridUtils.primaryTemplate(workOrder));
 		setCreatedDate(workOrder.getCreateTimestamp());
 	}
 }

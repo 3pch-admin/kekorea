@@ -21,9 +21,9 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 <table class="create-table">
 	<colgroup>
 		<col width="130">
-		<col width="800">
+		<col width="700">
 		<col width="130">
-		<col width="800">
+		<col width="700">
 	</colgroup>
 	<tr>
 		<th class="req">회의록 제목</th>
@@ -51,7 +51,9 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 			<font class="req">KEK 작번</font>
 		</th>
 		<td class="indent5" colspan="3">
-			<jsp:include page="/extcore/include/project-include.jsp"></jsp:include>
+			<jsp:include page="/extcore/include/project-include.jsp">
+				<jsp:param value="create" name="mode"/>
+			</jsp:include>
 		</td>
 	</tr>
 	<tr>
@@ -67,6 +69,7 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 		<td class="indent5" colspan="3">
 			<jsp:include page="/extcore/include/secondary-include.jsp">
 				<jsp:param value="" name="oid" />
+				<jsp:param value="create" name="mode"/>
 			</jsp:include>
 		</td>
 	</tr>
@@ -125,9 +128,9 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 				}
 			}, "GET");
 		})
-
 		// 작번 추가 그리드
 		_createAUIGrid(_columns);
+		AUIGrid.resize(_myGridID);
 	});
 
 	window.addEventListener("resize", function() {

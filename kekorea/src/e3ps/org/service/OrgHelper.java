@@ -5,11 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import e3ps.admin.commonCode.CommonCode;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.org.Department;
 import e3ps.org.People;
+import e3ps.org.PeopleMakLink;
+import e3ps.org.PeopleWTUserLink;
 import e3ps.org.dto.UserDTO;
 import e3ps.workspace.ApprovalUserLine;
 import net.sf.json.JSONArray;
@@ -96,24 +99,24 @@ public class OrgHelper {
 		return department;
 	}
 
-	public Department getDepartment(String code) {
-		Department department = null;
-		try {
-			QuerySpec query = new QuerySpec();
-			int idx = query.appendClassList(Department.class, true);
-
-			SearchCondition sc = new SearchCondition(Department.class, Department.CODE, "=", code);
-			query.appendWhere(sc, new int[] { idx });
-
-			QueryResult result = PersistenceHelper.manager.find((StatementSpec) query);
-			if (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				department = (Department) obj[0];
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	/**
+	 * 부서코드로 부서 객체를 가져오는 함수
+	 * 
+	 * @param code : 부서코드
+	 * @return Department
+	 * @throws Exception
+	 */
+	public Department getDepartment(String code) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Department.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, Department.class, Department.CODE, code);
+		QueryResult result = PersistenceHelper.manager.find((StatementSpec) query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Department department = (Department) obj[0];
+			return department;
 		}
-		return department;
+		return null;
 	}
 
 	public Department getDepartmentByName(String name) {
@@ -1162,17 +1165,23 @@ public class OrgHelper {
 		return map;
 	}
 
-	public ArrayList<HashMap<String, Object>> getDepartmentMap() throws Exception {
-		ArrayList<HashMap<String, Object>> list = new ArrayList<>();
+	/**
+	 * 부서 데이터를 key-value 형태로 만들어 배열에 담아서 반환 oid-name
+	 * 
+	 * @return ArrayList<HashMap<String, String>>
+	 * @throws Exception
+	 */
+	public ArrayList<HashMap<String, String>> getDepartmentMap() throws Exception {
+		ArrayList<HashMap<String, String>> list = new ArrayList<>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Department.class, true);
 		QuerySpecUtils.toOrderBy(query, idx, Department.class, Department.DEPTH, false);
-		QuerySpecUtils.toOrderBy(query, idx, Department.class, Department.SORT, true);
+		QuerySpecUtils.toOrderBy(query, idx, Department.class, Department.SORT, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			Department department = (Department) obj[0];
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			HashMap<String, String> map = new HashMap<String, String>();
 			map.put("name", department.getName());
 			map.put("oid", department.getPersistInfo().getObjectIdentifier().getStringValue());
 			list.add(map);
@@ -1180,8 +1189,15 @@ public class OrgHelper {
 		return list;
 	}
 
+	/**
+	 * 부서별 사용자를 가져온다 AUIGrid 에서 편집 용도
+	 * 
+	 * @param code : 부서코드
+	 * @return org.json.JSONArray
+	 * @throws Exception
+	 */
 	public org.json.JSONArray getDepartmentUser(String code) throws Exception {
-		ArrayList<WTUser> list = new ArrayList<>();
+		ArrayList<HashMap<String, String>> list = new ArrayList<>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTUser.class, true);
 		int idx_d = query.appendClassList(Department.class, false);
@@ -1199,9 +1215,73 @@ public class OrgHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			WTUser wtUser = (WTUser) obj[0];
-			list.add(wtUser);
-			return new org.json.JSONArray(list);
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("oid", wtUser.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", wtUser.getFullName());
+			list.add(map);
 		}
-		return new org.json.JSONArray();
+		return new org.json.JSONArray(list);
+	}
+
+	/**
+	 * 그리드에 표현할 막종 목록
+	 * 
+	 * @param people : 사용자 객체
+	 * @return String
+	 * @throws Exception
+	 */
+	public String getUserMaks(People people) throws Exception {
+		String mak = "";
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(People.class, true);
+		int idx_link = query.appendClassList(PeopleMakLink.class, true);
+		QuerySpecUtils.toInnerJoin(query, People.class, PeopleMakLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, PeopleMakLink.class, "roleAObjectRef.key.id",
+				people.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult result = PersistenceHelper.manager.find(query);
+		int last = 0;
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			PeopleMakLink link = (PeopleMakLink) obj[1];
+
+			if (last == (result.size() - 1)) {
+				mak += link.getMak().getCode();
+			} else {
+				mak += link.getMak().getCode() + ", ";
+			}
+			last++;
+		}
+		return mak;
+	}
+
+	/**
+	 * 사용자가 설정한 막종을 배열로 들고 오는 함수
+	 * 
+	 * @param sessionUser : 접속한 사용자의 WTUser 객체
+	 * @return ArrayList<CommonCode>
+	 */
+	public ArrayList<CommonCode> getUserMaks(WTUser sessionUser) throws Exception {
+		ArrayList<CommonCode> list = new ArrayList<>();
+		People people = null;
+		QueryResult result = PersistenceHelper.manager.navigate(sessionUser, "people", PeopleWTUserLink.class);
+		if (result.hasMoreElements()) {
+			people = (People) result.nextElement();
+		}
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(People.class, true);
+		int idx_link = query.appendClassList(PeopleMakLink.class, true);
+		QuerySpecUtils.toInnerJoin(query, People.class, PeopleMakLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, PeopleMakLink.class, "roleAObjectRef.key.id",
+				people.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult qr = PersistenceHelper.manager.find(query);
+		while (qr.hasMoreElements()) {
+			Object[] obj = (Object[]) qr.nextElement();
+			PeopleMakLink link = (PeopleMakLink) obj[1];
+			list.add(link.getMak());
+		}
+		return list;
 	}
 }

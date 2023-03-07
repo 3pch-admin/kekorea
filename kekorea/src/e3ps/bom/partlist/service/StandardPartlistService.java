@@ -41,12 +41,12 @@ import wt.services.StandardManager;
 import wt.session.SessionHelper;
 import wt.util.WTException;
 
-public class StandardPartListService extends StandardManager implements PartListService {
+public class StandardPartlistService extends StandardManager implements PartlistService {
 
 	private static final long serialVersionUID = -4881738189892868701L;
 
-	public static StandardPartListService newStandardPartListService() throws WTException {
-		StandardPartListService instance = new StandardPartListService();
+	public static StandardPartlistService newStandardPartlistService() throws WTException {
+		StandardPartlistService instance = new StandardPartlistService();
 		instance.initialize();
 		return instance;
 	}
@@ -403,7 +403,7 @@ public class StandardPartListService extends StandardManager implements PartList
 
 			WorkspaceHelper.service.deleteAllLine(master);
 
-			ArrayList<PartListMasterProjectLink> lists = PartListHelper.manager.getPartListMasterProjectLink(master);
+			ArrayList<PartListMasterProjectLink> lists = PartlistHelper.manager.getPartListMasterProjectLink(master);
 			System.out.println("klists=" + lists.size());
 
 			// 관련작번 삭제
@@ -430,7 +430,7 @@ public class StandardPartListService extends StandardManager implements PartList
 			}
 
 			// 수배표 삭제
-			list = PartListHelper.manager.getPartListData(master);
+			list = PartlistHelper.manager.getPartListData(master);
 
 			for (PartListData pData : list) {
 				PersistenceHelper.manager.delete(pData);
@@ -509,7 +509,7 @@ public class StandardPartListService extends StandardManager implements PartList
 
 				if ("기계".equals(engType)) {
 					ArrayList<PartListMaster> datas = new ArrayList<PartListMaster>();
-					datas = PartListHelper.manager.findPartListByProject(project, engType, "");
+					datas = PartlistHelper.manager.findPartListByProject(project, engType, "");
 					double totalPrices = 0D;
 					for (PartListMaster masters : datas) {
 						totalPrices += masters.getTotalPrice();
@@ -517,7 +517,7 @@ public class StandardPartListService extends StandardManager implements PartList
 					project.setOutputMachinePrice(totalPrices);
 				} else if ("전기".equals(engType)) {
 					ArrayList<PartListMaster> datas = new ArrayList<PartListMaster>();
-					datas = PartListHelper.manager.findPartListByProject(project, engType, "");
+					datas = PartlistHelper.manager.findPartListByProject(project, engType, "");
 					double totalPrices = 0D;
 					for (PartListMaster masters : datas) {
 						totalPrices += masters.getTotalPrice();
@@ -710,7 +710,7 @@ public class StandardPartListService extends StandardManager implements PartList
 					return map;
 				}
 
-				ArrayList<PartListMasterProjectLink> projectList = PartListHelper.manager
+				ArrayList<PartListMasterProjectLink> projectList = PartlistHelper.manager
 						.getPartListMasterProjectLink(partList);
 				for (PartListMasterProjectLink link : projectList) {
 					PersistenceHelper.manager.delete(link);
@@ -770,25 +770,24 @@ public class StandardPartListService extends StandardManager implements PartList
 			int sort = 0;
 			for (int i = 0; i < _addRows.size(); i++) {
 				Map<String, Object> _addRow = (Map<String, Object>) _addRows.get(i);
-				
-				String lotNo= (String)_addRow.get("lotNo");
-				String unitName= (String)_addRow.get("unitName");
-				String partNo= (String)_addRow.get("partNo");
-				String partName= (String)_addRow.get("partName");
-				String standard= (String)_addRow.get("standard");
-				String maker= (String)_addRow.get("maker");
-				String customer= (String)_addRow.get("customer");
-				int quantity= (int)_addRow.get("quantity");
-				String unit= (String)_addRow.get("unit");
-				double price= (double)_addRow.get("price");
-				String currency= (String)_addRow.get("currency");
-				double won= (double)_addRow.get("won");
-				double exchangeRate= (double)_addRow.get("exchangeRate");
-				String referDrawing= (String)_addRow.get("referDrawing");
-				String classification= (String)_addRow.get("classification");
-				String note= (String)_addRow.get("note");
-				
-				
+
+				String lotNo = (String) _addRow.get("lotNo");
+				String unitName = (String) _addRow.get("unitName");
+				String partNo = (String) _addRow.get("partNo");
+				String partName = (String) _addRow.get("partName");
+				String standard = (String) _addRow.get("standard");
+				String maker = (String) _addRow.get("maker");
+				String customer = (String) _addRow.get("customer");
+				int quantity = (int) _addRow.get("quantity");
+				String unit = (String) _addRow.get("unit");
+				double price = (double) _addRow.get("price");
+				String currency = (String) _addRow.get("currency");
+				double won = (double) _addRow.get("won");
+				double exchangeRate = (double) _addRow.get("exchangeRate");
+				String referDrawing = (String) _addRow.get("referDrawing");
+				String classification = (String) _addRow.get("classification");
+				String note = (String) _addRow.get("note");
+
 				PartListData data = PartListData.newPartListData();
 				data.setLotNo(lotNo);
 				data.setUnitName(unitName);
@@ -810,7 +809,6 @@ public class StandardPartListService extends StandardManager implements PartList
 				data.setNote(note);
 				data = (PartListData) PersistenceHelper.manager.save(data);
 
-				
 				MasterDataLink link = MasterDataLink.newMasterDataLink(master, data);
 				link.setSort(sort);
 				PersistenceHelper.manager.save(link);
@@ -818,15 +816,11 @@ public class StandardPartListService extends StandardManager implements PartList
 				total += data.getWon();
 				sort++;
 			}
-			
-			
-			for(Map<String, Object> addRow : addRows) {
-				String oid = (String)addRow.get("oid");
-				Project project = (Project)CommonUtils.getObject(oid);
 
-				
-				
-				
+			for (Map<String, Object> addRow : addRows) {
+				String oid = (String) addRow.get("oid");
+				Project project = (Project) CommonUtils.getObject(oid);
+
 				if ("기계".equals(engType)) {
 					double outputMachinePrice = project.getOutputMachinePrice() != null
 							? project.getOutputMachinePrice()

@@ -57,7 +57,8 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 
 				ApplicationData dd = ApplicationData.newApplicationData(keDrawing);
 				dd.setRole(ContentRoleType.PRIMARY);
-				dd = (ApplicationData) ContentServerHelper.service.updateContent(keDrawing, dd, primaryPath);
+				PersistenceHelper.manager.save(dd);
+				ContentServerHelper.service.updateContent(keDrawing, dd, primaryPath);
 			}
 
 			for (Map<String, Object> removeRow : removeRows) {
@@ -122,7 +123,7 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				String oid = (String) addRow.get("oid");
 				int next = (int) addRow.get("next");
 				String primaryPath = (String) addRow.get("primaryPath");
-				String note = (String)addRow.get("note");
+				String note = (String) addRow.get("note");
 
 				KeDrawing pre = (KeDrawing) CommonUtils.getObject(oid);
 				pre.setLatest(false);

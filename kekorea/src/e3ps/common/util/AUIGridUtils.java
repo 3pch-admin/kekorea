@@ -134,6 +134,13 @@ public class AUIGridUtils {
 		return thumnail_mini;
 	}
 
+	/**
+	 * 그리드 상에서 첨부 파일 올리는 경우 호출하는 함수
+	 * 
+	 * @param request : HttpServletRequest 객체
+	 * @return : Map<String, Object>
+	 * @throws Exception
+	 */
 	public static Map<String, Object> upload(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
@@ -151,30 +158,6 @@ public class AUIGridUtils {
 			map.put("name", origin);
 			map.put("fullPath", fullPath);
 			map.put("icon", CommonContentHelper.manager.getIcon(ext));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
-		return map;
-	}
-
-	public static Map<String, Object> preview(HttpServletRequest request) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-		try {
-
-			int limit = 1024 * 1024 * 1024;
-			MultipartRequest multi = new MultipartRequest(request, TEMP, limit, "UTF-8", new DefaultFileRenamePolicy());
-
-			String roleType = multi.getParameter("roleType");
-			String origin = multi.getOriginalFileName(roleType);
-			String name = multi.getFilesystemName(roleType);
-
-			String ext = FileUtil.getExtension(origin);
-			String fullPath = TEMP + File.separator + name;
-
-			map.put("name", origin);
-			map.put("fullPath", fullPath);
 			map.put("base64", ContentUtils.imageToBase64(new File(fullPath), ext));
 
 		} catch (Exception e) {

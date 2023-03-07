@@ -73,86 +73,153 @@
 					width : 80,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						inline : true
 					},
 				}, {
 					dataField : "name",
 					headerText : "도면일람표 제목",
 					dataType : "string",
 					width : 350,
-					style : "left underline",
+					style : "left indent10 underline",
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						inline : true
 					},
 				}, {
 					dataField : "customer_name",
 					headerText : "거래처",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "install_name",
 					headerText : "설치장소",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "mak_name",
 					headerText : "막종",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "detail_name",
 					headerText : "막종상세",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "kekNumber",
 					headerText : "KEK 작번",
 					dataType : "string",
-					width : 130
+					width : 130,
+					style : "underline",
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "keNumber",
 					headerText : "KE 작번",
 					dataType : "string",
-					width : 130
+					width : 130,
+					style : "underline",
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "userId",
 					headerText : "USER ID",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "description",
 					headerText : "작업 내용",
 					dataType : "string",
 					width : 450,
-					style : "left indent10"
+					style : "left indent10",
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "state",
 					headerText : "상태",
 					dataType : "string",
-					width : 80
+					width : 80,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "model",
 					headerText : "모델",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "pdate",
 					headerText : "발행일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "creator",
 					headerText : "작성자",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "createdDate",
 					headerText : "작성일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "primary",
+					headerText : "도면파일",
+					dataType : "string",
+					width : 100,
+					editable : false,
+					renderer : {
+						type : "TemplateRenderer",
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
 				} ]
 			}
 
@@ -160,7 +227,7 @@
 			function createAUIGrid(columnLayout) {
 				// 그리드 속성
 				const props = {
-					rowIdField : "oid",
+					rowIdField : "loid",
 					// 그리드 공통속성 시작
 					headerHeight : 30, // 헤더높이
 					rowHeight : 30, // 행 높이
@@ -189,10 +256,9 @@
 				AUIGrid.showAjaxLoader(myGridID);
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
-					$("input[name=sessionid]").val(data.sessionid);
-					$("input[name=curPage]").val(data.curPage);
+					document.getElementById("sessionid").value = data.sessionid;
+					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
-					parent.closeLayer();
 				});
 			}
 
@@ -207,18 +273,19 @@
 
 			function requestAdditionalData() {
 				let params = new Object();
-				let curPage = $("input[name=curPage]").val();
-				params.sessionid = $("input[name=sessionid]").val();
+				let curPage = document.getElementById("curPage").value;
+				let sessionid = document.getElementById("sessionid").value;
+				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/appendData");
+				let url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				call(url, params, function(data) {
 					if (data.list.length == 0) {
 						last = true;
 					} else {
 						AUIGrid.appendData(myGridID, data.list);
-						$("input[name=curPage]").val(parseInt(curPage) + 1);
+						document.getElementById("sessionid").value = parseInt(curPage) + 1;
 					}
 					AUIGrid.removeAjaxLoader(myGridID);
 				})
@@ -229,18 +296,26 @@
 				popup(url);
 			}
 
-			parent.closeLayer();
-			// jquery 모든 DOM구조 로딩 후 
-			$(function() {
-				// 로컬 스토리지에 저장된 컬럼 값 불러오기 see - base.js
+			// jquery 삭제를 해가는 쪽으로 한다..
+			document.addEventListener("DOMContentLoaded", function() {
+				// DOM이 로드된 후 실행할 코드 작성
 				let columns = loadColumnLayout("workOrder-list");
 				createAUIGrid(columns);
-			}).keypress(function(e) {
-				let keyCode = e.keyCode;
+				AUIGrid.resize(myGridID);
+				parent.closeLayer();
+			});
+
+			document.addEventListener("keydown", function(event) {
+				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
+				let keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}
 			})
+
+			window.addEventListener("resize", function() {
+				AUIGrid.resize(myGridID);
+			});
 		</script>
 	</form>
 </body>

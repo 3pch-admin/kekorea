@@ -87,24 +87,37 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					},
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						inline : true
 					},
 				}, {
 					dataField : "name",
 					headerText : "DRAWING TITLE",
 					dataType : "string",
+					width : 300,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "keNumber",
 					headerText : "DWG. NO",
 					dataType : "string",
 					width : 200,
 					editable : false,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "version",
 					headerText : "버전",
 					dataType : "numeric",
 					width : 80,
 					editable : false,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "latest",
 					headerText : "최신버전",
@@ -114,12 +127,20 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						type : "CheckBoxEditRenderer"
 					},
 					editable : false,
+					filter : {
+						showIcon : false,
+						inline : false
+					},
 				}, {
 					dataField : "creator",
 					headerText : "작성자",
 					dataType : "string",
 					width : 100,
 					editable : false,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "createdDate",
 					headerText : "작성일",
@@ -127,12 +148,20 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					formatString : "yyyy-mm-dd",
 					width : 100,
 					editable : false,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "modifier",
 					headerText : "수정자",
 					dataType : "string",
 					width : 100,
 					editable : false,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "modifiedDate",
 					headerText : "수정일",
@@ -140,6 +169,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					formatString : "yyyy-mm-dd",
 					width : 100,
 					editable : false,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "primary",
 					headerText : "도면파일",
@@ -148,6 +181,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					editable : false,
 					renderer : {
 						type : "TemplateRenderer",
+					},
+					filter : {
+						showIcon : false,
+						inline : false
 					},
 				}, {
 					dataField : "",
@@ -167,13 +204,17 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					filter : {
 						showIcon : false,
 						inline : false
-					},					
+					},
 				}, {
 					dataField : "note",
 					headerText : "개정사유",
 					dateType : "string",
 					width : 250,
-					editable : false
+					editable : false,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				} ]
 			}
 
@@ -212,10 +253,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				AUIGrid.showAjaxLoader(myGridID);
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
-					$("input[name=sessionid]").val(data.sessionid);
-					$("input[name=curPage]").val(data.curPage);
+					document.getElementById("sessionid").value = data.sessionid;
+					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
-					parent.closeLayer();
 				});
 			}
 
@@ -230,18 +270,18 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function requestAdditionalData() {
 				let params = new Object();
-				let curPage = $("input[name=curPage]").val();
-				params.sessionid = $("input[name=sessionid]").val();
+				let curPage = document.getElementById("curPage").value;
+				params.sessionid = document.getElementById("sessionid").value;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/appendData");
+				let url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				call(url, params, function(data) {
 					if (data.list.length == 0) {
 						last = true;
 					} else {
 						AUIGrid.appendData(myGridID, data.list);
-						$("input[name=curPage]").val(parseInt(curPage) + 1);
+						document.getElementById("curPage").value = parseInt(curPage) + 1;
 					}
 					AUIGrid.removeAjaxLoader(myGridID);
 				})
@@ -258,6 +298,15 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				AUIGrid.addRow(myGridID, item, "first");
 			}
 
+			// 행 삭제
+			function deleteRow() {
+				let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				for (let i = checkedItems.length - 1; i >= 0; i--) {
+					let rowIndex = checkedItems[i].rowIndex;
+					AUIGrid.removeRow(myGridID, rowIndex);
+				}
+			}
+
 			function attach(data) {
 				let name = data.name;
 				let start = name.indexOf("-");
@@ -267,16 +316,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				let template = "<img src='" + data.icon + "' style='position: relative; top: 2px;'>";
 				AUIGrid.updateRowsById(myGridID, {
 					oid : recentGridItem.oid,
-					number : number,
+					keNumber : number,
 					version : Number(version),
 					file : name,
 					primary : template,
 					primaryPath : data.fullPath
 				});
 			}
-
-			// 로딩 레이어 삭제
-			parent.closeLayer();
 
 			// 저장
 			function create() {
@@ -313,17 +359,25 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				panel.list = checkedItems;
 			}
 
-			// jquery 모든 DOM구조 로딩 후 
-			$(function() {
-				// 로컬 스토리지에 저장된 컬럼 값 불러오기 see - base.js
+			document.addEventListener("DOMContentLoaded", function() {
+				// DOM이 로드된 후 실행할 코드 작성
 				let columns = loadColumnLayout("keDrawing-list");
 				createAUIGrid(columns);
-			}).keypress(function(e) {
-				let keyCode = e.keyCode;
+				// 로딩 레이어 삭제
+				parent.closeLayer();
+			});
+
+			document.addEventListener("keydown", function(event) {
+				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
+				let keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}
 			})
+
+			window.addEventListener("resize", function() {
+				AUIGrid.resize(myGridID);
+			});
 		</script>
 	</form>
 </body>

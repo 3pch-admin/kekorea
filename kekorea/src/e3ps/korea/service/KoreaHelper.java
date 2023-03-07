@@ -6,13 +6,17 @@ import java.util.List;
 import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
+import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
 import e3ps.project.dto.ProjectDTO;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.org.WTUser;
 import wt.query.ClassAttribute;
 import wt.query.OrderBy;
 import wt.query.QuerySpec;
@@ -24,11 +28,23 @@ public class KoreaHelper {
 	public static final KoreaService service = ServiceFactory.getService(KoreaService.class);
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
+		WTUser sessionUser = CommonUtils.sessionUser();
+		ArrayList<CommonCode> maks = OrgHelper.manager.getUserMaks(sessionUser);
+		if (maks.size() == 0) {
+			maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
+		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<ProjectDTO> list = new ArrayList<ProjectDTO>();
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);
+
+		query.appendOpenParen();
+		for (CommonCode mak : maks) {
+			QuerySpecUtils.toEqualsOr(query, idx, Project.class, "makReference.key.id",
+					mak.getPersistInfo().getObjectIdentifier().getId());
+		}
+		query.appendCloseParen();
 
 		ClassAttribute ca = new ClassAttribute(Project.class, Project.P_DATE);
 		OrderBy by = new OrderBy(ca, false);
@@ -58,7 +74,7 @@ public class KoreaHelper {
 		QueryResult result = PersistenceHelper.manager.find(query);
 		return result.size();
 	}
-	
+
 	public int yAxisValueForDetail(CommonCode mak) throws Exception {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);

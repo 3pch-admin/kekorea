@@ -56,9 +56,12 @@ td.indent10 {
 }
 
 td.underline {
-	text-decoration: underline;
 	color: blue !important;
 	cursor: pointer;
+}
+
+td.underline:hover {
+	text-decoration: underline;
 }
 
 /** 텍스트 박스 사이즈 CSS **/
@@ -183,7 +186,6 @@ table.create-table th.req {
 	font-weight: 800;
 }
 
-
 table.create-table textarea {
 	width: calc(100% - 15px);
 	border: 1px solid #a6a6a6;
@@ -228,4 +230,10 @@ a {
 a:hover {
 	text-decoration: underline;
 	color: blue;
+}
+
+/** iframe CSS **/
+iframe {
+	border: none;
+	width: 100%;
 }

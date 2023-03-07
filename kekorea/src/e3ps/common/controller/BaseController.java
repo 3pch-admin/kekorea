@@ -9,4 +9,5 @@ public class BaseController {
 	protected final String DELETE_MSG = "삭제되었습니다.";
 	protected final String REVISE_MSG = "개정되었습니다.";
 	protected final String MODIFY_MSG = "수정되었습니다.";
+	protected final String REGISTER_MSG = "결재가 등록되었습니다.";
 }

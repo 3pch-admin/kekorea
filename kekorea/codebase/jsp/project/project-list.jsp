@@ -524,7 +524,7 @@ JSONArray machines = (JSONArray)request.getAttribute("machines");
 		params.sessionid = $("input[name=sessionid]").val();
 		params.start = (curPage * 30);
 		params.end = (curPage * 30) + 30;
-		let url = getCallUrl("/appendData");
+		let url = getCallUrl("/aui/appendData");
 		AUIGrid.showAjaxLoader(myGridID);
 		parent.openLayer();
 		call(url, params, function(data) {

@@ -2,6 +2,8 @@ package e3ps.org.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -11,14 +13,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.org.dto.UserDTO;
 import e3ps.org.service.OrgHelper;
 
 @Controller
@@ -46,7 +50,7 @@ public class OrgController extends BaseController {
 	public ModelAndView organization() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
-		ArrayList<HashMap<String, Object>> list = OrgHelper.manager.getDepartmentMap();
+		ArrayList<HashMap<String, String>> list = OrgHelper.manager.getDepartmentMap();
 		JSONArray maks = CommonCodeHelper.manager.parseJson("MAK");
 		model.addObject("maks", maks);
 		model.addObject("list", list);
@@ -70,49 +74,34 @@ public class OrgController extends BaseController {
 		return result;
 	}
 
-	@Description("조직도 ")
-	@RequestMapping(value = "/viewOrg", method = RequestMethod.POST)
-	public Map<String, Object> viewOrg(@RequestBody Map<String, Object> params) throws Exception {
+	@Description(value = "사용자 정보 저장 그리드 용")
+	@PostMapping(value = "/save")
+	@ResponseBody
+	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
+			throws Exception {
+		ArrayList<LinkedHashMap<String, Object>> editRows = params.get("editRows");
 		Map<String, Object> result = new HashMap<String, Object>();
-//		Map<String, Object> result = null;
 		try {
-			result = OrgHelper.manager.find(params);
+
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+			ArrayList<UserDTO> editRow = new ArrayList<>();
+			for (LinkedHashMap<String, Object> edit : editRows) {
+				UserDTO dto = mapper.convertValue(edit, UserDTO.class);
+				editRow.add(dto);
+			}
+
+			HashMap<String, List<UserDTO>> dataMap = new HashMap<>();
+			dataMap.put("editRows", editRow); // 삭제행
+
+			OrgHelper.service.save(dataMap);
 			result.put("result", SUCCESS);
-			System.out.println("ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ");
+			result.put("msg", SAVE_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
 		}
 		return result;
 	}
-
-	@Description("폴더트리 부서 가져오기")
-	@RequestMapping(value = "/getDeptTree")
-	@ResponseBody
-	public JSONArray getDeptTree(@RequestParam Map<String, Object> params) throws Exception {
-//		JSONArray node = null;
-		JSONArray node = new JSONArray();
-		try {
-			node = OrgHelper.manager.getDeptTree(params);
-//			node.add(node);
-			System.out.println("zzzzzzzzzz");
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("xxxxxxxxxxxxxxxxxxx");
-		}
-		return node;
-	}
-
-//	@Description("부서 별 유저")
-//	@RequestMapping(value = "getUserForDept")
-//	@ResponseBody
-//	public Map<String, Object> getUserForDept(@RequestBody Map<String, Object> params) {
-//		Map<String, Object> map = new HashMap<String, Object>();
-//		try {
-//			map = OrgHelper.manager.getUserForDept(params);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return map;
-//	}
 }

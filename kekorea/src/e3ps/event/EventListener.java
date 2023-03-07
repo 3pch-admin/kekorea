@@ -2,6 +2,8 @@ package e3ps.event;
 
 import com.ptc.wvs.server.publish.PublishServiceEvent;
 
+import e3ps.epm.workOrder.WorkOrder;
+import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.org.service.OrgHelper;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;

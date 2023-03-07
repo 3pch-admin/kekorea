@@ -8,13 +8,18 @@ import java.util.Random;
 
 import com.infoengine.SAK.Task;
 
+import e3ps.admin.commonCode.CommonCode;
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.mail.MailUtils;
+import e3ps.common.util.CommonUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.org.Department;
 import e3ps.org.People;
+import e3ps.org.PeopleMakLink;
 import e3ps.org.PeopleWTUserLink;
 import e3ps.org.beans.UserViewData;
+import e3ps.org.dto.UserDTO;
 import e3ps.workspace.ApprovalUserLine;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -34,6 +39,7 @@ import wt.services.ManagerException;
 import wt.services.StandardManager;
 import wt.session.SessionContext;
 import wt.session.SessionHelper;
+import wt.util.WTAttributeNameIfc;
 import wt.util.WTException;
 import wt.util.WTProperties;
 
@@ -141,11 +147,11 @@ public class StandardOrgService extends StandardManager implements OrgService {
 
 			SessionHelper.manager.setAdministrator();
 
-			QuerySpec spec = new QuerySpec();
-			spec.appendClassList(People.class, true);
-			QueryResult navi = PersistenceHelper.manager.find(spec);
-			while (navi.hasMoreElements()) {
-				Object[] obj = (Object[]) navi.nextElement();
+			QuerySpec qs = new QuerySpec();
+			int _idx = qs.appendClassList(People.class, true);
+			QueryResult qr = PersistenceHelper.manager.find(qs);
+			while (qr.hasMoreElements()) {
+				Object[] obj = (Object[]) qr.nextElement();
 				People u = (People) obj[0];
 				String id = u.getId();
 				WTUser user = OrganizationServicesMgr.getUser(id);
@@ -156,28 +162,19 @@ public class StandardOrgService extends StandardManager implements OrgService {
 
 			QuerySpec query = new QuerySpec();
 			int idx = query.appendClassList(WTUser.class, true);
-
-			SearchCondition sc = new SearchCondition(WTUser.class, WTUser.DISABLED, SearchCondition.IS_FALSE);
-			query.appendWhere(sc, new int[] { idx });
-			query.appendAnd();
-
-			sc = new SearchCondition(WTUser.class, WTUser.REPAIR_NEEDED, SearchCondition.IS_FALSE);
-			query.appendWhere(sc, new int[] { idx });
-
-			ClassAttribute ca = new ClassAttribute(WTUser.class, WTUser.FULL_NAME);
-			OrderBy orderBy = new OrderBy(ca, false);
-			query.appendOrderBy(orderBy, new int[] { idx });
+			QuerySpecUtils.toBooleanAnd(query, idx, WTUser.class, WTUser.DISABLED, false);
+			QuerySpecUtils.toBooleanAnd(query, idx, WTUser.class, WTUser.REPAIR_NEEDED, false);
+			QuerySpecUtils.toOrderBy(query, idx, WTUser.class, WTUser.FULL_NAME, false);
 			QueryResult result = PersistenceHelper.manager.find(query);
-
 			while (result.hasMoreElements()) {
 				Object[] obj = (Object[]) result.nextElement();
 				WTUser wtuser = (WTUser) obj[0];
 
-				QueryResult qr = PersistenceHelper.manager.navigate(wtuser, "people", PeopleWTUserLink.class);
+				QueryResult _qr = PersistenceHelper.manager.navigate(wtuser, "people", PeopleWTUserLink.class);
 				// not value...
 				People user = null;
 
-				if (!qr.hasMoreElements()) {
+				if (!_qr.hasMoreElements()) {
 					user = People.newPeople();
 					// set foreignKey
 					user.setDepartment(department);
@@ -188,9 +185,6 @@ public class StandardOrgService extends StandardManager implements OrgService {
 					user.setId(a);
 					user.setEmail(wtuser.getEMail() != null ? wtuser.getEMail() : "");
 					user = (People) PersistenceHelper.manager.save(user);
-				} else {
-					user = (People) qr.nextElement();
-					user = (People) PersistenceHelper.manager.modify(user);
 				}
 			}
 
@@ -664,9 +658,71 @@ public class StandardOrgService extends StandardManager implements OrgService {
 			trs.start();
 
 			editRow.forEach(map -> {
-				String name = (String)map.get("name"); 
-				ㄴ
+				String name = (String) map.get("name");
 			});
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void save(HashMap<String, List<UserDTO>> dataMap) throws Exception {
+		List<UserDTO> editRows = dataMap.get("editRows");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			for (UserDTO dto : editRows) {
+				String oid = dto.getOid();
+				String maks = dto.getMak();
+				String email = dto.getEmail();
+				String duty = dto.getDuty();
+				String department_oid = dto.getDepartment_oid();
+				boolean resign = dto.isResign();
+
+				People people = (People) CommonUtils.getObject(oid);
+				Department department = null;
+				if (!StringUtils.isNull(department_oid)) {
+					department = (Department) CommonUtils.getObject(department_oid);
+					people.setDepartment(department);
+				}
+				people.setEmail(email);
+				people.setDuty(duty);
+				people.setResign(resign);
+				PersistenceHelper.manager.modify(people);
+
+				// 기존 막종 링크 모두 제거
+				QuerySpec query = new QuerySpec();
+				int idx = query.appendClassList(People.class, true);
+				int idx_link = query.appendClassList(PeopleMakLink.class, true);
+				QuerySpecUtils.toInnerJoin(query, People.class, PeopleMakLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleAObjectRef.key.id", idx, idx_link);
+				QuerySpecUtils.toEqualsAnd(query, idx_link, PeopleMakLink.class, "roleAObjectRef.key.id",
+						people.getPersistInfo().getObjectIdentifier().getId());
+				QueryResult result = PersistenceHelper.manager.find(query);
+				while (result.hasMoreElements()) {
+					Object[] obj = (Object[]) result.nextElement();
+					PeopleMakLink link = (PeopleMakLink) obj[1];
+					PersistenceHelper.manager.delete(link);
+				}
+
+				if (!StringUtils.isNull(maks)) {
+					String[] makArray = maks.split(",");
+					for (String mak : makArray) {
+						CommonCode makCode = CommonCodeHelper.manager.getCommonCode(mak.trim(), "MAK");
+						PeopleMakLink link = PeopleMakLink.newPeopleMakLink(people, makCode);
+						PersistenceHelper.manager.save(link);
+					}
+				}
+			}
 
 			trs.commit();
 			trs = null;

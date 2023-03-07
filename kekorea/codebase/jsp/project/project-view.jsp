@@ -1,5 +1,5 @@
 <%@page import="org.json.JSONArray"%>
-<%@page import="e3ps.project.template.beans.TemplateViewData"%>
+<%@page import="e3ps.project.template.dto.TemplateViewData"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 String oid = (String) request.getAttribute("oid");

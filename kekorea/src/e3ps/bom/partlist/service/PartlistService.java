@@ -6,7 +6,7 @@ import wt.method.RemoteInterface;
 import wt.util.WTException;
 
 @RemoteInterface
-public interface PartListService {
+public interface PartlistService {
 
 	/**
 	 * 수배표 등록

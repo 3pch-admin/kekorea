@@ -48,17 +48,17 @@ import wt.util.WTProperties;
 import wt.vc.VersionControlHelper;
 import wt.vc.wip.WorkInProgressHelper;
 
-public class PartListHelper {
+public class PartlistHelper {
 
 	/**
 	 * access service
 	 */
-	public static final PartListService service = ServiceFactory.getService(PartListService.class);
+	public static final PartlistService service = ServiceFactory.getService(PartlistService.class);
 
 	/**
 	 * access helper
 	 */
-	public static final PartListHelper manager = new PartListHelper();
+	public static final PartlistHelper manager = new PartlistHelper();
 
 	public static String excelFormLoc;
 	static {
@@ -442,7 +442,7 @@ public class PartListHelper {
 																				// "EUC-KR");
 		Map<String, String> headerList = new HashMap<String, String>();
 		Map<String, String> list = new HashMap<String, String>();
-		ArrayList<PartListData> data = PartListHelper.manager.getPartListData(master);
+		ArrayList<PartListData> data = PartlistHelper.manager.getPartListData(master);
 		// headerList를 세팅할 만큼 세팅합니다.
 		headerList.put("0", "NO");
 		headerList.put("1", "LOT_NO");
@@ -636,6 +636,13 @@ public class PartListHelper {
 		return list;
 	}
 
+	/**
+	 * 수배표 가져오는 함수
+	 * 
+	 * @param params : 검색 조건을 지닌 객체
+	 * @return Map<String, Object>
+	 * @throws Exception
+	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<PartListDTO> list = new ArrayList<>();
@@ -651,6 +658,8 @@ public class PartListHelper {
 				WTAttributeNameIfc.ID_NAME, idx_link, idx_p);
 
 		QuerySpecUtils.toOrderBy(query, idx, PartListMaster.class, PartListMaster.CREATE_TIMESTAMP, true);
+
+		System.out.println(query);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();

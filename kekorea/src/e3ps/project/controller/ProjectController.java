@@ -48,7 +48,7 @@ public class ProjectController extends BaseController {
 		ArrayList<CommonCode> customers = CommonCodeHelper.manager.getArrayCodeList("CUSTOMER");
 		ArrayList<CommonCode> projectTypes = CommonCodeHelper.manager.getArrayCodeList("PROJECT_TYPE");
 		ArrayList<CommonCode> maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
-		ArrayList<HashMap<String, Object>> list = TemplateHelper.manager.getTemplateArrayMap();
+		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
 
 		org.json.JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
 		org.json.JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");

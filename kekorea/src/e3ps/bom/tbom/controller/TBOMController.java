@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.bom.tbom.TBOMMaster;
-import e3ps.bom.tbom.dto.TBOMMasterViewData;
 import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
@@ -32,7 +31,7 @@ public class TBOMController extends BaseController {
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/bom/tbom/tbom-list.jsp");
+		model.setViewName("/extcore/jsp/bom/tbom/tbom-list.jsp");
 		return model;
 	}
 
@@ -77,16 +76,16 @@ public class TBOMController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "T-BOM 상세")
-	@GetMapping(value = "/view")
-	public ModelAndView view(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
-		TBOMMasterViewData data = new TBOMMasterViewData(master);
-		model.addObject("data", data);
-		model.setViewName("popup:/bom/tbom/tbom-view");
-		return model;
-	}
+//	@Description(value = "T-BOM 상세")
+//	@GetMapping(value = "/view")
+//	public ModelAndView view(@RequestParam String oid) throws Exception {
+//		ModelAndView model = new ModelAndView();
+//		TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
+//		TBOMMasterViewData data = new TBOMMasterViewData(master);
+//		model.addObject("data", data);
+//		model.setViewName("popup:/bom/tbom/tbom-view");
+//		return model;
+//	}
 
 	@Description(value = "T-BOM 그리드 저장 함수")
 	@ResponseBody

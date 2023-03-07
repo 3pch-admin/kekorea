@@ -19,7 +19,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.template.Template;
-import e3ps.project.template.beans.TemplateViewData;
+import e3ps.project.template.dto.TemplateViewData;
 import e3ps.project.template.service.TemplateHelper;
 import net.sf.json.JSONArray;
 

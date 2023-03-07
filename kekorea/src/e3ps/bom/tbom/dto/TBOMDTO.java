@@ -1,7 +1,6 @@
 package e3ps.bom.tbom.dto;
 
 import e3ps.bom.tbom.TBOMData;
-import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import lombok.Getter;
 import lombok.Setter;

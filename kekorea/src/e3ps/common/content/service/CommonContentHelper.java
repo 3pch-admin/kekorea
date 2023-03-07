@@ -23,7 +23,7 @@ public class CommonContentHelper {
 			icon = "file_pdf.gif";
 		} else if (ext.equalsIgnoreCase("bmp")) {
 			icon = "file_bmp.gif";
-		} else if (ext.equalsIgnoreCase("xlsx") || ext.equalsIgnoreCase("xls")) {
+		} else if (ext.equalsIgnoreCase("xlsx") || ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("csv")) {
 			icon = "file_excel.gif";
 		}
 		return path + icon;

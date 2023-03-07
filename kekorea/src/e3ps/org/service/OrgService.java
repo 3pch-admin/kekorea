@@ -1,9 +1,12 @@
 package e3ps.org.service;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import e3ps.org.Department;
 import e3ps.org.People;
+import e3ps.org.dto.UserDTO;
 import wt.method.RemoteInterface;
 import wt.org.WTUser;
 import wt.util.WTException;
@@ -13,6 +16,7 @@ public interface OrgService {
 
 	/**
 	 * AUIGrid 리스트 저장
+	 * 
 	 * @param params : AUIGrid 데이터
 	 * @throws Exception
 	 */
@@ -43,4 +47,12 @@ public interface OrgService {
 	public abstract void save(WTUser wtuser) throws Exception;
 
 	public abstract void modify(WTUser wtuser) throws Exception;
+
+	/**
+	 * 사용자 정보 저장 그리드 용
+	 * 
+	 * @param dataMap : 사용자 정보를 담는 변수
+	 * @throws Exception
+	 */
+	public abstract void save(HashMap<String, List<UserDTO>> dataMap) throws Exception;
 }

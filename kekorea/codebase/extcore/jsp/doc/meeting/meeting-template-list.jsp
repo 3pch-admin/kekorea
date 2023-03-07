@@ -75,10 +75,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					dataField : "name",
 					headerText : "회의록 템플릿 제목",
 					dataType : "string",
-					style : "left underline",
+					style : "left indent10 underline",
 					filter : {
 						showIcon : true,
-						useExMenu : true,
 						inline : true
 					},
 				}, {
@@ -88,7 +87,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					width : 100,
 					filter : {
 						showIcon : true,
-						useExMenu : true,
 						inline : true
 					},
 				}, {
@@ -99,7 +97,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					width : 100,
 					filter : {
 						showIcon : true,
-						useExMenu : true,
 						inline : true
 					},
 				} ]
@@ -148,10 +145,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				let params = new Object();
 				let url = getCallUrl("/meeting/template");
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
-					$("input[name=sessionid]").val(data.sessionid);
-					$("input[name=curPage]").val(data.curPage);
+					document.getElementById("sessionid").value = data.sessionid;
+					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
@@ -168,20 +166,23 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function requestAdditionalData() {
 				let params = new Object();
-				let curPage = $("input[name=curPage]").val();
-				params.sessionid = $("input[name=sessionid]").val();
+				let curPage = document.getElementById("curPage").value;
+				let sessionid = document.getElementById("sessionid").value;
+				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/appendData");
+				let url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					if (data.list.length == 0) {
 						last = true;
 					} else {
 						AUIGrid.appendData(myGridID, data.list);
-						$("input[name=curPage]").val(parseInt(curPage) + 1);
+						document.getElementById("curPage").value = parseInt(curPage) + 1;
 					}
 					AUIGrid.removeAjaxLoader(myGridID);
+					parent.closeLayer();
 				})
 			}
 
@@ -201,12 +202,14 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				let params = new Object();
 				let removeRows = AUIGrid.getRemovedItems(myGridID);
 				params.removeRows = removeRows;
+				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
+					parent.closeLayer();
 					if (data.result) {
 						loadGridData();
 					}
-				}, "POST");
+				});
 			}
 
 			// 행 삭제
@@ -222,15 +225,20 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				// DOM이 로드된 후 실행할 코드 작성
 				let columns = loadColumnLayout("meeting-template-list");
 				createAUIGrid(columns);
+				AUIGrid.resize(myGridID);
 			});
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				let keyCode = event.keyCode || event.which;
-				if (keyCode === 14) {
+				if (keyCode === 13) {
 					loadGridData();
 				}
 			})
+
+			window.addEventListener("resize", function() {
+				AUIGrid.resize(myGridID);
+			});
 		</script>
 	</form>
 </body>
