@@ -4,6 +4,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 	ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks");
+	ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("installs");
 %>
 <!DOCTYPE html>
 <html>
@@ -83,14 +84,13 @@ Highcharts.chart('container', {
             }
         },
         series: [
-        	<%for (CommonCode mak : maks) {
-	ArrayList<CommonCode> details = KoreaHelper.manager.drillDownList(mak);%>
+        	<%for (CommonCode mak : maks) {%>
             {
                 name: '<%=mak.getName()%>',
                 id: '<%=mak.getCode()%>',
                 data: [
-                <%for (CommonCode detail : details) {%>
-                	['<%=detail.getName()%>', <%=KoreaHelper.manager.yAxisValueForDetail(detail)%>],
+                <%for (CommonCode install : installs) {%>
+                	['<%=install.getName()%>', <%=KoreaHelper.manager.yAxisValueForInstall(install)%>],
                 <%}%>
                 ]
             },

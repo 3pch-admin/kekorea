@@ -16,6 +16,7 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.org.Department;
 import e3ps.org.People;
+import e3ps.org.PeopleInstallLink;
 import e3ps.org.PeopleMakLink;
 import e3ps.org.PeopleWTUserLink;
 import e3ps.org.beans.UserViewData;
@@ -683,6 +684,7 @@ public class StandardOrgService extends StandardManager implements OrgService {
 			for (UserDTO dto : editRows) {
 				String oid = dto.getOid();
 				String maks = dto.getMak();
+				String installs = dto.getInstall();
 				String email = dto.getEmail();
 				String duty = dto.getDuty();
 				String department_oid = dto.getDepartment_oid();
@@ -699,18 +701,10 @@ public class StandardOrgService extends StandardManager implements OrgService {
 				people.setResign(resign);
 				PersistenceHelper.manager.modify(people);
 
-				// 기존 막종 링크 모두 제거
-				QuerySpec query = new QuerySpec();
-				int idx = query.appendClassList(People.class, true);
-				int idx_link = query.appendClassList(PeopleMakLink.class, true);
-				QuerySpecUtils.toInnerJoin(query, People.class, PeopleMakLink.class, WTAttributeNameIfc.ID_NAME,
-						"roleAObjectRef.key.id", idx, idx_link);
-				QuerySpecUtils.toEqualsAnd(query, idx_link, PeopleMakLink.class, "roleAObjectRef.key.id",
-						people.getPersistInfo().getObjectIdentifier().getId());
-				QueryResult result = PersistenceHelper.manager.find(query);
-				while (result.hasMoreElements()) {
-					Object[] obj = (Object[]) result.nextElement();
-					PeopleMakLink link = (PeopleMakLink) obj[1];
+				ArrayList<PeopleMakLink> makLinks = OrgHelper.manager.getMakLinks(people);
+				ArrayList<PeopleInstallLink> installLinks = OrgHelper.manager.getInstallLinks(people);
+
+				for (PeopleMakLink link : makLinks) {
 					PersistenceHelper.manager.delete(link);
 				}
 
@@ -719,6 +713,19 @@ public class StandardOrgService extends StandardManager implements OrgService {
 					for (String mak : makArray) {
 						CommonCode makCode = CommonCodeHelper.manager.getCommonCode(mak.trim(), "MAK");
 						PeopleMakLink link = PeopleMakLink.newPeopleMakLink(people, makCode);
+						PersistenceHelper.manager.save(link);
+					}
+				}
+
+				for (PeopleInstallLink link : installLinks) {
+					PersistenceHelper.manager.delete(link);
+				}
+
+				if (!StringUtils.isNull(maks)) {
+					String[] installArray = installs.split(",");
+					for (String install : installArray) {
+						CommonCode installCode = CommonCodeHelper.manager.getCommonCode(install.trim(), "INSTALL");
+						PeopleInstallLink link = PeopleInstallLink.newPeopleInstallLink(people, installCode);
 						PersistenceHelper.manager.save(link);
 					}
 				}

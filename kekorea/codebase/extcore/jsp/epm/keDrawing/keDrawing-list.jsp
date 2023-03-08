@@ -242,7 +242,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				// 화면 첫 진입시 리스트 호출 함수
 				// 등록이 있는곳은 제외 한다.
-				// loadGridData();
+				loadGridData();
 				// Lazy Loading 이벤트 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 			}
@@ -251,11 +251,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				let params = new Object();
 				let url = getCallUrl("/keDrawing/list");
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
+					parent.closeLayer();
 				});
 			}
 
@@ -271,11 +273,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			function requestAdditionalData() {
 				let params = new Object();
 				let curPage = document.getElementById("curPage").value;
-				params.sessionid = document.getElementById("sessionid").value;
+				let sessionid = document.getElementById("sessionid").value;
+				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
 				let url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					if (data.list.length == 0) {
 						last = true;
@@ -284,6 +288,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						document.getElementById("curPage").value = parseInt(curPage) + 1;
 					}
 					AUIGrid.removeAjaxLoader(myGridID);
+					parent.closeLayer();
 				})
 			}
 
@@ -339,12 +344,14 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				params.addRows = addRows;
 				params.removeRows = removeRows;
 				params.editRows = editRows;
+				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
+					parent.closeLayer();
 					if (data.result) {
 						loadGridData();
 					}
-				}, "POST");
+				});
 			}
 
 			function revise() {
@@ -363,8 +370,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				// DOM이 로드된 후 실행할 코드 작성
 				let columns = loadColumnLayout("keDrawing-list");
 				createAUIGrid(columns);
-				// 로딩 레이어 삭제
-				parent.closeLayer();
 			});
 
 			document.addEventListener("keydown", function(event) {

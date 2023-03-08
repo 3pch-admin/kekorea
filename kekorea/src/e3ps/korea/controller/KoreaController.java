@@ -33,7 +33,7 @@ public class KoreaController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "KOREA 검색 함수")
+	@Description(value = "한국생산 검색 함수")
 	@ResponseBody
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -54,8 +54,8 @@ public class KoreaController extends BaseController {
 	public ModelAndView chart() throws Exception {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = CommonUtils.sessionUser();
-		ArrayList<CommonCode> installs = CommonCodeHelper.manager.getArrayCodeList("INSTALL");
 		ArrayList<CommonCode> maks = OrgHelper.manager.getUserMaks(sessionUser);
+		ArrayList<CommonCode> installs = OrgHelper.manager.getUserInstalls(sessionUser);
 		// 설정을 안한 경우 모든 막종을 보여준다.
 		if (maks.size() == 0) {
 			maks = CommonCodeHelper.manager.getArrayCodeList("MAK");

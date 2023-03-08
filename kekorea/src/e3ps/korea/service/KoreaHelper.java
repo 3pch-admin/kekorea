@@ -75,28 +75,19 @@ public class KoreaHelper {
 		return result.size();
 	}
 
-	public int yAxisValueForDetail(CommonCode mak) throws Exception {
+	/**
+	 * 한국생산 차트 drilldown 설치 장소 값
+	 * 
+	 * @param install : 설치 장소
+	 * @return int
+	 * @throws Exception
+	 */
+	public int yAxisValueForInstall(CommonCode install) throws Exception {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "detailReference.key.id",
-				mak.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "installReference.key.id",
+				install.getPersistInfo().getObjectIdentifier().getId());
 		QueryResult result = PersistenceHelper.manager.find(query);
 		return result.size();
-	}
-
-	public ArrayList<CommonCode> drillDownList(CommonCode mak) throws Exception {
-		ArrayList<CommonCode> list = new ArrayList<>();
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(CommonCode.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, "parentReference.key.id",
-				mak.getPersistInfo().getObjectIdentifier().getId());
-		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
-		QueryResult result = PersistenceHelper.manager.find(query);
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			CommonCode detail = (CommonCode) obj[0];
-			list.add(detail);
-		}
-		return list;
 	}
 }

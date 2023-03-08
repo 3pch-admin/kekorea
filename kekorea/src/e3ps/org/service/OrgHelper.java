@@ -11,6 +11,7 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.org.Department;
 import e3ps.org.People;
+import e3ps.org.PeopleInstallLink;
 import e3ps.org.PeopleMakLink;
 import e3ps.org.PeopleWTUserLink;
 import e3ps.org.dto.UserDTO;
@@ -1230,7 +1231,7 @@ public class OrgHelper {
 	 * @return String
 	 * @throws Exception
 	 */
-	public String getUserMaks(People people) throws Exception {
+	public String getGridMaks(People people) throws Exception {
 		String mak = "";
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(People.class, true);
@@ -1244,11 +1245,41 @@ public class OrgHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			PeopleMakLink link = (PeopleMakLink) obj[1];
-
 			if (last == (result.size() - 1)) {
 				mak += link.getMak().getCode();
 			} else {
 				mak += link.getMak().getCode() + ", ";
+			}
+			last++;
+		}
+		return mak;
+	}
+
+	/**
+	 * 그리드에 표현할 설치장소 목록
+	 * 
+	 * @param people : 사용자 객체
+	 * @return String
+	 * @throws Exception
+	 */
+	public String getGridInstalls(People people) throws Exception {
+		String mak = "";
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(People.class, true);
+		int idx_link = query.appendClassList(PeopleInstallLink.class, true);
+		QuerySpecUtils.toInnerJoin(query, People.class, PeopleInstallLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, PeopleInstallLink.class, "roleAObjectRef.key.id",
+				people.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult result = PersistenceHelper.manager.find(query);
+		int last = 0;
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			PeopleInstallLink link = (PeopleInstallLink) obj[1];
+			if (last == (result.size() - 1)) {
+				mak += link.getInstall().getCode();
+			} else {
+				mak += link.getInstall().getCode() + ", ";
 			}
 			last++;
 		}
@@ -1281,6 +1312,82 @@ public class OrgHelper {
 			Object[] obj = (Object[]) qr.nextElement();
 			PeopleMakLink link = (PeopleMakLink) obj[1];
 			list.add(link.getMak());
+		}
+		return list;
+	}
+
+	/**
+	 * 사용자가 설정한 막종 링크
+	 * 
+	 * @param people : 사용자 객체
+	 * @return ArrayList<PeopleMakLink>
+	 * @throws Exception
+	 */
+	public ArrayList<PeopleMakLink> getMakLinks(People people) throws Exception {
+		ArrayList<PeopleMakLink> list = new ArrayList<>();
+		// 기존 막종 링크 모두 제거
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(People.class, true);
+		int idx_link = query.appendClassList(PeopleMakLink.class, true);
+		QuerySpecUtils.toInnerJoin(query, People.class, PeopleMakLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, PeopleMakLink.class, "roleAObjectRef.key.id",
+				people.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			PeopleMakLink link = (PeopleMakLink) obj[1];
+			list.add(link);
+		}
+		return list;
+	}
+
+	/**
+	 * 사용자가 설정한 설치장소 링크
+	 * 
+	 * @param people : 사용자 객체
+	 * @return ArrayList<PeopleInstallLink>
+	 * @throws Exception
+	 */
+	public ArrayList<PeopleInstallLink> getInstallLinks(People people) throws Exception {
+		ArrayList<PeopleInstallLink> list = new ArrayList<>();
+		// 기존 막종 링크 모두 제거
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(People.class, true);
+		int idx_link = query.appendClassList(PeopleInstallLink.class, true);
+		QuerySpecUtils.toInnerJoin(query, People.class, PeopleInstallLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, PeopleInstallLink.class, "roleAObjectRef.key.id",
+				people.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			PeopleInstallLink link = (PeopleInstallLink) obj[1];
+			list.add(link);
+		}
+		return list;
+	}
+
+	public ArrayList<CommonCode> getUserInstalls(WTUser sessionUser) throws Exception {
+		ArrayList<CommonCode> list = new ArrayList<>();
+		People people = null;
+		QueryResult result = PersistenceHelper.manager.navigate(sessionUser, "people", PeopleWTUserLink.class);
+		if (result.hasMoreElements()) {
+			people = (People) result.nextElement();
+		}
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(People.class, true);
+		int idx_link = query.appendClassList(PeopleInstallLink.class, true);
+		QuerySpecUtils.toInnerJoin(query, People.class, PeopleInstallLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, PeopleInstallLink.class, "roleAObjectRef.key.id",
+				people.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult qr = PersistenceHelper.manager.find(query);
+		while (qr.hasMoreElements()) {
+			Object[] obj = (Object[]) qr.nextElement();
+			PeopleInstallLink link = (PeopleInstallLink) obj[1];
+			list.add(link.getInstall());
 		}
 		return list;
 	}

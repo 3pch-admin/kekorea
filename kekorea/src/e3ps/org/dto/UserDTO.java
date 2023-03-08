@@ -27,7 +27,8 @@ public class UserDTO {
 	private Timestamp createdDate;
 	private boolean resign;
 	private String mak;
-	
+	private String install;
+
 	public UserDTO() {
 
 	}
@@ -51,7 +52,8 @@ public class UserDTO {
 		}
 		setCreatedDate(people.getCreateTimestamp());
 		setResign(people.getResign());
-		setMak(OrgHelper.manager.getUserMaks(people));
+		setMak(OrgHelper.manager.getGridMaks(people));
+		setInstall(OrgHelper.manager.getGridInstalls(people));
 	}
 
 	public UserDTO(People people) throws Exception {
@@ -68,6 +70,7 @@ public class UserDTO {
 		}
 		setCreatedDate(people.getCreateTimestamp());
 		setResign(people.getResign());
-		setMak(OrgHelper.manager.getUserMaks(people));
+		setMak(OrgHelper.manager.getGridMaks(people));
+		setInstall(OrgHelper.manager.getGridInstalls(people));
 	}
 }

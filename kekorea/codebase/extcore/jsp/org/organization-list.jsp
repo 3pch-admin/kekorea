@@ -8,6 +8,7 @@
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) request.getAttribute("list");
 JSONArray maks = (JSONArray) request.getAttribute("maks");
+JSONArray installs = (JSONArray) request.getAttribute("installs");
 JSONArray departments = new JSONArray(list);
 %>
 <!DOCTYPE html>
@@ -87,10 +88,9 @@ JSONArray departments = new JSONArray(list);
 		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
-			let maks =
-		<%=maks%>
-			let departments =
-		<%=departments%>
+			let maks = <%=maks%>
+			let installs = <%=installs%>
+			let departments = <%=departments%>
 			let dutys = [ "사장", "부사장", "PL", "TL" ];
 			function _layout() {
 				return [ {
@@ -185,7 +185,7 @@ JSONArray departments = new JSONArray(list);
 					},
 				}, {
 					dataField : "mak",
-					headerText : "관련막종",
+					headerText : "막종",
 					dataType : "string",
 					style : "left indent10",
 					editable : true,
@@ -221,6 +221,53 @@ JSONArray departments = new JSONArray(list);
 						for (let i = 0, len = maks.length; i < len; i++) {
 							if (maks[i]["key"] == value) {
 								retStr = maks[i]["value"];
+								break;
+							}
+						}
+						return retStr == "" ? value : retStr;
+					},
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "install",
+					headerText : "설치장소",
+					dataType : "string",
+					style : "left indent10",
+					editable : true,
+					headerTooltip : {
+						show : true,
+						tooltipHtml : "한국 생산의 차트에서 사용자가 원하는 설치장소만 볼 수 있도록 설정 하는 컬럼입니다."
+					},
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+						},
+						onClick : function(event) {
+							// 아이콘을 클릭하면 수정으로 진입함.
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "DropDownListRenderer",
+						showEditorBtn : false,
+						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
+						multipleMode : true, // 다중 선택 모드(기본값 : false)
+						showCheckAll : true, // 다중 선택 모드에서 전체 체크 선택/해제 표시(기본값:false);
+						list : installs,
+						keyField : "key", // key 에 해당되는 필드명
+						valueField : "value", // value 에 해당되는 필드명,			
+					},
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
+						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+						for (let i = 0, len = installs.length; i < len; i++) {
+							if (installs[i]["key"] == value) {
+								retStr = installs[i]["value"];
 								break;
 							}
 						}
