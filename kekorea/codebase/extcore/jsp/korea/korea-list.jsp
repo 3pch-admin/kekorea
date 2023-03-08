@@ -256,11 +256,13 @@
 				let params = new Object();
 				let url = getCallUrl("/korea/list");
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
+					parent.closeLayer();
 				});
 			}
 
@@ -282,6 +284,7 @@
 				params.end = (curPage * 100) + 100;
 				let url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					if (data.list.length == 0) {
 						last = true;
@@ -290,6 +293,7 @@
 						document.getElementById("curPage").value = parseInt(curPage) + 1;
 					}
 					AUIGrid.removeAjaxLoader(myGridID);
+					parent.closeLayer();
 				})
 			}
 
@@ -299,7 +303,6 @@
 				let columns = loadColumnLayout("korea-list");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				parent.closeLayer();
 			});
 
 			window.addEventListener("resize", function() {

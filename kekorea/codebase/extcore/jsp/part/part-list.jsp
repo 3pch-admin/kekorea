@@ -67,9 +67,10 @@
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('part-list');">
+				</td>
+				<td class="right">
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
-				<td class="right"></td>
 			</tr>
 		</table>
 
@@ -101,76 +102,128 @@
 					style : "left indent10 underline",
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						inline : true
 					},
 				}, {
 					dataField : "part_code",
 					headerText : "품번",
 					dataType : "string",
-					width : 120
+					width : 120,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "name_of_parts",
 					headerText : "품명",
 					dataType : "string",
 					width : 300,
-					style : "left indent10"
+					style : "left indent10",
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "number",
 					headerText : "규격",
 					dataType : "string",
-					width : 150
+					width : 150,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "material",
 					headerText : "MATERIAL",
 					dataType : "string",
-					width : 150
+					width : 150,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "remark",
 					headerText : "REMARK",
 					dataType : "string",
-					width : 150
+					width : 150,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "maker",
 					headerText : "MAKER",
 					dataType : "string",
-					width : 150
+					width : 150,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "version",
 					headerText : "버전",
 					dataType : "string", // 버전 사이즈 80
-					width : 80
+					width : 80,
+					filter : {
+						showIcon : false,
+						inline : false
+					},
 				}, {
 					dataField : "creator",
 					headerText : "작성자",
 					dataType : "string", // 날짜 및 사람명 컬럼 사이즈 100
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "createdDate",
 					headerText : "작성일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "modifier",
 					headerText : "수정자",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "modifiedDate",
 					headerText : "수정일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "state",
 					headerText : "상태",
 					dataType : "string", //상태 사이즈 100
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "location",
 					headerText : "FOLDER",
 					dataType : "string",
-					width : 150
+					width : 150,
+					filter : {
+						showIcon : false,
+						inline : false
+					},
 				} ]
 			}
 
@@ -206,10 +259,11 @@
 				let params = new Object();
 				let url = getCallUrl("/part/list");
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
-					$("input[name=sessionid]").val(data.sessionid);
-					$("input[name=curPage]").val(data.curPage);
+					document.getElementById("sessionid").value = data.sessionid;
+					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
@@ -226,33 +280,43 @@
 
 			function requestAdditionalData() {
 				let params = new Object();
-				let curPage = $("input[name=curPage]").val();
-				params.sessionid = $("input[name=sessionid]").val();
+				let curPage = document.getElementById("curPage").value;
+				params.sessionid = document.getElementById("sessionid").value;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
 				let url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					if (data.list.length == 0) {
 						last = true;
 					} else {
 						AUIGrid.appendData(myGridID, data.list);
-						$("input[name=curPage]").val(parseInt(curPage) + 1);
+						document.getElementById("curPage").value = parseInt(curPage) + 1;
 					}
 					AUIGrid.removeAjaxLoader(myGridID);
+					parent.closeLayer();
 				})
 			}
 
-			// jquery 모든 DOM구조 로딩 후 
-			$(function() {
-				// 로컬 스토리지에 저장된 컬럼 값 불러오기 see - base.js
+			// jquery 삭제를 해가는 쪽으로 한다..
+			document.addEventListener("DOMContentLoaded", function() {
+				// DOM이 로드된 후 실행할 코드 작성
 				let columns = loadColumnLayout("part-list");
 				createAUIGrid(columns);
-			}).keypress(function(e) {
-				let keyCode = e.keyCode;
+			});
+
+			document.addEventListener("keydown", function(event) {
+				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
+				let keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
+					loadGridData();
 				}
 			})
+
+			window.addEventListener("resize", function() {
+				AUIGrid.resize(myGridID);
+			});
 		</script>
 	</form>
 </body>

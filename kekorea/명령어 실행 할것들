@@ -5,3 +5,6 @@
 2. ResourceBuild 실행
 	- tools bundle -Dbundle.input=e3ps.admin.commonCode.** -Dbundle.buildLocales=true
 	
+3. State ResourceBuild 실행
+	- Shell -> ResourceBuild.bat wt.lifecycle.**
+	- codebase -> ant -f MakeJar.xml

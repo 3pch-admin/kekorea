@@ -324,7 +324,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					if (data.result) {
 						loadGridData();
 					}
-				}, "POST");
+				});
 			}
 
 			// 행 삭제

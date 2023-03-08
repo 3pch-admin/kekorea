@@ -22,7 +22,8 @@ public class ApprovalLineDTO {
 	private Timestamp createdDate;
 	private Timestamp receiveTime;
 	private Timestamp completeTime;
-	private String pointer;
+	
+	private String point; // 표시..
 
 	public ApprovalLineDTO() {
 

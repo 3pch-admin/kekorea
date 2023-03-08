@@ -18,7 +18,7 @@ import wt.session.SessionHelper;
 
 @Getter
 @Setter
-public class PartColumnData {
+public class PartDTO {
 
 	private String oid;
 	private String cadType;
@@ -38,11 +38,11 @@ public class PartColumnData {
 	private String state;
 	private String location;
 
-	public PartColumnData() {
+	public PartDTO() {
 
 	}
 
-	public PartColumnData(WTPart part) throws Exception {
+	public PartDTO(WTPart part) throws Exception {
 		EPMDocument epm = PartHelper.manager.getEPMDocument(part);
 		setOid(part.getPersistInfo().getObjectIdentifier().getStringValue());
 		setThumnail(AUIGridUtils.getThumnailSmall(part));
@@ -75,5 +75,6 @@ public class PartColumnData {
 		setModifier(part.getModifierFullName());
 		setModifiedDate(part.getModifyTimestamp());
 		setState(part.getLifeCycleState().getDisplay());
+		setLocation(part.getLocation());
 	}
 }

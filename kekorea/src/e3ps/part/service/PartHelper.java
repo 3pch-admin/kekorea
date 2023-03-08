@@ -29,7 +29,7 @@ import e3ps.part.UnitSubPart;
 import e3ps.part.beans.BomBroker;
 import e3ps.part.beans.BomCompare;
 import e3ps.part.beans.BomTreeData;
-import e3ps.part.beans.PartColumnData;
+import e3ps.part.beans.PartDTO;
 import e3ps.part.beans.PartTreeData;
 import e3ps.part.beans.PartViewData;
 import e3ps.part.column.BomColumnData;
@@ -2179,7 +2179,7 @@ public class PartHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		ArrayList<PartColumnData> list = new ArrayList<>();
+		ArrayList<PartDTO> list = new ArrayList<>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTPart.class, true);
 
@@ -2189,7 +2189,7 @@ public class PartHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			WTPart part = (WTPart) obj[0];
-			PartColumnData column = new PartColumnData(part);
+			PartDTO column = new PartDTO(part);
 			list.add(column);
 		}
 		map.put("list", list);

@@ -6,12 +6,11 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import wt.content.ContentHolder;
-import wt.content.FormatContentHolder;
 import wt.enterprise.Managed;
 import wt.ownership.Ownable;
 import wt.util.WTException;
 
-@GenAsPersistable(superClass = Managed.class, interfaces = { FormatContentHolder.class, ContentHolder.class,
+@GenAsPersistable(superClass = Managed.class, interfaces = { ContentHolder.class, ContentHolder.class,
 		Ownable.class },
 
 		properties = {

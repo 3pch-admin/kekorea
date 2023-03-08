@@ -22,11 +22,10 @@ import e3ps.part.service.PartHelper;
 public class PartController extends BaseController {
 
 	@Description(value = "부품 조회 페이지")
-	@RequestMapping(value = "/listPart", method = RequestMethod.GET)
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/extcore//jsp/part/part-list.jsp");
+		model.setViewName("/extcore/jsp/part/part-list.jsp");
 		return model;
 	}
 
@@ -37,33 +36,10 @@ public class PartController extends BaseController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			result = PartHelper.manager.list(params);
-			result.put("result", true);
-		} catch (Exception e) {
-			result.put("result", false);
-			e.printStackTrace();
-		}
-		return result;
-	}
-
-	@Description("EPLAN 결재 페이지")
-	@RequestMapping(value = "/approval", method = RequestMethod.GET)
-	public ModelAndView approval() throws Exception {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/part/approvalEplan.jsp");
-		return model;
-	}
-
-	@Description("EPLAN 결재")
-	@RequestMapping(value = "/approval", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, Object> approval(@RequestBody Map<String, Object> params) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			result = PartHelper.service.approvalEplanAction(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
-			result.put("result", FAIL);
 			e.printStackTrace();
+			result.put("result", FAIL);
 		}
 		return result;
 	}

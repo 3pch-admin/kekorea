@@ -79,6 +79,14 @@
 					headerText : "",
 					dataType : "string",
 					width : 40,
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconHeight : 16,
+						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
+							"default" : "/Windchill/extcore/images/details.gif" // default
+						},
+					},
 					filter : {
 						showIcon : false,
 						inline : false
@@ -116,6 +124,7 @@
 					headerText : "KEK 작번",
 					dataType : "string",
 					width : 100,
+					style : "underline",
 					filter : {
 						showIcon : true,
 						inline : true
@@ -125,6 +134,7 @@
 					headerText : "KE 작번",
 					dataType : "string",
 					width : 100,
+					style : "underline",
 					filter : {
 						showIcon : true,
 						inline : true

@@ -5,7 +5,7 @@ import e3ps.common.util.ThumnailUtils;
 import wt.part.WTPart;
 import wt.session.SessionHelper;
 
-public class PartColumnData {
+public class PartDTO {
 
 	// 목록에서 보여 줄것만해서
 	public String oid;
@@ -20,7 +20,7 @@ public class PartColumnData {
 	// 기타
 	public String iconPath;
 
-	public PartColumnData(WTPart part) throws Exception {
+	public PartDTO(WTPart part) throws Exception {
 		this.oid = part.getPersistInfo().getObjectIdentifier().getStringValue();
 		this.number = part.getNumber();
 		this.thumnail = ThumnailUtils.getThumnail(this.oid);

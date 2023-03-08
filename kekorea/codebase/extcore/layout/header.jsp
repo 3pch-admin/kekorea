@@ -155,7 +155,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/part/listPart', '부품 관리 > 부품 조회');">부품 조회</a>
+						<a onclick="moveToPage(this, '/part/list', '부품 관리 > 부품 조회');">부품 조회</a>
 					</li>
 					<li>
 						<a href="profile.html">코드 생성</a>
@@ -166,9 +166,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<!-- 					<li> -->
 					<!-- 						<a href="contacts_2.html">제작사양서 등록</a> -->
 					<!-- 					</li> -->
-					<li>
-						<a href="projects.html">UNIT BOM 조회</a>
-					</li>
+<!-- 					<li> -->
+<!-- 						<a href="projects.html">UNIT BOM 조회</a> -->
+<!-- 					</li> -->
 					<li>
 						<a onclick="moveToPage(this, '/kepart/list');">KE 부품 조회</a>
 					</li>

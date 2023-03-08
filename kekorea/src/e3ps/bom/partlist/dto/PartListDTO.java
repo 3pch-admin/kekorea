@@ -2,9 +2,8 @@ package e3ps.bom.partlist.dto;
 
 import java.sql.Timestamp;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.project.Project;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +13,7 @@ import lombok.Setter;
 public class PartListDTO {
 
 	private String oid;
+	private String loid;
 	private String projectType_code;
 	private String projectType_name;
 	private String projectType_oid;
@@ -34,16 +34,17 @@ public class PartListDTO {
 	private String install_code;
 	private String install_name;
 	private String install_oid;
-	@JsonIgnore
 	private Timestamp pdate;
 	private String model;
 	private String creator;
-	@JsonIgnore
 	private Timestamp createdDate;
 	private String state;
 
-	public PartListDTO(PartListMaster partListMaster, Project project) throws Exception {
+	public PartListDTO(PartListMasterProjectLink link) throws Exception {
+		PartListMaster partListMaster = link.getPartListMaster();
+		Project project = link.getProject();
 		setOid(partListMaster.getPersistInfo().getObjectIdentifier().getStringValue());
+		setLoid(link.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(partListMaster.getName());
 		if (project.getProjectType() != null) {
 			setProjectType_code(project.getProjectType().getCode());

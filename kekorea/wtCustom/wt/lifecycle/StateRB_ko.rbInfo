@@ -1,0 +1,9 @@
+ResourceInfo.class=wt.tools.resource.EnumResourceInfo
+
+# Entry Contents
+
+APPROVING.value=승인중
+APPROVING.shortDescription=승인중
+
+RETURN.value=반려됨
+RETURN.shortDescription=반려됨

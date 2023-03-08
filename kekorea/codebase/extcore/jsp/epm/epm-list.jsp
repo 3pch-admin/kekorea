@@ -86,81 +86,141 @@
 						altField : null,
 						onClick : function(event) {
 						}
-					}
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},					
 				}, {
 					dataField : "name",
 					headerText : "파일이름",
 					dataType : "string",
 					width : 350,
 					style : "left indent10 underline",
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "part_code",
 					headerText : "품번",
 					dataType : "string",
-					width : 130
+					width : 130,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "name_of_parts",
 					headerText : "품명",
 					dataType : "string",
 					width : 350,
 					style : "left indent10 underline",
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "dwg_no",
 					headerText : "규격",
 					dataType : "string",
-					width : 130
+					width : 130,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "material",
 					headerText : "MATERIAL",
 					dataType : "string",
-					width : 130
+					width : 130,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "remark",
 					headerText : "REMARK",
 					dataType : "string",
-					width : 150
+					width : 150,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "reference",
 					headerText : "REFERENCE 도면",
 					dataType : "string",
-					width : 150
+					width : 150,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "version",
 					headerText : "버전",
 					dataType : "string",
-					width : 80
+					width : 80,
+					filter : {
+						showIcon : false,
+						inline : false
+					},
 				}, {
 					dataField : "modifier",
 					headerText : "수정자",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "modifiedDate",
 					headerText : "수정일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "creator",
 					headerText : "작성자",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "createdDate",
 					headerText : "작성일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "state",
 					headerText : "상태",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "location",
-					headerText : "폴더",
+					headerText : "FOLDER",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : false
+						inline : false
+					},
 				} ]
 			}
 

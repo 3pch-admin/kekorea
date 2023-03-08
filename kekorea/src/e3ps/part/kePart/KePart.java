@@ -14,8 +14,7 @@ import wt.fc.Item;
 import wt.ownership.Ownable;
 import wt.util.WTException;
 
-@GenAsPersistable(superClass = Item.class, interfaces = { FormatContentHolder.class, ContentHolder.class,
-		Ownable.class },
+@GenAsPersistable(superClass = Item.class, interfaces = { ContentHolder.class, Ownable.class },
 
 		properties = {
 

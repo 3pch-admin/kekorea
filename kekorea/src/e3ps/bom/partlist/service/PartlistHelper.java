@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.JSONArray;
 
 import e3ps.bom.partlist.MasterDataLink;
 import e3ps.bom.partlist.PartListData;
@@ -659,20 +660,62 @@ public class PartlistHelper {
 
 		QuerySpecUtils.toOrderBy(query, idx, PartListMaster.class, PartListMaster.CREATE_TIMESTAMP, true);
 
-		System.out.println(query);
-
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
-			PartListMaster master = (PartListMaster) obj[0];
-			Project project = (Project) obj[2];
-			PartListDTO column = new PartListDTO(master, project);
+			PartListMasterProjectLink link = (PartListMasterProjectLink) obj[1];
+			PartListDTO column = new PartListDTO(link);
 			list.add(column);
 		}
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
 		return map;
+	}
+
+	/**
+	 * 수배표된 데이터들을 JSONArray 형태로 가져오는 함수
+	 * 
+	 * @param oid : 수배표마스터 객체 OID
+	 * @return org.json.JSONArray
+	 * @throws Exception
+	 */
+	public JSONArray getData(String oid) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(MasterDataLink.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, MasterDataLink.class, "roleAObjectRef.key.id",
+				master.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toOrderBy(query, idx, MasterDataLink.class, MasterDataLink.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			MasterDataLink link = (MasterDataLink) obj[0];
+			PartListData data = link.getData();
+
+			Map<String, Object> map = new HashMap<>();
+			map.put("lotNo", data.getLotNo());
+			map.put("unitName", data.getUnitName());
+			map.put("partNo", data.getPartNo());
+			map.put("partName", data.getPartName());
+			map.put("standard", data.getStandard());
+			map.put("maker", data.getMaker());
+			map.put("customer", data.getCustomer());
+			map.put("quantity", data.getQuantity());
+			map.put("unit", data.getUnit());
+			map.put("price", data.getPrice());
+			map.put("currency", data.getCurrency());
+			map.put("won", data.getWon());
+			map.put("partListDate", data.getPartListDate());
+			map.put("exchangeRate", data.getExchangeRate());
+			map.put("referDrawing", data.getReferDrawing());
+			map.put("classification", data.getClassification());
+			map.put("note", data.getNote());
+			list.add(map);
+		}
+
+		return new JSONArray(list);
 	}
 }
