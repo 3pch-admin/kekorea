@@ -194,7 +194,6 @@
 		params.addRows = addRows;
 		params._addRows = _addRows;
 		let url = getCallUrl("/workOrder/create");
-		console.log(params);
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {

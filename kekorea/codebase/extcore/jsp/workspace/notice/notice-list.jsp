@@ -31,7 +31,7 @@
 			<tr>
 				<th>공지사항 제목</th>
 				<td>
-					<input type="text" name="fileName" class="AXInput">
+					<input type="text" name="name" id="name" class="AXInput">
 				</td>
 				<th>설명</th>
 				<td>
@@ -147,6 +147,13 @@
 			function loadGridData() {
 				let params = new Object();
 				let url = getCallUrl("/notice/list");
+				
+				// 검색 변수
+				let name = document.getElementById("name").value;
+				
+				// 검색 변수 담기
+				params.name = name;
+				console.log(params);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

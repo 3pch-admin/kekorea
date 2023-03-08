@@ -6,6 +6,7 @@ import java.util.Map;
 
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.workspace.notice.Notice;
 import e3ps.workspace.notice.dto.NoticeDTO;
 import wt.fc.PagingQueryResult;
@@ -21,8 +22,15 @@ public class NoticeHelper {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<NoticeDTO> list = new ArrayList<>();
 
+		// key -value
+		String name = (String) params.get("name"); // 공지사항 제목
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Notice.class, true);
+
+		if (!StringUtils.isNull(name)) {
+			QuerySpecUtils.toLikeAnd(query, idx, Notice.class, Notice.NAME, name);
+		}
 
 		QuerySpecUtils.toOrderBy(query, idx, Notice.class, Notice.CREATE_TIMESTAMP, true);
 

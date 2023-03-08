@@ -245,7 +245,7 @@
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				//화면 첫 진입시 리스트 호출 함수
-				// loadGridData();
+				loadGridData();
 				// Lazy Loading 이벤트 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 			}
@@ -254,11 +254,13 @@
 				let params = new Object();
 				let url = getCallUrl("/workOrder/list");
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
+					parent.closeLayer();
 				});
 			}
 
@@ -280,6 +282,7 @@
 				params.end = (curPage * 100) + 100;
 				let url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					if (data.list.length == 0) {
 						last = true;
@@ -288,6 +291,7 @@
 						document.getElementById("sessionid").value = parseInt(curPage) + 1;
 					}
 					AUIGrid.removeAjaxLoader(myGridID);
+					parent.closeLayer();
 				})
 			}
 
@@ -302,7 +306,6 @@
 				let columns = loadColumnLayout("workOrder-list");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				parent.closeLayer();
 			});
 
 			document.addEventListener("keydown", function(event) {
