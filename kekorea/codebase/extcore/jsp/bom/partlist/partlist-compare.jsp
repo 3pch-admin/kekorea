@@ -8,7 +8,7 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <!-- hidden -->
-<input type="hidden" name="oid" id="oid" value="<%=dto.getOid() %>">
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <input type="hidden" name="compare" id="compare">
 <!-- 검색 테이블 -->
 <table class="search-table">
@@ -25,7 +25,7 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 		</td>
 		<th>비교수배표</th>
 		<td>
-			<input type="text" name="comp" class="AXInput width-500" readonly="readonly" onclick="opener();">
+			<input type="text" name="comp" id="comp" class="AXInput width-500" readonly="readonly" onclick="opener();">
 		</td>
 	</tr>
 </table>
@@ -33,7 +33,9 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<input type="button" value="비교" title="비교" class="orange" onclick="_compare();">
+			<input type="button" value="LOT 비교" title="LOT 비교" class="orange" onclick="_compare('lotNo');">
+			<input type="button" value="품번 비교" title="품번 비교" class="blue" onclick="_compare('partNo');">
+			<input type="button" value="전체 비교" title="전체 비교" class="red" onclick="_compare('');">
 		</td>
 		<td class="right">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
@@ -190,38 +192,39 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 		AUIGrid.resize(_myGridID);
 		AUIGrid.setGridData(myGridID, <%=data%>);
 	});
-	
+
 	function opener() {
 		let url = getCallUrl("/partlist/popup?method=attach&multi=false");
 		popup(url);
 	}
-	
+
 	function attach(data) {
 		const item = data[0].item;
 		const oid = item.oid;
 		document.getElementById("compare").value = oid;
+		document.getElementById("comp").value = item.name;
 	}
 
 	// 비교
-	function _compare() {
+	function _compare(compareType) {
 		const oid = document.getElementById("oid").value;
 		const _oid = document.getElementById("compare").value;
-		alert(oid);
-		alert(_oid);
+		const url = getCallUrl("/partlist/compare");
+		const params = new Object();
+		params.oid = oid;
+		params._oid = _oid;
+		params.compareType = compareType;
+		console.log(params);
+		AUIGrid.clearGridData(myGridID);
+		AUIGrid.clearGridData(_myGridID);
+		call(url, params, function(data) {
+			AUIGrid.setGridData(myGridID, data.dataList);
+			AUIGrid.setGridData(_myGridID, data._dataList);
+		})
 	}
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(_myGridID);
 	});
-
-	document.addEventListener("keydown", function(event) {
-		// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-		let keyCode = event.keyCode || event.which;
-		// esc 키(코드 27)를 눌렀을 때
-		if (keyCode === 27) {
-			// 현재 창 닫기
-			self.close();
-		}
-	})
 </script>

@@ -2,6 +2,7 @@ package e3ps.bom.partlist.service;
 
 import java.util.Map;
 
+import e3ps.bom.partlist.dto.PartListDTO;
 import wt.method.RemoteInterface;
 import wt.util.WTException;
 
@@ -58,4 +59,6 @@ public interface PartlistService {
 	 * @throws WTException
 	 */
 	public abstract Map<String, Object> modifyPartListAction(Map<String, Object> param) throws WTException;
+
+	public abstract void create(PartListDTO dto) throws Exception;
 }

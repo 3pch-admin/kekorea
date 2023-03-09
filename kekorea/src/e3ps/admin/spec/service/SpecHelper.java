@@ -27,6 +27,7 @@ public class SpecHelper {
 		rootNode.put("code", "ROOT");
 		rootNode.put("codeType", "");
 		rootNode.put("description", "사양관리");
+		rootNode.put("sort", 0);
 		rootNode.put("enable", true);
 
 		QuerySpec query = new QuerySpec();
@@ -39,19 +40,47 @@ public class SpecHelper {
 		JSONArray children = new JSONArray();
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
-			CommonCode commonCode = (CommonCode) obj[0];
+			CommonCode specCode = (CommonCode) obj[0];
 			JSONObject node = new JSONObject();
-			node.put("oid", commonCode.getPersistInfo().getObjectIdentifier().getStringValue());
-			node.put("name", commonCode.getName());
-			node.put("code", commonCode.getCode());
-			node.put("codeType", commonCode.getCodeType());
-			node.put("description", commonCode.getDescription());
-			node.put("enable", commonCode.getEnable());
+			node.put("oid", specCode.getPersistInfo().getObjectIdentifier().getStringValue());
+			node.put("name", specCode.getName());
+			node.put("code", specCode.getCode());
+			node.put("codeType", specCode.getCodeType().toString());
+			node.put("description", specCode.getDescription());
+			node.put("enable", specCode.getEnable());
+			node.put("sort", specCode.getSort());
+			options(node, specCode);
 			children.add(node);
 		}
 		rootNode.put("children", children);
 		root.add(rootNode);
 		map.put("list", root);
 		return map;
+	}
+
+	private void options(JSONObject parentNode, CommonCode specCode) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(CommonCode.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE_TYPE, "OPTION");
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, "parentReference.key.id",
+				specCode.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, true);
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		JSONArray children = new JSONArray();
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			CommonCode optionCode = (CommonCode) obj[0];
+			JSONObject node = new JSONObject();
+			node.put("oid", optionCode.getPersistInfo().getObjectIdentifier().getStringValue());
+			node.put("name", optionCode.getName());
+			node.put("code", optionCode.getCode());
+			node.put("codeType", optionCode.getCodeType().toString());
+			node.put("description", optionCode.getDescription());
+			node.put("sort", optionCode.getSort());
+			node.put("enable", optionCode.getEnable());
+			children.add(node);
+		}
+		parentNode.put("children", children);
 	}
 }

@@ -29,15 +29,15 @@
 			<tr>
 				<th>결재 제목</th>
 				<td>
-					<input type="text" name="fileName" class="AXInput">
+					<input type="date" name="fileName" id="fileName" class="AXInput" placeholder="년도-월-일">
 				</td>
 				<th>기안자</th>
 				<td>
-					<input type="text" name="partCode" class="AXInput">
+					<input type="text" name="" class="AXInput">
 				</td>
 				<th>수신일</th>
 				<td>
-					<input type="text" name="partCode" class="AXInput">
+					<input type="text" name="partCode" id="partCode" class="AXInput" readonly="readonly">
 				</td>
 			</tr>
 		</table>
@@ -169,6 +169,7 @@
 			function loadGridData() {
 				let params = new Object();
 				let url = getCallUrl("/workspace/approval");
+				console.log(document.getElementById("partCode").value);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

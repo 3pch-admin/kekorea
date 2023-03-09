@@ -715,7 +715,167 @@ public class PartlistHelper {
 			map.put("note", data.getNote());
 			list.add(map);
 		}
-
 		return new JSONArray(list);
+	}
+
+	/**
+	 * 수배표된 데이터들을 ArrayList<Map<String, Object>> 형태로 가져오는 함수
+	 * 
+	 * @param oid : 수배표마스터 객체 OID
+	 * @return ArrayList<Map<String, Object>>
+	 * @throws Exception
+	 */
+	public ArrayList<Map<String, Object>> getArrayMap(String oid) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(MasterDataLink.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, MasterDataLink.class, "roleAObjectRef.key.id",
+				master.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toOrderBy(query, idx, MasterDataLink.class, MasterDataLink.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			MasterDataLink link = (MasterDataLink) obj[0];
+			PartListData data = link.getData();
+
+			Map<String, Object> map = new HashMap<>();
+			map.put("lotNo", data.getLotNo());
+			map.put("unitName", data.getUnitName());
+			map.put("partNo", data.getPartNo());
+			map.put("partName", data.getPartName());
+			map.put("standard", data.getStandard());
+			map.put("maker", data.getMaker());
+			map.put("customer", data.getCustomer());
+			map.put("quantity", data.getQuantity());
+			map.put("unit", data.getUnit());
+			map.put("price", data.getPrice());
+			map.put("currency", data.getCurrency());
+			map.put("won", data.getWon());
+			map.put("partListDate", data.getPartListDate());
+			map.put("exchangeRate", data.getExchangeRate());
+			map.put("referDrawing", data.getReferDrawing());
+			map.put("classification", data.getClassification());
+			map.put("note", data.getNote());
+			list.add(map);
+		}
+		return list;
+	}
+
+	public Map<String, Object> compare(Map<String, Object> params) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		String oid = (String) params.get("oid");
+		String _oid = (String) params.get("_oid");
+		String compareType = (String) params.get("compareType");
+
+		ArrayList<Map<String, Object>> result = getArrayMap(oid); // 기준
+		ArrayList<Map<String, Object>> _result = getArrayMap(_oid); // 비교
+
+		// 더 큰 배열
+		int maxSize = Math.max(result.size(), _result.size());
+		// 크기가 작은 ArrayList를 찾아 null 값을 추가
+		int diff = Math.abs(result.size() - _result.size());
+		if (result.size() < _result.size()) {
+			for (int i = 0; i < diff; i++) {
+				Map<String, Object> empty = new HashMap<String, Object>();
+				result.add(empty);
+			}
+		} else if (result.size() > _result.size()) {
+			for (int i = 0; i < diff; i++) {
+				Map<String, Object> empty = new HashMap<String, Object>();
+				_result.add(empty);
+			}
+		}
+
+		ArrayList<Map<String, Object>> dataList = new ArrayList<>(maxSize); // 신규 기준
+		ArrayList<Map<String, Object>> _dataList = new ArrayList<>(maxSize); // 신규 비교
+
+		for (int i = 0; i < result.size(); i++) {
+			for (int j = 0; j < _result.size(); j++) {
+				Map<String, Object> data = result.get(i); // 기준
+				Map<String, Object> _data = _result.get(j); // 비교
+
+				if (compareType.equals("lotNo")) { // LOT NO 비교
+					String value = (String) data.get("lotNo");
+					String _value = (String) _data.get("lotNo");
+					if (value.equals(_value)) {
+						dataList.add(data);
+						_dataList.add(_data);
+						_result.remove(j);
+						break;
+					} else if (!value.equals(_value)) {
+						Map<String, Object> empty = new HashMap<String, Object>();
+						dataList.add(data);
+						_dataList.add(empty);
+						break;
+					}
+				} else if (compareType.equals("partNo")) {
+					String value = (String) data.get("partNo");
+					String _value = (String) _data.get("partNo");
+
+					System.out.println("value=" + value);
+					System.out.println("_value=" + _value);
+
+					if (value.equals(_value)) {
+						dataList.add(data);
+						_dataList.add(_data);
+						_result.remove(j);
+						break;
+					} else if (!value.equals(_value)) {
+						Map<String, Object> empty = new HashMap<String, Object>();
+						dataList.add(data);
+						_dataList.add(empty);
+						break;
+					}
+				} else {
+					String value = (String) data.get("partNo") + "-" + (String) data.get("lotNo");
+					String _value = (String) _data.get("partNo") + "-" + (String) _data.get("lotNo");
+					if (value.equals(_value)) {
+						dataList.add(data);
+						_dataList.add(_data);
+						_result.remove(j);
+						break;
+					} else if (!value.equals(_value)) {
+						Map<String, Object> empty = new HashMap<String, Object>();
+						dataList.add(data);
+						_dataList.add(empty);
+						break;
+					}
+				}
+			}
+		}
+
+		// 합치기
+		_dataList.addAll(_result); // 비교 데이터 합치기..
+
+		int _diff = Math.abs(dataList.size() - _dataList.size());
+		if (dataList.size() < _dataList.size()) {
+			for (int i = 0; i < _diff; i++) {
+				Map<String, Object> empty = new HashMap<String, Object>();
+				dataList.add(empty);
+			}
+		} else if (dataList.size() > _dataList.size()) {
+			for (int i = 0; i < _diff; i++) {
+				Map<String, Object> empty = new HashMap<String, Object>();
+				_dataList.add(empty);
+			}
+		}
+
+		// 싸이즈가 같으니깐??
+		for (int i = dataList.size() - 1; i >= 0; i--) {
+//		for (int i = 0; i < dataList.size(); i++) {
+			Map<String, Object> m = dataList.get(i);
+			Map<String, Object> _m = _dataList.get(i);
+			// 둘다 비어 있으면 빼버린다..
+			if (m.size() == 0 && _m.size() == 0) {
+				dataList.remove(i);
+				_dataList.remove(i);
+			}
+		}
+
+		map.put("dataList", dataList);
+		map.put("_dataList", _dataList);
+		return map;
 	}
 }

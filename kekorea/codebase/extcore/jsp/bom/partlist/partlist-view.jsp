@@ -114,6 +114,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			rowHeight : 30, // 행 높이
 			showRowNumColumn : true, // 번호 행 출력 여부
 			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
+			selectionMode : "multipleCells",
 			// 그리드 공통속성 끝
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);

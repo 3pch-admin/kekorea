@@ -50,7 +50,7 @@
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('spec-list');">
-					<input type="button" value="저장" title="저장" onclick="create();">
+					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="자식 추가" title="자식 추가" class="orange" onclick="addTreeRow();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
@@ -65,6 +65,13 @@
 		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
+			const list = [ {
+				"key" : "SPEC",
+				"value" : "사양"
+			}, {
+				"key" : "OPTION",
+				"value" : "옵션"
+			} ];
 			function _layout() {
 				return [ {
 					dataField : "name",
@@ -90,9 +97,54 @@
 					headerText : "코드타입",
 					dataType : "string", // 날짜 및 사람명 컬럼 사이즈 100
 					width : 100,
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+						},
+						onClick : function(event) {
+							// 아이콘을 클릭하면 수정으로 진입함.
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "DropDownListRenderer",
+						showEditorBtn : false,
+						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
+						list : list,
+						keyField : "key", // key 에 해당되는 필드명
+						valueField : "value", // value 에 해당되는 필드명,
+					},
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
+						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+						for (let i = 0, len = list.length; i < len; i++) {
+							if (list[i]["key"] == value) {
+								retStr = list[i]["value"];
+								break;
+							}
+						}
+						return retStr == "" ? value : retStr;
+					},
 					filter : {
 						showIcon : true,
 						inline : true
+					},
+				}, {
+					dataField : "sort",
+					headerText : "정렬",
+					dataType : "numeric",
+					width : 100,
+					formatString : "###0",
+					editRenderer : {
+						type : "InputEditRenderer",
+						onlyNumeric : true, // 0~9만 입력가능
+					},
+					filter : {
+						showIcon : false,
+						inline : false
 					},
 				}, {
 					dataField : "enable",
@@ -100,8 +152,16 @@
 					dataType : "boolean",
 					width : 100,
 					renderer : {
-						type : "CheckBoxEditRenderer"
+						type : "CheckBoxEditRenderer",
+						editable : true,
+						disabledFunction : function(rowIndex, columnIndex, value, isChecked, item, dataField) {
+							if (rowIndex != 0) {
+								return false;
+							}
+							return true;
+						},
 					},
+
 					filter : {
 						showIcon : true,
 						inline : true
@@ -136,17 +196,92 @@
 					// 그리드 공통속성 끝
 					fillColumnSizeMode : true,
 					showRowCheckColumn : true,
-					editable : true
+					editable : true,
+					enableRowCheckShiftKey : true,
+					displayTreeOpen : true
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
+				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinish);
+				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
+			}
+
+			// 저장
+			function save() {
+
+				if (!confirm("저장 하시겠습니까?")) {
+					return false;
+				}
+
+				const params = new Object();
+				const url = getCallUrl("/spec/save");
+				const addRows = AUIGrid.getAddedRowItems(myGridID);
+				const removeRows = AUIGrid.getRemovedItems(myGridID);
+				const editRows = AUIGrid.getEditedRowItems(myGridID);
+				params.addRows = addRows;
+				params.removeRows = removeRows;
+				params.editRows = editRows;
+				parent.openLayer();
+				call(url, params, function(data) {
+					alert(data.msg);
+					if (data.result) {
+						loadGridData();
+					} else {
+						// 실패...
+					}
+				})
+			}
+
+			function auiCellEditBegin(event) {
+				const dataField = event.dataField;
+				const rowIndex = event.rowIndex;
+				if (rowIndex == 0) {
+					return false;
+				}
+
+				if (dataField === "codeType") {
+					return false;
+				}
+				return true;
+			}
+
+			function auiAddRowFinish(event) {
+				const item = event.items[0];
+				const depth = item._$depth;
+				if (depth == 2) {
+					const item = {
+						"codeType" : "SPEC"
+					};
+					AUIGrid.updateRow(myGridID, item, "selectedIndex");
+				}
+
+				if (depth == 3) {
+					const item = {
+						"codeType" : "OPTION"
+					};
+					AUIGrid.updateRow(myGridID, item, "selectedIndex");
+				}
+
+				if (depth > 3 || depth === undefined) {
+					AUIGrid.removeRow(myGridID, "selectedIndex");
+				}
+
+				const selected = AUIGrid.getSelectedIndex(myGridID);
+				if (selected.length <= 0) {
+					return;
+				}
+
+				const rowIndex = selected[0];
+				const colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "name");
+				AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex);
+				AUIGrid.openInputer(myGridID);
 			}
 
 			function loadGridData() {
-				let params = new Object();
-				let url = getCallUrl("/spec/list");
+				const params = new Object();
+				const url = getCallUrl("/spec/list");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -158,7 +293,7 @@
 
 			// 행 추가
 			function addRow() {
-				var selectedItems = AUIGrid.getSelectedItems(myGridID);
+				const selectedItems = AUIGrid.getSelectedItems(myGridID);
 				var selItem;
 				var parentItem;
 				var parentRowId;
@@ -182,12 +317,6 @@
 
 				var newItem = new Object();
 				newItem.parentRowId = parentRowId; // 부모의 rowId 값을 보관해 놓음...나중에 개발자가 유용하게 쓰기 위함...실제 그리드는 사용하지 않음.
-
-				if (parentItem == null) {
-					newItem.id = "새 자식";
-				} else {
-					newItem.id = parentItem.id + "-자식";
-				}
 				newItem.enable = true;
 
 				// 행 위치 시킬 곳, 셀렉트 값.

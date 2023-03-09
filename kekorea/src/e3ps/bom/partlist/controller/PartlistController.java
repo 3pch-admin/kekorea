@@ -14,15 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.dto.PartListDTO;
-import e3ps.bom.partlist.dto.PartListMasterViewData;
 import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.project.Project;
-import wt.fc.ReferenceFactory;
 
 @Controller
 @RequestMapping(value = "/partlist/**")
@@ -50,14 +46,6 @@ public class PartlistController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
-	}
-
-	@Description(value = "수배표 등록")
-	@GetMapping(value = "/create")
-	public ModelAndView create() throws Exception {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("popup:/bom/partList/partList-create");
-		return model;
 	}
 
 	@Description(value = "수배된 리스트 페이지")
@@ -91,5 +79,46 @@ public class PartlistController extends BaseController {
 		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.setViewName("popup:/bom/partlist/partlist-popup");
 		return model;
+	}
+
+	@Description(value = "수배표 비교")
+	@ResponseBody
+	@PostMapping(value = "/compare")
+	public Map<String, Object> compare(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = PartlistHelper.manager.compare(params);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", false);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "수배표 등록 페이지")
+	@GetMapping(value = "/create")
+	public ModelAndView create() throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("popup:/bom/partlist/partlist-create");
+		return model;
+	}
+
+	@Description(value = "수배표 등록")
+	@ResponseBody
+	@PostMapping(value = "/create")
+	public Map<String, Object> create(@RequestBody PartListDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			PartlistHelper.service.create(dto);
+			result.put("msg", SAVE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
 	}
 }

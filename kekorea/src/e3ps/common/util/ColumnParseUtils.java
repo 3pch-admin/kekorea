@@ -7,7 +7,9 @@ import e3ps.admin.commonCode.dto.CommonCodeDTO;
 import e3ps.admin.sheetvariable.Category;
 import e3ps.admin.sheetvariable.CategoryItemsLink;
 import e3ps.admin.sheetvariable.beans.CategoryColumnData;
-import e3ps.admin.spec.Spec;
+import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.PartListMasterProjectLink;
+import e3ps.bom.partlist.dto.PartListDTO;
 import e3ps.doc.column.DocumentColumnData;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
@@ -48,10 +50,6 @@ public class ColumnParseUtils {
 				CommonCodeDTO data = parse((CommonCode) per);
 				list.add(data);
 				// 사양
-			} else if (per instanceof Spec) {
-//				SpecColumnData data = parse((Spec) per);
-//				list.add(data);
-				// CS 카테고리
 			} else if (per instanceof Category) {
 				CategoryItemsLink link = (CategoryItemsLink) obj[1];
 				CategoryColumnData data = parse((Category) per, link);
@@ -76,9 +74,17 @@ public class ColumnParseUtils {
 			} else if (per instanceof WTPart) {
 				PartDTO data = parse((WTPart) per);
 				list.add(data);
+			} else if (per instanceof PartListMaster) {
+				PartListMasterProjectLink link = (PartListMasterProjectLink) obj[1];
+				PartListDTO data = parse(link);
+				list.add(data);
 			}
 		}
 		return list;
+	}
+
+	private static PartListDTO parse(PartListMasterProjectLink per) throws Exception {
+		return new PartListDTO(per);
 	}
 
 	private static PartDTO parse(WTPart per) throws Exception {

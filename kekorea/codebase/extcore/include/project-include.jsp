@@ -8,6 +8,7 @@
 <%
 String oid = StringUtils.getParameter(request.getParameter("oid"));
 String mode = StringUtils.getParameter(request.getParameter("mode"), "create");
+String multi = StringUtils.getParameter(request.getParameter("multi"), "false");
 String obj = StringUtils.getParameter(request.getParameter("obj"));
 JSONArray data = null;
 // 객체 마다 다르게 
@@ -16,12 +17,12 @@ if ("meeting".equals(obj)) {
 	data = MeetingHelper.manager.jsonArrayAui(oid);
 }
 %>
-<div style="margin-top: 3px;">
+<div style="margin-top: 3px; text-indent: 5px;">
 	<%
 	// 등록 및 수정
 	if ("create".equals(mode) || "update".equals(mode)) {
 	%>
-	<input type="button" value="작번 추가" title="작번 추가" class="blue" onclick="appendData('project', 'append');">
+	<input type="button" value="작번 추가" title="작번 추가" class="blue" onclick="_insert();">
 	<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="_deleteRow();">
 	<%
 	}
@@ -93,6 +94,11 @@ if ("meeting".equals(obj)) {
 		}
 		// 등록 및 수정
 	<%if ("create".equals(mode) || "update".equals(mode)) {%>
+		function _insert() {
+			const url = getCallUrl("/project/popup?method=append&multi=<%=multi%>");
+			popup(url);
+		}
+	
 		function append(data) {
 			for (let i = 0; i < data.length; i++) {
 				let item = data[i].item;
