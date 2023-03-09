@@ -1,21 +1,63 @@
+<%@page import="e3ps.bom.partlist.dto.PartListDTO"%>
 <%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 JSONArray data = (JSONArray) request.getAttribute("data");
+PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 %>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<!-- hidden -->
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid() %>">
+<input type="hidden" name="compare" id="compare">
+<!-- 검색 테이블 -->
+<table class="search-table">
+	<colgroup>
+		<col width="130">
+		<col width="800">
+		<col width="130">
+		<col width="800">
+	</colgroup>
+	<tr>
+		<th>기준수배표</th>
+		<td>
+			<input type="text" class="AXInput width-500" readonly="readonly" value="<%=dto.getName()%>">
+		</td>
+		<th>비교수배표</th>
+		<td>
+			<input type="text" name="comp" class="AXInput width-500" readonly="readonly" onclick="opener();">
+		</td>
+	</tr>
+</table>
+
 <table class="button-table">
 	<tr>
+		<td class="left">
+			<input type="button" value="비교" title="비교" class="orange" onclick="_compare();">
+		</td>
 		<td class="right">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
 </table>
+
 <!-- 그리드 리스트 -->
-<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+<table class="tb-none">
+	<colgroup>
+		<col width="50%">
+		<col width="50%">
+	</colgroup>
+	<tr>
+		<td>
+			<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		</td>
+		<td>
+			<div id="_grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		</td>
+</table>
 <script type="text/javascript">
 	let myGridID;
+	let _myGridID;
 	const data = <%=data%>
 	const columns = [ {
 		dataField : "lotNo",
@@ -108,15 +150,36 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-// 			rowIdField : "oid",
 			// 그리드 공통속성 시작
 			headerHeight : 30, // 헤더높이
 			rowHeight : 30, // 행 높이
 			showRowNumColumn : true, // 번호 행 출력 여부
 			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-			// 그리드 공통속성 끝
+		// 그리드 공통속성 끝
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+		_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
+
+		// H스크롤 체인지 핸들러.
+		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+			AUIGrid.setHScrollPositionByPx(_myGridID, event.position); // 수평 스크롤 이동 시킴..
+		});
+
+		// V스크롤 체인지 핸들러.
+		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+			AUIGrid.setRowPosition(_myGridID, event.position); // 수평 스크롤 이동 시킴..
+		});
+
+		// H스크롤 체인지 핸들러.
+		AUIGrid.bind(_myGridID, "hScrollChange", function(event) {
+			AUIGrid.setHScrollPositionByPx(myGridID, event.position); // 수평 스크롤 이동 시킴...
+		});
+
+		// V스크롤 체인지 핸들러.
+		AUIGrid.bind(_myGridID, "vScrollChange", function(event) {
+			AUIGrid.setRowPosition(myGridID, event.position); // 수평 스크롤 이동 시킴..
+		});
+
 	}
 	// jquery 삭제를 해가는 쪽으로 한다..
 	document.addEventListener("DOMContentLoaded", function() {
@@ -124,12 +187,34 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		createAUIGrid(columns);
 		AUIGrid.setGridData(myGridID, data);
 		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
+		AUIGrid.setGridData(myGridID, <%=data%>);
 	});
+	
+	function opener() {
+		let url = getCallUrl("/partlist/popup?method=attach&multi=false");
+		popup(url);
+	}
+	
+	function attach(data) {
+		const item = data[0].item;
+		const oid = item.oid;
+		document.getElementById("compare").value = oid;
+	}
+
+	// 비교
+	function _compare() {
+		const oid = document.getElementById("oid").value;
+		const _oid = document.getElementById("compare").value;
+		alert(oid);
+		alert(_oid);
+	}
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
 	});
-	
+
 	document.addEventListener("keydown", function(event) {
 		// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 		let keyCode = event.keyCode || event.which;

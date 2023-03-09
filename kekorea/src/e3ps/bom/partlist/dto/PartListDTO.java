@@ -14,6 +14,7 @@ public class PartListDTO {
 
 	private String oid;
 	private String loid;
+	private String poid;
 	private String projectType_code;
 	private String projectType_name;
 	private String projectType_oid;
@@ -45,6 +46,7 @@ public class PartListDTO {
 		Project project = link.getProject();
 		setOid(partListMaster.getPersistInfo().getObjectIdentifier().getStringValue());
 		setLoid(link.getPersistInfo().getObjectIdentifier().getStringValue());
+		setPoid(project.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(partListMaster.getName());
 		if (project.getProjectType() != null) {
 			setProjectType_code(project.getProjectType().getCode());

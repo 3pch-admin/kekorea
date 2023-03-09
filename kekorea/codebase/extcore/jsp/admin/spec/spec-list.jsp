@@ -13,9 +13,6 @@
 </head>
 <body>
 	<form>
-		<!-- 리스트 검색시 반드시 필요한 히든 값 -->
-		<input type="hidden" name="sessionid" id="sessionid">
-		<input type="hidden" name="curPage" id="curPage">
 		<!-- 검색 테이블 -->
 		<table class="search-table">
 			<colgroup>
@@ -52,7 +49,11 @@
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('notice-list');">
+					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('spec-list');">
+					<input type="button" value="저장" title="저장" onclick="create();">
+					<input type="button" value="자식 추가" title="자식 추가" class="orange" onclick="addTreeRow();">
+					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
+					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 				</td>
 				<td class="right">
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
@@ -67,26 +68,26 @@
 			function _layout() {
 				return [ {
 					dataField : "name",
-					headerText : "공지사항 제목",
+					headerText : "코드 명",
 					dataType : "string",
 					width : 350,
-					style : "left underline",
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "description",
-					headerText : "내용",
-					dataType : "string",
 					style : "left",
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 				}, {
-					dataField : "creator",
-					headerText : "작성자",
+					dataField : "code",
+					headerText : "코드",
+					dataType : "string",
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "codeType",
+					headerText : "코드타입",
 					dataType : "string", // 날짜 및 사람명 컬럼 사이즈 100
 					width : 100,
 					filter : {
@@ -94,23 +95,24 @@
 						inline : true
 					},
 				}, {
-					dataField : "createdDate",
-					headerText : "작성일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
+					dataField : "enable",
+					headerText : "사용여부",
+					dataType : "boolean",
 					width : 100,
+					renderer : {
+						type : "CheckBoxEditRenderer"
+					},
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 				}, {
-					dataField : "primary",
-					headerText : "첨부파일",
+					dataField : "description",
+					headerText : "설명",
 					dataType : "string",
-					width : 80,
 					filter : {
-						showIcon : false,
-						inline : false
+						showIcon : true,
+						inline : true
 					},
 				} ]
 			}
@@ -132,73 +134,105 @@
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					// 그리드 공통속성 끝
-					wordWrap : true,
-					fillColumnSizeMode : true
+					fillColumnSizeMode : true,
+					showRowCheckColumn : true,
+					editable : true
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
-				// Lazy Loading 이벤트 바인딩
-				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 			}
 
 			function loadGridData() {
 				let params = new Object();
-				let url = getCallUrl("/notice/list");
-
-				// 검색 변수
-				let name = document.getElementById("name").value;
-
-				// 검색 변수 담기
-				params.name = name;
-				console.log(params);
+				let url = getCallUrl("/spec/list");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
-					document.getElementById("sessionid").value = data.sessionid;
-					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
 			}
 
-			let last = false;
-			function vScrollChangeHandler(event) {
-				if (event.position == event.maxPosition) {
-					if (!last) {
-						requestAdditionalData();
+			// 행 추가
+			function addRow() {
+				var selectedItems = AUIGrid.getSelectedItems(myGridID);
+				var selItem;
+				var parentItem;
+				var parentRowId;
+
+				if (selectedItems.length > 0) {
+					selItem = selectedItems[0].item;
+
+					// 선택 행의 동급 레벨로 추가하기 위해 선택행의 부모 가져오기
+					parentItem = AUIGrid.getParentItemByRowId(myGridID, selItem.oid);
+					parentRowId;
+
+					if (parentItem) {
+						parentRowId = parentItem.oid;
+					} else {
+						parentRowId = null; // parentRowId 를 null 로 하면 최상위 행이 생깁니다.
 					}
+				} else {
+					// 선택행이 없으므로 최상단에 행 추가시킴.
+					parentRowId = null;
 				}
+
+				var newItem = new Object();
+				newItem.parentRowId = parentRowId; // 부모의 rowId 값을 보관해 놓음...나중에 개발자가 유용하게 쓰기 위함...실제 그리드는 사용하지 않음.
+
+				if (parentItem == null) {
+					newItem.id = "새 자식";
+				} else {
+					newItem.id = parentItem.id + "-자식";
+				}
+				newItem.enable = true;
+
+				// 행 위치 시킬 곳, 셀렉트 값.
+
+				// parameter
+				// item : 삽입하고자 하는 아이템 Object 또는 배열(배열인 경우 다수가 삽입됨)
+				// rowId : 삽입되는 행의 부모 rowId 값 (null 인 경우 root 에 해당됨)
+				// rowPos : first : 상단, last : 하단, selectionUp : 선택된 곳 위, selectionDown : 선택된 곳 아래
+				AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "last");
 			}
 
-			function requestAdditionalData() {
-				let params = new Object();
-				let curPage = document.getElementById("curPage").value
-				let sessionid = document.getElementById("sessionid").value
-				params.sessionid = sessionid;
-				params.start = (curPage * 100);
-				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/aui/appendData");
-				AUIGrid.showAjaxLoader(myGridID);
-				parent.openLayer();
-				call(url, params, function(data) {
-					if (data.list.length == 0) {
-						last = true;
-					} else {
-						AUIGrid.appendData(myGridID, data.list);
-						document.getElementById("curPage").value = parseInt(curPage) + 1;
-					}
-					AUIGrid.removeAjaxLoader(myGridID);
-					parent.closeLayer();
-				})
+			// 행 추가
+			function addTreeRow() {
+				var selectedItems = AUIGrid.getSelectedItems(myGridID);
+				if (selectedItems.length <= 0)
+					return;
+
+				var selItem = selectedItems[0].item;
+				var parentRowId = selItem.oid; // 선택행의 자식으로 행 추가
+
+				var newItem = new Object();
+				newItem.parentRowId = parentRowId; // 부모의 rowId 값을 보관해 놓음...나중에 개발자가 유용하게 쓰기 위함...실제 그리드는 사용하지 않음.
+				newItem.oid = selItem.oid + "-자식";
+				newItem.enable = true;
+
+				// parameter
+				// item : 삽입하고자 하는 아이템 Object 또는 배열(배열인 경우 다수가 삽입됨)
+				// rowId : 삽입되는 행의 부모 rowId 값
+				// rowPos : first : 상단, last : 하단, selectionUp : 선택된 곳 위, selectionDown : 선택된 곳 아래
+				AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "selectionDown");
+			}
+
+			// 행 삭제
+			function deleteRow() {
+				let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				for (let i = checkedItems.length - 1; i >= 0; i--) {
+					let rowIndex = checkedItems[i].rowIndex;
+					AUIGrid.removeRow(myGridID, rowIndex);
+				}
 			}
 
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				let columns = loadColumnLayout("notice-list");
+				let columns = loadColumnLayout("spec-list");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});

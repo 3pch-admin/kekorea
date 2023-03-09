@@ -44,7 +44,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('project-popup');">
+			<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('partlist-popup');">
 			<input type="button" value="추가" title="추가" class="blue" onclick="<%=method%>();">
 			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
@@ -60,124 +60,168 @@ boolean multi = (boolean) request.getAttribute("multi");
 	let myGridID;
 	function _layout() {
 		return [ {
-			dataField : "state",
-			headerText : "진행상태",
+			dataField : "projectType_name",
+			headerText : "설계구분",
 			dataType : "string",
 			width : 80,
-			renderer : {
-				type : "TemplateRenderer",
-			},
 			filter : {
 				showIcon : true,
-				useExMenu : true
+				inline : true
 			},
 		}, {
-			dataField : "projectType_name",
-			headerText : "작번유형",
-			dataType : "string",
-			width : 80,
+			dataField : "info",
+			headerText : "",
+			width : 40,
+			renderer : {
+				type : "IconRenderer",
+				iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+				iconHeight : 16,
+				iconTableRef : { // icon 값 참조할 테이블 레퍼런스
+					"default" : "/Windchill/extcore/images/details.gif" // default
+				},
+			},
+			filter : {
+				showIcon : false,
+				inline : false
+			},
 		}, {
-			dataField : "customer_name",
-			headerText : "거래처",
+			dataField : "name",
+			headerText : "수배표제목",
 			dataType : "string",
-			width : 100,
-		}, {
-			dataField : "install_name",
-			headerText : "설치장소",
-			dataType : "string",
-			width : 100,
+			style : "left indent10",
+			width : 300,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+			cellMerge : true
+		// 구분1 칼럼 셀 세로 병합 실행
 		}, {
 			dataField : "mak_name",
 			headerText : "막종",
 			dataType : "string",
 			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		}, {
 			dataField : "detail_name",
 			headerText : "막종상세",
 			dataType : "string",
 			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		}, {
 			dataField : "kekNumber",
 			headerText : "KEK 작번",
 			dataType : "string",
-			width : 130,
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		}, {
 			dataField : "keNumber",
 			headerText : "KE 작번",
 			dataType : "string",
-			width : 130,
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		}, {
 			dataField : "userId",
 			headerText : "USER ID",
 			dataType : "string",
 			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		}, {
 			dataField : "description",
-			headerText : "작업 내용",
+			headerText : "작업내용",
 			dataType : "string",
-			width : 450,
-			style : "left indent10"
+			width : 300,
+			style : "left",
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "customer_name",
+			headerText : "거래처",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "install_name",
+			headerText : "설치 장소",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		}, {
 			dataField : "pdate",
 			headerText : "발행일",
 			dataType : "date",
 			formatString : "yyyy-mm-dd",
-			width : 100
-		}, {
-			dataField : "completeDate",
-			headerText : "설계 완료일",
-			dataType : "date",
-			formatString : "yyyy-mm-dd",
 			width : 100,
-		}, {
-			dataField : "customDate",
-			headerText : "요구 납기일",
-			dataType : "date",
-			formatString : "yyyy-mm-dd",
-			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		}, {
 			dataField : "model",
 			headerText : "모델",
 			dataType : "string",
-			width : 130,
-		}, {
-			dataField : "machine",
-			headerText : "기계 담당자",
-			dataType : "string",
 			width : 100,
-		}, {
-			dataField : "elec",
-			headerText : "전기 담당자",
-			dataType : "string",
-			width : 100,
-		}, {
-			dataField : "soft",
-			headerText : "SW 담당자",
-			dataType : "string",
-			width : 100
-		}, {
-			dataField : "kekProgress",
-			headerText : "진행율",
-			postfix : "%",
-			width : 80,
-			renderer : {
-				type : "BarRenderer",
-				min : 0,
-				max : 100
+			filter : {
+				showIcon : true,
+				inline : true
 			},
 		}, {
-			dataField : "kekState",
-			headerText : "작번상태",
+			dataField : "creator",
+			headerText : "작성자",
 			dataType : "string",
 			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "createdDate",
+			headerText : "작성일",
+			dataType : "date",
+			formatString : "yyyy-mm-dd",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "state",
+			headerText : "상태",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		} ]
-	}
+	};
 
-	// AUIGrid 생성 함수
 	function createAUIGrid(columnLayout) {
-		// 그리드 속성
 		const props = {
-			rowIdField : "oid",
+			rowIdField : "loid",
 			// 그리드 공통속성 시작
 			headerHeight : 30, // 헤더높이
 			rowHeight : 30, // 행 높이
@@ -189,18 +233,25 @@ boolean multi = (boolean) request.getAttribute("multi");
 			selectionMode : "multipleCells",
 			enableMovingColumn : true,
 			showInlineFilter : true,
-			showRowCheckColumn : true
-		// 그리드 공통속성 끝
+			// 그리드 공통속성 끝
+			showRowCheckColumn : true,
+			enableCellMerge : true,
+			// 멀티 선택 여부
+			<%
+				if(!multi) {
+			%>
+			rowCheckToRadio : true
+			<%
+				}
+			%>
 		};
-
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-		//화면 첫 진입시 리스트 호출 함수
 		loadGridData();
-		// Lazy Loading 이벤트 바인딩
+		// LazyLoading 바인딩
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 	}
-	
+
 	function auiCellClickHandler(event) {
 		let item = event.item;
 		rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); // rowIdField 얻기
@@ -216,15 +267,27 @@ boolean multi = (boolean) request.getAttribute("multi");
 		}
 	}
 	
+	function <%=method%>() {
+		let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+		if (checkedItems.length == 0) {
+			alert("추가할 수배표 선택하세요.");
+			return false;
+		}
+		
+		opener.<%=method%>(checkedItems);
+	}
+	
 	function loadGridData() {
 		let params = new Object();
-		let url = getCallUrl("/project/list");
+		let url = getCallUrl("/partlist/list");
 		AUIGrid.showAjaxLoader(myGridID);
+// 		openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
-			$("input[name=sessionid]").val(data.sessionid);
-			$("input[name=curPage]").val(data.curPage);
+			document.getElementById("sessionid").value = data.sessionid;
+			document.getElementById("curPage").value = data.curPage;
 			AUIGrid.setGridData(myGridID, data.list);
+// 			closeLayer();
 		});
 	}
 
@@ -239,42 +302,43 @@ boolean multi = (boolean) request.getAttribute("multi");
 
 	function requestAdditionalData() {
 		let params = new Object();
-		let curPage = $("input[name=curPage]").val();
-		params.sessionid = $("input[name=sessionid]").val();
+		let curPage = document.getElementById("curPage").value
+		let sessionid = document.getElementById("sessionid").value
+		params.sessionid = sessionid;
 		params.start = (curPage * 100);
 		params.end = (curPage * 100) + 100;
 		let url = getCallUrl("/aui/appendData");
 		AUIGrid.showAjaxLoader(myGridID);
+// 		openLayer();
 		call(url, params, function(data) {
 			if (data.list.length == 0) {
 				last = true;
 			} else {
 				AUIGrid.appendData(myGridID, data.list);
-				$("input[name=curPage]").val(parseInt(curPage) + 1);
+				document.getElementById("curPage").value = parseInt(curPage) + 1;
 			}
 			AUIGrid.removeAjaxLoader(myGridID);
+// 			closeLayer();
 		})
 	}
 
-	
-	function <%=method%>() {
-		let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-		if (checkedItems.length == 0) {
-			alert("추가할 작번을 선택하세요.");
-			return false;
-		}
-		opener.<%=method%>(checkedItems);
-	}
-	
-	
-	// jquery 모든 DOM구조 로딩 후 
-	$(function() {
-		// 로컬 스토리지에 저장된 컬럼 값 불러오기 see - base.js
-		let columns = loadColumnLayout("project-popup");
+	// jquery 삭제를 해가는 쪽으로 한다..
+	document.addEventListener("DOMContentLoaded", function() {
+		// DOM이 로드된 후 실행할 코드 작성
+		let columns = loadColumnLayout("partlist-popup");
 		createAUIGrid(columns);
-	}).keypress(function(e) {
-		let keyCode = e.keyCode;
+		AUIGrid.resize(myGridID);
+	});
+
+	document.addEventListener("keydown", function(event) {
+		// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
+		let keyCode = event.keyCode || event.which;
 		if (keyCode === 13) {
+			loadGridData();
 		}
 	})
+
+	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID);
+	});
 </script>

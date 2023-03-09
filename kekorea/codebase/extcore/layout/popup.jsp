@@ -21,12 +21,12 @@
 		<script type="text/javascript">
 // 			const cover = new ax5.ui.mask();
 // 			function openLayer() {
-// 				$("#loading_layer").show();
+// 				document.getElementById("loading_layer").style.display = "block";
 // 				cover.open();
 // 			}
 
 // 			function closeLayer() {
-// 				$("#loading_layer").hide();
+// 				document.getElementById("loading_layer").style.display = "none";
 // 				cover.close();
 // 			}
 		</script>

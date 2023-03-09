@@ -195,7 +195,7 @@ public class ProjectController extends BaseController {
 
 	@Description(value = "프로젝트 추가 페이지")
 	@GetMapping(value = "/popup")
-	public ModelAndView popup(@RequestParam String method) throws Exception {
+	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 
@@ -216,6 +216,7 @@ public class ProjectController extends BaseController {
 		model.addObject("maks", maks);
 		model.addObject("before", before);
 		model.addObject("end", end);
+		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.addObject("method", method);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("popup:/project/project-popup");

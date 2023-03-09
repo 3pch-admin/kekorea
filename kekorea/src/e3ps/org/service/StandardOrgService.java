@@ -19,7 +19,6 @@ import e3ps.org.People;
 import e3ps.org.PeopleInstallLink;
 import e3ps.org.PeopleMakLink;
 import e3ps.org.PeopleWTUserLink;
-import e3ps.org.beans.UserViewData;
 import e3ps.org.dto.UserDTO;
 import e3ps.workspace.ApprovalUserLine;
 import wt.fc.PersistenceHelper;

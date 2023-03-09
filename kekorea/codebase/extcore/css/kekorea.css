@@ -1,5 +1,27 @@
 @charset "UTF-8";
 
+/** 테이블 공통 CSS **/
+table {
+	width: 100%;
+}
+
+/** border 공통 CSS **/
+.tb-none {
+	border-top: none;
+}
+
+.rb-none {
+	border-right: none;
+}
+
+.lb-none {
+	border-left: none;
+}
+
+.bb-none {
+	border-bottom: none;
+}
+
 /** 검색 테이블 CSS **/
 table.search-table {
 	width: 100%;
@@ -236,4 +258,21 @@ a:hover {
 iframe {
 	border: none;
 	width: 100%;
+}
+
+/** input[type=text] CSS **/
+input[type=text].width-200 {
+	width: 200px;
+}
+
+input[type=text].width-300 {
+	width: 300px;
+}
+
+input[type=text].width-400 {
+	width: 400px;
+}
+
+input[type=text].width-500 {
+	width: 500px;
 }

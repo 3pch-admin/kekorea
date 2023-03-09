@@ -4,7 +4,7 @@ import com.ptc.windchill.annotations.metadata.GenAsBinaryLink;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.GeneratedRole;
 
-import e3ps.admin.spec.Spec;
+import e3ps.admin.commonCode.CommonCode;
 import wt.fc.ObjectToObjectLink;
 import wt.util.WTException;
 
@@ -12,7 +12,7 @@ import wt.util.WTException;
 
 		roleA = @GeneratedRole(name = "history", type = History.class),
 
-		roleB = @GeneratedRole(name = "spec", type = Spec.class),
+		roleB = @GeneratedRole(name = "spec", type = CommonCode.class),
 
 		properties = {
 
@@ -25,10 +25,9 @@ public class HistorySpecLink extends _HistorySpecLink {
 
 	static final long serialVersionUID = 1;
 
-	public static HistorySpecLink newHistorySpecLink(History history, Spec spec) throws WTException {
+	public static HistorySpecLink newHistorySpecLink(History history, CommonCode spec) throws WTException {
 		HistorySpecLink instance = new HistorySpecLink();
 		instance.initialize(history, spec);
 		return instance;
 	}
-
 }
