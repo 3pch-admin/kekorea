@@ -31,15 +31,15 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "unit", type = String.class, javaDoc = "단위"),
 
-				@GeneratedProperty(name = "price", type = Double.class, javaDoc = "단가"),
+				@GeneratedProperty(name = "price", type = Integer.class, javaDoc = "단가"),
 
 				@GeneratedProperty(name = "currency", type = String.class, javaDoc = "화폐"),
 
-				@GeneratedProperty(name = "won", type = Double.class, javaDoc = "원화금액"),
+				@GeneratedProperty(name = "won", type = Integer.class, javaDoc = "원화금액"),
 
 				@GeneratedProperty(name = "partListDate", type = Timestamp.class, javaDoc = "수배일자"),
 
-				@GeneratedProperty(name = "exchangeRate", type = Double.class, javaDoc = "환율"),
+				@GeneratedProperty(name = "exchangeRate", type = Integer.class, javaDoc = "환율"),
 
 				@GeneratedProperty(name = "referDrawing", type = String.class, javaDoc = "참고도면"),
 

@@ -117,7 +117,7 @@
 		editRenderer : {
 			type : "InputEditRenderer",
 			onlyNumeric : true, // 0~9만 입력가능
-		},		
+		},
 	}, {
 		dataField : "unit",
 		headerText : "단위",
@@ -150,6 +150,7 @@
 		headerText : "환율",
 		dataType : "numeric",
 		width : 80,
+		formatString : "#,##0.0000"
 	}, {
 		dataField : "referDrawing",
 		headerText : "참고도면",
@@ -167,7 +168,6 @@
 		width : 250,
 	} ];
 
-	
 	function createAUIGrid(columnLayout) {
 		const props = {
 			headerHeight : 30, // 헤더높이
@@ -185,17 +185,17 @@
 		readyHandler();
 		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 	}
-	
+
 	function auiCellEditEndHandler() {
-		
+
 	}
-	
+
 	function readyHandler() {
 		let item = new Object();
 		item.partListDate = new Date();
 		AUIGrid.addRow(myGridID, item, "first");
 	}
-	
+
 	// 등록
 	function create() {
 
@@ -224,7 +224,7 @@
 			}
 		})
 	}
-	
+
 	// 행 추가
 	function addRow() {
 		let item = new Object();

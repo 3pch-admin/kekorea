@@ -1092,7 +1092,7 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				int price = (int) addRow.get("price");
 				String currency = (String) addRow.get("currency");
 				int won = (int) addRow.get("won");
-				double exchangeRate = (double) addRow.get("exchangeRate");
+				Object exchangeRate = (Object) addRow.get("exchangeRate");
 				String referDrawing = (String) addRow.get("referDrawing");
 				String classification = (String) addRow.get("classification");
 				String note = (String) addRow.get("note");
@@ -1106,10 +1106,17 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				data.setCustomer(customer);
 				data.setQuantity(quantity);
 				data.setUnit(unit);
-				data.setPrice((double) price);
+				data.setPrice(price);
 				data.setCurrency(currency);
-				data.setWon((double) won);
-				data.setExchangeRate((double) exchangeRate);
+				data.setWon(won);
+
+				if (exchangeRate instanceof Double) {
+					double value = (double) exchangeRate;
+					data.setExchangeRate((int) value);
+				} else {
+					data.setExchangeRate((int) exchangeRate);
+				}
+
 				data.setReferDrawing(referDrawing);
 				data.setClassification(classification);
 				data.setNote(note);

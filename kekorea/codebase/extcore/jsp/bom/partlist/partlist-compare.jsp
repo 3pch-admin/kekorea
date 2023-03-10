@@ -60,7 +60,8 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 <script type="text/javascript">
 	let myGridID;
 	let _myGridID;
-	const data = <%=data%>
+	const data =
+<%=data%>
 	const columns = [ {
 		dataField : "lotNo",
 		headerText : "LOT_NO",
@@ -133,6 +134,7 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 		headerText : "환율",
 		dataType : "numeric",
 		width : 80,
+		formatString : "#,##0.0000"
 	}, {
 		dataField : "referDrawing",
 		headerText : "참고도면",
@@ -157,7 +159,11 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 			rowHeight : 30, // 행 높이
 			showRowNumColumn : true, // 번호 행 출력 여부
 			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-		// 그리드 공통속성 끝
+			// 그리드 공통속성 끝
+			rowStyleFunction : function(rowIndex, item) {
+				console.log(rowIndex);
+				console.log(item);
+			}
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
@@ -190,7 +196,9 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 		AUIGrid.setGridData(myGridID, data);
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(_myGridID);
-		AUIGrid.setGridData(myGridID, <%=data%>);
+		AUIGrid.setGridData(myGridID,
+<%=data%>
+	);
 	});
 
 	function opener() {

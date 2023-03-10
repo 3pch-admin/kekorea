@@ -89,6 +89,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		headerText : "환율",
 		dataType : "numeric",
 		width : 80,
+		formatString : "#,##0.0000"
 	}, {
 		dataField : "referDrawing",
 		headerText : "참고도면",
