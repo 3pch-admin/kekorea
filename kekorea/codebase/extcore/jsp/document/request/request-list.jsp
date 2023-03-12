@@ -52,8 +52,9 @@
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('partlist-list');">
-					<input type="button" value="비교" title="비교" class="red" onclick="compare();">
+					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('request-list');">
+					<input type="button" value="저장" title="저장" onclick="save();">
+					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
@@ -69,7 +70,7 @@
 			function _layout() {
 				return [ {
 					dataField : "projectType_name",
-					headerText : "설계구분",
+					headerText : "작번유형",
 					dataType : "string",
 					width : 80,
 					filter : {
@@ -77,39 +78,32 @@
 						inline : true
 					},
 				}, {
-					dataField : "info",
-					headerText : "",
-					width : 40,
-					style : "cursor",
-					renderer : {
-						type : "IconRenderer",
-						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
-						iconHeight : 16,
-						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-							"default" : "/Windchill/extcore/images/details.gif" // default
-						},
-						onClick : function(event) {
-							const oid = event.item.loid;
-							const url = getCallUrl("/partlist/info?oid=" + oid);
-							popup(url);
-						}
-					},
-					filter : {
-						showIcon : false,
-						inline : false
-					},
-				}, {
 					dataField : "name",
-					headerText : "수배표제목",
+					headerText : "의뢰서 제목",
 					dataType : "string",
-					style : "left indent10 underline",
-					width : 300,
+					width : 350,
 					filter : {
 						showIcon : true,
 						inline : true
 					},
-					cellMerge : true
-				// 구분1 칼럼 셀 세로 병합 실행
+				}, {
+					dataField : "customer_name",
+					headerText : "거래처",
+					dataType : "string",
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "install_name",
+					headerText : "설치장소",
+					dataType : "string",
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "mak_name",
 					headerText : "막종",
@@ -132,8 +126,7 @@
 					dataField : "kekNumber",
 					headerText : "KEK 작번",
 					dataType : "string",
-					style : "underline",
-					width : 100,
+					width : 130,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -142,8 +135,7 @@
 					dataField : "keNumber",
 					headerText : "KE 작번",
 					dataType : "string",
-					style : "underline",
-					width : 100,
+					width : 130,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -159,17 +151,17 @@
 					},
 				}, {
 					dataField : "description",
-					headerText : "작업내용",
+					headerText : "작업 내용",
 					dataType : "string",
-					width : 300,
-					style : "left",
+					width : 450,
+					style : "left indent10",
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 				}, {
-					dataField : "customer_name",
-					headerText : "거래처",
+					dataField : "creator",
+					headerText : "검토자",
 					dataType : "string",
 					width : 100,
 					filter : {
@@ -177,8 +169,26 @@
 						inline : true
 					},
 				}, {
-					dataField : "install_name",
-					headerText : "설치 장소",
+					dataField : "version",
+					headerText : "버전",
+					dataType : "string",
+					width : 80,
+					filter : {
+						showIcon : false,
+						inline : false
+					},
+				}, {
+					dataField : "state",
+					headerText : "상태",
+					dataType : "string",
+					width : 80,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "model",
+					headerText : "모델",
 					dataType : "string",
 					width : 100,
 					filter : {
@@ -196,8 +206,8 @@
 						inline : true
 					},
 				}, {
-					dataField : "model",
-					headerText : "모델",
+					dataField : "docType",
+					headerText : "문서타입",
 					dataType : "string",
 					width : 100,
 					filter : {
@@ -224,20 +234,32 @@
 						inline : true
 					},
 				}, {
-					dataField : "state",
-					headerText : "상태",
+					dataField : "modifier",
+					headerText : "수정자",
 					dataType : "string",
 					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true
 					},
+				}, {
+					dataField : "modifiedDate",
+					headerText : "수정일",
+					dataType : "date",
+					formatString : "yyyy-mm-dd",
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				} ]
-			};
+			}
 
+			// AUIGrid 생성 함수
 			function createAUIGrid(columnLayout) {
+				// 그리드 속성
 				const props = {
-					rowIdField : "loid",
+					rowIdField : "oid",
 					// 그리드 공통속성 시작
 					headerHeight : 30, // 헤더높이
 					rowHeight : 30, // 행 높이
@@ -251,50 +273,48 @@
 					showInlineFilter : true,
 					// 그리드 공통속성 끝
 					showRowCheckColumn : true,
-					enableCellMerge : true,
 				};
+
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
-				// LazyLoading 바인딩
+				// Lazy Loading 이벤트 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
-				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 			}
 
-			function compare() {
-				let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				if (checkedItems.length <= 0) {
-					alert("비교할 수배표를 선택하세요.");
-					return;
+			function save() {
+				if (!confirm("저장 하시겠습니까?")) {
+					return false;
 				}
-				if (checkedItems.length > 1) {
-					alert("비교할 수배표를 하나만 선택하세요.");
-					return;
-				}
-				let loid = checkedItems[0].item.loid;
-				let oid = checkedItems[0].item.oid;
-				let url = getCallUrl("/partlist/compare?loid=" + loid + "&oid=" + oid);
+				const url = getCallUrl("/request/save");
+				const params = new Object();
+				const removeRows = AUIGrid.getRemovedItems(myGridID);
+				params.removeRows = removeRows;
+				call(url, params, function(data) {
+					alert(data.msg);
+					if (data.result) {
+						loadGridData();
+					} else {
+						// 실패..
+					}
+				})
+			}
+
+			function create() {
+				let url = getCallUrl("/request/create");
 				popup(url);
 			}
 
-			function auiCellClickHandler(event) {
-				let dataField = event.dataField;
-				let item = event.item;
-				if (dataField === "name") {
-					let url = getCallUrl("/partlist/view?oid=" + item.oid);
-					popup(url);
-				}
-			}
-
 			function loadGridData() {
-				let params = new Object();
-				let url = getCallUrl("/partlist/list");
-				AUIGrid.showAjaxLoader(myGridID);
+				const params = new Object();
+				const url = getCallUrl("/request/list");
+				AUIGrid.showAjaxLoader(myGridID); // .. 프리로더 개선해야함..
 				parent.openLayer();
 				call(url, params, function(data) {
-					AUIGrid.removeAjaxLoader(myGridID);
-					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
+					document.getElementById("sessionid").value = data.sessionid;
 					AUIGrid.setGridData(myGridID, data.list);
+					AUIGrid.removeAjaxLoader(myGridID);
 					parent.closeLayer();
 				});
 			}
@@ -309,13 +329,13 @@
 			}
 
 			function requestAdditionalData() {
-				let params = new Object();
-				let curPage = document.getElementById("curPage").value
-				let sessionid = document.getElementById("sessionid").value
+				const url = getCallUrl("/aui/appendData");
+				const params = new Object();
+				const curPage = document.getElementById("curPage").value;
+				const sessionid = document.getElementById("sessionid").value
 				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -330,15 +350,19 @@
 				})
 			}
 
-			function create() {
-				const url = getCallUrl("/partlist/create");
-				popup(url);
+			// 행 삭제
+			function deleteRow() {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				for (let i = checkedItems.length - 1; i >= 0; i--) {
+					const rowIndex = checkedItems[i].rowIndex;
+					AUIGrid.removeRow(myGridID, rowIndex);
+				}
 			}
 
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				let columns = loadColumnLayout("partlist-list");
+				const columns = loadColumnLayout("request-list");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});

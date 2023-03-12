@@ -47,12 +47,14 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 		</td>
 	</tr>
 	<tr>
-		<th>
-			<font class="req">KEK 작번</font>
-		</th>
-		<td class="indent5" colspan="3">
+		<th class="req">KEK 작번</th>
+		<td colspan="3">
 			<jsp:include page="/extcore/include/project-include.jsp">
-				<jsp:param value="create" name="mode"/>
+				<jsp:param value="" name="oid" />
+				<jsp:param value="create" name="mode" />
+				<jsp:param value="true" name="multi" />
+				<jsp:param value="" name="obj" />
+				<jsp:param value="250" name="height" />
 			</jsp:include>
 		</td>
 	</tr>
@@ -63,13 +65,11 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 		</td>
 	</tr>
 	<tr>
-		<th>
-			첨부파일
-		</th>
+		<th>첨부파일</th>
 		<td class="indent5" colspan="3">
 			<jsp:include page="/extcore/include/secondary-include.jsp">
 				<jsp:param value="" name="oid" />
-				<jsp:param value="create" name="mode"/>
+				<jsp:param value="create" name="mode" />
 			</jsp:include>
 		</td>
 	</tr>
@@ -82,10 +82,10 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 			return false;
 		}
 
-		let params = new Object();
-		let content = tinymce.activeEditor.getContent();
-		let _addRows = AUIGrid.getAddedRowItems(_myGridID); // 프로젝트
-		let url = getCallUrl("/meeting/create");
+		const params = new Object();
+		const content = tinymce.activeEditor.getContent();
+		const _addRows = AUIGrid.getAddedRowItems(_myGridID); // 프로젝트
+		const url = getCallUrl("/meeting/create");
 		params.name = document.getElementById("name").value;
 		params.content = content;
 		params.template = document.getElementById("template").value;
@@ -116,10 +116,10 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 	document.addEventListener("DOMContentLoaded", function() {
 		// DOM이 로드된 후 실행할 코드 작성
 		loadTinymce();
-		let templateBox = document.getElementById("template");
+		const templateBox = document.getElementById("template");
 		templateBox.addEventListener("change", function() {
-			let value = templateBox.value;
-			let url = getCallUrl("/meeting/getContent?oid=" + value);
+			const value = templateBox.value;
+			const url = getCallUrl("/meeting/getContent?oid=" + value);
 			call(url, null, function(data) {
 				if (data.result) {
 					tinymce.activeEditor.setContent(data.content);

@@ -1,8 +1,61 @@
 @charset "UTF-8";
 
+html {
+	font-size: 14px;
+	font-family: "Noto Sans KR";
+}
+
 /** 테이블 공통 CSS **/
 table {
 	width: 100%;
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+/** 컨테이너 테이블 CSS 트리전용 **/
+table.container-table td:first-child {
+	vertical-align: top;
+}
+
+/** 그리드 인클루드용 CSS **/
+div.include {
+	margin-top: 3px;
+	text-indent: 5px;
+}
+
+/** margin 공통 CSS **/
+.mt5 {
+	margin-top: 5px;
+}
+
+.mb5 {
+	margin-bottom: 5px;
+}
+
+.ml5 {
+	margin-left: 5px;
+}
+
+.mr5 {
+	margin-right: 5px;
+}
+
+
+/** padding 공통 CSS **/
+.pt5 {
+	padding-top: 5px;
+}
+
+.pb5 {
+	padding-bottom: 5px;
+}
+
+.pl5 {
+	padding-left: 5px;
+}
+
+.pr5 {
+	padding-right: 5px;
 }
 
 /** border 공통 CSS **/
@@ -25,9 +78,7 @@ table {
 /** 검색 테이블 CSS **/
 table.search-table {
 	width: 100%;
-	border-spacing: 0;
 	border-top: 2px solid #86bff9;
-	border-collapse: collapse;
 	font-size: 12px;
 }
 
@@ -53,8 +104,6 @@ table.search-table td {
 /** 버튼 테이블 CSS **/
 table.button-table {
 	width: 100%;
-	border-spacing: 0;
-	border-collapse: collapse;
 	font-size: 12px;
 	margin-top: 5px;
 	margin-bottom: 5px;
@@ -63,6 +112,10 @@ table.button-table {
 /** TD 태그 CSS **/
 td.left {
 	text-align: left;
+}
+
+td.center {
+	text-align: center;
 }
 
 td.right {
@@ -86,6 +139,10 @@ td.underline:hover {
 	text-decoration: underline;
 }
 
+td.cursor {
+	cursor: pointer;
+}
+
 /** 텍스트 박스 사이즈 CSS **/
 input[type=text].width-100 {
 	width: 100px;
@@ -105,6 +162,18 @@ input[type=text].width-400 {
 
 input[type=text].width-500 {
 	width: 500px;
+}
+
+input[type=text].width-600 {
+	width: 600px;
+}
+
+input[type=text].width-700 {
+	width: 700px;
+}
+
+input[type=text].width-800 {
+	width: 800px;
 }
 
 /** 버튼 꾸밈 CSS **/
@@ -182,9 +251,7 @@ div#loading {
 /** 등록 테이블 CSS **/
 table.create-table {
 	width: 100%;
-	border-spacing: 0;
 	border-top: 2px solid #86bff9;
-	border-collapse: collapse;
 	font-size: 12px;
 }
 
@@ -275,4 +342,12 @@ input[type=text].width-400 {
 
 input[type=text].width-500 {
 	width: 500px;
+}
+
+/** axicon css 재정의 **/
+i.axi-close2 {
+	font-size: 20px;
+	position: relative;
+	top: 4px;
+	cursor: pointer;
 }

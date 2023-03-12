@@ -58,6 +58,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		headerText : "수량",
 		dataType : "numeric",
 		width : 60,
+		postfix : "개"
 	}, {
 		dataField : "unit",
 		headerText : "단위",
@@ -68,6 +69,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		headerText : "단가",
 		dataType : "numeric",
 		width : 120,
+		postfix : "원"
 	}, {
 		dataField : "currency",
 		headerText : "화폐",
@@ -78,6 +80,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		headerText : "원화금액",
 		dataType : "numeric",
 		width : 120,
+		postfix : "원"
 	}, {
 		dataField : "partListDate",
 		headerText : "수배일자",
@@ -106,19 +109,59 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		dataType : "string",
 		width : 250,
 	} ];
+	
+	const footerLayout = [ {
+		labelText : "∑",
+		positionField : "#base",
+	}, {
+		dataField : "lotNo",
+		positionField : "lotNo",
+		style : "right",
+		colSpan : 7, // 자신을 포함하여 3개의 푸터를 가로 병합함.
+		labelFunction : function(value, columnValues, footerValues) {
+			return "수배표 수량 합계 금액";
+		}
+	}, {
+		dataField : "quantity",
+		positionField : "quantity",
+		operation : "SUM",
+		dataType : "numeric",
+		postfix : "개"
+	},{
+		dataField : "unit",
+		positionField : "unit",
+		style : "right",
+		colSpan : 3, // 자신을 포함하여 3개의 푸터를 가로 병합함.
+		labelFunction : function(value, columnValues, footerValues) {
+			return "수배표 수량 합계 금액";
+		}
+	}, {
+		dataField : "won",
+		positionField : "won",
+		operation : "SUM",
+		dataType : "numeric",
+		formatString : "#,##0",
+		postfix : "원"
+	}, {
+		dataField : "partListDate",
+		positionField : "partListDate",
+		colSpan : "5",
+	}, ];
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-// 			rowIdField : "oid",
 			// 그리드 공통속성 시작
 			headerHeight : 30, // 헤더높이
 			rowHeight : 30, // 행 높이
 			showRowNumColumn : true, // 번호 행 출력 여부
 			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
 			selectionMode : "multipleCells",
-			// 그리드 공통속성 끝
+			showFooter : true,
+			footerPosition : "top",
+		// 그리드 공통속성 끝
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+		AUIGrid.setFooter(myGridID, footerLayout);
 	}
 	// jquery 삭제를 해가는 쪽으로 한다..
 	document.addEventListener("DOMContentLoaded", function() {
@@ -131,14 +174,4 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
 	});
-	
-	document.addEventListener("keydown", function(event) {
-		// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-		let keyCode = event.keyCode || event.which;
-		// esc 키(코드 27)를 눌렀을 때
-		if (keyCode === 27) {
-			// 현재 창 닫기
-			self.close();
-		}
-	})
 </script>

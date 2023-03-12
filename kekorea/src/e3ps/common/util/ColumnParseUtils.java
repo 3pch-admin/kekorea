@@ -11,6 +11,7 @@ import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.dto.PartListDTO;
 import e3ps.doc.column.DocumentColumnData;
+import e3ps.doc.dto.DocumentDTO;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.dto.RequestDocumentDTO;
@@ -43,7 +44,7 @@ public class ColumnParseUtils {
 				list.add(data);
 				// 문서
 			} else if (per instanceof WTDocument) {
-				DocumentColumnData data = parse((WTDocument) per);
+				DocumentDTO data = parse((WTDocument) per);
 				list.add(data);
 				// 코드
 			} else if (per instanceof CommonCode) {
@@ -115,8 +116,8 @@ public class ColumnParseUtils {
 		return new RequestDocumentDTO(per);
 	}
 
-	private static DocumentColumnData parse(WTDocument per) throws Exception {
-		return new DocumentColumnData(per);
+	private static DocumentDTO parse(WTDocument per) throws Exception {
+		return new DocumentDTO(per);
 	}
 
 	private static ProjectDTO parse(Project per) throws Exception {

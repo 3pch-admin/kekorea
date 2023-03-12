@@ -2,10 +2,7 @@ package e3ps.common.util;
 
 import java.sql.Timestamp;
 
-import e3ps.admin.spec.Spec;
-import e3ps.admin.spec.SpecOptionsLink;
-import e3ps.epm.ViewerData;
-import wt.epm.EPMDocument;
+import wt.enterprise.RevisionControlled;
 import wt.iba.definition.litedefinition.AttributeDefDefaultView;
 import wt.iba.definition.service.IBADefinitionHelper;
 import wt.iba.value.StringValue;
@@ -17,12 +14,55 @@ import wt.query.QuerySpec;
 import wt.query.SQLFunction;
 import wt.query.SearchCondition;
 import wt.util.WTAttributeNameIfc;
+import wt.vc.ControlBranch;
+import wt.vc.VersionControlHelper;
 import wt.vc.wip.WorkInProgressHelper;
 
 public class QuerySpecUtils {
 
 	private QuerySpecUtils() {
 
+	}
+
+	public static void toLatest(QuerySpec query, int idx, Class clazz) throws Exception {
+		int branchIdx = query.appendClassList(ControlBranch.class, false);
+		int childBranchIdx = query.appendClassList(ControlBranch.class, false);
+
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+
+		SearchCondition sc = new SearchCondition(clazz, RevisionControlled.BRANCH_IDENTIFIER, ControlBranch.class,
+				WTAttributeNameIfc.ID_NAME);
+		query.appendWhere(sc, new int[] { idx, branchIdx });
+
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+
+		SearchCondition outerJoin = new SearchCondition(ControlBranch.class, WTAttributeNameIfc.ID_NAME,
+				ControlBranch.class, "predecessorReference.key.id");
+		outerJoin.setOuterJoin(SearchCondition.RIGHT_OUTER_JOIN);
+		query.appendWhere(outerJoin, new int[] { branchIdx, childBranchIdx });
+
+		ClassAttribute ca = new ClassAttribute(ControlBranch.class, WTAttributeNameIfc.ID_NAME);
+		query.appendSelect(ca, new int[] { childBranchIdx }, false);
+
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+
+		sc = new SearchCondition(ca, SearchCondition.IS_NULL);
+		query.appendWhere(sc, new int[] { childBranchIdx });
+
+	}
+
+	public static void toIteration(QuerySpec query, int idx, Class clazz) throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+		SearchCondition sc = VersionControlHelper.getSearchCondition(clazz, true);
+		query.appendWhere(sc, new int[] { idx });
 	}
 
 	public static void toEqualsAnd(QuerySpec query, int idx, Class clazz, String column, Object value)
@@ -134,7 +174,8 @@ public class QuerySpecUtils {
 		query.appendOrderBy(orderBy, new int[] { idx });
 	}
 
-	public static void toBooleanAnd(QuerySpec query, int idx, Class clazz, String column, boolean value) throws Exception {
+	public static void toBooleanAnd(QuerySpec query, int idx, Class clazz, String column, boolean value)
+			throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -221,7 +262,6 @@ public class QuerySpecUtils {
 		}
 		SearchCondition sc = WorkInProgressHelper.getSearchCondition_CI(clazz);
 		query.appendWhere(sc, new int[] { idx });
-		sc = WorkInProgressHelper.getSearchCondition_CI(EPMDocument.class);
 	}
 
 	public static void toIBAEquals(QuerySpec query, int idx, Class clazz, String name, String value) throws Exception {

@@ -40,7 +40,7 @@ public class AUIGridUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
+0	}
 
 	private AUIGridUtils() {
 

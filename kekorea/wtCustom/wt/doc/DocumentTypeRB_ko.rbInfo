@@ -1,0 +1,9 @@
+ResourceInfo.class=wt.tools.resource.EnumResourceInfo
+
+# Entry Contents
+
+$$Request.value=의뢰서
+$$Request.shortDescription=의뢰서
+
+$$Output.value=산출물
+$$Output.shortDescription=산출물

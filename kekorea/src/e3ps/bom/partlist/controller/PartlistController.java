@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.dto.PartListDTO;
 import e3ps.bom.partlist.service.PartlistHelper;
@@ -120,5 +121,20 @@ public class PartlistController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "수배표 정보 페이지")
+	@GetMapping(value = "/info")
+	public ModelAndView info(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		PartListMasterProjectLink link = (PartListMasterProjectLink) CommonUtils.getObject(oid);
+		PartListDTO dto = new PartListDTO(link);
+		JSONArray data = PartlistHelper.manager.getData(dto.getOid());
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("data", data);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/bom/partlist/partlist-info");
+		return model;
 	}
 }

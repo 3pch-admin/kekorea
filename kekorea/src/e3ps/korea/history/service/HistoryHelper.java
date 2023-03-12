@@ -7,7 +7,7 @@ import java.util.Map;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.korea.history.History;
-import e3ps.korea.history.HistorySpecLink;
+import e3ps.korea.history.HistoryOptionLink;
 import e3ps.project.Project;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -24,28 +24,26 @@ public class HistoryHelper {
 		ArrayList<Map<String, Object>> dataList = new ArrayList<>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(History.class, true);
-
 		QuerySpecUtils.toOrderBy(query, idx, History.class, History.CREATE_TIMESTAMP, true);
-
 		QueryResult result = PersistenceHelper.manager.find(query);
 
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			History history = (History) obj[0];
 			Project project = history.getProject();
-			ArrayList<HistorySpecLink> data = getLinks(history);
-			Map<String, Object> dataMap = new HashMap<String, Object>();
+			ArrayList<HistoryOptionLink> data = getLinks(history);
+			Map<String, Object> dataMap = new HashMap<>();
 			dataMap.put("kekNumber", project.getKekNumber());
 			dataMap.put("keNumber", project.getKeNumber());
 			dataMap.put("install", project.getInstall().getName());
-			dataMap.put("pDate", CommonUtils.getPersistableTime(project.getCreateTimestamp()));
+			dataMap.put("pdate", project.getPDate());
 			dataMap.put("tuv", history.getTuv());
 			dataMap.put("poid", project.getPersistInfo().getObjectIdentifier().getStringValue());
 			dataMap.put("oid", history.getPersistInfo().getObjectIdentifier().getStringValue());
-			for (HistorySpecLink link : data) {
-				String columnKey = link.getSpec().getColumnKey();
-				String value = link.getValue();
-				dataMap.put(columnKey, value);
+			for (HistoryOptionLink link : data) {
+				String dataField = link.getDataField();
+				String value = link.getOption().getName();
+				dataMap.put(dataField, value);
 			}
 			dataList.add(dataMap);
 		}
@@ -53,12 +51,12 @@ public class HistoryHelper {
 		return map;
 	}
 
-	public ArrayList<HistorySpecLink> getLinks(History history) throws Exception {
-		ArrayList<HistorySpecLink> list = new ArrayList<HistorySpecLink>();
+	public ArrayList<HistoryOptionLink> getLinks(History history) throws Exception {
+		ArrayList<HistoryOptionLink> list = new ArrayList<HistoryOptionLink>();
 
-		QueryResult result = PersistenceHelper.manager.navigate(history, "spec", HistorySpecLink.class, false);
+		QueryResult result = PersistenceHelper.manager.navigate(history, "spec", HistoryOptionLink.class, false);
 		while (result.hasMoreElements()) {
-			HistorySpecLink link = (HistorySpecLink) result.nextElement();
+			HistoryOptionLink link = (HistoryOptionLink) result.nextElement();
 			list.add(link);
 		}
 		return list;
@@ -77,7 +75,7 @@ public class HistoryHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			History history = (History) obj[0];
-			ArrayList<HistorySpecLink> data = getLinks(history);
+			ArrayList<HistoryOptionLink> data = getLinks(history);
 			Map<String, Object> dataMap = new HashMap<String, Object>();
 			dataMap.put("kekNumber", project.getKekNumber());
 			dataMap.put("keNumber", project.getKeNumber());
@@ -86,7 +84,7 @@ public class HistoryHelper {
 			dataMap.put("tuv", history.getTuv());
 			dataMap.put("poid", project.getPersistInfo().getObjectIdentifier().getStringValue());
 			dataMap.put("oid", history.getPersistInfo().getObjectIdentifier().getStringValue());
-			for (HistorySpecLink link : data) {
+			for (HistoryOptionLink link : data) {
 				String columnKey = link.getSpec().getColumnKey();
 				String value = link.getValue();
 				dataMap.put(columnKey, value);

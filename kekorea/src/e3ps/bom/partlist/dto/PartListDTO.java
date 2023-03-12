@@ -61,6 +61,7 @@ public class PartListDTO {
 		setLoid(link.getPersistInfo().getObjectIdentifier().getStringValue());
 		setPoid(project.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(partListMaster.getName());
+		setContent(partListMaster.getDescription());
 		if (project.getProjectType() != null) {
 			setProjectType_code(project.getProjectType().getCode());
 			setProjectType_name(project.getProjectType().getName());

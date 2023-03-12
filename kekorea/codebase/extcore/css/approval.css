@@ -1,0 +1,46 @@
+@charset "UTF-8";
+
+td.tab {
+	height: 50px;
+	background-color: #9595ff;
+	color: white;
+	font-weight: 800;
+}
+
+td.tab:hover {
+	background-color: #2222ff;
+	cursor: pointer;
+}
+
+td.active {
+	background-color: #2222ff;
+}
+
+.select-table {
+	border-top: 2px solid #7c67f1;
+}
+
+.select-table td {
+	height: 32px;
+	border-left: 1px solid #a6a6a6;
+	border-right: 1px solid #a6a6a6;
+	border-bottom: 1px solid #a6a6a6;
+}
+
+.select-table tr:first-child td {
+	background-color: #c1c1ff;
+	font-weight: 800;
+}
+
+div.line-title {
+	font-size: 12px;
+	height: 24px;
+	font-weight: 800;
+	padding-top: 5px;
+}
+
+div.line-title i.axi-subtitles {
+	font-size: 14px;
+	position: relative;
+	top: 2px;
+}

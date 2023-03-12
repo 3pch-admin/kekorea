@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import e3ps.common.util.CommonUtils;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.project.Project;
@@ -30,6 +31,7 @@ public class RequestDocumentDTO {
 	private String version;
 	private String state;
 	private String model;
+	private String docType;
 
 	@JsonIgnore
 	private Timestamp pdate;
@@ -44,7 +46,7 @@ public class RequestDocumentDTO {
 
 	// 변수 담기 용도
 	private ArrayList<Map<String, String>> addRows = new ArrayList<>();
-	private String[] secondarys = null;
+	private ArrayList<String> secondarys = new ArrayList<>();
 
 	public RequestDocumentDTO() {
 
@@ -89,5 +91,6 @@ public class RequestDocumentDTO {
 		setCreatedDate(request.getCreateTimestamp());
 		setModifier(request.getModifierFullName());
 		setModifiedDate(request.getModifyTimestamp());
+		setDocType(request.getDocType().getDisplay());
 	}
 }

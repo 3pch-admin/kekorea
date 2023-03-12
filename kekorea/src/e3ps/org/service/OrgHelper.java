@@ -1,11 +1,13 @@
 package e3ps.org.service;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
+import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
@@ -18,10 +20,12 @@ import e3ps.org.dto.UserDTO;
 import e3ps.workspace.ApprovalUserLine;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import wt.clients.folder.FolderTaskLogic;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.fc.ReferenceFactory;
+import wt.folder.Folder;
 import wt.org.WTUser;
 import wt.pds.StatementSpec;
 import wt.query.ClassAttribute;
@@ -60,28 +64,17 @@ public class OrgHelper {
 		return isDeptUser;
 	}
 
-	public Department getRoot() {
-//		Department root = null;
-//		QuerySpec query = null;
-//		try {
-//			query = new QuerySpec();
-//			int idx = query.appendClassList(Department.class, true);
-//
-//			SearchCondition sc = new SearchCondition(Department.class, Department.CODE, "=", "ROOT");
-//			query.appendWhere(sc, new int[] { idx });
-//
-//			QueryResult result = PersistenceHelper.manager.find(query);
-//			if (result.hasMoreElements()) {
-//				Object[] obj = (Object[]) result.nextElement();
-//				root = (Department) obj[0];
-//			}
-//			if (root == null) {
-//				root = OrgHelper.service.makeRoot();
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-		return root;
+	public Department getRoot() throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Department.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, Department.class, Department.CODE, "ROOT");
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Department root = (Department) obj[0];
+			return root;
+		}
+		return null;
 	}
 
 	public Department getDepartment(WTUser wtuser) {
@@ -1388,6 +1381,88 @@ public class OrgHelper {
 			Object[] obj = (Object[]) qr.nextElement();
 			PeopleInstallLink link = (PeopleInstallLink) obj[1];
 			list.add(link.getInstall());
+		}
+		return list;
+	}
+
+	public JSONArray loadDepartmentTree(Map<String, String> params) throws Exception {
+		Department root = getRoot();
+
+		JSONArray list = new JSONArray();
+		JSONObject rootNode = new JSONObject();
+		rootNode.put("oid", root.getPersistInfo().getObjectIdentifier().getStringValue());
+		rootNode.put("name", root.getName());
+
+		JSONArray children = new JSONArray();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Department.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, Department.class, "parentReference.key.id",
+				root.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toOrderBy(query, idx, Department.class, Department.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Department child = (Department) obj[0];
+			JSONObject node = new JSONObject();
+			node.put("oid", child.getPersistInfo().getObjectIdentifier().getStringValue());
+			node.put("name", child.getName());
+			loadDepartmentTree(child, node);
+			children.add(node);
+		}
+		rootNode.put("children", children);
+		list.add(rootNode);
+		return list;
+	}
+
+	private void loadDepartmentTree(Department parent, JSONObject parentNode) throws Exception {
+		JSONArray children = new JSONArray();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Department.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, Department.class, "parentReference.key.id",
+				parent.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toOrderBy(query, idx, Department.class, Department.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Department child = (Department) obj[0];
+			JSONObject node = new JSONObject();
+			node.put("oid", child.getPersistInfo().getObjectIdentifier().getStringValue());
+			node.put("name", child.getName());
+			loadDepartmentTree(child, node);
+			children.add(node);
+		}
+		parentNode.put("children", children);
+	}
+
+	public ArrayList<UserDTO> loadDepartmentUser(String oid) throws Exception {
+		ArrayList<UserDTO> list = new ArrayList<>();
+		Department department = null;
+
+		if (!StringUtils.isNull(oid)) {
+			department = (Department) CommonUtils.getObject(oid);
+		} else {
+			department = getRoot();
+		}
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(People.class, true);
+		int idx_d = query.appendClassList(Department.class, false);
+		int idx_w = query.appendClassList(WTUser.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, People.class, WTUser.class, "wtUserReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_w);
+		QuerySpecUtils.toInnerJoin(query, People.class, Department.class, "departmentReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_d);
+		QuerySpecUtils.toEqualsAnd(query, idx, People.class, "departmentReference.key.id",
+				department.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			People people = (People) obj[0];
+			UserDTO dto = new UserDTO(people);
+			list.add(dto);
 		}
 		return list;
 	}

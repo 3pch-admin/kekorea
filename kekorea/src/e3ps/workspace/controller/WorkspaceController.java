@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -156,5 +157,13 @@ public class WorkspaceController extends BaseController {
 			result.put("result", FAIL);
 		}
 		return result;
+	}
+
+	@Description(value = "결재선 지정 팝업 페이지")
+	@GetMapping(value = "/popup")
+	public ModelAndView popup() throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("popup:/workspace/register-popup");
+		return model;
 	}
 }

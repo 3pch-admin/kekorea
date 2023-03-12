@@ -1,5 +1,6 @@
 package e3ps.admin.spec.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,5 +83,43 @@ public class SpecHelper {
 			children.add(node);
 		}
 		parentNode.put("children", children);
+	}
+
+	public Map<String, ArrayList<Map<String, String>>> getOptionList() throws Exception {
+		Map<String, ArrayList<Map<String, String>>> map = new HashMap<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(CommonCode.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE_TYPE, "SPEC");
+		QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, true);
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			CommonCode specCode = (CommonCode) obj[0];
+			ArrayList<Map<String, String>> list = getOption(specCode);
+			map.put(specCode.getCode(), list);
+		}
+		return map;
+	}
+
+	private ArrayList<Map<String, String>> getOption(CommonCode specCode) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(CommonCode.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE_TYPE, "OPTION");
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, "parentReference.key.id",
+				specCode.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, true);
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			CommonCode optionCode = (CommonCode) obj[0];
+			Map<String, String> map = new HashMap<>();
+			map.put("key", optionCode.getCode());
+			map.put("value", optionCode.getName());
+			list.add(map);
+		}
+		return list;
 	}
 }

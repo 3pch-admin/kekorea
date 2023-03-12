@@ -3,6 +3,7 @@ package e3ps.korea.history;
 import com.ptc.windchill.annotations.metadata.GenAsBinaryLink;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.GeneratedRole;
+import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import e3ps.admin.commonCode.CommonCode;
 import wt.fc.ObjectToObjectLink;
@@ -12,22 +13,23 @@ import wt.util.WTException;
 
 		roleA = @GeneratedRole(name = "history", type = History.class),
 
-		roleB = @GeneratedRole(name = "spec", type = CommonCode.class),
+		roleB = @GeneratedRole(name = "option", type = CommonCode.class),
 
 		properties = {
 
-				@GeneratedProperty(name = "value", type = String.class)
+				@GeneratedProperty(name = "dataField", type = String.class, constraints = @PropertyConstraints(required = true))
 
 		}
 
 )
-public class HistorySpecLink extends _HistorySpecLink {
+
+public class HistoryOptionLink extends _HistoryOptionLink {
 
 	static final long serialVersionUID = 1;
 
-	public static HistorySpecLink newHistorySpecLink(History history, CommonCode spec) throws WTException {
-		HistorySpecLink instance = new HistorySpecLink();
-		instance.initialize(history, spec);
+	public static HistoryOptionLink newHistoryOptionLink(History history, CommonCode option) throws WTException {
+		HistoryOptionLink instance = new HistoryOptionLink();
+		instance.initialize(history, option);
 		return instance;
 	}
 }

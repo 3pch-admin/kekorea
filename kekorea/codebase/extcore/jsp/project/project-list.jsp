@@ -176,6 +176,15 @@
 					headerText : "KEK 작번",
 					dataType : "string",
 					width : 130,
+					style : "underline",
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", // 자바스크립 함수 호출로 사용하고자 하는 경우에 baseUrl 에 "javascript" 로 설정
+						// baseUrl 에 javascript 로 설정한 경우, 링크 클릭 시 callback 호출됨.
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -195,7 +204,6 @@
 					headerText : "USER ID",
 					dataType : "string",
 					width : 100,
-					style : "underline",
 					filter : {
 						showIcon : true,
 						inline : true
@@ -314,7 +322,7 @@
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
-				// 그리드 공통속성 끝
+					// 그리드 공통속성 끝
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);

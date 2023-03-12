@@ -8,7 +8,7 @@
              value="true"/>
    <Property name="wt.auth.handler" overridable="true"
              targetFile="codebase/wt.properties"
-             value="wt.auth.NullAuthentication,wt.httpgw.HTTPAuthentication"/>             
+             value="wt.httpgw.HTTPAuthentication"/>             
              
    <!-- Service -->          
    <Property name="wt.services.service.90000" overridable="true"
@@ -47,5 +47,22 @@
              targetFile="codebase/wt.properties"
              value="512"/>     	             
              
+	<!-- Time Zone -->
+	<Property name="wt.method.timezone" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="Asia/Seoul"/>
                                                
+	<!-- Version Setting -->
+	<Property name="wt.series.HarvardSeries.InSpec.delimiter" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="."/>
+	<Property name="wt.series.HarvardSeries.InSpec.depth" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="16"/>
+	<Property name="wt.series.HarvardSeries.InSpec.level.1" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="wt.series.IntegerSeries"/>
+	<Property name="wt.series.HarvardSeries.seriesNames" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="MilSpec, InSpec"/>                                       	
 </Configuration>
