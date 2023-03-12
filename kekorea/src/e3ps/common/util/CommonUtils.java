@@ -12,22 +12,13 @@ import wt.fc.collections.WTHashSet;
 import wt.fc.collections.WTValuedHashMap;
 import wt.inf.container.WTContainerRef;
 import wt.inf.library.WTLibrary;
-import wt.introspection.ClassInfo;
-import wt.introspection.WTIntrospector;
 import wt.org.WTUser;
 import wt.ownership.Ownership;
 import wt.pdmlink.PDMLinkProduct;
 import wt.pds.StatementSpec;
-import wt.query.ClassAttribute;
-import wt.query.KeywordExpression;
 import wt.query.QuerySpec;
 import wt.query.SearchCondition;
-import wt.query.TableExpression;
 import wt.session.SessionHelper;
-import wt.util.WTAttributeNameIfc;
-import wt.util.WTException;
-import wt.util.WTPropertyVetoException;
-import wt.vc.ControlBranch;
 import wt.vc.Iterated;
 import wt.vc.VersionControlHelper;
 import wt.vc.VersionReference;
@@ -210,89 +201,6 @@ public class CommonUtils {
 	}
 
 	/**
-	 * 접속한 사용자가 객체의 작성자인지 확인 하는 함수
-	 * 
-	 * @param rc : 작성자인지 확인할 객체
-	 * @return boolean
-	 * @throws Exception
-	 */
-	public static boolean isCreator(RevisionControlled rc) throws Exception {
-		WTUser user = (WTUser) SessionHelper.manager.getPrincipal();
-		return isCreator(rc, user);
-	}
-
-	/**
-	 * 해당 객체의 작성자인지 확인 하는 함수
-	 * 
-	 * @param rc   : 작성자인지 확인할 객체
-	 * @param user : 작성자인지 확인할 사용자 객체
-	 * @return boolean
-	 */
-	public static boolean isCreator(RevisionControlled rc, WTUser user) {
-		String id = rc.getCreatorName();
-		if (id.equals(user.getName())) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * 접속한 사용자가 객체의 수정자인지 확인 하는 함수
-	 * 
-	 * @param rc : 수정자인지 확인할 객체
-	 * @return boolean
-	 * @throws Exception
-	 */
-	public static boolean isModifier(RevisionControlled rc) throws Exception {
-		WTUser user = (WTUser) SessionHelper.manager.getPrincipal();
-		return isModifier(rc, user);
-	}
-
-	/**
-	 * 해당 객체의 수정자인지 확인 하는 함수
-	 * 
-	 * @param rc   : 수정자인지 확인할 객체
-	 * @param user : 수정자인지 확인할 사용자 객체
-	 * @return boolean
-	 */
-	public static boolean isModifier(RevisionControlled rc, WTUser user) {
-		String id = rc.getModifierName();
-		if (id.equals(user.getName())) {
-			return true;
-		}
-		return false;
-	}
-
-//	public static void latestQuery(QuerySpec qs, Class targetClass, int idx) throws WTException {
-//		try {
-//			int branchIdx = qs.appendClassList(ControlBranch.class, false);
-//			int childBranchIdx = qs.appendClassList(ControlBranch.class, false);
-//
-//			if (qs.getConditionCount() > 0)
-//				qs.appendAnd();
-//			qs.appendWhere(new SearchCondition(targetClass, RevisionControlled.BRANCH_IDENTIFIER, ControlBranch.class,
-//					WTAttributeNameIfc.ID_NAME), new int[] { idx, branchIdx });
-//
-//			if (qs.getConditionCount() > 0)
-//				qs.appendAnd();
-//			SearchCondition outerJoinSc = new SearchCondition(ControlBranch.class, WTAttributeNameIfc.ID_NAME,
-//					ControlBranch.class, "predecessorReference.key.id");
-//			outerJoinSc.setOuterJoin(SearchCondition.RIGHT_OUTER_JOIN);
-//			qs.appendWhere(outerJoinSc, new int[] { branchIdx, childBranchIdx });
-//
-//			ClassAttribute childBranchIdNameCa = new ClassAttribute(ControlBranch.class, WTAttributeNameIfc.ID_NAME);
-//			qs.appendSelect(childBranchIdNameCa, new int[] { childBranchIdx }, false);
-//
-//			if (qs.getConditionCount() > 0)
-//				qs.appendAnd();
-//			qs.appendWhere(new SearchCondition(childBranchIdNameCa, SearchCondition.IS_NULL),
-//					new int[] { childBranchIdx });
-//		} catch (WTPropertyVetoException e) {
-//			throw new WTException(e);
-//		}
-//	}
-
-	/**
 	 * 객체를 가져오는 함수
 	 * 
 	 * @param oid : 가져올 객체의 OID
@@ -381,5 +289,29 @@ public class CommonUtils {
 	 */
 	public static WTUser sessionUser() throws Exception {
 		return (WTUser) SessionHelper.manager.getPrincipal();
+	}
+
+	/**
+	 * 접속한 사용자가 RevisionControlled 객체의 작성자인지 확인 하는 함수
+	 * 
+	 * @param rc : RevisionControlled 상속 받은 객체들
+	 * @return boolean
+	 * @throws Exception
+	 */
+	public static boolean isCreator(RevisionControlled rc) throws Exception {
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		return isCreator(rc, sessionUser);
+	}
+
+	/**
+	 * WTUser 객체가 RevisionControlled 객체의 작성자인지 확인 하는 함수
+	 * 
+	 * @param rc          : RevisionControlled 상속받은 객체들
+	 * @param sessionUser : WTUser 객체
+	 * @return boolean
+	 * @throws Exception
+	 */
+	public static boolean isCreator(RevisionControlled rc, WTUser sessionUser) throws Exception {
+		return rc.getCreatorName().equals(sessionUser.getName());
 	}
 }

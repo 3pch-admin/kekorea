@@ -16,6 +16,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.FolderUtils;
 import e3ps.common.util.PageQueryUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.SearchUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.E3PSDocumentMaster;
@@ -25,6 +26,7 @@ import e3ps.doc.column.DocumentColumnData;
 import e3ps.doc.column.OldOutputColumnData;
 import e3ps.doc.column.OutputColumnData;
 import e3ps.doc.column.RequestDocumentColumnData;
+import e3ps.doc.dto.DocumentDTO;
 import e3ps.doc.request.RequestDocument;
 import e3ps.org.People;
 import e3ps.project.Project;
@@ -2462,6 +2464,48 @@ public class DocumentHelper {
 			e.printStackTrace();
 			map.put("result", FAIL);
 		}
+		return map;
+	}
+
+	public Map<String, Object> list(Map<String, Object> params) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		ArrayList<DocumentDTO> list = new ArrayList<>();
+
+		// 검색 변수
+		boolean latest = (boolean) params.get("latest");
+		// 폴더 OID
+		String oid = (String) params.get("oid");
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WTDocument.class, true);
+		int idx_master = query.appendClassList(WTDocumentMaster.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, WTDocument.class, WTDocumentMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_master);
+
+		if(!StringUtils.isNull(oid)) {
+			
+		}
+		
+		
+		// 최신 이터레이션.
+		if (latest) {
+			QuerySpecUtils.toIteration(query, idx, WTDocument.class);
+			QuerySpecUtils.toLatest(query, idx, WTDocument.class);
+		}
+
+		PageQueryUtils pager = new PageQueryUtils(params, query);
+		PagingQueryResult result = pager.find();
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WTDocument document = (WTDocument) obj[0];
+			DocumentDTO dto = new DocumentDTO(document);
+			list.add(dto);
+		}
+
+		map.put("list", list);
+		map.put("sessionid", pager.getSessionId());
+		map.put("curPage", pager.getCpage());
 		return map;
 	}
 }

@@ -73,7 +73,6 @@
 					style : "left underline",
 					filter : {
 						showIcon : true,
-						useExMenu : true,
 						inline : true
 					},
 				}, {
@@ -83,7 +82,7 @@
 					style : "left",
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						inline : true
 					},
 				}, {
 					dataField : "creator",
@@ -92,7 +91,7 @@
 					width : 100,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						inline : true
 					},
 				}, {
 					dataField : "createdDate",
@@ -102,7 +101,7 @@
 					width : 100,
 					filter : {
 						showIcon : true,
-						useExMenu : true
+						inline : true
 					},
 				}, {
 					dataField : "primary",
@@ -147,11 +146,15 @@
 			function loadGridData() {
 				let params = new Object();
 				let url = getCallUrl("/notice/list");
-				
+
 				// 검색 변수
 				let name = document.getElementById("name").value;
+<<<<<<< HEAD
 				let name = document.getElementById("description").value;
 				
+=======
+
+>>>>>>> 0289d759cfa7b3e8046244e1428ec2ce01758e1c
 				// 검색 변수 담기
 				params.name = name;
 				params.description = description;

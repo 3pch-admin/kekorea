@@ -29,15 +29,19 @@
 			<tr>
 				<th>결재 제목</th>
 				<td>
+<<<<<<< HEAD
 					<input type="text" name="approvalTitle" id="approvalTitle" class="AXInput">
+=======
+					<input type="date" name="fileName" id="fileName" class="AXInput" placeholder="년도-월-일">
+>>>>>>> 0289d759cfa7b3e8046244e1428ec2ce01758e1c
 				</td>
 				<th>기안자</th>
 				<td>
-					<input type="text" name="partCode" class="AXInput">
+					<input type="text" name="" class="AXInput">
 				</td>
 				<th>수신일</th>
 				<td>
-					<input type="text" name="partCode" class="AXInput">
+					<input type="text" name="partCode" id="partCode" class="AXInput" readonly="readonly">
 				</td>
 			</tr>
 		</table>
@@ -169,8 +173,12 @@
 			function loadGridData() {
 				let params = new Object();
 				let url = getCallUrl("/workspace/approval");
+<<<<<<< HEAD
 				let approvalTitle = document.getElementById("approvalTitle").value;
 				params.approvalTitle = approvalTitle;
+=======
+				console.log(document.getElementById("partCode").value);
+>>>>>>> 0289d759cfa7b3e8046244e1428ec2ce01758e1c
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

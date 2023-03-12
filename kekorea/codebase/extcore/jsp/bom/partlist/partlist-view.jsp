@@ -1,7 +1,7 @@
-<%@page import="e3ps.bom.partlist.dto.PartListDataDTO"%>
+<%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-PartListDataDTO dto = (PartListDataDTO) request.getAttribute("dto");
+JSONArray data = (JSONArray) request.getAttribute("data");
 %>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
@@ -16,6 +16,7 @@ PartListDataDTO dto = (PartListDataDTO) request.getAttribute("dto");
 <div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
 <script type="text/javascript">
 	let myGridID;
+	const data = <%=data%>
 	const columns = [ {
 		dataField : "lotNo",
 		headerText : "LOT_NO",
@@ -57,6 +58,7 @@ PartListDataDTO dto = (PartListDataDTO) request.getAttribute("dto");
 		headerText : "수량",
 		dataType : "numeric",
 		width : 60,
+		postfix : "개"
 	}, {
 		dataField : "unit",
 		headerText : "단위",
@@ -67,6 +69,7 @@ PartListDataDTO dto = (PartListDataDTO) request.getAttribute("dto");
 		headerText : "단가",
 		dataType : "numeric",
 		width : 120,
+		postfix : "원"
 	}, {
 		dataField : "currency",
 		headerText : "화폐",
@@ -77,6 +80,7 @@ PartListDataDTO dto = (PartListDataDTO) request.getAttribute("dto");
 		headerText : "원화금액",
 		dataType : "numeric",
 		width : 120,
+		postfix : "원"
 	}, {
 		dataField : "partListDate",
 		headerText : "수배일자",
@@ -88,6 +92,7 @@ PartListDataDTO dto = (PartListDataDTO) request.getAttribute("dto");
 		headerText : "환율",
 		dataType : "numeric",
 		width : 80,
+		formatString : "#,##0.0000"
 	}, {
 		dataField : "referDrawing",
 		headerText : "참고도면",
@@ -104,26 +109,65 @@ PartListDataDTO dto = (PartListDataDTO) request.getAttribute("dto");
 		dataType : "string",
 		width : 250,
 	} ];
+	
+	const footerLayout = [ {
+		labelText : "∑",
+		positionField : "#base",
+	}, {
+		dataField : "lotNo",
+		positionField : "lotNo",
+		style : "right",
+		colSpan : 7, // 자신을 포함하여 3개의 푸터를 가로 병합함.
+		labelFunction : function(value, columnValues, footerValues) {
+			return "수배표 수량 합계 금액";
+		}
+	}, {
+		dataField : "quantity",
+		positionField : "quantity",
+		operation : "SUM",
+		dataType : "numeric",
+		postfix : "개"
+	},{
+		dataField : "unit",
+		positionField : "unit",
+		style : "right",
+		colSpan : 3, // 자신을 포함하여 3개의 푸터를 가로 병합함.
+		labelFunction : function(value, columnValues, footerValues) {
+			return "수배표 수량 합계 금액";
+		}
+	}, {
+		dataField : "won",
+		positionField : "won",
+		operation : "SUM",
+		dataType : "numeric",
+		formatString : "#,##0",
+		postfix : "원"
+	}, {
+		dataField : "partListDate",
+		positionField : "partListDate",
+		colSpan : "5",
+	}, ];
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-			rowIdField : "oid",
 			// 그리드 공통속성 시작
 			headerHeight : 30, // 헤더높이
 			rowHeight : 30, // 행 높이
 			showRowNumColumn : true, // 번호 행 출력 여부
-			showStateColumn : true, // 상태표시 행 출력 여부
 			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
 			selectionMode : "multipleCells",
+			showFooter : true,
+			footerPosition : "top",
 		// 그리드 공통속성 끝
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+		AUIGrid.setFooter(myGridID, footerLayout);
 	}
-
 	// jquery 삭제를 해가는 쪽으로 한다..
 	document.addEventListener("DOMContentLoaded", function() {
 		// DOM이 로드된 후 실행할 코드 작성
 		createAUIGrid(columns);
+		AUIGrid.setGridData(myGridID, data);
 		AUIGrid.resize(myGridID);
 	});
 

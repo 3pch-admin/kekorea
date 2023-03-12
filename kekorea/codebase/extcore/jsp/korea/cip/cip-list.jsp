@@ -565,7 +565,7 @@ String name = (String) request.getAttribute("name");
 					} else {
 						// 실패 햇을 경우 처리..
 					}
-				}, "POST");
+				});
 			}
 
 			// jquery 삭제를 해가는 쪽으로 한다..
@@ -574,7 +574,6 @@ String name = (String) request.getAttribute("name");
 				let columns = loadColumnLayout("cip-list");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				parent.closeLayer();
 			});
 
 			document.addEventListener("keydown", function(event) {

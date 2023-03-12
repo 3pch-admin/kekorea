@@ -37,7 +37,7 @@ public class RequestDocumentController extends BaseController {
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/extcore/jsp/doc/request/request-list.jsp");
+		model.setViewName("/extcore/jsp/document/request/request-list.jsp");
 		return model;
 	}
 
@@ -122,7 +122,7 @@ public class RequestDocumentController extends BaseController {
 		model.addObject("softs", softs);
 		model.addObject("machines", machines);
 		model.addObject("list", list);
-		model.setViewName("popup:/doc/request/request-create");
+		model.setViewName("popup:/document/request/request-create");
 		return model;
 	}
 }

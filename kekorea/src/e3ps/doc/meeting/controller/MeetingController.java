@@ -37,7 +37,7 @@ public class MeetingController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		model.addObject("isAdmin", isAdmin);
-		model.setViewName("/extcore/jsp/doc/meeting/meeting-list.jsp");
+		model.setViewName("/extcore/jsp/document/meeting/meeting-list.jsp");
 		return model;
 	}
 
@@ -62,7 +62,7 @@ public class MeetingController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		model.addObject("isAdmin", isAdmin);
-		model.setViewName("/extcore/jsp/doc/meeting/meeting-template-list.jsp");
+		model.setViewName("/extcore/jsp/document/meeting/meeting-template-list.jsp");
 		return model;
 	}
 
@@ -87,7 +87,7 @@ public class MeetingController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		ArrayList<Map<String, String>> list = MeetingHelper.manager.getMeetingTemplateMap();
 		model.addObject("list", list);
-		model.setViewName("popup:/doc/meeting/meeting-create");
+		model.setViewName("popup:/document/meeting/meeting-create");
 		return model;
 	}
 
@@ -111,7 +111,7 @@ public class MeetingController extends BaseController {
 	@GetMapping(value = "/format")
 	public ModelAndView format() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("popup:/doc/meeting/meeting-template-format");
+		model.setViewName("popup:/document/meeting/meeting-template-format");
 		return model;
 	}
 
@@ -168,7 +168,7 @@ public class MeetingController extends BaseController {
 		MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(oid);
 		MeetingTemplateDTO dto = new MeetingTemplateDTO(meetingTemplate);
 		model.addObject("dto", dto);
-		model.setViewName("popup:/doc/meeting/meeting-template-info");
+		model.setViewName("popup:/document/meeting/meeting-template-info");
 		return model;
 	}
 
@@ -225,7 +225,7 @@ public class MeetingController extends BaseController {
 		MeetingProjectLink link = (MeetingProjectLink)CommonUtils.getObject(oid);
 		MeetingDTO dto = new MeetingDTO(link);
 		model.addObject("dto", dto);
-		model.setViewName("popup:/doc/meeting/meeting-view");
+		model.setViewName("popup:/document/meeting/meeting-view");
 		return model;
 	}
 

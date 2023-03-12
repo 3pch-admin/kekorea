@@ -22,7 +22,7 @@ public class RequestDocumentHelper {
 	public static final RequestDocumentHelper manager = new RequestDocumentHelper();
 	public static final RequestDocumentService service = ServiceFactory.getService(RequestDocumentService.class);
 
-	// 의뢰서 저장폴더 
+	// 의뢰서 저장폴더
 	public static final String REQUEST_DOCUMENT_ROOT = "/Default/프로젝트/의뢰서";
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
@@ -38,6 +38,8 @@ public class RequestDocumentHelper {
 				"roleAObjectRef.key.id", WTAttributeNameIfc.ID_NAME, idx_link, idx);
 		QuerySpecUtils.toInnerJoin(query, RequestDocumentProjectLink.class, Project.class, "roleBObjectRef.key.id",
 				WTAttributeNameIfc.ID_NAME, idx_link, idx_p);
+
+		QuerySpecUtils.toEqualsAnd(query, idx, RequestDocument.class, RequestDocument.DOC_TYPE, "$$Request");
 
 		QuerySpecUtils.toOrderBy(query, idx, RequestDocument.class, RequestDocument.CREATE_TIMESTAMP, true);
 

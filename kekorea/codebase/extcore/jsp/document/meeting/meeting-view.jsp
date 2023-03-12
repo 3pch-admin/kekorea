@@ -38,7 +38,7 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 			<jsp:include page="/extcore/include/project-include.jsp">
 				<jsp:param value="<%=dto.getOid()%>" name="oid" />
 				<jsp:param value="view" name="mode" />
-				<jsp:param value="meeting" name="obj"/>
+				<jsp:param value="meeting" name="obj" />
 			</jsp:include>
 		</td>
 	</tr>
@@ -81,17 +81,7 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 
 	document.addEventListener("DOMContentLoaded", function() {
 		// DOM이 로드된 후 실행할 코드 작성
-		loadTinymce();
 		_createAUIGrid(_columns);
+		AUIGrid.resize(_myGridID);
 	});
-
-	document.addEventListener("keydown", function(event) {
-		// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-		let keyCode = event.keyCode || event.which;
-		// esc 키(코드 27)를 눌렀을 때
-		if (keyCode === 27) {
-			// 현재 창 닫기
-			self.close();
-		}
-	})
 </script>

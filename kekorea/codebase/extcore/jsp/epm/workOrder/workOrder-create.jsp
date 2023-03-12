@@ -106,16 +106,10 @@
 		headerText : "NOTE",
 		dataType : "string",
 		width : 350,
-	}, {
-		dataField : "oid",
-		headerText : "oid",
-		dataType : "string",
-		visible : false
 	} ]
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-			rowIdField : "rowId",
 			headerHeight : 30, // 헤더높이
 			rowHeight : 30, // 행 높이
 			showRowNumColumn : true, // 번호 행 출력 여부

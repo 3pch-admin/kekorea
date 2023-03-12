@@ -53,6 +53,8 @@
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('partlist-list');">
+					<input type="button" value="비교" title="비교" class="red" onclick="compare();">
+					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
@@ -78,6 +80,7 @@
 					dataField : "info",
 					headerText : "",
 					width : 40,
+					style : "cursor",
 					renderer : {
 						type : "IconRenderer",
 						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
@@ -85,6 +88,11 @@
 						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
 							"default" : "/Windchill/extcore/images/details.gif" // default
 						},
+						onClick : function(event) {
+							const oid = event.item.loid;
+							const url = getCallUrl("/partlist/info?oid=" + oid);
+							popup(url);
+						}
 					},
 					filter : {
 						showIcon : false,
@@ -100,6 +108,8 @@
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true
+				// 구분1 칼럼 셀 세로 병합 실행
 				}, {
 					dataField : "mak_name",
 					headerText : "막종",
@@ -122,6 +132,7 @@
 					dataField : "kekNumber",
 					headerText : "KEK 작번",
 					dataType : "string",
+					style : "underline",
 					width : 100,
 					filter : {
 						showIcon : true,
@@ -131,6 +142,7 @@
 					dataField : "keNumber",
 					headerText : "KE 작번",
 					dataType : "string",
+					style : "underline",
 					width : 100,
 					filter : {
 						showIcon : true,
@@ -225,7 +237,7 @@
 
 			function createAUIGrid(columnLayout) {
 				const props = {
-					rowIdField : "oid",
+					rowIdField : "loid",
 					// 그리드 공통속성 시작
 					headerHeight : 30, // 헤더높이
 					rowHeight : 30, // 행 높이
@@ -237,13 +249,31 @@
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
-				// 그리드 공통속성 끝
+					// 그리드 공통속성 끝
+					showRowCheckColumn : true,
+					enableCellMerge : true,
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
 				// LazyLoading 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+			}
+
+			function compare() {
+				let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				if (checkedItems.length <= 0) {
+					alert("비교할 수배표를 선택하세요.");
+					return;
+				}
+				if (checkedItems.length > 1) {
+					alert("비교할 수배표를 하나만 선택하세요.");
+					return;
+				}
+				let loid = checkedItems[0].item.loid;
+				let oid = checkedItems[0].item.oid;
+				let url = getCallUrl("/partlist/compare?loid=" + loid + "&oid=" + oid);
+				popup(url);
 			}
 
 			function auiCellClickHandler(event) {
@@ -298,6 +328,11 @@
 					AUIGrid.removeAjaxLoader(myGridID);
 					parent.closeLayer();
 				})
+			}
+
+			function create() {
+				const url = getCallUrl("/partlist/create");
+				popup(url);
 			}
 
 			// jquery 삭제를 해가는 쪽으로 한다..

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -28,22 +29,6 @@ import e3ps.org.service.OrgHelper;
 @Controller
 @RequestMapping(value = "/org/**")
 public class OrgController extends BaseController {
-
-	@Description("사용자 검색 바인딩")
-	@RequestMapping(value = "/getUserBind")
-	@ResponseBody
-	public Map<String, Object> getUserBind(@RequestBody Map<String, Object> params) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			result = OrgHelper.manager.getUserBind(params);
-			result.put("result", SUCCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("result", FAIL);
-			result.put("msg", e.toString());
-		}
-		return result;
-	}
 
 	@Description(value = "조직도 페이지")
 	@GetMapping(value = "/organization")
@@ -100,6 +85,50 @@ public class OrgController extends BaseController {
 			OrgHelper.service.save(dataMap);
 			result.put("result", SUCCESS);
 			result.put("msg", SAVE_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+
+	@Description(value = "조직도 팝업 페이지")
+	@GetMapping(value = "/popup")
+	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("multi", Boolean.parseBoolean(multi));
+		model.addObject("method", method);
+		model.setViewName("popup:/org/organization-popup");
+		return model;
+	}
+
+	@Description(value = "부서 트리 구조 가져오기")
+	@PostMapping(value = "/loadDepartmentTree")
+	@ResponseBody
+	public Map<String, Object> loadDepartmentTree(@RequestBody Map<String, String> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			net.sf.json.JSONArray list = OrgHelper.manager.loadDepartmentTree(params);
+			result.put("list", list);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+	
+	
+
+	@Description(value = "부서별 사용자 리스트 가져오기")
+	@GetMapping(value = "/loadDepartmentUser")
+	@ResponseBody
+	public Map<String, Object> loadDepartmentUser(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ArrayList<UserDTO> list = OrgHelper.manager.loadDepartmentUser(oid);
+			result.put("list", list);
+			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);

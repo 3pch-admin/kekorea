@@ -1,6 +1,8 @@
 package e3ps.bom.partlist.dto;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Map;
 
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
@@ -14,6 +16,7 @@ public class PartListDTO {
 
 	private String oid;
 	private String loid;
+	private String poid;
 	private String projectType_code;
 	private String projectType_name;
 	private String projectType_oid;
@@ -39,13 +42,26 @@ public class PartListDTO {
 	private String creator;
 	private Timestamp createdDate;
 	private String state;
+	private String engType;
+	private String content; // 수배표 설명
+
+	// 변수용
+	private ArrayList<Map<String, Object>> _addRows = new ArrayList<>(); // 프로젝트
+	private ArrayList<Map<String, Object>> addRows = new ArrayList<>(); // 수배표
+	private ArrayList<String> secondarys = new ArrayList<>();
+
+	public PartListDTO() {
+
+	}
 
 	public PartListDTO(PartListMasterProjectLink link) throws Exception {
 		PartListMaster partListMaster = link.getPartListMaster();
 		Project project = link.getProject();
 		setOid(partListMaster.getPersistInfo().getObjectIdentifier().getStringValue());
 		setLoid(link.getPersistInfo().getObjectIdentifier().getStringValue());
+		setPoid(project.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(partListMaster.getName());
+		setContent(partListMaster.getDescription());
 		if (project.getProjectType() != null) {
 			setProjectType_code(project.getProjectType().getCode());
 			setProjectType_name(project.getProjectType().getName());
@@ -80,5 +96,6 @@ public class PartListDTO {
 		setState(partListMaster.getLifeCycleState().getDisplay());
 		setCreator(partListMaster.getCreatorFullName());
 		setCreatedDate(partListMaster.getCreateTimestamp());
+		setEngType(partListMaster.getEngType());
 	}
 }

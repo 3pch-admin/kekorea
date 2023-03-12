@@ -24,7 +24,9 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "model", type = String.class, constraints = @PropertyConstraints(required = true)),
 
-		}, tableProperties = @TableProperties(compositeIndex1 = "+ kePartNumber + lotNo")
+		},
+
+		tableProperties = @TableProperties(compositeIndex1 = "+ kePartNumber + lotNo")
 
 )
 public class KePartMaster extends _KePartMaster {

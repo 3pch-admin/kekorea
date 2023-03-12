@@ -378,6 +378,8 @@
 	background-size: 16px;
 	vertical-align: bottom;
 	margin: 0 2px 0 0;
+	position: relative;
+	bottom: 1px;
 }
 
 .aui-grid-tree-minus-icon {
@@ -389,6 +391,8 @@
 	background-size: 16px;
 	vertical-align: bottom;
 	margin: 0 2px 0 0;
+	position: relative;
+	bottom: 1px;
 }
 
 .aui-grid-tree-branch-icon {
@@ -399,6 +403,8 @@
 	background-size: 16px;
 	vertical-align: bottom;
 	margin: 0 2px 0 0;
+	position: relative;
+	bottom: 2px;
 }
 
 .aui-grid-tree-branch-open-icon {
@@ -419,6 +425,8 @@
 	background-size: 16px;
 	vertical-align: bottom;
 	margin: 0 2px 0 4px;
+	position: relative;
+	bottom: 1px;
 }
 
 /* 트리 lazyMode 프리로더 */

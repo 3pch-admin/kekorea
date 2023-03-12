@@ -63,3 +63,9 @@ MAK_DETAIL.sort=13
 
 USER_TYPE.value=USER_TYPE
 USER_TYPE.sort=14
+
+SPEC.value=SPEC
+SPEC.sort=15
+
+OPTION.value=OPTION
+OPTION.sort=16

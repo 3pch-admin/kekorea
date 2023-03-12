@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.bom.partlist.PartListMaster;
-import e3ps.bom.partlist.dto.PartListMasterViewData;
+import e3ps.bom.partlist.PartListMasterProjectLink;
+import e3ps.bom.partlist.dto.PartListDTO;
 import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.common.controller.BaseController;
-import wt.fc.ReferenceFactory;
+import e3ps.common.util.CommonUtils;
 
 @Controller
 @RequestMapping(value = "/partlist/**")
@@ -48,14 +49,6 @@ public class PartlistController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "수배표 등록")
-	@GetMapping(value = "/create")
-	public ModelAndView create() throws Exception {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("popup:/bom/partList/partList-create");
-		return model;
-	}
-
 	@Description(value = "수배된 리스트 페이지")
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
@@ -63,6 +56,85 @@ public class PartlistController extends BaseController {
 		JSONArray data = PartlistHelper.manager.getData(oid);
 		model.addObject("data", data);
 		model.setViewName("popup:/bom/partlist/partlist-view");
+		return model;
+	}
+
+	@Description(value = "수배된 비교 페이지")
+	@GetMapping(value = "/compare")
+	public ModelAndView compare(@RequestParam String loid, @RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		PartListMasterProjectLink link = (PartListMasterProjectLink) CommonUtils.getObject(loid);
+		PartListDTO dto = new PartListDTO(link);
+		JSONArray data = PartlistHelper.manager.getData(oid);
+		model.addObject("data", data);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/bom/partlist/partlist-compare");
+		return model;
+	}
+
+	@Description(value = "수배표 팝업 조회 페이지")
+	@GetMapping(value = "/popup")
+	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("method", method);
+		model.addObject("multi", Boolean.parseBoolean(multi));
+		model.setViewName("popup:/bom/partlist/partlist-popup");
+		return model;
+	}
+
+	@Description(value = "수배표 비교")
+	@ResponseBody
+	@PostMapping(value = "/compare")
+	public Map<String, Object> compare(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = PartlistHelper.manager.compare(params);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", false);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "수배표 등록 페이지")
+	@GetMapping(value = "/create")
+	public ModelAndView create() throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("popup:/bom/partlist/partlist-create");
+		return model;
+	}
+
+	@Description(value = "수배표 등록")
+	@ResponseBody
+	@PostMapping(value = "/create")
+	public Map<String, Object> create(@RequestBody PartListDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			PartlistHelper.service.create(dto);
+			result.put("msg", SAVE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "수배표 정보 페이지")
+	@GetMapping(value = "/info")
+	public ModelAndView info(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		PartListMasterProjectLink link = (PartListMasterProjectLink) CommonUtils.getObject(oid);
+		PartListDTO dto = new PartListDTO(link);
+		JSONArray data = PartlistHelper.manager.getData(dto.getOid());
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("data", data);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/bom/partlist/partlist-info");
 		return model;
 	}
 }

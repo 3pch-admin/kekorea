@@ -166,9 +166,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<!-- 					<li> -->
 					<!-- 						<a href="contacts_2.html">제작사양서 등록</a> -->
 					<!-- 					</li> -->
-<!-- 					<li> -->
-<!-- 						<a href="projects.html">UNIT BOM 조회</a> -->
-<!-- 					</li> -->
+					<!-- 					<li> -->
+					<!-- 						<a href="projects.html">UNIT BOM 조회</a> -->
+					<!-- 					</li> -->
 					<li>
 						<a onclick="moveToPage(this, '/kepart/list');">KE 부품 조회</a>
 					</li>
@@ -188,7 +188,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/doc/list', '문서 관리 > 문서 조회');">문서 조회</a>
+						<a onclick="moveToPage(this, '/document/list', '문서 관리 > 문서 조회');">문서 조회</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/output/list', '문서 관리 > 산출물 조회');">산출물 조회</a>
@@ -200,7 +200,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						<a onclick="moveToPage(this, '/meeting/list', '문서 관리 > 회의록 조회');">회의록 조회</a>
 					</li>
 					<li>
-						<a href="500.html">문서 결재</a>
+						<a onclick="moveToPage(this, '/document/register', '문서 관리 > 문서 결재');">문서 결재</a>
 					</li>
 					<!-- 					<li> -->
 					<!-- 						<a onclick="moveToPage(this, '/document/listContents');">첨부파일 조회</a> -->

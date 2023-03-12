@@ -28,7 +28,7 @@ function call(url, params, callBack, methodType) {
 		data: params,
 		async: true,
 		contentType: "application/json; charset=UTF-8",
-		beforeSend : function() {
+		beforeSend: function() {
 		},
 		success: function(res) {
 			callBack(res);
@@ -37,7 +37,7 @@ function call(url, params, callBack, methodType) {
 
 		},
 		error: function(res) {
-			let status = res.status;
+			const status = res.status;
 			if (status == 405) {
 				alert("에러코드 : " + status + ", 컨트롤러 해당 메소드를 지원 하는지 확인 !! (EX : POST, GET, PUT, DELETE 방식)")
 			} else if (status == 404) {
@@ -224,14 +224,6 @@ function getLocalStorageValue(storageID) {
 	}
 };
 
-
-// 팝업창 공통 호출
-function appendData(type, method) {
-	if (type === "project") {
-		let url = getCallUrl("/project/popup?method=" + method);
-		popup(url);
-	}
-}
 
 // 태그 NAME이 여러개인 것을 배열 객체로 리턴 해주는 함수
 function toArray(name) {

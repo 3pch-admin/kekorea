@@ -1,12 +1,14 @@
 package e3ps.admin.spec.service;
 
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
 
-import e3ps.admin.spec.Options;
-import e3ps.admin.spec.Spec;
-import e3ps.admin.spec.SpecOptionsLink;
+import e3ps.admin.commonCode.CommonCode;
+import e3ps.admin.commonCode.CommonCodeType;
+import e3ps.admin.commonCode.dto.CommonCodeDTO;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.StringUtils;
 import wt.fc.PersistenceHelper;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
@@ -21,59 +23,89 @@ public class StandardSpecService extends StandardManager implements SpecService 
 	}
 
 	@Override
-	public void create(Map<String, Object> params) throws Exception {
-		ArrayList<Map<String, Object>> addRows = (ArrayList<Map<String, Object>>) params.get("addRows");
-		ArrayList<Map<String, Object>> removeRows = (ArrayList<Map<String, Object>>) params.get("removeRows");
-		ArrayList<Map<String, Object>> editRows = (ArrayList<Map<String, Object>>) params.get("editRows");
+	public void save(HashMap<String, List<CommonCodeDTO>> dataMap) throws Exception {
+		List<CommonCodeDTO> addRows = dataMap.get("addRows");
+		List<CommonCodeDTO> editRows = dataMap.get("editRows");
+		List<CommonCodeDTO> removeRows = dataMap.get("removeRows");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			for (Map<String, Object> addRow : addRows) {
-				String name = (String) addRow.get("name");
-				int sort = (int) addRow.get("sort");
-				boolean enable = (boolean) addRow.get("enable");
+			for (CommonCodeDTO dto : addRows) {
+				String name = dto.getName();
+				String code = dto.getCode();
+				String codeType = dto.getCodeType();
+				String description = dto.getDescription();
+				boolean enable = dto.isEnable();
+				String _$parent = dto.get_$parent();
+				int sort = dto.getSort();
+				ArrayList<CommonCodeDTO> children = dto.getChildren();
 
-				Spec spec = Spec.newSpec();
-				spec.setColumnKey("COLUMN_" + sort);
-				spec.setName(name);
-				spec.setSort(sort);
-				spec.setLatest(true);
-				spec.setEnable(enable);
-				spec.setVersion(1);
-				spec.setOwnership(CommonUtils.sessionOwner());
-				PersistenceHelper.manager.save(spec);
-			}
+				if ("SPEC".equals(codeType)) {
+					CommonCode parent = CommonCode.newCommonCode();
+					parent.setName(name);
+					parent.setCode(code);
+					parent.setDescription(description);
+					parent.setEnable(enable);
+					parent.setSort(sort);
+					parent.setCodeType(CommonCodeType.toCommonCodeType(codeType));
+					PersistenceHelper.manager.save(parent);
 
-			for (Map<String, Object> removeRow : removeRows) {
-				String oid = (String) removeRow.get("oid");
-				Spec spec = (Spec) CommonUtils.getObject(oid);
-
-				ArrayList<SpecOptionsLink> links = OptionsHelper.manager.getLinks(spec);
-				for (SpecOptionsLink link : links) {
-					PersistenceHelper.manager.delete(link);
+					for (int i = 0; i < children.size(); i++) {
+						CommonCodeDTO dd = (CommonCodeDTO) children.get(i);
+						CommonCode child = CommonCode.newCommonCode();
+						child.setName(dd.getName());
+						child.setCode(dd.getCode());
+						child.setCodeType(CommonCodeType.toCommonCodeType(dd.getCodeType()));
+						child.setDescription(dd.getDescription());
+						child.setParent(parent);
+						child.setSort(dd.getSort());
+						child.setEnable(dd.isEnable());
+						PersistenceHelper.manager.save(child);
+					}
+				} else if ("OPTION".equals(codeType)) {
+					if (_$parent.indexOf("CommonCode") > -1) {
+						CommonCode parent = (CommonCode) CommonUtils.getObject(_$parent);
+						CommonCode optionCode = CommonCode.newCommonCode();
+						optionCode.setName(name);
+						optionCode.setCode(code);
+						optionCode.setDescription(description);
+						optionCode.setEnable(enable);
+						optionCode.setParent(parent);
+						optionCode.setSort(sort);
+						optionCode.setCodeType(CommonCodeType.toCommonCodeType(codeType));
+						PersistenceHelper.manager.save(optionCode);
+					}
 				}
-				PersistenceHelper.manager.delete(spec);
 			}
 
-			for (Map<String, Object> editRow : editRows) {
-				String oid = (String) editRow.get("oid");
-				String name = (String) editRow.get("name");
-				int sort = (int) editRow.get("sort");
-				boolean enable = (boolean) editRow.get("enable");
+			for (CommonCodeDTO dto : editRows) {
+				String oid = dto.getOid();
+				String name = dto.getName();
+				String code = dto.getCode();
+				String description = dto.getDescription();
+				boolean enable = dto.isEnable();
+				int sort = dto.getSort();
+				String parent_oid = dto.getParent_oid();
+				CommonCode commonCode = (CommonCode) CommonUtils.getObject(oid);
+				commonCode.setName(name);
+				commonCode.setCode(code);
+				commonCode.setSort(sort);
+				commonCode.setDescription(description);
+				commonCode.setEnable(enable);
 
-				Spec pre = (Spec) CommonUtils.getObject(oid);
-				pre.setLatest(false);
-				PersistenceHelper.manager.modify(pre);
+				if (!StringUtils.isNull(parent_oid)) {
+					CommonCode parent = (CommonCode) CommonUtils.getObject(parent_oid);
+					commonCode.setParent(parent);
+				}
 
-				Spec latest = Spec.newSpec();
-				latest.setColumnKey(pre.getColumnKey()); // 키 값은 불변으로 한다
-				latest.setName(name);
-				latest.setSort(sort);
-				latest.setEnable(enable);
-				latest.setLatest(true);
-				latest.setVersion(pre.getVersion() + 1);
-				PersistenceHelper.manager.save(latest);
+				PersistenceHelper.manager.modify(commonCode);
+			}
+
+			for (CommonCodeDTO dto : removeRows) {
+				String oid = dto.getOid();
+				CommonCode commonCode = (CommonCode) CommonUtils.getObject(oid);
+				PersistenceHelper.manager.delete(commonCode);
 			}
 
 			trs.commit();

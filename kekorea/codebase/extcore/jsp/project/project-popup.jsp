@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 String method = (String) request.getAttribute("method");
+boolean multi = (boolean) request.getAttribute("multi");
 %>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>

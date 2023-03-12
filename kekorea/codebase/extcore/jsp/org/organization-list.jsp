@@ -84,14 +84,33 @@ JSONArray departments = new JSONArray(list);
 			</tr>
 		</table>
 
-		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<!-- 리스트 테이블 -->
+		<table>
+			<colgroup>
+				<col width="230">
+				<col width="10">
+				<col width="*">
+			</colgroup>
+			<tr>
+				<td>
+					<jsp:include page="/extcore/include/department-include.jsp">
+						<jsp:param value="list" name="mode" />
+						<jsp:param value="665" name="height" />
+					</jsp:include>
+				</td>
+				<td>&nbsp;</td>
+				<td>
+					<!-- 그리드 리스트 -->
+					<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+				</td>
+			</tr>
+		</table>
 		<script type="text/javascript">
 			let myGridID;
-			let maks = <%=maks%>
-			let installs = <%=installs%>
-			let departments = <%=departments%>
-			let dutys = [ "사장", "부사장", "PL", "TL" ];
+			const maks = <%=maks%>
+			const installs = <%=installs%>
+			const departments = <%=departments%>
+			const dutys = [ "사장", "부사장", "PL", "TL" ];
 			function _layout() {
 				return [ {
 					dataField : "name",
@@ -291,7 +310,7 @@ JSONArray departments = new JSONArray(list);
 					dataField : "resign",
 					headerText : "퇴사여부",
 					dataType : "boolean",
-					width : 100,
+					width : 80,
 					renderer : {
 						type : "CheckBoxEditRenderer",
 						editable : true
@@ -342,11 +361,16 @@ JSONArray departments = new JSONArray(list);
 			}
 
 			function loadGridData() {
+<<<<<<< HEAD
 				let params = new Object();
 				let url = getCallUrl("/org/list");
 				let userName = document.getElementById("userName").value;
 				let userId = document.getElementById("userId").value;
 				
+=======
+				const url = getCallUrl("/org/list");
+				const params = new Object();
+>>>>>>> 0289d759cfa7b3e8046244e1428ec2ce01758e1c
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -368,13 +392,13 @@ JSONArray departments = new JSONArray(list);
 			}
 
 			function requestAdditionalData() {
-				let params = new Object();
-				let curPage = document.getElementById("curPage").value
-				let sessionid = document.getElementById("sessionid").value
+				const url = getCallUrl("/aui/appendData");
+				const params = new Object();
+				const curPage = document.getElementById("curPage").value
+				const sessionid = document.getElementById("sessionid").value
 				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -394,9 +418,9 @@ JSONArray departments = new JSONArray(list);
 					return false;
 				}
 
-				let params = new Object();
-				let editRows = AUIGrid.getEditedRowItems(myGridID);
-				let url = getCallUrl("/org/save");
+				const url = getCallUrl("/org/save");
+				const params = new Object();
+				const editRows = AUIGrid.getEditedRowItems(myGridID);
 				params.editRows = editRows;
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -415,21 +439,21 @@ JSONArray departments = new JSONArray(list);
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				let columns = loadColumnLayout("organization-list");
-				createAUIGrid(columns);
-				AUIGrid.resize(myGridID);
+				const columns = loadColumnLayout("organization-list");
+				createAUIGrid(columns); // 리스트
+				AUIGrid.resize(myGridID); // 리스트
 			});
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-				let keyCode = event.keyCode || event.which;
+				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}
 			})
 
 			window.addEventListener("resize", function() {
-				AUIGrid.resize(myGridID);
+				AUIGrid.resize(myGridID); // 리스트
 			});
 		</script>
 	</form>
