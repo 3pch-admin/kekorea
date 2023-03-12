@@ -46,7 +46,7 @@ MeetingTemplateDTO dto = (MeetingTemplateDTO) request.getAttribute("dto");
 				// 에디터가 초기화되면 실행되는 콜백 함수
 				editor.on('init', function() {
 					// 에디터의 내용 가져오기
-					let content = editor.getContent();
+					const content = editor.getContent();
 					editor.setContent(content);
 				});
 			}
@@ -60,7 +60,7 @@ MeetingTemplateDTO dto = (MeetingTemplateDTO) request.getAttribute("dto");
 
 	document.addEventListener("keydown", function(event) {
 		// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-		let keyCode = event.keyCode || event.which;
+		const keyCode = event.keyCode || event.which;
 		// esc 키(코드 27)를 눌렀을 때
 		if (keyCode === 27) {
 			// 현재 창 닫기

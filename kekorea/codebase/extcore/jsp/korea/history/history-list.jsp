@@ -115,8 +115,8 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 							return;
 						}
 						// 데이터 요청
-						let url = getCallUrl("/history/remoter");
-						let params = new Object();
+						const url = getCallUrl("/history/remoter");
+						const params = new Object();
 						params.term = request.term;
 						params.target = "project";
 						call(url, params, function(data) {
@@ -227,13 +227,13 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 			}
 
 			function auiAddRowHandler(event) {
-				let selected = AUIGrid.getSelectedIndex(myGridID);
+				const selected = AUIGrid.getSelectedIndex(myGridID);
 				if (selected.length <= 0) {
 					return;
 				}
 
-				let rowIndex = selected[0];
-				let colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "kekNumber");
+				const rowIndex = selected[0];
+				const colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "kekNumber");
 				AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex);
 				AUIGrid.openInputer(myGridID);
 			}
@@ -281,22 +281,22 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 			
 			// 행 추가
 			function addRow() {
-				let item = new Object();
+				const item = new Object();
 				AUIGrid.addRow(myGridID, item, "first");
 			}
 
 			// 행 삭제
 			function deleteRow() {
-				let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
-					let rowIndex = checkedItems[i].rowIndex;
+					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
 			}
 
 			function loadGridData() {
-				let params = new Object();
-				let url = getCallUrl("/history/list");
+				const params = new Object();
+				const url = getCallUrl("/history/list");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -308,7 +308,7 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 				});
 			}
 
-			let last = false;
+			const last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {

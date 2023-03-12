@@ -202,7 +202,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 	}
 	
 	function auiCellClickHandler(event) {
-		let item = event.item;
+		const item = event.item;
 		rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); // rowIdField 얻기
 		rowId = item[rowIdField];
 		
@@ -217,8 +217,8 @@ boolean multi = (boolean) request.getAttribute("multi");
 	}
 	
 	function loadGridData() {
-		let params = new Object();
-		let url = getCallUrl("/project/list");
+		const params = new Object();
+		const url = getCallUrl("/project/list");
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
@@ -228,7 +228,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 		});
 	}
 
-	let last = false;
+	const last = false;
 	function vScrollChangeHandler(event) {
 		if (event.position == event.maxPosition) {
 			if (!last) {
@@ -238,12 +238,12 @@ boolean multi = (boolean) request.getAttribute("multi");
 	}
 
 	function requestAdditionalData() {
-		let params = new Object();
-		let curPage = $("input[name=curPage]").val();
+		const params = new Object();
+		const curPage = $("input[name=curPage]").val();
 		params.sessionid = $("input[name=sessionid]").val();
 		params.start = (curPage * 100);
 		params.end = (curPage * 100) + 100;
-		let url = getCallUrl("/aui/appendData");
+		const url = getCallUrl("/aui/appendData");
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			if (data.list.length == 0) {
@@ -258,7 +258,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 
 	
 	function <%=method%>() {
-		let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 		if (checkedItems.length == 0) {
 			alert("추가할 작번을 선택하세요.");
 			return false;
@@ -270,7 +270,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 	// jquery 모든 DOM구조 로딩 후 
 	$(function() {
 		// 로컬 스토리지에 저장된 컬럼 값 불러오기 see - base.js
-		let columns = loadColumnLayout("project-popup");
+		const columns = loadColumnLayout("project-popup");
 		createAUIGrid(columns);
 	}).keypress(function(e) {
 		let keyCode = e.keyCode;

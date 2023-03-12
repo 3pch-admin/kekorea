@@ -25,7 +25,7 @@ String method = (String) request.getAttribute("method");
 	</tr>
 </table>
 <script type="text/javascript">
-	let secondary = new AXUpload5();
+const secondary = new AXUpload5();
 	let data;
 	function secondaryUploader() {
 		secondary.setConfig({
@@ -48,11 +48,13 @@ String method = (String) request.getAttribute("method");
 			},
 		})
 	}
-	
+
 	secondaryUploader();
-	
+
 	function save() {
-		opener.<%=method%>	(data);
-		self.close();	
+		opener.
+<%=method%>
+	(data);
+		self.close();
 	}
 </script>

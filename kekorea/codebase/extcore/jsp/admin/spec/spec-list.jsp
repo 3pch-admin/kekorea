@@ -64,7 +64,7 @@
 		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
-			let myGridID;
+			const myGridID;
 			const list = [ {
 				"key" : "SPEC",
 				"value" : "사양"
@@ -351,9 +351,9 @@
 
 			// 행 삭제
 			function deleteRow() {
-				let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				for (let i = checkedItems.length - 1; i >= 0; i--) {
-					let rowIndex = checkedItems[i].rowIndex;
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				for (const i = checkedItems.length - 1; i >= 0; i--) {
+					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
 			}
@@ -361,14 +361,14 @@
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				let columns = loadColumnLayout("spec-list");
+				const columns = loadColumnLayout("spec-list");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-				let keyCode = event.keyCode || event.which;
+				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}

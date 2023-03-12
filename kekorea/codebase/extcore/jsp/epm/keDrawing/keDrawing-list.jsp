@@ -196,8 +196,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						labelText : "파일선택",
 						onclick : function(rowIndex, columnIndex, value, item) {
 							recentGridItem = item;
-							let oid = item.oid;
-							let url = getCallUrl("/aui/primary?oid=" + oid + "&method=attach");
+							const oid = item.oid;
+							const url = getCallUrl("/aui/primary?oid=" + oid + "&method=attach");
 							popup(url, 1000, 200);
 						}
 					},
@@ -248,8 +248,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			function loadGridData() {
-				let params = new Object();
-				let url = getCallUrl("/keDrawing/list");
+				const params = new Object();
+				const url = getCallUrl("/keDrawing/list");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -261,7 +261,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				});
 			}
 
-			let last = false;
+			const last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {
@@ -271,13 +271,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			function requestAdditionalData() {
-				let params = new Object();
-				let curPage = document.getElementById("curPage").value;
-				let sessionid = document.getElementById("sessionid").value;
+				const params = new Object();
+				const curPage = document.getElementById("curPage").value;
+				const sessionid = document.getElementById("sessionid").value;
 				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/aui/appendData");
+				const url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -294,7 +294,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			// 행 추가
 			function addRow() {
-				let item = new Object();
+				const item = new Object();
 				item.createdDate = new Date();
 				item.modifiedDate = new Date();
 				item.creator = "<%=sessionUser.getFullName()%>";
@@ -305,20 +305,20 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			// 행 삭제
 			function deleteRow() {
-				let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
-					let rowIndex = checkedItems[i].rowIndex;
+					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
 			}
 
 			function attach(data) {
-				let name = data.name;
-				let start = name.indexOf("-");
-				let end = name.lastIndexOf(".");
-				let number = name.substring(0, start);
-				let version = name.substring(start + 1, end);
-				let template = "<img src='" + data.icon + "' style='position: relative; top: 2px;'>";
+				const name = data.name;
+				const start = name.indexOf("-");
+				const end = name.lastIndexOf(".");
+				const number = name.substring(0, start);
+				const version = name.substring(start + 1, end);
+				const template = "<img src='" + data.icon + "' style='position: relative; top: 2px;'>";
 				AUIGrid.updateRowsById(myGridID, {
 					oid : recentGridItem.oid,
 					keNumber : number,
@@ -336,11 +336,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					return false;
 				}
 
-				let url = getCallUrl("/keDrawing/create");
-				let params = new Object();
-				let addRows = AUIGrid.getAddedRowItems(myGridID);
-				let removeRows = AUIGrid.getRemovedItems(myGridID);
-				let editRows = AUIGrid.getEditedRowItems(myGridID);
+				const url = getCallUrl("/keDrawing/create");
+				const params = new Object();
+				const addRows = AUIGrid.getAddedRowItems(myGridID);
+				const removeRows = AUIGrid.getRemovedItems(myGridID);
+				const editRows = AUIGrid.getEditedRowItems(myGridID);
 				params.addRows = addRows;
 				params.removeRows = removeRows;
 				params.editRows = editRows;
@@ -355,26 +355,26 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			function revise() {
-				let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				if (checkedItems.length == 0) {
 					alert("개정할 도면을 선택하세요.");
 					return false;
 				}
-				let url = getCallUrl("/keDrawing/revise");
-				let panel;
+				const url = getCallUrl("/keDrawing/revise");
+				const panel;
 				panel = popup(url, 1600, 550);
 				panel.list = checkedItems;
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				let columns = loadColumnLayout("keDrawing-list");
+				const columns = loadColumnLayout("keDrawing-list");
 				createAUIGrid(columns);
 			});
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-				let keyCode = event.keyCode || event.which;
+				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}

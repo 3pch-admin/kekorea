@@ -202,7 +202,7 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 	});
 
 	function opener() {
-		let url = getCallUrl("/partlist/popup?method=attach&multi=false");
+		const url = getCallUrl("/partlist/popup?method=attach&multi=false");
 		popup(url);
 	}
 

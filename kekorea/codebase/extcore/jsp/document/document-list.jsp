@@ -257,7 +257,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				});
 			}
 
-			let last = false;
+			const last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {

@@ -77,15 +77,15 @@ String name = (String) request.getAttribute("name");
 		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
-			let maks =
+			const maks =
 		<%=maks%>
-			let installs =
+			const installs =
 		<%=installs%>
-			let customers =
+			const customers =
 		<%=customers%>
 			let recentGridItem = null;
 			let subListMap = {};
-			let list = [ "적용완료", "일부적용", "미적용", "검토중" ];
+			const list = [ "적용완료", "일부적용", "미적용", "검토중" ];
 			function _layout() {
 				return [ {
 					dataField : "item",
@@ -216,8 +216,8 @@ String name = (String) request.getAttribute("name");
 					},
 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
 						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
-						let param = item.mak_code;
-						let dd = subListMap[param]; // param으로 보관된 리스트가 있는지 여부
+						const param = item.mak_code;
+						const dd = subListMap[param]; // param으로 보관된 리스트가 있는지 여부
 						if (dd === undefined)
 							return value;
 						for (let i = 0, len = dd.length; i < len; i++) {
@@ -343,8 +343,8 @@ String name = (String) request.getAttribute("name");
 						labelText : "파일선택",
 						onclick : function(rowIndex, columnIndex, value, item) {
 							recentGridItem = item;
-							let oid = item.oid;
-							let url = getCallUrl("/aui/preview?oid=" + oid + "&method=preView");
+							const oid = item.oid;
+							const url = getCallUrl("/aui/preview?oid=" + oid + "&method=preView");
 							popup(url, 1000, 200);
 						}
 					},
@@ -374,8 +374,8 @@ String name = (String) request.getAttribute("name");
 						labelText : "파일선택",
 						onclick : function(rowIndex, columnIndex, value, item) {
 							recentGridItem = item;
-							let oid = item.oid;
-							let url = getCallUrl("/aui/secondary?oid=" + oid + "&method=setSecondary");
+							const oid = item.oid;
+							const url = getCallUrl("/aui/secondary?oid=" + oid + "&method=setSecondary");
 							popup(url, 1000, 400);
 						}
 					},
@@ -430,12 +430,12 @@ String name = (String) request.getAttribute("name");
 			}
 
 			function auiCellEditEndHandler(event) {
-				let dataField = event.dataField;
-				let item = event.item;
-				let rowIndex = event.rowIndex;
+				const dataField = event.dataField;
+				const item = event.item;
+				const rowIndex = event.rowIndex;
 				if (dataField === "mak_code") {
-					let mak = item.mak_code;
-					let url = getCallUrl("/commonCode/getChildrens?parentCode=" + mak + "&codeType=MAK");
+					const mak = item.mak_code;
+					const url = getCallUrl("/commonCode/getChildrens?parentCode=" + mak + "&codeType=MAK");
 					call(url, null, function(data) {
 						subListMap[mak] = data.list;
 					}, "GET");
@@ -443,17 +443,17 @@ String name = (String) request.getAttribute("name");
 			}
 
 			function auiCellClickHandler(event) {
-				let oid = event.item.oid;
-				let dataField = event.dataField;
+				const oid = event.item.oid;
+				const dataField = event.dataField;
 				if (dataField == "preView" && oid.indexOf("Cip") > -1) {
-					let url = getCallUrl("/aui/thumbnail?oid=" + oid);
+					const url = getCallUrl("/aui/thumbnail?oid=" + oid);
 					popup(url);
 				}
 			}
 
 			function loadGridData() {
-				let params = new Object();
-				let url = getCallUrl("/cip/list");
+				const params = new Object();
+				const url = getCallUrl("/cip/list");
 				AUIGrid.showAjaxLoader(myGridID);
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
@@ -463,7 +463,7 @@ String name = (String) request.getAttribute("name");
 				});
 			}
 
-			let last = false;
+			const last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {
@@ -473,13 +473,13 @@ String name = (String) request.getAttribute("name");
 			}
 
 			function requestAdditionalData() {
-				let params = new Object();
-				let curPage = document.getElementById("curPage").value;
-				let sessionid = document.getElementById("sessionid").value
+				const params = new Object();
+				const curPage = document.getElementById("curPage").value;
+				const sessionid = document.getElementById("sessionid").value
 				params.sessionid = sessionid;
 				params.start = (curPage * 30);
 				params.end = (curPage * 30) + 30;
-				let url = getCallUrl("/aui/appendData");
+				const url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				call(url, params, function(data) {
 					if (data.list.length == 0) {
@@ -494,20 +494,20 @@ String name = (String) request.getAttribute("name");
 			}
 
 			function auiAddRowHandler(event) {
-				let selected = AUIGrid.getSelectedIndex(myGridID);
+				const selected = AUIGrid.getSelectedIndex(myGridID);
 				if (selected.length <= 0) {
 					return;
 				}
 
-				let rowIndex = selected[0];
-				let colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "item");
+				const rowIndex = selected[0];
+				const colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "item");
 				AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex);
 				AUIGrid.openInputer(myGridID);
 			}
 
 			function preView(data) {
-				let preView = data.base64;
-				let preViewPath = data.fullPath;
+				const preView = data.base64;
+				const preViewPath = data.fullPath;
 				AUIGrid.updateRowsById(myGridID, {
 					oid : recentGridItem.oid,
 					preView : preView,
@@ -516,8 +516,8 @@ String name = (String) request.getAttribute("name");
 			}
 
 			function setSecondary(data) {
-				let template = "";
-				let arr = new Array();
+				const template = "";
+				const arr = new Array();
 				for (let i = 0; i < data.length; i++) {
 					template += "<img style='position: relative; top: 2px' src='" + data[i].icon + "'>&nbsp;";
 					arr.push(data[i].fullPath);
@@ -532,7 +532,7 @@ String name = (String) request.getAttribute("name");
 
 			// 행 추가
 			function addRow() {
-				let item = new Object();
+				const item = new Object();
 				item.createdDate = new Date();
 				item.creator = "<%=name%>";
 				item.latest = true;
@@ -541,19 +541,19 @@ String name = (String) request.getAttribute("name");
 
 			// 행 삭제
 			function deleteRow() {
-				let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
-					let rowIndex = checkedItems[i].rowIndex;
+					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
 			}
 
 			function save() {
-				let addRows = AUIGrid.getAddedRowItems(myGridID);
-				let removeRows = AUIGrid.getRemovedItems(myGridID);
-				let editRows = AUIGrid.getEditedRowItems(myGridID);
-				let params = new Object();
-				let url = getCallUrl("/cip/save");
+				const addRows = AUIGrid.getAddedRowItems(myGridID);
+				const removeRows = AUIGrid.getRemovedItems(myGridID);
+				const editRows = AUIGrid.getEditedRowItems(myGridID);
+				const params = new Object();
+				const url = getCallUrl("/cip/save");
 				params.addRows = addRows;
 				params.removeRows = removeRows;
 				params.editRows = editRows;
@@ -571,14 +571,14 @@ String name = (String) request.getAttribute("name");
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				let columns = loadColumnLayout("cip-list");
+				const columns = loadColumnLayout("cip-list");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-				let keyCode = event.keyCode || event.which;
+				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}

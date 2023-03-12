@@ -150,15 +150,15 @@
 			}
 
 			function auiCellClickHandler(event) {
-				let oid = event.item.oid;
-				let dataField = event.dataField;
+				const oid = event.item.oid;
+				const dataField = event.dataField;
 			}
 
 			function loadGridData() {
-				let params = new Object();
-				let url = getCallUrl("/issue/list");
-				let issueName = document.getElementById("issueName").value;
-				let description = document.getElementById("description").value;
+				const params = new Object();
+				const url = getCallUrl("/issue/list");
+				const issueName = document.getElementById("issueName").value;
+				const description = document.getElementById("description").value;
 				params.fileName = fileName;
 				params.description = description;
 				AUIGrid.showAjaxLoader(myGridID);
@@ -172,7 +172,7 @@
 				});
 			}
 
-			let last = false;
+			const last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {
@@ -182,12 +182,12 @@
 			}
 
 			function requestAdditionalData() {
-				let params = new Object();
-				let curPage = document.getElementById("curPage").value;
+				const params = new Object();
+				const curPage = document.getElementById("curPage").value;
 				params.sessionid = document.getElementById("sessionid").value;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/aui/appendData");
+				const url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -205,13 +205,13 @@
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				let columns = loadColumnLayout("issue-list");
+				const columns = loadColumnLayout("issue-list");
 				createAUIGrid(columns);
 			});
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-				let keyCode = event.keyCode || event.which;
+				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}

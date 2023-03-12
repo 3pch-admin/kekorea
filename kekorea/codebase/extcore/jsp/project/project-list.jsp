@@ -136,12 +136,12 @@
 							"default" : "/Windchill/extcore/images/icon/search.gif" // default
 						},
 						onClick : function(event) {
-							let item = event.item;
-							let mak_oid = item.mak_oid;
-							let detail_oid = item.detail_oid;
-							let customer_oid = item.customer_oid;
-							let install_oid = item.install_oid;
-							let url = getCallUrl("/cip/view?mak_oid=" + mak_oid + "&detail_oid=" + detail_oid + "&customer_oid=" + customer_oid + "&install_oid=" + install_oid);
+							const item = event.item;
+							const mak_oid = item.mak_oid;
+							const detail_oid = item.detail_oid;
+							const customer_oid = item.customer_oid;
+							const install_oid = item.install_oid;
+							const url = getCallUrl("/cip/view?mak_oid=" + mak_oid + "&detail_oid=" + detail_oid + "&customer_oid=" + customer_oid + "&install_oid=" + install_oid);
 							popup(url);
 						}
 					},
@@ -162,9 +162,9 @@
 							"default" : "/Windchill/extcore/images/icon/search.gif" // default
 						},
 						onClick : function(event) {
-							let item = event.item;
-							let oid = item.oid;
-							let url = getCallUrl("/history/view?oid=" + oid);
+							const item = event.item;
+							const oid = item.oid;
+							const url = getCallUrl("/history/view?oid=" + oid);
 							popup(url);
 						}
 					},
@@ -379,11 +379,11 @@
 			}
 
 			function loadGridData() {
-				let params = new Object();
-				let url = getCallUrl("/project/list");
+				const params = new Object();
+				const url = getCallUrl("/project/list");
 				
-				let kekNumber = document.getElementById("kekNumber").value;
-				let description = document.getElementById("description").value;
+				const kekNumber = document.getElementById("kekNumber").value;
+				const description = document.getElementById("description").value;
 				params.kekNumber = kekNumber;
 				params.description = description;
 				AUIGrid.showAjaxLoader(myGridID);
@@ -397,7 +397,7 @@
 				});
 			}
 
-			let last = false;
+			const last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {
@@ -407,13 +407,13 @@
 			}
 
 			function requestAdditionalData() {
-				let params = new Object();
-				let curPage = document.getElementById("curPage").value
-				let sessionid = document.getElementById("sessionid").value;
+				const params = new Object();
+				const curPage = document.getElementById("curPage").value
+				const sessionid = document.getElementById("sessionid").value;
 				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/aui/appendData");
+				const url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -431,14 +431,14 @@
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				let columns = loadColumnLayout("project-list");
+				const columns = loadColumnLayout("project-list");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-				let keyCode = event.keyCode || event.which;
+				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}

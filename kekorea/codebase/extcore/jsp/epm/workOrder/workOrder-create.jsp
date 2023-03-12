@@ -129,27 +129,27 @@
 
 	// 행 삭제
 	function deleteRow() {
-		let checked = AUIGrid.getCheckedRowItems(myGridID);
+		const checked = AUIGrid.getCheckedRowItems(myGridID);
 		for (let i = checked.length - 1; i >= 0; i--) {
-			let rowIndex = checked[i].rowIndex;
+			const rowIndex = checked[i].rowIndex;
 			AUIGrid.removeRow(myGridID, rowIndex);
 		}
 	};
 
 	function readyHandler() {
-		let item = new Object();
+		const item = new Object();
 		item.createdDate = new Date();
 		AUIGrid.addRow(myGridID, item, "first");
 	}
 
 	function auiCellEditEndHandler(event) {
-		let dataField = event.dataField;
+		const dataField = event.dataField;
 		if (dataField === "number") {
-			let number = event.item.number;
-			let url = getCallUrl("/workOrder/getData?number=" + number);
+			const number = event.item.number;
+			const url = getCallUrl("/workOrder/getData?number=" + number);
 			call(url, null, function(data) {
 				if (data.ok) {
-					let item = {
+					const item = {
 						ok : data.ok,
 						name : data.name,
 						rev : data.rev,
@@ -160,7 +160,7 @@
 					}
 					AUIGrid.updateRow(myGridID, item, event.rowIndex);
 				} else {
-					let item = {
+					const item = {
 						ok : data.ok,
 					}
 				}
@@ -170,7 +170,7 @@
 
 	// 행 추가
 	function addRow() {
-		let item = new Object();
+		const item = new Object();
 		item.createdDate = new Date();
 		AUIGrid.addRow(myGridID, item, "last");
 	}
@@ -181,13 +181,13 @@
 		if (!confirm("등록 하시겠습니까?")) {
 			return false;
 		}
-		let params = new Object();
-		let addRows = AUIGrid.getAddedRowItems(myGridID); // 도면 일람표
-		let _addRows = AUIGrid.getAddedRowItems(_myGridID); // 프로젝트
+		const params = new Object();
+		const addRows = AUIGrid.getAddedRowItems(myGridID); // 도면 일람표
+		const _addRows = AUIGrid.getAddedRowItems(_myGridID); // 프로젝트
 		params.name = document.getElementById("name").value;
 		params.addRows = addRows;
 		params._addRows = _addRows;
-		let url = getCallUrl("/workOrder/create");
+		const url = getCallUrl("/workOrder/create");
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {

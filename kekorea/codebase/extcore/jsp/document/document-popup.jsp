@@ -242,7 +242,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 				});
 			}
 
-			let last = false;
+			const last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {
@@ -271,7 +271,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 			}
 
 			function <%=method%>() {
-				let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				if (checkedItems.length == 0) {
 					alert("추가할 문서를 선택하세요.");
 					return false;
@@ -280,7 +280,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 			}
 			
 			function auiCellClickHandler(event) {
-				let item = event.item;
+				const item = event.item;
 				rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); // rowIdField 얻기
 				rowId = item[rowIdField];
 				

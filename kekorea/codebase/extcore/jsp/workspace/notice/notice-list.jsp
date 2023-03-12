@@ -144,13 +144,13 @@
 			}
 
 			function loadGridData() {
-				let params = new Object();
-				let url = getCallUrl("/notice/list");
+				const params = new Object();
+				const url = getCallUrl("/notice/list");
 
 				// 검색 변수
-				let name = document.getElementById("name").value;
+				const name = document.getElementById("name").value;
 <<<<<<< HEAD
-				let name = document.getElementById("description").value;
+const name = document.getElementById("description").value;
 				
 =======
 
@@ -169,7 +169,7 @@
 				});
 			}
 
-			let last = false;
+			const last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {
@@ -179,13 +179,13 @@
 			}
 
 			function requestAdditionalData() {
-				let params = new Object();
-				let curPage = document.getElementById("curPage").value
-				let sessionid = document.getElementById("sessionid").value
+				const params = new Object();
+				const curPage = document.getElementById("curPage").value
+				const sessionid = document.getElementById("sessionid").value
 				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/aui/appendData");
+				const url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -203,14 +203,14 @@
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				let columns = loadColumnLayout("notice-list");
+				const columns = loadColumnLayout("notice-list");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-				let keyCode = event.keyCode || event.which;
+				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}

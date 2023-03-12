@@ -20,7 +20,7 @@ String method = (String) request.getAttribute("method");
 	</tr>
 </table>
 <script type="text/javascript">
-	let preview = new AXUpload5();
+const preview = new AXUpload5();
 	let data;
 	function previewUploader() {
 		preview.setConfig({

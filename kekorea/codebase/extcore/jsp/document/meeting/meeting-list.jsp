@@ -249,17 +249,17 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			function auiCellClickHandler(event) {
-				let dataField = event.dataField;
-				let item = event.item;
+				const dataField = event.dataField;
+				const item = event.item;
 				if (dataField === "name") {
-					let url = getCallUrl("/meeting/view?oid=" + item.loid);
+					const url = getCallUrl("/meeting/view?oid=" + item.loid);
 					popup(url);
 				}
 			}
 
 			function loadGridData() {
-				let params = new Object();
-				let url = getCallUrl("/meeting/list");
+				const params = new Object();
+				const url = getCallUrl("/meeting/list");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -271,7 +271,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				});
 			}
 
-			let last = false;
+			const last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {
@@ -281,12 +281,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			function requestAdditionalData() {
-				let params = new Object();
-				let curPage = document.getElementById("curPage").value;
+				const params = new Object();
+				const curPage = document.getElementById("curPage").value;
 				params.sessionid = document.getElementById("sessionid").value;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/aui/appendData");
+				const url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -303,7 +303,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			// 등록
 			function create() {
-				let url = getCallUrl("/meeting/create");
+				const url = getCallUrl("/meeting/create");
 				popup(url);
 			}
 
@@ -313,9 +313,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					return false;
 				}
 
-				let url = getCallUrl("/meeting/delete");
-				let params = new Object();
-				let removeRows = AUIGrid.getRemovedItems(myGridID);
+				const url = getCallUrl("/meeting/delete");
+				const params = new Object();
+				const removeRows = AUIGrid.getRemovedItems(myGridID);
 				params.removeRows = removeRows;
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -329,9 +329,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			// 행 삭제
 			function deleteRow() {
-				let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
-					let rowIndex = checkedItems[i].rowIndex;
+					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
 			}
@@ -339,13 +339,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				let columns = loadColumnLayout("meeting-list");
+				const columns = loadColumnLayout("meeting-list");
 				createAUIGrid(columns);
 			});
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-				let keyCode = event.keyCode || event.which;
+				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}

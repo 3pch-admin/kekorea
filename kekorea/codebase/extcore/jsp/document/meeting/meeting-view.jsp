@@ -72,7 +72,7 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 				// 에디터가 초기화되면 실행되는 콜백 함수
 				editor.on('init', function() {
 					// 에디터의 내용 가져오기
-					let content = editor.getContent();
+					const content = editor.getContent();
 					editor.setContent(content);
 				});
 			}

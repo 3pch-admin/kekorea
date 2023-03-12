@@ -41,7 +41,7 @@
 		let content = tinymce.activeEditor.getContent();
 		params.name = document.getElementById("name").value;
 		params.content = content;
-		let url = getCallUrl("/meeting/format");
+		const url = getCallUrl("/meeting/format");
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {

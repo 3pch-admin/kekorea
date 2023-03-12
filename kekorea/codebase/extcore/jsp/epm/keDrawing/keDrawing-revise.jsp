@@ -73,8 +73,8 @@
 			labelText : "파일선택",
 			onclick : function(rowIndex, columnIndex, value, item) {
 				recentGridItem = item;
-				let rowId = item.rowId; // ... oid 가 있는데 이상하게 안받아와짐.
-				let url = getCallUrl("/aui/primary?oid=" + rowId + "&method=attach");
+				const rowId = item.rowId; // ... oid 가 있는데 이상하게 안받아와짐.
+				const url = getCallUrl("/aui/primary?oid=" + rowId + "&method=attach");
 				popup(url, 1000, 200);
 			}
 		}
@@ -105,12 +105,12 @@
 	}
 
 	function attach(data) {
-		let name = data.name;
-		let start = name.indexOf("-");
-		let end = name.lastIndexOf(".");
-		let number = name.substring(0, start);
-		let next = name.substring(start + 1, end);
-		let template = "<img src='" + data.icon + "' style='position: relative; top: 2px;'>";
+		const name = data.name;
+		const start = name.indexOf("-");
+		const end = name.lastIndexOf(".");
+		const number = name.substring(0, start);
+		const next = name.substring(start + 1, end);
+		const template = "<img src='" + data.icon + "' style='position: relative; top: 2px;'>";
 		AUIGrid.updateRowsById(myGridID, {
 			rowId : recentGridItem.rowId,
 			number : number,
@@ -123,7 +123,7 @@
 
 	// 그리드 행 삭제
 	function remove() {
-		let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 		for (let i = checkedItems.length - 1; i >= 0; i--) {
 			let rowIndex = checkedItems[i].rowIndex;
 			AUIGrid.removeRow(myGridID, rowIndex);
@@ -137,9 +137,9 @@
 			return false;
 		}
 
-		let addRows = AUIGrid.getAddedRowItems(myGridID);
-		let params = new Object();
-		let url = getCallUrl("/keDrawing/revise");
+		const addRows = AUIGrid.getAddedRowItems(myGridID);
+		const params = new Object();
+		const url = getCallUrl("/keDrawing/revise");
 		params.addRows = addRows;
 		call(url, params, function(data) {
 			alert(data.msg);

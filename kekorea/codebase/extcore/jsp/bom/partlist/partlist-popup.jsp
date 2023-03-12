@@ -253,7 +253,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 	}
 
 	function auiCellClickHandler(event) {
-		let item = event.item;
+		const item = event.item;
 		rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); // rowIdField 얻기
 		rowId = item[rowIdField];
 		
@@ -268,7 +268,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 	}
 	
 	function <%=method%>() {
-		let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 		if (checkedItems.length == 0) {
 			alert("추가할 수배표 선택하세요.");
 			return false;
@@ -278,8 +278,8 @@ boolean multi = (boolean) request.getAttribute("multi");
 	}
 	
 	function loadGridData() {
-		let params = new Object();
-		let url = getCallUrl("/partlist/list");
+		const params = new Object();
+		const url = getCallUrl("/partlist/list");
 		AUIGrid.showAjaxLoader(myGridID);
 // 		openLayer();
 		call(url, params, function(data) {
@@ -291,7 +291,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 		});
 	}
 
-	let last = false;
+	const last = false;
 	function vScrollChangeHandler(event) {
 		if (event.position == event.maxPosition) {
 			if (!last) {
@@ -301,13 +301,13 @@ boolean multi = (boolean) request.getAttribute("multi");
 	}
 
 	function requestAdditionalData() {
-		let params = new Object();
-		let curPage = document.getElementById("curPage").value
-		let sessionid = document.getElementById("sessionid").value
+		const params = new Object();
+		const curPage = document.getElementById("curPage").value
+		const sessionid = document.getElementById("sessionid").value
 		params.sessionid = sessionid;
 		params.start = (curPage * 100);
 		params.end = (curPage * 100) + 100;
-		let url = getCallUrl("/aui/appendData");
+		const url = getCallUrl("/aui/appendData");
 		AUIGrid.showAjaxLoader(myGridID);
 		console.log(params);
 		call(url, params, function(data) {
@@ -325,14 +325,14 @@ boolean multi = (boolean) request.getAttribute("multi");
 	// jquery 삭제를 해가는 쪽으로 한다..
 	document.addEventListener("DOMContentLoaded", function() {
 		// DOM이 로드된 후 실행할 코드 작성
-		let columns = loadColumnLayout("partlist-popup");
+		const columns = loadColumnLayout("partlist-popup");
 		createAUIGrid(columns);
 		AUIGrid.resize(myGridID);
 	});
 
 	document.addEventListener("keydown", function(event) {
 		// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-		let keyCode = event.keyCode || event.which;
+		const keyCode = event.keyCode || event.which;
 		if (keyCode === 13) {
 			loadGridData();
 		}

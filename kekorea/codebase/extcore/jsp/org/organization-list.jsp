@@ -362,10 +362,10 @@ JSONArray departments = new JSONArray(list);
 
 			function loadGridData() {
 <<<<<<< HEAD
-				let params = new Object();
-				let url = getCallUrl("/org/list");
-				let userName = document.getElementById("userName").value;
-				let userId = document.getElementById("userId").value;
+const params = new Object();
+const url = getCallUrl("/org/list");
+const userName = document.getElementById("userName").value;
+const userId = document.getElementById("userId").value;
 				
 =======
 				const url = getCallUrl("/org/list");
@@ -382,7 +382,7 @@ JSONArray departments = new JSONArray(list);
 				});
 			}
 
-			let last = false;
+			const last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {

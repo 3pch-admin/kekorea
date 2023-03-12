@@ -194,7 +194,7 @@
 	}
 
 	function readyHandler() {
-		let item = new Object();
+		const item = new Object();
 		item.partListDate = new Date();
 		AUIGrid.addRow(myGridID, item, "first");
 	}
@@ -230,7 +230,7 @@
 
 	// 행 추가
 	function addRow() {
-		let item = new Object();
+		const item = new Object();
 		item.partListDate = new Date();
 		AUIGrid.addRow(myGridID, item, "last");
 	}

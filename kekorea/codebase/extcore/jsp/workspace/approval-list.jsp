@@ -29,11 +29,8 @@
 			<tr>
 				<th>결재 제목</th>
 				<td>
-<<<<<<< HEAD
 					<input type="text" name="approvalTitle" id="approvalTitle" class="AXInput">
-=======
 					<input type="date" name="fileName" id="fileName" class="AXInput" placeholder="년도-월-일">
->>>>>>> 0289d759cfa7b3e8046244e1428ec2ce01758e1c
 				</td>
 				<th>기안자</th>
 				<td>
@@ -171,14 +168,11 @@
 			}
 
 			function loadGridData() {
-				let params = new Object();
-				let url = getCallUrl("/workspace/approval");
-<<<<<<< HEAD
-				let approvalTitle = document.getElementById("approvalTitle").value;
+				const params = new Object();
+				const url = getCallUrl("/workspace/approval");
+				const approvalTitle = document.getElementById("approvalTitle").value;
 				params.approvalTitle = approvalTitle;
-=======
 				console.log(document.getElementById("partCode").value);
->>>>>>> 0289d759cfa7b3e8046244e1428ec2ce01758e1c
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -190,7 +184,7 @@
 				});
 			}
 
-			let last = false;
+			const last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {
@@ -200,13 +194,13 @@
 			}
 
 			function requestAdditionalData() {
-				let params = new Object();
-				let curPage = document.getElementById("curPage").value;
-				let sessionid = document.getElementById("sessionid").value;
+				const params = new Object();
+				const curPage = document.getElementById("curPage").value;
+				const sessionid = document.getElementById("sessionid").value;
 				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/aui/appendData");
+				const url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -224,13 +218,13 @@
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				let columns = loadColumnLayout("approval-list");
+				const columns = loadColumnLayout("approval-list");
 				createAUIGrid(columns);
 			});
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-				let keyCode = event.keyCode || event.which;
+				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}

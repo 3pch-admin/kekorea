@@ -20,7 +20,7 @@ JSONArray data = JSONArray.fromObject(list);
 
 <script type="text/javascript">
 	let myGridID;
-	let data = <%=data%>
+	const data = <%=data%>
 	const columns = [ {
 		dataField : "pDate",
 		headerText : "발행일",

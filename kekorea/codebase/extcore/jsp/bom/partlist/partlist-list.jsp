@@ -261,7 +261,7 @@
 			}
 
 			function compare() {
-				let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				if (checkedItems.length <= 0) {
 					alert("비교할 수배표를 선택하세요.");
 					return;
@@ -270,24 +270,24 @@
 					alert("비교할 수배표를 하나만 선택하세요.");
 					return;
 				}
-				let loid = checkedItems[0].item.loid;
-				let oid = checkedItems[0].item.oid;
-				let url = getCallUrl("/partlist/compare?loid=" + loid + "&oid=" + oid);
+				const loid = checkedItems[0].item.loid;
+				const oid = checkedItems[0].item.oid;
+				const url = getCallUrl("/partlist/compare?loid=" + loid + "&oid=" + oid);
 				popup(url);
 			}
 
 			function auiCellClickHandler(event) {
-				let dataField = event.dataField;
-				let item = event.item;
+				const dataField = event.dataField;
+				const item = event.item;
 				if (dataField === "name") {
-					let url = getCallUrl("/partlist/view?oid=" + item.oid);
+					const url = getCallUrl("/partlist/view?oid=" + item.oid);
 					popup(url);
 				}
 			}
 
 			function loadGridData() {
-				let params = new Object();
-				let url = getCallUrl("/partlist/list");
+				const params = new Object();
+				const url = getCallUrl("/partlist/list");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -298,8 +298,7 @@
 					parent.closeLayer();
 				});
 			}
-
-			let last = false;
+			const last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {
@@ -309,13 +308,13 @@
 			}
 
 			function requestAdditionalData() {
-				let params = new Object();
-				let curPage = document.getElementById("curPage").value
-				let sessionid = document.getElementById("sessionid").value
+				const params = new Object();
+				const curPage = document.getElementById("curPage").value
+				const sessionid = document.getElementById("sessionid").value
 				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/aui/appendData");
+				const url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -338,14 +337,14 @@
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				let columns = loadColumnLayout("partlist-list");
+				const columns = loadColumnLayout("partlist-list");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-				let keyCode = event.keyCode || event.which;
+				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}

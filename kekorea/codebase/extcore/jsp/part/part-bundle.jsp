@@ -132,15 +132,15 @@
 		}
 
 		function cellEditEndHandler(event) {
-			let dataField = event.dataField;
-			let item = event.item;
-			let rowIndex = event.rowIndex;
+			const dataField = event.dataField;
+			const item = event.item;
+			const rowIndex = event.rowIndex;
 
 			if (dataField === "spec") {
-				let url = getCallUrl("/part/bundleValidatorSpec?spec=" + item.spec);
+				const url = getCallUrl("/part/bundleValidatorSpec?spec=" + item.spec);
 				call(url, null, function(data) {
 					// 서버 없으면 OK
-					let obj = {
+					const obj = {
 						dwg_check : data.dwg_check
 					}
 					AUIGrid.updateRow(myGridID, obj, rowIndex);
@@ -148,16 +148,16 @@
 			}
 
 			if (dataField === "number") {
-				let url = getCallUrl("/part/bundleValidatorNumber?number=" + item.number);
+				const url = getCallUrl("/part/bundleValidatorNumber?number=" + item.number);
 				call(url, null, function(data) {
 					// 서버 없으면 OK
-					let obj = {
+					const obj = {
 						ycode_check : data.ycode_check
 					}
 					AUIGrid.updateRow(myGridID, obj, rowIndex);
 				}, "GET");
 
-				let ycode_check = AUIGrid.getCellValue(myGridID, event.rowIndex, "ycode_check");
+				const ycode_check = AUIGrid.getCellValue(myGridID, event.rowIndex, "ycode_check");
 				alert(ycode_check);
 			}
 		}

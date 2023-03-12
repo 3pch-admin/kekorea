@@ -20,7 +20,7 @@ String method = (String) request.getAttribute("method");
 	</tr>
 </table>
 <script type="text/javascript">
-	let primary = new AXUpload5();
+const primary = new AXUpload5();
 	let data;
 	function primaryUploader() {
 		primary.setConfig({

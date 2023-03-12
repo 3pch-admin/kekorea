@@ -253,8 +253,8 @@
 			}
 
 			function loadGridData() {
-				let params = new Object();
-				let url = getCallUrl("/korea/list");
+				const params = new Object();
+				const url = getCallUrl("/korea/list");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -266,7 +266,7 @@
 				});
 			}
 
-			let last = false;
+			const last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {
@@ -276,13 +276,13 @@
 			}
 
 			function requestAdditionalData() {
-				let params = new Object();
-				let curPage = document.getElementById("curPage").value
-				let sessionid = document.getElementById("sessionid").value
+				const params = new Object();
+				const curPage = document.getElementById("curPage").value
+				const sessionid = document.getElementById("sessionid").value
 				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				let url = getCallUrl("/aui/appendData");
+				const url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -300,7 +300,7 @@
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				let columns = loadColumnLayout("korea-list");
+				const columns = loadColumnLayout("korea-list");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});
