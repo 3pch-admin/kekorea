@@ -1,41 +1,39 @@
-package e3ps.korea.cssheet.service;
+package e3ps.korea.configSheet.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import e3ps.common.util.PageQueryUtils;
-import e3ps.epm.numberRule.beans.NumberRuleColumnData;
-import e3ps.korea.cssheet.CSSheet;
-import e3ps.korea.cssheet.beans.CSSheetColumnData;
+import e3ps.korea.configSheet.ConfigSheet;
+import e3ps.korea.configSheet.ConfigSheetDTO;
 import wt.fc.PagingQueryResult;
 import wt.query.QuerySpec;
 import wt.services.ServiceFactory;
 
-public class CSSheetHelper {
+public class ConfigSheetHelper {
 
-	public static final CSSheetHelper manager = new CSSheetHelper();
-	public static final CSSheetService service = ServiceFactory.getService(CSSheetService.class);
+	public static final ConfigSheetHelper manager = new ConfigSheetHelper();
+	public static final ConfigSheetService service = ServiceFactory.getService(ConfigSheetService.class);
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<>();
-		ArrayList<CSSheetColumnData> list = new ArrayList<>();
+		ArrayList<ConfigSheetDTO> list = new ArrayList<>();
+
 		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(CSSheet.class, true);
+		int idx = query.appendClassList(ConfigSheet.class, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
-
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
-			CSSheet csSheet = (CSSheet) obj[0];
-			CSSheetColumnData column = new CSSheetColumnData(csSheet);
+			ConfigSheet configSheet = (ConfigSheet) obj[0];
+			ConfigSheetDTO column = new ConfigSheetDTO(configSheet);
 			list.add(column);
 		}
-
 		map.put("list", list);
-		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
+		map.put("sessionid", pager.getSessionId());
 		return map;
 	}
 }

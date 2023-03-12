@@ -137,7 +137,7 @@ public class OrgHelper {
 	public List<Map<Object, Object>> userList(Map<String, Object> param) {
 		List<Map<Object, Object>> list = new ArrayList<Map<Object, Object>>();
 		String key = (String) param.get("key");
-		
+
 		try {
 
 			QuerySpec query = new QuerySpec();
@@ -1140,10 +1140,8 @@ public class OrgHelper {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<UserDTO> list = new ArrayList<>();
 
-<<<<<<< HEAD
 		String userName = (String) params.get("userName");
 		String userId = (String) params.get("userId");
-=======
 		String oid = (String) params.get("oid");
 		Department department = null;
 		if (!StringUtils.isNull(oid)) {
@@ -1152,7 +1150,6 @@ public class OrgHelper {
 			department = getRoot();
 		}
 
->>>>>>> 8b13c0f (no message)
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(People.class, true);
 		int idx_w = query.appendClassList(WTUser.class, false);
@@ -1171,6 +1168,7 @@ public class OrgHelper {
 		if (!StringUtils.isNull(userName)) {
 			QuerySpecUtils.toLikeAnd(query, idx, People.class, People.NAME, userName);
 		}
+
 		if (!StringUtils.isNull(userId)) {
 			QuerySpecUtils.toLikeAnd(query, idx, People.class, People.ID, userId);
 		}

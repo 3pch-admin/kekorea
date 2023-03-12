@@ -84,3 +84,15 @@ SPEC.sort=15
 #사양에 따른 옵션
 OPTION.value=\uc635\uc158
 OPTION.sort=16
+
+#CONFIG SHEET 카테고리
+CATEGORY.value=\uce74\ud14c\uace0\ub9ac
+CATEGORY.sort=17
+
+#CONFIG SHEET 아이템
+CATEGORY_ITEM.value=\uce74\ud14c\uace0\ub9ac\u0020\uc544\uc774\ud15c
+CATEGORY_ITEM.sort=18
+
+#CONFIG SHEET 사양
+CATEGORY_SPEC.value=\uce74\ud14c\uace0\ub9ac\u0020\uc0ac\uc591
+CATEGORY_SPEC.sort=19

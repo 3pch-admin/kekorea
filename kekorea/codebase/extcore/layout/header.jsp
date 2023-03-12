@@ -233,7 +233,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						<a onclick="moveToPage(this, '/korea/list', '한국 생산 > 한국 생상');">한국 생산</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/cssheet/list', '한국 생산 > CS SHEET 조회');">CS SHEET 조회</a>
+						<a onclick="moveToPage(this, '/configSheet/list', '한국 생산 > CONFIG SHEET 조회');">CONFIG SHEET 조회</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/cip/list', '한국 생산 > CIP 조회');">CIP 조회</a>
@@ -272,7 +272,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						<a onclick="moveToPage(this, '/spec/list', '관리자 > 사양 관리');">사양 관리</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/category/list', '관리자 > CS 카테고리');">CS 카테고리</a>
+						<a onclick="moveToPage(this, '/sheetVariable/list', '관리자 > CONFIG SHEET 카테고리');">CONFIG SHEET 카테고리</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/password/list', '관리자 > 비밀번호 세팅');">비밀번호 세팅</a>
