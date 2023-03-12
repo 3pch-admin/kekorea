@@ -51,11 +51,6 @@ public class ColumnParseUtils {
 				CommonCodeDTO data = parse((CommonCode) per);
 				list.add(data);
 				// 사양
-			} else if (per instanceof Category) {
-				CategoryItemsLink link = (CategoryItemsLink) obj[1];
-				CategoryColumnData data = parse((Category) per, link);
-				list.add(data);
-				// 프로젝트
 			} else if (per instanceof Project) {
 				ProjectDTO data = parse((Project) per);
 				list.add(data);

@@ -146,15 +146,9 @@
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/notice/list");
-
 				// 검색 변수
 				const name = document.getElementById("name").value;
-<<<<<<< HEAD
-const name = document.getElementById("description").value;
-				
-=======
-
->>>>>>> 0289d759cfa7b3e8046244e1428ec2ce01758e1c
+				const description = document.getElementById("description").value;
 				// 검색 변수 담기
 				params.name = name;
 				params.description = description;
@@ -179,13 +173,13 @@ const name = document.getElementById("description").value;
 			}
 
 			function requestAdditionalData() {
+				const url = getCallUrl("/aui/appendData");
 				const params = new Object();
 				const curPage = document.getElementById("curPage").value
 				const sessionid = document.getElementById("sessionid").value
 				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				const url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
