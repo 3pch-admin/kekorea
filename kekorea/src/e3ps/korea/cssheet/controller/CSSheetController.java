@@ -23,7 +23,7 @@ public class CSSheetController extends BaseController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/jsp/korea/cssheet/cssheet-list.jsp");
+		model.setViewName("/extcore/jsp/korea/cssheet/cssheet-list.jsp");
 		return model;
 	}
 	

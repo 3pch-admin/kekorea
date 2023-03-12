@@ -1140,10 +1140,30 @@ public class OrgHelper {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<UserDTO> list = new ArrayList<>();
 
+<<<<<<< HEAD
 		String userName = (String) params.get("userName");
 		String userId = (String) params.get("userId");
+=======
+		String oid = (String) params.get("oid");
+		Department department = null;
+		if (!StringUtils.isNull(oid)) {
+			department = (Department) CommonUtils.getObject(oid);
+		} else {
+			department = getRoot();
+		}
+
+>>>>>>> 8b13c0f (no message)
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(People.class, true);
+		int idx_w = query.appendClassList(WTUser.class, false);
+		int idx_d = query.appendClassList(Department.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, People.class, WTUser.class, "wtUserReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_w);
+		QuerySpecUtils.toInnerJoin(query, People.class, Department.class, "departmentReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_d);
+		QuerySpecUtils.toEqualsAnd(query, idx, People.class, "departmentReference.key.id",
+				department.getPersistInfo().getObjectIdentifier().getId());
 
 		QuerySpecUtils.toBooleanAnd(query, idx, People.class, People.RESIGN, false);
 		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, false);
