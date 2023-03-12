@@ -20,7 +20,7 @@
 		<table class="button-table">
 			<tr>
 				<td class="right">
-					<input type="button" value="조회" title="조회" onclick="loadGridData();">
+					<input type="button" value="결재등록" title="결재등록" onclick="registerLine();">
 				</td>
 			</tr>
 		</table>
@@ -59,7 +59,8 @@
 		</table>
 		<script type="text/javascript">
 			// 등록
-			function create() {
+			function registerLine() {
+				
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {

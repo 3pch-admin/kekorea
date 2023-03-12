@@ -1,7 +1,6 @@
 package e3ps.common.util;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,10 +11,7 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import com.ptc.wvs.server.util.FileHelper;
 import com.ptc.wvs.server.util.PublishUtils;
 
-import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.admin.spec.service.OptionsHelper;
 import e3ps.common.content.service.CommonContentHelper;
-import e3ps.project.service.ProjectHelper;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
 import wt.content.ContentHolder;
@@ -40,28 +36,10 @@ public class AUIGridUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-0	}
+	}
 
 	private AUIGridUtils() {
 
-	}
-
-	public static ArrayList<Map<String, Object>> remoter(Map<String, Object> params) throws Exception {
-		ArrayList<Map<String, Object>> list = new ArrayList<>();
-		String target = (String) params.get("target");
-
-		// 프로젝트 리모터
-		if (target.contains("project")) {
-			list = ProjectHelper.manager.remoter(params);
-		} else if (target.contains("spec")) {
-//			list = SpecHelper.manager.remoter(params);
-		} else if (target.contains("code")) {
-			list = CommonCodeHelper.manager.remoter(params);
-		} else if (target.contains("options")) {
-			list = OptionsHelper.manager.remoter(params);
-		}
-
-		return list;
 	}
 
 	/**

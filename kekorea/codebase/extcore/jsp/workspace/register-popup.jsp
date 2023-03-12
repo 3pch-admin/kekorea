@@ -83,6 +83,9 @@
 							}
 
 							function loadDepartmentUser(oid) {
+								if(oid === undefined) {
+									oid = "";
+								}
 								const url = getCallUrl("/org/loadDepartmentUser?oid=" + oid);
 								AUIGrid.showAjaxLoader(_$myGridID);
 								call(url, null, function(data) {
