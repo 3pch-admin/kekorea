@@ -49,7 +49,7 @@
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('spec-list');">
+					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('sheetVariable-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="자식 추가" title="자식 추가" class="orange" onclick="addTreeRow();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
@@ -66,12 +66,16 @@
 		<script type="text/javascript">
 			let myGridID;
 			const list = [ {
-				"key" : "SPEC",
-				"value" : "사양"
+				"key" : "CATEGORY",
+				"value" : "카테고리"
 			}, {
-				"key" : "OPTION",
-				"value" : "옵션"
+				"key" : "CATEGORY_ITEM",
+				"value" : "아이템"
+			}, {
+				"key" : "CATEGORY_SPEC",
+				"value" : "사양"
 			} ];
+
 			function _layout() {
 				return [ {
 					dataField : "name",
@@ -252,19 +256,26 @@
 				const depth = item._$depth;
 				if (depth == 2) {
 					const item = {
-						"codeType" : "SPEC"
+						"codeType" : "CATEGORY"
 					};
 					AUIGrid.updateRow(myGridID, item, "selectedIndex");
 				}
 
 				if (depth == 3) {
 					const item = {
-						"codeType" : "OPTION"
+						"codeType" : "CATEGORY_ITEM"
 					};
 					AUIGrid.updateRow(myGridID, item, "selectedIndex");
 				}
 
-				if (depth > 3 || depth === undefined) {
+				if (depth == 4) {
+					const item = {
+						"codeType" : "CATEGORY_SPEC"
+					};
+					AUIGrid.updateRow(myGridID, item, "selectedIndex");
+				}
+
+				if (depth > 4 || depth === undefined) {
 					AUIGrid.removeRow(myGridID, "selectedIndex");
 				}
 
@@ -281,7 +292,7 @@
 
 			function loadGridData() {
 				const params = new Object();
-				const url = getCallUrl("/spec/list");
+				const url = getCallUrl("/sheetVariable/list");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -348,7 +359,7 @@
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				const columns = loadColumnLayout("spec-list");
+				const columns = loadColumnLayout("sheetVariable-list");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});

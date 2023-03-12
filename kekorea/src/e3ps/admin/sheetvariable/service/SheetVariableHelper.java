@@ -79,6 +79,33 @@ public class SheetVariableHelper {
 			node.put("description", itemCode.getDescription());
 			node.put("sort", itemCode.getSort());
 			node.put("enable", itemCode.getEnable());
+			specs(node, itemCode);
+			children.add(node);
+		}
+		parentNode.put("children", children);
+	}
+
+	private void specs(JSONObject parentNode, CommonCode itemCode) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(CommonCode.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE_TYPE, "CATEGORY_SPEC");
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, "parentReference.key.id",
+				itemCode.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, true);
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		JSONArray children = new JSONArray();
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			CommonCode specCode = (CommonCode) obj[0];
+			JSONObject node = new JSONObject();
+			node.put("oid", specCode.getPersistInfo().getObjectIdentifier().getStringValue());
+			node.put("name", specCode.getName());
+			node.put("code", specCode.getCode());
+			node.put("codeType", specCode.getCodeType().toString());
+			node.put("description", specCode.getDescription());
+			node.put("sort", specCode.getSort());
+			node.put("enable", specCode.getEnable());
 			children.add(node);
 		}
 		parentNode.put("children", children);
