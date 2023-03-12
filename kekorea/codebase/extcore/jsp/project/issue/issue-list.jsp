@@ -41,13 +41,13 @@
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th>공지사항 제목</th>
+				<th>특이사항 제목</th>
 				<td>
-					<input type="text" name="fileName" class="AXInput">
+					<input type="text" name="issueName" id="issueName" class="AXInput">
 				</td>
 				<th>설명</th>
 				<td>
-					<input type="text" name="partCode" class="AXInput">
+					<input type="text" name="description" id="description" class="AXInput">
 				</td>
 				<th>작성자</th>
 				<td>
@@ -77,7 +77,7 @@
 			let myGridID;
 			function _layout() {
 				return [ {
-					dataField : "name",
+					dataField : "name", 
 					headerText : "특이사항 제목",
 					dataType : "string",
 					style : "left indent10 underline",
@@ -157,6 +157,10 @@
 			function loadGridData() {
 				let params = new Object();
 				let url = getCallUrl("/issue/list");
+				let issueName = document.getElementById("issueName").value;
+				let description = document.getElementById("description").value;
+				params.fileName = fileName;
+				params.description = description;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

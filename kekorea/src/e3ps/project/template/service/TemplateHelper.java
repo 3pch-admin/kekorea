@@ -10,11 +10,13 @@ import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.template.Template;
 import e3ps.project.template.TemplateUserLink;
 import e3ps.project.template.dto.TemplateDTO;
+import e3ps.workspace.ApprovalLine;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.fc.PagingQueryResult;
@@ -32,9 +34,20 @@ public class TemplateHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<TemplateDTO> list = new ArrayList<TemplateDTO>();
+		
+		String templateName = (String) params.get("templateName");
+		String description = (String) params.get("description");
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Template.class, true);
 		QuerySpecUtils.toOrderBy(query, idx, Template.class, Template.CREATE_TIMESTAMP, true);
+		
+		if (!StringUtils.isNull(templateName)) {
+			QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.NAME, templateName);
+		}
+		if (!StringUtils.isNull(description)) {
+			QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.DESCRIPTION, description);
+		}
+		
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {

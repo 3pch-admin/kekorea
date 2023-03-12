@@ -24,12 +24,17 @@ public class NoticeHelper {
 
 		// key -value
 		String name = (String) params.get("name"); // 공지사항 제목
-
+		String description = (String) params.get("description"); // 공지사항 제목
+		
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Notice.class, true);
 
 		if (!StringUtils.isNull(name)) {
 			QuerySpecUtils.toLikeAnd(query, idx, Notice.class, Notice.NAME, name);
+		}
+		
+		if (!StringUtils.isNull(description)) {
+			QuerySpecUtils.toLikeAnd(query, idx, Notice.class, Notice.DESCRIPTION, description);
 		}
 
 		QuerySpecUtils.toOrderBy(query, idx, Notice.class, Notice.CREATE_TIMESTAMP, true);

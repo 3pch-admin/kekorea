@@ -31,11 +31,11 @@
 			<tr>
 				<th>공지사항 제목</th>
 				<td>
-					<input type="text" name="fileName" class="AXInput">
+					<input type="text" name="fileName" id="fileName" class="AXInput">
 				</td>
 				<th>설명</th>
 				<td>
-					<input type="text" name="partCode" class="AXInput">
+					<input type="text" name="description" id="description" class="AXInput">
 				</td>
 				<th>작성자</th>
 				<td>
@@ -159,6 +159,11 @@
 			function loadGridData() {
 				let params = new Object();
 				let url = getCallUrl("/template/list");
+				
+				let fileName = document.getElementById("fileName").value;
+				let description = document.getElementById("description").value;
+				params.fileName = fileName;
+				params.description = description;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

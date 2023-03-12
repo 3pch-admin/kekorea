@@ -3159,6 +3159,7 @@ public class ProjectHelper {
 		String predate = (String) params.get("predate");
 		String postdate = (String) params.get("postdate");
 		String template = (String) params.get("template");
+		String description = (String) params.get("description");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);
@@ -3221,6 +3222,10 @@ public class ProjectHelper {
 
 		if (!StringUtils.isNull(postdate)) {
 
+		}
+		
+		if (!StringUtils.isNull(description)) {
+			QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.DESCRIPTION, description);
 		}
 
 		QuerySpecUtils.toOrderBy(query, idx, Project.class, Project.P_DATE, false);

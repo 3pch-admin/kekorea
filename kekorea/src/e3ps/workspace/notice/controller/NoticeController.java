@@ -20,7 +20,7 @@ import e3ps.workspace.notice.service.NoticeHelper;;
 @RequestMapping(value = "/notice/**")
 public class NoticeController extends BaseController {
 
-	@Description(value = "골지사항 리스트 페이지")
+	@Description(value = "공지사항 리스트 페이지")
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();

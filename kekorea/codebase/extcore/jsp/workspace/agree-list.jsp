@@ -29,7 +29,7 @@
 			<tr>
 				<th>결재 제목</th>
 				<td>
-					<input type="text" name="fileName" class="AXInput">
+					<input type="text" name="approvalTitle" id="approvalTitle" class="AXInput">
 				</td>
 				<th>기안자</th>
 				<td>
@@ -168,6 +168,8 @@
 			function loadGridData() {
 				let params = new Object();
 				let url = getCallUrl("/workspace/agree");
+				let approvalTitle = document.getElementById("approvalTitle").value;
+				params.approvalTitle = approvalTitle;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

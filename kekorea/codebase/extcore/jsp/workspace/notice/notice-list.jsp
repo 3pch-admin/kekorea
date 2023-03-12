@@ -35,7 +35,7 @@
 				</td>
 				<th>설명</th>
 				<td>
-					<input type="text" name="partCode" class="AXInput">
+					<input type="text" name="description" id="description" class="AXInput">
 				</td>
 				<th>작성자</th>
 				<td>
@@ -150,10 +150,11 @@
 				
 				// 검색 변수
 				let name = document.getElementById("name").value;
+				let name = document.getElementById("description").value;
 				
 				// 검색 변수 담기
 				params.name = name;
-				console.log(params);
+				params.description = description;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

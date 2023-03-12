@@ -43,11 +43,11 @@ JSONArray departments = new JSONArray(list);
 			<tr>
 				<th>이름</th>
 				<td>
-					<input type="text" name="partName" class="AXInput">
+					<input type="text" name="userName" id="userName" class="AXInput">
 				</td>
 				<th>아이디</th>
 				<td>
-					<input type="text" name="number" class="AXInput">
+					<input type="text" name="userId" id="userId" class="AXInput">
 				</td>
 				<th>부서</th>
 				<td>
@@ -344,6 +344,9 @@ JSONArray departments = new JSONArray(list);
 			function loadGridData() {
 				let params = new Object();
 				let url = getCallUrl("/org/list");
+				let userName = document.getElementById("userName").value;
+				let userId = document.getElementById("userId").value;
+				
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

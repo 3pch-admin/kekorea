@@ -23,6 +23,7 @@ import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
 import e3ps.workspace.PersistableLineMasterLink;
 import e3ps.workspace.dto.ApprovalLineDTO;
+import e3ps.workspace.notice.Notice;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.fc.PagingQueryResult;
@@ -686,6 +687,8 @@ public class WorkspaceHelper {
 	public Map<String, Object> agree(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
+		
+		String approvalTitle = (String) params.get("approvalTitle");  // 결재 제목
 
 		// 쿼리문 작성
 		QuerySpec query = new QuerySpec();
@@ -704,6 +707,10 @@ public class WorkspaceHelper {
 		}
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.MODIFY_TIMESTAMP, false);
 
+		if (!StringUtils.isNull(approvalTitle)) {
+			QuerySpecUtils.toLikeAnd(query, idx, ApprovalLine.class, ApprovalLine.NAME, approvalTitle);
+		}
+		
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {
@@ -733,7 +740,8 @@ public class WorkspaceHelper {
 		String creatorsOid = (String) params.get("creatorsOid");
 		String predate = (String) params.get("predate");
 		String postdate = (String) params.get("postdate");
-
+		String approvalTitle = (String) params.get("approvalTitle");
+		
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ApprovalLine.class, true);
 		int idx_m = query.appendClassList(ApprovalMaster.class, false);
@@ -744,10 +752,6 @@ public class WorkspaceHelper {
 		// 쿼리 수정할 예정
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, APPROVAL_APPROVING);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, APPROVAL_LINE);
-
-		if (!StringUtils.isNull(name)) {
-			QuerySpecUtils.toLikeAnd(query, idx, ApprovalLine.class, ApprovalLine.NAME, name);
-		}
 
 		if (!isAdmin) {
 			WTUser sessionUser = CommonUtils.sessionUser();
@@ -774,6 +778,14 @@ public class WorkspaceHelper {
 
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, true);
 
+		if (!StringUtils.isNull(name)) {
+			QuerySpecUtils.toLikeAnd(query, idx, ApprovalLine.class, ApprovalLine.NAME, name);
+		}
+		
+		if (!StringUtils.isNull(approvalTitle)) {
+			QuerySpecUtils.toLikeAnd(query, idx, ApprovalLine.class, ApprovalLine.NAME, approvalTitle);
+		}
+		
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {
@@ -798,7 +810,8 @@ public class WorkspaceHelper {
 	public Map<String, Object> receive(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
-
+		String approvalTitle = (String) params.get("approvalTitle");
+		
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ApprovalLine.class, true);
 		int idx_master = query.appendClassList(ApprovalMaster.class, true);
@@ -807,15 +820,18 @@ public class WorkspaceHelper {
 				WTAttributeNameIfc.ID_NAME, idx, idx_master);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, RECEIVE_READY);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, RECEIVE_LINE);
-
+		
 		WTUser sessionUser = CommonUtils.sessionUser();
 		if (!CommonUtils.isAdmin()) {
 			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, "ownership.owner.key.id",
 					sessionUser.getPersistInfo().getObjectIdentifier().getId());
 		}
-
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.MODIFY_TIMESTAMP, false);
-
+		
+		if (!StringUtils.isNull(approvalTitle)) {
+			QuerySpecUtils.toLikeAnd(query, idx, ApprovalLine.class, ApprovalLine.NAME, approvalTitle);
+		}
+		
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {
@@ -840,6 +856,8 @@ public class WorkspaceHelper {
 	public Map<String, Object> progress(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
+		String approvalTitle = (String) params.get("approvalTitle");
+		
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ApprovalMaster.class, true);
 
@@ -848,13 +866,16 @@ public class WorkspaceHelper {
 			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, "ownership.owner.key.id",
 					sessionUser.getPersistInfo().getObjectIdentifier().getId());
 		}
-
 		query.appendOpenParen();
 		QuerySpecUtils.toEqualsOr(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, APPROVAL_APPROVING);
 		QuerySpecUtils.toEqualsOr(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, AGREE_READY);
 		query.appendCloseParen();
-
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.MODIFY_TIMESTAMP, false);
+		
+		if (!StringUtils.isNull(approvalTitle)) {
+			QuerySpecUtils.toLikeAnd(query, idx, ApprovalMaster.class, ApprovalMaster.NAME, approvalTitle);
+		}
+		
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {
@@ -879,6 +900,8 @@ public class WorkspaceHelper {
 	public Map<String, Object> complete(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
+		String approvalTitle = (String) params.get("approvalTitle");
+		
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ApprovalMaster.class, true);
 
@@ -891,6 +914,10 @@ public class WorkspaceHelper {
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, MASTER_APPROVAL_COMPLETE);
 
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.MODIFY_TIMESTAMP, false);
+		
+		if (!StringUtils.isNull(approvalTitle)) {
+			QuerySpecUtils.toLikeAnd(query, idx, ApprovalMaster.class, ApprovalMaster.NAME, approvalTitle);
+		}
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {
@@ -915,6 +942,8 @@ public class WorkspaceHelper {
 	public Map<String, Object> reject(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
+		String approvalTitle = (String) params.get("approvalTitle");
+		
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ApprovalMaster.class, true);
 
@@ -930,6 +959,11 @@ public class WorkspaceHelper {
 		query.appendCloseParen();
 
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.MODIFY_TIMESTAMP, false);
+		
+		if (!StringUtils.isNull(approvalTitle)) {
+			QuerySpecUtils.toLikeAnd(query, idx, ApprovalMaster.class, ApprovalMaster.NAME, approvalTitle);
+		}
+		
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {

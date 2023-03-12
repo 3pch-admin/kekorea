@@ -15,6 +15,7 @@ import e3ps.org.PeopleInstallLink;
 import e3ps.org.PeopleMakLink;
 import e3ps.org.PeopleWTUserLink;
 import e3ps.org.dto.UserDTO;
+import e3ps.project.issue.Issue;
 import e3ps.workspace.ApprovalUserLine;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -143,6 +144,7 @@ public class OrgHelper {
 	public List<Map<Object, Object>> userList(Map<String, Object> param) {
 		List<Map<Object, Object>> list = new ArrayList<Map<Object, Object>>();
 		String key = (String) param.get("key");
+		
 		try {
 
 			QuerySpec query = new QuerySpec();
@@ -1145,12 +1147,20 @@ public class OrgHelper {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<UserDTO> list = new ArrayList<>();
 
+		String userName = (String) params.get("userName");
+		String userId = (String) params.get("userId");
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(People.class, true);
 
 		QuerySpecUtils.toBooleanAnd(query, idx, People.class, People.RESIGN, false);
 		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, false);
 
+		if (!StringUtils.isNull(userName)) {
+			QuerySpecUtils.toLikeAnd(query, idx, People.class, People.NAME, userName);
+		}
+		if (!StringUtils.isNull(userId)) {
+			QuerySpecUtils.toLikeAnd(query, idx, People.class, People.ID, userId);
+		}
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {

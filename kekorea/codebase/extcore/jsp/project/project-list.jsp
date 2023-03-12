@@ -29,21 +29,67 @@
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th>공지사항 제목</th>
+				<th>KEK 작번</th>
 				<td>
-					<input type="text" name="fileName" class="AXInput">
+					<input type="text" name="kekNumber"  id="kekNumber" class="AXInput">
 				</td>
-				<th>설명</th>
+				<th>발행일</th>
 				<td>
-					<input type="text" name="partCode" class="AXInput">
+					<input type="text" name="description" id="description" class="AXInput">
 				</td>
-				<th>작성자</th>
+				<th>KE 작번</th>
 				<td>
 					<input type="text" name="partName" class="AXInput">
 				</td>
-				<th>작성일</th>
+				<th>USER ID</th>
 				<td>
 					<input type="text" name="number" class="AXInput">
+				</td>
+			</tr>
+			<tr>
+				<th>작번 상태</th>
+				<td>
+					<input type="text" name="kekNumberState"  id="kekNumberState" class="AXInput">
+				</td>
+				<th>모델</th>
+				<td>
+					<input type="text" name="model" id="model" class="AXInput">
+				</td>
+				<th>거래처</th>
+				<td>
+					<input type="text" name="partName" class="AXInput">
+				</td>
+				<th>설치 장소</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+			</tr>
+			<tr>
+				<th>작번 유형</th>
+				<td>
+					<input type="text" name=""  id="" class="AXInput">
+				</td>
+				<th>기계 담당자</th>
+				<td>
+					<input type="text" name="" id="" class="AXInput">
+				</td>
+				<th>전기 담당자</th>
+				<td>
+					<input type="text" name="" class="AXInput">
+				</td>
+				<th>SW 담당자</th>
+				<td>
+					<input type="text" name="" class="AXInput">
+				</td>
+			</tr>
+			<tr>
+				<th>막종</th>
+				<td>
+					<input type="text" name=""  id="" class="AXInput">
+				</td>
+				<th>작업 내용</th>
+				<td colspan ="5">
+					<input type="text" name="description" id="description" class="AXInput">
 				</td>
 			</tr>
 		</table>
@@ -327,6 +373,11 @@
 			function loadGridData() {
 				let params = new Object();
 				let url = getCallUrl("/project/list");
+				
+				let kekNumber = document.getElementById("kekNumber").value;
+				let description = document.getElementById("description").value;
+				params.kekNumber = kekNumber;
+				params.description = description;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

@@ -26,7 +26,7 @@
 		<tr>
 			<th>템플릿 이름</th>
 			<td>
-				<input type="text" name="name" class="AXInput wid200">
+				<input type="text" name="templateName" id="templateName" class="AXInput wid200">
 			</td>
 			<th>기간</th>
 			<td>
@@ -134,6 +134,9 @@
 	function loadGridData() {
 		let params = new Object();
 		let url = getCallUrl("/template/list");
+		
+		let templateName = document.getElementById("templateName").value;
+		params.templateName = templateName;
 		AUIGrid.showAjaxLoader(myGridID);
 		params = form(params, "search_table");
 		parent.openLayer();
