@@ -301,7 +301,7 @@
 			}
 
 			function create() {
-				let url = getCallUrl("/request/create");
+				const url = getCallUrl("/request/create");
 				popup(url);
 			}
 
@@ -369,7 +369,7 @@
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-				let keyCode = event.keyCode || event.which;
+				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}
