@@ -60,20 +60,20 @@ JSONArray customers = (JSONArray) request.getAttribute("customers");
 <div id="grid_wrap" style="height: 455px; border-top: 1px solid #3180c3; margin-top: 5px;"></div>
 <script type="text/javascript">
 	let myGridID;
-	let maks =
+	const maks =
 <%=maks%>
-	let installs =
+	const installs =
 <%=installs%>
-	let customers =
+	const customers =
 <%=customers%>
 	;
-	let elecs =
+	const elecs =
 <%=elecs%>
 	;
-	let machines =
+	const machines =
 <%=machines%>
 	;
-	let softs =
+	const softs =
 <%=softs%>
 	;
 	let subListMap = {};
@@ -351,12 +351,12 @@ JSONArray customers = (JSONArray) request.getAttribute("customers");
 	}
 
 	function auiCellEditEndHandler(event) {
-		let dataField = event.dataField;
-		let item = event.item;
-		let rowIndex = event.rowIndex;
+		const dataField = event.dataField;
+		const item = event.item;
+		const rowIndex = event.rowIndex;
 		if (dataField === "mak_code") {
-			let mak = item.mak_code;
-			let url = getCallUrl("/commonCode/getChildrens?parentCode=" + mak + "&codeType=MAK");
+			const mak = item.mak_code;
+			const url = getCallUrl("/commonCode/getChildrens?parentCode=" + mak + "&codeType=MAK");
 			call(url, null, function(data) {
 				subListMap[mak] = data.list;
 			}, "GET");
@@ -364,7 +364,7 @@ JSONArray customers = (JSONArray) request.getAttribute("customers");
 	}
 
 	function readyHandler() {
-		let item = new Object();
+		const item = new Object();
 		AUIGrid.addRow(myGridID, item, "first");
 	}
 
@@ -375,9 +375,9 @@ JSONArray customers = (JSONArray) request.getAttribute("customers");
 			return false;
 		}
 
-		let params = new Object();
-		let url = getCallUrl("/request/create");
-		let addRows = AUIGrid.getAddedRowItems(myGridID); // 프로젝트
+		const params = new Object();
+		const url = getCallUrl("/request/create");
+		const addRows = AUIGrid.getAddedRowItems(myGridID); // 프로젝트
 		params.addRows = addRows
 		params.secondarys = toArray("secondarys");
 		call(url, params, function(data) {

@@ -265,7 +265,7 @@
 				});
 			}
 
-			const last = false;
+			let last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {

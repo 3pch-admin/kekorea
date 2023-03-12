@@ -463,7 +463,7 @@ String name = (String) request.getAttribute("name");
 				});
 			}
 
-			const last = false;
+			let last = false;
 			function vScrollChangeHandler(event) {
 				if (event.position == event.maxPosition) {
 					if (!last) {
