@@ -163,7 +163,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 							// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
 							return { "validate": isValid, "message": "DRAWING TITLE의 값은 공백을 입력 할 수 없습니다." };
 						}
-					},					
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -251,6 +251,19 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					editable : false,
 					renderer : {
 						type : "TemplateRenderer",
+					},
+					editRenderer: {
+						type: "InputEditRenderer",
+
+						// ID는 고유값만 가능하도록 에디팅 유효성 검사
+						validator: function (oldValue, newValue, item, dataField) {
+							let isValid = true;
+							if(newValue === "") {
+								isValid = false;
+							}
+							// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
+							return { "validate": isValid, "message": "첨부파일을 선택하세요." };
+						}
 					},
 					filter : {
 						showIcon : false,
@@ -414,10 +427,16 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
+					
 					if(isNull(item.name)) {
 						AUIGrid.showToastMessage(myGridID, i, 1, "DRAWING TITLE의 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
+					if(isNull(item.primary)) {
+						AUIGrid.showToastMessage(myGridID, i, 9, "첨부파일을 선택하세요.");
+						return false;
+					}
+					
 				}
 
 				params.addRows = addRows;
