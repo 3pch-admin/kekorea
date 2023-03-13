@@ -10,12 +10,10 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
-import wt.content.ContentHolder;
-import wt.fc.Item;
-import wt.ownership.Ownable;
+import wt.doc.WTDocument;
 import wt.util.WTException;
 
-@GenAsPersistable(superClass = Item.class, interfaces = { Ownable.class, ContentHolder.class },
+@GenAsPersistable(superClass = WTDocument.class,
 
 		properties = {
 
@@ -31,7 +29,7 @@ import wt.util.WTException;
 
 				@GeneratedForeignKey(name = "MeetingTemplateLink",
 
-						foreignKeyRole = @ForeignKeyRole(name = "template", type = MeetingTemplate.class,
+						foreignKeyRole = @ForeignKeyRole(name = "tiny", type = MeetingTemplate.class,
 
 								constraints = @PropertyConstraints(required = false)),
 

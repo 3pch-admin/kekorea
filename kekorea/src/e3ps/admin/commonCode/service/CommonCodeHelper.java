@@ -136,7 +136,7 @@ public class CommonCodeHelper {
 		int idx = query.appendClassList(CommonCode.class, true);
 
 		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
-		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.ENABLE, true);
+		QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, true);
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
 
 		QueryResult result = PersistenceHelper.manager.find(query);

@@ -234,7 +234,7 @@ ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks"
 					for (CommonCode mak : maks) {
 					%>
 					<li>
-						<a onclick="moveToPage(this, '/korea/list', '한국 생산 > 한국 생산(<%=mak.getName()%>)');"><%=mak.getName() %></a>
+						<a onclick="moveToPage(this, '/korea/list?code=<%=mak.getCode() %>', '한국 생산 > 한국 생산(<%=mak.getName()%>)');"><%=mak.getName() %></a>
 					</li>
 					<%
 					}

@@ -33,9 +33,7 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<input type="button" value="LOT 비교" title="LOT 비교" class="orange" onclick="_compare('lotNo');">
-			<input type="button" value="품번 비교" title="품번 비교" class="blue" onclick="_compare('partNo');">
-			<input type="button" value="전체 비교" title="전체 비교" class="red" onclick="_compare('');">
+			<input type="button" value="비교" title="비교" class="red" onclick="_compare('');">
 		</td>
 		<td class="right">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">

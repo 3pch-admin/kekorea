@@ -70,8 +70,6 @@ public class DocumentHelper {
 
 	public static final String ROOT = "/Default/문서";
 
-	public static final String OUTPUT_ROOT = "/Default/프로젝트";
-
 	public static final String OLDOUTPUT_ROOT = "/Default/문서/프로젝트";
 
 	public static final String ELEC_OUTPUT_ROOT = "/Default/프로젝트/전기_수배표";

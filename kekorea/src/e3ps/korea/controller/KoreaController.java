@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -27,8 +28,9 @@ public class KoreaController extends BaseController {
 
 	@Description(value = "한국 생산 차트 리스트 페이지")
 	@GetMapping(value = "/list")
-	public ModelAndView list() throws Exception {
+	public ModelAndView list(@RequestParam String code) throws Exception {
 		ModelAndView model = new ModelAndView();
+		model.addObject("code", code);
 		model.setViewName("/extcore/jsp/korea/korea-list.jsp");
 		return model;
 	}
@@ -51,7 +53,7 @@ public class KoreaController extends BaseController {
 
 	@Description(value = "한국 생산 차트 페이지")
 	@GetMapping(value = "/chart")
-	public ModelAndView chart() throws Exception {
+	public ModelAndView chart(@RequestParam String code) throws Exception {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = CommonUtils.sessionUser();
 		ArrayList<CommonCode> maks = OrgHelper.manager.getUserMaks(sessionUser);

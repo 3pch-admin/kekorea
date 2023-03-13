@@ -32,7 +32,7 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 		</td>
 		<th>회의록 템플릿 선택</th>
 		<td class="indent5">
-			<select name="template" id="template" class="width-300">
+			<select name="tiny" id="tiny" class="width-300">
 				<option value="">선택</option>
 				<%
 				for (Map<String, String> map : list) {
@@ -88,7 +88,7 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 		const url = getCallUrl("/meeting/create");
 		params.name = document.getElementById("name").value;
 		params.content = content;
-		params.template = document.getElementById("template").value;
+		params.tiny = document.getElementById("tiny").value;
 		params._addRows = _addRows
 		params.secondarys = toArray("secondarys");
 		call(url, params, function(data) {
@@ -116,9 +116,9 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 	document.addEventListener("DOMContentLoaded", function() {
 		// DOM이 로드된 후 실행할 코드 작성
 		loadTinymce();
-		const templateBox = document.getElementById("template");
-		templateBox.addEventListener("change", function() {
-			const value = templateBox.value;
+		const tinyBox = document.getElementById("tiny");
+		tinyBox.addEventListener("change", function() {
+			const value = tinyBox.value;
 			const url = getCallUrl("/meeting/getContent?oid=" + value);
 			call(url, null, function(data) {
 				if (data.result) {

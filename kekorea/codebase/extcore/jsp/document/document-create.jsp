@@ -8,6 +8,7 @@
 		<td class="right">
 			<input type="button" value="등록" title="등록" onclick="create();">
 			<input type="button" value="자가결재" title="자가결재" class="blue">
+			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
 	</tr>
 </table>
