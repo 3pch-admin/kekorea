@@ -101,50 +101,112 @@
 					dataField : "name", 
 					headerText : "특이사항 제목",
 					dataType : "string",
-					style : "left indent10 underline",
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "content",
 					headerText : "설명",
 					dataType : "string",
 					width : 350,
-					style : "left indent10"
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "kekNumber",
 					headerText : "KEK 작번",
 					dataType : "string",
 					width : 100,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "keNumber",
 					headerText : "KE 작번",
 					dataType : "string",
-					width : 100
+					width : 100,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "description",
 					headerText : "작업내용",
 					dataType : "string",
 					width : 350,
 					style : "left indent10"
+						filter : {
+							showIcon : true,
+							inline : true
+						},
 				}, {
 					dataField : "mak_name",
 					headerText : "막종",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "detail_name",
 					headerText : "막종상세",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "creator",
 					headerText : "작성자",
 					dataType : "string",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "createdDate",
 					headerText : "작성일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
-					width : 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				} ]
 			}
 

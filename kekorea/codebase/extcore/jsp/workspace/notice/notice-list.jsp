@@ -70,7 +70,13 @@
 					headerText : "공지사항 제목",
 					dataType : "string",
 					width : 350,
-					style : "left underline",
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -79,7 +85,13 @@
 					dataField : "description",
 					headerText : "내용",
 					dataType : "string",
-					style : "left",
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true

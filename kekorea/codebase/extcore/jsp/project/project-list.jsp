@@ -231,7 +231,6 @@
 					headerText : "KEK 작번",
 					dataType : "string",
 					width : 130,
-					style : "underline",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript", // 자바스크립 함수 호출로 사용하고자 하는 경우에 baseUrl 에 "javascript" 로 설정
@@ -249,7 +248,13 @@
 					headerText : "KE 작번",
 					dataType : "string",
 					width : 130,
-					style : "underline",
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true

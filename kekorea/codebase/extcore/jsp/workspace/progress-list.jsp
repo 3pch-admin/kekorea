@@ -51,7 +51,13 @@
 					dataField : "name",
 					headerText : "결재 제목",
 					dataType : "string",
-					style : "left indent10 underline",
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true

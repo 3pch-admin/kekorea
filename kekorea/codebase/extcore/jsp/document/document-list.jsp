@@ -135,6 +135,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					headerText : "문서제목",
 					dataType : "string",
 					width : 350,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -144,6 +151,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					headerText : "문서번호",
 					dataType : "string",
 					width : 120,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true

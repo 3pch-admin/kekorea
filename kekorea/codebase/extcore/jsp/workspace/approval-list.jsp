@@ -66,6 +66,13 @@
 					headerText : "확인",
 					dataType : "boolean",
 					width : 80,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
 					filter : {
 						showIcon : false,
 						inline : false
@@ -78,6 +85,13 @@
 					headerText : "구분",
 					dataType : "string",
 					width : 80,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -87,6 +101,13 @@
 					headerText : "역할",
 					dataType : "string",
 					width : 80,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -106,8 +127,8 @@
 					dataType : "string",
 					width : 150,
 					filter : {
-						showIcon : true,
-						inline : true
+						showIcon : false,
+						inline : false
 					},
 				}, {
 					dataField : "creator",
