@@ -17,6 +17,7 @@ import wt.clients.folder.FolderTaskLogic;
 import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
+import wt.doc.DocumentType;
 import wt.fc.PersistenceHelper;
 import wt.folder.Folder;
 import wt.folder.FolderEntry;
@@ -75,13 +76,14 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 			Meeting meeting = Meeting.newMeeting();
 			meeting.setNumber(MeetingHelper.manager.getNextNumber());
 			meeting.setName(name);
-			meeting.setContent(content);
-			meeting.setOwnership(CommonUtils.sessionOwner());
+			meeting.setDescription(content);
 
 			if (!StringUtils.isNull(tiny)) {
 				MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(tiny);
 				meeting.setTiny(meetingTemplate);
 			}
+
+			meeting.setDocType(DocumentType.toDocumentType("$$Meeting"));
 
 			Folder folder = FolderTaskLogic.getFolder(MeetingHelper.LOCATION, CommonUtils.getContainer());
 			FolderHelper.assignLocation((FolderEntry) meeting, folder);

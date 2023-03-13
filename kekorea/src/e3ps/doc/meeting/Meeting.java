@@ -15,19 +15,9 @@ import wt.util.WTException;
 
 @GenAsPersistable(superClass = WTDocument.class,
 
-		properties = {
-
-				@GeneratedProperty(name = "name", type = String.class, javaDoc = "희의록 제목", constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(index = true)),
-
-				@GeneratedProperty(name = "content", type = String.class, javaDoc = "희외록 내용", columnProperties = @ColumnProperties(columnType = ColumnType.BLOB)),
-
-				@GeneratedProperty(name = "state", type = String.class, constraints = @PropertyConstraints(required = true))
-
-		},
-
 		foreignKeys = {
 
-				@GeneratedForeignKey(name = "MeetingTemplateLink",
+				@GeneratedForeignKey(name = "MeetingTinyLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "tiny", type = MeetingTemplate.class,
 

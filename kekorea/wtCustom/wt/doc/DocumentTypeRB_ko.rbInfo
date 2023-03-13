@@ -7,3 +7,6 @@ $$Request.shortDescription=의뢰서
 
 $$Output.value=산출물
 $$Output.shortDescription=산출물
+
+$$Meeting.value=회의록
+$$Meeting.shortDescription=회의록

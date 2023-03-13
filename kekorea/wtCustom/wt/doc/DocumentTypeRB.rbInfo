@@ -28,3 +28,6 @@ $$Request.shortDescription=Request
 
 $$Output.value=Output
 $$Output.shortDescription=Output
+
+$$Meeting.value=Meeting
+$$Meeting.shortDescription=Meeting

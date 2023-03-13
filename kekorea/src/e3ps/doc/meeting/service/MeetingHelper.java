@@ -33,7 +33,7 @@ public class MeetingHelper {
 	public static final MeetingService service = ServiceFactory.getService(MeetingService.class);
 
 	// 회의록이 저장되어지는 폴더 위치 상수
-	public static final String LOCATION = "/Default/프로젝트/회의로";
+	public static final String LOCATION = "/Default/프로젝트/회의록";
 
 	public Map<String, Object> template(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();

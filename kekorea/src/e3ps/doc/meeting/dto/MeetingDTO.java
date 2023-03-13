@@ -57,7 +57,7 @@ public class MeetingDTO {
 		}
 		setName(meeting.getName());
 		setNumber(meeting.getNumber());
-		setContent(meeting.getContent());
+		setContent(meeting.getDescription());
 
 		if (project.getCustomer() != null) {
 			setCustomer_name(project.getCustomer().getName());
