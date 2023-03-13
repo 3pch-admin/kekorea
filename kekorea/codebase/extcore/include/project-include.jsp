@@ -108,6 +108,13 @@ if ("meeting".equals(obj)) {
 				<%
 				}
 				%>
+				<%
+					if(!Boolean.parseBoolean(multi)) {
+				%>
+				rowCheckToRadio : true
+				<%
+					}
+				%>
 			}
 			_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 			<%if ("view".equals(mode)) {%>

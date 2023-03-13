@@ -3,7 +3,7 @@
  * AUIGrid 에서 사용되는 메세지들을 정의합니다. - 한국어
  * 마지막 추가된 버전 : v3.0.12
  */
-AUIGridMessages = {
+var AUIGridMessages = {
 	/*
 	 * 그리드에 출력시킬 데이터가 없는 메세지
 	 */
@@ -146,3 +146,4 @@ AUIGridMessages = {
 	 */
 	checkHeaderText: ''
 };
+if (typeof window !== "undefined") window.AUIGridMessages = AUIGridMessages;

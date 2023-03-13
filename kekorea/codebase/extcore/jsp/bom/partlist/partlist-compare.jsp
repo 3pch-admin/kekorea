@@ -33,6 +33,7 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 <table class="button-table">
 	<tr>
 		<td class="left">
+			<input type="button" value="수량비교" title="수량비교" onclick="_compare('quantity');">
 			<input type="button" value="비교" title="비교" class="red" onclick="_compare('');">
 		</td>
 		<td class="right">
@@ -159,12 +160,21 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
 			// 그리드 공통속성 끝
 			rowStyleFunction : function(rowIndex, item) {
-				console.log(rowIndex);
-				console.log(item);
+			}
+		};
+
+		const _props = {
+			// 그리드 공통속성 시작
+			headerHeight : 30, // 헤더높이
+			rowHeight : 30, // 행 높이
+			showRowNumColumn : true, // 번호 행 출력 여부
+			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
+			// 그리드 공통속성 끝
+			rowStyleFunction : function(rowIndex, item) {
 			}
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-		_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
+		_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, _props);
 
 		// H스크롤 체인지 핸들러.
 		AUIGrid.bind(myGridID, "hScrollChange", function(event) {

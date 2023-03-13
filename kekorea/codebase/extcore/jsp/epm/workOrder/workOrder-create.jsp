@@ -18,27 +18,31 @@
 		<col width="*">
 	</colgroup>
 	<tr>
-		<th class="req">도면 일람표 명</th>
+		<th class="req lb">도면 일람표 명</th>
 		<td class="indent5">
 			<input type="text" name="name" id="name" class="AXInput width-500">
 		</td>
 	</tr>
 	<tr>
-		<th class="req">KEK 작번</th>
-		<td class="indent5">
+		<th class="req lb">KEK 작번</th>
+		<td>
 			<jsp:include page="/extcore/include/project-include.jsp">
+				<jsp:param value="" name="oid" />
 				<jsp:param value="create" name="mode" />
+				<jsp:param value="true" name="multi" />
+				<jsp:param value="" name="obj" />
+				<jsp:param value="150" name="height" />
 			</jsp:include>
 		</td>
 	</tr>
 	<tr>
-		<th class="req">작업 내용</th>
+		<th class="req lb">작업 내용</th>
 		<td class="indent5">
 			<textarea name="description" id="description" rows="8"></textarea>
 		</td>
 	</tr>
 	<tr>
-		<th>첨부파일</th>
+		<th class="lb">첨부파일</th>
 		<td class="indent5">
 			<jsp:include page="/extcore/include/secondary-include.jsp">
 				<jsp:param value="" name="oid" />

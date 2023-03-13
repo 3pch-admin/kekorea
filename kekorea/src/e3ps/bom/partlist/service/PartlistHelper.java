@@ -798,27 +798,11 @@ public class PartlistHelper {
 				Map<String, Object> data = result.get(i); // 기준
 				Map<String, Object> _data = _result.get(j); // 비교
 
-				if (compareType.equals("lotNo")) { // LOT NO 비교
-					String value = (String) data.get("lotNo");
-					String _value = (String) _data.get("lotNo");
-					if (value.equals(_value)) {
-						dataList.add(data);
-						_dataList.add(_data);
-						_result.remove(j);
-						break;
-					} else if (!value.equals(_value)) {
-						Map<String, Object> empty = new HashMap<String, Object>();
-						dataList.add(data);
-						_dataList.add(empty);
-						break;
-					}
-				} else if (compareType.equals("partNo")) {
-					String value = (String) data.get("partNo");
-					String _value = (String) _data.get("partNo");
-
-					System.out.println("value=" + value);
-					System.out.println("_value=" + _value);
-
+				if (compareType.equals("quantity")) { // LOT NO 비교
+					String value = (String) data.get("partNo") + "-" + (String) data.get("lotNo") + "-"
+							+ (int) data.get("quantity");
+					String _value = (String) _data.get("partNo") + "-" + (String) _data.get("lotNo") + "-"
+							+ (int) data.get("quantity");
 					if (value.equals(_value)) {
 						dataList.add(data);
 						_dataList.add(_data);

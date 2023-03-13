@@ -7,6 +7,8 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,7 +26,7 @@ import e3ps.epm.numberRule.service.NumberRuleHelper;
 public class NumberRuleController extends BaseController {
 
 	@Description(value = "KEK 도번 리스트 페이지")
-	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		ArrayList<CommonCode> sizes = CommonCodeHelper.manager.getArrayCodeList("SIZE");
@@ -39,13 +41,13 @@ public class NumberRuleController extends BaseController {
 		model.addObject("businessSectors", businessSectors);
 		model.addObject("classificationWritingDepartment", classificationWritingDepartment);
 		model.addObject("sizes", sizes);
-		model.setViewName("/jsp/epm/numberRule/numberRule-list.jsp");
+		model.setViewName("/extcore/jsp/epm/numberRule/numberRule-list.jsp");
 		return model;
 	}
 
 	@Description(value = "KEK 도번 리스트 가져 오는 함수")
 	@ResponseBody
-	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -61,7 +63,7 @@ public class NumberRuleController extends BaseController {
 
 	@Description(value = "KEK 도번 카테고리 등록 함수")
 	@ResponseBody
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	@PostMapping(value = "/create")
 	public Map<String, Object> create(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -77,7 +79,7 @@ public class NumberRuleController extends BaseController {
 	}
 
 	@Description(value = "KEK 도번 생성 페이지")
-	@RequestMapping(value = "/create", method = RequestMethod.GET)
+	@GetMapping(value = "/create")
 	public ModelAndView create() throws Exception {
 		ModelAndView model = new ModelAndView();
 		JSONArray drawingCompanys = CommonCodeHelper.manager.parseJson("DRAWING_COMPANY");
@@ -95,7 +97,7 @@ public class NumberRuleController extends BaseController {
 
 	@Description(value = "KEK 최종 도번 가져오기")
 	@ResponseBody
-	@RequestMapping(value = "/last", method = RequestMethod.GET)
+	@GetMapping(value = "/last")
 	public Map<String, Object> last(@RequestParam String number) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -110,7 +112,7 @@ public class NumberRuleController extends BaseController {
 	}
 
 	@Description(value = "KEK 도번 개정 페이지")
-	@RequestMapping(value = "/revise", method = RequestMethod.GET)
+	@GetMapping(value = "/revise")
 	public ModelAndView revise() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("popup:/epm/numberRule/numberRule-revise");
@@ -119,7 +121,7 @@ public class NumberRuleController extends BaseController {
 
 	@Description(value = "KEK 최종 도번 개정")
 	@ResponseBody
-	@RequestMapping(value = "/revise", method = RequestMethod.POST)
+	@PostMapping(value = "/revise")
 	public Map<String, Object> revise(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
