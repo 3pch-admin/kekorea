@@ -95,8 +95,15 @@
 					dataField : "name",
 					headerText : "수배표제목",
 					dataType : "string",
-					style : "left indent10 underline",
 					width : 300,
+					style : "left indent10",
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -124,7 +131,13 @@
 					headerText : "KEK 작번",
 					dataType : "string",
 					width : 100,
-					style : "underline",
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -134,7 +147,6 @@
 					headerText : "KE 작번",
 					dataType : "string",
 					width : 100,
-					style : "underline",
 					filter : {
 						showIcon : true,
 						inline : true
@@ -153,7 +165,6 @@
 					headerText : "작업내용",
 					dataType : "string",
 					width : 300,
-					style : "left",
 					filter : {
 						showIcon : true,
 						inline : true

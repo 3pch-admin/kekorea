@@ -1,13 +1,10 @@
-<<<<<<< HEAD
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-=======
 <%@page import="e3ps.project.output.service.OutputHelper"%>
 <%@page import="e3ps.doc.service.DocumentHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
->>>>>>> 8db48d85fa048d31fb382ee923c81dea0d96d4f9
 <!DOCTYPE html>
 <html>
 <head>

@@ -70,6 +70,7 @@
 					headerText : "공지사항 제목",
 					dataType : "string",
 					width : 350,
+					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript", 
@@ -85,6 +86,7 @@
 					dataField : "description",
 					headerText : "내용",
 					dataType : "string",
+					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript", 

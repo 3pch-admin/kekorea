@@ -107,9 +107,12 @@ JSONArray departments = new JSONArray(list);
 		</table>
 		<script type="text/javascript">
 			let myGridID;
-			const maks = <%=maks%>
-			const installs = <%=installs%>
-			const departments = <%=departments%>
+			const maks =
+		<%=maks%>
+			const installs =
+		<%=installs%>
+			const departments =
+		<%=departments%>
 			const dutys = [ "사장", "부사장", "PL", "TL" ];
 			function _layout() {
 				return [ {
@@ -118,9 +121,10 @@ JSONArray departments = new JSONArray(list);
 					dataType : "string",
 					width : 100,
 					editable : false,
+					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
-						baseUrl : "javascript", 
+						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
 						}
@@ -137,7 +141,7 @@ JSONArray departments = new JSONArray(list);
 					editable : false,
 					renderer : {
 						type : "LinkRenderer",
-						baseUrl : "javascript", 
+						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
 						}
@@ -375,16 +379,10 @@ JSONArray departments = new JSONArray(list);
 			}
 
 			function loadGridData() {
-<<<<<<< HEAD
-const params = new Object();
-const url = getCallUrl("/org/list");
-const userName = document.getElementById("userName").value;
-const userId = document.getElementById("userId").value;
-				
-=======
-				const url = getCallUrl("/org/list");
 				const params = new Object();
->>>>>>> 0289d759cfa7b3e8046244e1428ec2ce01758e1c
+				const userName = document.getElementById("userName").value;
+				const userId = document.getElementById("userId").value;
+				const url = getCallUrl("/org/list");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

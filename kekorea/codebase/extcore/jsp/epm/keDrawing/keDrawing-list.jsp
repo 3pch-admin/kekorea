@@ -144,7 +144,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					headerText : "DRAWING TITLE",
 					dataType : "string",
 					width : 300,
-<<<<<<< HEAD
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript", 
@@ -152,7 +151,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
 						}
 					},
-=======
 					editRenderer: {
 						type: "InputEditRenderer",
 
@@ -166,7 +164,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 							return { "validate": isValid, "message": "DRAWING TITLE의 값은 공백을 입력 할 수 없습니다." };
 						}
 					},					
->>>>>>> 2ae04d36eabf1842c826a48961105b5d9ec6a289
 					filter : {
 						showIcon : true,
 						inline : true

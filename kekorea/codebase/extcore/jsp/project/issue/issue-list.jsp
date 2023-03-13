@@ -57,8 +57,8 @@
 				<td>
 					<input type="text" name="number" class="AXInput">
 				</td>
-				</tr>
-				<tr>
+			</tr>
+			<tr>
 				<th>막종</th>
 				<td>
 					<input type="text" name="number" class="AXInput">
@@ -69,11 +69,12 @@
 				</td>
 				<th>작성일</th>
 				<td colspan="3">
-					<input type="text" name="partNamea" class="AXInput width-100"> ~
+					<input type="text" name="partNamea" class="AXInput width-100">
+					~
 					<input type="text" name="partNamea" class="AXInput width-100">
 				</td>
-				</tr>
-				<tr>				
+			</tr>
+			<tr>
 				<th>작업 내용</th>
 				<td colspan="7">
 					<input type="text" name="number" class="AXInput">
@@ -101,6 +102,7 @@
 					dataField : "name", 
 					headerText : "특이사항 제목",
 					dataType : "string",
+					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript", 
@@ -117,6 +119,7 @@
 					headerText : "설명",
 					dataType : "string",
 					width : 350,
+					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript", 
@@ -165,7 +168,7 @@
 					headerText : "작업내용",
 					dataType : "string",
 					width : 350,
-					style : "left indent10"
+					style : "left indent10",
 						filter : {
 							showIcon : true,
 							inline : true
@@ -242,7 +245,7 @@
 				const url = getCallUrl("/issue/list");
 				const issueName = document.getElementById("issueName").value;
 				const description = document.getElementById("description").value;
-				params.fileName = fileName;
+				params.issueName = issueName;
 				params.description = description;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();

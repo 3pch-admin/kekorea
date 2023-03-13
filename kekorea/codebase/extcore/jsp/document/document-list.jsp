@@ -135,6 +135,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					headerText : "문서제목",
 					dataType : "string",
 					width : 350,
+					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript", 
@@ -151,6 +152,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					headerText : "문서번호",
 					dataType : "string",
 					width : 120,
+					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript", 

@@ -120,11 +120,7 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 		</table>
 
 		<!-- 그리드 리스트 -->
-<<<<<<< HEAD
 		<div id="grid_wrap" style="height: 640px; border-top: 1px solid #3180c3;"></div>
-=======
-		<div id="grid_wrap" style="height: 605px; border-top: 1px solid #3180c3;"></div>
->>>>>>> 2a560b1a6a81614523a14df148180d7df422bba1
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {

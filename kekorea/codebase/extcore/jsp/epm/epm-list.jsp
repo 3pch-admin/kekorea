@@ -146,6 +146,7 @@
 					headerText : "파일이름",
 					dataType : "string",
 					width : 350,
+					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript", 
@@ -280,7 +281,7 @@
 					dataType : "string",
 					width : 100,
 					filter : {
-						showIcon : false
+						showIcon : false,
 						inline : false
 					},
 				} ]

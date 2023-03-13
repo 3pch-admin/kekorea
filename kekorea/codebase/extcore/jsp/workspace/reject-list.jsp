@@ -51,6 +51,7 @@
 					dataField : "name",
 					headerText : "결재 제목",
 					dataType : "string",
+					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript", 
