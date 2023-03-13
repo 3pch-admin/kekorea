@@ -31,13 +31,13 @@
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th class="req">결재 제목</th>
+				<th class="req lb">결재 제목</th>
 				<td class="indent5">
 					<input type="text" name="name" id="name" class="AXInput width-700">
 				</td>
 			</tr>
 			<tr>
-				<th class="req">결재 문서</th>
+				<th class="req lb">결재 문서</th>
 				<td>
 					<jsp:include page="/extcore/include/document-include.jsp">
 						<jsp:param value="" name="oid" />
@@ -49,7 +49,7 @@
 				</td>
 			</tr>
 			<tr>
-				<th class="req">결재</th>
+				<th class="req lb">결재</th>
 				<td>
 					<jsp:include page="/extcore/include/register-include.jsp">
 						<jsp:param value="300" name="height" />
@@ -60,7 +60,20 @@
 		<script type="text/javascript">
 			// 등록
 			function registerLine() {
-				
+				const url = getCallUrl("/document/register");
+				const params = new Object();
+				const _addRows = AUIGrid.getAddedRowItems(_myGridID); // 문사
+				const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_); // 결재
+				params.name = document.getElementById("name").value;
+				params._addRows = _addRows;
+				params._addRows_ = _addRows_;
+				console.log(params);
+// 				call(url, params, function(data) {
+// 					alert(data.msg);
+// 					if (data.result) {
+// 						document.location.href = getCallUrl("/workspace/approval");
+// 					}
+// 				})
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
@@ -70,6 +83,7 @@
 
 			window.addEventListener("resize", function() {
 				AUIGrid.bind(_myGridID);
+				AUIGrid.bind(_myGridID_);
 			});
 		</script>
 	</form>

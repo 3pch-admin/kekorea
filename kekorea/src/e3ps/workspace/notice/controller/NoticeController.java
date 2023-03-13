@@ -1,5 +1,6 @@
 package e3ps.workspace.notice.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.doc.meeting.dto.MeetingDTO;
+import e3ps.doc.meeting.service.MeetingHelper;
+import e3ps.workspace.notice.dto.NoticeDTO;
 import e3ps.workspace.notice.service.NoticeHelper;;
 
 @Controller
@@ -38,6 +42,31 @@ public class NoticeController extends BaseController {
 		try {
 			result = NoticeHelper.manager.list(params);
 			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+	
+
+	@Description(value = "공지사항 등록 페이지")
+	@GetMapping(value = "/create")
+	public ModelAndView create() throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("popup:/workspace/notice/notice-create");
+		return model;
+	}
+
+	@Description(value = "공지사항 등록")
+	@PostMapping(value = "/create")
+	@ResponseBody
+	public Map<String, Object> create(@RequestBody NoticeDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			NoticeHelper.service.create(dto);
+			result.put("result", SUCCESS);
+			result.put("msg", SAVE_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);

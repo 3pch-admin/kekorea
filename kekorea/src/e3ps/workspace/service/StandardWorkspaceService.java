@@ -1442,4 +1442,10 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 		}
 		return map;
 	}
+
+	@Override
+	public void register(Persistable persistable, ArrayList<Map<String, String>> _addRows_) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
 }

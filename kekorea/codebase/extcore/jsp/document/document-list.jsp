@@ -112,7 +112,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				<col width="*">
 			</colgroup>
 			<tr>
-				<td>
+				<td valign="top">
 					<jsp:include page="/extcore/include/folder-include.jsp">
 						<jsp:param value="<%=DocumentHelper.ROOT%>" name="location" />
 						<jsp:param value="product" name="container" />

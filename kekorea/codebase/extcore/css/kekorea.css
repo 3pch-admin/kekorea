@@ -75,6 +75,23 @@ div.include {
 	border-bottom: none;
 }
 
+/** border 공통 CSS **/
+.tb {
+	border-top: 1px solid #a6a6a6;
+}
+
+.rb {
+	border-right: 1px solid #a6a6a6;
+}
+
+.lb {
+	border-left: 1px solid #a6a6a6;
+}
+
+.bb {
+	border-bottom: 1px solid #a6a6a6;
+}
+
 /** 검색 테이블 CSS **/
 table.search-table {
 	width: 100%;
@@ -259,7 +276,7 @@ table.create-table th {
 	background-color: #f2f2f2;
 	height: 30px;
 	border-bottom: 1px solid #a6a6a6;
-	border-left: 1px solid #a6a6a6;
+/* 	border-left: 1px solid #a6a6a6; */
 	padding-bottom: 4px;
 }
 

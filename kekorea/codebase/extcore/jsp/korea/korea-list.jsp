@@ -4,6 +4,9 @@
 <%@page import="e3ps.admin.commonCode.CommonCodeType"%>
 <%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+String code = (String) request.getAttribute("code");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,7 +25,7 @@
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<!-- 차트 프레임 -->
-		<iframe src="/Windchill/plm/korea/chart" style="height: 450px;"></iframe>
+		<iframe src="/Windchill/plm/korea/chart?code=<%=code %>" style="height: 450px;"></iframe>
 		<!-- 차트 프레임 //-->
 		<table class="button-table">
 			<tr>

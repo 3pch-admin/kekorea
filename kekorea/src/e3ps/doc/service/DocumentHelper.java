@@ -70,8 +70,6 @@ public class DocumentHelper {
 
 	public static final String ROOT = "/Default/문서";
 
-	public static final String OUTPUT_ROOT = "/Default/프로젝트";
-
 	public static final String OLDOUTPUT_ROOT = "/Default/문서/프로젝트";
 
 	public static final String ELEC_OUTPUT_ROOT = "/Default/프로젝트/전기_수배표";
@@ -2395,75 +2393,7 @@ public class DocumentHelper {
 			map.put("result", "FAIL");
 			e.printStackTrace();
 		}
-		return map;
-	}
 
-	public Map<String, Object> setNumber(Map<String, Object> param) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-		String loc = (String) param.get("loc");
-
-		String preFix = "KEK";
-
-		String[] aa = loc.split("/");
-
-		for (String nn : aa) {
-			if ("공용".equals(nn)) {
-				preFix = "CM";
-				break;
-			} else if ("프로젝트".equals(nn)) {
-				preFix = "PJ";
-				break;
-			} else if ("기술".equals(nn)) {
-				preFix = "TE";
-				break;
-			} else if ("특허".equals(nn)) {
-				preFix = "PA";
-				break;
-			} else if ("설계관리".equals(nn)) {
-				preFix = "MA";
-				break;
-			}
-		}
-
-		try {
-			Calendar ca = Calendar.getInstance();
-			int month = ca.get(Calendar.MONTH) + 1;
-			int year = ca.get(Calendar.YEAR);
-			DecimalFormat df = new DecimalFormat("00");
-			String number = preFix + "-" + df.format(year).substring(2) + df.format(month) + "-";
-
-			QuerySpec query = new QuerySpec();
-			int idx = query.appendClassList(WTDocument.class, true);
-
-			SearchCondition sc = new SearchCondition(WTDocument.class, WTDocument.NUMBER, "LIKE",
-					number.toUpperCase() + "%");
-			query.appendWhere(sc, new int[] { idx });
-
-			ClassAttribute attr = new ClassAttribute(WTDocument.class, WTDocument.NUMBER);
-			OrderBy orderBy = new OrderBy(attr, true);
-			query.appendOrderBy(orderBy, new int[] { idx });
-
-			QueryResult result = PersistenceHelper.manager.find(query);
-			if (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				WTDocument document = (WTDocument) obj[0];
-
-				String s = document.getNumber().substring(document.getNumber().lastIndexOf("-") + 1);
-
-				int ss = Integer.parseInt(s) + 1;
-				DecimalFormat d = new DecimalFormat("0000");
-				number += d.format(ss);
-			} else {
-				number += "0001";
-			}
-
-			map.put("number", number);
-			map.put("result", SUCCESS);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			map.put("result", FAIL);
-		}
 		return map;
 	}
 
@@ -2483,11 +2413,10 @@ public class DocumentHelper {
 		QuerySpecUtils.toInnerJoin(query, WTDocument.class, WTDocumentMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_master);
 
-		if(!StringUtils.isNull(oid)) {
-			
+		if (!StringUtils.isNull(oid)) {
+
 		}
-		
-		
+
 		// 최신 이터레이션.
 		if (latest) {
 			QuerySpecUtils.toIteration(query, idx, WTDocument.class);
@@ -2507,5 +2436,60 @@ public class DocumentHelper {
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
 		return map;
+	}
+
+	public String setNumber(Map<String, Object> params) throws Exception {
+		String oid = (String) params.get("oid");
+		Folder folder = (Folder) CommonUtils.getObject(oid);
+		String loc = folder.getLocation();
+		String preFix = "KEK";
+
+		String[] aa = loc.split("/");
+		System.out.println("===" + loc);
+		for (String nn : aa) {
+			System.out.println("n=" + nn);
+			if ("공용".equals(nn)) {
+				preFix = "CM";
+				break;
+			} else if ("프로젝트".equals(nn)) {
+				preFix = "PJ";
+				break;
+			} else if ("기술".equals(nn)) {
+				preFix = "TE";
+				break;
+			} else if ("특허".equals(nn)) {
+				preFix = "PA";
+				break;
+			} else if ("설계관리".equals(nn)) {
+				preFix = "MA";
+				break;
+			}
+		}
+
+		Calendar ca = Calendar.getInstance();
+		int month = ca.get(Calendar.MONTH) + 1;
+		int year = ca.get(Calendar.YEAR);
+		DecimalFormat df = new DecimalFormat("00");
+		String number = preFix + "-" + df.format(year).substring(2) + df.format(month) + "-";
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WTDocument.class, true);
+		QuerySpecUtils.toLikeRightAnd(query, idx, WTDocument.class, WTDocument.NUMBER, number);
+		QuerySpecUtils.toOrderBy(query, idx, WTDocument.class, WTDocument.NUMBER, true);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WTDocument document = (WTDocument) obj[0];
+
+			String s = document.getNumber().substring(document.getNumber().lastIndexOf("-") + 1);
+
+			int ss = Integer.parseInt(s) + 1;
+			DecimalFormat d = new DecimalFormat("0000");
+			number += d.format(ss);
+		} else {
+			number += "0001";
+		}
+		return number;
 	}
 }

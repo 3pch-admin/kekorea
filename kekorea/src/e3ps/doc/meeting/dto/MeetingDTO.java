@@ -20,10 +20,9 @@ public class MeetingDTO {
 	private String poid;
 	private String loid;
 	private String name;
+	private String number;
 	private String projectType_name;
 	private String content;
-	private String template;
-	private String template_name;
 	private String customer_name;
 	private String install_name;
 	private String mak_name;
@@ -40,7 +39,8 @@ public class MeetingDTO {
 
 	// 변수 담기 용도
 	private ArrayList<Map<String, String>> _addRows = new ArrayList<>();
-	private String[] secondarys = null;
+	private ArrayList<String> secondarys = new ArrayList<>();
+	private String tiny;
 
 	public MeetingDTO() {
 
@@ -56,12 +56,9 @@ public class MeetingDTO {
 			setProjectType_name(project.getProjectType().getName());
 		}
 		setName(meeting.getName());
-		setContent(meeting.getContent());
+		setNumber(meeting.getNumber());
+		setContent(meeting.getDescription());
 
-		if (meeting.getTemplate() != null) {
-			setTemplate(meeting.getTemplate().getPersistInfo().getObjectIdentifier().getStringValue());
-			setTemplate(meeting.getTemplate().getName());
-		}
 		if (project.getCustomer() != null) {
 			setCustomer_name(project.getCustomer().getName());
 		}
@@ -83,7 +80,7 @@ public class MeetingDTO {
 		setDescription(project.getDescription());
 		setModel(project.getModel());
 		setPdate(project.getPDate());
-		setState(meeting.getState());
+		setState(meeting.getLifeCycleState().getDisplay());
 		setCreator(meeting.getOwnership().getOwner().getFullName());
 		setCreatedDate(meeting.getCreateTimestamp());
 	}

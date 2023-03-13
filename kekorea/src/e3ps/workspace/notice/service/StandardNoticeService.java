@@ -3,6 +3,13 @@ package e3ps.workspace.notice.service;
 import java.util.ArrayList;
 import java.util.Map;
 
+import e3ps.common.util.CommonUtils;
+import e3ps.workspace.notice.Notice;
+import e3ps.workspace.notice.dto.NoticeDTO;
+import wt.content.ApplicationData;
+import wt.content.ContentRoleType;
+import wt.content.ContentServerHelper;
+import wt.fc.PersistenceHelper;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
 import wt.util.WTException;
@@ -45,5 +52,39 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 				trs.rollback();
 		}
 
+	}
+
+	@Override
+	public void create(NoticeDTO dto) throws Exception {
+		String name = dto.getName();
+		String description = dto.getDescription();
+		ArrayList<String> secondarys = dto.getSecondarys();
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Notice notice = Notice.newNotice();
+			notice.setName(name);
+			notice.setDescription(description);
+			notice.setOwnership(CommonUtils.sessionOwner());
+			PersistenceHelper.manager.save(notice);
+
+			for (String secondary : secondarys) {
+				ApplicationData applicationData = ApplicationData.newApplicationData(meeting);
+				applicationData.setRole(ContentRoleType.SECONDARY);
+				PersistenceHelper.manager.save(applicationData);
+				ContentServerHelper.service.updateContent(notice, applicationData, secondary);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
 	}
 }

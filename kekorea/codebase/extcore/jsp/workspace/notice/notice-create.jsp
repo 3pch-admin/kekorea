@@ -2,9 +2,6 @@
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%
-ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.getAttribute("list");
-%>
 <!-- tinymce -->
 <%@include file="/extcore/include/tinymce.jsp"%>
 <!-- AUIGrid -->
@@ -21,41 +18,12 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 <table class="create-table">
 	<colgroup>
 		<col width="130">
-		<col width="700">
-		<col width="130">
-		<col width="700">
+		<col width="*">
 	</colgroup>
 	<tr>
-		<th class="req">회의록 제목</th>
+		<th class="req">공지사항 제목</th>
 		<td class="indent5">
 			<input type="text" name="name" id="name" class="AXInput width-500">
-		</td>
-		<th>회의록 템플릿 선택</th>
-		<td class="indent5">
-			<select name="tiny" id="tiny" class="width-300">
-				<option value="">선택</option>
-				<%
-				for (Map<String, String> map : list) {
-					String value = map.get("oid");
-					String name = map.get("name");
-				%>
-				<option value="<%=value%>"><%=name%></option>
-				<%
-				}
-				%>
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<th class="req">KEK 작번</th>
-		<td colspan="3">
-			<jsp:include page="/extcore/include/project-include.jsp">
-				<jsp:param value="" name="oid" />
-				<jsp:param value="create" name="mode" />
-				<jsp:param value="true" name="multi" />
-				<jsp:param value="" name="obj" />
-				<jsp:param value="250" name="height" />
-			</jsp:include>
 		</td>
 	</tr>
 	<tr>
@@ -114,26 +82,9 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
-		// DOM이 로드된 후 실행할 코드 작성
 		loadTinymce();
-		const tinyBox = document.getElementById("tiny");
-		tinyBox.addEventListener("change", function() {
-			const value = tinyBox.value;
-			const url = getCallUrl("/meeting/getContent?oid=" + value);
-			call(url, null, function(data) {
-				if (data.result) {
-					tinymce.activeEditor.setContent(data.content);
-				} else {
-					alert(data.msg);
-				}
-			}, "GET");
-		})
-		// 작번 추가 그리드
-		_createAUIGrid(_columns);
-		AUIGrid.resize(_myGridID);
 	});
 
 	window.addEventListener("resize", function() {
-		AUIGrid.resize(_myGridID);
 	});
 </script>

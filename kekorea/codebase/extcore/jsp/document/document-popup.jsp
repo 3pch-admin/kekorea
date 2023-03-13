@@ -62,11 +62,12 @@ boolean multi = (boolean) request.getAttribute("multi");
 		<col width="*">
 	</colgroup>
 	<tr>
-		<td>
+		<td valign="top">
 			<jsp:include page="/extcore/include/folder-include.jsp">
 				<jsp:param value="<%=DocumentHelper.ROOT%>" name="location" />
 				<jsp:param value="product" name="container" />
 				<jsp:param value="list" name="mode" />
+				<jsp:param value="665" name="height" />
 			</jsp:include>
 		</td>
 		<td>&nbsp;</td>
@@ -212,13 +213,9 @@ boolean multi = (boolean) request.getAttribute("multi");
 					useContextMenu : true,
 					// 그리드 공통속성 끝
 					showRowCheckColumn : true,
-					<%
-						if(!multi) {
-					%>
+					<%if (!multi) {%>
 					rowCheckToRadio : true
-					<%
-						}
-					%>
+					<%}%>
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);

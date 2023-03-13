@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import e3ps.common.Constants;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.meeting.Meeting;
@@ -14,10 +13,15 @@ import e3ps.doc.meeting.MeetingTemplate;
 import e3ps.doc.meeting.dto.MeetingDTO;
 import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.project.Project;
+import wt.clients.folder.FolderTaskLogic;
 import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
+import wt.doc.DocumentType;
 import wt.fc.PersistenceHelper;
+import wt.folder.Folder;
+import wt.folder.FolderEntry;
+import wt.folder.FolderHelper;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
 import wt.util.WTException;
@@ -62,23 +66,27 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 	public void create(MeetingDTO dto) throws Exception {
 		String name = dto.getName();
 		String content = dto.getContent();
-		String template = dto.getTemplate();
+		String tiny = dto.getTiny();
 		ArrayList<Map<String, String>> _addRows = dto.get_addRows();
-		String[] secondarys = dto.getSecondarys();
+		ArrayList<String> secondarys = dto.getSecondarys();
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
 			Meeting meeting = Meeting.newMeeting();
+			meeting.setNumber(MeetingHelper.manager.getNextNumber());
 			meeting.setName(name);
-			meeting.setContent(content);
-			meeting.setOwnership(CommonUtils.sessionOwner());
-			meeting.setState(Constants.State.INWORK);
+			meeting.setDescription(content);
 
-			if (!StringUtils.isNull(template)) {
-				MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(template);
-				meeting.setTemplate(meetingTemplate);
+			if (!StringUtils.isNull(tiny)) {
+				MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(tiny);
+				meeting.setTiny(meetingTemplate);
 			}
+
+			meeting.setDocType(DocumentType.toDocumentType("$$Meeting"));
+
+			Folder folder = FolderTaskLogic.getFolder(MeetingHelper.LOCATION, CommonUtils.getContainer());
+			FolderHelper.assignLocation((FolderEntry) meeting, folder);
 
 			PersistenceHelper.manager.save(meeting);
 
@@ -142,7 +150,7 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 
 			for (MeetingDTO remove : removeRows) {
 				String oid = remove.getLoid();
-				MeetingProjectLink link = (MeetingProjectLink)CommonUtils.getObject(oid);
+				MeetingProjectLink link = (MeetingProjectLink) CommonUtils.getObject(oid);
 				PersistenceHelper.manager.delete(link);
 			}
 

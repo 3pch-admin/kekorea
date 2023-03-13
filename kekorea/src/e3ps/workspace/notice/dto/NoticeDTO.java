@@ -1,6 +1,7 @@
 package e3ps.workspace.notice.dto;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import e3ps.common.util.AUIGridUtils;
 import e3ps.workspace.notice.Notice;
@@ -17,6 +18,9 @@ public class NoticeDTO {
 	private String creator;
 	private Timestamp createdDate;
 	private String primary;
+
+	// 변수용
+	private ArrayList<String> secondarys = new ArrayList<>();
 
 	public NoticeDTO() {
 

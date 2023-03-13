@@ -29,6 +29,7 @@ import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
+import e3ps.workspace.service.WorkspaceHelper;
 import wt.clients.folder.FolderTaskLogic;
 import wt.clients.vc.CheckInOutTaskLogic;
 import wt.doc.WTDocument;
@@ -1059,5 +1060,44 @@ public class StandardDocumentService extends StandardManager implements Document
 			if (trs != null)
 				trs.rollback();
 		}
+	}
+
+	@Override
+	public void register(Map<String, Object> params) throws Exception {
+		String name = (String)params.get("name");
+		ArrayList<Map<String, String>> _addRows =(ArrayList<Map<String, String>>)params.get("_addRows");
+		ArrayList<Map<String, String>> _addRows_ =(ArrayList<Map<String, String>>)params.get("_addRows_");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+			
+			ApprovalContract contract = ApprovalContract.newApprovalContract();
+			contract.setName(name);
+			contract.setStartTime(new Timestamp(new Date().getTime()));
+			contract.setState(WorkspaceHelper.APPROVAL_APPROVING);
+			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
+
+			for(Map<String, String> _addRow : _addRows) {
+				String oid = _addRow.get("oid");
+				WTDocument document = (WTDocument)CommonUtils.getObject(oid)
+				ApprovalContractPersistableLink aLink = ApprovalContractPersistableLink
+						.newApprovalContractPersistableLink(contract, document);
+				PersistenceHelper.manager.save(aLink);
+			}
+
+
+			WorkspaceHelper.service.register(contract, _addRows_);
+			
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+
 	}
 }

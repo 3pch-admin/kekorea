@@ -37,46 +37,25 @@ public class StandardSpecService extends StandardManager implements SpecService 
 				String codeType = dto.getCodeType();
 				String description = dto.getDescription();
 				boolean enable = dto.isEnable();
-				String _$parent = dto.get_$parent();
 				int sort = dto.getSort();
+				String _$parent = dto.get_$parent();
 				ArrayList<CommonCodeDTO> children = dto.getChildren();
 
-				if ("SPEC".equals(codeType)) {
-					CommonCode parent = CommonCode.newCommonCode();
-					parent.setName(name);
-					parent.setCode(code);
-					parent.setDescription(description);
-					parent.setEnable(enable);
-					parent.setSort(sort);
-					parent.setCodeType(CommonCodeType.toCommonCodeType(codeType));
-					PersistenceHelper.manager.save(parent);
-
-					for (int i = 0; i < children.size(); i++) {
-						CommonCodeDTO dd = (CommonCodeDTO) children.get(i);
-						CommonCode child = CommonCode.newCommonCode();
-						child.setName(dd.getName());
-						child.setCode(dd.getCode());
-						child.setCodeType(CommonCodeType.toCommonCodeType(dd.getCodeType()));
-						child.setDescription(dd.getDescription());
-						child.setParent(parent);
-						child.setSort(dd.getSort());
-						child.setEnable(dd.isEnable());
-						PersistenceHelper.manager.save(child);
-					}
-				} else if ("OPTION".equals(codeType)) {
-					if (_$parent.indexOf("CommonCode") > -1) {
-						CommonCode parent = (CommonCode) CommonUtils.getObject(_$parent);
-						CommonCode optionCode = CommonCode.newCommonCode();
-						optionCode.setName(name);
-						optionCode.setCode(code);
-						optionCode.setDescription(description);
-						optionCode.setEnable(enable);
-						optionCode.setParent(parent);
-						optionCode.setSort(sort);
-						optionCode.setCodeType(CommonCodeType.toCommonCodeType(codeType));
-						PersistenceHelper.manager.save(optionCode);
-					}
+				CommonCode parent = null;
+				if (!StringUtils.isNull(_$parent) && _$parent.indexOf("CommonCode") > -1) {
+					parent = (CommonCode) CommonUtils.getObject(_$parent);
 				}
+
+				CommonCode commonCode = CommonCode.newCommonCode();
+				commonCode.setName(name);
+				commonCode.setCode(code);
+				commonCode.setCodeType(CommonCodeType.toCommonCodeType(codeType));
+				commonCode.setDescription(description);
+				commonCode.setSort(sort);
+				commonCode.setParent(parent);
+				commonCode.setEnable(enable);
+				PersistenceHelper.manager.save(commonCode);
+				save(commonCode, children);
 			}
 
 			for (CommonCodeDTO dto : editRows) {
@@ -86,19 +65,12 @@ public class StandardSpecService extends StandardManager implements SpecService 
 				String description = dto.getDescription();
 				boolean enable = dto.isEnable();
 				int sort = dto.getSort();
-				String parent_oid = dto.getParent_oid();
 				CommonCode commonCode = (CommonCode) CommonUtils.getObject(oid);
 				commonCode.setName(name);
 				commonCode.setCode(code);
 				commonCode.setSort(sort);
 				commonCode.setDescription(description);
 				commonCode.setEnable(enable);
-
-				if (!StringUtils.isNull(parent_oid)) {
-					CommonCode parent = (CommonCode) CommonUtils.getObject(parent_oid);
-					commonCode.setParent(parent);
-				}
-
 				PersistenceHelper.manager.modify(commonCode);
 			}
 
@@ -117,6 +89,29 @@ public class StandardSpecService extends StandardManager implements SpecService 
 		} finally {
 			if (trs != null)
 				trs.rollback();
+		}
+	}
+
+	// 어차피 도는 부분.. no transaction
+	private void save(CommonCode parentCode, ArrayList<CommonCodeDTO> list) throws Exception {
+		for (CommonCodeDTO dto : list) {
+			String name = dto.getName();
+			String code = dto.getCode();
+			String codeType = dto.getCodeType();
+			String description = dto.getDescription();
+			boolean enable = dto.isEnable();
+			int sort = dto.getSort();
+			ArrayList<CommonCodeDTO> children = dto.getChildren();
+			CommonCode commonCode = CommonCode.newCommonCode();
+			commonCode.setName(name);
+			commonCode.setCode(code);
+			commonCode.setCodeType(CommonCodeType.toCommonCodeType(codeType));
+			commonCode.setDescription(description);
+			commonCode.setSort(sort);
+			commonCode.setParent(parentCode);
+			commonCode.setEnable(enable);
+			PersistenceHelper.manager.save(commonCode);
+			save(commonCode, children);
 		}
 	}
 }

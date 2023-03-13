@@ -52,6 +52,7 @@
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('notice-list');">
+					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
@@ -192,6 +193,11 @@
 					parent.closeLayer();
 				})
 			}
+			
+			function create() {
+				const url = getCallUrl("/notice/create");
+				popup(url, 1200, 700);
+			}
 
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
@@ -200,7 +206,7 @@
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});
-
+			
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;

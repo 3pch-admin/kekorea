@@ -10,28 +10,16 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
-import wt.content.ContentHolder;
-import wt.fc.Item;
-import wt.ownership.Ownable;
+import wt.doc.WTDocument;
 import wt.util.WTException;
 
-@GenAsPersistable(superClass = Item.class, interfaces = { Ownable.class, ContentHolder.class },
-
-		properties = {
-
-				@GeneratedProperty(name = "name", type = String.class, javaDoc = "희의록 제목", constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(index = true)),
-
-				@GeneratedProperty(name = "content", type = String.class, javaDoc = "희외록 내용", columnProperties = @ColumnProperties(columnType = ColumnType.BLOB)),
-
-				@GeneratedProperty(name = "state", type = String.class, constraints = @PropertyConstraints(required = true))
-
-		},
+@GenAsPersistable(superClass = WTDocument.class,
 
 		foreignKeys = {
 
-				@GeneratedForeignKey(name = "MeetingTemplateLink",
+				@GeneratedForeignKey(name = "MeetingTinyLink",
 
-						foreignKeyRole = @ForeignKeyRole(name = "template", type = MeetingTemplate.class,
+						foreignKeyRole = @ForeignKeyRole(name = "tiny", type = MeetingTemplate.class,
 
 								constraints = @PropertyConstraints(required = false)),
 

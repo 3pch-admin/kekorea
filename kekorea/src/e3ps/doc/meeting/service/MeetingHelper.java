@@ -1,6 +1,8 @@
 package e3ps.doc.meeting.service;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,10 +16,14 @@ import e3ps.doc.meeting.dto.MeetingDTO;
 import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.project.Project;
 import net.sf.json.JSONArray;
+import wt.doc.WTDocumentMaster;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.query.ClassAttribute;
+import wt.query.OrderBy;
 import wt.query.QuerySpec;
+import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
 
@@ -27,7 +33,7 @@ public class MeetingHelper {
 	public static final MeetingService service = ServiceFactory.getService(MeetingService.class);
 
 	// 회의록이 저장되어지는 폴더 위치 상수
-	public static final String LOCATION = "/Default/프로젝트/회의로";
+	public static final String LOCATION = "/Default/프로젝트/회의록";
 
 	public Map<String, Object> template(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -138,4 +144,36 @@ public class MeetingHelper {
 		}
 		return JSONArray.fromObject(list);
 	}
+
+	public String getNextNumber() throws Exception {
+
+		Calendar ca = Calendar.getInstance();
+		int day = ca.get(Calendar.DATE);
+		int month = ca.get(Calendar.MONTH) + 1;
+		int year = ca.get(Calendar.YEAR);
+		DecimalFormat df = new DecimalFormat("00");
+		String number = "MEETING-" + df.format(year) + df.format(month) + df.format(day) + "-";
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WTDocumentMaster.class, true);
+
+		QuerySpecUtils.toLikeRightAnd(query, idx, WTDocumentMaster.class, WTDocumentMaster.NUMBER, number);
+		QuerySpecUtils.toOrderBy(query, idx, WTDocumentMaster.class, WTDocumentMaster.NUMBER, true);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WTDocumentMaster document = (WTDocumentMaster) obj[0];
+
+			String s = document.getNumber().substring(document.getNumber().lastIndexOf("-") + 1);
+
+			int ss = Integer.parseInt(s) + 1;
+			DecimalFormat d = new DecimalFormat("000");
+			number += d.format(ss);
+		} else {
+			number += "001";
+		}
+		return number;
+	}
+
 }
