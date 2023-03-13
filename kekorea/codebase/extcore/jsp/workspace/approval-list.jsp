@@ -57,7 +57,7 @@
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 500px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 715px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
@@ -66,13 +66,6 @@
 					headerText : "확인",
 					dataType : "boolean",
 					width : 80,
-					renderer : {
-						type : "LinkRenderer",
-						baseUrl : "javascript", 
-						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
-						}
-					},
 					filter : {
 						showIcon : false,
 						inline : false
@@ -116,7 +109,13 @@
 					dataField : "name",
 					headerText : "결재 제목",
 					dataType : "string",
-					style : "left indent10 underline",
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript", 
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true

@@ -25,20 +25,13 @@
 				<col width="*">
 				<col width="130">
 				<col width="*">
-				<col width="130">
-				<col width="*">
 			</colgroup>
 			<tr>
 				<th>수배표 제목</th>
 				<td>
 					<input type="text" name="fileName" class="AXInput">
 				</td>
-				<th>상태</th>
-				<td>
-					<select name="size" id="size" class="AXSelect w200">
-						<option value="">선택</option>
-					</select>
-				</td>
+
 				<th>KEK 작번</th>
 				<td>
 					<input type="text" name="partName" class="AXInput">
@@ -47,17 +40,11 @@
 				<td>
 					<input type="text" name="number" class="AXInput">
 				</td>
-				</tr>
-				<tr>
+			</tr>
+			<tr>
 				<th>설명</th>
 				<td>
 					<input type="text" name="number" class="AXInput">
-				</td>
-				<th>설계 구분</th>
-				<td>
-					<select name="size" id="size" class="AXSelect w200">
-						<option value="">선택</option>
-					</select>
 				</td>
 				<th>막종</th>
 				<td>
@@ -67,26 +54,40 @@
 				<td>
 					<input type="text" name="number" class="AXInput">
 				</td>
-				</tr>
-				<tr>
+			</tr>
+			<tr>
+				<th>상태</th>
+				<td>
+					<select name="size" id="size" class="AXSelect w200">
+						<option value="">선택</option>
+					</select>
+				</td>
 				<th>작성자</th>
 				<td>
 					<input type="text" name="number" class="AXInput">
 				</td>
 				<th>작성일</th>
-				<td colspan="5">
-					<input type="text" name="partNamea" class="AXInput width-100"> ~
+				<td>
+					<input type="text" name="partNamea" class="AXInput width-100">
+					~
 					<input type="text" name="partNamea" class="AXInput width-100">
 				</td>
-				</tr>
-				<tr>
+			</tr>
+			<tr>
+				<th>설계 구분</th>
+				<td>
+					<select name="size" id="size" class="AXSelect w200">
+						<option value="">선택</option>
+					</select>
+				</td>
 				<th>수정자</th>
 				<td>
 					<input type="text" name="number" class="AXInput">
 				</td>
 				<th>수정일</th>
-				<td colspan="5">
-					<input type="text" name="partNamea" class="AXInput width-100"> ~
+				<td>
+					<input type="text" name="partNamea" class="AXInput width-100">
+					~
 					<input type="text" name="partNamea" class="AXInput width-100">
 				</td>
 			</tr>
@@ -107,7 +108,7 @@
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 430px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 640px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
@@ -149,7 +150,7 @@
 					width : 300,
 					renderer : {
 						type : "LinkRenderer",
-						baseUrl : "javascript", 
+						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
 						}
@@ -185,7 +186,7 @@
 					width : 100,
 					renderer : {
 						type : "LinkRenderer",
-						baseUrl : "javascript", 
+						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
 						}

@@ -116,7 +116,7 @@
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 430px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 640px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {

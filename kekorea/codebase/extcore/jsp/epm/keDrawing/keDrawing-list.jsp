@@ -120,7 +120,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 390px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 610px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			let recentGridItem = null;

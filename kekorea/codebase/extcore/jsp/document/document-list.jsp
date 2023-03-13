@@ -117,13 +117,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						<jsp:param value="<%=DocumentHelper.ROOT%>" name="location" />
 						<jsp:param value="product" name="container" />
 						<jsp:param value="list" name="mode" />
-						<jsp:param value="460" name="height" />
+						<jsp:param value="680" name="height" />
 					</jsp:include>
 				</td>
 				<td>&nbsp;</td>
 				<td>
 					<!-- 그리드 리스트 -->
-					<div id="grid_wrap" style="height: 460px; border-top: 1px solid #3180c3;"></div>
+					<div id="grid_wrap" style="height: 680px; border-top: 1px solid #3180c3;"></div>
 				</td>
 			</tr>
 		</table>
