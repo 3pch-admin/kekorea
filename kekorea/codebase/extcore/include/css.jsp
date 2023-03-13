@@ -4,7 +4,7 @@
 <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:300&amp;subset=korean"> -->
 
 <!-- 공통 CSS -->
-<link rel="stylesheet" href="/Windchill/extcore/css/kekorea.css?v=13">
+<link rel="stylesheet" href="/Windchill/extcore/css/kekorea.css?v=16">
 <link rel="stylesheet" href="/Windchill/extcore/component/axisj/AXJ.min.css">
 
 <!-- axicon -->

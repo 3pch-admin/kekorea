@@ -48,7 +48,6 @@ String height = StringUtils.getParameter(request.getParameter("height"), "200");
 
 		function _createAUIGrid_(columnLayout) {
 			const props = {
-				rowIdField : "oid",
 				headerHeight : 30,
 				rowHeight : 30,
 				showRowNumColumn : true,

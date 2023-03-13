@@ -23,7 +23,7 @@ String root = DocumentHelper.ROOT;
 		<!-- info search -->
 		<jsp:include page="/jsp/common/search_info.jsp"></jsp:include>
 	</div>
-	<table class="container_table">
+	<table class="container-table">
 		<tr>
 			<!-- only folder tree.. -->
 			<jsp:include page="/jsp/common/layouts/include_tree.jsp">

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.admin.spec.service.SpecHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.doc.meeting.dto.MeetingDTO;
 import e3ps.doc.meeting.service.MeetingHelper;
@@ -50,8 +53,8 @@ public class ConfigSheetController extends BaseController {
 	@GetMapping(value = "/create")
 	public ModelAndView create() throws Exception {
 		ModelAndView model = new ModelAndView();
-		ArrayList<Map<String, String>> list = MeetingHelper.manager.getMeetingTemplateMap();
-		model.addObject("list", list);
+		JSONArray categorys = CommonCodeHelper.manager.parseJson("CATEGORY");
+		model.addObject("categorys", categorys);
 		model.setViewName("popup:/korea/configSheet/configSheet-create");
 		return model;
 	}

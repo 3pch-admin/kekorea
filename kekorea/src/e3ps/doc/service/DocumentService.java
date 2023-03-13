@@ -106,6 +106,8 @@ public interface DocumentService {
 	 * @throws WTException
 	 */
 	public abstract void reviseOutput(Map<String, Object> param ,Versioned versioned) throws WTException;
+
+	public abstract void register(Map<String, Object> params) throws Exception;
 	
 
 }

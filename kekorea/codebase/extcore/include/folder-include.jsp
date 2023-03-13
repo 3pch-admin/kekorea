@@ -13,6 +13,10 @@ String height = request.getParameter("height");
 		dataField : "name",
 		headerText : "폴더명",
 		dataType : "string",
+		filter : {
+			showIcon : true,
+			inline : true
+		},				
 	} ]
 
 	function _createAUIGrid(columnLayout) {
@@ -24,6 +28,9 @@ String height = request.getParameter("height");
 			rowNumHeaderText : "번호",
 			fillColumnSizeMode : true,
 			selectionMode: "singleRow",
+			enableFilter : true, // 필터 사용 여부
+			showInlineFilter : true,		
+			displayTreeOpen : true
 		}
 		_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 		loadFolderTree();

@@ -102,16 +102,9 @@ public class CommonCodeHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
 
-		SearchCondition sc = new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", codeType);
-		query.appendWhere(sc, new int[] { idx });
-		query.appendAnd();
-
-		sc = new SearchCondition(CommonCode.class, CommonCode.ENABLE, SearchCondition.IS_TRUE);
-		query.appendWhere(sc, new int[] { idx });
-
-		ClassAttribute ca = new ClassAttribute(CommonCode.class, CommonCode.NAME);
-		OrderBy by = new OrderBy(ca, false);
-		query.appendOrderBy(by, new int[] { idx });
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
+		QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, true);
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.SORT, false);
 
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
@@ -142,16 +135,9 @@ public class CommonCodeHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
 
-		SearchCondition sc = new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", codeType);
-		query.appendWhere(sc, new int[] { idx });
-		query.appendAnd();
-
-		sc = new SearchCondition(CommonCode.class, CommonCode.ENABLE, SearchCondition.IS_TRUE);
-		query.appendWhere(sc, new int[] { idx });
-
-		ClassAttribute ca = new ClassAttribute(CommonCode.class, CommonCode.NAME);
-		OrderBy by = new OrderBy(ca, false);
-		query.appendOrderBy(by, new int[] { idx });
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.ENABLE, true);
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
 
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {

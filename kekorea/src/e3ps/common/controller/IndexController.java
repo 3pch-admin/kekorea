@@ -1,5 +1,6 @@
 package e3ps.common.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import e3ps.admin.commonCode.CommonCode;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.FolderUtils;
+import e3ps.doc.meeting.service.MeetingHelper;
 import e3ps.korea.cip.service.CipHelper;
 import e3ps.org.dto.UserDTO;
 import e3ps.org.service.OrgHelper;
@@ -39,6 +42,8 @@ public class IndexController extends BaseController {
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		UserDTO data = new UserDTO(sessionUser);
 		boolean isAdmin = CommonUtils.isAdmin();
+		ArrayList<CommonCode> maks = OrgHelper.manager.getUserMaks(sessionUser);
+		model.addObject("maks", maks);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
 		model.setViewName("/extcore/layout/header.jsp");
@@ -68,4 +73,18 @@ public class IndexController extends BaseController {
 		}
 		return result;
 	}
+
+	@Description(value = "폴더 선택 페이지")
+	@GetMapping(value = "/folder")
+	public ModelAndView folder(@RequestParam String location, @RequestParam String container,
+			@RequestParam String method, @RequestParam String multi) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("location", location);
+		model.addObject("container", container);
+		model.addObject("method", method);
+		model.addObject("multi", Boolean.parseBoolean(multi));
+		model.setViewName("popup:/common/folder/folder-popup");
+		return model;
+	}
+
 }

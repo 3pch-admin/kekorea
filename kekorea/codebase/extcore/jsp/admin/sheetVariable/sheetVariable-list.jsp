@@ -165,7 +165,6 @@
 							return true;
 						},
 					},
-
 					filter : {
 						showIcon : true,
 						inline : true
@@ -220,7 +219,7 @@
 				}
 
 				const params = new Object();
-				const url = getCallUrl("/spec/save");
+				const url = getCallUrl("/sheetVariable/save");
 				const addRows = AUIGrid.getAddedRowItems(myGridID);
 				const removeRows = AUIGrid.getRemovedItems(myGridID);
 				const editRows = AUIGrid.getEditedRowItems(myGridID);

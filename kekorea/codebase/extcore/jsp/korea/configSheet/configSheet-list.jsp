@@ -1,3 +1,4 @@
+<%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -52,7 +53,7 @@
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('cssheet-list');">
+					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('configSheet-list');">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
@@ -224,7 +225,7 @@
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
-					// 그리드 공통속성 끝
+				// 그리드 공통속성 끝
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
@@ -282,14 +283,14 @@
 
 			// 등록
 			function create() {
-				const url = getCallUrl("/cssheet/create");
+				const url = getCallUrl("/configSheet/create");
 				popup(url);
 			}
 
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
-				const columns = loadColumnLayout("cssheet-list");
+				const columns = loadColumnLayout("configSheet-list");
 				createAUIGrid(columns);
 			});
 

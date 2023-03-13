@@ -1,4 +1,9 @@
+<%@page import="e3ps.bom.partlist.service.PartlistHelper"%>
+<%@page import="e3ps.doc.meeting.service.MeetingHelper"%>
 <%@page import="net.sf.json.JSONArray"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
@@ -8,15 +13,14 @@ String multi = StringUtils.getParameter(request.getParameter("multi"), "false");
 String obj = StringUtils.getParameter(request.getParameter("obj"));
 String height = StringUtils.getParameter(request.getParameter("height"), "150");
 JSONArray data = null;
-// 객체 마다 다르게
 %>
 <div class="include">
 	<%
 	// 등록 및 수정
 	if ("create".equals(mode) || "update".equals(mode)) {
 	%>
-	<input type="button" value="문서 추가" title="문서 추가" class="blue" onclick="_insert();">
-	<input type="button" value="문서 삭제" title="문서 삭제" class="red" onclick="_deleteRow();">
+	<input type="button" value="부품 추가" title="부품 추가" class="blue" onclick="_insert();">
+	<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="_deleteRow();">
 	<%
 	}
 	%>
@@ -24,25 +28,20 @@ JSONArray data = null;
 	<script type="text/javascript">
 		let _myGridID;
 		const _columns = [ {
-			dataField : "number",
-			headerText : "문서번호",
+			dataField : "dwgNo",
+			headerText : "DWG_NO",
 			dataType : "string",
-			width : 100
+			width : 200
 		}, {
 			dataField : "name",
-			headerText : "문서제목",
+			headerText : "NAME",
 			dataType : "string",
-			<%if ("view".equals(mode)) {%>
-			renderer : {
-				type : "LinkRenderer",
-				baseUrl : "javascript", // 자바스크립 함수 호출로 사용하고자 하는 경우에 baseUrl 에 "javascript" 로 설정
-				// baseUrl 에 javascript 로 설정한 경우, 링크 클릭 시 callback 호출됨.
-				jsCallback : function(rowIndex, columnIndex, value, item) {
-					const oid = item.oid;
-					alert(oid);
-				}
-			},			
-			<%}%>			
+			width : 250
+		}, {
+			dataField : "name_of_parts",
+			headerText : "NAME_OF_PARTS",
+			dataType : "string",
+			width : 250
 		}, {
 			dataField : "version",
 			headerText : "버전",
@@ -57,28 +56,24 @@ JSONArray data = null;
 			dataField : "creator",
 			headerText : "작성자",
 			dataType : "string",
-			width : 100
+			width : 100,
 		}, {
 			dataField : "createdDate",
 			headerText : "작성일",
 			dataType : "date",
-			formatString : "yyyy-mm-dd",
-			width : 100
-		},{
+			formatString :"yyyy-mm-dd",
+			width : 100,
+		}, {
 			dataField : "modifier",
 			headerText : "수정자",
 			dataType : "string",
-			width : 100
-		}, {
+			width : 100,
+		} , {
 			dataField : "modifiedDate",
 			headerText : "수정일",
 			dataType : "date",
-			formatString : "yyyy-mm-dd",
-			width : 100
-		}, {
-			dataField : "oid",
-			visible : false,
-			dataType : "string"
+			formatString :"yyyy-mm-dd",
+			width : 100,
 		} ]
 
 		function _createAUIGrid(columnLayout) {
@@ -92,9 +87,7 @@ JSONArray data = null;
 				showStateColumn : true, // 상태표시 행 출력 여부
 				softRemoveRowMode : false,
 				showRowCheckColumn : true, // 체크 박스 출력
-				<%
-				}
-				%>
+				<%}%>
 			}
 			_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 			<%if ("view".equals(mode)) {%>
@@ -104,16 +97,14 @@ JSONArray data = null;
 		// 등록 및 수정
 	<%if ("create".equals(mode) || "update".equals(mode)) {%>
 		function _insert() {
-			const url = getCallUrl("/document/popup?method=append&multi=<%=multi%>");
+			const url = getCallUrl("/project/popup?method=append&multi=<%=multi%>");
 			popup(url);
 		}
 	
 		function append(data) {
-// 			rowIdField : "oid",
 			for (let i = 0; i < data.length; i++) {
 				let item = data[i].item;
 				let isUnique = AUIGrid.isUniqueValue(_myGridID, "oid", item.oid);
-// 				alert(isUnique);
 				if (isUnique) {
 					AUIGrid.addRow(_myGridID, item, "first");
 				}
