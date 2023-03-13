@@ -234,3 +234,12 @@ function toArray(name) {
 	}
 	return array;
 }
+
+// auigrid 값 체크..
+function isNull(value) {
+	if (value === undefined) {
+		return true;
+	}
+	return false;
+}
+

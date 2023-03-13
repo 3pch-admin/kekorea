@@ -85,6 +85,7 @@
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true
 				}, {
 					dataField : "customer_name",
 					headerText : "거래처",
@@ -241,6 +242,7 @@
 					showInlineFilter : true,
 					// 그리드 공통속성 끝
 					showRowCheckColumn : true,
+					enableCellMerge : true,
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
