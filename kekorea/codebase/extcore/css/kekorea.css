@@ -193,6 +193,40 @@ input[type=text].width-800 {
 	width: 800px;
 }
 
+
+/** 셀렉트 박스 사이즈 CSS **/
+select.width-100 {
+	width: 100px;
+}
+
+select.width-200 {
+	width: 200px;
+}
+
+select.width-300 {
+	width: 300px;
+}
+
+select.width-400 {
+	width: 400px;
+}
+
+select.width-500 {
+	width: 500px;
+}
+
+select.width-600 {
+	width: 600px;
+}
+
+select.width-700 {
+	width: 700px;
+}
+
+select.width-800 {
+	width: 800px;
+}
+
 /** 버튼 꾸밈 CSS **/
 input[type="button"] {
 	display: inline-block;

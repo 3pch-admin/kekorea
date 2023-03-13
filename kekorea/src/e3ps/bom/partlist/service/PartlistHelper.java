@@ -817,6 +817,13 @@ public class PartlistHelper {
 				} else {
 					String value = (String) data.get("partNo") + "-" + (String) data.get("lotNo");
 					String _value = (String) _data.get("partNo") + "-" + (String) _data.get("lotNo");
+
+					System.out.println("value=" + value);
+					System.out.println("_value=" + _value);
+
+					System.out.println("i=" + i);
+					System.out.println("j=" + j);
+
 					if (value.equals(_value)) {
 						dataList.add(data);
 						_dataList.add(_data);

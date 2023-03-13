@@ -45,9 +45,9 @@ public class ProjectController extends BaseController {
 		String before = date.toString().substring(0, 10);
 		String end = DateUtils.getCurrentTimestamp().toString().substring(0, 10);
 
-		ArrayList<CommonCode> customers = CommonCodeHelper.manager.getArrayCodeList("CUSTOMER");
-		ArrayList<CommonCode> projectTypes = CommonCodeHelper.manager.getArrayCodeList("PROJECT_TYPE");
-		ArrayList<CommonCode> maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
+		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getArrayKeyValueMap("CUSTOMER");
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getArrayKeyValueMap("MAK");
+		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getArrayKeyValueMap("PROJECT_TYPE");
 		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
 
 		org.json.JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");

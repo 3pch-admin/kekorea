@@ -1,4 +1,9 @@
+<%@page import="java.util.Map"%>
+<%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) request.getAttribute("customers");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,26 +36,27 @@
 			<tr>
 				<th>KEK 작번</th>
 				<td>
-					<input type="text" name="kekNumber"  id="kekNumber" class="AXInput">
+					<input type="text" name="kekNumber" id="kekNumber" class="AXInput">
 				</td>
 				<th>발행일</th>
 				<td colspan="3">
-					<input type="text" name="partName" class="AXInput width-100"> ~
+					<input type="text" name="partName" class="AXInput width-100">
+					~
 					<input type="text" name="partName" class="AXInput width-100">
 				</td>
 				<th>KE 작번</th>
 				<td>
 					<input type="text" name="partName" class="AXInput">
 				</td>
-				</tr>
-				<tr>
+			</tr>
+			<tr>
 				<th>USER ID</th>
 				<td>
 					<input type="text" name="number" class="AXInput">
 				</td>
 				<th>작번 상태</th>
 				<td>
-					<select name="size" id="size" class="AXSelect w200">
+					<select name="size" id="size1" class="AXSelect w200">
 						<option value="">선택</option>
 					</select>
 				</td>
@@ -60,21 +66,19 @@
 				</td>
 				<th>거래처</th>
 				<td>
-					<select name="size" id="size" class="AXSelect w200">
+					<select name="size" id="size2" class="AXSelect w200">
 						<option value="">선택</option>
 					</select>
 				</td>
-				</tr>
-				<tr>
-				<th>설치 장소</th>
+			</tr>
+			<tr>
+				<th>설치장소</th>
 				<td>
-					<select name="size" id="size" class="AXSelect w200">
-						<option value="">선택</option>
-					</select>
+					<input type="text" name="install" id="install" class="AXInput width-200">
 				</td>
 				<th>작번 유형</th>
 				<td>
-					<select name="size" id="size" class="AXSelect w200">
+					<select name="size" id="size3" class="AXSelect w200">
 						<option value="">선택</option>
 					</select>
 				</td>
@@ -86,15 +90,15 @@
 				<td>
 					<input type="text" name="" class="AXInput">
 				</td>
-				</tr>
-				<tr>
+			</tr>
+			<tr>
 				<th>SW 담당자</th>
 				<td>
 					<input type="text" name="" class="AXInput">
 				</td>
 				<th>막종</th>
 				<td>
-					<input type="text" name=""  id="" class="AXInput">
+					<input type="text" name="" id="" class="AXInput">
 				</td>
 				<th>작업 내용</th>
 				<td colspan="3">
@@ -116,7 +120,11 @@
 		</table>
 
 		<!-- 그리드 리스트 -->
+<<<<<<< HEAD
 		<div id="grid_wrap" style="height: 640px; border-top: 1px solid #3180c3;"></div>
+=======
+		<div id="grid_wrap" style="height: 605px; border-top: 1px solid #3180c3;"></div>
+>>>>>>> 2a560b1a6a81614523a14df148180d7df422bba1
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
@@ -236,7 +244,9 @@
 						baseUrl : "javascript", // 자바스크립 함수 호출로 사용하고자 하는 경우에 baseUrl 에 "javascript" 로 설정
 						// baseUrl 에 javascript 로 설정한 경우, 링크 클릭 시 callback 호출됨.
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							const url = getCallUrl("/project/info?oid=" + oid);
+							popup(url);
 						}
 					},
 					filter : {
@@ -252,7 +262,9 @@
 						type : "LinkRenderer",
 						baseUrl : "javascript", 
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							const url = getCallUrl("/project/info?oid=" + oid);
+							popup(url);
 						}
 					},
 					filter : {
@@ -382,7 +394,7 @@
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
-					// 그리드 공통속성 끝
+				// 그리드 공통속성 끝
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
@@ -395,7 +407,7 @@
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/project/list");
-				
+
 				const kekNumber = document.getElementById("kekNumber").value;
 				const description = document.getElementById("description").value;
 				params.kekNumber = kekNumber;
@@ -441,6 +453,12 @@
 					parent.closeLayer();
 				})
 			}
+
+			$("#install").bindSelector({
+				finder : function() {
+
+				}
+			})
 
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {

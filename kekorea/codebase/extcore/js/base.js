@@ -80,6 +80,22 @@ function selectBox(id) {
 }
 
 /**
+ * Bind Selector
+ */
+
+function selector(id) {
+	$("#" + id).bindSelector({
+		optionPrintLength: "all",
+		onsearch: function(objID, objVal, callBack) {
+		},
+		finder: function() {
+
+		}
+	});
+}
+
+
+/**
  * 팝업창
  */
 function popup(url, width, height) {
