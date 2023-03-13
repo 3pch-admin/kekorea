@@ -49,12 +49,33 @@
 				<td>
 					<input type="text" name="description" id="description" class="AXInput">
 				</td>
-				<th>작성자</th>
+				<th>KEK 작번</th>
 				<td>
 					<input type="text" name="partName" class="AXInput">
 				</td>
-				<th>작성일</th>
+				<th>KE 작번</th>
 				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+				</tr>
+				<tr>
+				<th>막종</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+				<th>작성자</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+				<th>작성일</th>
+				<td colspan="3">
+					<input type="text" name="partNamea" class="AXInput width-100"> ~
+					<input type="text" name="partNamea" class="AXInput width-100">
+				</td>
+				</tr>
+				<tr>				
+				<th>작업 내용</th>
+				<td colspan="7">
 					<input type="text" name="number" class="AXInput">
 				</td>
 			</tr>
@@ -72,7 +93,7 @@
 			</tr>
 		</table>
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 460px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {

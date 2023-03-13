@@ -34,22 +34,25 @@
 					<input type="text" name="kekNumber"  id="kekNumber" class="AXInput">
 				</td>
 				<th>발행일</th>
-				<td>
-					<input type="text" name="description" id="description" class="AXInput">
+				<td colspan="3">
+					<input type="text" name="partName" class="AXInput width-100"> ~
+					<input type="text" name="partName" class="AXInput width-100">
 				</td>
 				<th>KE 작번</th>
 				<td>
 					<input type="text" name="partName" class="AXInput">
 				</td>
+				</tr>
+				<tr>
 				<th>USER ID</th>
 				<td>
 					<input type="text" name="number" class="AXInput">
 				</td>
-			</tr>
-			<tr>
 				<th>작번 상태</th>
 				<td>
-					<input type="text" name="kekNumberState"  id="kekNumberState" class="AXInput">
+					<select name="size" id="size" class="AXSelect w200">
+						<option value="">선택</option>
+					</select>
 				</td>
 				<th>모델</th>
 				<td>
@@ -57,17 +60,23 @@
 				</td>
 				<th>거래처</th>
 				<td>
-					<input type="text" name="partName" class="AXInput">
+					<select name="size" id="size" class="AXSelect w200">
+						<option value="">선택</option>
+					</select>
 				</td>
+				</tr>
+				<tr>
 				<th>설치 장소</th>
 				<td>
-					<input type="text" name="number" class="AXInput">
+					<select name="size" id="size" class="AXSelect w200">
+						<option value="">선택</option>
+					</select>
 				</td>
-			</tr>
-			<tr>
 				<th>작번 유형</th>
 				<td>
-					<input type="text" name=""  id="" class="AXInput">
+					<select name="size" id="size" class="AXSelect w200">
+						<option value="">선택</option>
+					</select>
 				</td>
 				<th>기계 담당자</th>
 				<td>
@@ -77,19 +86,19 @@
 				<td>
 					<input type="text" name="" class="AXInput">
 				</td>
+				</tr>
+				<tr>
 				<th>SW 담당자</th>
 				<td>
 					<input type="text" name="" class="AXInput">
 				</td>
-			</tr>
-			<tr>
 				<th>막종</th>
 				<td>
 					<input type="text" name=""  id="" class="AXInput">
 				</td>
 				<th>작업 내용</th>
-				<td colspan ="5">
-					<input type="text" name="description" id="description" class="AXInput">
+				<td colspan="3">
+					<input type="text" name="description" id="description" class="AXInput width-300">
 				</td>
 			</tr>
 		</table>
@@ -107,7 +116,7 @@
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 430px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {

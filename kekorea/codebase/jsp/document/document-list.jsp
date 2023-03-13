@@ -36,8 +36,8 @@ String root = DocumentHelper.ROOT;
 					<tr>
 						<th>문서분류</th>
 						<td colspan="7">
-							<%-- 				<input type="hidden" name="location" value="<%=root%>"> --%>
-							<%-- 				<span id="location"><%=root%></span> --%>
+							<input type="hidden" name="location" value="<%=root%>">
+							<span id="location"><%=root%></span>
 						</td>
 					</tr>
 					<tr>
@@ -204,7 +204,7 @@ String root = DocumentHelper.ROOT;
 			$("input[name=sessionid]").val(data.sessionid);
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
-// 			parent.close();
+			// 			parent.close();
 			parent.closeLayer();
 		})
 	}

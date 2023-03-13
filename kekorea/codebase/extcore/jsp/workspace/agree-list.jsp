@@ -23,21 +23,22 @@
 				<col width="*">
 				<col width="130">
 				<col width="*">
-				<col width="130">
-				<col width="*">
 			</colgroup>
 			<tr>
 				<th>결재 제목</th>
-				<td>
-					<input type="text" name="approvalTitle" id="approvalTitle" class="AXInput">
+				<td colspan="3">
+					<input type="text" name="approvalTitle" id="approvalTitle" class="AXInput width-300">
 				</td>
+			</tr>
+			<tr>
 				<th>기안자</th>
 				<td>
 					<input type="text" name="partCode" class="AXInput">
 				</td>
 				<th>수신일</th>
 				<td>
-					<input type="text" name="partName" class="AXInput">
+					<input type="text" name="partName" class="AXInput width-100"> ~
+					<input type="text" name="partName" class="AXInput width-100">
 				</td>
 			</tr>
 		</table>
@@ -55,7 +56,7 @@
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 500px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
@@ -189,7 +190,6 @@
 					}
 				}
 			}
-
 			function requestAdditionalData() {
 				const params = new Object();
 				const curPage = document.getElementById("curPage").value;

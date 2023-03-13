@@ -121,7 +121,7 @@ ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) 
 			</td>
 		</tr>
 	</table>
-	<div id="grid_wrap" style="height: 660px; border-top: 1px solid #3180c3;"></div>
+	<div id="grid_wrap" style="height: 450px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;

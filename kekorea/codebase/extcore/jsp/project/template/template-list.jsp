@@ -25,25 +25,35 @@
 				<col width="*">
 				<col width="130">
 				<col width="*">
-				<col width="130">
-				<col width="*">
 			</colgroup>
 			<tr>
-				<th>공지사항 제목</th>
+				<th>템플릿 제목</th>
 				<td>
-					<input type="text" name="fileName" id="fileName" class="AXInput">
-				</td>
-				<th>설명</th>
-				<td>
-					<input type="text" name="description" id="description" class="AXInput">
+					<input type="text" name="templateName" id="templateName" class="AXInput">
 				</td>
 				<th>작성자</th>
 				<td>
-					<input type="text" name="partName" class="AXInput">
+					<input type="text" name="duration" id="duration" class="AXInput">
 				</td>
 				<th>작성일</th>
 				<td>
-					<input type="text" name="number" class="AXInput">
+					<input type="text" name="partName" class="AXInput width-100"> ~
+					<input type="text" name="partName" class="AXInput width-100">
+				</td>
+				</tr>
+				<tr>
+				<th>기간</th>
+				<td>
+					<input type="text" name="partName" class="AXInput">
+				</td>
+				<th>수정자</th>
+				<td>
+					<input type="text" name="" class="AXInput">
+				</td>
+				<th>수정일</th>
+				<td>
+					<input type="text" name="partNamea" class="AXInput width-100"> ~
+					<input type="text" name="partNamea" class="AXInput width-100">
 				</td>
 			</tr>
 		</table>
@@ -62,7 +72,7 @@
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 500px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
@@ -160,8 +170,8 @@
 				const params = new Object();
 				const url = getCallUrl("/template/list");
 				
-				const fileName = document.getElementById("fileName").value;
-				const description = document.getElementById("description").value;
+				const templateName = document.getElementById("templateName").value;
+				const duration = document.getElementById("duration").value;
 				params.fileName = fileName;
 				params.description = description;
 				AUIGrid.showAjaxLoader(myGridID);

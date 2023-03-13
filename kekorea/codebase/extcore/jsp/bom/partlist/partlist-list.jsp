@@ -29,21 +29,65 @@
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th>공지사항 제목</th>
+				<th>수배표 제목</th>
 				<td>
 					<input type="text" name="fileName" class="AXInput">
 				</td>
-				<th>설명</th>
+				<th>상태</th>
 				<td>
-					<input type="text" name="partCode" class="AXInput">
+					<select name="size" id="size" class="AXSelect w200">
+						<option value="">선택</option>
+					</select>
 				</td>
-				<th>작성자</th>
+				<th>KEK 작번</th>
 				<td>
 					<input type="text" name="partName" class="AXInput">
 				</td>
-				<th>작성일</th>
+				<th>KE 작번</th>
 				<td>
 					<input type="text" name="number" class="AXInput">
+				</td>
+				</tr>
+				<tr>
+				<th>설명</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+				<th>설계 구분</th>
+				<td>
+					<select name="size" id="size" class="AXSelect w200">
+						<option value="">선택</option>
+					</select>
+				</td>
+				<th>막종</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+				<th>작업 내용</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+				</tr>
+				<tr>
+				<th>작성자</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+				<th>작성일</th>
+				<td colspan="5">
+					<input type="text" name="partNamea" class="AXInput width-100"> ~
+					<input type="text" name="partNamea" class="AXInput width-100">
+				</td>
+				</tr>
+				<tr>
+				<th>수정자</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+				<th>수정일</th>
+				<td colspan="5">
+					<input type="text" name="partNamea" class="AXInput width-100"> ~
+					<input type="text" name="partNamea" class="AXInput width-100">
 				</td>
 			</tr>
 		</table>
@@ -63,7 +107,7 @@
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 430px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {

@@ -29,21 +29,80 @@
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th>공지사항 제목</th>
-				<td>
-					<input type="text" name="fileName" class="AXInput">
-				</td>
-				<th>설명</th>
+				<th>KEK 작번</th>
 				<td>
 					<input type="text" name="partCode" class="AXInput">
 				</td>
-				<th>작성자</th>
+				<th>KE 작번</th>
+				<td>
+					<input type="text" name="partCode" class="AXInput">
+				</td>
+				<th>설명</th>
 				<td>
 					<input type="text" name="partName" class="AXInput">
 				</td>
-				<th>작성일</th>
+				<th>설계 구분</th>
+				<td>
+					<select name="state" id="state" class="AXSelect wid200">
+						<option value="">선택</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>거래처</th>
 				<td>
 					<input type="text" name="number" class="AXInput">
+				</td>
+				<th>USER ID</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+				<th>막종</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+				<th>작업 내용</th>
+				<td colspan="3">
+					<input type="text" name="number" class="AXInput">
+				</td>
+			</tr>
+			<tr>
+				<th>작성자</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+				<th>작성일</th>
+				<td colspan="3">
+					<input type="text" name="partName" class="AXInput width-100">
+					~
+					<input type="text" name="partName" class="AXInput width-100">
+				</td>
+				<th>설치장소</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+			</tr>
+			<tr>
+				<th>수정자</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+				<th>수정일</th>
+				<td colspan="3">
+					<input type="text" name="partName" class="AXInput width-100">
+					~
+					<input type="text" name="partName" class="AXInput width-100">
+				</td>
+				<th>버전</th>
+				<td>
+					<label title="최신버전">
+						<input type="radio" name="latest" value="true" checked="checked">
+						<span class="latest">최신버전</span>
+					</label>
+					<label title="모든버전">
+						<input type="radio" name="latest" value="false">
+						<span class="latest">모든버전</span>
+					</label>
 				</td>
 			</tr>
 		</table>
@@ -64,7 +123,7 @@
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 430px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {

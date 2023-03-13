@@ -1,3 +1,4 @@
+<%@page import="e3ps.bom.partlist.service.PartlistHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -29,17 +30,23 @@
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th>파일이름</th>
-				<td>
-					<input type="text" name="fileName" class="AXInput">
+				<th>부품 분류</th>
+				<td colspan="7">
+					<input type="hidden" name="location" value=""> <span id="location">defaultttttttt</span>
 				</td>
-				<th>품번</th>
+			</tr>
+			<tr>
+				<th>파일 이름</th>
 				<td>
 					<input type="text" name="partCode" class="AXInput">
 				</td>
-				<th>품명</th>
+				<th>품번</th>
 				<td>
 					<input type="text" name="partName" class="AXInput">
+				</td>
+				<th>품명</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
 				</td>
 				<th>규격</th>
 				<td>
@@ -49,15 +56,49 @@
 			<tr>
 				<th>MATERIAL</th>
 				<td>
-					<input type="text" name="material" class="AXInput">
+					<input type="text" name="number" class="AXInput">
 				</td>
 				<th>REMARK</th>
 				<td>
-					<input type="text" name="remark" class="AXInput">
+					<input type="text" name="number" class="AXInput">
 				</td>
 				<th>MAKER</th>
 				<td colspan="3">
-					<input type="text" name="maker" class="AXInput">
+					<input type="text" name="number" class="AXInput">
+				</td>
+			</tr>
+			<tr>
+				<th>작성자</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+				<th>작성일</th>
+				<td colspan="3">
+					<input type="text" name="partName" class="AXInput width-100">
+					~
+					<input type="text" name="partName" class="AXInput width-100">
+				</td>
+				<th>상태</th>
+				<td>
+					<select name="size" id="size" class="AXSelect w200">
+						<option value="">선택</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>수정자</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
+				</td>
+				<th>수정일</th>
+				<td colspan="3">
+					<input type="text" name="partName" class="AXInput width-100">
+					~
+					<input type="text" name="partName" class="AXInput width-100">
+				</td>
+				<th>버전</th>
+				<td>
+					<input type="text" name="number" class="AXInput">
 				</td>
 			</tr>
 		</table>
@@ -75,7 +116,7 @@
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 390px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {

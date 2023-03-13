@@ -36,7 +36,7 @@ public class TemplateHelper {
 		List<TemplateDTO> list = new ArrayList<TemplateDTO>();
 		
 		String templateName = (String) params.get("templateName");
-		String description = (String) params.get("description");
+		String duration = (String) params.get("duration");
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Template.class, true);
 		QuerySpecUtils.toOrderBy(query, idx, Template.class, Template.CREATE_TIMESTAMP, true);
@@ -44,8 +44,8 @@ public class TemplateHelper {
 		if (!StringUtils.isNull(templateName)) {
 			QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.NAME, templateName);
 		}
-		if (!StringUtils.isNull(description)) {
-			QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.DESCRIPTION, description);
+		if (!StringUtils.isNull(duration)) {
+			QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.DURATION, duration);
 		}
 		
 		PageQueryUtils pager = new PageQueryUtils(params, query);

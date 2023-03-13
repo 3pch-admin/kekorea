@@ -72,7 +72,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</td>
 		</tr>
 	</table>
-	<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+	<div id="grid_wrap" style="height: 450px; border-top: 1px solid #3180c3;"></div>
 </body>
 <script type="text/javascript">
 	let myGridID;
