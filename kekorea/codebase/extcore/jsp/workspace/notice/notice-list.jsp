@@ -29,7 +29,7 @@
 				<td>
 					<input type="text" name="name" id="name" class="AXInput width-300">
 				</td>
-				<th>설명</th>
+				<th>내용</th>
 				<td>
 					<input type="text" name="description" id="description" class="AXInput">
 				</td>
@@ -37,7 +37,7 @@
 				<tr>
 				<th>작성자</th>
 				<td>
-					<input type="text" name="partName" class="AXInput">
+					<input type="text" name="creator" id= "creator" class="AXInput">
 				</td>
 				<th>작성일</th>
 				<td>
@@ -163,9 +163,11 @@
 				// 검색 변수
 				const name = document.getElementById("name").value;
 				const description = document.getElementById("description").value;
+				const creator = document.getElementById("creator").value;
 				// 검색 변수 담기
 				params.name = name;
 				params.description = description;
+				params.creator = creator;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

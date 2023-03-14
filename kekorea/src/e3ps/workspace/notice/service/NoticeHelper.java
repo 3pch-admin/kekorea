@@ -24,7 +24,8 @@ public class NoticeHelper {
 
 		// key -value
 		String name = (String) params.get("name"); // 공지사항 제목
-		String description = (String) params.get("description"); // 공지사항 제목
+		String description = (String) params.get("description"); // 내용
+		String creator = (String) params.get("creator"); // 작성자
 		
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Notice.class, true);
@@ -36,6 +37,10 @@ public class NoticeHelper {
 		if (!StringUtils.isNull(description)) {
 			QuerySpecUtils.toLikeAnd(query, idx, Notice.class, Notice.DESCRIPTION, description);
 		}
+
+//		if (!StringUtils.isNull(creator)) {
+//			QuerySpecUtils.toLikeAnd(query, idx, Notice.class, Notice.??????????????, creator);
+//		}
 
 		QuerySpecUtils.toOrderBy(query, idx, Notice.class, Notice.CREATE_TIMESTAMP, true);
 

@@ -40,23 +40,23 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 				</td>
 				<th>발행일</th>
 				<td colspan="3">
-					<input type="text" name="partName" class="AXInput width-100">
+					<input type="text" name="pdate" class="AXInput width-100">
 					~
-					<input type="text" name="partName" class="AXInput width-100">
+					<input type="text" name="pdate2" class="AXInput width-100">
 				</td>
 				<th>KE 작번</th>
 				<td>
-					<input type="text" name="partName" class="AXInput">
+					<input type="text" name="keNumber" id="keNumber" class="AXInput">
 				</td>
 			</tr>
 			<tr>
 				<th>USER ID</th>
 				<td>
-					<input type="text" name="number" class="AXInput">
+					<input type="text" name="userId" id= "userId" class="AXInput">
 				</td>
 				<th>작번 상태</th>
 				<td>
-					<select name="size" id="size1" class="AXSelect w200">
+					<select name="kekState" id="kekState" class="AXSelect w200">
 						<option value="">선택</option>
 					</select>
 				</td>
@@ -66,7 +66,7 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 				</td>
 				<th>거래처</th>
 				<td>
-					<select name="size" id="size2" class="AXSelect w200">
+					<select name="customer_name" id="customer_name" class="AXSelect w200">
 						<option value="">선택</option>
 					</select>
 				</td>
@@ -74,31 +74,31 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 			<tr>
 				<th>설치장소</th>
 				<td>
-					<input type="text" name="install" id="install" class="AXInput width-200">
+					<input type="text" name="install_name" id="install_name" class="AXInput width-200">
 				</td>
 				<th>작번 유형</th>
 				<td>
-					<select name="size" id="size3" class="AXSelect w200">
+					<select name="projectType_name" id="projectType_name" class="AXSelect w200">
 						<option value="">선택</option>
 					</select>
 				</td>
 				<th>기계 담당자</th>
 				<td>
-					<input type="text" name="" id="" class="AXInput">
+					<input type="text" name="machine" id="machine" class="AXInput">
 				</td>
 				<th>전기 담당자</th>
 				<td>
-					<input type="text" name="" class="AXInput">
+					<input type="text" name="elec" id= "elec" class="AXInput">
 				</td>
 			</tr>
 			<tr>
 				<th>SW 담당자</th>
 				<td>
-					<input type="text" name="" class="AXInput">
+					<input type="text" name="soft" id= "soft" class="AXInput">
 				</td>
 				<th>막종</th>
 				<td>
-					<input type="text" name="" id="" class="AXInput">
+					<input type="text" name="mak_name" id="mak_name" class="AXInput">
 				</td>
 				<th>작업 내용</th>
 				<td colspan="3">

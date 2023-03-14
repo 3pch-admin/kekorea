@@ -92,19 +92,6 @@ String name = (String) request.getAttribute("name");
 					headerText : "항목",
 					dataType : "string",
 					width : 120,
-					editRenderer: {
-						type: "InputEditRenderer",
-
-						// ID는 고유값만 가능하도록 에디팅 유효성 검사
-						validator: function (oldValue, newValue, item, dataField) {
-							let isValid = true;
-							if(newValue === "") {
-								isValid = false;
-							}
-							// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-							return { "validate": isValid, "message": "항목 값은 공백을 입력 할 수 없습니다." };
-						}
-					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -114,19 +101,6 @@ String name = (String) request.getAttribute("name");
 					headerText : "개선내용",
 					dataType : "string",
 					width : 300,
-					editRenderer: {
-						type: "InputEditRenderer",
-
-						// ID는 고유값만 가능하도록 에디팅 유효성 검사
-						validator: function (oldValue, newValue, item, dataField) {
-							let isValid = true;
-							if(newValue === "") {
-								isValid = false;
-							}
-							// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-							return { "validate": isValid, "message": "개선내용 값은 공백을 입력 할 수 없습니다." };
-						}
-					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -136,19 +110,6 @@ String name = (String) request.getAttribute("name");
 					headerText : "개선책",
 					dataType : "string",
 					width : 300,
-					editRenderer: {
-						type: "InputEditRenderer",
-
-						// ID는 고유값만 가능하도록 에디팅 유효성 검사
-						validator: function (oldValue, newValue, item, dataField) {
-							let isValid = true;
-							if(newValue === "") {
-								isValid = false;
-							}
-							// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-							return { "validate": isValid, "message": "개선책 값은 공백을 입력 할 수 없습니다." };
-						}
-					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -175,15 +136,6 @@ String name = (String) request.getAttribute("name");
 						showEditorBtn : false,
 						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
 						list : list,
-						
-						validator: function (oldValue, newValue, item, dataField) {
-							let isValid = true;
-							if(newValue === "") {
-								isValid = false;
-							}
-							// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-							return { "validate": isValid, "message": "적용/미적용 값을 선택하세요." };
-						}
 					},
 					filter : {
 						showIcon : true,
@@ -215,16 +167,6 @@ String name = (String) request.getAttribute("name");
 						valueField : "value", // value 에 해당되는 필드명,
 						descendants : [ "detail_code" ], // 자손 필드들
 						descendantDefaultValues : [ "-" ], // 변경 시 자손들에게 기본값 지정
-
-							// ID는 고유값만 가능하도록 에디팅 유효성 검사
-							validator: function (oldValue, newValue, item, dataField) {
-								let isValid = true;
-								if(newValue === "") {
-									isValid = false;
-								}
-								// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-								return { "validate": isValid, "message": "막종 값을 선택하세요." };
-							}
 					},
 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
 						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
@@ -271,15 +213,6 @@ String name = (String) request.getAttribute("name");
 							}
 							return dd;
 						},
-							// ID는 고유값만 가능하도록 에디팅 유효성 검사
-							validator: function (oldValue, newValue, item, dataField) {
-								let isValid = true;
-								if(newValue === "") {
-									isValid = false;
-								}
-								// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-								return { "validate": isValid, "message": "막종상세 값을 선택하세요." };
-							}
 					},
 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
 						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
@@ -323,16 +256,6 @@ String name = (String) request.getAttribute("name");
 						list : customers, //key-value Object 로 구성된 리스트
 						keyField : "key", // key 에 해당되는 필드명
 						valueField : "value",
-
-							// ID는 고유값만 가능하도록 에디팅 유효성 검사
-							validator: function (oldValue, newValue, item, dataField) {
-								let isValid = true;
-								if(newValue === "") {
-									isValid = false;
-								}
-								// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-								return { "validate": isValid, "message": "거래처 값을 선택하세요." };
-							}
 					},
 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
 						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
@@ -372,16 +295,6 @@ String name = (String) request.getAttribute("name");
 						list : installs, //key-value Object 로 구성된 리스트
 						keyField : "key", // key 에 해당되는 필드명
 						valueField : "value",
-						
-							// ID는 고유값만 가능하도록 에디팅 유효성 검사
-							validator: function (oldValue, newValue, item, dataField) {
-								let isValid = true;
-								if(newValue === "") {
-									isValid = false;
-								}
-								// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-								return { "validate": isValid, "message": "설치장소 값을 선택하세요." };
-							}
 					},
 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
 						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
@@ -416,19 +329,6 @@ String name = (String) request.getAttribute("name");
 						altField : null,
 						imgHeight : 34,
 					},
-					editRenderer: {
-						type: "InputEditRenderer",
-
-						// ID는 고유값만 가능하도록 에디팅 유효성 검사
-						validator: function (oldValue, newValue, item, dataField) {
-							let isValid = true;
-							if(newValue === "") {
-								isValid = false;
-							}
-							// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-							return { "validate": isValid, "message": "미리보기를 선택하세요." };
-						}
-					},
 					filter : {
 						showIcon : false,
 						inline : false
@@ -460,19 +360,6 @@ String name = (String) request.getAttribute("name");
 					renderer : {
 						type : "TemplateRenderer",
 					},
-					editRenderer: {
-						type: "InputEditRenderer",
-
-						// ID는 고유값만 가능하도록 에디팅 유효성 검사
-						validator: function (oldValue, newValue, item, dataField) {
-							let isValid = true;
-							if(newValue === "") {
-								isValid = false;
-							}
-							// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-							return { "validate": isValid, "message": "첨부파일을 선택하세요." };
-						}
-					},
 					filter : {
 						showIcon : false,
 						inline : false
@@ -501,19 +388,6 @@ String name = (String) request.getAttribute("name");
 					headerText : "작성자",
 					dataType : "string",
 					width : 100,
-					editRenderer: {
-						type: "InputEditRenderer",
-
-						// ID는 고유값만 가능하도록 에디팅 유효성 검사
-						validator: function (oldValue, newValue, item, dataField) {
-							let isValid = true;
-							if(newValue === "") {
-								isValid = false;
-							}
-							// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-							return { "validate": isValid, "message": "작성자 값은 공백을 입력 할 수 없습니다." };
-						}
-					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -524,19 +398,6 @@ String name = (String) request.getAttribute("name");
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
 					width : 100,
-					editRenderer: {
-						type: "InputEditRenderer",
-
-						// ID는 고유값만 가능하도록 에디팅 유효성 검사
-						validator: function (oldValue, newValue, item, dataField) {
-							let isValid = true;
-							if(newValue === "") {
-								isValid = false;
-							}
-							// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-							return { "validate": isValid, "message": "작성일 값은 공백을 입력 할 수 없습니다." };
-						}
-					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -610,7 +471,6 @@ String name = (String) request.getAttribute("name");
 					}
 				}
 			}
-
 			function requestAdditionalData() {
 				const params = new Object();
 				const curPage = document.getElementById("curPage").value;
