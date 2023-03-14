@@ -29,7 +29,7 @@
 			<tr>
 				<th>공지사항 제목</th>
 				<td>
-					<input type="text" name="name" id="name" class="width-300">
+					<input type="text" name="name" id="name" class="indent5 width-300">
 				</td>
 				<th>내용</th>
 				<td>
