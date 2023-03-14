@@ -28,6 +28,8 @@ JSONArray departments = new JSONArray(list);
 		<!-- 리스트 검색시 반드시 필요한 히든 값 -->
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
+		<!-- 부서 OID -->
+		<input type="hidden" name="oid" id="oid">
 		<!-- 검색 테이블 -->
 		<table class="search-table">
 			<colgroup>
@@ -121,7 +123,6 @@ JSONArray departments = new JSONArray(list);
 					dataType : "string",
 					width : 100,
 					editable : false,
-					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
@@ -382,7 +383,11 @@ JSONArray departments = new JSONArray(list);
 				const params = new Object();
 				const userName = document.getElementById("userName").value;
 				const userId = document.getElementById("userId").value;
+				const oid = document.getElementById("oid").value;
 				const url = getCallUrl("/org/list");
+				params.oid = oid;
+				params.userName = userName;
+				params.userId = userId;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

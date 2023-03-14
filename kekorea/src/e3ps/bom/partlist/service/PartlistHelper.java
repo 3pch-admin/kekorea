@@ -794,26 +794,36 @@ public class PartlistHelper {
 		ArrayList<Map<String, Object>> _dataList = new ArrayList<>(maxSize); // 신규 비교
 
 		for (int i = 0; i < result.size(); i++) {
+			boolean isEquals = true;
+			Map<String, Object> data = result.get(i); // 기준
 			for (int j = 0; j < _result.size(); j++) {
-				Map<String, Object> data = result.get(i); // 기준
 				Map<String, Object> _data = _result.get(j); // 비교
 
 				if (compareType.equals("quantity")) { // LOT NO 비교
 					String value = (String) data.get("partNo") + "-" + (String) data.get("lotNo") + "-"
 							+ (int) data.get("quantity");
 					String _value = (String) _data.get("partNo") + "-" + (String) _data.get("lotNo") + "-"
-							+ (int) data.get("quantity");
+							+ (int) _data.get("quantity");
+
+					System.out.println("q=" + value);
+					System.out.println("q22=" + _value);
+
 					if (value.equals(_value)) {
 						dataList.add(data);
 						_dataList.add(_data);
+//						result.remove(i);
 						_result.remove(j);
-						break;
-					} else if (!value.equals(_value)) {
-						Map<String, Object> empty = new HashMap<String, Object>();
-						dataList.add(data);
-						_dataList.add(empty);
+						isEquals = true;
 						break;
 					}
+//					} else if (!value.equals(_value)) {
+//						Map<String, Object> empty = new HashMap<String, Object>();
+//						dataList.add(data);
+//						_dataList.add(empty);
+////						break;
+//						continue;
+//					}
+					isEquals = false;
 				} else {
 					String value = (String) data.get("partNo") + "-" + (String) data.get("lotNo");
 					String _value = (String) _data.get("partNo") + "-" + (String) _data.get("lotNo");
@@ -825,17 +835,33 @@ public class PartlistHelper {
 					System.out.println("j=" + j);
 
 					if (value.equals(_value)) {
+						System.out.println("11i=" + i);
+						System.out.println("22j=" + j);
+
 						dataList.add(data);
 						_dataList.add(_data);
+//						result.remove(i);
 						_result.remove(j);
-						break;
-					} else if (!value.equals(_value)) {
-						Map<String, Object> empty = new HashMap<String, Object>();
-						dataList.add(data);
-						_dataList.add(empty);
+						isEquals = true;
 						break;
 					}
+//					} else if (!value.equals(_value)) {
+//						Map<String, Object> empty = new HashMap<String, Object>();
+//						dataList.add(data);
+//						_dataList.add(empty);
+////						break;
+//						continue;
+//					}
+					isEquals = false;
 				}
+			}
+			System.out.println("isEquals=" + isEquals);
+			if (!isEquals) {
+				Map<String, Object> empty = new HashMap<String, Object>();
+//				dataList.add(data);
+//				_dataList.add(empty);
+				dataList.add(empty);
+				_dataList.add(_data);
 			}
 		}
 

@@ -323,22 +323,22 @@
 	display: inline-block;
 	width: 16px;
 	height: 16px;
-	border: 1px solid #ccc;
-	vertical-align: middle;
-	background: #ffffff url(./images/plus_7_7.png) 50% 50% no-repeat;
-	margin: 0 4px 0 0;
-	box-sizing: border-box;
+	border: none;
+	background: url(./images/arrow-right.png) 50% 50% no-repeat;
+	background-size: 16px;
+	vertical-align: bottom;
+	margin: 0 2px 0 0;
 }
 
 .aui-grid-tree-minus-icon {
 	display: inline-block;
 	width: 16px;
 	height: 16px;
-	border: 1px solid #ccc;
-	vertical-align: middle;
-	background: #ffffff url(./images/minus_7_7.png) 50% 50% no-repeat;
-	margin: 0 4px 0 0;
-	box-sizing: border-box;
+	border: none;
+	background: url(./images/arrow-downright.png) 50% 50% no-repeat;
+	background-size: 16px;
+	vertical-align: bottom;
+	margin: 0 2px 0 0;
 }
 
 .aui-grid-tree-branch-icon {
@@ -355,7 +355,6 @@
 	display: inline-block;
 	width: 18px;
 	height: 16px;
-	vertical-align: top;
 	background: url(./images/b_folderopen2.png) 50% 50% no-repeat;
 	background-size: 16px;
 	vertical-align: bottom;
@@ -364,8 +363,14 @@
 
 .aui-grid-tree-leaf-icon {
 	display: inline-block;
-	width: 32px;
+	width: 16px;
 	height: 16px;
+	background: url(./images/flat_circle.png) no-repeat;
+	background-size: 16px;
+	vertical-align: bottom;
+	margin: 0 2px 0 4px;
+	position: relative;
+	bottom: 1px;
 }
 
 /* 트리 lazyMode 프리로더 */

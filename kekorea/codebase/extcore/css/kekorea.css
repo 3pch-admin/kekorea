@@ -402,3 +402,24 @@ i.axi-close2 {
 	top: 4px;
 	cursor: pointer;
 }
+
+/** 뷰 테이블 CSS **/
+table.view-table {
+	width: 100%;
+	border-top: 2px solid #86bff9;
+	font-size: 12px;
+}
+
+table.view-table th {
+	background-color: #f2f2f2;
+	height: 30px;
+	border-bottom: 1px solid #a6a6a6;
+	padding-bottom: 4px;
+}
+
+table.view-table td {
+	height: 30px;
+	border-bottom: 1px solid #a6a6a6;
+	border-left: 1px solid #a6a6a6;
+	border-right: 1px solid #a6a6a6;
+}

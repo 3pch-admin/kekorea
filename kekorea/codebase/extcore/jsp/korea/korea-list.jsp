@@ -46,160 +46,92 @@ String code = (String) request.getAttribute("code");
 					renderer : {
 						type : "TemplateRenderer",
 					},
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "projectType_name",
 					headerText : "작번유형",
 					dataType : "string",
 					width : 80,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
 				}, {
 					dataField : "customer_name",
 					headerText : "거래처",
 					dataType : "string",
 					width : 100,
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "install_name",
 					headerText : "설치장소",
 					dataType : "string",
 					width : 100,
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "mak_name",
 					headerText : "막종",
 					dataType : "string",
 					width : 100,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
 				}, {
 					dataField : "detail_name",
 					headerText : "막종상세",
 					dataType : "string",
 					width : 100,
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "kekNumber",
 					headerText : "KEK 작번",
 					dataType : "string",
 					width : 130,
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "keNumber",
 					headerText : "KE 작번",
 					dataType : "string",
 					width : 130,
 					style : "underline",
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "userId",
 					headerText : "USER ID",
 					dataType : "string",
 					width : 100,
 					style : "underline",
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "description",
 					headerText : "작업 내용",
 					dataType : "string",
 					width : 450,
 					style : "left indent10",
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "pdate",
 					headerText : "발행일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
 					width : 100,
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "completeDate",
 					headerText : "설계 완료일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
 					width : 100,
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "customDate",
 					headerText : "요구 납기일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
 					width : 100,
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "model",
 					headerText : "모델",
 					dataType : "string",
 					width : 130,
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "machine",
 					headerText : "기계 담당자",
 					dataType : "string",
 					width : 100,
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "elec",
 					headerText : "전기 담당자",
 					dataType : "string",
 					width : 100,
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "soft",
 					headerText : "SW 담당자",
 					dataType : "string",
 					width : 100,
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "kekProgress",
 					headerText : "진행율",
@@ -210,19 +142,11 @@ String code = (String) request.getAttribute("code");
 						min : 0,
 						max : 100
 					},
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				}, {
 					dataField : "kekState",
 					headerText : "작번상태",
 					dataType : "string",
 					width : 100,
-					filter : {
-						showIcon : false,
-						inline : false
-					},
 				} ]
 			}
 			function createAUIGrid(columnLayout) {
@@ -235,10 +159,8 @@ String code = (String) request.getAttribute("code");
 					showStateColumn : true, // 상태표시 행 출력 여부
 					rowNumHeaderText : "번호", // 번호 행 텍스트 설정
 					noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
-					enableFilter : true, // 필터 사용 여부
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
-					showInlineFilter : true,
 				// 그리드 공통속성 끝
 				}
 

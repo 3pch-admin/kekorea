@@ -47,7 +47,6 @@ String height = request.getParameter("height");
 			const oid = rowItem.oid; // oid로 할지 location 으로 할지...
 			// 히든 값 세팅
 			document.getElementById("oid").value = oid;
-// 			requestMyData("./data/getJsonDetails.php?id=" + custId, myGridID2);
 			loadGridData();
 		}, 500);  
 		<%

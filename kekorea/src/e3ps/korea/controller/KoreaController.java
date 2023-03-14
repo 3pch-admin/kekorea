@@ -53,17 +53,20 @@ public class KoreaController extends BaseController {
 
 	@Description(value = "한국 생산 차트 페이지")
 	@GetMapping(value = "/chart")
-	public ModelAndView chart(@RequestParam String code) throws Exception {
+	public ModelAndView chart(@RequestParam String code, @RequestParam(required = false) String projectType)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
+		CommonCode makCode = CommonCodeHelper.manager.getCommonCode(code, "MAK");
 		WTUser sessionUser = CommonUtils.sessionUser();
-		ArrayList<CommonCode> maks = OrgHelper.manager.getUserMaks(sessionUser);
+		ArrayList<CommonCode> customers = CommonCodeHelper.manager.getArrayCodeList("CUSTOMER");
 		ArrayList<CommonCode> installs = OrgHelper.manager.getUserInstalls(sessionUser);
-		// 설정을 안한 경우 모든 막종을 보여준다.
-		if (maks.size() == 0) {
-			maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
+		if (installs.size() == 0) {
+			installs = CommonCodeHelper.manager.getArrayCodeList("INSTALL");
 		}
-
-		model.addObject("maks", maks);
+		model.addObject("makCode", makCode);
+		model.addObject("projectType", projectType);
+		model.addObject("code", code);
+		model.addObject("customers", customers);
 		model.addObject("installs", installs);
 		model.setViewName("/extcore/jsp/korea/korea-chart.jsp");
 		return model;
