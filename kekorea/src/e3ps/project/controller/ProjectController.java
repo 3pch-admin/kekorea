@@ -22,8 +22,10 @@ import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
+import e3ps.doc.meeting.service.MeetingHelper;
 import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
+import e3ps.project.dto.ProjectDTO;
 import e3ps.project.dto.ProjectViewData;
 import e3ps.project.service.ProjectHelper;
 import e3ps.project.template.service.TemplateHelper;
@@ -86,7 +88,7 @@ public class ProjectController extends BaseController {
 
 	@Description(value = "프로젝트 등록 함수")
 	@ResponseBody
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	@PostMapping(value = "/create")
 	public Map<String, Object> create(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -102,7 +104,7 @@ public class ProjectController extends BaseController {
 	}
 
 	@Description(value = "프로젝트 생성 페이지")
-	@RequestMapping(value = "/create", method = RequestMethod.GET)
+	@GetMapping(value = "/create")
 	public ModelAndView create() throws Exception {
 		ModelAndView model = new ModelAndView();
 		ArrayList<CommonCode> customers = CommonCodeHelper.manager.getArrayCodeList("CUSTOMER");
@@ -133,34 +135,8 @@ public class ProjectController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "프로젝트 정보 트리 페이지")
-	@RequestMapping(value = "/view", method = RequestMethod.GET)
-	public ModelAndView view(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		org.json.JSONArray taskTypes = CommonCodeHelper.manager.parseJson("TASK_TYPE");
-		model.addObject("taskTypes", taskTypes);
-		model.addObject("oid", oid);
-		model.setViewName("popup:/project/project-view");
-		return model;
-	}
-
-	@Description(value = "프로젝트 정보 페이지")
-	@RequestMapping(value = "/projectView", method = RequestMethod.GET)
-	public ModelAndView projectView(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		Project project = (Project) CommonUtils.getObject(oid);
-		ProjectViewData data = new ProjectViewData(project);
-//		ArrayList<Task> list = TaskHelper.manager.getTemplateTaskDepth(template);
-		boolean isAdmin = CommonUtils.isAdmin();
-		model.addObject("isAdmin", isAdmin);
-//		model.addObject("list", list);
-		model.addObject("data", data);
-		model.setViewName("popup:/project/projectView");
-		return model;
-	}
-
 	@Description(value = "프로젝트 트리")
-	@RequestMapping(value = "/load", method = RequestMethod.GET)
+	@GetMapping(value = "/load")
 	@ResponseBody
 	public Map<String, Object> load(@RequestParam String oid) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -177,7 +153,7 @@ public class ProjectController extends BaseController {
 	}
 
 	@Description(value = "프로젝트 트리 저장")
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	@PostMapping(value = "/save")
 	@ResponseBody
 	public Map<String, Object> save(@RequestBody Map<String, Object> params) {
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -222,4 +198,34 @@ public class ProjectController extends BaseController {
 		model.setViewName("popup:/project/project-popup");
 		return model;
 	}
+
+	@Description(value = "프로젝트 프레임 페이지")
+	@GetMapping(value = "/info")
+	public ModelAndView info(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("oid", oid);
+		model.setViewName("popup:/project/project-info");
+		return model;
+	}
+
+	@Description(value = "프로젝트 태스크 트리 페이지")
+	@GetMapping(value = "/tree")
+	public ModelAndView tree(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("oid", oid);
+		model.setViewName("/extcore/jsp/project/project-tree.jsp");
+		return model;
+	}
+
+	@Description(value = "프로젝트 정보 페이지")
+	@GetMapping(value = "/view")
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Project project = (Project) CommonUtils.getObject(oid);
+		ProjectDTO dto = new ProjectDTO(project);
+		model.addObject("dto", dto);
+		model.setViewName("/extcore/jsp/project/project-view.jsp");
+		return model;
+	}
+
 }

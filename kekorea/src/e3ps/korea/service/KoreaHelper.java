@@ -66,25 +66,26 @@ public class KoreaHelper {
 		return map;
 	}
 
-	public int yAxisValueForMak(CommonCode mak) throws Exception {
+	public int yAxisValue(String makCode, CommonCode customer) throws Exception {
+		CommonCode mak = CommonCodeHelper.manager.getCommonCode(makCode, "MAK");
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "makReference.key.id",
 				mak.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "customerReference.key.id",
+				customer.getPersistInfo().getObjectIdentifier().getId());
 		QueryResult result = PersistenceHelper.manager.find(query);
 		return result.size();
 	}
 
-	/**
-	 * 한국생산 차트 drilldown 설치 장소 값
-	 * 
-	 * @param install : 설치 장소
-	 * @return int
-	 * @throws Exception
-	 */
-	public int yAxisValueForInstall(CommonCode install) throws Exception {
+	public int yAxisValueForInstall(String makCode, CommonCode customer, CommonCode install) throws Exception {
+		CommonCode mak = CommonCodeHelper.manager.getCommonCode(makCode, "MAK");
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "makReference.key.id",
+				mak.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "customerReference.key.id",
+				customer.getPersistInfo().getObjectIdentifier().getId());
 		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "installReference.key.id",
 				install.getPersistInfo().getObjectIdentifier().getId());
 		QueryResult result = PersistenceHelper.manager.find(query);

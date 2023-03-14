@@ -37,11 +37,12 @@
 				</td>
 				<th>작성일</th>
 				<td>
-					<input type="text" name="partName" class="AXInput width-100"> ~
+					<input type="text" name="partName" class="AXInput width-100">
+					~
 					<input type="text" name="partName" class="AXInput width-100">
 				</td>
-				</tr>
-				<tr>
+			</tr>
+			<tr>
 				<th>기간</th>
 				<td>
 					<input type="text" name="partName" class="AXInput">
@@ -52,7 +53,8 @@
 				</td>
 				<th>수정일</th>
 				<td>
-					<input type="text" name="partNamea" class="AXInput width-100"> ~
+					<input type="text" name="partNamea" class="AXInput width-100">
+					~
 					<input type="text" name="partNamea" class="AXInput width-100">
 				</td>
 			</tr>
@@ -63,7 +65,7 @@
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('template-list');">
-
+					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
@@ -81,11 +83,14 @@
 					headerText : "템플릿 제목",
 					dataType : "string",
 					width : 350,
+					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
-						baseUrl : "javascript", 
+						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							const url = getCallUrl("/template/info?oid=" + oid);
+							popup(url);
 						}
 					},
 					filter : {
@@ -161,8 +166,7 @@
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
-					// 그리드 공통속성 끝
-					fillColumnSizeMode : true
+				// 그리드 공통속성 끝
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
@@ -175,11 +179,8 @@
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/template/list");
-				
 				const templateName = document.getElementById("templateName").value;
 				const duration = document.getElementById("duration").value;
-				params.fileName = fileName;
-				params.description = description;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -189,6 +190,11 @@
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
+			}
+
+			function create() {
+				const url = getCallUrl("/template/create");
+				popup(url, 1200, 350);
 			}
 
 			let last = false;

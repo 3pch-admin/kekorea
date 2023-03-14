@@ -3,7 +3,9 @@
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks");
+	String code = (String)request.getAttribute("code");
+	CommonCode makCode = (CommonCode) request.getAttribute("makCode");
+	ArrayList<CommonCode> customers = (ArrayList<CommonCode>) request.getAttribute("customers");
 	ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("installs");
 %>
 <!DOCTYPE html>
@@ -24,7 +26,7 @@ Highcharts.chart('container', {
     },
     title: {
         align: 'left',
-        text: '막종별 작번 개수'
+        text: '<%=makCode.getName()%> 막종 작번 개수'
     },
 //     subtitle: {
 //         align: 'left',
@@ -67,11 +69,11 @@ Highcharts.chart('container', {
             	}
             },
             data: [
-            	<%for (CommonCode mak : maks) {%>
+            	<%for (CommonCode customer : customers) {%>
                 {
-                    name: '<%=mak.getName()%>',
-                    y: <%=KoreaHelper.manager.yAxisValueForMak(mak)%>,
-                    drilldown: '<%=mak.getCode()%>'
+                    name: '<%=customer.getName()%>',
+                    y: <%=KoreaHelper.manager.yAxisValue(code, customer)%>,
+                    drilldown: '<%=customer.getCode()%>'
                 },
                 <%}%>
             ]
@@ -84,13 +86,13 @@ Highcharts.chart('container', {
             }
         },
         series: [
-        	<%for (CommonCode mak : maks) {%>
+        	<%for (CommonCode customer : customers) {%>
             {
-                name: '<%=mak.getName()%>',
-                id: '<%=mak.getCode()%>',
+                name: '<%=customer.getName()%>',
+                id: '<%=customer.getCode()%>',
                 data: [
                 <%for (CommonCode install : installs) {%>
-                	['<%=install.getName()%>', <%=KoreaHelper.manager.yAxisValueForInstall(install)%>],
+                	['<%=install.getName()%>', <%=KoreaHelper.manager.yAxisValueForInstall(code, customer, install)%>],
                 <%}%>
                 ]
             },

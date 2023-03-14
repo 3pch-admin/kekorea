@@ -928,12 +928,8 @@ public class OrgHelper {
 	public ArrayList<Department> getSubDepartment(Department dd, ArrayList<Department> departments) throws Exception {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Department.class, true);
-
-		SearchCondition sc = new SearchCondition(Department.class,
-				Department.PARENT_REFERENCE + "." + WTAttributeNameIfc.REF_OBJECT_ID, "=",
+		QuerySpecUtils.toEqualsAnd(query, idx, Department.class, "parentReference.key.id",
 				dd.getPersistInfo().getObjectIdentifier().getId());
-
-		query.appendWhere(sc, new int[] { idx });
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -1159,12 +1155,7 @@ public class OrgHelper {
 				WTAttributeNameIfc.ID_NAME, idx, idx_w);
 		QuerySpecUtils.toInnerJoin(query, People.class, Department.class, "departmentReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_d);
-		QuerySpecUtils.toEqualsAnd(query, idx, People.class, "departmentReference.key.id",
-				department.getPersistInfo().getObjectIdentifier().getId());
-
-		QuerySpecUtils.toBooleanAnd(query, idx, People.class, People.RESIGN, false);
-		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, false);
-
+		
 		if (!StringUtils.isNull(userName)) {
 			QuerySpecUtils.toLikeAnd(query, idx, People.class, People.NAME, userName);
 		}
@@ -1172,6 +1163,24 @@ public class OrgHelper {
 		if (!StringUtils.isNull(userId)) {
 			QuerySpecUtils.toLikeAnd(query, idx, People.class, People.ID, userId);
 		}
+
+		query.appendOpenParen();
+		QuerySpecUtils.toEqualsAnd(query, idx, People.class, "departmentReference.key.id",
+				department.getPersistInfo().getObjectIdentifier().getId());
+
+		ArrayList<Department> deptList = OrgHelper.manager.getSubDepartment(department, new ArrayList<Department>());
+		for (int i = 0; i < deptList.size(); i++) {
+			Department sub = (Department) deptList.get(i);
+			query.appendOr();
+			long sfid = sub.getPersistInfo().getObjectIdentifier().getId();
+			query.appendWhere(new SearchCondition(People.class, "departmentReference.key.id", "=", sfid),
+					new int[] { idx });
+		}
+		query.appendCloseParen();
+
+		QuerySpecUtils.toBooleanAnd(query, idx, People.class, People.RESIGN, false);
+		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, false);
+
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {
