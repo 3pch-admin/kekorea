@@ -9,6 +9,8 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.korea.history.History;
 import e3ps.korea.history.HistoryOptionLink;
 import e3ps.project.Project;
+import e3ps.project.template.Template;
+import wt.enterprise.Managed;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.query.ClassAttribute;
@@ -46,11 +48,11 @@ public class HistoryHelper {
 			Map<String, Object> dataMap = new HashMap<>();
 			dataMap.put("kekNumber", project.getKekNumber());
 			dataMap.put("keNumber", project.getKeNumber());
-			dataMap.put("install", project.getInstall().getName());
+			dataMap.put("install", project.getInstall() != null ? project.getInstall().getName() : "");
 			dataMap.put("pdate", project.getPDate());
-			dataMap.put("tuv", history.getTuv());
+			dataMap.put("tuv", history != null ? history.getTuv() : "");
 			dataMap.put("poid", project.getPersistInfo().getObjectIdentifier().getStringValue());
-			dataMap.put("oid", history.getPersistInfo().getObjectIdentifier().getStringValue());
+			dataMap.put("oid", history != null ? history.getPersistInfo().getObjectIdentifier().getStringValue() : "");
 			for (HistoryOptionLink link : data) {
 				String dataField = link.getDataField();
 				String value = link.getOption().getName();

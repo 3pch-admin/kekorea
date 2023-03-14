@@ -24,6 +24,8 @@ JSONArray departments = new JSONArray(list);
 <%@include file="/extcore/include/script.jsp"%>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
@@ -368,6 +370,16 @@ JSONArray departments = new JSONArray(list);
 				loadGridData();
 				// Lazy Loading 이벤트 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+				// 동적 수정여부 체크
+				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin );
+			}
+			
+			function auiCellEditBegin(event) {
+				const item = event.item;
+				if("<%=sessionUser.getName() %>" !== item.id) {
+					return false;
+				}
+				return true;
 			}
 
 			function loadGridData() {

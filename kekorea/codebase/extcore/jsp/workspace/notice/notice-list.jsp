@@ -29,23 +29,23 @@
 			<tr>
 				<th>공지사항 제목</th>
 				<td>
-					<input type="text" name="name" id="name" class="AXInput width-300">
+					<input type="text" name="name" id="name" class="width-300">
 				</td>
 				<th>내용</th>
 				<td>
-					<input type="text" name="description" id="description" class="AXInput">
+					<input type="text" name="description" id="description">
 				</td>
 			</tr>
 			<tr>
 				<th>작성자</th>
 				<td>
-					<input type="text" name="creator" id="creator" class="AXInput">
+					<input type="text" name="creator" id="creator">
 				</td>
 				<th>작성일</th>
 				<td>
-					<input type="text" name="number" class="AXInput width-100">
+					<input type="text" name="number" class="width-100">
 					~
-					<input type="text" name="number" class="AXInput width-100">
+					<input type="text" name="number" class="width-100">
 				</td>
 			</tr>
 		</table>

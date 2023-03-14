@@ -18,6 +18,8 @@ public class TemplateDTO {
 	private boolean enable;
 	private String creator;
 	private Timestamp createdDate;
+	private String modifier;
+	private Timestamp modifiedDate;
 
 	public TemplateDTO() {
 
@@ -31,5 +33,7 @@ public class TemplateDTO {
 		setEnable(template.getEnable());
 		setCreator(template.getOwnership().getOwner().getFullName());
 		setCreatedDate(template.getCreateTimestamp());
+		setModifier(template.getUpdateUser().getOwner().getFullName());
+		setModifiedDate(template.getModifyTimestamp());
 	}
 }

@@ -10,6 +10,8 @@
 <%@include file="/extcore/include/script.jsp"%>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
@@ -140,6 +142,25 @@
 				}, {
 					dataField : "createdDate",
 					headerText : "작성일",
+					dataType : "date",
+					formatString : "yyyy-mm-dd",
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "modifier",
+					headerText : "수정자",
+					dataType : "string", // 날짜 및 사람명 컬럼 사이즈 100
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "modifiedDate",
+					headerText : "수정일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
 					width : 100,

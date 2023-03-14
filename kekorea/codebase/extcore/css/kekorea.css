@@ -117,6 +117,19 @@ table.search-table td {
 	/* 	text-indent: 5px; */
 }
 
+
+table.search-table input[type='text'] {
+	border: 1px solid #a6a6a6;
+	background: #fff;
+	color: #333;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	font-size: 14px;
+	height: 15px;
+	padding: 5px;
+}
+
 /** 버튼 테이블 CSS **/
 table.button-table {
 	width: 100%;
@@ -455,3 +468,4 @@ a:hover {
 .ui-widget-header {
 	padding: 0.2em;
 }
+
