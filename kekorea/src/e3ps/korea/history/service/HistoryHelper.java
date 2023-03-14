@@ -11,8 +11,11 @@ import e3ps.korea.history.HistoryOptionLink;
 import e3ps.project.Project;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.query.ClassAttribute;
 import wt.query.QuerySpec;
+import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
+import wt.util.WTAttributeNameIfc;
 
 public class HistoryHelper {
 
@@ -24,13 +27,21 @@ public class HistoryHelper {
 		ArrayList<Map<String, Object>> dataList = new ArrayList<>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(History.class, true);
+		int idx_p = query.appendClassList(Project.class, true);
+
+		SearchCondition sc = new SearchCondition(History.class, "projectReference.key.id", Project.class,
+				WTAttributeNameIfc.ID_NAME);
+		sc.setFromIndicies(new int[] { idx, idx_p }, 0);
+		sc.setOuterJoin(1);
+		query.appendWhere(sc, new int[] { idx, idx_p });
+
 		QuerySpecUtils.toOrderBy(query, idx, History.class, History.CREATE_TIMESTAMP, true);
 		QueryResult result = PersistenceHelper.manager.find(query);
 
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			History history = (History) obj[0];
-			Project project = history.getProject();
+			Project project = (Project) obj[1];
 			ArrayList<HistoryOptionLink> data = getLinks(history);
 			Map<String, Object> dataMap = new HashMap<>();
 			dataMap.put("kekNumber", project.getKekNumber());
@@ -53,6 +64,9 @@ public class HistoryHelper {
 
 	public ArrayList<HistoryOptionLink> getLinks(History history) throws Exception {
 		ArrayList<HistoryOptionLink> list = new ArrayList<HistoryOptionLink>();
+		if (history == null) {
+			return list;
+		}
 
 		QueryResult result = PersistenceHelper.manager.navigate(history, "spec", HistoryOptionLink.class, false);
 		while (result.hasMoreElements()) {

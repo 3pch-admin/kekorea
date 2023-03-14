@@ -1,3 +1,4 @@
+<%@page import="wt.org.WTUser"%>
 <%@page import="org.json.JSONArray"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.ArrayList"%>
@@ -6,6 +7,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) request.getAttribute("list");
 JSONArray maks = (JSONArray) request.getAttribute("maks");
 JSONArray installs = (JSONArray) request.getAttribute("installs");
@@ -50,7 +52,8 @@ JSONArray departments = new JSONArray(list);
 					<input type="text" name="userId" id="userId" class="AXInput">
 				</td>
 				<th>퇴사여부</th>
-				<td>&nbsp;
+				<td>
+					&nbsp;
 					<div class="pretty p-switch">
 						<input type="checkbox" name="resign" value="true">
 						<div class="state p-success">
@@ -97,9 +100,12 @@ JSONArray departments = new JSONArray(list);
 		</table>
 		<script type="text/javascript">
 			let myGridID;
-			const maks = <%=maks%>
-			const installs = <%=installs%>
-			const departments = <%=departments%>
+			const maks =
+		<%=maks%>
+			const installs =
+		<%=installs%>
+			const departments =
+		<%=departments%>
 			const dutys = [ "사장", "부사장", "PL", "TL" ];
 			function _layout() {
 				return [ {

@@ -40,7 +40,6 @@ div.include {
 	margin-right: 5px;
 }
 
-
 /** padding 공통 CSS **/
 .pt5 {
 	padding-top: 5px;
@@ -115,7 +114,7 @@ table.search-table td {
 	border-bottom: 1px solid #a6a6a6;
 	border-left: 1px solid #a6a6a6;
 	border-right: 1px solid #a6a6a6;
-/* 	text-indent: 5px; */
+	/* 	text-indent: 5px; */
 }
 
 /** 버튼 테이블 CSS **/
@@ -148,7 +147,7 @@ td.indent10 {
 }
 
 td.underline {
-	color: blue !important;
+	/* 	color: blue !important; */
 	cursor: pointer;
 }
 
@@ -192,7 +191,6 @@ input[type=text].width-700 {
 input[type=text].width-800 {
 	width: 800px;
 }
-
 
 /** 셀렉트 박스 사이즈 CSS **/
 select.width-100 {
@@ -310,7 +308,7 @@ table.create-table th {
 	background-color: #f2f2f2;
 	height: 30px;
 	border-bottom: 1px solid #a6a6a6;
-/* 	border-left: 1px solid #a6a6a6; */
+	/* 	border-left: 1px solid #a6a6a6; */
 	padding-bottom: 4px;
 }
 
@@ -422,4 +420,38 @@ table.view-table td {
 	border-bottom: 1px solid #a6a6a6;
 	border-left: 1px solid #a6a6a6;
 	border-right: 1px solid #a6a6a6;
+}
+
+/** A link CSS **/
+a {
+	text-decoration: none !important;
+	color: black !Important;
+}
+
+a:hover {
+	text-decoration: underline !important;
+	color: blue !important;
+}
+
+/** 컨텍스트 메뉴 재 정의 CSS **/
+.my-column {
+	text-align: right;
+}
+
+#headerMenu {
+	position: absolute;
+	display: none;
+	z-index: 100;
+}
+
+.ui-menu {
+	width: 250px;
+	font-size: 12px;
+	box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+	-webkit-box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+	-moz-box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+}
+
+.ui-widget-header {
+	padding: 0.2em;
 }

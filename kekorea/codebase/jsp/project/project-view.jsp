@@ -22,6 +22,18 @@ JSONArray taskTypes = (JSONArray) request.getAttribute("taskTypes");
 	</tr>
 </table>
 
+
+<!-- 작번 상세 정보 -->
+<table>
+	<tr>
+		<th>총기간[공수](일)</th>
+		<th>계획 시작일</th>
+		<th>계획 종료일</th>
+		<th>실제 시작일</th>
+		<th>실제 종료일</th>
+	</tr>
+</table>
+
 <table>
 	<colgroup>
 		<col width="20%">
@@ -34,7 +46,7 @@ JSONArray taskTypes = (JSONArray) request.getAttribute("taskTypes");
 		</td>
 		<td>&nbsp;</td>
 		<td valign="top">
-			<iframe src="/Windchill/plm/project/projectView?oid=<%=oid %>" style="height: 910px; width: 100%;"></iframe>
+			<iframe src="/Windchill/plm/project/projectView?oid=<%=oid%>" style="height: 910px; width: 100%;"></iframe>
 		</td>
 	</tr>
 </table>
@@ -144,7 +156,8 @@ JSONArray taskTypes = (JSONArray) request.getAttribute("taskTypes");
 
 	function loadGridData() {
 		let params = new Object();
-		let url = getCallUrl("/project/load?oid=<%=oid%>");
+		let url = getCallUrl("/project/load?oid=<%=oid%>
+	");
 		AUIGrid.showAjaxLoader(myGridID);
 		openLayer();
 		call(url, params, function(data) {

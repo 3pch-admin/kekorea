@@ -801,9 +801,12 @@ public class PartlistHelper {
 
 				if (compareType.equals("quantity")) { // LOT NO 비교
 					String value = (String) data.get("partNo") + "-" + (String) data.get("lotNo") + "-"
-							+ (int) data.get("quantity");
+							+ (data.get("quantity") == null ? "" : (int) data.get("quantity"));
 					String _value = (String) _data.get("partNo") + "-" + (String) _data.get("lotNo") + "-"
-							+ (int) _data.get("quantity");
+							+ (_data.get("quantity") == null ? "" : (int) _data.get("quantity"));
+
+					System.out.println("va=" + value);
+					System.out.println("v2a=" + _value);
 
 					if (value.equals(_value)) {
 						dataList.add(data);
@@ -813,12 +816,27 @@ public class PartlistHelper {
 						isEquals = true;
 						break;
 					}
-				} // 비교 조건부..
+					isEquals = false;
+				} else {
+					// 비교 조건부..
+					String value = (String) data.get("partNo") + "-" + (String) data.get("lotNo");
+					String _value = (String) _data.get("partNo") + "-" + (String) _data.get("lotNo");
+
+					if (value.equals(_value)) {
+						dataList.add(data);
+						_dataList.add(_data);
+//						result.remove(i);
+						_result.remove(j);
+						isEquals = true;
+						break;
+					}
+					isEquals = false;
+				}
 			}
 			System.out.println("isEquals=" + isEquals);
 			if (!isEquals) {
 				Map<String, Object> empty = new HashMap<String, Object>();
-//				dataList.add(data);
+				dataList.add(data);
 				_dataList.add(empty);
 //				dataList.add(empty);
 //				_dataList.add(_data);

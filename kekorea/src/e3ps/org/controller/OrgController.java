@@ -25,6 +25,8 @@ import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.org.dto.UserDTO;
 import e3ps.org.service.OrgHelper;
+import wt.org.WTUser;
+import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/org/**")
@@ -35,9 +37,11 @@ public class OrgController extends BaseController {
 	public ModelAndView organization() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		ArrayList<HashMap<String, String>> list = OrgHelper.manager.getDepartmentMap();
 		JSONArray maks = CommonCodeHelper.manager.parseJson("MAK");
 		JSONArray installs = CommonCodeHelper.manager.parseJson("INSTALL");
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("maks", maks);
 		model.addObject("installs", installs);
 		model.addObject("list", list);
@@ -117,8 +121,6 @@ public class OrgController extends BaseController {
 		}
 		return result;
 	}
-	
-	
 
 	@Description(value = "부서별 사용자 리스트 가져오기")
 	@GetMapping(value = "/loadDepartmentUser")

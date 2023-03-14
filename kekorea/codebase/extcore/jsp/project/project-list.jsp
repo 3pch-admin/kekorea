@@ -15,6 +15,8 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 <%@include file="/extcore/include/script.jsp"%>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
@@ -52,7 +54,7 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 			<tr>
 				<th>USER ID</th>
 				<td>
-					<input type="text" name="userId" id= "userId" class="AXInput">
+					<input type="text" name="userId" id="userId" class="AXInput">
 				</td>
 				<th>작번 상태</th>
 				<td>
@@ -88,13 +90,13 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 				</td>
 				<th>전기 담당자</th>
 				<td>
-					<input type="text" name="elec" id= "elec" class="AXInput">
+					<input type="text" name="elec" id="elec" class="AXInput">
 				</td>
 			</tr>
 			<tr>
 				<th>SW 담당자</th>
 				<td>
-					<input type="text" name="soft" id= "soft" class="AXInput">
+					<input type="text" name="soft" id="soft" class="AXInput">
 				</td>
 				<th>막종</th>
 				<td>
@@ -256,7 +258,7 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 					width : 130,
 					renderer : {
 						type : "LinkRenderer",
-						baseUrl : "javascript", 
+						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/project/info?oid=" + oid);
@@ -380,16 +382,20 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 				const props = {
 					rowIdField : "oid",
 					// 그리드 공통속성 시작
-					headerHeight : 30, // 헤더높이
-					rowHeight : 30, // 행 높이
-					showRowNumColumn : true, // 번호 행 출력 여부
-					showStateColumn : true, // 상태표시 행 출력 여부
-					rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-					noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
-					enableFilter : true, // 필터 사용 여부
+					headerHeight : 30,
+					rowHeight : 30,
+					showRowNumColumn : true,
+					showStateColumn : true,
+					rowNumHeaderText : "번호",
+					noDataMessage : "검색 결과가 없습니다.",
+					enableFilter : true,
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
+					useContextMenu : true,
+					enableRightDownFocus : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				// 그리드 공통속성 끝
 				};
 
@@ -449,12 +455,6 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 					parent.closeLayer();
 				})
 			}
-
-			$("#install").bindSelector({
-				finder : function() {
-
-				}
-			})
 
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {

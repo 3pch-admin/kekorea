@@ -1,4 +1,4 @@
-<%@page import="e3ps.partlist.PartListMasterProjectLink"%>
+의뢰서<%@page import="e3ps.partlist.PartListMasterProjectLink"%>
 <%@page import="java.util.Vector"%>
 <%@page import="wt.enterprise.RevisionControlled"%>
 <%@page import="e3ps.project.DocumentMasterOutputLink"%>
