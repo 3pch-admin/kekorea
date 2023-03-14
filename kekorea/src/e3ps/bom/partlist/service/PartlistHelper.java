@@ -805,9 +805,6 @@ public class PartlistHelper {
 					String _value = (String) _data.get("partNo") + "-" + (String) _data.get("lotNo") + "-"
 							+ (int) _data.get("quantity");
 
-					System.out.println("q=" + value);
-					System.out.println("q22=" + _value);
-
 					if (value.equals(_value)) {
 						dataList.add(data);
 						_dataList.add(_data);
@@ -816,52 +813,15 @@ public class PartlistHelper {
 						isEquals = true;
 						break;
 					}
-//					} else if (!value.equals(_value)) {
-//						Map<String, Object> empty = new HashMap<String, Object>();
-//						dataList.add(data);
-//						_dataList.add(empty);
-////						break;
-//						continue;
-//					}
-					isEquals = false;
-				} else {
-					String value = (String) data.get("partNo") + "-" + (String) data.get("lotNo");
-					String _value = (String) _data.get("partNo") + "-" + (String) _data.get("lotNo");
-
-					System.out.println("value=" + value);
-					System.out.println("_value=" + _value);
-
-					System.out.println("i=" + i);
-					System.out.println("j=" + j);
-
-					if (value.equals(_value)) {
-						System.out.println("11i=" + i);
-						System.out.println("22j=" + j);
-
-						dataList.add(data);
-						_dataList.add(_data);
-//						result.remove(i);
-						_result.remove(j);
-						isEquals = true;
-						break;
-					}
-//					} else if (!value.equals(_value)) {
-//						Map<String, Object> empty = new HashMap<String, Object>();
-//						dataList.add(data);
-//						_dataList.add(empty);
-////						break;
-//						continue;
-//					}
-					isEquals = false;
-				}
+				} // 비교 조건부..
 			}
 			System.out.println("isEquals=" + isEquals);
 			if (!isEquals) {
 				Map<String, Object> empty = new HashMap<String, Object>();
 //				dataList.add(data);
-//				_dataList.add(empty);
-				dataList.add(empty);
-				_dataList.add(_data);
+				_dataList.add(empty);
+//				dataList.add(empty);
+//				_dataList.add(_data);
 			}
 		}
 

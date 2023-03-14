@@ -720,7 +720,7 @@ public class StandardOrgService extends StandardManager implements OrgService {
 					PersistenceHelper.manager.delete(link);
 				}
 
-				if (!StringUtils.isNull(maks)) {
+				if (!StringUtils.isNull(installs)) {
 					String[] installArray = installs.split(",");
 					for (String install : installArray) {
 						CommonCode installCode = CommonCodeHelper.manager.getCommonCode(install.trim(), "INSTALL");

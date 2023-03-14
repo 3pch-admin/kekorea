@@ -258,4 +258,3 @@ function isNull(value) {
 	}
 	return false;
 }
-

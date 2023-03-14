@@ -90,8 +90,6 @@ String name = (String) request.getAttribute("name");
 					headerText : "항목",
 					dataType : "string",
 					width : 120,
-<<<<<<< HEAD
-=======
 					editRenderer: {
 						type: "InputEditRenderer",
 
@@ -106,7 +104,6 @@ String name = (String) request.getAttribute("name");
 							return { "validate": isValid, "message": "항목 값은 공백을 입력 할 수 없습니다." };
 						}
 					},
->>>>>>> d1d5b3b1b3c871d522019a30c805baf31d33ea88
 					filter : {
 						showIcon : true,
 						inline : true
@@ -438,6 +435,7 @@ String name = (String) request.getAttribute("name");
 					editable : true
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
+				loadGridData();
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);

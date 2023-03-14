@@ -34,41 +34,29 @@ JSONArray departments = new JSONArray(list);
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
-				<col width="*">
+				<col width="600">
 				<col width="130">
-				<col width="*">
+				<col width="600">
 				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
+				<col width="600">
 			</colgroup>
 			<tr>
 				<th>이름</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="userName" id="userName" class="AXInput">
 				</td>
 				<th>아이디</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="userId" id="userId" class="AXInput">
 				</td>
-				<th>부서</th>
-				<td>
-					<select name="department" id="department" class="AXSelect">
-						<option value="">선택</option>
-						<%
-						for (HashMap<String, Object> map : list) {
-							String oid = (String) map.get("oid");
-							String name = (String) map.get("name");
-						%>
-						<option value="<%=oid%>"><%=name%></option>
-						<%
-						}
-						%>
-					</select>
-				</td>
 				<th>퇴사여부</th>
-				<td>
-					<input type="text" name="partCode" class="AXInput">
+				<td>&nbsp;
+					<div class="pretty p-switch">
+						<input type="checkbox" name="resign" value="true">
+						<div class="state p-success">
+							<label>&nbsp;</label>
+						</div>
+					</div>
 				</td>
 			</tr>
 		</table>
@@ -109,12 +97,9 @@ JSONArray departments = new JSONArray(list);
 		</table>
 		<script type="text/javascript">
 			let myGridID;
-			const maks =
-		<%=maks%>
-			const installs =
-		<%=installs%>
-			const departments =
-		<%=departments%>
+			const maks = <%=maks%>
+			const installs = <%=installs%>
+			const departments = <%=departments%>
 			const dutys = [ "사장", "부사장", "PL", "TL" ];
 			function _layout() {
 				return [ {

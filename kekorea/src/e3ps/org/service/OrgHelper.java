@@ -1148,14 +1148,7 @@ public class OrgHelper {
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(People.class, true);
-		int idx_w = query.appendClassList(WTUser.class, false);
-		int idx_d = query.appendClassList(Department.class, false);
 
-		QuerySpecUtils.toInnerJoin(query, People.class, WTUser.class, "wtUserReference.key.id",
-				WTAttributeNameIfc.ID_NAME, idx, idx_w);
-		QuerySpecUtils.toInnerJoin(query, People.class, Department.class, "departmentReference.key.id",
-				WTAttributeNameIfc.ID_NAME, idx, idx_d);
-		
 		if (!StringUtils.isNull(userName)) {
 			QuerySpecUtils.toLikeAnd(query, idx, People.class, People.NAME, userName);
 		}

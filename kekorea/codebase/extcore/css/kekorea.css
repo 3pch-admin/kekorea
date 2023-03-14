@@ -115,7 +115,7 @@ table.search-table td {
 	border-bottom: 1px solid #a6a6a6;
 	border-left: 1px solid #a6a6a6;
 	border-right: 1px solid #a6a6a6;
-	text-indent: 5px;
+/* 	text-indent: 5px; */
 }
 
 /** 버튼 테이블 CSS **/
