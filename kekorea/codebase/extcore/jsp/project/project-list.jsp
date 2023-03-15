@@ -242,7 +242,7 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/project/info?oid=" + oid);
-							popup(url);
+							popup(url); 
 						}
 					},
 					filter : {

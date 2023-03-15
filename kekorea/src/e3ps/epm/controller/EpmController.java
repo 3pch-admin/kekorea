@@ -9,11 +9,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
+import e3ps.common.util.CommonUtils;
 import e3ps.epm.service.EpmHelper;
+import e3ps.project.Project;
+import e3ps.project.dto.ProjectDTO;
 
 @Controller
 @RequestMapping(value = "/epm/**")
@@ -65,4 +69,16 @@ public class EpmController extends BaseController {
 		}
 		return result;
 	}
+	
+	@Description(value = "도면 정보 페이지")
+	@GetMapping(value = "/view")
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Project project = (Project) CommonUtils.getObject(oid);
+		ProjectDTO dto = new ProjectDTO(project);
+		model.addObject("dto", dto);
+		model.setViewName("/extcore/jsp/epm/epm-view.jsp");
+		return model;
+	}
+	
 }

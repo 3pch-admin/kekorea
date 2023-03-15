@@ -74,7 +74,7 @@ String name = (String) request.getAttribute("name");
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 750px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			const maks = <%=maks%>
@@ -90,23 +90,6 @@ String name = (String) request.getAttribute("name");
 					headerText : "항목",
 					dataType : "string",
 					width : 120,
-<<<<<<< HEAD
-=======
-					editRenderer: {
-						type: "InputEditRenderer",
-
-						// ID는 고유값만 가능하도록 에디팅 유효성 검사
-						validator: function (oldValue, newValue, item, dataField) {
-							let isValid = true;
-							if(newValue === "") {
-								isValid = false;
-								success = false;
-							}
-							// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-							return { "validate": isValid, "message": "항목 값은 공백을 입력 할 수 없습니다." };
-						}
-					},
->>>>>>> d1d5b3b1b3c871d522019a30c805baf31d33ea88
 					filter : {
 						showIcon : true,
 						inline : true
@@ -574,6 +557,51 @@ String name = (String) request.getAttribute("name");
 				const addRows = AUIGrid.getAddedRowItems(myGridID);
 				const removeRows = AUIGrid.getRemovedItems(myGridID);
 				const editRows = AUIGrid.getEditedRowItems(myGridID);
+				
+				for (let i = 0; i < addRows.length; i++) {
+					const item = addRows[i];
+					
+					if(isNull(item.item)) {
+						AUIGrid.showToastMessage(myGridID, i, 0, "항목 값은 공백을 입력 할 수 없습니다.");
+						return false;
+					}
+					if(isNull(item.improvements)) {
+						AUIGrid.showToastMessage(myGridID, i, 1, "개선내용 값은 공백을 입력 할 수 없습니다.");
+						return false;
+					}
+					if(isNull(item.improvement)) {
+						AUIGrid.showToastMessage(myGridID, i, 2, "개선책 값은 공백을 입력 할 수 없습니다.");
+						return false;
+					}
+					if(isNull(item.apply)) {
+						AUIGrid.showToastMessage(myGridID, i, 3, "적용/미적용 값을 선택하세요.");
+						return false;
+					}
+					if(isNull(item.mak_code)) {
+						AUIGrid.showToastMessage(myGridID, i, 4, "막종 값을 선택하세요.");
+						return false;
+					}
+					if(isNull(item.detail_code)) {
+						AUIGrid.showToastMessage(myGridID, i, 5, "막종상세 값을 선택하세요.");
+						return false;
+					}
+					if(isNull(item.customer_code)) {
+						AUIGrid.showToastMessage(myGridID, i, 6, "거래처 값을 선택하세요.");
+						return false;
+					}
+					if(isNull(item.install_code)) {
+						AUIGrid.showToastMessage(myGridID, i, 7, "설치장소 값을 선택하세요.");
+						return false;
+					}
+					if(isNull(item.preView)) {
+						AUIGrid.showToastMessage(myGridID, i, 9, "미리보기를 선택하세요.");
+						return false;
+					}
+					if(isNull(item.icons)) {
+						AUIGrid.showToastMessage(myGridID, i, 11, "첨부파일을 선택하세요.");
+						return false;
+					}
+				}
 				params.addRows = addRows;
 				params.removeRows = removeRows;
 				params.editRows = editRows;

@@ -410,7 +410,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						AUIGrid.showToastMessage(myGridID, i, 9, "첨부파일을 선택하세요.");
 						return false;
 					}
-					
 				}
 
 				params.addRows = addRows;
