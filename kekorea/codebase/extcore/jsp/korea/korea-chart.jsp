@@ -15,9 +15,13 @@
 <title></title>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/highchart.jsp"%>
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
 </head>
 <body>
 <div id="container" style="height: 430px;"></div>
+<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 	<script type="text/javascript">
 //Create the chart
 Highcharts.chart('container', {
