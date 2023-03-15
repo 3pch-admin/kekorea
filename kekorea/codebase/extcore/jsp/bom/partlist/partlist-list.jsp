@@ -30,67 +30,67 @@
 			</colgroup>
 			<tr>
 				<th>수배표 제목</th>
-				<td>
-					<input type="text" name="fileName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="fileName" class="width-300">
 				</td>
 
 				<th>KEK 작번</th>
-				<td>
-					<input type="text" name="partName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partName" class="width-300">
 				</td>
 				<th>KE 작번</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-300">
 				</td>
 			</tr>
 			<tr>
 				<th>설명</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-300">
 				</td>
 				<th>막종</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-300">
 				</td>
 				<th>작업 내용</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-300">
 				</td>
 			</tr>
 			<tr>
 				<th>상태</th>
-				<td>
-					<select name="size" id="size" class="AXSelect w200">
+				<td class="indent5">
+					<select name="size" id="size" class="width-100">
 						<option value="">선택</option>
 					</select>
 				</td>
 				<th>작성자</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-300">
 				</td>
 				<th>작성일</th>
-				<td>
-					<input type="text" name="partNamea" class="AXInput width-100">
+				<td class="indent5">
+					<input type="text" name="partNamea" class="width-100">
 					~
-					<input type="text" name="partNamea" class="AXInput width-100">
+					<input type="text" name="partNamea" class="width-100">
 				</td>
 			</tr>
 			<tr>
 				<th>설계 구분</th>
-				<td>
-					<select name="size" id="size" class="AXSelect w200">
+				<td class="indent5">
+					<select name="size" id="size" class="width-100">
 						<option value="">선택</option>
 					</select>
 				</td>
 				<th>수정자</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-300">
 				</td>
 				<th>수정일</th>
-				<td>
-					<input type="text" name="partNamea" class="AXInput width-100">
+				<td class="indent5">
+					<input type="text" name="partNamea" class="width-100">
 					~
-					<input type="text" name="partNamea" class="AXInput width-100">
+					<input type="text" name="partNamea" class="width-100">
 				</td>
 			</tr>
 		</table>
@@ -325,7 +325,7 @@
 				loadGridData();
 				// LazyLoading 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
-				
+
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
@@ -425,7 +425,7 @@
 					loadGridData();
 				}
 			})
-			
+
 			// 컨텍스트 메뉴 숨기기
 			document.addEventListener("click", function(event) {
 				hideContextMenu();

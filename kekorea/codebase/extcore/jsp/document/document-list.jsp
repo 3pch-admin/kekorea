@@ -38,48 +38,50 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			</colgroup>
 			<tr>
 				<th>문서 분류</th>
-				<td colspan="7">
-					<input type="hidden" name="location" value="<%=DocumentHelper.ROOT%>"> <span id="location"><%=DocumentHelper.ROOT%></span>
+				<td colspan="7" class="indent5">
+					<input type="hidden" name="location" value="<%=DocumentHelper.ROOT%>">
+					<span id="location"><%=DocumentHelper.ROOT%></span>
 				</td>
-				</tr>
-				<tr>
+			</tr>
+			<tr>
 				<th>문서 제목</th>
-				<td>
-					<input type="text" name="partCode" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partCode" class="width-300">
 				</td>
 				<th>문서 번호</th>
-				<td>
-					<input type="text" name="partName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partName" class="width-300">
 				</td>
 				<th>설명</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-300">
 				</td>
 				<th>상태</th>
-				<td>
-					<select name="size" id="size" class="AXSelect w200">
+				<td class="indent5">
+					<select name="size" id="size" class="width-100">
 						<option value="">선택</option>
 					</select>
 				</td>
-				</tr>
-				<tr>
+			</tr>
+			<tr>
 				<th>작성자</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-200">
 				</td>
 				<th>작성일</th>
-				<td colspan="3">
-					<input type="text" name="partNamea" class="AXInput width-100"> ~
-					<input type="text" name="partNamea" class="AXInput width-100">
+				<td colspan="3" class="indent5">
+					<input type="text" name="partNamea" class="width-100">
+					~
+					<input type="text" name="partNamea" class="width-100">
 				</td>
 				<th>버전</th>
-				<td>
+				<td class="indent5">
 					<label title="최신 버전">
 						<input type="radio" name="latestVersion" value="true" checked="checked">
 						<span class="latestVersion">최신 버전</span>
 					</label>
 					<label title="모든 버전">
-						<input type="radio" name="allVersion" value="false" >
+						<input type="radio" name="allVersion" value="false">
 						<span class="allVersion">모든 버전</span>
 					</label>
 				</td>
@@ -91,6 +93,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('document-list');">
+					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('document-list');">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 					<%
 					if (isAdmin) {
@@ -126,6 +129,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				<td>
 					<!-- 그리드 리스트 -->
 					<div id="grid_wrap" style="height: 680px; border-top: 1px solid #3180c3;"></div>
+					<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 				</td>
 			</tr>
 		</table>
@@ -140,7 +144,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
-						baseUrl : "javascript", 
+						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
 						}
@@ -157,7 +161,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
-						baseUrl : "javascript", 
+						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
 						}
@@ -288,6 +292,18 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				loadGridData();
 				// Lazy Loading 이벤트 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+				
+				// 컨텍스트 메뉴 이벤트 바인딩
+				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+
+				// 스크롤 체인지 핸들러.
+				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
+
+				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
 			}
 
 			function loadGridData() {
@@ -374,6 +390,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("document-list");
+				// 컨텍스트 메뉴 시작
+				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				$("#h_item_ul").append(contenxtHeader);
+				$("#headerMenu").menu({
+					select : headerMenuSelectHandler
+				});
 				createAUIGrid(columns);
 				_createAUIGrid(_columns);
 			});
@@ -386,6 +408,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				}
 			})
 
+			// 컨텍스트 메뉴 숨기기
+			document.addEventListener("click", function(event) {
+				hideContextMenu();
+			})
+			
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(_myGridID);
 				AUIGrid.resize(myGridID);
