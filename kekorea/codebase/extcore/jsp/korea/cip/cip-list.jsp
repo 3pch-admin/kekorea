@@ -77,18 +77,12 @@ String name = (String) request.getAttribute("name");
 		</table>
 
 		<!-- 그리드 리스트 -->
-<<<<<<< Updated upstream
 		<div id="grid_wrap" style="height: 750px; border-top: 1px solid #3180c3;"></div>
-<<<<<<< HEAD
 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
-=======
-=======
 		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
->>>>>>> Stashed changes
->>>>>>> a99012168c19b5b1f368ba9e228a312ab0318bbf
 		<script type="text/javascript">
 			let myGridID;
 			const maks = <%=maks%>
@@ -577,8 +571,7 @@ String name = (String) request.getAttribute("name");
 			function addRow() {
 				const item = new Object();
 				item.createdDate = new Date();
-				item.creator = "<%=name%>
-			";
+				item.creator = "<%=name%>";
 				item.latest = true;
 				AUIGrid.addRow(myGridID, item, "first");
 			}
