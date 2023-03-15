@@ -29,14 +29,8 @@
 			</colgroup>
 			<tr>
 				<th>공지사항 제목</th>
-<<<<<<< Updated upstream
-				<td>
-					<input type="text" name="" id="" class="AXInput">
-=======
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-300">
->>>>>>> Stashed changes
-				</td>
+					<input type="text" name="" id="" class="width-200">
 				<th>설명</th>
 				<td class="indent5">
 					<input type="text" name="partCode" class="width-300">
@@ -47,7 +41,14 @@
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
-					<input type="text" name="number" class="width-100">
+					<input type="text" name="created" id="created" class="width-200" readonly="readonly">
+					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
+					<!-- data-target 달력 태그 ID -->
+					<input type="hidden" name="createdFrom" id="createdFrom">
+					<!-- 달력 태그 아이디값 + From -->
+					<input type="hidden" name="createdTo" id="createdTo">
+					<!-- 달력 태그 아이디값 + To -->
 				</td>
 			</tr>
 		</table>
@@ -229,7 +230,7 @@
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
 				});
 			}
-			
+
 			// 저장
 			function save() {
 
@@ -242,28 +243,27 @@
 				const addRows = AUIGrid.getAddedRowItems(myGridID);
 				const removeRows = AUIGrid.getRemovedItems(myGridID);
 				const editRows = AUIGrid.getEditedRowItems(myGridID);
-				
+
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
-					if(isNull(item.name)) {
-						AUIGrid.showToastMessage(myGridID, i+1, 0, "코드 명 값은 공백을 입력 할 수 없습니다.");
+					if (isNull(item.name)) {
+						AUIGrid.showToastMessage(myGridID, i + 1, 0, "코드 명 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
-					if(isNull(item.code)) {
-						AUIGrid.showToastMessage(myGridID, i+1, 1, "코드 값은 공백을 입력 할 수 없습니다.");
+					if (isNull(item.code)) {
+						AUIGrid.showToastMessage(myGridID, i + 1, 1, "코드 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
-					if(isNull(item.codeType)) {
-						AUIGrid.showToastMessage(myGridID, i+1, 2, "코드 타입 값을 선택하세요.");
+					if (isNull(item.codeType)) {
+						AUIGrid.showToastMessage(myGridID, i + 1, 2, "코드 타입 값을 선택하세요.");
 						return false;
 					}
-					if(isNull(item.sort)) {
-						AUIGrid.showToastMessage(myGridID, i+1, 3, "정렬 값은 공백을 입력 할 수 없습니다.");
+					if (isNull(item.sort)) {
+						AUIGrid.showToastMessage(myGridID, i + 1, 3, "정렬 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 				}
-				
-				
+
 				params.addRows = addRows;
 				params.removeRows = removeRows;
 				params.editRows = editRows;
@@ -401,6 +401,11 @@
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+				
+				// 범위 달력
+				fromToCalendar("created", "calendar");
+				// 범위 달력 값 삭제
+				fromToDelete("delete");
 			});
 
 			document.addEventListener("keydown", function(event) {

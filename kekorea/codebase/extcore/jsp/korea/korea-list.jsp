@@ -202,8 +202,8 @@ String code = (String) request.getAttribute("code");
 
 			function requestAdditionalData() {
 				const params = new Object();
-				const curPage = document.getElementById("curPage").value
-				const sessionid = document.getElementById("sessionid").value
+				const curPage = document.getElementById("curPage").value;
+				const sessionid = document.getElementById("sessionid").value;
 				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
