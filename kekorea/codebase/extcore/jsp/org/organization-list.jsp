@@ -1,3 +1,4 @@
+<%@page import="wt.org.WTUser"%>
 <%@page import="org.json.JSONArray"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.ArrayList"%>
@@ -6,6 +7,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) request.getAttribute("list");
 JSONArray maks = (JSONArray) request.getAttribute("maks");
 JSONArray installs = (JSONArray) request.getAttribute("installs");
@@ -22,6 +24,8 @@ JSONArray departments = new JSONArray(list);
 <%@include file="/extcore/include/script.jsp"%>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
@@ -34,41 +38,30 @@ JSONArray departments = new JSONArray(list);
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
-				<col width="*">
+				<col width="600">
 				<col width="130">
-				<col width="*">
+				<col width="600">
 				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
+				<col width="600">
 			</colgroup>
 			<tr>
 				<th>이름</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="userName" id="userName" class="AXInput">
 				</td>
 				<th>아이디</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="userId" id="userId" class="AXInput">
-				</td>
-				<th>부서</th>
-				<td>
-					<select name="department" id="department" class="AXSelect">
-						<option value="">선택</option>
-						<%
-						for (HashMap<String, Object> map : list) {
-							String oid = (String) map.get("oid");
-							String name = (String) map.get("name");
-						%>
-						<option value="<%=oid%>"><%=name%></option>
-						<%
-						}
-						%>
-					</select>
 				</td>
 				<th>퇴사여부</th>
 				<td>
-					<input type="text" name="partCode" class="AXInput">
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="checkbox" name="resign" value="true">
+						<div class="state p-success">
+							<label>&nbsp;</label>
+						</div>
+					</div>
 				</td>
 			</tr>
 		</table>
@@ -377,6 +370,16 @@ JSONArray departments = new JSONArray(list);
 				loadGridData();
 				// Lazy Loading 이벤트 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+				// 동적 수정여부 체크
+				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin );
+			}
+			
+			function auiCellEditBegin(event) {
+				const item = event.item;
+				if("<%=sessionUser.getName() %>" !== item.id) {
+					return false;
+				}
+				return true;
 			}
 
 			function loadGridData() {

@@ -28,13 +28,13 @@
 	</tr>
 	<tr>
 		<th class="req">내용</th>
-		<td class="indent5" colspan="3">
-			<textarea name="description" id="description" rows="8"></textarea>
+		<td class="indent5">
+			<textarea name="description" id="description"></textarea>
 		</td>
 	</tr>
 	<tr>
 		<th>첨부파일</th>
-		<td class="indent5" colspan="3">
+		<td class="indent5">
 			<jsp:include page="/extcore/include/secondary-include.jsp">
 				<jsp:param value="" name="oid" />
 				<jsp:param value="create" name="mode" />
@@ -73,7 +73,7 @@
 	function loadTinymce() {
 		tinymce.init({
 			selector : 'textarea',
-			height : 500,
+			height : 400,
 			statusbar : false,
 			language : 'ko_KR',
 			plugins : 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',

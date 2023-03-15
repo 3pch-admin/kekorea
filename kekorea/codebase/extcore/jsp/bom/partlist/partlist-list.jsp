@@ -148,11 +148,13 @@
 					headerText : "수배표제목",
 					dataType : "string",
 					width : 300,
+					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const url = getCallUrl("/partlist/view?oid=" + item.oid);
+							popup(url);
 						}
 					},
 					filter : {
@@ -314,7 +316,6 @@
 				loadGridData();
 				// LazyLoading 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
-				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 			}
 
 			function compare() {
@@ -331,15 +332,6 @@
 				const oid = checkedItems[0].item.oid;
 				const url = getCallUrl("/partlist/compare?loid=" + loid + "&oid=" + oid);
 				popup(url);
-			}
-
-			function auiCellClickHandler(event) {
-				const dataField = event.dataField;
-				const item = event.item;
-				if (dataField === "name") {
-					const url = getCallUrl("/partlist/view?oid=" + item.oid);
-					popup(url);
-				}
 			}
 
 			function loadGridData() {

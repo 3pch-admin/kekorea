@@ -10,8 +10,7 @@ import wt.enterprise.Managed;
 import wt.ownership.Ownable;
 import wt.util.WTException;
 
-@GenAsPersistable(superClass = Managed.class, interfaces = { ContentHolder.class, ContentHolder.class,
-		Ownable.class },
+@GenAsPersistable(superClass = Managed.class, interfaces = { ContentHolder.class, Ownable.class },
 
 		properties = {
 
@@ -24,8 +23,8 @@ import wt.util.WTException;
 		}
 
 )
-public class TBOMMaster extends _TBOMMaster {
 
+public class TBOMMaster extends _TBOMMaster {
 	static final long serialVersionUID = 1;
 
 	public static TBOMMaster newTBOMMaster() throws WTException {

@@ -7,6 +7,10 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 %>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<style>
+.my-row-style {
+background-color: #e1ffe1;}
+</style>
 <!-- hidden -->
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <input type="hidden" name="compare" id="compare">
@@ -50,10 +54,10 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 	</colgroup>
 	<tr>
 		<td>
-			<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+			<div id="grid_wrap" style="height: 500px; border-top: 1px solid #3180c3;"></div>
 		</td>
 		<td>
-			<div id="_grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+			<div id="_grid_wrap" style="height: 500px; border-top: 1px solid #3180c3;"></div>
 		</td>
 </table>
 <script type="text/javascript">
@@ -66,89 +70,158 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 		headerText : "LOT_NO",
 		dataType : "string",
 		width : 80,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
 	}, {
 		dataField : "unitName",
 		headerText : "UNIT NAME",
 		dataType : "string",
-		width : 120
+		width : 120,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
 	}, {
 		dataField : "partNo",
 		headerText : "부품번호",
 		dataType : "string",
 		style : "underline",
 		width : 130,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
 	}, {
 		dataField : "partName",
 		headerText : "부품명",
 		dataType : "string",
 		width : 200,
-	}, {
-		dataField : "standard",
-		headerText : "규격",
-		dataType : "string",
-		width : 250,
-	}, {
-		dataField : "maker",
-		headerText : "MAKER",
-		dataType : "string",
-		width : 130,
-	}, {
-		dataField : "customer",
-		headerText : "거래처",
-		dataType : "string",
-		width : 130,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
 	}, {
 		dataField : "quantity",
 		headerText : "수량",
 		dataType : "numeric",
 		width : 60,
+		postfix : "개",
+		filter : {
+			showIcon : true,
+			inline : true
+		},
+	}, {
+		dataField : "standard",
+		headerText : "규격",
+		dataType : "string",
+		width : 250,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
+	}, {
+		dataField : "maker",
+		headerText : "MAKER",
+		dataType : "string",
+		width : 130,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
+	}, {
+		dataField : "customer",
+		headerText : "거래처",
+		dataType : "string",
+		width : 130,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
 	}, {
 		dataField : "unit",
 		headerText : "단위",
 		dataType : "string",
 		width : 80,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
 	}, {
 		dataField : "price",
 		headerText : "단가",
 		dataType : "numeric",
 		width : 120,
+		filter : {
+			showIcon : false,
+			inline : false
+		},
 	}, {
 		dataField : "currency",
 		headerText : "화폐",
 		dataType : "string",
 		width : 60,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
 	}, {
 		dataField : "won",
 		headerText : "원화금액",
 		dataType : "numeric",
 		width : 120,
+		filter : {
+			showIcon : false,
+			inline : false
+		},
 	}, {
 		dataField : "partListDate",
 		headerText : "수배일자",
 		dataType : "date",
 		formatString : "yyyy-mm-dd",
 		width : 100,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
 	}, {
 		dataField : "exchangeRate",
 		headerText : "환율",
 		dataType : "numeric",
 		width : 80,
-		formatString : "#,##0.0000"
+		formatString : "#,##0.0000",
+		filter : {
+			showIcon : false,
+			inline : false
+		},
 	}, {
 		dataField : "referDrawing",
 		headerText : "참고도면",
 		dataType : "string",
 		width : 120,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
 	}, {
 		dataField : "classification",
 		headerText : "조달구분",
 		dataType : "string",
 		width : 120,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
 	}, {
 		dataField : "note",
 		headerText : "비고",
 		dataType : "string",
 		width : 250,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
 	} ];
 
 	function createAUIGrid(columnLayout) {
@@ -158,6 +231,8 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 			rowHeight : 30, // 행 높이
 			showRowNumColumn : true, // 번호 행 출력 여부
 			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
+			enableFilter : true, // 필터 사용 여부
+			showInlineFilter : true,
 			// 그리드 공통속성 끝
 			rowStyleFunction : function(rowIndex, item) {
 			}
@@ -169,8 +244,20 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 			rowHeight : 30, // 행 높이
 			showRowNumColumn : true, // 번호 행 출력 여부
 			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
+			enableFilter : true, // 필터 사용 여부
+			showInlineFilter : true,
 			// 그리드 공통속성 끝
 			rowStyleFunction : function(rowIndex, item) {
+				// 다른쪽 그리드의 동일한 행 아이템 얻기
+// 				var _item = AUIGrid.getItemByRowIndex(myGridID, rowIndex); // 왼쪽
+// 				if (!_item) {
+// 					return;
+// 				}
+
+// 				// 그리드1의 country 와 그리드2의 country 값이 다르면 my-row-style CSS 클래스 적용
+// 				if (_item.quantity != item.quantity) {
+// 					return "my-row-style";
+// 				}
 			}
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);

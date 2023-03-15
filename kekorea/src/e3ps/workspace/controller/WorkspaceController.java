@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
+import e3ps.common.util.CommonUtils;
+import e3ps.workspace.ApprovalLine;
+import e3ps.workspace.dto.ApprovalLineDTO;
 import e3ps.workspace.service.WorkspaceHelper;
 
 @Controller
@@ -164,6 +167,17 @@ public class WorkspaceController extends BaseController {
 	public ModelAndView popup() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("popup:/workspace/register-popup");
+		return model;
+	}
+
+	@Description(value = "결재 정보 보기")
+	@GetMapping(value = "/view")
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		ApprovalLine approvalLine = (ApprovalLine) CommonUtils.getObject(oid);
+		ApprovalLineDTO dto = new ApprovalLineDTO(approvalLine, "");
+		model.addObject("oid", oid);
+		model.setViewName("popup:/workspace/approval-view");
 		return model;
 	}
 }

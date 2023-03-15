@@ -7,11 +7,12 @@ import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import wt.content.ContentHolder;
 import wt.content.FormatContentHolder;
+import wt.fc.Item;
 import wt.fc.WTObject;
 import wt.ownership.Ownable;
 import wt.util.WTException;
 
-@GenAsPersistable(superClass = WTObject.class, interfaces = { ContentHolder.class, Ownable.class },
+@GenAsPersistable(superClass = Item.class, interfaces = { ContentHolder.class, Ownable.class },
 
 		properties = {
 

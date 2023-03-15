@@ -48,54 +48,6 @@ function call(url, params, callBack, methodType) {
 }
 
 /**
- * SELECT 박스 바인딩
- * 변수 SELECT 박스 NAME 값
- */
-function select(name) {
-	$("select[name=" + name + "]").bindSelect();
-}
-
-/**
- * RADIO 박스 바인딩
- * 변수 RADIO 박스 NAME 값
- */
-function radio(name) {
-	$("input:radio[name=" + name + "]").checks();
-}
-
-/**
- * CHECKBOX 박스 바인딩
- * 변수 CHECKBOX 박스 NAME 값
- */
-function checkBox(name) {
-	$("input:checkbox[name=" + name + "]").checks();
-}
-
-/**
- * SELECTBOX 박스 바인딩
- * 변수 SELECTBOX 박스 ID 값
- */
-function selectBox(id) {
-	$("#" + id).bindSelect();
-}
-
-/**
- * Bind Selector
- */
-
-function selector(id) {
-	$("#" + id).bindSelector({
-		optionPrintLength: "all",
-		onsearch: function(objID, objVal, callBack) {
-		},
-		finder: function() {
-
-		}
-	});
-}
-
-
-/**
  * 팝업창
  */
 function popup(url, width, height) {
@@ -201,45 +153,6 @@ function rangeDate(name, startName) {
 	$("input[name=" + name + "]").bindTwinDate(config);
 }
 
-/**
- * AUIGrid 칼럼 저장 
- */
-function saveColumnLayout(storageID) {
-	let columns = AUIGrid.getColumnLayout(myGridID);
-	let columnJson = JSON.stringify(columns);
-	localStorage.setItem(storageID, columnJson);
-	alert("현재 그리드의 상태가 보관되었습니다.\r\n브라우저를 종료하거나 F5 로 갱신했을 때 현재 상태로 그리드가 출력됩니다.");
-}
-
-/**
- * AUIGrid 컬럼 가져오기
- */
-function loadColumnLayout(storageID) {
-	let columnLayout = null;
-	let column = getLocalStorageValue(storageID);
-	if (column && typeof column != "undefined") {
-		columnLayout = JSON.parse(column);
-		//감춰진 칼럼에 따라 데모 상에 보이는 체크박스 동기화 시킴.
-		//		syncCheckbox(columnLayout);
-	}
-
-	if (!columnLayout) {
-		columnLayout = _layout();
-	}
-	return columnLayout;
-};
-
-/**
- * 로컬 스토리지 가져오기
- */
-function getLocalStorageValue(storageID) {
-	if (typeof (Storage) != "undefined") {
-		return localStorage.getItem(storageID);
-	} else {
-		alert("localStorage 를 지원하지 않는 브라우저입니다.");
-	}
-};
-
 
 // 태그 NAME이 여러개인 것을 배열 객체로 리턴 해주는 함수
 function toArray(name) {
@@ -258,4 +171,3 @@ function isNull(value) {
 	}
 	return false;
 }
-

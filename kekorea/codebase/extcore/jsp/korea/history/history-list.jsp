@@ -103,27 +103,6 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 				headerText : "KEK작번",
 				dataType : "string",
 				width : 140,
-				editRenderer : {
-					type : "RemoteListRenderer",
-					fieldName : "value",
-					noDataMessage : "검색결과가 없습니다.",
-					showEditorBtnOver : true, // 마우스 오버 시 에디터버턴 보이기
-					remoter : function(request, response) { // remoter 지정 필수
-						if (String(request.term).length < 2) {
-							alert("2글자 이상 입력하십시오.");
-							response(false); // 데이터 요청이 없는 경우 반드시 false 삽입하십시오.
-							return;
-						}
-						// 데이터 요청
-						const url = getCallUrl("/history/remoter");
-						const params = new Object();
-						params.term = request.term;
-						params.target = "project";
-						call(url, params, function(data) {
-							response(data.list);
-						});
-					}
-				},
 				filter : {
 					showIcon : true,
 					inline : true

@@ -35,13 +35,13 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th class="req">CONFIG SHEET 제목</th>
+				<th class="req lb">CONFIG SHEET 제목</th>
 				<td class="indent5">
 					<input type="text" name="name" id="name" class="AXInput width-700">
 				</td>
 			</tr>
 			<tr>
-				<th class="req">KEK 작번</th>
+				<th class="req lb">KEK 작번</th>
 				<td>
 					<jsp:include page="/extcore/include/project-include.jsp">
 						<jsp:param value="" name="oid" />
@@ -53,13 +53,13 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 				</td>
 			</tr>
 			<tr>
-				<th>설명</th>
+				<th class="lb">설명</th>
 				<td class="indent5">
 					<textarea name="description" id="description" rows="6" cols=""></textarea>
 				</td>
 			</tr>
 			<tr>
-				<th>첨부파일</th>
+				<th class="lb">첨부파일</th>
 				<td class="indent5">
 					<jsp:include page="/extcore/include/secondary-include.jsp">
 						<jsp:param value="" name="oid" />
@@ -68,7 +68,7 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 				</td>
 			</tr>
 			<tr>
-				<th class="req">결재</th>
+				<th class="req lb">결재</th>
 				<td>
 					<jsp:include page="/extcore/include/register-include.jsp">
 						<jsp:param value="200" name="height" />

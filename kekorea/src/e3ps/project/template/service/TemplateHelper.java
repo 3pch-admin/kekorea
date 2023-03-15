@@ -34,20 +34,22 @@ public class TemplateHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<TemplateDTO> list = new ArrayList<TemplateDTO>();
-		
+
 		String templateName = (String) params.get("templateName");
 		String duration = (String) params.get("duration");
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Template.class, true);
-		QuerySpecUtils.toOrderBy(query, idx, Template.class, Template.CREATE_TIMESTAMP, true);
-		
+
 		if (!StringUtils.isNull(templateName)) {
 			QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.NAME, templateName);
 		}
 		if (!StringUtils.isNull(duration)) {
 			QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.DURATION, duration);
 		}
-		
+
+		QuerySpecUtils.toBooleanAnd(query, idx, Template.class, Template.ENABLE, true);
+		QuerySpecUtils.toOrderBy(query, idx, Template.class, Template.CREATE_TIMESTAMP, true);
+
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {

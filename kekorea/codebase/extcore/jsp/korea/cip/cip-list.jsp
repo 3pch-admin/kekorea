@@ -90,6 +90,23 @@ String name = (String) request.getAttribute("name");
 					headerText : "항목",
 					dataType : "string",
 					width : 120,
+<<<<<<< HEAD
+=======
+					editRenderer: {
+						type: "InputEditRenderer",
+
+						// ID는 고유값만 가능하도록 에디팅 유효성 검사
+						validator: function (oldValue, newValue, item, dataField) {
+							let isValid = true;
+							if(newValue === "") {
+								isValid = false;
+								success = false;
+							}
+							// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
+							return { "validate": isValid, "message": "항목 값은 공백을 입력 할 수 없습니다." };
+						}
+					},
+>>>>>>> 3c2a1782361badebb2b43b48ee5430e6bd16d0d3
 					filter : {
 						showIcon : true,
 						inline : true
@@ -421,6 +438,7 @@ String name = (String) request.getAttribute("name");
 					editable : true
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
+				loadGridData();
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
