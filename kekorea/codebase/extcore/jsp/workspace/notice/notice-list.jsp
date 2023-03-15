@@ -188,10 +188,12 @@
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/notice/list");
+			
 				// 검색 변수
 				const name = document.getElementById("name").value;
 				const description = document.getElementById("description").value;
 				const creator = document.getElementById("creator").value;
+
 				// 검색 변수 담기
 				params.name = name;
 				params.description = description;
