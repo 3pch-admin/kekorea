@@ -93,9 +93,14 @@
 				</td>
 				<th>수정일</th>
 				<td class="indent5">
-					<input type="text" name="partNamea" class="width-100">
-					~
-					<input type="text" name="partNamea" class="width-100">
+					<input type="text" name="modifydate" id="modifydate" class="width-200" readonly="readonly">
+					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
+					<img src="/Windchill/extcore/images/delete.png" class="mdelete" title="삭제" data-target="modifydate">
+					<!-- data-target 달력 태그 ID -->
+					<input type="hidden" name="modifydateFrom" id="modifydateFrom">
+					<!-- 달력 태그 아이디값 + From -->
+					<input type="hidden" name="modifydateTo" id="modifydateTo">
+					<!-- 달력 태그 아이디값 + To -->
 				</td>
 			</tr>
 		</table>
@@ -426,6 +431,11 @@
 				fromToCalendar("created", "calendar");
 				// 범위 달력 값 삭제
 				fromToDelete("delete")
+				
+				// 범위 달력 수정일
+				fromToCalendar("modifydate", "calendar");
+				// 범위 달력 값 삭제
+				fromToDelete("mdelete");
 			});
 
 			document.addEventListener("keydown", function(event) {
