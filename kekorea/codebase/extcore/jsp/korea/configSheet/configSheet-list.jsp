@@ -11,6 +11,8 @@
 <%@include file="/extcore/include/script.jsp"%>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
@@ -31,20 +33,20 @@
 			</colgroup>
 			<tr>
 				<th>공지사항 제목</th>
-				<td>
-					<input type="text" name="fileName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="fileName" class="width-300">
 				</td>
 				<th>설명</th>
-				<td>
-					<input type="text" name="partCode" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partCode" class="width-300">
 				</td>
 				<th>작성자</th>
-				<td>
-					<input type="text" name="partName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partName" class="width-100">
 				</td>
 				<th>작성일</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-100">
 				</td>
 			</tr>
 		</table>
@@ -54,6 +56,7 @@
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('configSheet-list');">
+					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('configSheet-list');">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
@@ -64,6 +67,7 @@
 
 		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
@@ -225,6 +229,7 @@
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
+					useContextMenu : true
 				// 그리드 공통속성 끝
 				};
 
@@ -235,6 +240,18 @@
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 				// cellclick
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+				
+				// 컨텍스트 메뉴 이벤트 바인딩
+				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+
+				// 스크롤 체인지 핸들러.
+				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
+
+				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
 			}
 
 			function loadGridData() {
@@ -291,9 +308,20 @@
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("configSheet-list");
+				// 컨텍스트 메뉴 시작
+				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				$("#h_item_ul").append(contenxtHeader);
+				$("#headerMenu").menu({
+					select : headerMenuSelectHandler
+				});
 				createAUIGrid(columns);
 			});
 
+			// 컨텍스트 메뉴 숨기기
+			document.addEventListener("click", function(event) {
+				hideContextMenu();
+			})
+			
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;

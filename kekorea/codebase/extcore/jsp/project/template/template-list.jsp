@@ -31,11 +31,19 @@
 			<tr>
 				<th>템플릿 제목</th>
 				<td class="indent5">
+<<<<<<< Updated upstream
 					<input type="text" name="templateName" id="templateName">
 				</td>
 				<th>작성자</th>
 				<td class="indent5">
 					<input type="text" name="duration" id="duration">
+=======
+					<input type="text" name="templateName" id="templateName" class="width-300">
+				</td>
+				<th>작성자</th>
+				<td class="indent5">
+					<input type="text" name="duration" id="duration" class="width-100">
+>>>>>>> Stashed changes
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
@@ -47,11 +55,19 @@
 			<tr>
 				<th>기간</th>
 				<td class="indent5">
+<<<<<<< Updated upstream
 					<input type="text" name="partName">
 				</td>
 				<th>수정자</th>
 				<td class="indent5">
 					<input type="text" name="">
+=======
+					<input type="text" name="partName" class="width-100">
+				</td>
+				<th>수정자</th>
+				<td class="indent5">
+					<input type="text" name="" class="width-100">
+>>>>>>> Stashed changes
 				</td>
 				<th>수정일</th>
 				<td class="indent5">
@@ -190,11 +206,16 @@
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
+<<<<<<< Updated upstream
 					useContextMenu : true,
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				// 그리드 공통속성 끝
+=======
+					// 그리드 공통속성 끝
+					useContextMenu : true
+>>>>>>> Stashed changes
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
@@ -202,7 +223,11 @@
 				loadGridData();
 				// Lazy Loading 이벤트 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+<<<<<<< Updated upstream
 				
+=======
+
+>>>>>>> Stashed changes
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
@@ -290,6 +315,11 @@
 				}
 			})
 			
+			// 컨텍스트 메뉴 숨기기
+			document.addEventListener("click", function(event) {
+				hideContextMenu();
+			})
+
 			// 컨텍스트 메뉴 숨기기
 			document.addEventListener("click", function(event) {
 				hideContextMenu();

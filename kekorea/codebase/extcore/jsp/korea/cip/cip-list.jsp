@@ -20,6 +20,8 @@ String name = (String) request.getAttribute("name");
 <%@include file="/extcore/include/script.jsp"%>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
@@ -40,20 +42,20 @@ String name = (String) request.getAttribute("name");
 			</colgroup>
 			<tr>
 				<th>공지사항 제목</th>
-				<td>
-					<input type="text" name="fileName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="fileName" class="width-300">
 				</td>
 				<th>설명</th>
-				<td>
-					<input type="text" name="partCode" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partCode" class="width-300">
 				</td>
 				<th>작성자</th>
-				<td>
-					<input type="text" name="partName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partName" class="width-100">
 				</td>
 				<th>작성일</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-100">
 				</td>
 			</tr>
 		</table>
@@ -63,6 +65,7 @@ String name = (String) request.getAttribute("name");
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('cip-list');">
+					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('cip-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
@@ -74,7 +77,13 @@ String name = (String) request.getAttribute("name");
 		</table>
 
 		<!-- 그리드 리스트 -->
+<<<<<<< Updated upstream
 		<div id="grid_wrap" style="height: 750px; border-top: 1px solid #3180c3;"></div>
+=======
+		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
+>>>>>>> Stashed changes
 		<script type="text/javascript">
 			let myGridID;
 			const maks = <%=maks%>
@@ -435,7 +444,8 @@ String name = (String) request.getAttribute("name");
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					// 그리드 공통속성 끝
-					editable : true
+					editable : true,
+					useContextMenu : true
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
 				loadGridData();
@@ -443,6 +453,18 @@ String name = (String) request.getAttribute("name");
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+				
+				// 컨텍스트 메뉴 이벤트 바인딩
+				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+
+				// 스크롤 체인지 핸들러.
+				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
+
+				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
 			}
 
 			function auiCellEditEndHandler(event) {
@@ -549,7 +571,8 @@ String name = (String) request.getAttribute("name");
 			function addRow() {
 				const item = new Object();
 				item.createdDate = new Date();
-				item.creator = "<%=name%>";
+				item.creator = "<%=name%>
+			";
 				item.latest = true;
 				AUIGrid.addRow(myGridID, item, "first");
 			}
@@ -564,12 +587,12 @@ String name = (String) request.getAttribute("name");
 			}
 
 			function save() {
-				
-				 // 저장전에 검증ㄷ되어야..
+
+				// 저장전에 검증ㄷ되어야..
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
 				}
-				
+
 				const url = getCallUrl("/cip/save");
 				const params = new Object();
 				const addRows = AUIGrid.getAddedRowItems(myGridID);
@@ -638,6 +661,12 @@ String name = (String) request.getAttribute("name");
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("cip-list");
+				// 컨텍스트 메뉴 시작
+				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				$("#h_item_ul").append(contenxtHeader);
+				$("#headerMenu").menu({
+					select : headerMenuSelectHandler
+				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});
@@ -648,6 +677,11 @@ String name = (String) request.getAttribute("name");
 				if (keyCode === 13) {
 					loadGridData();
 				}
+			})
+			
+			// 컨텍스트 메뉴 숨기기
+			document.addEventListener("click", function(event) {
+				hideContextMenu();
 			})
 
 			window.addEventListener("resize", function() {
