@@ -31,19 +31,16 @@
 			<tr>
 				<th>템플릿 제목</th>
 				<td class="indent5">
-<<<<<<< Updated upstream
 					<input type="text" name="templateName" id="templateName">
 				</td>
 				<th>작성자</th>
 				<td class="indent5">
 					<input type="text" name="duration" id="duration">
-=======
 					<input type="text" name="templateName" id="templateName" class="width-300">
 				</td>
 				<th>작성자</th>
 				<td class="indent5">
 					<input type="text" name="duration" id="duration" class="width-100">
->>>>>>> Stashed changes
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
@@ -55,19 +52,16 @@
 			<tr>
 				<th>기간</th>
 				<td class="indent5">
-<<<<<<< Updated upstream
 					<input type="text" name="partName">
 				</td>
 				<th>수정자</th>
 				<td class="indent5">
 					<input type="text" name="">
-=======
 					<input type="text" name="partName" class="width-100">
 				</td>
 				<th>수정자</th>
 				<td class="indent5">
 					<input type="text" name="" class="width-100">
->>>>>>> Stashed changes
 				</td>
 				<th>수정일</th>
 				<td class="indent5">

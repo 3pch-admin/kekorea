@@ -50,7 +50,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				</td>
 				<th>문서 번호</th>
 				<td class="indent5">
-					<input type="text" name="partName" class="width-300">
+					<input type="text" name="partName" class="width-200">
 				</td>
 				<th>설명</th>
 				<td class="indent5">
