@@ -22,6 +22,8 @@
 <%@include file="/extcore/include/script.jsp"%>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
@@ -42,42 +44,42 @@
 			</colgroup>
 			<tr>
 				<th>특이사항 제목</th>
-				<td>
-					<input type="text" name="issueName" id="issueName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="issueName" id="issueName">
 				</td>
 				<th>설명</th>
-				<td>
-					<input type="text" name="description" id="description" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="description" id="description">
 				</td>
 				<th>KEK 작번</th>
-				<td>
-					<input type="text" name="partName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partName">
 				</td>
 				<th>KE 작번</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number">
 				</td>
 			</tr>
 			<tr>
 				<th>막종</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number">
 				</td>
 				<th>작성자</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number">
 				</td>
 				<th>작성일</th>
-				<td colspan="3">
-					<input type="text" name="partNamea" class="AXInput width-100">
+				<td colspan="3" class="indent5">
+					<input type="text" name="partNamea" class="width-100">
 					~
-					<input type="text" name="partNamea" class="AXInput width-100">
+					<input type="text" name="partNamea" class="width-100">
 				</td>
 			</tr>
 			<tr>
 				<th>작업 내용</th>
-				<td colspan="7">
-					<input type="text" name="number" class="AXInput">
+				<td colspan="7" class="indent5">
+					<input type="text" name="number">
 				</td>
 			</tr>
 		</table>
@@ -87,6 +89,7 @@
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('issue-list');">
+					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('issue-list');">
 				</td>
 				<td class="right">
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
@@ -95,6 +98,8 @@
 		</table>
 		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 680px; border-top: 1px solid #3180c3;"></div>
+		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
@@ -229,12 +234,28 @@
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
+					useContextMenu : true,
+					enableRightDownFocus : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					// 그리드 공통속성 끝
 					enableCellMerge : true,
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
 				loadGridData();
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+				
+				// 컨텍스트 메뉴 이벤트 바인딩
+				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+
+				// 스크롤 체인지 핸들러.
+				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
+
+				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
 			}
 
 			function loadGridData() {
@@ -265,12 +286,12 @@
 			}
 
 			function requestAdditionalData() {
+				const url = getCallUrl("/aui/appendData");
 				const params = new Object();
 				const curPage = document.getElementById("curPage").value;
 				params.sessionid = document.getElementById("sessionid").value;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				const url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -289,7 +310,14 @@
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("issue-list");
+				// 컨텍스트 메뉴 시작
+				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				$("#h_item_ul").append(contenxtHeader);
+				$("#headerMenu").menu({
+					select : headerMenuSelectHandler
+				});
 				createAUIGrid(columns);
+				AUIGrid.resize(myGridID);
 			});
 
 			document.addEventListener("keydown", function(event) {
@@ -298,6 +326,11 @@
 				if (keyCode === 13) {
 					loadGridData();
 				}
+			})
+			
+			// 컨텍스트 메뉴 숨기기
+			document.addEventListener("click", function(event) {
+				hideContextMenu();
 			})
 
 			window.addEventListener("resize", function() {

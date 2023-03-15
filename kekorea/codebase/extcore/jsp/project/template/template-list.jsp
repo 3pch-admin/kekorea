@@ -30,34 +30,34 @@
 			</colgroup>
 			<tr>
 				<th>템플릿 제목</th>
-				<td>
-					<input type="text" name="templateName" id="templateName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="templateName" id="templateName">
 				</td>
 				<th>작성자</th>
-				<td>
-					<input type="text" name="duration" id="duration" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="duration" id="duration">
 				</td>
 				<th>작성일</th>
-				<td>
-					<input type="text" name="partName" class="AXInput width-100">
+				<td class="indent5">
+					<input type="text" name="partName" class="width-100">
 					~
-					<input type="text" name="partName" class="AXInput width-100">
+					<input type="text" name="partName" class="width-100">
 				</td>
 			</tr>
 			<tr>
 				<th>기간</th>
-				<td>
-					<input type="text" name="partName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partName">
 				</td>
 				<th>수정자</th>
-				<td>
-					<input type="text" name="" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="">
 				</td>
 				<th>수정일</th>
-				<td>
-					<input type="text" name="partNamea" class="AXInput width-100">
+				<td class="indent5">
+					<input type="text" name="partNamea" class="width-100">
 					~
-					<input type="text" name="partNamea" class="AXInput width-100">
+					<input type="text" name="partNamea" class="width-100">
 				</td>
 			</tr>
 		</table>
@@ -67,6 +67,7 @@
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('template-list');">
+					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('template-list');">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
@@ -77,6 +78,8 @@
 
 		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 715px; border-top: 1px solid #3180c3;"></div>
+		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
@@ -187,6 +190,10 @@
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
+					useContextMenu : true,
+					enableRightDownFocus : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				// 그리드 공통속성 끝
 				};
 
@@ -195,6 +202,18 @@
 				loadGridData();
 				// Lazy Loading 이벤트 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+				
+				// 컨텍스트 메뉴 이벤트 바인딩
+				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+
+				// 스크롤 체인지 핸들러.
+				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
+
+				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
 			}
 
 			function loadGridData() {
@@ -228,13 +247,13 @@
 			}
 
 			function requestAdditionalData() {
+				const url = getCallUrl("/aui/appendData");
 				const params = new Object();
 				const curPage = document.getElementById("curPage").value;
 				const sessionid = document.getElementById("sessionid").value;
 				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				const url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -253,6 +272,12 @@
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("template-list");
+				// 컨텍스트 메뉴 시작
+				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				$("#h_item_ul").append(contenxtHeader);
+				$("#headerMenu").menu({
+					select : headerMenuSelectHandler
+				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});
@@ -263,6 +288,11 @@
 				if (keyCode === 13) {
 					loadGridData();
 				}
+			})
+			
+			// 컨텍스트 메뉴 숨기기
+			document.addEventListener("click", function(event) {
+				hideContextMenu();
 			})
 
 			window.addEventListener("resize", function() {

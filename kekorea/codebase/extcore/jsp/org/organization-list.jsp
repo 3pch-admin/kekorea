@@ -71,6 +71,7 @@ JSONArray departments = new JSONArray(list);
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('organization-list');">
+					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('organization-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 				</td>
 				<td class="right">
@@ -100,6 +101,8 @@ JSONArray departments = new JSONArray(list);
 				</td>
 			</tr>
 		</table>
+		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
 			const maks =
@@ -360,6 +363,10 @@ JSONArray departments = new JSONArray(list);
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
+					useContextMenu : true,
+					enableRightDownFocus : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					// 그리드 공통속성 끝
 					showRowCheckColumn : true, // 엑스트라 체크 박스 사용 여부
 					editable : true
@@ -372,6 +379,18 @@ JSONArray departments = new JSONArray(list);
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 				// 동적 수정여부 체크
 				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin );
+				
+				// 컨텍스트 메뉴 이벤트 바인딩
+				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+
+				// 스크롤 체인지 핸들러.
+				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
+
+				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
 			}
 			
 			function auiCellEditBegin(event) {
@@ -384,10 +403,10 @@ JSONArray departments = new JSONArray(list);
 
 			function loadGridData() {
 				const params = new Object();
+				const url = getCallUrl("/org/list");
 				const userName = document.getElementById("userName").value;
 				const userId = document.getElementById("userId").value;
 				const oid = document.getElementById("oid").value;
-				const url = getCallUrl("/org/list");
 				params.oid = oid;
 				params.userName = userName;
 				params.userId = userId;
@@ -460,6 +479,12 @@ JSONArray departments = new JSONArray(list);
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("organization-list");
+				// 컨텍스트 메뉴 시작
+				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				$("#h_item_ul").append(contenxtHeader);
+				$("#headerMenu").menu({
+					select : headerMenuSelectHandler
+				});
 				createAUIGrid(columns); // 리스트
 				AUIGrid.resize(myGridID); // 리스트
 			});
@@ -470,6 +495,11 @@ JSONArray departments = new JSONArray(list);
 				if (keyCode === 13) {
 					loadGridData();
 				}
+			})
+			
+			// 컨텍스트 메뉴 숨기기
+			document.addEventListener("click", function(event) {
+				hideContextMenu();
 			})
 
 			window.addEventListener("resize", function() {

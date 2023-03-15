@@ -32,17 +32,17 @@
 					<input type="text" name="name" id="name" class="width-300">
 				</td>
 				<th>내용</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="description" id="description">
 				</td>
 			</tr>
 			<tr>
 				<th>작성자</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="creator" id="creator">
 				</td>
 				<th>작성일</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="number" class="width-100">
 					~
 					<input type="text" name="number" class="width-100">
@@ -141,6 +141,7 @@
 
 			// AUIGrid 생성 함수
 			function createAUIGrid(columnLayout) {
+				// 그리드 속성
 				const props = {
 					// 그리드 공통속성 시작
 					headerHeight : 30,

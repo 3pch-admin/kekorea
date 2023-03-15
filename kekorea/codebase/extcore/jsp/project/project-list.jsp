@@ -37,37 +37,37 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 			</colgroup>
 			<tr>
 				<th>KEK 작번</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="kekNumber" id="kekNumber" class="AXInput">
 				</td>
 				<th>발행일</th>
-				<td colspan="3">
+				<td colspan="3" class="indent5">
 					<input type="text" name="pdate" class="AXInput width-100">
 					~
 					<input type="text" name="pdate2" class="AXInput width-100">
 				</td>
 				<th>KE 작번</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="keNumber" id="keNumber" class="AXInput">
 				</td>
 			</tr>
 			<tr>
 				<th>USER ID</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="userId" id="userId" class="AXInput">
 				</td>
 				<th>작번 상태</th>
-				<td>
+				<td class="indent5">
 					<select name="kekState" id="kekState" class="AXSelect w200">
 						<option value="">선택</option>
 					</select>
 				</td>
 				<th>모델</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="model" id="model" class="AXInput">
 				</td>
 				<th>거래처</th>
-				<td>
+				<td class="indent5">
 					<select name="customer_name" id="customer_name" class="AXSelect w200">
 						<option value="">선택</option>
 					</select>
@@ -75,35 +75,35 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 			</tr>
 			<tr>
 				<th>설치장소</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="install_name" id="install_name" class="AXInput width-200">
 				</td>
 				<th>작번 유형</th>
-				<td>
+				<td class="indent5">
 					<select name="projectType_name" id="projectType_name" class="AXSelect w200">
 						<option value="">선택</option>
 					</select>
 				</td>
 				<th>기계 담당자</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="machine" id="machine" class="AXInput">
 				</td>
 				<th>전기 담당자</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="elec" id="elec" class="AXInput">
 				</td>
 			</tr>
 			<tr>
 				<th>SW 담당자</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="soft" id="soft" class="AXInput">
 				</td>
 				<th>막종</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="mak_name" id="mak_name" class="AXInput">
 				</td>
 				<th>작업 내용</th>
-				<td colspan="3">
+				<td colspan="3" class="indent5">
 					<input type="text" name="description" id="description" class="AXInput width-300">
 				</td>
 			</tr>
@@ -114,6 +114,7 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('project-list');">
+					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('project-list');">
 				</td>
 				<td class="right">
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
@@ -123,6 +124,8 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 
 		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 640px; border-top: 1px solid #3180c3;"></div>
+		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
@@ -244,7 +247,7 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/project/info?oid=" + oid);
-							popup(url); 
+							popup(url);
 						}
 					},
 					filter : {
@@ -396,7 +399,8 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-				// 그리드 공통속성 끝
+					// 그리드 공통속성 끝
+					fillColumnSizeMode : true
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
@@ -404,14 +408,27 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 				loadGridData();
 				// Lazy Loading 이벤트 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+
+				// 컨텍스트 메뉴 이벤트 바인딩
+				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+
+				// 스크롤 체인지 핸들러.
+				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
+
+				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
 			}
 
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/project/list");
-
+				// 검색 변수
 				const kekNumber = document.getElementById("kekNumber").value;
 				const description = document.getElementById("description").value;
+				// 검색 변수 담기
 				params.kekNumber = kekNumber;
 				params.description = description;
 				AUIGrid.showAjaxLoader(myGridID);
@@ -435,13 +452,13 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 			}
 
 			function requestAdditionalData() {
+				const url = getCallUrl("/aui/appendData");
 				const params = new Object();
 				const curPage = document.getElementById("curPage").value
 				const sessionid = document.getElementById("sessionid").value;
 				params.sessionid = sessionid;
 				params.start = (curPage * 100);
 				params.end = (curPage * 100) + 100;
-				const url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -460,6 +477,12 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("project-list");
+				// 컨텍스트 메뉴 시작
+				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				$("#h_item_ul").append(contenxtHeader);
+				$("#headerMenu").menu({
+					select : headerMenuSelectHandler
+				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});
@@ -470,6 +493,11 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 				if (keyCode === 13) {
 					loadGridData();
 				}
+			})
+
+			// 컨텍스트 메뉴 숨기기
+			document.addEventListener("click", function(event) {
+				hideContextMenu();
 			})
 
 			window.addEventListener("resize", function() {

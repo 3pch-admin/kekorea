@@ -15,9 +15,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.epm.dto.EpmDTO;
 import e3ps.epm.service.EpmHelper;
 import e3ps.project.Project;
 import e3ps.project.dto.ProjectDTO;
+import wt.epm.EPMDocument;
 
 @Controller
 @RequestMapping(value = "/epm/**")
@@ -74,8 +76,8 @@ public class EpmController extends BaseController {
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		Project project = (Project) CommonUtils.getObject(oid);
-		ProjectDTO dto = new ProjectDTO(project);
+		EPMDocument epm = (EPMDocument) CommonUtils.getObject(oid);
+		EpmDTO dto = new EpmDTO(epm);
 		model.addObject("dto", dto);
 		model.setViewName("/extcore/jsp/epm/epm-view.jsp");
 		return model;
