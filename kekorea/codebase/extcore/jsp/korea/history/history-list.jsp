@@ -20,6 +20,8 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 <%@include file="/extcore/include/script.jsp"%>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
@@ -40,20 +42,20 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 			</colgroup>
 			<tr>
 				<th>공지사항 제목</th>
-				<td>
-					<input type="text" name="fileName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="fileName" class="width-300">
 				</td>
 				<th>설명</th>
-				<td>
-					<input type="text" name="partCode" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partCode" class="width-300">
 				</td>
 				<th>작성자</th>
-				<td>
-					<input type="text" name="partName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partName" class="width-100">
 				</td>
 				<th>작성일</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-100">
 					<i class="axi axi-close2"></i>
 				</td>
 			</tr>
@@ -63,6 +65,8 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 		<table class="button-table">
 			<tr>
 				<td class="left">
+					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('history-list');">
+					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('history-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
@@ -75,9 +79,12 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 
 		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
-			const columns = [ {
+			function _layout() {
+				return [ {
 				dataField : "pdate",
 				headerText : "발행일",
 				dataType : "date",
@@ -175,7 +182,7 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 				},
 			},
 			<%}%>
-			]
+			]}
 
 			function createAUIGrid(columnLayout) {
 				const props = {
@@ -193,9 +200,10 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 					showInlineFilter : true,
 					// 그리드 공통속성 끝
 					showRowCheckColumn : true,
-					editable : true
+					editable : true,
+					useContextMenu : true
 				};
-				myGridID = AUIGrid.create("#grid_wrap", columns, props);
+				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				// 그리드 데이터 로딩
 				loadGridData();
 				// LazyLoading 바인딩
@@ -203,6 +211,18 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 				// 셀 편집 종료 이벤트
 				AUIGrid.bind(myGridID, "cellEditEnd", editEndHandler);
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
+				
+				// 컨텍스트 메뉴 이벤트 바인딩
+				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+
+				// 스크롤 체인지 핸들러.
+				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
+
+				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
 			}
 
 			function auiAddRowHandler(event) {
@@ -319,6 +339,13 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
+				const columns = loadColumnLayout("history-list");
+				// 컨텍스트 메뉴 시작
+				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				$("#h_item_ul").append(contenxtHeader);
+				$("#headerMenu").menu({
+					select : headerMenuSelectHandler
+				});
 				// DOM이 로드된 후 실행할 코드 작성
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
@@ -332,6 +359,12 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 				}
 			})
 
+			// 컨텍스트 메뉴 숨기기
+			document.addEventListener("click", function(event) {
+				hideContextMenu();
+			})
+
+			
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(myGridID);
 			});

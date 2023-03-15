@@ -5,6 +5,9 @@
 <!-- jquery ui cdn -->
 <script type="text/javascript" src="https://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
 
+<!-- dataranger -->
+<script type="text/javascript" src="/Windchill/extcore/component/daterangepicker/moment.min.js"></script>
+<script type="text/javascript" src="/Windchill/extcore/component/daterangepicker/daterangepicker.js"></script>
+
 <!-- 공통 SCRIPT -->
-<!-- <script type="text/javascript" src="/Windchill/extcore/component/axisj/AXJ.all.js"></script> -->
-<script type="text/javascript" src="/Windchill/extcore/js/base.js?v=11"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/base.js?v=14"></script>

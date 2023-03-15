@@ -42,20 +42,20 @@ String name = (String) request.getAttribute("name");
 			</colgroup>
 			<tr>
 				<th>공지사항 제목</th>
-				<td>
-					<input type="text" name="fileName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="fileName" class="width-300">
 				</td>
 				<th>설명</th>
-				<td>
-					<input type="text" name="partCode" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partCode" class="width-300">
 				</td>
 				<th>작성자</th>
-				<td>
-					<input type="text" name="partName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partName" class="width-100">
 				</td>
 				<th>작성일</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-100">
 				</td>
 			</tr>
 		</table>
@@ -77,9 +77,18 @@ String name = (String) request.getAttribute("name");
 		</table>
 
 		<!-- 그리드 리스트 -->
+<<<<<<< Updated upstream
 		<div id="grid_wrap" style="height: 750px; border-top: 1px solid #3180c3;"></div>
+<<<<<<< HEAD
 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
+=======
+=======
+		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
+>>>>>>> Stashed changes
+>>>>>>> a99012168c19b5b1f368ba9e228a312ab0318bbf
 		<script type="text/javascript">
 			let myGridID;
 			const maks = <%=maks%>
@@ -441,7 +450,8 @@ String name = (String) request.getAttribute("name");
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					// 그리드 공통속성 끝
-					editable : true
+					editable : true,
+					useContextMenu : true
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
 				loadGridData();
@@ -567,7 +577,8 @@ String name = (String) request.getAttribute("name");
 			function addRow() {
 				const item = new Object();
 				item.createdDate = new Date();
-				item.creator = "<%=name%>";
+				item.creator = "<%=name%>
+			";
 				item.latest = true;
 				AUIGrid.addRow(myGridID, item, "first");
 			}
@@ -582,12 +593,12 @@ String name = (String) request.getAttribute("name");
 			}
 
 			function save() {
-				
-				 // 저장전에 검증ㄷ되어야..
+
+				// 저장전에 검증ㄷ되어야..
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
 				}
-				
+
 				const url = getCallUrl("/cip/save");
 				const params = new Object();
 				const addRows = AUIGrid.getAddedRowItems(myGridID);

@@ -19,6 +19,8 @@ import e3ps.project.template.dto.TemplateDTO;
 import e3ps.workspace.ApprovalLine;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import wt.epm.EPMDocumentHelper;
+import wt.epm.util.EPMHelper;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;

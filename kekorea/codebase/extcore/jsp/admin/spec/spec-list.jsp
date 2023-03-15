@@ -10,6 +10,8 @@
 <%@include file="/extcore/include/script.jsp"%>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
@@ -27,20 +29,25 @@
 			</colgroup>
 			<tr>
 				<th>공지사항 제목</th>
+<<<<<<< Updated upstream
 				<td>
 					<input type="text" name="" id="" class="AXInput">
+=======
+				<td class="indent5">
+					<input type="text" name="name" id="name" class="width-300">
+>>>>>>> Stashed changes
 				</td>
 				<th>설명</th>
-				<td>
-					<input type="text" name="partCode" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partCode" class="width-300">
 				</td>
 				<th>작성자</th>
-				<td>
-					<input type="text" name="partName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partName" class="width-100">
 				</td>
 				<th>작성일</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-100">
 				</td>
 			</tr>
 		</table>
@@ -50,6 +57,7 @@
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('spec-list');">
+					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('spec-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="자식 추가" title="자식 추가" class="orange" onclick="addTreeRow();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
@@ -63,6 +71,8 @@
 
 		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
 			const list = [ {
@@ -198,7 +208,8 @@
 					showRowCheckColumn : true,
 					editable : true,
 					enableRowCheckShiftKey : true,
-					displayTreeOpen : true
+					displayTreeOpen : true,
+					useContextMenu : true
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
@@ -206,6 +217,17 @@
 				loadGridData();
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinish);
 				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
+				// 컨텍스트 메뉴 이벤트 바인딩
+				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+
+				// 스크롤 체인지 핸들러.
+				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
+
+				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
 			}
 			
 			// 저장
@@ -371,6 +393,12 @@
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("spec-list");
+				// 컨텍스트 메뉴 시작
+				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				$("#h_item_ul").append(contenxtHeader);
+				$("#headerMenu").menu({
+					select : headerMenuSelectHandler
+				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});
@@ -383,6 +411,10 @@
 				}
 			})
 
+			// 컨텍스트 메뉴 숨기기
+			document.addEventListener("click", function(event) {
+				hideContextMenu();
+			})
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(myGridID);
 			});

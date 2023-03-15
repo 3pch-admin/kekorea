@@ -16,6 +16,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 <%@include file="/extcore/include/script.jsp"%>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
@@ -61,6 +63,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('document-list');">
+					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('document-list');">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 					<%
 					if (isAdmin) {
@@ -96,6 +99,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				<td>
 					<!-- 그리드 리스트 -->
 					<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+					<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+					<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 				</td>
 			</tr>
 		</table>
@@ -242,6 +247,18 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				loadGridData();
 				// Lazy Loading 이벤트 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+				
+				// 컨텍스트 메뉴 이벤트 바인딩
+				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+
+				// 스크롤 체인지 핸들러.
+				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
+
+				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
 			}
 
 			function loadGridData() {
@@ -328,6 +345,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("document-list");
+				// 컨텍스트 메뉴 시작
+				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				$("#h_item_ul").append(contenxtHeader);
+				$("#headerMenu").menu({
+					select : headerMenuSelectHandler
+				});
 				createAUIGrid(columns);
 				_createAUIGrid(_columns);
 			});
@@ -340,6 +363,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				}
 			})
 
+			// 컨텍스트 메뉴 숨기기
+			document.addEventListener("click", function(event) {
+				hideContextMenu();
+			})
+			
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(_myGridID);
 				AUIGrid.resize(myGridID);

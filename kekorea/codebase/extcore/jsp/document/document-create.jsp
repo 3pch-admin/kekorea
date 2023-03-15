@@ -89,6 +89,25 @@
 			document.getElementById("number").value = data.number;
 		})
 	}
+	
+	function create() {
+		if (!confirm("등록 하시겠습니까?")) {
+			return false;
+		}
+		
+		const params = new Object();
+		const url = getCallUrl("/document/create");
+		call(url, params, function(data) {
+			alert(data.msg);
+			if(data.result) {
+				opener.loadGridData();
+				self.close();
+			} else {
+				
+			}
+		});
+	};
+	
 
 	// jquery 삭제를 해가는 쪽으로 한다..
 	document.addEventListener("DOMContentLoaded", function() {

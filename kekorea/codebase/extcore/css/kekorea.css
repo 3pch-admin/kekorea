@@ -117,7 +117,6 @@ table.search-table td {
 	/* 	text-indent: 5px; */
 }
 
-
 table.search-table input[type='text'] {
 	border: 1px solid #a6a6a6;
 	background: #fff;
@@ -128,6 +127,10 @@ table.search-table input[type='text'] {
 	font-size: 14px;
 	height: 15px;
 	padding: 5px;
+}
+
+table.search-table input[type='text']:read-only {
+	background-color: #dedede;
 }
 
 /** 버튼 테이블 CSS **/
@@ -469,3 +472,16 @@ a:hover {
 	padding: 0.2em;
 }
 
+/** 달력 IMAGE CSS **/
+img.calendar {
+	position: relative;
+	top: 3px;
+	cursor: pointer;
+}
+
+/** 달력삭제 IMAGE CSS **/
+img.delete {
+	position: relative;
+	top: 3px;
+	cursor: pointer;
+}
