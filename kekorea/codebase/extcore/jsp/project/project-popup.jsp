@@ -5,6 +5,8 @@ boolean multi = (boolean) request.getAttribute("multi");
 %>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 <!-- 리스트 검색시 반드시 필요한 히든 값 -->
 <input type="hidden" name="sessionid" id="sessionid">
 <input type="hidden" name="curPage" id="curPage">
@@ -23,19 +25,19 @@ boolean multi = (boolean) request.getAttribute("multi");
 	<tr>
 		<th>공지사항 제목</th>
 		<td>
-			<input type="text" name="fileName" class="AXInput">
+			<input type="text" name="fileName">
 		</td>
 		<th>설명</th>
 		<td>
-			<input type="text" name="partCode" class="AXInput">
+			<input type="text" name="partCode">
 		</td>
 		<th>작성자</th>
 		<td>
-			<input type="text" name="partName" class="AXInput">
+			<input type="text" name="partName">
 		</td>
 		<th>작성일</th>
 		<td>
-			<input type="text" name="number" class="AXInput">
+			<input type="text" name="number">
 		</td>
 	</tr>
 </table>
@@ -45,6 +47,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 	<tr>
 		<td class="left">
 			<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('project-popup');">
+			<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('project-popup');">
 			<input type="button" value="추가" title="추가" class="blue" onclick="<%=method%>();">
 			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
@@ -56,6 +59,8 @@ boolean multi = (boolean) request.getAttribute("multi");
 
 <!-- 그리드 리스트 -->
 <div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
 	let myGridID;
 	function _layout() {
@@ -199,6 +204,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 		// Lazy Loading 이벤트 바인딩
 		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+		
 	}
 	
 	function auiCellClickHandler(event) {
@@ -238,12 +244,12 @@ boolean multi = (boolean) request.getAttribute("multi");
 	}
 
 	function requestAdditionalData() {
+		const url = getCallUrl("/aui/appendData");
 		const params = new Object();
 		const curPage = $("input[name=curPage]").val();
 		params.sessionid = $("input[name=sessionid]").val();
 		params.start = (curPage * 100);
 		params.end = (curPage * 100) + 100;
-		const url = getCallUrl("/aui/appendData");
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			if (data.list.length == 0) {

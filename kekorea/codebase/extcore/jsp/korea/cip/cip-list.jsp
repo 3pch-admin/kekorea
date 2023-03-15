@@ -20,6 +20,8 @@ String name = (String) request.getAttribute("name");
 <%@include file="/extcore/include/script.jsp"%>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
@@ -63,6 +65,7 @@ String name = (String) request.getAttribute("name");
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('cip-list');">
+					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('cip-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
@@ -75,6 +78,8 @@ String name = (String) request.getAttribute("name");
 
 		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 750px; border-top: 1px solid #3180c3;"></div>
+		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
 			const maks = <%=maks%>
@@ -90,8 +95,6 @@ String name = (String) request.getAttribute("name");
 					headerText : "항목",
 					dataType : "string",
 					width : 120,
-<<<<<<< HEAD
-=======
 					editRenderer: {
 						type: "InputEditRenderer",
 
@@ -106,7 +109,6 @@ String name = (String) request.getAttribute("name");
 							return { "validate": isValid, "message": "항목 값은 공백을 입력 할 수 없습니다." };
 						}
 					},
->>>>>>> 3c2a1782361badebb2b43b48ee5430e6bd16d0d3
 					filter : {
 						showIcon : true,
 						inline : true
@@ -434,6 +436,10 @@ String name = (String) request.getAttribute("name");
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
+					useContextMenu : true,
+					enableRightDownFocus : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					// 그리드 공통속성 끝
 					editable : true
 				};
@@ -443,6 +449,18 @@ String name = (String) request.getAttribute("name");
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+				
+				// 컨텍스트 메뉴 이벤트 바인딩
+				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+
+				// 스크롤 체인지 핸들러.
+				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
+
+				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
 			}
 
 			function auiCellEditEndHandler(event) {
@@ -488,13 +506,13 @@ String name = (String) request.getAttribute("name");
 				}
 			}
 			function requestAdditionalData() {
+				const url = getCallUrl("/aui/appendData");
 				const params = new Object();
 				const curPage = document.getElementById("curPage").value;
 				const sessionid = document.getElementById("sessionid").value
 				params.sessionid = sessionid;
 				params.start = (curPage * 30);
 				params.end = (curPage * 30) + 30;
-				const url = getCallUrl("/aui/appendData");
 				AUIGrid.showAjaxLoader(myGridID);
 				call(url, params, function(data) {
 					if (data.list.length == 0) {
@@ -638,6 +656,12 @@ String name = (String) request.getAttribute("name");
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("cip-list");
+				// 컨텍스트 메뉴 시작
+				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				$("#h_item_ul").append(contenxtHeader);
+				$("#headerMenu").menu({
+					select : headerMenuSelectHandler
+				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});
@@ -648,6 +672,11 @@ String name = (String) request.getAttribute("name");
 				if (keyCode === 13) {
 					loadGridData();
 				}
+			})
+			
+			// 컨텍스트 메뉴 숨기기
+			document.addEventListener("click", function(event) {
+				hideContextMenu();
 			})
 
 			window.addEventListener("resize", function() {
