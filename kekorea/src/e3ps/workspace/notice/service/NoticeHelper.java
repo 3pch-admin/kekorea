@@ -26,21 +26,27 @@ public class NoticeHelper {
 		String name = (String) params.get("name"); // 공지사항 제목
 		String description = (String) params.get("description"); // 내용
 		String creator = (String) params.get("creator"); // 작성자
-		
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Notice.class, true);
 
 		if (!StringUtils.isNull(name)) {
 			QuerySpecUtils.toLikeAnd(query, idx, Notice.class, Notice.NAME, name);
 		}
-		
+
 		if (!StringUtils.isNull(description)) {
 			QuerySpecUtils.toLikeAnd(query, idx, Notice.class, Notice.DESCRIPTION, description);
 		}
 
-//		if (!StringUtils.isNull(creator)) {
-//			QuerySpecUtils.toLikeAnd(query, idx, Notice.class, Notice.??????????????, creator);
-//		}
+		if (!StringUtils.isNull(createdFrom)) {
+			QuerySpecUtils.toTimeGreaterEqualsThan(query, idx, Notice.class, Notice.CREATE_TIMESTAMP, createdFrom);
+		}
+
+		if (!StringUtils.isNull(createdTo)) {
+			QuerySpecUtils.toTimeLessEqualsThan(query, idx, Notice.class, Notice.CREATE_TIMESTAMP, createdTo);
+		}
 
 		QuerySpecUtils.toOrderBy(query, idx, Notice.class, Notice.CREATE_TIMESTAMP, true);
 

@@ -168,7 +168,11 @@ function genColumnHtml(columns) {
 			if (column.dataField == "id") { // ID 칼럼은 숨기기 못하게 설정
 				arr.push('<li class="ui-state-disabled"><span class="ui-icon ui-icon-check"/>' + column.headerText + '</li>');
 			} else {
-				arr.push('<li><span class="ui-icon ui-icon-check" data="' + column.dataField + '"/>' + column.headerText + '</li>');
+				if (typeof column.visible != "undefined" && !column.visible) {
+					arr.push('<li><span class="ui-icon ui-icon-blank" data="' + column.dataField + '"/>' + column.headerText + '</li>');
+				} else {
+					arr.push('<li><span class="ui-icon ui-icon-check" data="' + column.dataField + '"/>' + column.headerText + '</li>');
+				}
 			}
 		}
 	};

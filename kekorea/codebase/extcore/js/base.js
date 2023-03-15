@@ -171,3 +171,47 @@ function isNull(value) {
 	}
 	return false;
 }
+
+
+/**
+ * 범위 달력
+ */
+function fromToCalendar(fromId, iconClass) {
+	$("#" + fromId).add("." + iconClass).daterangepicker({
+		locale: {
+			"format": "YYYY-MM-DD",
+			"applyLabel": "적용",
+			"cancelLabel": "취소",
+			"daysOfWeek": ["월", "화", "수", "목", "금", "토", "일"],
+			"monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+			"customRangeLabel": "날짜 선택"
+		},
+		ranges: {
+			"오늘": [moment(), moment()],
+			"어제": [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+			'7일 전': [moment().subtract(6, 'days'), moment()],
+			'30일 전': [moment().subtract(29, 'days'), moment()],
+			'이번달(시작~끝)': [moment().startOf('month'), moment().endOf('month')],
+			'지난달(시작~끝)': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+		},
+		autoUpdateInput: false
+	});
+
+	$("#" + fromId).add("." + iconClass).on("apply.daterangepicker", function(ev, picker) {
+		document.getElementById(fromId).value = picker.startDate.format("YYYY-MM-DD") + " ~ " + picker.endDate.format("YYYY-MM-DD");
+		document.getElementById(fromId + "From").value = picker.startDate.format("YYYY-MM-DD");
+		document.getElementById(fromId + "To").value = picker.endDate.format("YYYY-MM-DD");
+	})
+}
+
+/**
+ * 범위 달력 값 삭제
+ */
+function fromToDelete(iconClass) {
+	$("." + iconClass).click(function() {
+		const fromId = $("." + iconClass).data("target");
+		document.getElementById(fromId).value = "";
+		document.getElementById(fromId + "From").value = "";
+		document.getElementById(fromId + "To").value = "";
+	})
+}
