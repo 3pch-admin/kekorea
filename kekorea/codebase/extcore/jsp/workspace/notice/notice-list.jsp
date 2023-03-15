@@ -28,8 +28,8 @@
 			</colgroup>
 			<tr>
 				<th>공지사항 제목</th>
-				<td>
-					<input type="text" name="name" id="name" class="indent5 width-300">
+				<td class="indent5">
+					<input type="text" name="name" id="name" class="width-300">
 				</td>
 				<th>내용</th>
 				<td>
@@ -81,7 +81,8 @@
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							alert(oid);
 						}
 					},
 					filter : {
@@ -97,7 +98,8 @@
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							alert(oid);
 						}
 					},
 					filter : {
@@ -140,11 +142,11 @@
 			// AUIGrid 생성 함수
 			function createAUIGrid(columnLayout) {
 				const props = {
-					rowIdField : "oid",
 					// 그리드 공통속성 시작
 					headerHeight : 30,
 					rowHeight : 30,
 					showRowNumColumn : true,
+					showRowCheckColumn : true,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
 					noDataMessage : "검색 결과가 없습니다.",
