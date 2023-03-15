@@ -46,7 +46,14 @@
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
-					<input type="text" name="number" class="width-100">
+					<input type="text" name="created" id="created" class="width-200" readonly="readonly">
+					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
+					<!-- data-target 달력 태그 ID -->
+					<input type="hidden" name="createdFrom" id="createdFrom">
+					<!-- 달력 태그 아이디값 + From -->
+					<input type="hidden" name="createdTo" id="createdTo">
+					<!-- 달력 태그 아이디값 + To -->
 				</td>
 			</tr>
 		</table>
@@ -240,7 +247,7 @@
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 				// cellclick
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
-				
+
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
@@ -315,13 +322,18 @@
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns);
+				
 			});
+				// 범위 달력
+				fromToCalendar("created", "calendar");
+				// 범위 달력 값 삭제
+				fromToDelete("delete")
 
 			// 컨텍스트 메뉴 숨기기
 			document.addEventListener("click", function(event) {
 				hideContextMenu();
 			})
-			
+
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;

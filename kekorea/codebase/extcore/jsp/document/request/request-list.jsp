@@ -75,9 +75,14 @@
 				</td>
 				<th>작성일</th>
 				<td colspan="3" class="indent5">
-					<input type="text" name="partName" class="AXInput width-100">
-					~
-					<input type="text" name="partName" class="AXInput width-100">
+					<input type="text" name="created" id="created" class="width-200" readonly="readonly">
+					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
+					<!-- data-target 달력 태그 ID -->
+					<input type="hidden" name="createdFrom" id="createdFrom">
+					<!-- 달력 태그 아이디값 + From -->
+					<input type="hidden" name="createdTo" id="createdTo">
+					<!-- 달력 태그 아이디값 + To -->
 				</td>
 				<th>설치장소</th>
 				<td class="indent5">
@@ -455,6 +460,11 @@
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+				
+				// 범위 달력
+				fromToCalendar("created", "calendar");
+				// 범위 달력 값 삭제
+				fromToDelete("delete")
 			});
 
 			document.addEventListener("keydown", function(event) {
