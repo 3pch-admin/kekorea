@@ -9,6 +9,8 @@ boolean multi = (boolean) request.getAttribute("multi");
 <!-- 리스트 검색시 반드시 필요한 히든 값 -->
 <input type="hidden" name="sessionid" id="sessionid">
 <input type="hidden" name="curPage" id="curPage">
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
 <!-- 검색 테이블 -->
 <table class="search-table">
 	<colgroup>
@@ -23,20 +25,27 @@ boolean multi = (boolean) request.getAttribute("multi");
 	</colgroup>
 	<tr>
 		<th>공지사항 제목</th>
-		<td>
-			<input type="text" name="fileName" class="AXInput">
+		<td class="indent5">
+			<input type="text" name="fileName" class="width-300">
 		</td>
 		<th>설명</th>
-		<td>
-			<input type="text" name="partCode" class="AXInput">
+		<td class="indent5">
+			<input type="text" name="partCode" class="width-300">
 		</td>
 		<th>작성자</th>
-		<td>
-			<input type="text" name="partName" class="AXInput">
+		<td class="indent5">
+			<input type="text" name="partName" class="width-100">
 		</td>
 		<th>작성일</th>
-		<td>
-			<input type="text" name="number" class="AXInput">
+		<td class="indent5">
+			<input type="text" name="created" id="created" class="width-200" readonly="readonly">
+			<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
+			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
+			<!-- data-target 달력 태그 ID -->
+			<input type="hidden" name="createdFrom" id="createdFrom">
+			<!-- 달력 태그 아이디값 + From -->
+			<input type="hidden" name="createdTo" id="createdTo">
+			<!-- 달력 태그 아이디값 + To -->
 		</td>
 	</tr>
 </table>
@@ -46,6 +55,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 	<tr>
 		<td class="left">
 			<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('document-popup');">
+			<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('document-popup');">
 			<input type="button" value="추가" title="추가" class="blue" onclick="<%=method%>();">
 			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
@@ -77,6 +87,8 @@ boolean multi = (boolean) request.getAttribute("multi");
 		</td>
 	</tr>
 </table>
+<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
 			let myGridID;
 			function _layout() {
@@ -224,6 +236,17 @@ boolean multi = (boolean) request.getAttribute("multi");
 				// Lazy Loading 이벤트 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+				// 컨텍스트 메뉴 이벤트 바인딩
+				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+
+				// 스크롤 체인지 핸들러.
+				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
+
+				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
 			}
 
 			function loadGridData() {
@@ -295,8 +318,18 @@ boolean multi = (boolean) request.getAttribute("multi");
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("document-popup");
+				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				$("#h_item_ul").append(contenxtHeader);
+				$("#headerMenu").menu({
+					select : headerMenuSelectHandler
+				});
 				createAUIGrid(columns);
 				_createAUIGrid(_columns); // 트리
+				
+				// 범위 달력
+				fromToCalendar("created", "calendar");
+				// 범위 달력 값 삭제
+				fromToDelete("delete")
 			});
 
 			document.addEventListener("keydown", function(event) {
