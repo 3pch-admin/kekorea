@@ -383,7 +383,7 @@
 			// 행 삭제
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				for (const i = checkedItems.length - 1; i >= 0; i--) {
+				for (let i = checkedItems.length - 1; i >= 0; i--) {
 					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}

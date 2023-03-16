@@ -74,8 +74,6 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('history-list');">
 					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('history-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
-					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
-					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 				</td>
 				<td class="right">
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
@@ -89,6 +87,7 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
+			const list = ["유", "무"];
 			function _layout() {
 				return [ {
 				dataField : "pdate",
@@ -135,15 +134,37 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 				headerText : "TUV유무",
 				dataType : "string",
 				width : 130,
+				renderer : {
+					type : "IconRenderer",
+					iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+					iconHeight : 16,
+					iconPosition : "aisleRight",
+					iconTableRef : { // icon 값 참조할 테이블 레퍼런스
+						"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+					},
+					onClick : function(event) {
+						// 아이콘을 클릭하면 수정으로 진입함.
+						AUIGrid.openInputer(event.pid);
+					}
+				},
+				editRenderer : {
+					type : "DropDownListRenderer",
+					showEditorBtn : false,
+					showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
+					multipleMode : false, // 다중 선택 모드(기본값 : false)
+					showCheckAll : false, // 다중 선택 모드에서 전체 체크 선택/해제 표시(기본값:false);
+					list : list
+				},				
 				filter : {
 					showIcon : true,
 					inline : true
-				},				
+				},			
 			},
 			<%for (Map<String, String> header : headers) {
 	String key = header.get("key"); // spec code ....key
 	String value = header.get("value");
-	JSONArray array = JSONArray.fromObject(list.get(key));%>
+	JSONArray array = JSONArray.fromObject(list.get(key));
+	%>
 			{
 				dataField : "<%=key%>",
 				headerText : "<%=value%>",
@@ -192,22 +213,24 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 
 			function createAUIGrid(columnLayout) {
 				const props = {
-					rowIdField : "loid",
 					// 그리드 공통속성 시작
-					headerHeight : 30, // 헤더높이
-					rowHeight : 30, // 행 높이
-					showRowNumColumn : true, // 번호 행 출력 여부
-					showStateColumn : true, // 상태표시 행 출력 여부
-					rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-					noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
-					enableFilter : true, // 필터 사용 여부
+					headerHeight : 30,
+					rowHeight : 30,
+					showRowNumColumn : true,
+					showRowCheckColumn : true,
+					showStateColumn : true,
+					rowNumHeaderText : "번호",
+					noDataMessage : "검색 결과가 없습니다.",
+					enableFilter : true,
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
+					useContextMenu : true,
+					enableRightDownFocus : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					// 그리드 공통속성 끝
-					showRowCheckColumn : true,
-					editable : true,
-					useContextMenu : true
+					editable : true
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				// 그리드 데이터 로딩
@@ -266,13 +289,12 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 					return false;
 				}
 				const url = getCallUrl("/history/save");
-				const addRows = AUIGrid.getAddedRowItems(myGridID);
-				const removeRows = AUIGrid.getRemovedItems(myGridID);
 				const editRows = AUIGrid.getEditedRowItems(myGridID);
+				const removeRows = AUIGrid.getRemovedItems(myGridID);
 				const params = new Object();
-				params.addRows = addRows;
-				params.removeRows = removeRows;
 				params.editRows = editRows;
+				params.removeRows = removeRows;
+				console.log(params);
 				call(url, params, function(data) {
 					alert(data.msg);
 					if(data.result) {
@@ -284,21 +306,6 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 				})
 			}
 			
-			// 행 추가
-			function addRow() {
-				const item = new Object();
-				AUIGrid.addRow(myGridID, item, "first");
-			}
-
-			// 행 삭제
-			function deleteRow() {
-				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				for (let i = checkedItems.length - 1; i >= 0; i--) {
-					const rowIndex = checkedItems[i].rowIndex;
-					AUIGrid.removeRow(myGridID, rowIndex);
-				}
-			}
-
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/history/list");
@@ -375,7 +382,6 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 				hideContextMenu();
 			})
 
-			
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(myGridID);
 			});

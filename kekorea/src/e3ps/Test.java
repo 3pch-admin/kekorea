@@ -1,9 +1,11 @@
 package e3ps;
 
 import e3ps.admin.commonCode.CommonCode;
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.korea.history.History;
 import e3ps.project.Project;
+import e3ps.project.ProjectUserLink;
 import wt.doc.WTDocument;
 import wt.doc.WTDocumentMaster;
 import wt.fc.PersistenceHelper;
@@ -19,19 +21,19 @@ public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(History.class, true);
-		int idx_p = query.appendClassList(Project.class, true);
-
-		SearchCondition sc = new SearchCondition(History.class, "projectReference.key.id", Project.class,
-				WTAttributeNameIfc.ID_NAME);
-		sc.setFromIndicies(new int[] { idx, idx_p }, 0);
-		sc.setOuterJoin(2);
-		query.appendWhere(sc, new int[] { idx, idx_p });
-
-		QuerySpecUtils.toOrderBy(query, idx, History.class, History.CREATE_TIMESTAMP, true);
+		CommonCode userTypeCode = CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE");
 		
-		System.out.println(query);
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ProjectUserLink.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, ProjectUserLink.USER_TYPE, "ELEC");
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while(result.hasMoreElements()) {
+			Object[] obj =(Object[])result.nextElement();
+			ProjectUserLink link = (ProjectUserLink)obj[0];
+			link.setUserType(userTypeCode);
+			PersistenceHelper.manager.modify(link);
+		}
+		System.out.println("프로젝트 유저 링크 변경 = " + userTypeCode.getName());
 		System.exit(0);
 	}
 }

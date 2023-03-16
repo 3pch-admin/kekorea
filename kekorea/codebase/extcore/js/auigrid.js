@@ -7,7 +7,7 @@
 */
 function saveColumnLayout(storageID) {
 	let columns = AUIGrid.getColumnLayout(myGridID);
-	let columnJson = JSON.stringify(columns);
+	let columnJson = JSONfn.stringify(columns);
 	localStorage.setItem(storageID, columnJson);
 	alert("현재 그리드의 상태가 보관되었습니다.\r\n브라우저를 종료하거나 F5 로 갱신했을 때 현재 상태로 그리드가 출력됩니다.");
 }
@@ -19,9 +19,7 @@ function loadColumnLayout(storageID) {
 	let columnLayout = null;
 	let column = getLocalStorageValue(storageID);
 	if (column && typeof column != "undefined") {
-		columnLayout = JSON.parse(column);
-		//감춰진 칼럼에 따라 데모 상에 보이는 체크박스 동기화 시킴.
-		//		syncCheckbox(columnLayout);
+		columnLayout = JSONfn.parse(column);
 	}
 
 	if (!columnLayout) {
@@ -177,3 +175,38 @@ function genColumnHtml(columns) {
 		}
 	};
 };
+
+/**
+ * LAZY LOAD 공통
+ * 리스트 페이지에서 모두 밖으로 제외
+ */
+let last = false;
+function vScrollChangeHandler(event) {
+	if (event.position == event.maxPosition) {
+		if (!last) {
+			requestAdditionalData();
+		}
+	}
+}
+
+function requestAdditionalData() {
+	const url = getCallUrl("/aui/appendData");
+	const params = new Object();
+	const curPage = document.getElementById("curPage").value
+	const sessionid = document.getElementById("sessionid").value;
+	params.sessionid = sessionid;
+	params.start = (curPage * 100);
+	params.end = (curPage * 100) + 100;
+	AUIGrid.showAjaxLoader(myGridID);
+	parent.openLayer();
+	call(url, params, function(data) {
+		if (data.list.length == 0) {
+			last = true;
+		} else {
+			AUIGrid.appendData(myGridID, data.list);
+			document.getElementById("curPage").value = parseInt(curPage) + 1;
+		}
+		AUIGrid.removeAjaxLoader(myGridID);
+		parent.closeLayer();
+	})
+}

@@ -20,15 +20,17 @@ import wt.util.WTException;
 
 		roleB = @GeneratedRole(name = "user", type = WTUser.class),
 
-		foreignKeys = { @GeneratedForeignKey(name = "ProjectUserTypeLink",
+		properties = {
 
-				foreignKeyRole = @ForeignKeyRole(name = "userType", type = CommonCode.class,
+				@GeneratedProperty(name = "userType", type = String.class)
+
+		}, foreignKeys = { @GeneratedForeignKey(name = "ProjectUserTypeLink",
+
+				foreignKeyRole = @ForeignKeyRole(name = "projectUserType", type = CommonCode.class,
 
 						constraints = @PropertyConstraints(required = true)),
 
-				myRole = @MyRole(name = "userLink", cardinality = Cardinality.ONE)),
-		}
-)
+				myRole = @MyRole(name = "userLink", cardinality = Cardinality.ONE)), })
 
 public class ProjectUserLink extends _ProjectUserLink {
 	static final long serialVersionUID = 1;

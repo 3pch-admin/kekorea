@@ -2,6 +2,7 @@ package e3ps.org.dto;
 
 import java.sql.Timestamp;
 
+import e3ps.common.util.CommonUtils;
 import e3ps.org.People;
 import e3ps.org.PeopleWTUserLink;
 import e3ps.org.service.OrgHelper;
@@ -73,4 +74,5 @@ public class UserDTO {
 		setMak(OrgHelper.manager.getGridMaks(people));
 		setInstall(OrgHelper.manager.getGridInstalls(people));
 	}
+
 }

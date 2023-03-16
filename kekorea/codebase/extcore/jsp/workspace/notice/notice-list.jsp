@@ -43,8 +43,7 @@
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
-					<input type="text" name="created" id="created" class="width-200" readonly="readonly">
-					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
+					<input type="text" name="created" id="created" class="width-200">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
 					<!-- data-target 달력 태그 ID -->
 					<input type="hidden" name="createdFrom" id="createdFrom">
@@ -137,6 +136,9 @@
 					headerText : "첨부파일",
 					dataType : "string",
 					width : 80,
+					renderer : {
+						type : "TemplateRenderer"
+					},
 					filter : {
 						showIcon : false,
 						inline : false
@@ -170,7 +172,6 @@
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
-				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
@@ -178,6 +179,7 @@
 				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					vScrollChangeHandler(event); // lazy loading
 				});
 
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
@@ -188,16 +190,19 @@
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/notice/list");
-			
+
 				// 검색 변수
 				const name = document.getElementById("name").value;
 				const description = document.getElementById("description").value;
 				const creator = document.getElementById("creator").value;
-
+				const createdFrom = document.getElementById("createdFrom").value;
+				const createdTo = document.getElementById("createdTo").value;
 				// 검색 변수 담기
 				params.name = name;
 				params.description = description;
 				params.creator = creator;
+				params.createdFrom = createdFrom;
+				params.createdTo = createdTo;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -209,40 +214,41 @@
 				});
 			}
 
-			let last = false;
-			function vScrollChangeHandler(event) {
-				if (event.position == event.maxPosition) {
-					if (!last) {
-						requestAdditionalData();
-					}
-				}
-			}
+			// 해당 부분 모드 리스트 페이지에서 제거한다
+// 			let last = false;
+// 			function vScrollChangeHandler(event) {
+// 				if (event.position == event.maxPosition) {
+// 					if (!last) {
+// 						requestAdditionalData();
+// 					}
+// 				}
+// 			}
 
-			function requestAdditionalData() {
-				const url = getCallUrl("/aui/appendData");
-				const params = new Object();
-				const curPage = document.getElementById("curPage").value
-				const sessionid = document.getElementById("sessionid").value
-				params.sessionid = sessionid;
-				params.start = (curPage * 100);
-				params.end = (curPage * 100) + 100;
-				AUIGrid.showAjaxLoader(myGridID);
-				parent.openLayer();
-				call(url, params, function(data) {
-					if (data.list.length == 0) {
-						last = true;
-					} else {
-						AUIGrid.appendData(myGridID, data.list);
-						document.getElementById("curPage").value = parseInt(curPage) + 1;
-					}
-					AUIGrid.removeAjaxLoader(myGridID);
-					parent.closeLayer();
-				})
-			}
+// 			function requestAdditionalData() {
+// 				const url = getCallUrl("/aui/appendData");
+// 				const params = new Object();
+// 				const curPage = document.getElementById("curPage").value
+// 				const sessionid = document.getElementById("sessionid").value
+// 				params.sessionid = sessionid;
+// 				params.start = (curPage * 100);
+// 				params.end = (curPage * 100) + 100;
+// 				AUIGrid.showAjaxLoader(myGridID);
+// 				parent.openLayer();
+// 				call(url, params, function(data) {
+// 					if (data.list.length == 0) {
+// 						last = true;
+// 					} else {
+// 						AUIGrid.appendData(myGridID, data.list);
+// 						document.getElementById("curPage").value = parseInt(curPage) + 1;
+// 					}
+// 					AUIGrid.removeAjaxLoader(myGridID);
+// 					parent.closeLayer();
+// 				})
+// 			}
 
 			function create() {
 				const url = getCallUrl("/notice/create");
-				popup(url, 1200, 700);
+				popup(url, 1200, 500);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
@@ -256,11 +262,8 @@
 				// 그리드 생성
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-
-				// 범위 달력
-				fromToCalendar("created", "calendar");
-				// 범위 달력 값 삭제
-				fromToDelete("delete")
+				
+				
 			});
 
 			document.addEventListener("keydown", function(event) {
