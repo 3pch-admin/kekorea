@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import e3ps.common.util.AUIGridUtils;
+import e3ps.common.util.CommonUtils;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.project.Project;
@@ -31,8 +32,10 @@ public class WorkOrderDTO {
 	private String state;
 	private String model;
 	private Timestamp pdate;
+	private String pdate_txt;
 	private String creator;
 	private Timestamp createdDate;
+	private String createdDate_txt;
 	private String primary;
 
 	// 변수용
@@ -80,8 +83,10 @@ public class WorkOrderDTO {
 		setState(workOrder.getState());
 		setModel(project.getModel());
 		setPdate(project.getPDate());
+		setPdate_txt(project.getPDate() != null ? project.getPDate().toString().substring(0, 10) : "");
 		setCreator(workOrder.getOwnership().getOwner().getFullName());
 		setPrimary(AUIGridUtils.primaryTemplate(workOrder));
 		setCreatedDate(workOrder.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(workOrder.getCreateTimestamp()));
 	}
 }

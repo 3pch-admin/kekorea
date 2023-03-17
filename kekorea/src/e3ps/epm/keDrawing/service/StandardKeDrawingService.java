@@ -67,15 +67,17 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 			for (KeDrawingDTO dto : removeRows) {
 				String oid = dto.getOid();
 				KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
+				KeDrawingMaster master = keDrawing.getMaster();
 				boolean isLast = KeDrawingHelper.manager.isLast(keDrawing.getMaster());
 				if (isLast) {
-					PersistenceHelper.manager.delete(keDrawing.getMaster());
+					PersistenceHelper.manager.delete(keDrawing);
+					PersistenceHelper.manager.delete(master);
 				} else {
 					KeDrawing pre = KeDrawingHelper.manager.getPreKeDrawing(keDrawing);
 					pre.setLatest(true);
 					PersistenceHelper.manager.modify(pre);
+					PersistenceHelper.manager.delete(keDrawing);
 				}
-				PersistenceHelper.manager.delete(keDrawing);
 			}
 
 			for (KeDrawingDTO dto : editRows) {
@@ -89,15 +91,18 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				master.setLotNo(lotNo);
 				PersistenceHelper.manager.modify(master);
 
-				QueryResult result = ContentHelper.service.getContentsByRole(keDrawing, ContentRoleType.PRIMARY);
-				if (result.hasMoreElements()) {
-					ApplicationData data = (ApplicationData) result.nextElement();
-					ContentServerHelper.service.deleteContent(keDrawing, data);
-				}
+				// 단순 텍스트 내용 변경건 확인이 필요..
+				if (!StringUtils.isNull(primaryPath)) {
+					QueryResult result = ContentHelper.service.getContentsByRole(keDrawing, ContentRoleType.PRIMARY);
+					if (result.hasMoreElements()) {
+						ApplicationData data = (ApplicationData) result.nextElement();
+						ContentServerHelper.service.deleteContent(keDrawing, data);
+					}
 
-				ApplicationData dd = ApplicationData.newApplicationData(keDrawing);
-				dd.setRole(ContentRoleType.PRIMARY);
-				dd = (ApplicationData) ContentServerHelper.service.updateContent(keDrawing, dd, primaryPath);
+					ApplicationData dd = ApplicationData.newApplicationData(keDrawing);
+					dd.setRole(ContentRoleType.PRIMARY);
+					dd = (ApplicationData) ContentServerHelper.service.updateContent(keDrawing, dd, primaryPath);
+				}
 			}
 
 			trs.commit();
@@ -114,19 +119,20 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 	}
 
 	@Override
-	public void revise(Map<String, Object> params) throws Exception {
-		ArrayList<Map<String, Object>> addRows = (ArrayList<Map<String, Object>>) params.get("addRows");
+	public void revise(HashMap<String, List<KeDrawingDTO>> dataMap) throws Exception {
+		List<KeDrawingDTO> addRows = dataMap.get("addRows");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			for (Map<String, Object> addRow : addRows) {
-				String oid = (String) addRow.get("oid");
-				int next = (int) addRow.get("next");
-				String primaryPath = (String) addRow.get("primaryPath");
-				String note = (String) addRow.get("note");
+			for (KeDrawingDTO dto : addRows) {
+				String oid = dto.getOid();
+				int next = dto.getNext();
+				String primaryPath = dto.getPrimaryPath();
+				String note = dto.getNote();
 
 				KeDrawing pre = (KeDrawing) CommonUtils.getObject(oid);
+
 				pre.setLatest(false);
 				pre = (KeDrawing) PersistenceHelper.manager.modify(pre);
 
@@ -135,6 +141,7 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				latest.setVersion(next);
 				latest.setMaster(pre.getMaster());
 				latest.setOwnership(CommonUtils.sessionOwner());
+				latest.setNote(note);
 				PersistenceHelper.manager.save(latest);
 
 				ApplicationData dd = ApplicationData.newApplicationData(latest);
@@ -152,6 +159,5 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 			if (trs != null)
 				trs.rollback();
 		}
-
 	}
 }

@@ -8,7 +8,7 @@
 	<tr>
 		<td class="right">
 			<input type="button" value="개정" title="개정" onclick="revise();">
-			<input type="button" value="삭제" title="삭제" class="red" onclick="remove();">
+			<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="remove();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -32,9 +32,15 @@
 		editable : false
 	}, {
 		dataField : "keNumber",
-		headerText : "DWG NO",
+		headerText : "DWG NO (개정전)",
 		dataType : "string",
-		width : 200,
+		width : 140,
+		editable : false
+	}, {
+		dataField : "keNumberNext",
+		headerText : "DWG NO (개정후)",
+		dataType : "string",
+		width : 140,
 		editable : false
 	}, {
 		dataField : "version",
@@ -64,17 +70,15 @@
 			type : "TemplateRenderer",
 		},
 	}, {
-		dataField : "",
-		headerText : "",
 		width : 100,
 		editable : false,
 		renderer : {
 			type : "ButtonRenderer",
 			labelText : "파일선택",
 			onclick : function(rowIndex, columnIndex, value, item) {
-				recentGridItem = item;
-				const rowId = item.rowId; // ... oid 가 있는데 이상하게 안받아와짐.
-				const url = getCallUrl("/aui/primary?oid=" + rowId + "&method=attach");
+				recentGridItem = item
+				const _$uid = item._$uid; // ... oid 가 있는데 이상하게 안받아와짐.
+				const url = getCallUrl("/aui/primary?oid=" + _$uid + "&method=attach");
 				popup(url, 1000, 200);
 			}
 		}
@@ -82,17 +86,15 @@
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-			rowIdField : "rowId",
 			headerHeight : 30, // 헤더높이
 			rowHeight : 30, // 행 높이
 			showRowNumColumn : true, // 번호 행 출력 여부
 			showStateColumn : true, // 상태표시 행 출력 여부
 			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
 			selectionMode : "multipleCells",
-			editable : true,
 			showRowCheckColumn : true,
+			editable : true
 		};
-
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		readyHandler();
 	}
@@ -100,20 +102,52 @@
 	function readyHandler() {
 		// 화면에서 받아온 데이터 그리드로 추가
 		for (let i = 0; i < data.length; i++) {
+			data[i].item.primary = "";
 			AUIGrid.addRow(myGridID, data[i].item, "last");
 		}
 	}
 
 	function attach(data) {
 		const name = data.name;
+		if (name.length !== 17) {
+			alert("도면파일 이름명을 체크하세요. \nDWG NO : 9자리, 버전 3자리의 양식을 맞춰주세요.");
+			return false;
+		}
+
 		const start = name.indexOf("-");
+		if (start <= -1) {
+			alert("도면파일 이름의 양식이 맞지 않습니다.\nDWG NO-버전 형태의 파일명만 허용됩니다.");
+			return false;
+		}
+
 		const end = name.lastIndexOf(".");
+		if (end <= -1) {
+			alert("도면파일 확장자를 체크해주세요.");
+			return false;
+		}
+
+		const ext = name.substring(end + 1);
+		if (ext.toLowerCase() !== "pdf") {
+			alert("PDF 파일 형식의 도면파일만 허용됩니다.");
+			return false;
+		}
+
 		const number = name.substring(0, start);
+		if (number.length !== 9) {
+			alert("도면파일의 DWG NO의 자리수를 확인해주세요. 등록가능한 도번의 자리수는 9자리여야 합니다.");
+			return false;
+		}
+
 		const next = name.substring(start + 1, end);
+		if (next.length !== 3) {
+			alert("도면파일의 버전 자리수를 확인해주세요. 등록가능한 버전의 자리수는 3자리여야 합니다.");
+			return false;
+		}
+
 		const template = "<img src='" + data.icon + "' style='position: relative; top: 2px;'>";
 		AUIGrid.updateRowsById(myGridID, {
-			rowId : recentGridItem.rowId,
-			number : number,
+			_$uid : recentGridItem._$uid,
+			keNumberNext : number,
 			next : Number(next),
 			file : name,
 			primary : template,
@@ -133,11 +167,39 @@
 	// 개정
 	function revise() {
 
+		const addRows = AUIGrid.getAddedRowItems(myGridID);
+		for (let i = 0; i < addRows.length; i++) {
+			const item = addRows[i];
+			const version = item.version;
+			const next = item.next;
+			const keNumberNext = item.keNumberNext;
+			const keNumber = item.keNumber;
+
+			if (keNumberNext !== keNumber) {
+				alert("개정전/후의 도번이 일치 하지 않습니다.\n데이터를 확인해주세요.");
+				return false;
+			}
+
+			if (next === undefined) {
+				AUIGrid.showToastMessage(myGridID, i, 6, "개정도면을 선택하세요.");
+				return false;
+			}
+
+			if (version >= next) {
+				alert("개정후 도면의 버전이 개정전 도면의 저번이 겉거나 혹은 더 낮습니다.");
+				return false;
+			}
+
+			if (isNull(item.note)) {
+				AUIGrid.showToastMessage(myGridID, i, 5, "개정사유를 입력하세요.");
+				return false;
+			}
+		}
+
 		if (!confirm("개정 하시겠습니까?")) {
 			return false;
 		}
 
-		const addRows = AUIGrid.getAddedRowItems(myGridID);
 		const params = new Object();
 		const url = getCallUrl("/keDrawing/revise");
 		params.addRows = addRows;
@@ -146,12 +208,10 @@
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
-			} else {
-				// 실패시 처리 ??
 			}
 		}); // POST 메소드 생략한다
 	}
-	
+
 	document.addEventListener("DOMContentLoaded", function() {
 		createAUIGrid(columns);
 	});

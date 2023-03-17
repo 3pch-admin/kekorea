@@ -657,7 +657,10 @@
 /* 소프트 모드 삭제한 행 스타일*/
 .aui-grid-row-soft-removed-marker {
 	color: #aaa !important;
-	text-decoration: line-through !important;
+/* 	text-decoration: line-through !important; */
+    text-decoration-line: line-through;
+    text-decoration-thickness: 2px;
+    text-decoration-color: red;
 }
 
 /* 수정한 셀 표시 스타일(마커) */

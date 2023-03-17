@@ -101,7 +101,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<input type="button" value="저장" title="저장" onclick="create();">
 					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
+					<%
+						if(isAdmin) {
+					%>
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
+					<%
+						}
+					%>
 				</td>
 				<td class="right">
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
@@ -110,7 +116,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 610px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
@@ -139,9 +145,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
-						baseUrl : "javascript", 
+						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							const url = getCallUrl("/keDrawing/view?oid=" + oid);
+							popup(url, 1100, 600);
 						}
 					},
 					filter : {
@@ -154,6 +162,15 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					dataType : "string",
 					width : 200,
 					editable : false,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.oid;
+							const url = getCallUrl("/keDrawing/view?oid=" + oid);
+							popup(url, 1100, 600);
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -187,6 +204,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					dataType : "string",
 					width : 100,
 					editable : false,
+					headerTooltip : {
+						show : true,
+						tooltipHtml : "데이터 저장시 접속한 사용자의 이름이 입력되어집니다."
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -198,6 +219,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					formatString : "yyyy-mm-dd",
 					width : 100,
 					editable : false,
+					headerTooltip : {
+						show : true,
+						tooltipHtml : "데이터 저장하는 날짜가 입력되어집니다."
+					},
 					filter : {
 						showIcon : true,
 						inline : true,
@@ -209,6 +234,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					dataType : "string",
 					width : 100,
 					editable : false,
+					headerTooltip : {
+						show : true,
+						tooltipHtml : "데이터 저장시 접속한 사용자의 이름이 입력되어집니다."
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -220,6 +249,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					formatString : "yyyy-mm-dd",
 					width : 100,
 					editable : false,
+					headerTooltip : {
+						show : true,
+						tooltipHtml : "데이터 저장하는 날짜가 입력되어집니다."
+					},
 					filter : {
 						showIcon : true,
 						inline : true,
@@ -250,8 +283,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						labelText : "파일선택",
 						onclick : function(rowIndex, columnIndex, value, item) {
 							recentGridItem = item;
-							const oid = item.oid;
-							const url = getCallUrl("/aui/primary?oid=" + oid + "&method=attach");
+							const _$uid = item._$uid;
+							const url = getCallUrl("/aui/primary?oid=" + _$uid + "&method=attach");
 							popup(url, 1000, 200);
 						}
 					},
@@ -294,7 +327,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					// 그리드 공통속성 끝
 					editable : true
-// 					fillColumnSizeMode : true // grid 컬럼 정의에서 하나의 컬럼자체에 width 를 안줄경우 해당 옵션은 필요 없다.
+				// 					fillColumnSizeMode : true // grid 컬럼 정의에서 하나의 컬럼자체에 width 를 안줄경우 해당 옵션은 필요 없다.
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
@@ -312,6 +345,20 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
 				});
+
+				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRow);
+			}
+
+			function auiBeforeRemoveRow(event) {
+				const items = event.items;
+				for (let i = 0; i < items.length; i++) {
+					const latest = items[i].latest;
+					if (!latest) {
+						alert("최신버전의 도면이 아닌 데이터가 있습니다.\n" + i + "행 데이터");
+						return false;
+					}
+				}
+				return true;
 			}
 
 			function loadGridData() {
@@ -332,11 +379,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			// 행 추가
 			function addRow() {
-				 const item = {
-						createdDate : new Date(),
-						modifiedDate : new Date(),
-						creator : "<%=sessionUser.getFullName()%>",
-						modifier : "<%=sessionUser.getFullName()%>",
+				const item = {
 					latest : true,
 				};
 				AUIGrid.addRow(myGridID, item, "first");
@@ -353,35 +396,35 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function attach(data) {
 				const name = data.name;
-				if(name.length !== 17) {
+				if (name.length !== 17) {
 					alert("도면파일 이름명을 체크하세요. \nDWG NO : 9자리, 버전 3자리의 양식을 맞춰주세요.");
 					return false;
 				}
-				
+
 				const start = name.indexOf("-");
-				if(start <= -1) {
+				if (start <= -1) {
 					alert("도면파일 이름의 양식이 맞지 않습니다.\nDWG NO-버전 형태의 파일명만 허용됩니다.");
 					return false;
 				}
-				
+
 				const end = name.lastIndexOf(".");
-				if(end <= -1) {
+				if (end <= -1) {
 					alert("도면파일 확장자를 체크해주세요.");
 					return false;
 				}
-				
+
 				const ext = name.substring(end + 1);
-				if(ext.toLowerCase() !== "pdf") {
+				if (ext.toLowerCase() !== "pdf") {
 					alert("PDF 파일 형식의 도면파일만 허용됩니다.");
 					return false;
 				}
 				const number = name.substring(0, start);
-				if(number.length !== 9) {
+				if (number.length !== 9) {
 					alert("도면파일의 DWG NO의 자리수를 확인해주세요. 등록가능한 도번의 자리수는 9자리여야 합니다.");
 					return false;
-				}	
+				}
 				const version = name.substring(start + 1, end);
-				if(version.length !== 3) {
+				if (version.length !== 3) {
 					alert("도면파일의 버전 자리수를 확인해주세요. 등록가능한 버전의 자리수는 3자리여야 합니다.");
 					return false;
 				}
@@ -398,11 +441,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			// 저장
 			function create() {
-
-				if (!confirm("저장 하시겠습니까?")) {
-					return false;
-				}
-
 				const url = getCallUrl("/keDrawing/create");
 				const params = new Object();
 				const addRows = AUIGrid.getAddedRowItems(myGridID);
@@ -416,10 +454,15 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						AUIGrid.showToastMessage(myGridID, i, 1, "DRAWING TITLE의 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
+
 					if (isNull(item.primary)) {
 						AUIGrid.showToastMessage(myGridID, i, 9, "첨부파일을 선택하세요.");
 						return false;
 					}
+				}
+
+				if (!confirm("저장 하시겠습니까?")) {
+					return false;
 				}
 
 				params.addRows = addRows;
@@ -441,6 +484,23 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					alert("개정할 도면을 선택하세요.");
 					return false;
 				}
+
+				for (let i = 0; i < checkedItems.length; i++) {
+					const oid = checkedItems[i].item.oid;
+					const latest = checkedItems[i].item.latest;
+					const rowIndex = checkedItems[i].rowIndex;
+
+					if (!latest) {
+						alert("최신버전이 아닌 도면이 포함되어있습니다. \n" + rowIndex + "행 데이터");
+						return false;
+					}
+
+					if (oid === undefined) {
+						alert("신규로 작성한 데이터가 존재합니다. \n" + rowIndex + "행 데이터");
+						return false;
+					}
+				}
+
 				const url = getCallUrl("/keDrawing/revise");
 				const panel = popup(url, 1600, 550);
 				panel.list = checkedItems;

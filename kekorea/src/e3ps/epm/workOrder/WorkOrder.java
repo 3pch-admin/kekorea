@@ -16,9 +16,9 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "number", type = String.class, javaDoc = "작업지시서 번호", constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(unique = true, columnName = "workOrderNumber")),
+				@GeneratedProperty(name = "number", type = String.class, javaDoc = "도면일람표 번호", constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(unique = true, columnName = "workOrderNumber")),
 
-				@GeneratedProperty(name = "name", type = String.class, javaDoc = "작업지시서 이름", constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "name", type = String.class, javaDoc = "도면일람표 이름", constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(index = true)),
 
 				@GeneratedProperty(name = "description", type = String.class, javaDoc = "설명", constraints = @PropertyConstraints(upperLimit = 2000)),
 

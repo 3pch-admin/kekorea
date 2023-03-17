@@ -19,7 +19,7 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 	</tr>
 </table>
 
-<table class="create-table">
+<table class="view-table">
 	<colgroup>
 		<col width="130">
 		<col width="800">

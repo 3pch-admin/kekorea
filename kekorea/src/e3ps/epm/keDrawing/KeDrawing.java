@@ -33,7 +33,7 @@ import wt.util.WTException;
 
 								constraints = @PropertyConstraints(required = true)),
 
-						myRole = @MyRole(name = "keDrawing", cardinality = Cardinality.ONE)
+						myRole = @MyRole(name = "iteration", cardinality = Cardinality.ONE)
 
 				) }
 

@@ -5,10 +5,14 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import e3ps.epm.keDrawing.KeDrawing;
 import wt.enterprise.RevisionControlled;
 import wt.iba.definition.litedefinition.AttributeDefDefaultView;
 import wt.iba.definition.service.IBADefinitionHelper;
 import wt.iba.value.StringValue;
+import wt.org.WTUser;
+import wt.part.WTPart;
+import wt.part.WTPartMaster;
 import wt.query.ClassAttribute;
 import wt.query.ColumnExpression;
 import wt.query.ConstantExpression;
@@ -27,6 +31,9 @@ public class QuerySpecUtils {
 
 	}
 
+	/**
+	 * 도면, 문서 기타 등 윈칠에서 관리하는 객체에 대한 최신 버전 쿼리문 작성
+	 */
 	public static void toLatest(QuerySpec query, int idx, Class clazz) throws Exception {
 		int branchIdx = query.appendClassList(ControlBranch.class, false);
 		int childBranchIdx = query.appendClassList(ControlBranch.class, false);
@@ -60,6 +67,9 @@ public class QuerySpecUtils {
 
 	}
 
+	/**
+	 * 도면, 문서 기타 등 윈칠에서 관리하는 객체에 대한 최신 이터레이션 쿼리문 작성
+	 */
 	public static void toIteration(QuerySpec query, int idx, Class clazz) throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
@@ -68,6 +78,9 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 equals (and) 조건 추가
+	 */
 	public static void toEqualsAnd(QuerySpec query, int idx, Class clazz, String column, Object value)
 			throws Exception {
 		if (query.getConditionCount() > 0) {
@@ -85,6 +98,9 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 equals (or) 조건 추가
+	 */
 	public static void toEqualsOr(QuerySpec query, int idx, Class clazz, String column, Object value) throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendOr();
@@ -101,6 +117,9 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 '%' like (or) 조건 추가
+	 */
 	public static void toLikeLeftOr(QuerySpec query, int idx, Class clazz, String column, String value)
 			throws Exception {
 		if (query.getConditionCount() > 0) {
@@ -113,6 +132,9 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 like '%' (or) 조건 추가
+	 */
 	public static void toLikeRightOr(QuerySpec query, int idx, Class clazz, String column, String value)
 			throws Exception {
 		if (query.getConditionCount() > 0) {
@@ -125,6 +147,9 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 '%' like '%' (or) 조건 추가
+	 */
 	public static void toLikeOr(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendOr();
@@ -136,6 +161,9 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 '%' like (and) 조건 추가
+	 */
 	public static void toLikeLeftAnd(QuerySpec query, int idx, Class clazz, String column, String value)
 			throws Exception {
 		if (query.getConditionCount() > 0) {
@@ -148,6 +176,9 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 like '%' (and) 조건 추가
+	 */
 	public static void toLikeRightAnd(QuerySpec query, int idx, Class clazz, String column, String value)
 			throws Exception {
 		if (query.getConditionCount() > 0) {
@@ -160,7 +191,14 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 '%' like '%' (and) 조건 추가
+	 */
 	public static void toLikeAnd(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
+		if (StringUtils.isNull(value)) {
+			return;
+		}
+
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -171,12 +209,31 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 order by 조건 추가
+	 */
 	public static void toOrderBy(QuerySpec query, int idx, Class clazz, String column, boolean sort) throws Exception {
 		ClassAttribute ca = new ClassAttribute(clazz, column);
 		OrderBy orderBy = new OrderBy(ca, sort);
 		query.appendOrderBy(orderBy, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 boolean 조건 추가
+	 */
+	public static void toBoolean(QuerySpec query, int idx, Class clazz, String column, boolean value) throws Exception {
+		SearchCondition sc = null;
+		if (value) {
+			sc = new SearchCondition(clazz, column, SearchCondition.IS_TRUE);
+		} else {
+			sc = new SearchCondition(clazz, column, SearchCondition.IS_FALSE);
+		}
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	/**
+	 * 쿼리문에 boolean (and) 조건 추가
+	 */
 	public static void toBooleanAnd(QuerySpec query, int idx, Class clazz, String column, boolean value)
 			throws Exception {
 		if (query.getConditionCount() > 0) {
@@ -191,7 +248,10 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
-	public static void toBooleanAndOr(QuerySpec query, int idx, Class clazz, String column, boolean value)
+	/**
+	 * 쿼리문에 boolean (or) 조건 추가
+	 */
+	public static void toBooleanOr(QuerySpec query, int idx, Class clazz, String column, boolean value)
 			throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendOr();
@@ -205,6 +265,9 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 inner join 조건 추가
+	 */
 	public static void toInnerJoin(QuerySpec query, Class left, Class right, String leftKey, String rightKey,
 			int leftIdx, int rightIdx) throws Exception {
 		if (query.getConditionCount() > 0) {
@@ -214,6 +277,9 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { leftIdx, rightIdx });
 	}
 
+	/**
+	 * 쿼리문에 시간 조건 추가 >=
+	 */
 	public static void toTimeGreaterEqualsThan(QuerySpec query, int idx, Class clazz, String column, String time)
 			throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -222,6 +288,9 @@ public class QuerySpecUtils {
 		toTimeGreaterEqualsThan(query, idx, clazz, column, fromTime);
 	}
 
+	/**
+	 * 쿼리문에 시간 조건 추가 >=
+	 */
 	public static void toTimeGreaterEqualsThan(QuerySpec query, int idx, Class clazz, String column, Timestamp time)
 			throws Exception {
 		if (query.getConditionCount() > 0) {
@@ -231,6 +300,9 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 시간 조건 추가 <=
+	 */
 	public static void toTimeLessEqualsThan(QuerySpec query, int idx, Class clazz, String column, String time)
 			throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -239,6 +311,9 @@ public class QuerySpecUtils {
 		toTimeLessEqualsThan(query, idx, clazz, column, toTime);
 	}
 
+	/**
+	 * 쿼리문에 시간 조건 추가 <=
+	 */
 	public static void toTimeLessEqualsThan(QuerySpec query, int idx, Class clazz, String column, Timestamp time)
 			throws Exception {
 		if (query.getConditionCount() > 0) {
@@ -248,6 +323,9 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 시간 조건 추가 >
+	 */
 	public static void toTimeGreaterThan(QuerySpec query, int idx, Class clazz, String column, String time)
 			throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -256,6 +334,9 @@ public class QuerySpecUtils {
 		toTimeGreaterThan(query, idx, clazz, column, fromTime);
 	}
 
+	/**
+	 * 쿼리문에 시간 조건 추가 >
+	 */
 	public static void toTimeGreaterThan(QuerySpec query, int idx, Class clazz, String column, Timestamp time)
 			throws Exception {
 		if (query.getConditionCount() > 0) {
@@ -265,6 +346,9 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 시간 조건 추가 <
+	 */
 	public static void toTimeLessThan(QuerySpec query, int idx, Class clazz, String column, String time)
 			throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -273,6 +357,9 @@ public class QuerySpecUtils {
 		toTimeLessThan(query, idx, clazz, column, toTime);
 	}
 
+	/**
+	 * 쿼리문에 시간 조건 추가 <
+	 */
 	public static void toTimeLessThan(QuerySpec query, int idx, Class clazz, String column, Timestamp time)
 			throws Exception {
 		if (query.getConditionCount() > 0) {
@@ -282,7 +369,10 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
-	public static void toNotEquals(QuerySpec query, int idx, Class clazz, String column, String value)
+	/**
+	 * 쿼리문에 not equals (and) 조건 추가
+	 */
+	public static void toNotEqualsAnd(QuerySpec query, int idx, Class clazz, String column, String value)
 			throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
@@ -291,6 +381,9 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 쿼리문에 체크인 된 객체만 가져오는 조건 추가
+	 */
 	public static void toCI(QuerySpec query, int idx, Class clazz) throws Exception {
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
@@ -299,6 +392,9 @@ public class QuerySpecUtils {
 		query.appendWhere(sc, new int[] { idx });
 	}
 
+	/**
+	 * 부품, 도면등 기타 IBA값을 사용하는곳에 잇어서 equals (and) 조건 추가
+	 */
 	public static void toIBAEquals(QuerySpec query, int idx, Class clazz, String name, String value) throws Exception {
 		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath(name);
 		if (aview != null) {
@@ -322,4 +418,34 @@ public class QuerySpecUtils {
 		}
 	}
 
+	/**
+	 * Ownable.class 인터페이스를 구현한 객체에 대해서만 사용할 수 있는 작성사 검색 쿼리
+	 */
+	public static void toCreator(QuerySpec query, int idx, Class clazz, String oid) throws Exception {
+		if (StringUtils.isNull(oid)) {
+			return;
+		}
+
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+		WTUser creator = (WTUser) CommonUtils.getObject(oid);
+		SearchCondition sc = new SearchCondition(clazz, "ownership.owner.key.id", "=",
+				creator.getPersistInfo().getObjectIdentifier().getId());
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	/**
+	 * 객체 작성일 검색 From ~ To
+	 */
+	public static void toTimeGreaterAndLess(QuerySpec query, int idx, Class clazz, String column, String createdFrom,
+			String createdTo) throws Exception {
+		if (!StringUtils.isNull(createdFrom)) {
+			toTimeGreaterEqualsThan(query, idx, clazz, createdFrom, createdFrom);
+		}
+
+		if (!StringUtils.isNull(createdTo)) {
+			toTimeLessEqualsThan(query, idx, clazz, column, createdTo);
+		}
+	}
 }

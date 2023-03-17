@@ -166,7 +166,7 @@ function toArray(name) {
 
 // auigrid 값 체크..
 function isNull(value) {
-	if (value === undefined) {
+	if (value === undefined || value === null) {
 		return true;
 	}
 	return false;

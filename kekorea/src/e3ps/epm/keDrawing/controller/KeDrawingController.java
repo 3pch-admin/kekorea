@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -22,8 +23,12 @@ import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.doc.meeting.service.MeetingHelper;
+import e3ps.epm.keDrawing.KeDrawing;
+import e3ps.epm.keDrawing.KeDrawingMaster;
 import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
+import e3ps.epm.workOrder.dto.WorkOrderDTO;
+import net.sf.json.JSONArray;
 import wt.org.WTUser;
 
 @Controller
@@ -69,7 +74,6 @@ public class KeDrawingController extends BaseController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 
-			
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -97,12 +101,11 @@ public class KeDrawingController extends BaseController {
 
 			result = KeDrawingHelper.manager.isValid(addRow, editRow);
 			// true 중복있음
-			// 
-			if((boolean)result.get("isExist")) {
+			if ((boolean) result.get("isExist")) {
 				result.put("result", FAIL);
 				return result;
 			}
-			
+
 			KeDrawingHelper.service.create(dataMap);
 			result.put("msg", SAVE_MSG);
 			result.put("result", SUCCESS);
@@ -125,10 +128,35 @@ public class KeDrawingController extends BaseController {
 	@Description(value = "KE 도면 개정")
 	@ResponseBody
 	@PostMapping(value = "/revise")
-	public Map<String, Object> revise(@RequestBody Map<String, Object> params) throws Exception {
+	public Map<String, Object> revise(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
+			throws Exception {
+		ArrayList<LinkedHashMap<String, Object>> addRows = params.get("addRows");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			KeDrawingHelper.service.revise(params);
+
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+			ArrayList<KeDrawingDTO> addRow = new ArrayList<>();
+			for (LinkedHashMap<String, Object> add : addRows) {
+				KeDrawingDTO dto = mapper.convertValue(add, KeDrawingDTO.class);
+				addRow.add(dto);
+			}
+
+			HashMap<String, List<KeDrawingDTO>> dataMap = new HashMap<>();
+			dataMap.put("addRows", addRow); // 추가행
+
+			for (KeDrawingDTO dto : addRow) {
+				KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(dto.getOid()); // 원본
+				String keNumber = dto.getKeNumber(); // 변경 되는 값
+				if (!keNumber.equals(keDrawing.getMaster().getKeNumber())) {
+					result.put("result", FAIL);
+					result.put("msg", "개정전 후의 도번이 일치 하지 않습니다.\n데이터를 확인 해주세요.");
+					return result;
+				}
+			}
+
+			KeDrawingHelper.service.revise(dataMap);
 			result.put("msg", REVISE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
@@ -137,5 +165,27 @@ public class KeDrawingController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "KE 도면 정보 페이지")
+	@GetMapping(value = "/view")
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
+		KeDrawingDTO dto = new KeDrawingDTO(keDrawing);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/epm/keDrawing/keDrawing-view");
+		return model;
+	}
+
+	@Description(value = "KE 도면 이력정보 페이지")
+	@GetMapping(value = "/history")
+	public ModelAndView history(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		KeDrawingMaster master = (KeDrawingMaster) CommonUtils.getObject(oid);
+		JSONArray list = KeDrawingHelper.manager.history(master);
+		model.addObject("list", list);
+		model.setViewName("popup:/epm/keDrawing/keDrawing-history");
+		return model;
 	}
 }

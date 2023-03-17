@@ -149,7 +149,7 @@ td.indent10 {
 }
 
 td.underline {
-	/* 	color: blue !important; */
+	color: blue !important;
 	cursor: pointer;
 }
 
@@ -464,4 +464,48 @@ a:hover {
 	border: 1px solid #a6a6a6;
 	padding: 0;
 	vertical-align: middle;
+}
+
+/** VIEW TABLE **/
+/** 등록 테이블 CSS **/
+table.view-table {
+	width: 100%;
+	border-top: 2px solid #86bff9;
+	font-size: 12px;
+}
+
+table.view-table th {
+	background-color: #f2f2f2;
+	height: 30px;
+	border-bottom: 1px solid #a6a6a6;
+	/* 	border-left: 1px solid #a6a6a6; */
+	padding-bottom: 4px;
+}
+
+table.view-table td {
+	height: 30px;
+	border-bottom: 1px solid #a6a6a6;
+	border-left: 1px solid #a6a6a6;
+	border-right: 1px solid #a6a6a6;
+}
+
+table.view-table textarea {
+	width: calc(100% - 15px);
+	border: 1px solid #a6a6a6;
+	margin-top: 3px;
+	font-size: 14px;
+	font-family: inherit;
+}
+
+/** 헤더 아이콘 및 텍스트 **/
+div.header img {
+	position: relative;
+	top: 4px;
+}
+
+div.header {
+	margin-top: 2px;
+	margin-bottom: 2px;
+	font-weight: 800;
+	font-size: 12px;
 }
