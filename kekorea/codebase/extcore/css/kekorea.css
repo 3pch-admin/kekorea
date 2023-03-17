@@ -438,6 +438,18 @@ a:hover {
 	padding: 5px;
 }
 
+.create-table td input[type='number'], .search-table td input[type='number'] {
+	border: 1px solid #a6a6a6;
+	background: #fff;
+	color: #333;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	font-size: 14px;
+	height: 15px;
+	padding: 5px;
+}
+
 /** SELECT CSS **/
 .create-table td select, .search-table td select {
 	-webkit-border-radius: 2px 5px 5px;

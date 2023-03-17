@@ -171,3 +171,31 @@ function isNull(value) {
 	}
 	return false;
 }
+
+
+// axisj user 검색 바인딩 공용 
+function finderUser(id) {
+	axdom("#" + id).bindSelector({
+		finder: {
+			onclick: function() { // {Function} - 파인더 버튼 클릭 이벤트 콜백함수 (optional)
+				const url = getCallUrl("/org/popup");
+				popup(url, 1200, 600);
+			}
+		},
+	})
+}
+
+// axisj 날짜 범위 검색 바인딩 공용
+function twindate(endIdPrefix) {
+	axdom("#" + endIdPrefix + "To").bindTwinDate({
+		startTargetID: endIdPrefix + "From",
+		align: "left",
+		valign: "top",
+		buttonText: "확인",
+		customPos: {
+			top: 28,
+			left: 25
+		},
+	})
+
+}
