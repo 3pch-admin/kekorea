@@ -42,11 +42,11 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 			<tr>
 				<th>KEK 작번</th>
 				<td class="indent5">
-					<input type="text" name="kekNumber" id="kekNumber" class="AXInput">
+					<input type="text" name="kekNumber" id="kekNumber">
 				</td>
 				<th>KE 작번</th>
 				<td class="indent5">
-					<input type="text" name="keNumber" id="keNumber" class="AXInput">
+					<input type="text" name="keNumber" id="keNumber">
 				</td>
 				<th>발행일</th>
 				<td class="indent5">
@@ -57,24 +57,24 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 				</td>
 				<th>USER ID</th>
 				<td class="indent5">
-					<input type="text" name="userId" id="userId" class="AXInput">
+					<input type="text" name="userId" id="userId">
 				</td>
 			</tr>
 			<tr>
 				<th>작번 상태</th>
 				<td class="indent5">
 					<!-- 셀렉트 박스의 AXSelect 모두 제거한다 -->
-					<select name="kekState" id="kekState" class="w200">
+					<select name="kekState" id="kekState" class="width-200">
 						<option value="">선택</option>
 					</select>
 				</td>
 				<th>모델</th>
 				<td class="indent5">
-					<input type="text" name="model" id="model" class="AXInput">
+					<input type="text" name="model" id="model">
 				</td>
 				<th>거래처</th>
 				<td class="indent5">
-					<select name="customer_name" id="customer_name" class="AXSelect w200">
+					<select name="customer_name" id="customer_name" class="width-200">
 						<option value="">선택</option>
 						<%
 						for (Map customer : customers) {
@@ -87,7 +87,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 				</td>
 				<th>설치장소</th>
 				<td class="indent5">
-					<select name="customer_name" id="customer_name" class="AXSelect w200">
+					<select name="install_name" id="install_name" class="width-200">
 						<option value="">선택</option>
 					</select>
 				</td>
@@ -95,7 +95,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 			<tr>
 				<th>작번 유형</th>
 				<td class="indent5">
-					<select name="projectType" id="projectType" class="width-100">
+					<select name="projectType" id="projectType" class="width-200">
 						<option value="">선택</option>
 						<%
 						for (Map projectType : projectTypes) {
@@ -108,21 +108,21 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 				</td>
 				<th>기계 담당자</th>
 				<td class="indent5">
-					<input type="text" name="machine" id="machine" class="AXInput">
+					<input type="text" name="machine" id="machine">
 				</td>
 				<th>전기 담당자</th>
 				<td class="indent5">
-					<input type="text" name="elec" id="elec" class="AXInput">
+					<input type="text" name="elec" id="elec">
 				</td>
 				<th>SW 담당자</th>
 				<td class="indent5">
-					<input type="text" name="soft" id="soft" class="width-200">
+					<input type="text" name="soft" id="soft">
 				</td>
 			</tr>
 			<tr>
 				<th>막종</th>
 				<td class="indent5">
-					<input type="text" name="mak_name" id="mak_name" class="AXInput">
+					<input type="text" name="mak_name" id="mak_name">
 				</td>
 				<th>막종상세</th>
 				<td class="indent5">
@@ -332,7 +332,8 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
 					},
 				}, {
 					dataField : "completeDate",
@@ -348,7 +349,8 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
 					},
 				}, {
 					dataField : "model",
@@ -416,11 +418,11 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 			function createAUIGrid(columnLayout) {
 				// 그리드 속성
 				const props = {
-					rowIdField : "oid",
 					// 그리드 공통속성 시작
 					headerHeight : 30,
 					rowHeight : 30,
 					showRowNumColumn : true,
+					showRowCheckColumn : true,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
 					noDataMessage : "검색 결과가 없습니다.",
@@ -493,6 +495,9 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 				AUIGrid.resize(myGridID);
 
 				// 셀렉트 박스
+				selectbox("kekState");
+				selectbox("customer_name");
+				selectbox("install_name");
 				selectbox("projectType");
 				selectbox("template");
 

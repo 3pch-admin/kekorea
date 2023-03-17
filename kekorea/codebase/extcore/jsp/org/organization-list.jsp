@@ -91,13 +91,13 @@ JSONArray departments = new JSONArray(list);
 				<td>
 					<jsp:include page="/extcore/include/department-include.jsp">
 						<jsp:param value="list" name="mode" />
-						<jsp:param value="750" name="height" />
+						<jsp:param value="705" name="height" />
 					</jsp:include>
 				</td>
 				<td>&nbsp;</td>
 				<td>
 					<!-- 그리드 리스트 -->
-					<div id="grid_wrap" style="height: 750px; border-top: 1px solid #3180c3;"></div>
+					<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 				</td>
 			</tr>
 		</table>
@@ -342,7 +342,8 @@ JSONArray departments = new JSONArray(list);
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
 					},
 				} ]
 			}
@@ -351,32 +352,29 @@ JSONArray departments = new JSONArray(list);
 			function createAUIGrid(columnLayout) {
 				// 그리드 속성
 				const props = {
-					rowIdField : "oid",
-					// 그리드 공통속성 시작
-					headerHeight : 30, // 헤더높이
-					rowHeight : 30, // 행 높이
-					showRowNumColumn : true, // 번호 행 출력 여부
-					showStateColumn : true, // 상태표시 행 출력 여부
-					rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-					noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
-					enableFilter : true, // 필터 사용 여부
-					selectionMode : "multipleCells",
-					enableMovingColumn : true,
-					showInlineFilter : true,
-					useContextMenu : true,
-					enableRightDownFocus : true,
-					filterLayerWidth : 320,
-					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+						// 그리드 공통속성 시작
+						headerHeight : 30,
+						rowHeight : 30,
+						showRowNumColumn : true,
+						showRowCheckColumn : true,
+						showStateColumn : true,
+						rowNumHeaderText : "번호",
+						noDataMessage : "검색 결과가 없습니다.",
+						enableFilter : true,
+						selectionMode : "multipleCells",
+						enableMovingColumn : true,
+						showInlineFilter : true,
+						useContextMenu : true,
+						enableRightDownFocus : true,
+						filterLayerWidth : 320,
+						filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					// 그리드 공통속성 끝
-					showRowCheckColumn : true, // 엑스트라 체크 박스 사용 여부
-					editable : true
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
-				// Lazy Loading 이벤트 바인딩
-				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+				
 				// 동적 수정여부 체크
 				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin );
 				
@@ -419,37 +417,6 @@ JSONArray departments = new JSONArray(list);
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
-			}
-
-			let last = false;
-			function vScrollChangeHandler(event) {
-				if (event.position == event.maxPosition) {
-					if (!last) {
-						requestAdditionalData();
-					}
-				}
-			}
-
-			function requestAdditionalData() {
-				const url = getCallUrl("/aui/appendData");
-				const params = new Object();
-				const curPage = document.getElementById("curPage").value
-				const sessionid = document.getElementById("sessionid").value
-				params.sessionid = sessionid;
-				params.start = (curPage * 100);
-				params.end = (curPage * 100) + 100;
-				AUIGrid.showAjaxLoader(myGridID);
-				parent.openLayer();
-				call(url, params, function(data) {
-					if (data.list.length == 0) {
-						last = true;
-					} else {
-						AUIGrid.appendData(myGridID, data.list);
-						document.getElementById("curPage").value = parseInt(curPage) + 1;
-					}
-					AUIGrid.removeAjaxLoader(myGridID);
-					parent.closeLayer();
-				})
 			}
 
 			function save() {

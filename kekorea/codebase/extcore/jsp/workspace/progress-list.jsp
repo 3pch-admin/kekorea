@@ -46,7 +46,7 @@
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 750px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
@@ -82,11 +82,12 @@
 					headerText : "기안일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd HH:MM:ss",
-					width : 150,
+					width : 130,
 					// 시간 표현시 130
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
 					},
 				} ]
 			}
@@ -95,31 +96,28 @@
 			function createAUIGrid(columnLayout) {
 				// 그리드 속성
 				const props = {
-					rowIdField : "oid",
-					// 그리드 공통속성 시작
-					headerHeight : 30, // 헤더높이
-					rowHeight : 30, // 행 높이
-					showRowNumColumn : true, // 번호 행 출력 여부
-					showStateColumn : true, // 상태표시 행 출력 여부
-					rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-					noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
-					enableFilter : true, // 필터 사용 여부
-					selectionMode : "multipleCells",
-					enableMovingColumn : true,
-					showInlineFilter : true,
-					useContextMenu : true,
-					enableRightDownFocus : true,
-					filterLayerWidth : 320,
-					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					// 그리드 공통속성 끝
-					fillColumnSizeMode : true
+						// 그리드 공통속성 시작
+						headerHeight : 30,
+						rowHeight : 30,
+						showRowNumColumn : true,
+						showRowCheckColumn : true,
+						showStateColumn : true,
+						rowNumHeaderText : "번호",
+						noDataMessage : "검색 결과가 없습니다.",
+						enableFilter : true,
+						selectionMode : "multipleCells",
+						enableMovingColumn : true,
+						showInlineFilter : true,
+						useContextMenu : true,
+						enableRightDownFocus : true,
+						filterLayerWidth : 320,
+						filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+						// 그리드 공통속성 끝
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
-				// Lazy Loading 이벤트 바인딩
-				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 				
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
@@ -150,37 +148,6 @@
 				});
 			}
 
-			let last = false;
-			function vScrollChangeHandler(event) {
-				if (event.position == event.maxPosition) {
-					if (!last) {
-						requestAdditionalData();
-					}
-				}
-			}
-
-			function requestAdditionalData() {
-				const url = getCallUrl("/aui/appendData");
-				const params = new Object();
-				const curPage = document.getElementById("curPage").value;
-				const sessionid = document.getElementById("sessionid").value;
-				params.sessionid = sessionid;
-				params.start = (curPage * 100);
-				params.end = (curPage * 100) + 100;
-				AUIGrid.showAjaxLoader(myGridID);
-				parent.openLayer();
-				call(url, params, function(data) {
-					if (data.list.length == 0) {
-						last = true;
-					} else {
-						AUIGrid.appendData(myGridID, data.list);
-						document.getElementById("curPage").value = parseInt(curPage) + 1;
-					}
-					AUIGrid.removeAjaxLoader(myGridID);
-					parent.closeLayer();
-				})
-			}
-			
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성

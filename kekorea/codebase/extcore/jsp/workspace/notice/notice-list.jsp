@@ -43,13 +43,16 @@
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
-					<input type="text" name="created" id="created" class="width-200">
-					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
-					<!-- data-target 달력 태그 ID -->
-					<input type="hidden" name="createdFrom" id="createdFrom">
-					<!-- 달력 태그 아이디값 + From -->
-					<input type="hidden" name="createdTo" id="createdTo">
-					<!-- 달력 태그 아이디값 + To -->
+<!-- 					<input type="text" name="created" id="created" class="width-200"> -->
+<!-- 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created"> -->
+<!-- 					data-target 달력 태그 ID -->
+<!-- 					<input type="hidden" name="createdFrom" id="createdFrom"> -->
+<!-- 					달력 태그 아이디값 + From -->
+<!-- 					<input type="hidden" name="createdTo" id="createdTo"> -->
+<!-- 					달력 태그 아이디값 + To -->
+					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+					~
+					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
 			</tr>
 		</table>
@@ -262,10 +265,11 @@
 				// 그리드 생성
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				
-				
 			});
 
+			finderUser("creator");
+			twindate("created");
+			
 			document.addEventListener("keydown", function(event) {
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {

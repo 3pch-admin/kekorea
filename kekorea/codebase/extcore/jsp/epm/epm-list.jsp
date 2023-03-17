@@ -45,10 +45,11 @@
 			<tr>
 				<th>부품 분류</th>
 				<td colspan="7" class="indent5">
-					<input type="hidden" name="location" value=""> <span id="location">defaultttttttt</span>
+					<input type="hidden" name="location" value="">
+					<span id="location">defaultttttttt</span>
 				</td>
-				</tr>
-				<tr>
+			</tr>
+			<tr>
 				<th>파일 이름</th>
 				<td class="indent5">
 					<input type="text" name="partCode">
@@ -65,8 +66,8 @@
 				<td class="indent5">
 					<input type="text" name="number">
 				</td>
-				</tr>
-				<tr>
+			</tr>
+			<tr>
 				<th>MATERIAL</th>
 				<td class="indent5">
 					<input type="text" name="number">
@@ -79,35 +80,54 @@
 				<td colspan="3" class="indent5">
 					<input type="text" name="number">
 				</td>
-				</tr>
-				<tr>
+			</tr>
+			<tr>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<input type="text" name="creator" id="creator">
 				</td>
 				<th>작성일</th>
-				<td colspan="3" class="indent5">
-					<input type="text" name="partName" class="width-100"> ~
-					<input type="text" name="partName" class="width-100">
-				</td>
-				<th>상태</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+					~
+					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
-				</tr>
-				<tr>
 				<th>수정자</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<input type="text" name="modifier" id="modifier">
 				</td>
 				<th>수정일</th>
-				<td colspan="3" class="indent5">
-					<input type="text" name="partName" class="width-100"> ~
-					<input type="text" name="partName" class="width-100">
+				<td class="indent5">
+					<input type="text" name="modifiedFrom" id="modifiedFrom" class="width-100">
+					~
+					<input type="text" name="modifiedTo" id="modifiedTo" class="width-100">
+				</td>
+			</tr>
+			<tr>
+				<th>상태</th>
+				<td class="indent5">
+					<select name="template" id="template" class="width-200">
+						<option value="">선택</option>
+					</select>
 				</td>
 				<th>버전</th>
-				<td class="indent5">
-					<input type="text" name="number">
+				<td colspan="5" class="indent5">
+					<div class="pretty p-switch">
+						<input type="radio" name="latest" value="true" checked="checked">
+						<div class="state p-success">
+							<label>
+								<b>죄신버전</b>
+							</label>
+						</div>
+					</div>
+					<div class="pretty p-switch">
+						<input type="radio" name="latest" value="">
+						<div class="state p-success">
+							<label>
+								<b>모든버전</b>
+							</label>
+						</div>
+					</div>
 				</td>
 			</tr>
 		</table>
@@ -125,7 +145,7 @@
 			</tr>
 		</table>
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 610px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 565px; border-top: 1px solid #3180c3;"></div>
 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
@@ -145,7 +165,7 @@
 					filter : {
 						showIcon : false,
 						inline : false
-					},					
+					},
 				}, {
 					dataField : "name",
 					headerText : "파일이름",
@@ -154,7 +174,7 @@
 					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
-						baseUrl : "javascript", 
+						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
 						}
@@ -188,7 +208,7 @@
 					width : 130,
 					renderer : {
 						type : "LinkRenderer",
-						baseUrl : "javascript", 
+						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
 						}
@@ -250,7 +270,8 @@
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
 					},
 				}, {
 					dataField : "creator",
@@ -269,7 +290,8 @@
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
 					},
 				}, {
 					dataField : "state",
@@ -294,15 +316,15 @@
 
 			function createAUIGrid(columns) {
 				const props = {
-					rowIdField : "loid",
 					// 그리드 공통속성 시작
-					headerHeight : 30, // 헤더높이
-					rowHeight : 30, // 행 높이
-					showRowNumColumn : true, // 번호 행 출력 여부
-					showStateColumn : true, // 상태표시 행 출력 여부
-					rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-					noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
-					enableFilter : true, // 필터 사용 여부
+					headerHeight : 30,
+					rowHeight : 30,
+					showRowNumColumn : true,
+					showRowCheckColumn : true,
+					showStateColumn : true,
+					rowNumHeaderText : "번호",
+					noDataMessage : "검색 결과가 없습니다.",
+					enableFilter : true,
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
@@ -310,13 +332,12 @@
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					fillColumnSizeMode : true
+				// 그리드 공통속성 끝
 				};
+
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
 				loadGridData();
-				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
-				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
-				
+
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
@@ -349,36 +370,6 @@
 				});
 			}
 
-			let last = false;
-			function vScrollChangeHandler(event) {
-				if (event.position == event.maxPosition) {
-					if (!last) {
-						requestAdditionalData();
-					}
-				}
-			}
-
-			function requestAdditionalData() {
-				const url = getCallUrl("/aui/appendData");
-				const params = new Object();
-				const curPage = document.getElementById("curPage").value;
-				params.sessionid = document.getElementById("sessionid").value;
-				params.start = (curPage * 100);
-				params.end = (curPage * 100) + 100;
-				AUIGrid.showAjaxLoader(myGridID);
-				parent.openLayer();
-				call(url, params, function(data) {
-					if (data.list.length == 0) {
-						last = true;
-					} else {
-						AUIGrid.appendData(myGridID, data.list);
-						document.getElementById("curPage").value = parseInt(curPage) + 1;
-					}
-					AUIGrid.removeAjaxLoader(myGridID);
-					parent.closeLayer();
-				})
-			}
-
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
@@ -393,6 +384,12 @@
 				AUIGrid.resize(myGridID);
 			});
 
+			selectbox("state");
+			finderUser("creator");
+			finderUser("modifier");
+			twindate("created");
+			twindate("modified");
+
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;
@@ -405,7 +402,7 @@
 			document.addEventListener("click", function(event) {
 				hideContextMenu();
 			})
-			
+
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(myGridID);
 			});

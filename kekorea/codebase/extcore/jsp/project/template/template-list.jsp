@@ -35,21 +35,13 @@
 				</td>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="duration" id="duration">
-<<<<<<< HEAD
-=======
-					<input type="text" name="templateName" id="templateName" class="width-300">
-				</td>
-				<th>작성자</th>
-				<td class="indent5">
-					<input type="text" name="duration" id="duration" class="width-100">
->>>>>>> 32469a5155cd6788a4bfc803e4df7de466ba7d1e
+					<input type="text" name="creator" id="creator">
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
-					<input type="text" name="partName" class="width-100">
+					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
 					~
-					<input type="text" name="partName" class="width-100">
+					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
 			</tr>
 			<tr>
@@ -59,21 +51,13 @@
 				</td>
 				<th>수정자</th>
 				<td class="indent5">
-					<input type="text" name="">
-<<<<<<< HEAD
-=======
-					<input type="text" name="partName" class="width-100">
-				</td>
-				<th>수정자</th>
-				<td class="indent5">
-					<input type="text" name="" class="width-100">
->>>>>>> 32469a5155cd6788a4bfc803e4df7de466ba7d1e
+					<input type="text" name="modifier" id="modifier">
 				</td>
 				<th>수정일</th>
 				<td class="indent5">
-					<input type="text" name="partNamea" class="width-100">
+					<input type="text" name="modifiedFrom" id="modifiedFrom" class="width-100">
 					~
-					<input type="text" name="partNamea" class="width-100">
+					<input type="text" name="modifiedTo" id="modifiedTo" class="width-100">
 				</td>
 			</tr>
 		</table>
@@ -167,7 +151,8 @@
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
 					},
 				}, {
 					dataField : "modifier",
@@ -186,7 +171,8 @@
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
 					},
 				} ]
 			}
@@ -211,21 +197,11 @@
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					// 그리드 공통속성 끝
-<<<<<<< HEAD
-					useContextMenu : true
-=======
-					fillColumnSizeMode : true
->>>>>>> 32469a5155cd6788a4bfc803e4df7de466ba7d1e
+				// 그리드 공통속성 끝
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
-<<<<<<< HEAD
-				// Lazy Loading 이벤트 바인딩
-				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
-=======
->>>>>>> 32469a5155cd6788a4bfc803e4df7de466ba7d1e
 
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
@@ -262,37 +238,6 @@
 				popup(url, 1200, 350);
 			}
 
-// 			let last = false;
-// 			function vScrollChangeHandler(event) {
-// 				if (event.position == event.maxPosition) {
-// 					if (!last) {
-// 						requestAdditionalData();
-// 					}
-// 				}
-// 			}
-
-// 			function requestAdditionalData() {
-// 				const url = getCallUrl("/aui/appendData");
-// 				const params = new Object();
-// 				const curPage = document.getElementById("curPage").value;
-// 				const sessionid = document.getElementById("sessionid").value;
-// 				params.sessionid = sessionid;
-// 				params.start = (curPage * 100);
-// 				params.end = (curPage * 100) + 100;
-// 				AUIGrid.showAjaxLoader(myGridID);
-// 				parent.openLayer();
-// 				call(url, params, function(data) {
-// 					if (data.list.length == 0) {
-// 						last = true;
-// 					} else {
-// 						AUIGrid.appendData(myGridID, data.list);
-// 						document.getElementById("curPage").value = parseInt(curPage) + 1;
-// 					}
-// 					AUIGrid.removeAjaxLoader(myGridID);
-// 					parent.closeLayer();
-// 				})
-// 			}
-
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
@@ -306,6 +251,12 @@
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 			});
+
+			finderUser("modifier");
+			finderUser("creator");
+
+			twindate("created");
+			twindate("modified");
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
