@@ -21,7 +21,7 @@ String name = (String) request.getAttribute("name");
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
 </head>
 <body>
 	<form>
@@ -43,26 +43,21 @@ String name = (String) request.getAttribute("name");
 			<tr>
 				<th>공지사항 제목</th>
 				<td class="indent5">
-					<input type="text" name="fileName" class="width-300">
+					<input type="text" name="fileName" class="width-200">
 				</td>
 				<th>설명</th>
 				<td class="indent5">
-					<input type="text" name="partCode" class="width-300">
+					<input type="text" name="description" class="width-200">
 				</td>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="partName" class="width-100">
+					<input type="text" name="creator" id="creator" class="width-200">
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
-					<input type="text" name="created" id="created" class="width-200" readonly="readonly">
-					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
-					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
-					<!-- data-target 달력 태그 ID -->
-					<input type="hidden" name="createdFrom" id="createdFrom">
-					<!-- 달력 태그 아이디값 + From -->
-					<input type="hidden" name="createdTo" id="createdTo">
-					<!-- 달력 태그 아이디값 + To -->
+					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+					~
+					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
 			</tr>
 		</table>
@@ -84,10 +79,7 @@ String name = (String) request.getAttribute("name");
 		</table>
 
 		<!-- 그리드 리스트 -->
-<!-- 		<div id="grid_wrap" style="height: 750px; border-top: 1px solid #3180c3;"></div> -->
-<!-- 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
-<%-- 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%> --%>
-		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
@@ -427,38 +419,37 @@ String name = (String) request.getAttribute("name");
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
+						// 포맷팅 형태로 필터링 처리
 					},
 				} ]
 			}
 
 			function createAUIGrid(columns) {
 				const props = {
-					rowIdField : "oid",
-					// 그리드 공통속성 시작
-					headerHeight : 30, // 헤더높이
-					rowHeight : 30, // 행 높이
-					showRowNumColumn : true, // 번호 행 출력 여부
-					showStateColumn : true, // 상태표시 행 출력 여부
-					rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-					noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
-					enableFilter : true, // 필터 사용 여부
-					selectionMode : "multipleCells",
-					enableMovingColumn : true,
-					showInlineFilter : true,
-					useContextMenu : true,
-					enableRightDownFocus : true,
-					filterLayerWidth : 320,
-					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					// 그리드 공통속성 끝
-					editable : true,
-					useContextMenu : true
+						// 그리드 공통속성 시작
+						headerHeight : 30,
+						rowHeight : 30,
+						showRowNumColumn : true,
+						showRowCheckColumn : true,
+						showStateColumn : true,
+						rowNumHeaderText : "번호",
+						noDataMessage : "검색 결과가 없습니다.",
+						enableFilter : true,
+						selectionMode : "multipleCells",
+						enableMovingColumn : true,
+						showInlineFilter : true,
+						useContextMenu : true,
+						enableRightDownFocus : true,
+						filterLayerWidth : 320,
+						filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+						// 그리드 공통속성 끝
+						editable : true,
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
 				loadGridData();
-				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
-				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 				
 				// 컨텍스트 메뉴 이벤트 바인딩
@@ -467,6 +458,7 @@ String name = (String) request.getAttribute("name");
 				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					vScrollChangeHandler(event); // lazy loading
 				});
 
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
@@ -506,35 +498,6 @@ String name = (String) request.getAttribute("name");
 					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
 				});
-			}
-
-			let last = false;
-			function vScrollChangeHandler(event) {
-				if (event.position == event.maxPosition) {
-					if (!last) {
-						requestAdditionalData();
-					}
-				}
-			}
-			function requestAdditionalData() {
-				const url = getCallUrl("/aui/appendData");
-				const params = new Object();
-				const curPage = document.getElementById("curPage").value;
-				const sessionid = document.getElementById("sessionid").value
-				params.sessionid = sessionid;
-				params.start = (curPage * 30);
-				params.end = (curPage * 30) + 30;
-				AUIGrid.showAjaxLoader(myGridID);
-				call(url, params, function(data) {
-					if (data.list.length == 0) {
-						last = true;
-						AUIGrid.removeAjaxLoader(myGridID);
-					} else {
-						AUIGrid.appendData(myGridID, data.list);
-						AUIGrid.removeAjaxLoader(myGridID);
-						document.getElementById("curPage").value = parseInt(curPage) + 1;
-					}
-				})
 			}
 
 			function auiAddRowHandler(event) {
@@ -675,11 +638,12 @@ String name = (String) request.getAttribute("name");
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+
+				// 사용자 검색 바인딩 see base.js finderUser function 
+				finderUser("creator");
 				
-				// 범위 달력
-				fromToCalendar("created", "calendar");
-				// 범위 달력 값 삭제
-				fromToDelete("delete");
+				// 날짜 검색용 바인딩 see base.js twindate funtion
+				twindate("created");
 			});
 
 			document.addEventListener("keydown", function(event) {

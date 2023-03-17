@@ -26,26 +26,21 @@ boolean multi = (boolean) request.getAttribute("multi");
 	<tr>
 		<th>공지사항 제목</th>
 		<td class="indent5">
-			<input type="text" name="fileName" class="width-300">
+			<input type="text" name="fileName" class="width-200">
 		</td>
 		<th>설명</th>
 		<td class="indent5">
-			<input type="text" name="partCode" class="width-300">
+			<input type="text" name="description" class="width-200">
 		</td>
 		<th>작성자</th>
 		<td class="indent5">
-			<input type="text" name="partName" class="width-100">
+			<input type="text" name="creator" id="creator" class="width-200">
 		</td>
 		<th>작성일</th>
 		<td class="indent5">
-			<input type="text" name="created" id="created" class="width-200" readonly="readonly">
-			<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
-			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
-			<!-- data-target 달력 태그 ID -->
-			<input type="hidden" name="createdFrom" id="createdFrom">
-			<!-- 달력 태그 아이디값 + From -->
-			<input type="hidden" name="createdTo" id="createdTo">
-			<!-- 달력 태그 아이디값 + To -->
+			<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+					~
+					<input type="text" name="createdTo" id="createdTo" class="width-100">
 		</td>
 	</tr>
 </table>
@@ -77,13 +72,13 @@ boolean multi = (boolean) request.getAttribute("multi");
 				<jsp:param value="<%=DocumentHelper.ROOT%>" name="location" />
 				<jsp:param value="product" name="container" />
 				<jsp:param value="list" name="mode" />
-				<jsp:param value="665" name="height" />
+				<jsp:param value="705" name="height" />
 			</jsp:include>
 		</td>
 		<td>&nbsp;</td>
 		<td>
 			<!-- 그리드 리스트 -->
-			<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+			<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 		</td>
 	</tr>
 </table>
@@ -174,7 +169,9 @@ boolean multi = (boolean) request.getAttribute("multi");
 					formatString : "yyyy-mm-dd",
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
+						// 포맷팅 형태로 필터링 처리
 					},
 				}, {
 					dataField : "modifier",
@@ -210,7 +207,6 @@ boolean multi = (boolean) request.getAttribute("multi");
 			function createAUIGrid(columnLayout) {
 				// 그리드 속성
 				const props = {
-					rowIdField : "oid",
 					// 그리드 공통속성 시작
 					headerHeight : 30, // 헤더높이
 					rowHeight : 30, // 행 높이
@@ -233,15 +229,13 @@ boolean multi = (boolean) request.getAttribute("multi");
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
-				// Lazy Loading 이벤트 바인딩
-				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
-				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
 				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					vScrollChangeHandler(event); // lazy loading
 				});
 
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
@@ -260,34 +254,6 @@ boolean multi = (boolean) request.getAttribute("multi");
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
 				});
-			}
-
-			let last = false;
-			function vScrollChangeHandler(event) {
-				if (event.position == event.maxPosition) {
-					if (!last) {
-						requestAdditionalData();
-					}
-				}
-			}
-
-			function requestAdditionalData() {
-				const url = getCallUrl("/aui/appendData");
-				const params = new Object();
-				const curPage = document.getElementById("curPage").value;
-				params.sessionid = document.getElementById("sessionid").value;
-				params.start = (curPage * 100);
-				params.end = (curPage * 100) + 100;
-				AUIGrid.showAjaxLoader(myGridID);
-				call(url, params, function(data) {
-					if (data.list.length == 0) {
-						last = true;
-					} else {
-						AUIGrid.appendData(myGridID, data.list);
-						document.getElementById("curPage").value = parseInt(curPage) + 1;
-					}
-					AUIGrid.removeAjaxLoader(myGridID);
-				})
 			}
 
 			function <%=method%>() {
@@ -326,10 +292,11 @@ boolean multi = (boolean) request.getAttribute("multi");
 				createAUIGrid(columns);
 				_createAUIGrid(_columns); // 트리
 				
-				// 범위 달력
-				fromToCalendar("created", "calendar");
-				// 범위 달력 값 삭제
-				fromToDelete("delete")
+				// 사용자 검색 바인딩 see base.js finderUser function 
+				finderUser("creator");
+				
+				// 날짜 검색용 바인딩 see base.js twindate funtion
+				twindate("created");
 			});
 
 			document.addEventListener("keydown", function(event) {

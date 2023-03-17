@@ -12,7 +12,7 @@
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
 </head>
 <body>
 	<form>
@@ -34,26 +34,21 @@
 			<tr>
 				<th>공지사항 제목</th>
 				<td class="indent5">
-					<input type="text" name="fileName" class="width-300">
+					<input type="text" name="name" class="width-200">
 				</td>
 				<th>설명</th>
 				<td class="indent5">
-					<input type="text" name="partCode" class="width-300">
+					<input type="text" name="description" class="width-200">
 				</td>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="partName" class="width-100">
+					<input type="text" name="creator" id="creator" class="width-200">
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
-					<input type="text" name="created" id="created" class="width-200" readonly="readonly">
-					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
-					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
-					<!-- data-target 달력 태그 ID -->
-					<input type="hidden" name="createdFrom" id="createdFrom">
-					<!-- 달력 태그 아이디값 + From -->
-					<input type="hidden" name="createdTo" id="createdTo">
-					<!-- 달력 태그 아이디값 + To -->
+					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+					~
+					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
 			</tr>
 		</table>
@@ -73,7 +68,7 @@
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -196,7 +191,9 @@
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
+					// 포맷팅 형태로 필터링 처리
 					},
 				}, {
 					dataField : "creator",
@@ -215,7 +212,9 @@
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
+					// 포맷팅 형태로 필터링 처리
 					},
 				} ]
 			}
@@ -224,29 +223,28 @@
 			function createAUIGrid(columnLayout) {
 				// 그리드 속성
 				const props = {
-					rowIdField : "loid",
 					// 그리드 공통속성 시작
-					headerHeight : 30, // 헤더높이
-					rowHeight : 30, // 행 높이
-					showRowNumColumn : true, // 번호 행 출력 여부
-					showStateColumn : true, // 상태표시 행 출력 여부
-					rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-					noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
-					enableFilter : true, // 필터 사용 여부
+					headerHeight : 30,
+					rowHeight : 30,
+					showRowNumColumn : true,
+					showRowCheckColumn : true,
+					showStateColumn : true,
+					rowNumHeaderText : "번호",
+					noDataMessage : "검색 결과가 없습니다.",
+					enableFilter : true,
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
-					useContextMenu : true
+					useContextMenu : true,
+					enableRightDownFocus : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				// 그리드 공통속성 끝
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
-				// Lazy Loading 이벤트 바인딩
-				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
-				// cellclick
-				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
@@ -254,6 +252,7 @@
 				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					vScrollChangeHandler(event); // lazy loading
 				});
 
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
@@ -275,36 +274,6 @@
 				});
 			}
 
-			let last = false;
-			function vScrollChangeHandler(event) {
-				if (event.position == event.maxPosition) {
-					if (!last) {
-						requestAdditionalData();
-					}
-				}
-			}
-
-			function requestAdditionalData() {
-				const url = getCallUrl("/aui/appendData");
-				const params = new Object();
-				const curPage = document.getElementById("curPage").value;
-				params.sessionid = document.getElementById("sessionid").value;
-				params.start = (curPage * 100);
-				params.end = (curPage * 100) + 100;
-				AUIGrid.showAjaxLoader(myGridID);
-				parent.openLayer();
-				call(url, params, function(data) {
-					if (data.list.length == 0) {
-						last = true;
-					} else {
-						AUIGrid.appendData(myGridID, data.list);
-						document.getElementById("curPage").value = parseInt(curPage) + 1;
-					}
-					AUIGrid.removeAjaxLoader(myGridID);
-					parent.closeLayer();
-				})
-			}
-
 			// 등록
 			function create() {
 				const url = getCallUrl("/configSheet/create");
@@ -322,17 +291,13 @@
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns);
-				
-			});
-				// 범위 달력
-				fromToCalendar("created", "calendar");
-				// 범위 달력 값 삭제
-				fromToDelete("delete")
 
-			// 컨텍스트 메뉴 숨기기
-			document.addEventListener("click", function(event) {
-				hideContextMenu();
-			})
+				// 사용자 검색 바인딩 see base.js finderUser function 
+				finderUser("creator");
+
+				// 날짜 검색용 바인딩 see base.js twindate funtion
+				twindate("created");
+			});
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
@@ -340,6 +305,11 @@
 				if (keyCode === 13) {
 					loadGridData();
 				}
+			})
+
+			// 컨텍스트 메뉴 숨기기
+			document.addEventListener("click", function(event) {
+				hideContextMenu();
 			})
 
 			window.addEventListener("resize", function() {

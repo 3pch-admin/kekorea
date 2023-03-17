@@ -21,7 +21,7 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
 </head>
 <body>
 	<form>
@@ -43,26 +43,21 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 			<tr>
 				<th>공지사항 제목</th>
 				<td class="indent5">
-					<input type="text" name="fileName" class="width-300">
+					<input type="text" name="fileName" class="width-200">
 				</td>
 				<th>설명</th>
 				<td class="indent5">
-					<input type="text" name="partCode" class="width-300">
+					<input type="text" name="description" class="width-200">
 				</td>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="partName" class="width-100">
+					<input type="text" name="creator" id="creator"  class="width-200">
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
-					<input type="text" name="created" id="created" class="width-200" readonly="readonly">
-					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
-					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
-					<!-- data-target 달력 태그 ID -->
-					<input type="hidden" name="createdFrom" id="createdFrom">
-					<!-- 달력 태그 아이디값 + From -->
-					<input type="hidden" name="createdTo" id="createdTo">
-					<!-- 달력 태그 아이디값 + To -->
+					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+					~
+					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
 			</tr>
 		</table>
@@ -82,7 +77,7 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
@@ -98,7 +93,9 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 				editable : false,
 				filter : {
 					showIcon : true,
-					inline : true
+					inline : true,
+					displayFormatValues : true
+					// 포맷팅 형태로 필터링 처리
 				},				
 			}, {
 				dataField : "install",
@@ -235,8 +232,6 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				// 그리드 데이터 로딩
 				loadGridData();
-				// LazyLoading 바인딩
-				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 				// 셀 편집 종료 이벤트
 				AUIGrid.bind(myGridID, "cellEditEnd", editEndHandler);
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
@@ -247,6 +242,7 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					vScrollChangeHandler(event); // lazy loading
 				});
 
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
@@ -320,36 +316,6 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 				});
 			}
 
-			let last = false;
-			function vScrollChangeHandler(event) {
-				if (event.position == event.maxPosition) {
-					if (!last) {
-						requestAdditionalData();
-					}
-				}
-			}
-
-			function requestAdditionalData() {
-				const url = getCallUrl("/aui/appendData");
-				const params = new Object();
-				const curPage = document.getElementById("curPage").value;
-				params.sessionid = document.getElementById("sessionid").value;
-				params.start = (curPage * 100);
-				params.end = (curPage * 100) + 100;
-				AUIGrid.showAjaxLoader(myGridID);
-				parent.openLayer();
-				call(url, params, function(data) {
-					if (data.list.length == 0) {
-						last = true;
-					} else {
-						AUIGrid.appendData(myGridID, data.list);
-						document.getElementById("curPage").value = parseInt(curPage) + 1;
-					}
-					AUIGrid.removeAjaxLoader(myGridID);
-					parent.closeLayer();
-				})
-			}
-
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("history-list");
@@ -363,10 +329,11 @@ Map<String, ArrayList<Map<String, String>>> list = (Map<String, ArrayList<Map<St
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 				
-				// 범위 달력
-				fromToCalendar("created", "calendar");
-				// 범위 달력 값 삭제
-				fromToDelete("delete");
+				// 사용자 검색 바인딩 see base.js finderUser function 
+				finderUser("creator");
+				
+				// 날짜 검색용 바인딩 see base.js twindate funtion
+				twindate("created");
 			});
 
 			document.addEventListener("keydown", function(event) {
