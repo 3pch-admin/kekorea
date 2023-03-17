@@ -29,8 +29,16 @@
 			</colgroup>
 			<tr>
 				<th>공지사항 제목</th>
+<<<<<<< HEAD
+				<td>
+					<input type="text" name="" id="" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="name" id="name" class="width-300">
+				</td>
+=======
 				<td class="indent5">
 					<input type="text" name="" id="" class="width-200">
+>>>>>>> 32469a5155cd6788a4bfc803e4df7de466ba7d1e
 				<th>설명</th>
 				<td class="indent5">
 					<input type="text" name="partCode" class="width-300">
@@ -263,7 +271,11 @@
 						return false;
 					}
 				}
+<<<<<<< HEAD
+				
+=======
 
+>>>>>>> 32469a5155cd6788a4bfc803e4df7de466ba7d1e
 				params.addRows = addRows;
 				params.removeRows = removeRows;
 				params.editRows = editRows;

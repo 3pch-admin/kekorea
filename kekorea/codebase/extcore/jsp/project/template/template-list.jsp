@@ -36,11 +36,14 @@
 				<th>작성자</th>
 				<td class="indent5">
 					<input type="text" name="duration" id="duration">
+<<<<<<< HEAD
+=======
 					<input type="text" name="templateName" id="templateName" class="width-300">
 				</td>
 				<th>작성자</th>
 				<td class="indent5">
 					<input type="text" name="duration" id="duration" class="width-100">
+>>>>>>> 32469a5155cd6788a4bfc803e4df7de466ba7d1e
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
@@ -57,11 +60,14 @@
 				<th>수정자</th>
 				<td class="indent5">
 					<input type="text" name="">
+<<<<<<< HEAD
+=======
 					<input type="text" name="partName" class="width-100">
 				</td>
 				<th>수정자</th>
 				<td class="indent5">
 					<input type="text" name="" class="width-100">
+>>>>>>> 32469a5155cd6788a4bfc803e4df7de466ba7d1e
 				</td>
 				<th>수정일</th>
 				<td class="indent5">
@@ -206,11 +212,20 @@
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					// 그리드 공통속성 끝
+<<<<<<< HEAD
+					useContextMenu : true
+=======
 					fillColumnSizeMode : true
+>>>>>>> 32469a5155cd6788a4bfc803e4df7de466ba7d1e
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
+<<<<<<< HEAD
+				// Lazy Loading 이벤트 바인딩
+				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+=======
+>>>>>>> 32469a5155cd6788a4bfc803e4df7de466ba7d1e
 
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
