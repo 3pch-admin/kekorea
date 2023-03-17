@@ -214,38 +214,6 @@
 				});
 			}
 
-			// 해당 부분 모드 리스트 페이지에서 제거한다
-// 			let last = false;
-// 			function vScrollChangeHandler(event) {
-// 				if (event.position == event.maxPosition) {
-// 					if (!last) {
-// 						requestAdditionalData();
-// 					}
-// 				}
-// 			}
-
-// 			function requestAdditionalData() {
-// 				const url = getCallUrl("/aui/appendData");
-// 				const params = new Object();
-// 				const curPage = document.getElementById("curPage").value
-// 				const sessionid = document.getElementById("sessionid").value
-// 				params.sessionid = sessionid;
-// 				params.start = (curPage * 100);
-// 				params.end = (curPage * 100) + 100;
-// 				AUIGrid.showAjaxLoader(myGridID);
-// 				parent.openLayer();
-// 				call(url, params, function(data) {
-// 					if (data.list.length == 0) {
-// 						last = true;
-// 					} else {
-// 						AUIGrid.appendData(myGridID, data.list);
-// 						document.getElementById("curPage").value = parseInt(curPage) + 1;
-// 					}
-// 					AUIGrid.removeAjaxLoader(myGridID);
-// 					parent.closeLayer();
-// 				})
-// 			}
-
 			function create() {
 				const url = getCallUrl("/notice/create");
 				popup(url, 1200, 500);
