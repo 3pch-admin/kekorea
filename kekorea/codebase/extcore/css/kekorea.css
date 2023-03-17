@@ -104,9 +104,7 @@ table.search-table th {
 	border-bottom: 1px solid #a6a6a6;
 	border-left: 1px solid #a6a6a6;
 	padding-bottom: 4px;
-	max-width: 130px;
-	min-width: 130px;
-	width: 130px;
+	min-width: 100px;
 }
 
 table.search-table td {
@@ -115,18 +113,6 @@ table.search-table td {
 	border-left: 1px solid #a6a6a6;
 	border-right: 1px solid #a6a6a6;
 	/* 	text-indent: 5px; */
-}
-
-table.search-table input[type='text'] {
-	border: 1px solid #a6a6a6;
-	background: #fff;
-	color: #333;
-	-webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
-	border-radius: 2px;
-	font-size: 14px;
-	height: 15px;
-	padding: 5px;
 }
 
 table.search-table input[type='text']:read-only {
@@ -175,69 +161,36 @@ td.cursor {
 	cursor: pointer;
 }
 
-/** 텍스트 박스 사이즈 CSS **/
-input[type=text].width-100 {
+/** 넓이 CSS **/
+.width-100 {
 	width: 100px;
 }
 
-input[type=text].width-200 {
+.width-200 {
 	width: 200px;
 }
 
-input[type=text].width-300 {
+.width-300 {
 	width: 300px;
 }
 
-input[type=text].width-400 {
+.width-400 {
 	width: 400px;
 }
 
-input[type=text].width-500 {
+.width-500 {
 	width: 500px;
 }
 
-input[type=text].width-600 {
+.width-600 {
 	width: 600px;
 }
 
-input[type=text].width-700 {
+.width-700 {
 	width: 700px;
 }
 
-input[type=text].width-800 {
-	width: 800px;
-}
-
-/** 셀렉트 박스 사이즈 CSS **/
-select.width-100 {
-	width: 100px;
-}
-
-select.width-200 {
-	width: 200px;
-}
-
-select.width-300 {
-	width: 300px;
-}
-
-select.width-400 {
-	width: 400px;
-}
-
-select.width-500 {
-	width: 500px;
-}
-
-select.width-600 {
-	width: 600px;
-}
-
-select.width-700 {
-	width: 700px;
-}
-
-select.width-800 {
+.width-800 {
 	width: 800px;
 }
 
@@ -372,7 +325,7 @@ select.width-300 {
 	margin: 3px 5px 3px 5px;
 }
 
-#secondary_layer {
+#secondary_layer, #primary_layer {
 	margin-top: 3px;
 }
 
@@ -472,16 +425,43 @@ a:hover {
 	padding: 0.2em;
 }
 
-/** 달력 IMAGE CSS **/
-img.calendar {
-	position: relative;
-	top: 3px;
-	cursor: pointer;
+/** INPUT CSS **/
+.create-table td input[type='text'], .search-table td input[type='text'] {
+	border: 1px solid #a6a6a6;
+	background: #fff;
+	color: #333;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	font-size: 14px;
+	height: 15px;
+	padding: 5px;
 }
 
-/** 달력삭제 IMAGE CSS **/
-img.delete {
-	position: relative;
-	top: 3px;
-	cursor: pointer;
+.create-table td input[type='number'], .search-table td input[type='number'] {
+	border: 1px solid #a6a6a6;
+	background: #fff;
+	color: #333;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	font-size: 14px;
+	height: 15px;
+	padding: 5px;
+}
+
+/** SELECT CSS **/
+.create-table td select, .search-table td select {
+	-webkit-border-radius: 2px 5px 5px;
+	-moz-border-radius: 2px 5px 5px;
+	border-radius: 2px 5px 5px;
+	font-size: 12px;
+	height: 26px;
+	line-height: 26px;
+	background: #fff;
+	margin: 0 auto;
+	box-sizing: content-box;
+	border: 1px solid #a6a6a6;
+	padding: 0;
+	vertical-align: middle;
 }

@@ -216,10 +216,6 @@ public class QuerySpecUtils {
 
 	public static void toTimeGreaterEqualsThan(QuerySpec query, int idx, Class clazz, String column, String time)
 			throws Exception {
-		if (query.getConditionCount() > 0) {
-			query.appendAnd();
-		}
-
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = sdf.parse(time, new ParsePosition(0));
 		Timestamp fromTime = new Timestamp(date.getTime());
@@ -237,10 +233,6 @@ public class QuerySpecUtils {
 
 	public static void toTimeLessEqualsThan(QuerySpec query, int idx, Class clazz, String column, String time)
 			throws Exception {
-		if (query.getConditionCount() > 0) {
-			query.appendAnd();
-		}
-
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = sdf.parse(time, new ParsePosition(0));
 		Timestamp toTime = new Timestamp(date.getTime());
@@ -258,10 +250,6 @@ public class QuerySpecUtils {
 
 	public static void toTimeGreaterThan(QuerySpec query, int idx, Class clazz, String column, String time)
 			throws Exception {
-		if (query.getConditionCount() > 0) {
-			query.appendAnd();
-		}
-
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = sdf.parse(time, new ParsePosition(0));
 		Timestamp fromTime = new Timestamp(date.getTime());
@@ -279,10 +267,6 @@ public class QuerySpecUtils {
 
 	public static void toTimeLessThan(QuerySpec query, int idx, Class clazz, String column, String time)
 			throws Exception {
-		if (query.getConditionCount() > 0) {
-			query.appendAnd();
-		}
-
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = sdf.parse(time, new ParsePosition(0));
 		Timestamp toTime = new Timestamp(date.getTime());

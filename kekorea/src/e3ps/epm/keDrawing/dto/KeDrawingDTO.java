@@ -25,6 +25,9 @@ public class KeDrawingDTO {
 	private String primary;
 	private String note;
 
+	// 변수 담기용
+	private String primaryPath;
+
 	public KeDrawingDTO() {
 
 	}

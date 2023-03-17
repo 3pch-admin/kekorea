@@ -45,7 +45,14 @@
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
-					<input type="text" name="number" class="width-100">
+					<input type="text" name="created" id="created" class="width-200" readonly="readonly">
+					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
+					<!-- data-target 달력 태그 ID -->
+					<input type="hidden" name="createdFrom" id="createdFrom">
+					<!-- 달력 태그 아이디값 + From -->
+					<input type="hidden" name="createdTo" id="createdTo">
+					<!-- 달력 태그 아이디값 + To -->
 				</td>
 			</tr>
 		</table>
@@ -248,7 +255,7 @@
 				// LazyLoading 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
-				
+
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
@@ -330,6 +337,11 @@
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+				
+				// 범위 달력
+				fromToCalendar("created", "calendar");
+				// 범위 달력 값 삭제
+				fromToDelete("delete")
 			});
 
 			document.addEventListener("keydown", function(event) {
@@ -344,7 +356,7 @@
 			document.addEventListener("click", function(event) {
 				hideContextMenu();
 			})
-			
+
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(myGridID);
 			});

@@ -27,9 +27,9 @@ public class HistoryOptionLink extends _HistoryOptionLink {
 
 	static final long serialVersionUID = 1;
 
-	public static HistoryOptionLink newHistoryOptionLink(History history, CommonCode option) throws WTException {
+	public static HistoryOptionLink newHistoryOptionLink(History history, CommonCode spec) throws WTException {
 		HistoryOptionLink instance = new HistoryOptionLink();
-		instance.initialize(history, option);
+		instance.initialize(history, spec);
 		return instance;
 	}
 }

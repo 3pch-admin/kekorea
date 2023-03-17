@@ -55,7 +55,14 @@ String name = (String) request.getAttribute("name");
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
-					<input type="text" name="number" class="width-100">
+					<input type="text" name="created" id="created" class="width-200" readonly="readonly">
+					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
+					<!-- data-target 달력 태그 ID -->
+					<input type="hidden" name="createdFrom" id="createdFrom">
+					<!-- 달력 태그 아이디값 + From -->
+					<input type="hidden" name="createdTo" id="createdTo">
+					<!-- 달력 태그 아이디값 + To -->
 				</td>
 			</tr>
 		</table>
@@ -77,9 +84,9 @@ String name = (String) request.getAttribute("name");
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 750px; border-top: 1px solid #3180c3;"></div>
-		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
-		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
+<!-- 		<div id="grid_wrap" style="height: 750px; border-top: 1px solid #3180c3;"></div> -->
+<!-- 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+<%-- 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%> --%>
 		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
@@ -597,47 +604,47 @@ String name = (String) request.getAttribute("name");
 				const addRows = AUIGrid.getAddedRowItems(myGridID);
 				const removeRows = AUIGrid.getRemovedItems(myGridID);
 				const editRows = AUIGrid.getEditedRowItems(myGridID);
-				
+
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
-					
-					if(isNull(item.item)) {
+
+					if (isNull(item.item)) {
 						AUIGrid.showToastMessage(myGridID, i, 0, "항목 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
-					if(isNull(item.improvements)) {
+					if (isNull(item.improvements)) {
 						AUIGrid.showToastMessage(myGridID, i, 1, "개선내용 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
-					if(isNull(item.improvement)) {
+					if (isNull(item.improvement)) {
 						AUIGrid.showToastMessage(myGridID, i, 2, "개선책 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
-					if(isNull(item.apply)) {
+					if (isNull(item.apply)) {
 						AUIGrid.showToastMessage(myGridID, i, 3, "적용/미적용 값을 선택하세요.");
 						return false;
 					}
-					if(isNull(item.mak_code)) {
+					if (isNull(item.mak_code)) {
 						AUIGrid.showToastMessage(myGridID, i, 4, "막종 값을 선택하세요.");
 						return false;
 					}
-					if(isNull(item.detail_code)) {
+					if (isNull(item.detail_code)) {
 						AUIGrid.showToastMessage(myGridID, i, 5, "막종상세 값을 선택하세요.");
 						return false;
 					}
-					if(isNull(item.customer_code)) {
+					if (isNull(item.customer_code)) {
 						AUIGrid.showToastMessage(myGridID, i, 6, "거래처 값을 선택하세요.");
 						return false;
 					}
-					if(isNull(item.install_code)) {
+					if (isNull(item.install_code)) {
 						AUIGrid.showToastMessage(myGridID, i, 7, "설치장소 값을 선택하세요.");
 						return false;
 					}
-					if(isNull(item.preView)) {
+					if (isNull(item.preView)) {
 						AUIGrid.showToastMessage(myGridID, i, 9, "미리보기를 선택하세요.");
 						return false;
 					}
-					if(isNull(item.icons)) {
+					if (isNull(item.icons)) {
 						AUIGrid.showToastMessage(myGridID, i, 11, "첨부파일을 선택하세요.");
 						return false;
 					}
@@ -668,6 +675,11 @@ String name = (String) request.getAttribute("name");
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+				
+				// 범위 달력
+				fromToCalendar("created", "calendar");
+				// 범위 달력 값 삭제
+				fromToDelete("delete");
 			});
 
 			document.addEventListener("keydown", function(event) {
@@ -677,7 +689,7 @@ String name = (String) request.getAttribute("name");
 					loadGridData();
 				}
 			})
-			
+
 			// 컨텍스트 메뉴 숨기기
 			document.addEventListener("click", function(event) {
 				hideContextMenu();

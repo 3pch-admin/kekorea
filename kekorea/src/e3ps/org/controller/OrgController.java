@@ -137,4 +137,15 @@ public class OrgController extends BaseController {
 		}
 		return result;
 	}
+
+	@Description(value = "사용자 정보 페이지")
+	@GetMapping(value = "/view")
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		WTUser wtUser = (WTUser) CommonUtils.getObject(oid);
+		UserDTO dto = new UserDTO(wtUser);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/org/user-view");
+		return model;
+	}
 }

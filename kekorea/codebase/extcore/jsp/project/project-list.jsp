@@ -1,8 +1,12 @@
+<%@page import="java.util.HashMap"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) request.getAttribute("customers");
+ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.getAttribute("maks");
+ArrayList<Map<String, String>> projectTypes = (ArrayList<Map<String, String>>) request.getAttribute("projectTypes");
+ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) request.getAttribute("list");
 %>
 <!DOCTYPE html>
 <html>
@@ -16,7 +20,7 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
 </head>
 <body>
 	<form>
@@ -26,39 +30,41 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 		<!-- 검색 테이블 -->
 		<table class="search-table">
 			<colgroup>
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
+				<col width="100">
+				<col width="500">
+				<col width="100">
+				<col width="500">
+				<col width="100">
+				<col width="500">
+				<col width="100">
+				<col width="500">
 			</colgroup>
 			<tr>
 				<th>KEK 작번</th>
 				<td class="indent5">
 					<input type="text" name="kekNumber" id="kekNumber" class="AXInput">
 				</td>
-				<th>발행일</th>
-				<td colspan="3" class="indent5">
-					<input type="text" name="pdate" class="AXInput width-100">
-					~
-					<input type="text" name="pdate2" class="AXInput width-100">
-				</td>
 				<th>KE 작번</th>
 				<td class="indent5">
 					<input type="text" name="keNumber" id="keNumber" class="AXInput">
 				</td>
-			</tr>
-			<tr>
+				<th>발행일</th>
+				<td class="indent5">
+					<!-- input 박스의 AXInput 클래스 모두 제거한다 -->
+					<input type="text" name="pdateFrom" id="pdateFrom" class="width-100">
+					~
+					<input type="text" name="pdateTo" id="pdateTo" class="width-100">
+				</td>
 				<th>USER ID</th>
 				<td class="indent5">
 					<input type="text" name="userId" id="userId" class="AXInput">
 				</td>
+			</tr>
+			<tr>
 				<th>작번 상태</th>
 				<td class="indent5">
-					<select name="kekState" id="kekState" class="AXSelect w200">
+					<!-- 셀렉트 박스의 AXSelect 모두 제거한다 -->
+					<select name="kekState" id="kekState" class="w200">
 						<option value="">선택</option>
 					</select>
 				</td>
@@ -70,18 +76,34 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 				<td class="indent5">
 					<select name="customer_name" id="customer_name" class="AXSelect w200">
 						<option value="">선택</option>
+						<%
+						for (Map customer : customers) {
+						%>
+						<option value="<%=customer.get("key")%>"><%=customer.get("value")%></option>
+						<%
+						}
+						%>
+					</select>
+				</td>
+				<th>설치장소</th>
+				<td class="indent5">
+					<select name="customer_name" id="customer_name" class="AXSelect w200">
+						<option value="">선택</option>
 					</select>
 				</td>
 			</tr>
 			<tr>
-				<th>설치장소</th>
-				<td class="indent5">
-					<input type="text" name="install_name" id="install_name" class="AXInput width-200">
-				</td>
 				<th>작번 유형</th>
 				<td class="indent5">
-					<select name="projectType_name" id="projectType_name" class="AXSelect w200">
+					<select name="projectType" id="projectType" class="width-100">
 						<option value="">선택</option>
+						<%
+						for (Map projectType : projectTypes) {
+						%>
+						<option value="<%=projectType.get("key")%>"><%=projectType.get("value")%></option>
+						<%
+						}
+						%>
 					</select>
 				</td>
 				<th>기계 담당자</th>
@@ -92,19 +114,29 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 				<td class="indent5">
 					<input type="text" name="elec" id="elec" class="AXInput">
 				</td>
-			</tr>
-			<tr>
 				<th>SW 담당자</th>
 				<td class="indent5">
-					<input type="text" name="soft" id="soft" class="AXInput">
+					<input type="text" name="soft" id="soft" class="width-200">
 				</td>
+			</tr>
+			<tr>
 				<th>막종</th>
 				<td class="indent5">
 					<input type="text" name="mak_name" id="mak_name" class="AXInput">
 				</td>
+				<th>막종상세</th>
+				<td class="indent5">
+					<input type="text" name="detail_name" id="detail_name">
+				</td>
+				<th>템플릿</th>
+				<td class="indent5">
+					<select name="template" id="template" class="width-200">
+						<option value="">선택</option>
+					</select>
+				</td>
 				<th>작업 내용</th>
 				<td colspan="3" class="indent5">
-					<input type="text" name="description" id="description" class="AXInput width-300">
+					<input type="text" name="description" id="description" class="width-200">
 				</td>
 			</tr>
 		</table>
@@ -123,7 +155,8 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 640px; border-top: 1px solid #3180c3;"></div>
+		<!-- 검색 테이블 행4개일 경우 르기드 사이즈 600 즐겨찾기 및 기타 적인 요소로 스크롤 감안하여 조금 작게 -->
+		<div id="grid_wrap" style="height: 600px; border-top: 1px solid #3180c3;"></div>
 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
@@ -399,22 +432,19 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					// 그리드 공통속성 끝
-					fillColumnSizeMode : true
+				// 그리드 공통속성 끝
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
-				// Lazy Loading 이벤트 바인딩
-				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
-
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
 				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					vScrollChangeHandler(event);
 				});
 
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
@@ -431,6 +461,13 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 				// 검색 변수 담기
 				params.kekNumber = kekNumber;
 				params.description = description;
+
+				// params.서버에서 받을 변수명 = 웹에서 받아오는 값
+				params.projectType = document.getElementById("projectType").value;
+
+				// 웹화면에서 잘 받아서 가는지 확인 하려면 콘솔창 이용 F12
+				console.log(params);
+
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -440,37 +477,6 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
-			}
-
-			let last = false;
-			function vScrollChangeHandler(event) {
-				if (event.position == event.maxPosition) {
-					if (!last) {
-						requestAdditionalData();
-					}
-				}
-			}
-
-			function requestAdditionalData() {
-				const url = getCallUrl("/aui/appendData");
-				const params = new Object();
-				const curPage = document.getElementById("curPage").value
-				const sessionid = document.getElementById("sessionid").value;
-				params.sessionid = sessionid;
-				params.start = (curPage * 100);
-				params.end = (curPage * 100) + 100;
-				AUIGrid.showAjaxLoader(myGridID);
-				parent.openLayer();
-				call(url, params, function(data) {
-					if (data.list.length == 0) {
-						last = true;
-					} else {
-						AUIGrid.appendData(myGridID, data.list);
-						document.getElementById("curPage").value = parseInt(curPage) + 1;
-					}
-					AUIGrid.removeAjaxLoader(myGridID);
-					parent.closeLayer();
-				})
 			}
 
 			// jquery 삭제를 해가는 쪽으로 한다..
@@ -485,6 +491,30 @@ ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) requ
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+
+				// 날짜 검색용 바인딩 axdom(종료ID) startTargetID 시작 ID 
+				axdom("#pdateTo").bindTwinDate({
+					startTargetID : "pdateFrom",
+					align : "left",
+					valign : "top",
+					buttonText : "확인",
+					customPos : {
+						top : 28,
+						left : 25
+					},
+				})
+
+				// 셀렉트 박스 바인딩 여러개일 경우 add 함수로 복수개 등록가능
+				axdom("#projectType").add("#template").bindSelect();
+				// INPUT 박스 검색형태의 바인딩 여러개일 경우 add 함수로 복수개 등록가능
+				axdom("#soft").add("#elec").add("#machine").bindSelector({
+					finder : {
+						onclick : function() { // {Function} - 파인더 버튼 클릭 이벤트 콜백함수 (optional)
+							const url = getCallUrl("/org/popup");
+							popup(url, 1200, 600);
+						}
+					},
+				})
 			});
 
 			document.addEventListener("keydown", function(event) {

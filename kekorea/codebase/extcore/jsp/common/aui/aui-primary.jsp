@@ -13,9 +13,9 @@ String method = (String) request.getAttribute("method");
 </table>
 <table class="create-table">
 	<tr>
-		<th>첨부파일</th>
+		<th class="lb">첨부파일</th>
 		<td class="indent5">
-			<div class="AXUpload5" id="primary_layer"></div>
+			<div class="AXUpload5" id="primary_layer" style="margin: 0 !important;"></div>
 		</td>
 	</tr>
 </table>

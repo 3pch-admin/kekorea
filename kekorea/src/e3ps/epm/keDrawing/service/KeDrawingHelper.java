@@ -2,6 +2,7 @@ package e3ps.epm.keDrawing.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import e3ps.common.util.PageQueryUtils;
@@ -25,14 +26,23 @@ public class KeDrawingHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		ArrayList<KeDrawingDTO> list = new ArrayList<>();
 		Map<String, Object> map = new HashMap<String, Object>();
-		String latest = (String) params.get("latest");
+		String keNumber = (String) params.get("keNumber");
+		String name = (String) params.get("name");
+		int lotNo = (int) params.get("lotNo");
+		boolean latest = (boolean) params.get("latest");
+		String creator = (String) params.get("creator");
+		String modifier = (String) params.get("modifier");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
+		String modifiedFrom = (String) params.get("modifiedFrom");
+		String modifiedTo = (String) params.get("modifiedTo");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(KeDrawing.class, true);
 
-		if (!StringUtils.isNull(latest) && Boolean.parseBoolean(latest)) {
+		if (latest) {
 			QuerySpecUtils.toBooleanAnd(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
-		} else if (!StringUtils.isNull(latest) && !Boolean.parseBoolean(latest)) {
+		} else {
 			query.appendOpenParen();
 			QuerySpecUtils.toBooleanAndOr(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
 			QuerySpecUtils.toBooleanAndOr(query, idx, KeDrawing.class, KeDrawing.LATEST, false);
@@ -79,5 +89,19 @@ public class KeDrawingHelper {
 			return (KeDrawing) obj[0];
 		}
 		return null;
+	}
+
+	/**
+	 * KE 도면 등록, 수정중 중복 체크
+	 * 
+	 * @param addRow  : 추가 도면 데이터
+	 * @param editRow : 수정 도면 데이터
+	 * @return
+	 * @throws Exception
+	 */
+
+	public boolean isValid(ArrayList<KeDrawingDTO> addRow, ArrayList<KeDrawingDTO> editRow) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

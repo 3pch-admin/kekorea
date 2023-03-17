@@ -99,17 +99,17 @@ public class ProjectDTO {
 		setModel(project.getModel());
 
 		WTUser machineUser = ProjectHelper.manager.getUserType(project, "MACHINE");
-		WTUser elecUser = ProjectHelper.manager.getUserType(project, "ELEC");
-		WTUser softUser = ProjectHelper.manager.getUserType(project, "SOFT");
 
 		if (machineUser != null) {
 			setMachine(machineUser.getFullName());
 		}
 
+		WTUser elecUser = ProjectHelper.manager.getUserType(project, "ELEC");
 		if (elecUser != null) {
 			setElec(elecUser.getFullName());
 		}
 
+		WTUser softUser = ProjectHelper.manager.getUserType(project, "SOFT");
 		if (softUser != null) {
 			setSoft(softUser.getFullName());
 		}

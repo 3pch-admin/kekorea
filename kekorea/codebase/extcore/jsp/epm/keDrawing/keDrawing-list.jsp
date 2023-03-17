@@ -36,71 +36,58 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th>부품 분류</th>
-				<td colspan="7" class="indent5">
-					<input type="hidden" name="location" value=""> <span id="location">defaultttttttt</span>
-				</td>
-				</tr>
-				<tr>
-				<th>파일 이름</th>
+				<th>DRAWING TITLE</th>
 				<td class="indent5">
-					<input type="text" name="partCode">
+					<input type="text" name="name" id="name" class="width-200">
 				</td>
-				<th>품번</th>
+				<th>LOT NO</th>
 				<td class="indent5">
-					<input type="text" name="partName">
+					<input type="number" name="lotNo" id="lotNo" class="width-200">
 				</td>
-				<th>품명</th>
-				<td class="indent5">
-					<input type="text" name="number">
-				</td>
-				<th>규격</th>
-				<td class="indent5">
-					<input type="text" name="number">
-				</td>
-				</tr>
-				<tr>
-				<th>MATERIAL</th>
-				<td class="indent5">
-					<input type="text" name="number">
-				</td>
-				<th>REMARK</th>
-				<td class="indent5">
-					<input type="text" name="number">
-				</td>
-				<th>REFERENCE 도면</th>
-				<td colspan="3" class="indent5">
-					<input type="text" name="number">
-				</td>
-				</tr>
-				<tr>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<input type="text" name="creator" id="creator" class="width-200">
 				</td>
 				<th>작성일</th>
-				<td colspan="3" class="indent5">
-					<input type="text" name="partName" class="width-100"> ~
-					<input type="text" name="partName" class="width-100">
-				</td>
-				<th>상태</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+					~
+					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
-				</tr>
-				<tr>
-				<th>수정자</th>
+			</tr>
+			<tr>
+				<th>DWG NO</th>
 				<td class="indent5">
-					<input type="text" name="number">
-				</td>
-				<th>수정일</th>
-				<td colspan="3" class="indent5">
-					<input type="text" name="partName" class="width-100"> ~
-					<input type="text" name="partName" class="width-100">
+					<input type="text" name="keNumber" id="keNumber" class="width-200">
 				</td>
 				<th>버전</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<div class="pretty p-switch">
+						<input type="radio" name="latest" value="true" checked="checked">
+						<div class="state p-success">
+							<label>
+								<b>죄신버전</b>
+							</label>
+						</div>
+					</div>
+					<div class="pretty p-switch">
+						<input type="radio" name="latest" value="">
+						<div class="state p-success">
+							<label>
+								<b>모든버전</b>
+							</label>
+						</div>
+					</div>
+				</td>
+				<th>수정자</th>
+				<td class="indent5">
+					<input type="text" name="modifier" id="modifier" class="width-200">
+				</td>
+				<th>수정일</th>
+				<td class="indent5">
+					<input type="text" name="modifiedFrom" id="modifiedFrom" class="width-100">
+					~
+					<input type="text" name="modifiedTo" id="modifiedTo" class="width-100">
 				</td>
 			</tr>
 		</table>
@@ -142,13 +129,14 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					},
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
 					},
 				}, {
 					dataField : "name",
 					headerText : "DRAWING TITLE",
 					dataType : "string",
-					width : 300,
+					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript", 
@@ -162,7 +150,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					},
 				}, {
 					dataField : "keNumber",
-					headerText : "DWG. NO",
+					headerText : "DWG NO",
 					dataType : "string",
 					width : 200,
 					editable : false,
@@ -212,7 +200,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					editable : false,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
 					},
 				}, {
 					dataField : "modifier",
@@ -233,7 +222,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					editable : false,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
 					},
 				}, {
 					dataField : "primary",
@@ -241,6 +231,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					dataType : "string",
 					width : 100,
 					editable : false,
+					headerTooltip : {
+						show : true,
+						tooltipHtml : "도면파일명의 양식을 정확하게 해주세요. EX) DCB000000-001 (DWG NO : 9자리, 버전 : 3자리)"
+					},
 					renderer : {
 						type : "TemplateRenderer",
 					},
@@ -249,8 +243,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						inline : false
 					},
 				}, {
-					dataField : "",
-					headerText : "",
 					width : 100,
 					editable : false,
 					renderer : {
@@ -284,15 +276,15 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			function createAUIGrid(columnLayout) {
 				// 그리드 속성
 				const props = {
-					rowIdField : "oid",
 					// 그리드 공통속성 시작
-					headerHeight : 30, // 헤더높이
-					rowHeight : 30, // 행 높이
-					showRowNumColumn : true, // 번호 행 출력 여부
-					showStateColumn : true, // 상태표시 행 출력 여부
-					rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-					noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
-					enableFilter : true, // 필터 사용 여부
+					headerHeight : 30,
+					rowHeight : 30,
+					showRowNumColumn : true,
+					showRowCheckColumn : true,
+					showStateColumn : true,
+					rowNumHeaderText : "번호",
+					noDataMessage : "검색 결과가 없습니다.",
+					enableFilter : true,
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
@@ -301,23 +293,20 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					// 그리드 공통속성 끝
-					editable : true,
-					showRowCheckColumn : true,
+					editable : true
+// 					fillColumnSizeMode : true // grid 컬럼 정의에서 하나의 컬럼자체에 width 를 안줄경우 해당 옵션은 필요 없다.
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				// 화면 첫 진입시 리스트 호출 함수
-				// 등록이 있는곳은 제외 한다.
 				loadGridData();
-				// Lazy Loading 이벤트 바인딩
-				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
-				
+
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
 				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					vScrollChangeHandler(event); // lazy loading
 				});
 
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
@@ -328,6 +317,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/keDrawing/list");
+				params.latest = !!document.querySelector("input[name=latest]:checked").value;
+				params.lotNo = Number(document.getElementById("lotNo").value);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -339,45 +330,15 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				});
 			}
 
-			let last = false;
-			function vScrollChangeHandler(event) {
-				if (event.position == event.maxPosition) {
-					if (!last) {
-						requestAdditionalData();
-					}
-				}
-			}
-
-			function requestAdditionalData() {
-				const url = getCallUrl("/aui/appendData");
-				const params = new Object();
-				const curPage = document.getElementById("curPage").value;
-				const sessionid = document.getElementById("sessionid").value;
-				params.sessionid = sessionid;
-				params.start = (curPage * 100);
-				params.end = (curPage * 100) + 100;
-				AUIGrid.showAjaxLoader(myGridID);
-				parent.openLayer();
-				call(url, params, function(data) {
-					if (data.list.length == 0) {
-						last = true;
-					} else {
-						AUIGrid.appendData(myGridID, data.list);
-						document.getElementById("curPage").value = parseInt(curPage) + 1;
-					}
-					AUIGrid.removeAjaxLoader(myGridID);
-					parent.closeLayer();
-				})
-			}
-
 			// 행 추가
 			function addRow() {
-				const item = new Object();
-				item.createdDate = new Date();
-				item.modifiedDate = new Date();
-				item.creator = "<%=sessionUser.getFullName()%>";
-				item.modifier = "<%=sessionUser.getFullName()%>";
-				item.latest = true;
+				 const item = {
+						createdDate : new Date(),
+						modifiedDate : new Date(),
+						creator : "<%=sessionUser.getFullName()%>",
+						modifier : "<%=sessionUser.getFullName()%>",
+					latest : true,
+				};
 				AUIGrid.addRow(myGridID, item, "first");
 			}
 
@@ -392,13 +353,41 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function attach(data) {
 				const name = data.name;
+				if(name.length !== 17) {
+					alert("도면파일 이름명을 체크하세요. \nDWG NO : 9자리, 버전 3자리의 양식을 맞춰주세요.");
+					return false;
+				}
+				
 				const start = name.indexOf("-");
+				if(start <= -1) {
+					alert("도면파일 이름의 양식이 맞지 않습니다.\nDWG NO-버전 형태의 파일명만 허용됩니다.");
+					return false;
+				}
+				
 				const end = name.lastIndexOf(".");
+				if(end <= -1) {
+					alert("도면파일 확장자를 체크해주세요.");
+					return false;
+				}
+				
+				const ext = name.substring(end + 1);
+				if(ext.toLowerCase() !== "pdf") {
+					alert("PDF 파일 형식의 도면파일만 허용됩니다.");
+					return false;
+				}
 				const number = name.substring(0, start);
+				if(number.length !== 9) {
+					alert("도면파일의 DWG NO의 자리수를 확인해주세요. 등록가능한 도번의 자리수는 9자리여야 합니다.");
+					return false;
+				}	
 				const version = name.substring(start + 1, end);
+				if(version.length !== 3) {
+					alert("도면파일의 버전 자리수를 확인해주세요. 등록가능한 버전의 자리수는 3자리여야 합니다.");
+					return false;
+				}
 				const template = "<img src='" + data.icon + "' style='position: relative; top: 2px;'>";
 				AUIGrid.updateRowsById(myGridID, {
-					oid : recentGridItem.oid,
+					_$uid : recentGridItem._$uid,
 					keNumber : number,
 					version : Number(version),
 					file : name,
@@ -422,12 +411,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
-					
-					if(isNull(item.name)) {
+
+					if (isNull(item.name)) {
 						AUIGrid.showToastMessage(myGridID, i, 1, "DRAWING TITLE의 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
-					if(isNull(item.primary)) {
+					if (isNull(item.primary)) {
 						AUIGrid.showToastMessage(myGridID, i, 9, "첨부파일을 선택하세요.");
 						return false;
 					}
@@ -468,6 +457,14 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+
+				// 사용자 검색 바인딩 see base.js finderUser function 
+				finderUser("creator");
+				finderUser("modifier");
+
+				// 날짜 검색용 바인딩 see base.js twindate funtion
+				twindate("created");
+				twindate("modified");
 			});
 
 			document.addEventListener("keydown", function(event) {
@@ -477,7 +474,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					loadGridData();
 				}
 			})
-			
+
 			// 컨텍스트 메뉴 숨기기
 			document.addEventListener("click", function(event) {
 				hideContextMenu();

@@ -30,67 +30,77 @@
 			</colgroup>
 			<tr>
 				<th>수배표 제목</th>
-				<td>
-					<input type="text" name="fileName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="fileName" class="width-300">
 				</td>
 
 				<th>KEK 작번</th>
-				<td>
-					<input type="text" name="partName" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="partName" class="width-300">
 				</td>
 				<th>KE 작번</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-300">
 				</td>
 			</tr>
 			<tr>
 				<th>설명</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-300">
 				</td>
 				<th>막종</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-300">
 				</td>
 				<th>작업 내용</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-300">
 				</td>
 			</tr>
 			<tr>
 				<th>상태</th>
-				<td>
-					<select name="size" id="size" class="AXSelect w200">
+				<td class="indent5">
+					<select name="size" id="size" class="width-100">
 						<option value="">선택</option>
 					</select>
 				</td>
 				<th>작성자</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-300">
 				</td>
 				<th>작성일</th>
-				<td>
-					<input type="text" name="partNamea" class="AXInput width-100">
-					~
-					<input type="text" name="partNamea" class="AXInput width-100">
+				<td class="indent5">
+					<input type="text" name="created" id="created" class="width-200" readonly="readonly">
+					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
+					<!-- data-target 달력 태그 ID -->
+					<input type="hidden" name="createdFrom" id="createdFrom">
+					<!-- 달력 태그 아이디값 + From -->
+					<input type="hidden" name="createdTo" id="createdTo">
+					<!-- 달력 태그 아이디값 + To -->
 				</td>
 			</tr>
 			<tr>
 				<th>설계 구분</th>
-				<td>
-					<select name="size" id="size" class="AXSelect w200">
+				<td class="indent5">
+					<select name="size" id="size" class="width-100">
 						<option value="">선택</option>
 					</select>
 				</td>
 				<th>수정자</th>
-				<td>
-					<input type="text" name="number" class="AXInput">
+				<td class="indent5">
+					<input type="text" name="number" class="width-300">
 				</td>
 				<th>수정일</th>
-				<td>
-					<input type="text" name="partNamea" class="AXInput width-100">
-					~
-					<input type="text" name="partNamea" class="AXInput width-100">
+				<td class="indent5">
+					<input type="text" name="modifydate" id="modifydate" class="width-200" readonly="readonly">
+					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
+					<img src="/Windchill/extcore/images/delete.png" class="mdelete" title="삭제" data-target="modifydate">
+					<!-- data-target 달력 태그 ID -->
+					<input type="hidden" name="modifydateFrom" id="modifydateFrom">
+					<!-- 달력 태그 아이디값 + From -->
+					<input type="hidden" name="modifydateTo" id="modifydateTo">
+					<!-- 달력 태그 아이디값 + To -->
 				</td>
 			</tr>
 		</table>
@@ -325,7 +335,7 @@
 				loadGridData();
 				// LazyLoading 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
-				
+
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
@@ -416,6 +426,16 @@
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+				
+				// 범위 달력
+				fromToCalendar("created", "calendar");
+				// 범위 달력 값 삭제
+				fromToDelete("delete")
+				
+				// 범위 달력 수정일
+				fromToCalendar("modifydate", "calendar");
+				// 범위 달력 값 삭제
+				fromToDelete("mdelete");
 			});
 
 			document.addEventListener("keydown", function(event) {
@@ -425,7 +445,7 @@
 					loadGridData();
 				}
 			})
-			
+
 			// 컨텍스트 메뉴 숨기기
 			document.addEventListener("click", function(event) {
 				hideContextMenu();

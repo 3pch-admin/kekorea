@@ -10,6 +10,8 @@
 <%@include file="/extcore/include/script.jsp"%>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
@@ -30,19 +32,19 @@
 			</colgroup>
 			<tr>
 				<th>KEK 작번</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="partCode" class="AXInput">
 				</td>
 				<th>KE 작번</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="partCode" class="AXInput">
 				</td>
 				<th>설명</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="partName" class="AXInput">
 				</td>
 				<th>설계 구분</th>
-				<td>
+				<td class="indent5">
 					<select name="state" id="state" class="AXSelect wid200">
 						<option value="">선택</option>
 					</select>
@@ -50,51 +52,61 @@
 			</tr>
 			<tr>
 				<th>거래처</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="number" class="AXInput">
 				</td>
 				<th>USER ID</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="number" class="AXInput">
 				</td>
 				<th>막종</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="number" class="AXInput">
 				</td>
 				<th>작업 내용</th>
-				<td colspan="3">
+				<td colspan="3" class="indent5">
 					<input type="text" name="number" class="AXInput">
 				</td>
 			</tr>
 			<tr>
 				<th>작성자</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="number" class="AXInput">
 				</td>
 				<th>작성일</th>
-				<td colspan="3">
-					<input type="text" name="partName" class="AXInput width-100">
-					~
-					<input type="text" name="partName" class="AXInput width-100">
+				<td colspan="3" class="indent5">
+					<input type="text" name="created" id="created" class="width-200" readonly="readonly">
+					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
+					<!-- data-target 달력 태그 ID -->
+					<input type="hidden" name="createdFrom" id="createdFrom">
+					<!-- 달력 태그 아이디값 + From -->
+					<input type="hidden" name="createdTo" id="createdTo">
+					<!-- 달력 태그 아이디값 + To -->
 				</td>
 				<th>설치장소</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="number" class="AXInput">
 				</td>
 			</tr>
 			<tr>
 				<th>수정자</th>
-				<td>
+				<td class="indent5">
 					<input type="text" name="number" class="AXInput">
 				</td>
 				<th>수정일</th>
-				<td colspan="3">
-					<input type="text" name="partName" class="AXInput width-100">
-					~
-					<input type="text" name="partName" class="AXInput width-100">
+				<td colspan="3" class="indent5">
+					<input type="text" name="modifydate" id="modifydate" class="width-200" readonly="readonly">
+					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
+					<img src="/Windchill/extcore/images/delete.png" class="mdelete" title="삭제" data-target="modifydate">
+					<!-- data-target 달력 태그 ID -->
+					<input type="hidden" name="modifydateFrom" id="modifydateFrom">
+					<!-- 달력 태그 아이디값 + From -->
+					<input type="hidden" name="modifydateTo" id="modifydateTo">
+					<!-- 달력 태그 아이디값 + To -->
 				</td>
 				<th>버전</th>
-				<td>
+				<td class="indent5">
 					<label title="최신버전">
 						<input type="radio" name="latest" value="true" checked="checked">
 						<span class="latest">최신버전</span>
@@ -112,6 +124,7 @@
 			<tr>
 				<td class="left">
 					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('request-list');">
+					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('request-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
@@ -124,6 +137,7 @@
 
 		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 640px; border-top: 1px solid #3180c3;"></div>
+		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
@@ -144,7 +158,7 @@
 					style : "left indent10",
 					renderer : {
 						type : "LinkRenderer",
-						baseUrl : "javascript", 
+						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
 						}
@@ -340,6 +354,7 @@
 					showInlineFilter : true,
 					// 그리드 공통속성 끝
 					showRowCheckColumn : true,
+					useContextMenu : true
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
@@ -347,6 +362,18 @@
 				loadGridData();
 				// Lazy Loading 이벤트 바인딩
 				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+				
+				// 컨텍스트 메뉴 이벤트 바인딩
+				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+
+				// 스크롤 체인지 핸들러.
+				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
+
+				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+					hideContextMenu(); // 컨텍스트 메뉴 감추기
+				});
 			}
 
 			function save() {
@@ -430,8 +457,24 @@
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("request-list");
+				// 컨텍스트 메뉴 시작
+				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				$("#h_item_ul").append(contenxtHeader);
+				$("#headerMenu").menu({
+					select : headerMenuSelectHandler
+				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+				
+				// 범위 달력
+				fromToCalendar("created", "calendar");
+				// 범위 달력 값 삭제
+				fromToDelete("delete")
+				
+				// 범위 달력 수정일
+				fromToCalendar("modifydate", "calendar");
+				// 범위 달력 값 삭제
+				fromToDelete("mdelete");
 			});
 
 			document.addEventListener("keydown", function(event) {
@@ -442,6 +485,11 @@
 				}
 			})
 
+			// 컨텍스트 메뉴 숨기기
+			document.addEventListener("click", function(event) {
+				hideContextMenu();
+			})
+			
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(myGridID);
 			});

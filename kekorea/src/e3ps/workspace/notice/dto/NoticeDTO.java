@@ -20,7 +20,7 @@ public class NoticeDTO {
 	private String primary;
 
 	// 변수용
-	private ArrayList<String> secondarys = new ArrayList<>();
+	private ArrayList<String> primarys = new ArrayList<>();
 
 	public NoticeDTO() {
 

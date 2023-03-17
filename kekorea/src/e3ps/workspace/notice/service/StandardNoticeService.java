@@ -58,7 +58,7 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 	public void create(NoticeDTO dto) throws Exception {
 		String name = dto.getName();
 		String description = dto.getDescription();
-		ArrayList<String> secondarys = dto.getSecondarys();
+		ArrayList<String> primarys = dto.getPrimarys();
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
@@ -69,11 +69,16 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 			notice.setOwnership(CommonUtils.sessionOwner());
 			PersistenceHelper.manager.save(notice);
 
-			for (String secondary : secondarys) {
-				ApplicationData applicationData = ApplicationData.newApplicationData(meeting);
-				applicationData.setRole(ContentRoleType.SECONDARY);
+			for (int i = 0; i < primarys.size(); i++) {
+				String primary = (String) primarys.get(i);
+				ApplicationData applicationData = ApplicationData.newApplicationData(notice);
+				if (i == 0) {
+					applicationData.setRole(ContentRoleType.PRIMARY);
+				} else {
+					applicationData.setRole(ContentRoleType.SECONDARY);
+				}
 				PersistenceHelper.manager.save(applicationData);
-				ContentServerHelper.service.updateContent(notice, applicationData, secondary);
+				ContentServerHelper.service.updateContent(notice, applicationData, primary);
 			}
 
 			trs.commit();

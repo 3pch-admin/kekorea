@@ -1695,7 +1695,7 @@ public class ProjectHelper {
 		int idx = query.appendClassList(ProjectUserLink.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, "roleAObjectRef.key.id",
 				project.getPersistInfo().getObjectIdentifier().getId());
-		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, "userTypeReference.key.id",
+		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, "projectUserTypeReference.key.id",
 				userTypeCode.getPersistInfo().getObjectIdentifier().getId());
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {
@@ -3155,7 +3155,7 @@ public class ProjectHelper {
 		String customer = (String) params.get("customer");
 		String kekState = (String) params.get("kekState");
 		String model = (String) params.get("model");
-		String projectType = (String) params.get("projectType");
+		String projectType = (String) params.get("projectType"); // 프로젝트 타입 샘플용
 		String predate = (String) params.get("predate");
 		String postdate = (String) params.get("postdate");
 		String template = (String) params.get("template");
@@ -3181,7 +3181,10 @@ public class ProjectHelper {
 		}
 
 		if (!StringUtils.isNull(projectType)) {
-			CommonCode projectTypeCode = (CommonCode) CommonUtils.getObject(projectType);
+			// 코드랑 연결된 내용
+			// 코드, 코드유형으로 CommonCode 객체를 찾아온 후 프로젝트랑 연결된 컬럼과 쿼리 작성
+			// 코드 유형은 CommonCodeTypeRB_ko.rbinfo 파일참조
+			CommonCode projectTypeCode = CommonCodeHelper.manager.getCommonCode(projectType, "PROJECT_TYPE");
 			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "projectTypeReference.key.id",
 					projectTypeCode.getPersistInfo().getObjectIdentifier().getId());
 		}
@@ -3223,7 +3226,7 @@ public class ProjectHelper {
 		if (!StringUtils.isNull(postdate)) {
 
 		}
-		
+
 		if (!StringUtils.isNull(description)) {
 			QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.DESCRIPTION, description);
 		}
