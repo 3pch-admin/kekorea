@@ -197,5 +197,9 @@ function twindate(endIdPrefix) {
 			left: 25
 		},
 	})
+}
 
+// axisj select 박스 바인딩
+function selectbox(id) {
+	axdom("#" + id).add("#template").bindSelect();
 }

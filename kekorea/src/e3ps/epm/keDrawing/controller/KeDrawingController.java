@@ -96,9 +96,11 @@ public class KeDrawingController extends BaseController {
 			dataMap.put("removeRows", removeRow); // 삭제행
 
 			result = KeDrawingHelper.manager.isValid(addRow, editRow);
-			// false 중복있음
-			if(!() {
-				
+			// true 중복있음
+			// 
+			if((boolean)result.get("isExist")) {
+				result.put("result", FAIL);
+				return result;
 			}
 			
 			KeDrawingHelper.service.create(dataMap);

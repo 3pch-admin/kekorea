@@ -492,29 +492,17 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 
-				// 날짜 검색용 바인딩 axdom(종료ID) startTargetID 시작 ID 
-				axdom("#pdateTo").bindTwinDate({
-					startTargetID : "pdateFrom",
-					align : "left",
-					valign : "top",
-					buttonText : "확인",
-					customPos : {
-						top : 28,
-						left : 25
-					},
-				})
+				// 셀렉트 박스
+				selectbox("projectType");
+				selectbox("template");
 
-				// 셀렉트 박스 바인딩 여러개일 경우 add 함수로 복수개 등록가능
-				axdom("#projectType").add("#template").bindSelect();
-				// INPUT 박스 검색형태의 바인딩 여러개일 경우 add 함수로 복수개 등록가능
-				axdom("#soft").add("#elec").add("#machine").bindSelector({
-					finder : {
-						onclick : function() { // {Function} - 파인더 버튼 클릭 이벤트 콜백함수 (optional)
-							const url = getCallUrl("/org/popup");
-							popup(url, 1200, 600);
-						}
-					},
-				})
+				// 사용자 검색 바인딩 see base.js finderUser function 
+				finderUser("soft");
+				finderUser("elec");
+				finderUser("machine");
+
+				// 날짜 검색용 바인딩 see base.js twindate funtion
+				twindate("pdate");
 			});
 
 			document.addEventListener("keydown", function(event) {
