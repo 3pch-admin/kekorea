@@ -2,12 +2,10 @@ package e3ps.epm.keDrawing.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.common.util.StringUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
 import e3ps.epm.keDrawing.dto.KeDrawingDTO;
@@ -100,8 +98,43 @@ public class KeDrawingHelper {
 	 * @throws Exception
 	 */
 
-	public boolean isValid(ArrayList<KeDrawingDTO> addRow, ArrayList<KeDrawingDTO> editRow) {
-		// TODO Auto-generated method stub
-		return false;
+	public Map<String, Object> isValid(ArrayList<KeDrawingDTO> addRow, ArrayList<KeDrawingDTO> editRow)
+			throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		for (KeDrawingDTO dto : addRow) {
+			String keNumber = dto.getKeNumber();
+			int version = dto.getVersion();
+			boolean isExist = exist(keNumber, version);
+			if (isExist) {
+				result.put("isExist", true); // 존재하는거 true
+				result.put("keNumber", keNumber);
+				return result;
+			}
+		}
+
+		for (KeDrawingDTO dto : editRow) {
+			String keNumber = dto.getKeNumber();
+			int version = dto.getVersion();
+			boolean isExist = exist(keNumber, version);
+			if (isExist) {
+				result.put("isExist", true); // 존재하는거 true
+				result.put("keNumber", keNumber);
+				return result;
+			}
+		}
+		return result;
+	}
+
+	private boolean exist(String keNumber, int version) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx_m = query.appendClassList(KeDrawingMaster.class, true);
+		int idx = query.appendClassList(KeDrawing.class, true);
+
+		QuerySpecUtils.toInnerJoin(query, KeDrawingMaster.class, KeDrawing.class, WTAttributeNameIfc.ID_NAME,
+				"masterReference.key.id", idx_m, idx);
+		QuerySpecUtils.toEqualsAnd(query, idx, KeDrawing.class, KeDrawing.VERSION, version);
+		QuerySpecUtils.toEqualsAnd(query, idx_m, KeDrawingMaster.class, KeDrawingMaster.KE_NUMBER, keNumber);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		return result.size() > 0 ? true : false;
 	}
 }
