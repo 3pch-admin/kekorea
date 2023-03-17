@@ -96,7 +96,7 @@ public class PartlistHelper {
 			ClassAttribute ca = null;
 
 			ClassAttribute roleAca = new ClassAttribute(PartListMaster.class, WTAttributeNameIfc.ID_NAME);
-			ClassAttribute roleBca = new ClassAttribute(Project.class, WTAttributeNameIfc.ID_NAME);
+			ClassAttribute roleBca = new ClassAttribute(Proect.class, WTAttributeNameIfc.ID_NAME);
 
 			sc = new SearchCondition(new ClassAttribute(PartListMasterProjectLink.class, "roleAObjectRef.key.id"), "=",
 					roleAca);

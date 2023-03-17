@@ -29,13 +29,10 @@
 			</colgroup>
 			<tr>
 				<th>공지사항 제목</th>
-<<<<<<< Updated upstream
 				<td>
 					<input type="text" name="" id="" class="AXInput">
-=======
 				<td class="indent5">
 					<input type="text" name="name" id="name" class="width-300">
->>>>>>> Stashed changes
 				</td>
 				<th>설명</th>
 				<td class="indent5">
@@ -262,7 +259,6 @@
 						return false;
 					}
 				}
-				
 				
 				params.addRows = addRows;
 				params.removeRows = removeRows;
