@@ -9,7 +9,7 @@
 <script type="text/javascript" src="/Windchill/extcore/component/jsonfn/jsonfn.js"></script>
 
 <!-- 공통 SCRIPT -->
-<script type="text/javascript" src="/Windchill/extcore/js/base.js?v=15"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/base.js?v=17"></script>
 
 <!-- asixj -->
 <script type="text/javascript" src="/Windchill/extcore/component/axisj/AXJ.all.js"></script>
