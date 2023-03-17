@@ -354,6 +354,9 @@
 			function auiCellClickHandler(event) {
 				const oid = event.item.oid;
 				const dataField = event.dataField;
+				const url = getCallUrl("/epm/view");
+				const popup = url + "?oid=" + oid + "&popup=true";
+				window.open(popup, 1500, 750, "no");
 			}
 
 			function loadGridData() {

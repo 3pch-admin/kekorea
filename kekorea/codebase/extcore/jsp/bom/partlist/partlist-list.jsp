@@ -11,7 +11,7 @@
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
 </head>
 <body>
 	<form>
@@ -31,76 +31,63 @@
 			<tr>
 				<th>수배표 제목</th>
 				<td class="indent5">
-					<input type="text" name="fileName" class="width-300">
+					<input type="text" name="fileName" class="width-200">
 				</td>
-
+				<th>상태</th>
+				<td class="indent5">
+					<select name="state" id="state" class="width-200">
+						<option value="">선택</option>
+					</select>
+				</td>
 				<th>KEK 작번</th>
 				<td class="indent5">
-					<input type="text" name="partName" class="width-300">
+					<input type="text" name="partName" class="width-200">
 				</td>
 				<th>KE 작번</th>
 				<td class="indent5">
-					<input type="text" name="number" class="width-300">
+					<input type="text" name="number" class="width-200">
 				</td>
 			</tr>
 			<tr>
 				<th>설명</th>
 				<td class="indent5">
-					<input type="text" name="number" class="width-300">
+					<input type="text" name="number" class="width-200">
+				</td>
+				<th>설계 구분</th>
+				<td class="indent5">
+					<select name="projectType_name" id="projectType_name" class="width-100">
+						<option value="">선택</option>
+					</select>
 				</td>
 				<th>막종</th>
 				<td class="indent5">
-					<input type="text" name="number" class="width-300">
+					<input type="text" name="number" class="width-200">
 				</td>
 				<th>작업 내용</th>
 				<td class="indent5">
-					<input type="text" name="number" class="width-300">
+					<input type="text" name="number" class="width-200">
 				</td>
 			</tr>
 			<tr>
-				<th>상태</th>
-				<td class="indent5">
-					<select name="size" id="size" class="width-100">
-						<option value="">선택</option>
-					</select>
-				</td>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="number" class="width-300">
+					<input type="text" name="creator" id="creator" class="width-200">
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
-					<input type="text" name="created" id="created" class="width-200" readonly="readonly">
-					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
-					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created">
-					<!-- data-target 달력 태그 ID -->
-					<input type="hidden" name="createdFrom" id="createdFrom">
-					<!-- 달력 태그 아이디값 + From -->
-					<input type="hidden" name="createdTo" id="createdTo">
-					<!-- 달력 태그 아이디값 + To -->
-				</td>
-			</tr>
-			<tr>
-				<th>설계 구분</th>
-				<td class="indent5">
-					<select name="size" id="size" class="width-100">
-						<option value="">선택</option>
-					</select>
+					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+					~
+					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
 				<th>수정자</th>
 				<td class="indent5">
-					<input type="text" name="number" class="width-300">
+					<input type="text" name="modifier" id="modifier" class="width-200">
 				</td>
 				<th>수정일</th>
 				<td class="indent5">
-					<input type="text" name="modifydate" id="modifydate" class="width-200" readonly="readonly">
-					<img src="/Windchill/extcore/images/calendar.gif" class="calendar" title="달력열기">
-					<img src="/Windchill/extcore/images/delete.png" class="mdelete" title="삭제" data-target="modifydate">
-					<!-- data-target 달력 태그 ID -->
-					<input type="hidden" name="modifydateFrom" id="modifydateFrom">
-					<!-- 달력 태그 아이디값 + From -->
-					<input type="hidden" name="modifydateTo" id="modifydateTo">
-					<!-- 달력 태그 아이디값 + To -->
+					<input type="text" name="modifiedFrom" id="modifiedFrom" class="width-100">
+					~
+					<input type="text" name="modifiedTo" id="modifiedTo" class="width-100">
 				</td>
 			</tr>
 		</table>
@@ -121,7 +108,7 @@
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 640px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 635px; border-top: 1px solid #3180c3;"></div>
 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
@@ -267,7 +254,9 @@
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
+					// 포맷팅 형태로 필터링 처리
 					},
 				}, {
 					dataField : "model",
@@ -295,7 +284,30 @@
 					width : 100,
 					filter : {
 						showIcon : true,
+						inline : true,
+						displayFormatValues : true
+					// 포맷팅 형태로 필터링 처리
+					},
+				}, {
+					dataField : "modifier",
+					headerText : "수정자",
+					dataType : "string",
+					width : 100,
+					filter : {
+						showIcon : true,
 						inline : true
+					},
+				}, {
+					dataField : "modifiedDate",
+					headerText : "수정일",
+					dataType : "date",
+					width : 100,
+					formatString : "yyyy-mm-dd",
+					filter : {
+						showIcon : true,
+						inline : true,
+						displayFormatValues : true
+					// 포맷팅 형태로 필터링 처리
 					},
 				}, {
 					dataField : "state",
@@ -311,15 +323,15 @@
 
 			function createAUIGrid(columnLayout) {
 				const props = {
-					rowIdField : "loid",
 					// 그리드 공통속성 시작
-					headerHeight : 30, // 헤더높이
-					rowHeight : 30, // 행 높이
-					showRowNumColumn : true, // 번호 행 출력 여부
-					showStateColumn : true, // 상태표시 행 출력 여부
-					rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-					noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
-					enableFilter : true, // 필터 사용 여부
+					headerHeight : 30,
+					rowHeight : 30,
+					showRowNumColumn : true,
+					showRowCheckColumn : true,
+					showStateColumn : true,
+					rowNumHeaderText : "번호",
+					noDataMessage : "검색 결과가 없습니다.",
+					enableFilter : true,
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
@@ -328,13 +340,10 @@
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					// 그리드 공통속성 끝
-					showRowCheckColumn : true,
 					enableCellMerge : true,
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
-				// LazyLoading 바인딩
-				AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
 
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
@@ -342,6 +351,7 @@
 				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					vScrollChangeHandler(event); // lazy loading
 				});
 
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
@@ -378,36 +388,6 @@
 					parent.closeLayer();
 				});
 			}
-			let last = false;
-			function vScrollChangeHandler(event) {
-				if (event.position == event.maxPosition) {
-					if (!last) {
-						requestAdditionalData();
-					}
-				}
-			}
-
-			function requestAdditionalData() {
-				const url = getCallUrl("/aui/appendData");
-				const params = new Object();
-				const curPage = document.getElementById("curPage").value
-				const sessionid = document.getElementById("sessionid").value
-				params.sessionid = sessionid;
-				params.start = (curPage * 100);
-				params.end = (curPage * 100) + 100;
-				AUIGrid.showAjaxLoader(myGridID);
-				parent.openLayer();
-				call(url, params, function(data) {
-					if (data.list.length == 0) {
-						last = true;
-					} else {
-						AUIGrid.appendData(myGridID, data.list);
-						document.getElementById("curPage").value = parseInt(curPage) + 1;
-					}
-					AUIGrid.removeAjaxLoader(myGridID);
-					parent.closeLayer();
-				})
-			}
 
 			function create() {
 				const url = getCallUrl("/partlist/create");
@@ -426,16 +406,18 @@
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+
+				// 셀렉트 박스
+				selectbox("state");
+				selectbox("projectType_name");
 				
-				// 범위 달력
-				fromToCalendar("created", "calendar");
-				// 범위 달력 값 삭제
-				fromToDelete("delete")
+				// 사용자 검색 바인딩 see base.js finderUser function 
+				finderUser("creator");
+				finderUser("modifier");
 				
-				// 범위 달력 수정일
-				fromToCalendar("modifydate", "calendar");
-				// 범위 달력 값 삭제
-				fromToDelete("mdelete");
+				// 날짜 검색용 바인딩 see base.js twindate funtion
+				twindate("created");
+				twindate("modified");
 			});
 
 			document.addEventListener("keydown", function(event) {
