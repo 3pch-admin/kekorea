@@ -1,12 +1,21 @@
 package e3ps.part.kePart.service;
 
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
 
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.StringUtils;
+import e3ps.epm.keDrawing.KeDrawing;
+import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
+import e3ps.part.kePart.beans.KePartDTO;
+import wt.content.ApplicationData;
+import wt.content.ContentHelper;
+import wt.content.ContentRoleType;
+import wt.content.ContentServerHelper;
 import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.ownership.Ownership;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
@@ -21,27 +30,28 @@ public class StandardKePartService extends StandardManager implements KePartServ
 	}
 
 	@Override
-	public void create(Map<String, Object> params) throws Exception {
-		ArrayList<Map<String, Object>> addRows = (ArrayList<Map<String, Object>>) params.get("addRows");
-		ArrayList<Map<String, Object>> editRows = (ArrayList<Map<String, Object>>) params.get("editRows");
-		ArrayList<Map<String, Object>> removeRows = (ArrayList<Map<String, Object>>) params.get("removeRows");
+	public void create(HashMap<String, List<KePartDTO>> dataMap) throws Exception {
+		List<KePartDTO> addRows = dataMap.get("addRows");
+		List<KePartDTO> editRows = dataMap.get("editRows");
+		List<KePartDTO> removeRows = dataMap.get("removeRows");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
 			Ownership ownership = CommonUtils.sessionOwner();
 
-			for (Map<String, Object> addRow : addRows) {
-				int lotNo = (int) addRow.get("lotNo");
-				String kePartName = (String) addRow.get("kePartName");
-				String kePartNumber = (String) addRow.get("kePartNumber");
-				String state = (String) addRow.get("state");
-				String model = (String) addRow.get("model");
-				String code = (String) addRow.get("code");
+			for (KePartDTO dto : addRows) {
+				String keNumber = dto.getKeNumber();
+				String name = dto.getName();
+				int lotNo = dto.getLotNo();
+				String state = dto.getState();
+				String model = dto.getModel();
+				String code = dto.getCode();
+				String primaryPath = dto.getPrimaryPath();
 
 				KePartMaster master = KePartMaster.newKePartMaster();
-				master.setKePartName(kePartName);
-				master.setKePartNumber(kePartNumber);
+				master.setKeNumber(keNumber);
+				master.setName(name);
 				master.setLotNo(lotNo);
 				master.setModel(model);
 				master.setCode(code);
@@ -55,25 +65,58 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				kePart.setVersion(1);
 				kePart.setOwnership(ownership);
 				PersistenceHelper.manager.save(kePart);
+
+				ApplicationData dd = ApplicationData.newApplicationData(kePart);
+				dd.setRole(ContentRoleType.PRIMARY);
+				PersistenceHelper.manager.save(dd);
+				ContentServerHelper.service.updateContent(kePart, dd, primaryPath);
 			}
 
-			for (Map<String, Object> removeRow : removeRows) {
-				String oid = (String) removeRow.get("oid");
+			for (KePartDTO dto : removeRows) {
+				String oid = dto.getOid();
 				KePart kePart = (KePart) CommonUtils.getObject(oid);
-				boolean isLast = KePartHelper.manager.isLast(kePart.getMaster());
+				KePartMaster master = kePart.getMaster();
+				boolean isLast = KePartHelper.manager.isLast(master);
 				if (isLast) {
-					PersistenceHelper.manager.delete(kePart.getMaster());
+					PersistenceHelper.manager.delete(kePart);
+					PersistenceHelper.manager.delete(master);
 				} else {
-					// 이전 버전을 최신 버전으로 만드는 작업..
-					KePart prePart = KePartHelper.manager.getPreKePart(kePart);
-					prePart.setLatest(true);
-					PersistenceHelper.manager.modify(prePart);
+					KePart pre = KePartHelper.manager.getPreKePart(kePart);
+					pre.setLatest(true);
+					PersistenceHelper.manager.modify(pre);
+					PersistenceHelper.manager.delete(kePart);
 				}
-				PersistenceHelper.manager.delete(kePart);
 			}
 
-			for (Map<String, Object> editRow : editRows) {
+			for (KePartDTO dto : editRows) {
+				String oid = dto.getOid();
+				String name = dto.getName();
+				String keNumber = dto.getKeNumber();
+				String model = dto.getModel();
+				String code = dto.getCode();
+				int lotNo = dto.getLotNo();
+				String primaryPath = dto.getPrimaryPath();
+				KePart kePart = (KePart) CommonUtils.getObject(oid);
+				KePartMaster master = kePart.getMaster();
+				master.setName(name);
+				master.setKeNumber(keNumber);
+				master.setLotNo(lotNo);
+				master.setCode(code);
+				master.setModel(model);
+				PersistenceHelper.manager.modify(master);
 
+				// 단순 텍스트 내용 변경건 확인이 필요..
+				if (!StringUtils.isNull(primaryPath)) {
+					QueryResult result = ContentHelper.service.getContentsByRole(kePart, ContentRoleType.PRIMARY);
+					if (result.hasMoreElements()) {
+						ApplicationData data = (ApplicationData) result.nextElement();
+						ContentServerHelper.service.deleteContent(kePart, data);
+					}
+
+					ApplicationData dd = ApplicationData.newApplicationData(kePart);
+					dd.setRole(ContentRoleType.PRIMARY);
+					dd = (ApplicationData) ContentServerHelper.service.updateContent(kePart, dd, primaryPath);
+				}
 			}
 
 			trs.commit();
@@ -86,6 +129,49 @@ public class StandardKePartService extends StandardManager implements KePartServ
 			if (trs != null)
 				trs.rollback();
 		}
+	}
 
+	@Override
+	public void revise(HashMap<String, List<KePartDTO>> dataMap) throws Exception {
+		List<KePartDTO> addRows = dataMap.get("addRows");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			for (KePartDTO dto : addRows) {
+				String oid = dto.getOid();
+				int next = dto.getNext();
+				String primaryPath = dto.getPrimaryPath();
+				String note = dto.getNote();
+
+				KePart pre = (KePart) CommonUtils.getObject(oid);
+
+				pre.setLatest(false);
+				pre = (KePart) PersistenceHelper.manager.modify(pre);
+
+				KePart latest = KePart.newKePart();
+				latest.setLatest(true);
+				latest.setVersion(next);
+				latest.setMaster(pre.getMaster());
+				latest.setOwnership(CommonUtils.sessionOwner());
+				latest.setNote(note);
+				latest.setState("작업중");
+				PersistenceHelper.manager.save(latest);
+
+				ApplicationData dd = ApplicationData.newApplicationData(latest);
+				dd.setRole(ContentRoleType.PRIMARY);
+				dd = (ApplicationData) ContentServerHelper.service.updateContent(latest, dd, primaryPath);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
 	}
 }

@@ -50,7 +50,7 @@ public class StandardSpecService extends StandardManager implements SpecService 
 				commonCode.setName(name);
 				commonCode.setCode(code);
 				commonCode.setCodeType(CommonCodeType.toCommonCodeType(codeType));
-				commonCode.setDescription(description);
+				commonCode.setDescription(StringUtils.replaceToValue(description, name));
 				commonCode.setSort(sort);
 				commonCode.setParent(parent);
 				commonCode.setEnable(enable);
@@ -69,7 +69,7 @@ public class StandardSpecService extends StandardManager implements SpecService 
 				commonCode.setName(name);
 				commonCode.setCode(code);
 				commonCode.setSort(sort);
-				commonCode.setDescription(description);
+				commonCode.setDescription(StringUtils.replaceToValue(description, name));
 				commonCode.setEnable(enable);
 				PersistenceHelper.manager.modify(commonCode);
 			}
@@ -106,7 +106,7 @@ public class StandardSpecService extends StandardManager implements SpecService 
 			commonCode.setName(name);
 			commonCode.setCode(code);
 			commonCode.setCodeType(CommonCodeType.toCommonCodeType(codeType));
-			commonCode.setDescription(description);
+			commonCode.setDescription(StringUtils.replaceToValue(description, name));
 			commonCode.setSort(sort);
 			commonCode.setParent(parentCode);
 			commonCode.setEnable(enable);

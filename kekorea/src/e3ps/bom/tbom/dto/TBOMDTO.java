@@ -1,7 +1,13 @@
 package e3ps.bom.tbom.dto;
 
-import e3ps.bom.tbom.TBOMData;
-import e3ps.part.kePart.KePartMaster;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Map;
+
+import e3ps.bom.tbom.TBOMMaster;
+import e3ps.bom.tbom.TBOMMasterProjectLink;
+import e3ps.common.util.CommonUtils;
+import e3ps.project.Project;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,31 +16,95 @@ import lombok.Setter;
 public class TBOMDTO {
 
 	private String oid;
-	private int lotNo;
-	private String code;
-	private String kePartNumber;
-	private String kePartName;
+	private String loid;
+	private String poid;
+	private String projectType_code;
+	private String projectType_name;
+	private String projectType_oid;
+	private String name;
+	private String mak_code;
+	private String mak_name;
+	private String mak_oid;
+	private String detail_code;
+	private String detail_name;
+	private String detail_oid;
+	private String kekNumber;
+	private String keNumber;
+	private String userId;
+	private String description;
+	private String customer_code;
+	private String customer_name;
+	private String customer_oid;
+	private String install_code;
+	private String install_name;
+	private String install_oid;
+	private Timestamp pdate;
+	private String pdate_txt;
 	private String model;
-	private int qty;
-	private String unit;
-	private String provide;
-	private String discontinue;
+	private String creator;
+	private Timestamp createdDate;
+	private String createdDate_txt;
+	private Timestamp modifiedDate;
+	private String modifiedDate_txt;
+	private String state;
+	private String content;
 
+	// 변수용
+	private ArrayList<Map<String, Object>> addRows = new ArrayList<>(); // 도면 일람표
+	private ArrayList<Map<String, String>> _addRows = new ArrayList<>(); // 작번
+	private ArrayList<String> secondarys = new ArrayList<>();
+	
 	public TBOMDTO() {
 
 	}
 
-	public TBOMDTO(TBOMData data) throws Exception {
-		KePartMaster master = data.getKePart().getMaster();
-		setOid(data.getPersistInfo().getObjectIdentifier().getStringValue());
-		setLotNo(master.getLotNo());
-		setCode(master.getCode());
-		setKePartNumber(master.getKePartNumber());
-		setKePartName(master.getKePartName());
-		setModel(master.getModel());
-		setQty(data.getQty());
-		setUnit(data.getUnit());
-		setProvide(data.getProvide());
-		setDiscontinue(data.getDiscontinue());
+	public TBOMDTO(TBOMMasterProjectLink link) throws Exception {
+		TBOMMaster master = link.getMaster();
+		Project project = link.getProject();
+		setOid(master.getPersistInfo().getObjectIdentifier().getStringValue());
+		setLoid(link.getPersistInfo().getObjectIdentifier().getStringValue());
+		setPoid(project.getPersistInfo().getObjectIdentifier().getStringValue());
+		setName(master.getName());
+		setContent(master.getDescription());
+		if (project.getProjectType() != null) {
+			setProjectType_code(project.getProjectType().getCode());
+			setProjectType_name(project.getProjectType().getName());
+			setProjectType_oid(project.getProjectType().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+		if (project.getMak() != null) {
+			setMak_code(project.getMak().getCode());
+			setMak_name(project.getMak().getName());
+			setMak_oid(project.getMak().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+		if (project.getDetail() != null) {
+			setDetail_code(project.getDetail().getCode());
+			setDetail_name(project.getDetail().getName());
+			setDetail_oid(project.getDetail().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+		setKekNumber(project.getKekNumber());
+		setKeNumber(project.getKeNumber());
+		setUserId(project.getUserId());
+		setDescription(project.getDescription());
+		if (project.getCustomer() != null) {
+			setCustomer_code(project.getCustomer().getCode());
+			setCustomer_name(project.getCustomer().getName());
+			setCustomer_oid(project.getCustomer().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+		if (project.getInstall() != null) {
+			setInstall_code(project.getInstall().getCode());
+			setInstall_name(project.getInstall().getName());
+			setInstall_oid(project.getInstall().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+		if (project.getPDate() != null) {
+			setPdate(project.getPDate());
+			setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
+		}
+		setModel(project.getModel());
+		setState(master.getLifeCycleState().getDisplay());
+		setCreator(master.getCreatorFullName());
+		setCreatedDate(master.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+		setModifiedDate(master.getModifyTimestamp());
+		setModifiedDate_txt(CommonUtils.getPersistableTime(master.getModifyTimestamp()));
 	}
 }

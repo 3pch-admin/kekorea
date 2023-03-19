@@ -1,6 +1,7 @@
 package e3ps.doc.meeting;
 
 import com.ptc.windchill.annotations.metadata.GenAsBinaryLink;
+import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.GeneratedRole;
 
 import e3ps.project.Project;
@@ -11,7 +12,13 @@ import wt.util.WTException;
 
 		roleA = @GeneratedRole(name = "meeting", type = Meeting.class),
 
-		roleB = @GeneratedRole(name = "project", type = Project.class)
+		roleB = @GeneratedRole(name = "project", type = Project.class),
+
+		properties = {
+
+				@GeneratedProperty(name = "sort", type = Integer.class, javaDoc = "정렬", initialValue = "1")
+
+		}
 
 )
 

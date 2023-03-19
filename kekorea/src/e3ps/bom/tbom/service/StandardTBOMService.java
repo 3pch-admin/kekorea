@@ -7,6 +7,7 @@ import e3ps.bom.tbom.TBOMData;
 import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.TBOMMasterDataLink;
 import e3ps.bom.tbom.TBOMMasterProjectLink;
+import e3ps.bom.tbom.dto.TBOMDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.part.kePart.KePart;
 import e3ps.project.Project;
@@ -28,17 +29,18 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 	}
 
 	@Override
-	public void create(Map<String, Object> params) throws Exception {
-		String name = (String) params.get("name");
-		String description = (String) params.get("description");
-		ArrayList<Map<String, Object>> addRows = (ArrayList<Map<String, Object>>) params.get("addRows");
-		ArrayList<Map<String, Object>> _addRows = (ArrayList<Map<String, Object>>) params.get("_addRows");
+	public void create(TBOMDTO dto) throws Exception {
+		String name = dto.getName();
+		String description = dto.getDescription();
+		ArrayList<Map<String, Object>> addRows = dto.getAddRows(); // T-BOM
+		ArrayList<Map<String, String>> _addRows = dto.get_addRows(); // 작번
+		ArrayList<String> secondarys = dto.getSecondarys();
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
 			String number = TBOMHelper.manager.getNextNumber("T-BOM");
-			Folder folder = FolderTaskLogic.getFolder("/Default/T-BOM", CommonUtils.getContainer());
+			Folder folder = FolderTaskLogic.getFolder("/Default/프로젝트/T-BOM", CommonUtils.getContainer());
 
 			TBOMMaster master = TBOMMaster.newTBOMMaster();
 			master.setTNumber(number);
@@ -48,18 +50,19 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 			FolderHelper.assignLocation((FolderEntry) master, folder);
 			PersistenceHelper.manager.save(master);
 
-			for (Map<String, Object> _addRow : _addRows) { // project
-				String poid = (String) _addRow.get("oid");
-				Project project = (Project) CommonUtils.getObject(poid);
+			for (Map<String, String> _addRow : _addRows) { // project
+				String oid = (String) _addRow.get("oid");
+				Project project = (Project) CommonUtils.getObject(oid);
 				TBOMMasterProjectLink link = TBOMMasterProjectLink.newTBOMMasterProjectLink(master, project);
 				PersistenceHelper.manager.save(link);
 			}
 
 			int sort = 0;
 			for (Map<String, Object> addRow : addRows) { // tbom
-				String koid = (String) addRow.get("oid");
+				String koid = (String) addRow.get("oid"); // kepart..
 				String unit = (String) addRow.get("unit");
 				int qty = (int) addRow.get("qty");
+				int lotNo = (int) addRow.get("lotNo");
 				String provide = (String) addRow.get("provide");
 				String discontinue = (String) addRow.get("discontinue");
 
@@ -67,6 +70,7 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 				TBOMData data = TBOMData.newTBOMData();
 				data.setKePart(kePart);
 				data.setQty(qty);
+				data.setLotNo(lotNo);
 				data.setProvide(provide);
 				data.setDiscontinue(discontinue);
 				data.setUnit(unit);

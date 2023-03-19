@@ -1,3 +1,4 @@
+<%@page import="e3ps.epm.workOrder.service.WorkOrderHelper"%>
 <%@page import="e3ps.bom.partlist.service.PartlistHelper"%>
 <%@page import="e3ps.doc.meeting.service.MeetingHelper"%>
 <%@page import="net.sf.json.JSONArray"%>
@@ -20,6 +21,9 @@ if ("meeting".equals(obj)) {
 } else if("partlist".equals(obj)) {
 	// 수배표
 	data = PartlistHelper.manager.jsonArrayAui(oid);
+} else if("project".equals(obj)) {
+	// 도면일람표
+	data = WorkOrderHelper.manager.jsonArrayAui(oid);
 }
 %>
 <div class="include">
@@ -39,22 +43,38 @@ if ("meeting".equals(obj)) {
 			dataField : "projectType_name",
 			headerText : "작번유형",
 			dataType : "string",
-			width : 80
+			width : 80,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		}, {
 			dataField : "customer_name",
 			headerText : "거래처",
 			dataType : "string",
-			width : 120
+			width : 120,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		}, {
 			dataField : "mak_name",
 			headerText : "막종",
 			dataType : "string",
-			width : 120
+			width : 120,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		}, {
 			dataField : "detail_name",
 			headerText : "막종상세",
 			dataType : "string",
-			width : 120
+			width : 120,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		}, {
 			dataField : "kekNumber",
 			headerText : "KEK 작번",
@@ -70,6 +90,10 @@ if ("meeting".equals(obj)) {
 					alert(oid);
 				}
 			},			
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 			<%}%>
 		}, {
 			dataField : "keNumber",
@@ -86,12 +110,20 @@ if ("meeting".equals(obj)) {
 					alert(oid);
 				}
 			},			
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 			<%}%>			
 		}, {
 			dataField : "description",
 			headerText : "작업 내용",
 			dataType : "string",
 			style : "left indent10",
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		} ]
 
 		function _createAUIGrid(columnLayout) {
@@ -99,15 +131,24 @@ if ("meeting".equals(obj)) {
 				headerHeight : 30,
 				rowHeight : 30,
 				showRowNumColumn : true,
-				rowNumHeaderText : "번호",
-				fillColumnSizeMode : true,
 				<%if ("create".equals(mode) || "update".equals(mode)) {%>
-				showStateColumn : true, // 상태표시 행 출력 여부
-				softRemoveRowMode : false,
-				showRowCheckColumn : true, // 체크 박스 출력
+				showRowCheckColumn : true,
+				showStateColumn : true,
+				<%}%>
+				rowNumHeaderText : "번호",
+				noDataMessage : "관련 작번이 없습니다.",
 				<%
-				}
+					if("view".equals(mode)) {
 				%>
+				enableFilter : true,
+				showInlineFilter : true,
+				<%
+					}
+				%>
+				selectionMode : "multipleCells",
+				filterLayerWidth : 320,
+				filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+				// 그리드 공통속성 끝
 				<%
 					if(!Boolean.parseBoolean(multi)) {
 				%>

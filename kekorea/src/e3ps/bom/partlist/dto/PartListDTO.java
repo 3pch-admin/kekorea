@@ -6,6 +6,7 @@ import java.util.Map;
 
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
+import e3ps.common.util.CommonUtils;
 import e3ps.project.Project;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,9 +39,13 @@ public class PartListDTO {
 	private String install_name;
 	private String install_oid;
 	private Timestamp pdate;
+	private String pdate_txt;
 	private String model;
 	private String creator;
 	private Timestamp createdDate;
+	private String createdDate_txt;
+	private Timestamp modifiedDate;
+	private String modifiedDate_txt;
 	private String state;
 	private String engType;
 	private String content; // 수배표 설명
@@ -91,11 +96,17 @@ public class PartListDTO {
 			setInstall_name(project.getInstall().getName());
 			setInstall_oid(project.getInstall().getPersistInfo().getObjectIdentifier().getStringValue());
 		}
-		setPdate(project.getPDate());
+		if (project.getPDate() != null) {
+			setPdate(project.getPDate());
+			setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
+		}
 		setModel(project.getModel());
 		setState(partListMaster.getLifeCycleState().getDisplay());
 		setCreator(partListMaster.getCreatorFullName());
 		setCreatedDate(partListMaster.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(partListMaster.getCreateTimestamp()));
+		setModifiedDate(partListMaster.getModifyTimestamp());
+		setModifiedDate_txt(CommonUtils.getPersistableTime(partListMaster.getModifyTimestamp()));
 		setEngType(partListMaster.getEngType());
 	}
 }

@@ -19,6 +19,8 @@ import e3ps.common.util.CommonUtils;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.dto.ApprovalLineDTO;
 import e3ps.workspace.service.WorkspaceHelper;
+import wt.org.WTUser;
+import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/workspace/**")
@@ -28,6 +30,8 @@ public class WorkspaceController extends BaseController {
 	@GetMapping(value = "/agree")
 	public ModelAndView agree() throws Exception {
 		ModelAndView model = new ModelAndView();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/workspace/agree-list.jsp");
 		return model;
 	}
@@ -51,6 +55,8 @@ public class WorkspaceController extends BaseController {
 	@GetMapping(value = "/approval")
 	public ModelAndView approval() throws Exception {
 		ModelAndView model = new ModelAndView();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/workspace/approval-list.jsp");
 		return model;
 	}
@@ -74,6 +80,8 @@ public class WorkspaceController extends BaseController {
 	@GetMapping(value = "/receive")
 	public ModelAndView receive() throws Exception {
 		ModelAndView model = new ModelAndView();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/workspace/receive-list.jsp");
 		return model;
 	}
@@ -97,6 +105,8 @@ public class WorkspaceController extends BaseController {
 	@GetMapping(value = "/progress")
 	public ModelAndView progress() throws Exception {
 		ModelAndView model = new ModelAndView();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/workspace/progress-list.jsp");
 		return model;
 	}
@@ -120,6 +130,8 @@ public class WorkspaceController extends BaseController {
 	@GetMapping(value = "/complete")
 	public ModelAndView complete() throws Exception {
 		ModelAndView model = new ModelAndView();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/workspace/complete-list.jsp");
 		return model;
 	}
@@ -143,6 +155,8 @@ public class WorkspaceController extends BaseController {
 	@GetMapping(value = "/reject")
 	public ModelAndView reject() throws Exception {
 		ModelAndView model = new ModelAndView();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/workspace/reject-list.jsp");
 		return model;
 	}

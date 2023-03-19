@@ -76,7 +76,8 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 			Meeting meeting = Meeting.newMeeting();
 			meeting.setNumber(MeetingHelper.manager.getNextNumber());
 			meeting.setName(name);
-			meeting.setDescription(content);
+			meeting.setOwnership(CommonUtils.sessionOwner());
+			meeting.setContent(content);
 
 			if (!StringUtils.isNull(tiny)) {
 				MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(tiny);

@@ -19,7 +19,10 @@ import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.admin.spec.service.SpecHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.AUIGridUtils;
+import e3ps.common.util.CommonUtils;
 import e3ps.korea.history.service.HistoryHelper;
+import wt.org.WTUser;
+import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/history/**")
@@ -31,6 +34,10 @@ public class HistoryController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		ArrayList<Map<String, String>> headers = CommonCodeHelper.manager.getArrayKeyValueMap("SPEC");
 		Map<String, ArrayList<Map<String, String>>> list = SpecHelper.manager.getOptionList();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("list", list);
 		model.addObject("headers", headers);
 		model.setViewName("/extcore/jsp/korea/history/history-list.jsp");

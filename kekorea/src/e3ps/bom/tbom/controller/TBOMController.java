@@ -16,12 +16,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.bom.tbom.TBOMMaster;
+import e3ps.bom.tbom.dto.TBOMDTO;
 import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.epm.workOrder.service.WorkOrderHelper;
 import net.sf.json.JSONArray;
+import wt.org.WTUser;
+import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/tbom/**")
@@ -31,6 +34,10 @@ public class TBOMController extends BaseController {
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser)SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/bom/tbom/tbom-list.jsp");
 		return model;
 	}
@@ -62,10 +69,10 @@ public class TBOMController extends BaseController {
 	@Description(value = "T-BOM 등록 함수")
 	@ResponseBody
 	@PostMapping(value = "/create")
-	public Map<String, Object> create(@RequestBody Map<String, Object> params) throws Exception {
+	public Map<String, Object> create(@RequestBody TBOMDTO dto) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			TBOMHelper.service.create(params);
+			TBOMHelper.service.create(dto);
 			result.put("msg", SAVE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
@@ -76,17 +83,22 @@ public class TBOMController extends BaseController {
 		return result;
 	}
 
-//	@Description(value = "T-BOM 상세")
-//	@GetMapping(value = "/view")
-//	public ModelAndView view(@RequestParam String oid) throws Exception {
-//		ModelAndView model = new ModelAndView();
-//		TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
-//		TBOMMasterViewData data = new TBOMMasterViewData(master);
-//		model.addObject("data", data);
-//		model.setViewName("popup:/bom/tbom/tbom-view");
-//		return model;
-//	}
-
+	@Description(value = "KE부품 번호로 찾아오기 (KE OR EPM)")
+	@ResponseBody
+	@GetMapping(value = "/getData")
+	public Map<String, Object> getData(@RequestParam String number) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = TBOMHelper.manager.getData(number);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+	
 	@Description(value = "T-BOM 그리드 저장 함수")
 	@ResponseBody
 	@PostMapping(value = "/save")

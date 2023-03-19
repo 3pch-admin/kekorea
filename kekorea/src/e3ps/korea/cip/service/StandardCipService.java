@@ -60,7 +60,7 @@ public class StandardCipService extends StandardManager implements CipService {
 					ContentUtils.savePrimary(cip, preViewPath);
 				}
 
-				if (secondaryPaths != null && secondaryPaths.size() > 0) {
+				if (secondaryPaths.size() > 0) {
 					ContentUtils.saveSecondary(cip, secondaryPaths);
 				}
 
@@ -97,11 +97,13 @@ public class StandardCipService extends StandardManager implements CipService {
 				cip.setCustomer(CommonCodeHelper.manager.getCommonCode(customer, "CUSTOMER"));
 				cip.setInstall(CommonCodeHelper.manager.getCommonCode(install, "INSTALL"));
 				PersistenceHelper.manager.modify(cip);
+
 				if (!StringUtils.isNull(preViewPath)) {
 					ContentUtils.savePrimary(cip, preViewPath);
 				}
 
-				if (secondaryPaths != null && secondaryPaths.size() > 0) {
+				// 기존꺼 삭제하고 만드는거가...??
+				if (secondaryPaths.size() > 0) {
 					ContentUtils.saveSecondary(cip, secondaryPaths);
 				}
 			}

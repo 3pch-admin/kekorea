@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Map;
 
+import e3ps.common.util.CommonUtils;
 import e3ps.doc.meeting.Meeting;
 import e3ps.doc.meeting.MeetingProjectLink;
 import e3ps.project.Project;
@@ -33,9 +34,11 @@ public class MeetingDTO {
 	private String description;
 	private String model;
 	private Timestamp pdate;
+	private String pdate_txt;
 	private String state;
 	private String creator;
 	private Timestamp createdDate;
+	private String createdDate_txt;
 
 	// 변수 담기 용도
 	private ArrayList<Map<String, String>> _addRows = new ArrayList<>();
@@ -57,7 +60,7 @@ public class MeetingDTO {
 		}
 		setName(meeting.getName());
 		setNumber(meeting.getNumber());
-		setContent(meeting.getDescription());
+		setContent(meeting.getContent());
 
 		if (project.getCustomer() != null) {
 			setCustomer_name(project.getCustomer().getName());
@@ -79,9 +82,13 @@ public class MeetingDTO {
 		setUserId(project.getUserId());
 		setDescription(project.getDescription());
 		setModel(project.getModel());
-		setPdate(project.getPDate());
+		if (project.getPDate() != null) {
+			setPdate(project.getPDate());
+			setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
+		}
 		setState(meeting.getLifeCycleState().getDisplay());
 		setCreator(meeting.getOwnership().getOwner().getFullName());
 		setCreatedDate(meeting.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(meeting.getCreateTimestamp()));
 	}
 }

@@ -1,16 +1,23 @@
 package e3ps.epm.workOrder.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Map;
+
+import org.apache.poi.ss.usermodel.Workbook;
 
 import e3ps.common.Constants;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.ContentUtils;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.project.Project;
+import wt.content.ApplicationData;
+import wt.content.ContentRoleType;
+import wt.content.ContentServerHelper;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.pom.Transaction;
@@ -51,16 +58,35 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			}
 
 			int sort = 0;
+			ArrayList<WorkOrderDataLink> list = new ArrayList<>();
 			for (Map<String, Object> addRow : addRows) {
 				String oid = (String) addRow.get("oid");
 				int current = (int) addRow.get("current");
+				int lotNo = (int) addRow.get("lotNo");
+				String dataType = (String) addRow.get("dataType");
+				String note = (String) addRow.get("note");
 				Persistable persistable = (Persistable) CommonUtils.getObject(oid);
 				WorkOrderDataLink link = WorkOrderDataLink.newWorkOrderDataLink(workOrder, persistable);
 				link.setSort(sort);
+				link.setDataType(dataType);
+				link.setLotNo(lotNo);
+				link.setNote(note);
 				link.setCurrent(current);
 				PersistenceHelper.manager.save(link);
 				sort++;
+				list.add(link);
 			}
+
+			// create cover workorder
+			Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
+			File tempFile = ContentUtils.getTempFile(workOrder.getName() + "_도면일람표.xlsx");
+			FileOutputStream fos = new FileOutputStream(tempFile);
+			cover.write(fos);
+
+			ApplicationData data = ApplicationData.newApplicationData(workOrder);
+			data.setRole(ContentRoleType.PRIMARY);
+			PersistenceHelper.manager.save(data);
+			ContentServerHelper.service.updateContent(workOrder, data, tempFile.getAbsolutePath());
 
 			WorkOrderHelper.manager.postAfterAction(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
 

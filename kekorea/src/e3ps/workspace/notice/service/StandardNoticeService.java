@@ -1,6 +1,8 @@
 package e3ps.workspace.notice.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import e3ps.common.util.CommonUtils;
@@ -91,5 +93,31 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 			if (trs != null)
 				trs.rollback();
 		}
+	}
+
+	@Override
+	public void delete(HashMap<String, List<NoticeDTO>> dataMap) throws Exception {
+		List<NoticeDTO> removeRows = dataMap.get("removeRows");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			for (NoticeDTO dto : removeRows) {
+				String oid = dto.getOid();
+				Notice notice = (Notice) CommonUtils.getObject(oid);
+				PersistenceHelper.manager.delete(notice);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+
 	}
 }

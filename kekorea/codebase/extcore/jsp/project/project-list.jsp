@@ -149,6 +149,13 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('project-list');">
 				</td>
 				<td class="right">
+					<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
@@ -193,29 +200,6 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 							const customer_oid = item.customer_oid;
 							const install_oid = item.install_oid;
 							const url = getCallUrl("/cip/view?mak_oid=" + mak_oid + "&detail_oid=" + detail_oid + "&customer_oid=" + customer_oid + "&install_oid=" + install_oid);
-							popup(url);
-						}
-					},
-					filter : {
-						showIcon : false,
-						inline : false
-					},
-				}, {
-					dataField : "history",
-					headerText : "이력관리",
-					dataType : "string", // 날짜 및 사람명 컬럼 사이즈 100
-					width : 60,
-					renderer : {
-						type : "IconRenderer",
-						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
-						iconHeight : 16,
-						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-							"default" : "/Windchill/extcore/images/icon/search.gif" // default
-						},
-						onClick : function(event) {
-							const item = event.item;
-							const oid = item.oid;
-							const url = getCallUrl("/history/view?oid=" + oid);
 							popup(url);
 						}
 					},
@@ -466,7 +450,11 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 
 				// params.서버에서 받을 변수명 = 웹에서 받아오는 값
 				params.projectType = document.getElementById("projectType").value;
-
+				
+				
+				// 페이징 개수 처리
+				params.psize = document.getElementById("psize").value;
+				
 				// 웹화면에서 잘 받아서 가는지 확인 하려면 콘솔창 이용 F12
 				console.log(params);
 
@@ -486,7 +474,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("project-list");
 				// 컨텍스트 메뉴 시작
-				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
@@ -500,6 +488,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 				selectbox("install_name");
 				selectbox("projectType");
 				selectbox("template");
+				selectbox("psize");
 
 				// 사용자 검색 바인딩 see base.js finderUser function 
 				finderUser("soft");

@@ -13,11 +13,12 @@ import wt.util.WTException;
 @GenAsPersistable(superClass = WTObject.class, interfaces = { Ownable.class },
 
 		properties = {
-				@GeneratedProperty(name = "keNumber", type = String.class, javaDoc = "도면번호", constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(index = true)),
 
-				@GeneratedProperty(name = "name", type = String.class, javaDoc = "도면명", constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(index = true)),
+				@GeneratedProperty(name = "keNumber", type = String.class, javaDoc = "KE 도면번호", constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(index = true)),
 
-				@GeneratedProperty(name = "lotNo", type = Integer.class, javaDoc = "LOT", constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "name", type = String.class, javaDoc = "KE 도면명", constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(index = true)),
+
+				@GeneratedProperty(name = "lotNo", type = Integer.class, javaDoc = "LOT NO", constraints = @PropertyConstraints(required = true)),
 
 		}
 

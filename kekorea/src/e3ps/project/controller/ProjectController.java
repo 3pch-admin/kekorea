@@ -30,6 +30,8 @@ import e3ps.project.dto.ProjectViewData;
 import e3ps.project.service.ProjectHelper;
 import e3ps.project.template.service.TemplateHelper;
 import net.sf.json.JSONArray;
+import wt.org.WTUser;
+import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/project/**")
@@ -173,8 +175,6 @@ public class ProjectController extends BaseController {
 	@GetMapping(value = "/popup")
 	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
 		ModelAndView model = new ModelAndView();
-		boolean isAdmin = CommonUtils.isAdmin();
-
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MONTH, -4);
 		Timestamp date = new Timestamp(calendar.getTime().getTime());
@@ -186,6 +186,10 @@ public class ProjectController extends BaseController {
 		ArrayList<CommonCode> maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
 		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
 
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("list", list);
 		model.addObject("customers", customers);
 		model.addObject("projectTypes", projectTypes);

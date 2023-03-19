@@ -16,6 +16,8 @@ import wt.util.WTException;
 
 		properties = {
 
+				@GeneratedProperty(name = "lotNo", type = Integer.class, javaDoc = "LOT", constraints = @PropertyConstraints(required = true)),
+
 				@GeneratedProperty(name = "qty", type = Integer.class, javaDoc = "수량", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "unit", type = String.class, javaDoc = "단위", constraints = @PropertyConstraints(required = true)),

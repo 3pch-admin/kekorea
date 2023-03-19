@@ -12,17 +12,14 @@ import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
 
-import com.ptc.wvs.server.util.FileHelper;
 import com.ptc.wvs.server.util.PublishUtils;
 
-import e3ps.korea.cip.Cip;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
 import wt.content.ContentHolder;
 import wt.content.ContentItem;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
-import wt.epm.EPMDocument;
 import wt.fc.IconDelegate;
 import wt.fc.IconDelegateFactory;
 import wt.fc.PersistenceHelper;
@@ -34,41 +31,18 @@ import wt.representation.Representation;
 import wt.session.SessionHelper;
 import wt.util.FileUtil;
 import wt.util.IconSelector;
+import wt.util.WTProperties;
 
-/**
- * @author user
- */
 public class ContentUtils {
 
-	/**
-	 * Windchill codebase 경로
-	 */
-//	private static String CODEBASE;
-
-//	private static final String DEFAULT_ICONS = "/Windchill/jsp/images/xx.gif";
-
-//	static {
-//		try {
-//			CODEBASE = WTProperties.getLocalProperties().getProperty("wt.server.codebase");
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
-
-	/**
-	 * 첨부 파일 1번째를 주 첨부 파일로ㄴㄹ
-	 */
-	private static final String ALL_UPLOAD_KEY = "allContent";
-
-	/**
-	 * 주 첨부파일 키
-	 */
-	private static final String PRIMARY_KEY = "primary";
-
-	/*
-	 * 첨부파일 키
-	 */
-	private static final String SECONDARY_KEY = "secondary";
+	public static String TMP_PATH = "";
+	static {
+		try {
+			TMP_PATH = WTProperties.getServerProperties().getProperty("wt.temp");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * 객체 생성 방지
@@ -78,11 +52,7 @@ public class ContentUtils {
 	}
 
 	/**
-	 * @param oid : 객체 OID
-	 * @return String[]
-	 *         <p>
-	 *         객체 OID로 찾은 후 주 첨부파일 내용 가져 오기
-	 *         </p>
+	 * OID로 주 첨부 파일 내용들 가져오는 함수
 	 */
 	public static String[] getPrimary(String oid) throws Exception {
 		ReferenceFactory rf = new ReferenceFactory();
@@ -91,125 +61,60 @@ public class ContentUtils {
 	}
 
 	/**
-	 * @param holder : 주 첨부파일을 가져올 객체
-	 * @return String[]
-	 *         <p>
-	 *         객체의 주 첨부파일 내용을 가져 오기<br>
-	 *         0 객체 OID <br>
-	 *         1 컨텐츠 OID <br>
-	 *         2 파일명 <br>
-	 *         3 파일 크기<br>
-	 *         4 아이콘<br>
-	 *         5 다운로드 링크<br>
-	 *         </p>
+	 * ContentHolder 객체로 주 첨부 파일 내용들 가져오는 함수
 	 */
 	public static String[] getPrimary(ContentHolder holder) throws Exception {
-		// 6 개를 담아야하면 6개 생성
-		// 담는건 0 부터 시작
-		String[] primarys = new String[8];
-
+		String[] primarys = new String[7];
 		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
-		// primary 하나
 		if (result.hasMoreElements()) {
 			ContentItem item = (ContentItem) result.nextElement();
 
 			if (item instanceof ApplicationData) {
 				ApplicationData data = (ApplicationData) item;
-				// 0 객체 oid
 				primarys[0] = holder.getPersistInfo().getObjectIdentifier().getStringValue();
-				// 1 content oid
 				primarys[1] = data.getPersistInfo().getObjectIdentifier().getStringValue();
-				// 2 name
 				primarys[2] = data.getFileName();
-				if (holder instanceof EPMDocument) {
-					primarys[2] = ((EPMDocument) holder).getCADName();
-				}
-				// 3 file size
 				primarys[3] = data.getFileSizeKB() + "KB";
-				// 4 icon
 				primarys[4] = getFileIcons(primarys[2]);
-				// 5 download url
 				primarys[5] = ContentHelper.getDownloadURL(holder, data, false, primarys[2]).toString();
-				primarys[6] = String.valueOf(data.getFileSize());
-				primarys[7] = "<a href=" + primarys[5] + "><img src=" + primarys[4] + " class='pos2'></a>";
+				primarys[6] = "<a href=" + primarys[5] + "><img src=" + primarys[4] + "></a>";
 			}
 		}
 		return primarys;
 	}
 
-	public static void updateContents(Map<String, Object> param, ContentHolder holder) throws Exception {
-		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
-		if (result.hasMoreElements()) {
-			ContentItem item = (ContentItem) result.nextElement();
-			ContentServerHelper.service.deleteContent(holder, item);
-		}
-
-		result.reset();
-		result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.SECONDARY);
-		while (result.hasMoreElements()) {
-			ContentItem item = (ContentItem) result.nextElement();
-			ContentServerHelper.service.deleteContent(holder, item);
-		}
-
-		Iterator<String> it = param.keySet().iterator();
-		while (it.hasNext()) {
-			String key = (String) it.next();
-
-			if (key.contains(ALL_UPLOAD_KEY)) {
-				String value = (String) param.get(key);
-				String path = value.split("&")[0];
-				String fname = value.split("&")[1];
-
-				File file = new File(path);
-				String category = getCategory(file.getName());
-				ApplicationData data = ApplicationData.newApplicationData(holder);
-				if (key.equalsIgnoreCase("allContent_0")) {
-					data.setRole(ContentRoleType.PRIMARY);
-				} else {
-					data.setRole(ContentRoleType.SECONDARY);
-				}
-				data.setCategory(category);
-				data.setCreatedBy(SessionHelper.manager.getPrincipalReference());
-				data = (ApplicationData) ContentServerHelper.service.updateContent(holder, data, path);
-
-				data.setFileName(fname);
-				PersistenceHelper.manager.modify(data);
-
-			}
-		}
+	/**
+	 * 객체 OID로 첨부파일 가져오기
+	 */
+	public static Vector<String[]> getSecondary(String oid) throws Exception {
+		ReferenceFactory rf = new ReferenceFactory();
+		ContentHolder holder = (ContentHolder) rf.getReference(oid).getObject();
+		return getSecondary(holder);
 	}
 
 	/**
-	 * @param name : 확장자를 가져올 문자열
-	 * @return String
-	 *         <p>
-	 *         parameter 뒤에서 부터 . 찾은 후 확장자 return
-	 *         </p>
+	 * ContentHolder 객체에 대한 첨부파일 가져오기
 	 */
-//	private static String getExtension(String name) {
-//		for (int i = name.length() - 1; i >= 0; i--) {
-//			char pos = name.charAt(i);
-//			if (pos == '.') {
-//				int start = (i + 1);
-//				int end = name.length();
-//				String ext = name.substring(start, end);
-//				return ext;
-//			}
-//		}
-//		return new String("");
-//	}
-
-	/**
-	 * @param file : File 객체
-	 * @return String
-	 *         <p>
-	 *         특정 파일의 확장자 가져오기
-	 *         </p>
-	 */
-//	private static String getFileIcons(File file) {
-//		String name = file.getName();
-//		return getFileIcons(name);
-//	}
+	public static Vector<String[]> getSecondary(ContentHolder holder) throws Exception {
+		Vector<String[]> secondarys = new Vector<String[]>();
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.SECONDARY);
+		while (result.hasMoreElements()) {
+			ContentItem item = (ContentItem) result.nextElement();
+			if (item instanceof ApplicationData) {
+				String[] secondary = new String[8];
+				ApplicationData data = (ApplicationData) item;
+				secondary[0] = holder.getPersistInfo().getObjectIdentifier().getStringValue();
+				secondary[1] = data.getPersistInfo().getObjectIdentifier().getStringValue();
+				secondary[2] = data.getFileName();
+				secondary[3] = data.getFileSizeKB() + "KB";
+				secondary[4] = getFileIcons(secondary[2]);
+				secondary[5] = ContentHelper.getDownloadURL(holder, data, false, secondary[2]).toString();
+				secondary[6] = "<a href=" + secondary[5] + "><img src=" + secondary[4] + "></a>";
+				secondarys.add(secondary);
+			}
+		}
+		return secondarys;
+	}
 
 	/**
 	 * @param name : 파일 명
@@ -407,47 +312,12 @@ public class ContentUtils {
 
 	/**
 	 * 파일 확장자로 첨부 파일 이미지를 가져 오는 함수
-	 * 
-	 * @param ext : 파일 확장자
-	 * @return String
-	 * @throws Exception
 	 */
 	public static String getFileIcon(String ext) throws Exception {
 		if (ext.equalsIgnoreCase("pdf")) {
 			return "/Windchill/extcore/images/fileicon/file_pdf.gif";
 		}
 		return "/Windchill/extcore/images/fileicon/file_generic.gif";
-	}
-
-	public static Vector<String[]> getSecondary(ContentHolder holder) throws Exception {
-		Vector<String[]> secondarys = new Vector<String[]>();
-		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.SECONDARY);
-		while (result.hasMoreElements()) {
-			ContentItem item = (ContentItem) result.nextElement();
-			if (item instanceof ApplicationData) {
-				String[] secondary = new String[8];
-				ApplicationData data = (ApplicationData) item;
-				// 0 = holder oid
-				secondary[0] = holder.getPersistInfo().getObjectIdentifier().getStringValue();
-				// 1 = app oid
-				secondary[1] = data.getPersistInfo().getObjectIdentifier().getStringValue();
-				// 2 = name
-				secondary[2] = data.getFileName();
-				// 3 = size
-				secondary[3] = data.getFileSizeKB() + " KB";
-				// 4 = icon
-				secondary[4] = getFileIcon(secondary[2]);
-				// 5 = down url
-				secondary[5] = ContentHelper.getDownloadURL(holder, data, false, secondary[2]).toString();
-				// 6 = file version
-				secondary[6] = data.getFileVersion();
-				// 7 = file category
-				secondary[7] = data.getCategory();
-
-				secondarys.add(secondary);
-			}
-		}
-		return secondarys;
 	}
 
 	public static void updateSecondary(Map<String, Object> param, ContentHolder holder) throws Exception {
@@ -511,133 +381,6 @@ public class ContentUtils {
 
 	}
 
-	public static void updatePrimary(Map<String, Object> param, ContentHolder holder) throws Exception {
-
-		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
-		if (result.hasMoreElements()) {
-			ContentItem item = (ContentItem) result.nextElement();
-			ContentServerHelper.service.deleteContent(holder, item);
-		}
-
-		Iterator<String> it = param.keySet().iterator();
-		while (it.hasNext()) {
-			String key = (String) it.next();
-			if (key.contains(PRIMARY_KEY)) {
-				String value = (String) param.get(key);
-
-				String path = value.split("&")[0];
-				String fname = value.split("&")[1];
-				System.out.println("path : " + path);
-				System.out.println("fname : " + fname);
-				File file = new File(path);
-				String category = getCategory(file.getName());
-				System.out.println("category : " + category);
-				ApplicationData data = ApplicationData.newApplicationData(holder);
-				data.setRole(ContentRoleType.PRIMARY);
-				data.setCategory(category);
-				data.setCreatedBy(SessionHelper.manager.getPrincipalReference());
-				data = (ApplicationData) ContentServerHelper.service.updateContent(holder, data, path);
-
-				data.setFileName(fname);
-				PersistenceHelper.manager.modify(data);
-
-			}
-		}
-	}
-
-	public static Vector<String[]> getImages(ContentHolder holder) throws Exception {
-		Vector<String[]> images = new Vector<String[]>();
-		QueryResult result = ContentHelper.service.getContentsByRole(holder,
-				ContentRoleType.toContentRoleType("IMAGE"));
-		while (result.hasMoreElements()) {
-			ContentItem item = (ContentItem) result.nextElement();
-			if (item instanceof ApplicationData) {
-				String[] image = new String[8];
-				ApplicationData data = (ApplicationData) item;
-				// 0 = holder oid
-				image[0] = holder.getPersistInfo().getObjectIdentifier().getStringValue();
-				// 1 = app oid
-				image[1] = data.getPersistInfo().getObjectIdentifier().getStringValue();
-				// 2 = name
-				image[2] = data.getFileName();
-				// 3 = size
-				image[3] = data.getFileSizeKB() + " KB";
-				// 4 = icon
-				image[4] = getFileIcon(image[2]);
-				// 5 = down url
-				image[5] = ContentHelper.getDownloadURL(holder, data, false, image[2]).toString();
-				// 6 = file version
-				image[6] = data.getFileVersion();
-				// 7 = file category
-				image[7] = data.getCategory();
-
-				images.add(image);
-			}
-		}
-		return images;
-	}
-
-	public static Vector<File> getFileLists(String path, Map<String, Object> param) {
-		Vector<File> list = new Vector<File>();
-		File dir = new File(path);
-		String name = (String) param.get("name");
-		String fileType = (String) param.get("fileType");
-
-		String ext = null;
-		if ("파워포인트".equals(fileType)) {
-			ext = "pptx";
-		} else if ("엑셀".equals(fileType)) {
-			ext = "xlsx";
-		}
-
-		File[] f = dir.listFiles();
-		for (int i = 0; i < f.length; i++) {
-			if (f[i].isDirectory()) {
-				continue;
-			} else {
-				if (!StringUtils.isNull(fileType)) {
-					if (FileUtil.getExtension(f[i].getName()).equalsIgnoreCase(ext)) {
-						if (!list.contains(f[i])) {
-							list.add(f[i]);
-						}
-					}
-				}
-
-				if (!StringUtils.isNull(name)) {
-					if (f[i].getName().contains(name.toUpperCase())) {
-						if (!list.contains(f[i])) {
-							list.add(f[i]);
-						}
-					}
-				}
-
-				if (StringUtils.isNull(name) && StringUtils.isNull(fileType)) {
-					if (!list.contains(f[i])) {
-						list.add(f[i]);
-					}
-				}
-			}
-		}
-		return list;
-	}
-
-	public static void updatePartContents(String value, ContentHolder holder) throws Exception {
-		String path = value.split("&")[0];
-		String fname = value.split("&")[1];
-
-		File file = new File(path);
-		String category = getCategory(file.getName());
-		ApplicationData data = ApplicationData.newApplicationData(holder);
-		data.setRole(ContentRoleType.PRIMARY);
-		// data.setRole(ContentRoleType.SECONDARY);
-		data.setCategory(category);
-		data.setCreatedBy(SessionHelper.manager.getPrincipalReference());
-		data = (ApplicationData) ContentServerHelper.service.updateContent(holder, data, path);
-
-		data.setFileName(fname);
-		PersistenceHelper.manager.modify(data);
-	}
-
 	public static String imageToBase64(File image, String ext) throws Exception {
 		String base64 = Base64.getEncoder().encodeToString(loadFileAsBytesArray(image));
 		return "data:image/" + ext + ";base64," + base64;
@@ -652,6 +395,24 @@ public class ContentUtils {
 		return bytes;
 	}
 
+	/**
+	 * 썸네일 저장
+	 */
+	public static void saveThumbnail(ContentHolder holder, String path) throws Exception {
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.THUMBNAIL);
+		if (result.hasMoreElements()) {
+			ContentItem item = (ContentItem) result.nextElement();
+			ContentServerHelper.service.deleteContent(holder, item);
+		}
+
+		ApplicationData data = ApplicationData.newApplicationData(holder);
+		data.setRole(ContentRoleType.THUMBNAIL);
+		data = (ApplicationData) ContentServerHelper.service.updateContent(holder, data, path);
+	}
+
+	/**
+	 * 주 첨부 파일 저장
+	 */
 	public static void savePrimary(ContentHolder holder, String path) throws Exception {
 		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
 		if (result.hasMoreElements()) {
@@ -664,6 +425,9 @@ public class ContentUtils {
 		data = (ApplicationData) ContentServerHelper.service.updateContent(holder, data, path);
 	}
 
+	/**
+	 * 첨부 파일 저장
+	 */
 	public static void saveSecondary(ContentHolder holder, ArrayList<String> secondaryPaths) throws Exception {
 		if (secondaryPaths.isEmpty()) {
 			return;
@@ -682,26 +446,52 @@ public class ContentUtils {
 		}
 	}
 
+	/**
+	 * 썸네일 보기 위해 base64 형태로 반환
+	 */
 	public static String getPreViewBase64(String oid) throws Exception {
 		ContentHolder holder = (ContentHolder) CommonUtils.getObject(oid);
 		return getPreViewBase64(holder);
 	}
 
+	/**
+	 * 썸네일 보기 위해 base64 형태로 반환
+	 */
 	public static String getPreViewBase64(ContentHolder holder) throws Exception {
-		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.THUMBNAIL);
 		if (result.hasMoreElements()) {
 			ContentItem item = (ContentItem) result.nextElement();
-			if (item instanceof ApplicationData) {
-				ApplicationData data = (ApplicationData) item;
-				String ext = FileUtil.getExtension(data.getFileName());
-				InputStream is = ContentServerHelper.service.findLocalContentStream(data);
-				File tempFile = File.createTempFile(String.valueOf(is.hashCode()), ".tmp");
-				tempFile.deleteOnExit();
-				FileUtils.copyInputStreamToFile(is, tempFile);
-				String base64 = Base64.getEncoder().encodeToString(loadFileAsBytesArray(tempFile));
-				return "data:image/" + ext + ";base64," + base64;
-			}
+			ApplicationData data = (ApplicationData) item;
+			String ext = FileUtil.getExtension(data.getFileName());
+			InputStream is = ContentServerHelper.service.findLocalContentStream(data);
+			File tempFile = File.createTempFile(String.valueOf(is.hashCode()), ".tmp");
+			tempFile.deleteOnExit();
+			FileUtils.copyInputStreamToFile(is, tempFile);
+			String base64 = Base64.getEncoder().encodeToString(loadFileAsBytesArray(tempFile));
+			return "data:image/" + ext + ";base64," + base64;
 		}
 		return null;
+	}
+
+	/**
+	 * TEMP 파일 얻어오기
+	 */
+	public static File getTempFile() throws Exception {
+		File directory = new File(TMP_PATH + File.separator + "tempFile");
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
+		return File.createTempFile("TEMP_", "", directory);
+	}
+
+	/**
+	 * 파일명을 받아 TEMP 파일 만들기
+	 */
+	public static File getTempFile(String name) throws Exception {
+		File directory = new File(TMP_PATH + File.separator + "tempFile");
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
+		return new File(TMP_PATH + File.separator + "tempFile" + File.separator + name);
 	}
 }

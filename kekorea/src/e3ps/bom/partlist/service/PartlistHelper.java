@@ -31,8 +31,11 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.meeting.Meeting;
 import e3ps.doc.meeting.MeetingProjectLink;
+import e3ps.epm.workOrder.WorkOrderProjectLink;
+import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.org.People;
 import e3ps.project.Project;
+import net.sf.json.JSONObject;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -53,14 +56,7 @@ import wt.vc.wip.WorkInProgressHelper;
 
 public class PartlistHelper {
 
-	/**
-	 * access service
-	 */
 	public static final PartlistService service = ServiceFactory.getService(PartlistService.class);
-
-	/**
-	 * access helper
-	 */
 	public static final PartlistHelper manager = new PartlistHelper();
 
 	public static String excelFormLoc;
@@ -554,121 +550,89 @@ public class PartlistHelper {
 		return file;
 	}
 
-	public String getJsonList(PartListMaster master) throws Exception {
-		String jsonList = "[";
-
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(MasterDataLink.class, true);
-
-		SearchCondition sc = new SearchCondition(MasterDataLink.class, "roleAObjectRef.key.id", "=",
-				master.getPersistInfo().getObjectIdentifier().getId());
-		query.appendWhere(sc, new int[] { idx });
-
-		// ClassAttribute ca = new ClassAttribute(MasterDataLink.class,
-		// MasterDataLink.CREATE_TIMESTAMP);
-		// OrderBy by = new OrderBy(ca, false);
-		// query.appendOrderBy(by, new int[] { idx });
-
-		ClassAttribute ca = new ClassAttribute(MasterDataLink.class, MasterDataLink.SORT);
-		OrderBy by = new OrderBy(ca, false);
-		query.appendOrderBy(by, new int[] { idx });
-
-		QueryResult result = PersistenceHelper.manager.find(query);
-
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			MasterDataLink dd = (MasterDataLink) obj[0];
-			PartListData data = dd.getPartListData();
-			// PartListData data = (PartListData) result.nextElement();
-			String oid = data.getPersistInfo().getObjectIdentifier().getStringValue();
-			String ss = String.format("%,f", data.getWon()).substring(0,
-					String.format("%,f", data.getWon()).lastIndexOf("."));
-
-			jsonList += "['" + oid + "', '" + StringUtils.replaceToValue(data.getLotNo()) + "', '"
-					+ StringUtils
-							.replaceToValue(data.getUnitName() != null ? data.getUnitName().replaceAll("'", "") : "")
-					+ "', '" + StringUtils.replaceToValue(data.getPartNo()) + "','"
-					+ StringUtils.replaceToValue(data.getPartName()) + "', '"
-					+ StringUtils.replaceToValue(
-							data.getStandard() != null ? data.getStandard().replaceAll("'", "") : "")
-					+ "', '"
-					+ StringUtils.replaceToValue(data.getMaker() != null ? data.getMaker().replaceAll("'", "") : "")
-					+ "', '" + StringUtils.replaceToValue(data.getCustomer()) + "','"
-					+ StringUtils.replaceToValue(data.getQuantity()) + "', '"
-					+ StringUtils.replaceToValue(data.getUnit()) + "', '" + StringUtils.replaceToValue(data.getPrice())
-					// + "', '" + StringUtils.replaceToValue(data.getCurrency()) + "', '" +
-					// data.getWon() + "', '"
-					+ "', '" + StringUtils.replaceToValue(data.getCurrency()) + "', '" + ss + "', '"
-					+ StringUtils.replaceToValue(data.getPartListDate()) + "', '"
-					+ StringUtils.replaceToValue(data.getExchangeRate()) + "', '"
-					+ StringUtils.replaceToValue(data.getReferDrawing()) + "', '"
-					+ StringUtils.replaceToValue(data.getClassification()) + "', '"
-					+ StringUtils.replaceToValue(data.getNote()) + "'], ";
-		}
-
-		if (result.size() == 0) {
-			jsonList += "{}";
-		}
-
-		jsonList += "]";
-		return jsonList;
-	}
-
-	public ArrayList<PartListMasterProjectLink> getPartListMasterProjectLink(PartListMaster master) throws Exception {
-
-		ArrayList<PartListMasterProjectLink> list = new ArrayList<PartListMasterProjectLink>();
-
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(PartListMasterProjectLink.class, true);
-
-		SearchCondition sc = new SearchCondition(PartListMasterProjectLink.class, "roleAObjectRef.key.id", "=",
-				master.getPersistInfo().getObjectIdentifier().getId());
-		query.appendWhere(sc, new int[] { idx });
-
-		ClassAttribute ca = new ClassAttribute(PartListMasterProjectLink.class, WTAttributeNameIfc.CREATE_STAMP_NAME);
-		OrderBy by = new OrderBy(ca, false);
-		query.appendOrderBy(by, new int[] { idx });
-		QueryResult result = PersistenceHelper.manager.find(query);
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			// PartListMasterProjectLink link = (PartListMasterProjectLink)
-			// result.nextElement();
-			PartListMasterProjectLink link = (PartListMasterProjectLink) obj[0];
-			list.add(link);
-		}
-		return list;
-	}
-
 	/**
 	 * 수배표 가져오는 함수
-	 * 
-	 * @param params : 검색 조건을 지닌 객체
-	 * @return Map<String, Object>
-	 * @throws Exception
 	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<PartListDTO> list = new ArrayList<>();
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(PartListMaster.class, true);
-		int idx_link = query.appendClassList(PartListMasterProjectLink.class, true);
-		int idx_p = query.appendClassList(Project.class, true);
-
-		QuerySpecUtils.toInnerJoin(query, PartListMasterProjectLink.class, PartListMaster.class,
-				"roleAObjectRef.key.id", WTAttributeNameIfc.ID_NAME, idx_link, idx);
-		QuerySpecUtils.toInnerJoin(query, PartListMasterProjectLink.class, Project.class, "roleBObjectRef.key.id",
-				WTAttributeNameIfc.ID_NAME, idx_link, idx_p);
 
 		QuerySpecUtils.toOrderBy(query, idx, PartListMaster.class, PartListMaster.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
+
+		net.sf.json.JSONArray list = new net.sf.json.JSONArray();
+
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
-			PartListMasterProjectLink link = (PartListMasterProjectLink) obj[1];
-			PartListDTO column = new PartListDTO(link);
-			list.add(column);
+			PartListMaster master = (PartListMaster) obj[0];
+
+			JSONObject node = new JSONObject();
+			node.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+			node.put("name", master.getName());
+			QueryResult group = PersistenceHelper.manager.navigate(master, "project", PartListMasterProjectLink.class,
+					false);
+
+//			QuerySpec qs = new QuerySpec();
+//			int idx_m = qs.appendClassList(PartListMaster.class, true);
+//			int idx_link = qs.appendClassList(PartListMasterProjectLink.class, true);
+//			QuerySpecUtils.toInnerJoin(qs, PartListMaster.class, PartListMasterProjectLink.class,
+//					WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx_m, idx_link);
+//			QuerySpecUtils.toEqualsAnd(qs, idx_link, PartListMasterProjectLink.class, "roleAObjectRef.key.id",
+//					master.getPersistInfo().getObjectIdentifier().getId());
+//			QueryResult group = PersistenceHelper.manager.find(qs);
+
+			int isNode = 1;
+			net.sf.json.JSONArray children = new net.sf.json.JSONArray();
+			while (group.hasMoreElements()) {
+				PartListMasterProjectLink link = (PartListMasterProjectLink) group.nextElement();
+				PartListDTO dto = new PartListDTO(link);
+				if (isNode == 1) {
+					node.put("poid", dto.getPoid());
+					node.put("projectType_name", dto.getProjectType_name());
+					node.put("customer_name", dto.getCustomer_name());
+					node.put("install_name", dto.getInstall_name());
+					node.put("mak_name", dto.getMak_name());
+					node.put("detail_name", dto.getDetail_name());
+					node.put("kekNumber", dto.getKekNumber());
+					node.put("keNumber", dto.getKeNumber());
+					node.put("userId", dto.getUserId());
+					node.put("description", dto.getDescription());
+					node.put("state", dto.getState());
+					node.put("model", dto.getModel());
+					node.put("pdate_txt", dto.getPdate_txt());
+					node.put("creator", dto.getCreator());
+					node.put("createdDate_txt", dto.getCreatedDate_txt());
+					node.put("modifiedDate_txt", dto.getModifiedDate_txt());
+				} else {
+					JSONObject data = new JSONObject();
+					data.put("name", dto.getName());
+					data.put("oid", dto.getOid());
+					data.put("poid", dto.getPoid());
+					data.put("projectType_name", dto.getProjectType_name());
+					data.put("customer_name", dto.getCustomer_name());
+					data.put("install_name", dto.getInstall_name());
+					data.put("mak_name", dto.getMak_name());
+					data.put("detail_name", dto.getDetail_name());
+					data.put("kekNumber", dto.getKekNumber());
+					data.put("keNumber", dto.getKeNumber());
+					data.put("userId", dto.getUserId());
+					data.put("description", dto.getDescription());
+					data.put("state", dto.getState());
+					data.put("model", dto.getModel());
+					data.put("pdate_txt", dto.getPdate_txt());
+					data.put("creator", dto.getCreator());
+					data.put("createdDate_txt", dto.getCreatedDate_txt());
+					data.put("modifiedDate_txt", dto.getModifiedDate_txt());
+					children.add(data);
+				}
+				isNode++;
+			}
+			node.put("children", children);
+			list.add(node);
 		}
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
@@ -678,10 +642,6 @@ public class PartlistHelper {
 
 	/**
 	 * 수배표된 데이터들을 JSONArray 형태로 가져오는 함수
-	 * 
-	 * @param oid : 수배표마스터 객체 OID
-	 * @return org.json.JSONArray
-	 * @throws Exception
 	 */
 	public JSONArray getData(String oid) throws Exception {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
@@ -876,6 +836,9 @@ public class PartlistHelper {
 		return map;
 	}
 
+	/**
+	 * AUI 그리드 작번 리스트 INCLUDE 페이지
+	 */
 	public net.sf.json.JSONArray jsonArrayAui(String oid) throws Exception {
 		ArrayList<Map<String, String>> list = new ArrayList<>();
 		PartListMaster partListMaster = (PartListMaster) CommonUtils.getObject(oid);

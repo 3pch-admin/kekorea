@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
+import e3ps.common.util.CommonUtils;
+import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
+import wt.org.WTUser;
+import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/workOrder/**")
@@ -25,6 +29,10 @@ public class WorkOrderController extends BaseController {
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/epm/workOrder/workOrder-list.jsp");
 		return model;
 	}
@@ -70,7 +78,7 @@ public class WorkOrderController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "도면들 번호로 찾아오기 (KE OR EPM)")
+	@Description(value = "KE도면들 번호로 찾아오기 (KE OR EPM)")
 	@ResponseBody
 	@GetMapping(value = "/getData")
 	public Map<String, Object> getData(@RequestParam String number) throws Exception {
@@ -80,9 +88,20 @@ public class WorkOrderController extends BaseController {
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
-			result.put("result", false);
+			result.put("result", FAIL);
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "도면 일람표 정보 페이지")
+	@GetMapping(value = "/view")
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
+		WorkOrderDTO dto = new WorkOrderDTO(workOrder);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/epm/workOrder/workOrder-view");
+		return model;
 	}
 }

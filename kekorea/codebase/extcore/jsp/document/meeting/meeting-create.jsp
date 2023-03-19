@@ -11,6 +11,12 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 <%@include file="/extcore/include/auigrid.jsp"%>
 <table class="button-table">
 	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				회의록 등록
+			</div>
+		</td>
 		<td class="right">
 			<input type="button" value="등록" title="등록" onclick="create();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">

@@ -1,4 +1,9 @@
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -96,12 +101,21 @@
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('partlist-list');">
-					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('partlist-list');">
+					<!-- exportExcel 함수참고 -->
+					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('partlist-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('partlist-list');">
 					<input type="button" value="비교" title="비교" class="red" onclick="compare();">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
+					<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
@@ -115,19 +129,21 @@
 			let myGridID;
 			function _layout() {
 				return [ {
-					dataField : "projectType_name",
-					headerText : "설계구분",
+					dataField : "name",
+					headerText : "수배표 제목",
 					dataType : "string",
-					width : 80,
+					width : 300,
+					style : "underline",
 					filter : {
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true
+				// 구분1 칼럼 셀 세로 병합 실행
 				}, {
 					dataField : "info",
 					headerText : "",
 					width : 40,
-					style : "cursor",
 					renderer : {
 						type : "IconRenderer",
 						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
@@ -145,26 +161,18 @@
 						showIcon : false,
 						inline : false
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
-					dataField : "name",
-					headerText : "수배표제목",
+					dataField : "projectType_name",
+					headerText : "설계구분",
 					dataType : "string",
-					width : 300,
-					style : "left indent10",
-					renderer : {
-						type : "LinkRenderer",
-						baseUrl : "javascript",
-						jsCallback : function(rowIndex, columnIndex, value, item) {
-							const url = getCallUrl("/partlist/view?oid=" + item.oid);
-							popup(url);
-						}
-					},
+					width : 80,
 					filter : {
 						showIcon : true,
 						inline : true
 					},
-					cellMerge : true
-				// 구분1 칼럼 셀 세로 병합 실행
 				}, {
 					dataField : "mak_name",
 					headerText : "막종",
@@ -247,16 +255,13 @@
 						inline : true
 					},
 				}, {
-					dataField : "pdate",
+					dataField : "pdate_txt",
 					headerText : "발행일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
+					dataType : "string",
 					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true,
-						displayFormatValues : true
-					// 포맷팅 형태로 필터링 처리
 					},
 				}, {
 					dataField : "model",
@@ -276,39 +281,33 @@
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
-					dataField : "createdDate",
+					dataField : "createdDate_txt",
 					headerText : "작성일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
-					width : 100,
-					filter : {
-						showIcon : true,
-						inline : true,
-						displayFormatValues : true
-					// 포맷팅 형태로 필터링 처리
-					},
-				}, {
-					dataField : "modifier",
-					headerText : "수정자",
 					dataType : "string",
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
-					dataField : "modifiedDate",
+					dataField : "modifiedDate_txt",
 					headerText : "수정일",
-					dataType : "date",
+					dataType : "string",
 					width : 100,
-					formatString : "yyyy-mm-dd",
 					filter : {
 						showIcon : true,
 						inline : true,
-						displayFormatValues : true
-					// 포맷팅 형태로 필터링 처리
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
 					dataField : "state",
 					headerText : "상태",
@@ -318,6 +317,9 @@
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				} ]
 			};
 
@@ -341,6 +343,8 @@
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					// 그리드 공통속성 끝
 					enableCellMerge : true,
+					cellMergePolicy : "withNull"
+					fixedColumnCount : 1,
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
@@ -357,6 +361,17 @@
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
 				});
+				
+				AUIGrid.bind(myGridID, "cellDoubleClick", auiCellDoubleClick);
+			}
+			
+			function auiCellDoubleClick(event) {
+				const dataField = event.dataField;
+				const item = event.item;
+				if(dataField === "name") {
+					const url = getCallUrl("/partlist/view?oid="+item.oid);
+					popup(url);
+				}
 			}
 
 			function compare() {
@@ -378,6 +393,8 @@
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/partlist/list");
+				const psize = document.getElementById("psize").value;
+				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -399,7 +416,7 @@
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("partlist-list");
 				// 컨텍스트 메뉴 시작
-				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
@@ -410,15 +427,22 @@
 				// 셀렉트 박스
 				selectbox("state");
 				selectbox("projectType_name");
-				
+
 				// 사용자 검색 바인딩 see base.js finderUser function 
 				finderUser("creator");
 				finderUser("modifier");
-				
+
 				// 날짜 검색용 바인딩 see base.js twindate funtion
 				twindate("created");
 				twindate("modified");
+
+				selectbox("psize");
 			});
+
+			function exportExcel() {
+				const exceptColumnFields = [ "primary" ];
+				exportToExcel("수배표 리스트", "수배표", "수배표 리스트", exceptColumnFields, "<%=sessionUser.getFullName()%>	");
+			}
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기

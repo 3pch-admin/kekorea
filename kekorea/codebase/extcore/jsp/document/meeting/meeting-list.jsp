@@ -1,5 +1,7 @@
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
 <!DOCTYPE html>
@@ -59,8 +61,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('meeting-list');">
-					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('meeting-list');">
+					<!-- exportExcel 함수참고 -->
+					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('meeting-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('meeting-list');">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 					<%
 					if (isAdmin) {
@@ -72,6 +76,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					%>
 				</td>
 				<td class="right">
+					<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
@@ -85,20 +96,21 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			let myGridID;
 			function _layout() {
 				return [ {
-					dataField : "projectType_name",
-					headerText : "작번유형",
+					dataField : "name",
+					headerText : "회의록 제목",
 					dataType : "string",
-					width : 80,
+					width : 350,
+					style : "left indent10 underline",
 					filter : {
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true,
 				}, {
-					dataField : "name",
-					headerText : "도면일람표 제목",
+					dataField : "projectType_name",
+					headerText : "작번유형",
 					dataType : "string",
-					width : 350,
-					style : "left indent10 underline",
+					width : 80,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -177,15 +189,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						inline : true
 					},
 				}, {
-					dataField : "state",
-					headerText : "상태",
-					dataType : "string",
-					width : 80,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
 					dataField : "model",
 					headerText : "모델",
 					dataType : "string",
@@ -205,6 +208,18 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						inline : true
 					},
 				}, {
+					dataField : "state",
+					headerText : "상태",
+					dataType : "string",
+					width : 80,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
+				}, {
 					dataField : "creator",
 					headerText : "작성자",
 					dataType : "string",
@@ -213,18 +228,22 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
-					dataField : "createdDate",
+					dataField : "createdDate_txt",
 					headerText : "작성일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
+					dataType : "string",
 					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true,
-						displayFormatValues : true
-						// 포맷팅 형태로 필터링 처리
+					// 포맷팅 형태로 필터링 처리
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				} ]
 			}
 
@@ -232,29 +251,31 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			function createAUIGrid(columnLayout) {
 				// 그리드 속성
 				const props = {
-						// 그리드 공통속성 시작
-						headerHeight : 30,
-						rowHeight : 30,
-						showRowNumColumn : true,
-						showRowCheckColumn : true,
-						showStateColumn : true,
-						rowNumHeaderText : "번호",
-						noDataMessage : "검색 결과가 없습니다.",
-						enableFilter : true,
-						selectionMode : "multipleCells",
-						enableMovingColumn : true,
-						showInlineFilter : true,
-						useContextMenu : true,
-						enableRightDownFocus : true,
-						filterLayerWidth : 320,
-						filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-						// 그리드 공통속성 끝
+					// 그리드 공통속성 시작
+					headerHeight : 30,
+					rowHeight : 30,
+					showRowNumColumn : true,
+					showRowCheckColumn : true,
+					showStateColumn : true,
+					rowNumHeaderText : "번호",
+					noDataMessage : "검색 결과가 없습니다.",
+					enableFilter : true,
+					selectionMode : "multipleCells",
+					enableMovingColumn : true,
+					showInlineFilter : true,
+					useContextMenu : true,
+					enableRightDownFocus : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+					// 그리드 공통속성 끝
+					fixedColumnCount : 1,
+					enableCellMerge : true,
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
-				
+
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
@@ -267,9 +288,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
 				});
+
+				AUIGrid.bind(myGridID, "cellDoubleClick", auiCellDoubleClick);
 			}
 
-			function auiCellClickHandler(event) {
+			function auiCellDoubleClick(event) {
 				const dataField = event.dataField;
 				const item = event.item;
 				if (dataField === "name") {
@@ -281,6 +304,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/meeting/list");
+				const psize = document.getElementById("psize").value;
+				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -299,15 +324,19 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			function save() {
+				const url = getCallUrl("/meeting/delete");
+				const params = new Object();
+				const removeRows = AUIGrid.getRemovedItems(myGridID);
+				if (removeRows.length === 0) {
+					alert("변경된 내용이 없습니다.");
+					return false;
+				}
+
+				params.removeRows = removeRows;
 
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
 				}
-
-				const url = getCallUrl("/meeting/delete");
-				const params = new Object();
-				const removeRows = AUIGrid.getRemovedItems(myGridID);
-				params.removeRows = removeRows;
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
@@ -327,23 +356,30 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				}
 			}
 
+			function exportExcel() {
+				const exceptColumnFields = [];
+				exportToExcel("회의록 리스트", "회의록", "회의록 리스트", exceptColumnFields, "<%=sessionUser.getFullName()%>");
+			}
+
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("meeting-list");
 				// 컨텍스트 메뉴 시작
-				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns);
-				
+
 				// 사용자 검색 바인딩 see base.js finderUser function 
 				finderUser("creator");
-				
+
 				// 날짜 검색용 바인딩 see base.js twindate funtion
 				twindate("created");
+
+				selectbox("psize");
 			});
 
 			document.addEventListener("keydown", function(event) {
@@ -358,7 +394,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			document.addEventListener("click", function(event) {
 				hideContextMenu();
 			})
-			
+
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(myGridID);
 			});

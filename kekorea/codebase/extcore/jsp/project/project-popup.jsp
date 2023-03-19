@@ -1,7 +1,10 @@
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 String method = (String) request.getAttribute("method");
 boolean multi = (boolean) request.getAttribute("multi");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
@@ -46,12 +49,19 @@ boolean multi = (boolean) request.getAttribute("multi");
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('project-popup');">
-			<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('project-popup');">
+			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('project-popup');">
+			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('project-popup');">
 			<input type="button" value="추가" title="추가" class="blue" onclick="<%=method%>();">
 			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
 		<td class="right">
+			<select name="psize" id="psize">
+				<option value="30">30</option>
+				<option value="50">50</option>
+				<option value="100">100</option>
+				<option value="200">200</option>
+				<option value="300">300</option>
+			</select>
 			<input type="button" value="조회" title="조회" onclick="loadGridData();">
 		</td>
 	</tr>
@@ -60,7 +70,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 <!-- 그리드 리스트 -->
 <div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
 <!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
-		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
+<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
 	let myGridID;
 	function _layout() {
@@ -182,27 +192,37 @@ boolean multi = (boolean) request.getAttribute("multi");
 	function createAUIGrid(columnLayout) {
 		// 그리드 속성
 		const props = {
-			rowIdField : "oid",
 			// 그리드 공통속성 시작
-			headerHeight : 30, // 헤더높이
-			rowHeight : 30, // 행 높이
-			showRowNumColumn : true, // 번호 행 출력 여부
-			showStateColumn : true, // 상태표시 행 출력 여부
-			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-			noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
-			enableFilter : true, // 필터 사용 여부
+			headerHeight : 30,
+			rowHeight : 30,
+			showRowNumColumn : true,
+			showRowCheckColumn : true,
+			showStateColumn : true,
+			rowNumHeaderText : "번호",
+			noDataMessage : "검색 결과가 없습니다.",
 			selectionMode : "multipleCells",
 			enableMovingColumn : true,
 			showInlineFilter : true,
-			showRowCheckColumn : true
-		// 그리드 공통속성 끝
+			useContextMenu : true,
+			enableRightDownFocus : true,
+			filterLayerWidth : 320,
+			filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+			// 그리드 공통속성 끝
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		//화면 첫 진입시 리스트 호출 함수
 		loadGridData();
-		// Lazy Loading 이벤트 바인딩
-		AUIGrid.bind(myGridID, "vScrollChange", vScrollChangeHandler);
+
+		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+			hideContextMenu(); // 컨텍스트 메뉴 감추기
+			vScrollChangeHandler(event); // lazy loading
+		});
+	
+		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+			hideContextMenu(); // 컨텍스트 메뉴 감추기
+		});
+				
 		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 		
 	}
@@ -225,6 +245,8 @@ boolean multi = (boolean) request.getAttribute("multi");
 	function loadGridData() {
 		const params = new Object();
 		const url = getCallUrl("/project/list");
+		const psize = document.getElementById("psize").value;
+		params.psize = psize;
 		AUIGrid.showAjaxLoader(myGridID);
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
@@ -233,35 +255,6 @@ boolean multi = (boolean) request.getAttribute("multi");
 			AUIGrid.setGridData(myGridID, data.list);
 		});
 	}
-
-	let last = false;
-	function vScrollChangeHandler(event) {
-		if (event.position == event.maxPosition) {
-			if (!last) {
-				requestAdditionalData();
-			}
-		}
-	}
-
-	function requestAdditionalData() {
-		const url = getCallUrl("/aui/appendData");
-		const params = new Object();
-		const curPage = $("input[name=curPage]").val();
-		params.sessionid = $("input[name=sessionid]").val();
-		params.start = (curPage * 100);
-		params.end = (curPage * 100) + 100;
-		AUIGrid.showAjaxLoader(myGridID);
-		call(url, params, function(data) {
-			if (data.list.length == 0) {
-				last = true;
-			} else {
-				AUIGrid.appendData(myGridID, data.list);
-				$("input[name=curPage]").val(parseInt(curPage) + 1);
-			}
-			AUIGrid.removeAjaxLoader(myGridID);
-		})
-	}
-
 	
 	function <%=method%>() {
 		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
@@ -273,14 +266,35 @@ boolean multi = (boolean) request.getAttribute("multi");
 	}
 	
 	
-	// jquery 모든 DOM구조 로딩 후 
-	$(function() {
-		// 로컬 스토리지에 저장된 컬럼 값 불러오기 see - base.js
+	document.addEventListener("DOMContentLoaded", function() {
+		// DOM이 로드된 후 실행할 코드 작성
 		const columns = loadColumnLayout("project-popup");
+		// 컨텍스트 메뉴 시작
+		const contenxtHeader = genColumnHtml(columns); // see auigrid.js
+		$("#h_item_ul").append(contenxtHeader);
+		$("#headerMenu").menu({
+			select : headerMenuSelectHandler
+		});
 		createAUIGrid(columns);
-	}).keypress(function(e) {
-		let keyCode = e.keyCode;
+		AUIGrid.resize(myGridID);
+
+		selectbox("psize");
+	});
+
+	document.addEventListener("keydown", function(event) {
+		// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
+		const keyCode = event.keyCode || event.which;
 		if (keyCode === 13) {
+			loadGridData();
 		}
 	})
+
+	// 컨텍스트 메뉴 숨기기
+	document.addEventListener("click", function(event) {
+		hideContextMenu();
+	})
+
+	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID);
+	});
 </script>

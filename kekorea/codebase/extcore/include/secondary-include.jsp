@@ -8,12 +8,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 String oid = request.getParameter("oid");
-String mode = StringUtils.getParameter(request.getParameter("mode"), "create");
-%>
-
-<%
-// 등록 모드
-if ("create".equals(mode)) {
 %>
 <div class="AXUpload5" id="secondary_layer"></div>
 <div class="AXUpload5QueueBox_list" id="uploadQueueBox"></div>
@@ -26,8 +20,8 @@ if ("create".equals(mode)) {
 			uploadFileName : "secondary",
 			buttonTxt : "파일 선택",
 			uploadMaxFileSize : (1024 * 1024 * 1024),
-			uploadUrl : getCallUrl("/content/upload"),
 			dropBoxID : "uploadQueueBox",
+			uploadUrl : getCallUrl("/content/upload"),
 			queueBoxID : "uploadQueueBox",
 			uploadPars : {
 				roleType : "secondary"
@@ -49,16 +43,3 @@ if ("create".equals(mode)) {
 	}
 	load();
 </script>
-<%
-// 뷰 모드
-} else if ("view".equals(mode)) {
-ContentHolder holder = (ContentHolder) CommonUtils.getObject(oid);
-QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.SECONDARY);
-while (result.hasMoreElements()) {
-	ApplicationData data = (ApplicationData) result.nextElement();
-%>
-<p><a href=""><%=data.getFileName()%></a></p>
-<%
-}
-}
-%>

@@ -61,7 +61,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<input type="text" name="keNumber" id="keNumber" class="width-200">
 				</td>
 				<th>버전</th>
-				<td class="indent5">
+				<td>
+					&nbsp;
 					<div class="pretty p-switch">
 						<input type="radio" name="latest" value="true" checked="checked">
 						<div class="state p-success">
@@ -70,6 +71,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 							</label>
 						</div>
 					</div>
+					&nbsp;
 					<div class="pretty p-switch">
 						<input type="radio" name="latest" value="">
 						<div class="state p-success">
@@ -96,20 +98,29 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('keDrawing-list');">
-					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('keDrawing-list');">
+					<!-- exportExcel 함수참고 -->
+					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('keDrawing-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('keDrawing-list');">
 					<input type="button" value="저장" title="저장" onclick="create();">
 					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<%
-						if(isAdmin) {
+					if (isAdmin) {
 					%>
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 					<%
-						}
+					}
 					%>
 				</td>
 				<td class="right">
+					<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
@@ -127,11 +138,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					dataField : "lotNo",
 					headerText : "LOT",
 					dataType : "numeric",
-					width : 100,
+					width : 80,
 					formatString : "###0",
 					editRenderer : {
 						type : "InputEditRenderer",
 						onlyNumeric : true, // 0~9만 입력가능
+						maxlength : 3,
 					},
 					filter : {
 						showIcon : true,
@@ -142,14 +154,14 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					dataField : "name",
 					headerText : "DRAWING TITLE",
 					dataType : "string",
-					style : "left indent10",
+					style : "left indent10 underline",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/keDrawing/view?oid=" + oid);
-							popup(url, 1100, 600);
+							popup(url, 1300, 600);
 						}
 					},
 					filter : {
@@ -160,8 +172,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					dataField : "keNumber",
 					headerText : "DWG NO",
 					dataType : "string",
-					width : 200,
+					width : 100,
 					editable : false,
+					style : "underline",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
@@ -189,7 +202,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					dataField : "latest",
 					headerText : "최신버전",
 					dataType : "boolean",
-					width : 100,
+					width : 80,
 					renderer : {
 						type : "CheckBoxEditRenderer"
 					},
@@ -259,10 +272,24 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						displayFormatValues : true
 					},
 				}, {
+					dataField : "preView",
+					headerText : "미리보기",
+					width : 80,
+					editable : false,
+					renderer : {
+						type : "ImageRenderer",
+						altField : null,
+						imgHeight : 34,
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
+				}, {
 					dataField : "primary",
 					headerText : "도면파일",
 					dataType : "string",
-					width : 100,
+					width : 80,
 					editable : false,
 					headerTooltip : {
 						show : true,
@@ -276,7 +303,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						inline : false
 					},
 				}, {
-					width : 100,
+					dataField : "button",
+					headerText : "",
+					width : 80,
 					editable : false,
 					renderer : {
 						type : "ButtonRenderer",
@@ -346,10 +375,35 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
 				});
 
-				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRow);
+				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRowHandler);
+
+				// 행 추가후
+				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinishHandler);
+				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 			}
 
-			function auiBeforeRemoveRow(event) {
+			function auiCellClickHandler(event) {
+				const dataField = event.dataField;
+				const oid = event.item.oid;
+				if (dataField === "preView") {
+					const url = getCallUrl("/aui/thumbnail?oid=" + oid);
+					popup(url);
+				}
+			}
+
+			function auiAddRowFinishHandler(event) {
+				const selected = AUIGrid.getSelectedIndex(myGridID);
+				if (selected.length <= 0) {
+					return false;
+				}
+
+				const rowIndex = selected[0];
+				const colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "lotNo");
+				AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex);
+				AUIGrid.openInputer(myGridID);
+			}
+
+			function auiBeforeRemoveRowHandler(event) {
 				const items = event.items;
 				for (let i = 0; i < items.length; i++) {
 					const latest = items[i].latest;
@@ -364,8 +418,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/keDrawing/list");
-				params.latest = !!document.querySelector("input[name=latest]:checked").value;
-				params.lotNo = Number(document.getElementById("lotNo").value);
+				const psize = document.getElementById("psize").value;
+				const lotNo = Number(document.getElementById("lotNo").value);
+				const latest = !!document.querySelector("input[name=latest]:checked").value;
+				params.latest = latest;
+				params.lotNo = lotNo;
+				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -447,8 +505,18 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				const removeRows = AUIGrid.getRemovedItems(myGridID);
 				const editRows = AUIGrid.getEditedRowItems(myGridID);
 
+				if (addRows.length === 0 && removeRows.length === 0 && editRows.length === 0) {
+					alert("변경된 내용이 없습니다.");
+					return false;
+				}
+				// 새로 추가한 행 검증
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
+
+					if (item.lotNo === 0) {
+						AUIGrid.showToastMessage(myGridID, i, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
+						return false;
+					}
 
 					if (isNull(item.name)) {
 						AUIGrid.showToastMessage(myGridID, i, 1, "DRAWING TITLE의 값은 공백을 입력 할 수 없습니다.");
@@ -456,7 +524,21 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					}
 
 					if (isNull(item.primary)) {
-						AUIGrid.showToastMessage(myGridID, i, 9, "첨부파일을 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, i, 9, "도면파일을 선택하세요.");
+						return false;
+					}
+				}
+
+				// 수정한 행 검증
+				for (let i = 0; i < editRows.length; i++) {
+					const item = editRows[i];
+					if (item.lotNo === 0) {
+						AUIGrid.showToastMessage(myGridID, i, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
+						return false;
+					}
+
+					if (isNull(item.name)) {
+						AUIGrid.showToastMessage(myGridID, i, 1, "DRAWING TITLE의 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 				}
@@ -491,12 +573,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					const rowIndex = checkedItems[i].rowIndex;
 
 					if (!latest) {
-						alert("최신버전이 아닌 도면이 포함되어있습니다. \n" + rowIndex + "행 데이터");
+						alert("최신버전이 아닌 도면이 포함되어있습니다.\n" + rowIndex + "행 데이터");
 						return false;
 					}
 
 					if (oid === undefined) {
-						alert("신규로 작성한 데이터가 존재합니다. \n" + rowIndex + "행 데이터");
+						alert("신규로 작성한 데이터가 존재합니다.\n" + rowIndex + "행 데이터");
 						return false;
 					}
 				}
@@ -506,11 +588,16 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				panel.list = checkedItems;
 			}
 
+			function exportExcel() {
+				const exceptColumnFields = [ "preView", "button", "primary" ];
+				exportToExcel("KE 도면 리스트", "KE 도면", "KE 도면 리스트", exceptColumnFields, "<%=sessionUser.getFullName()%>");
+			}
+
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("keDrawing-list");
 				// 컨텍스트 메뉴 시작
-				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
@@ -525,6 +612,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				// 날짜 검색용 바인딩 see base.js twindate funtion
 				twindate("created");
 				twindate("modified");
+
+				selectbox("psize");
 			});
 
 			document.addEventListener("keydown", function(event) {

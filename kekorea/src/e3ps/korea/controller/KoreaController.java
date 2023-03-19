@@ -21,6 +21,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.korea.service.KoreaHelper;
 import e3ps.org.service.OrgHelper;
 import wt.org.WTUser;
+import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/korea/**")
@@ -30,6 +31,10 @@ public class KoreaController extends BaseController {
 	@GetMapping(value = "/list")
 	public ModelAndView list(@RequestParam String code) throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("code", code);
 		model.setViewName("/extcore/jsp/korea/korea-list.jsp");
 		return model;
@@ -63,6 +68,9 @@ public class KoreaController extends BaseController {
 		if (installs.size() == 0) {
 			installs = CommonCodeHelper.manager.getArrayCodeList("INSTALL");
 		}
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("makCode", makCode);
 		model.addObject("projectType", projectType);
 		model.addObject("code", code);

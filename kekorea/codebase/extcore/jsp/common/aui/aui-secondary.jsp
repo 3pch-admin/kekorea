@@ -17,7 +17,7 @@ String method = (String) request.getAttribute("method");
 		<col width="*">
 	</colgroup>
 	<tr>
-		<th>첨부파일</th>
+		<th class="lb">첨부파일</th>
 		<td class="indent5">
 			<div class="AXUpload5" id="secondary_layer"></div>
 			<div class="AXUpload5QueueBox_list" id="uploadQueueBox" style="height: 290px;"></div>
@@ -52,9 +52,7 @@ const secondary = new AXUpload5();
 	secondaryUploader();
 
 	function save() {
-		opener.
-<%=method%>
-	(data);
+		opener.<%=method%>(data);
 		self.close();
 	}
 </script>

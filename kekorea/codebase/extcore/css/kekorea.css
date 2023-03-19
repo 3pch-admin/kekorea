@@ -127,6 +127,16 @@ table.button-table {
 	margin-bottom: 5px;
 }
 
+table.button-table #psize {
+	width: 60px;
+}
+
+table.button-table img {
+	position: relative;
+	top: 3px;
+	cursor: pointer;
+}
+
 /** TD 태그 CSS **/
 td.left {
 	text-align: left;
@@ -394,7 +404,7 @@ table.view-table td {
 /** A link CSS **/
 a {
 	text-decoration: none !important;
-	color: black !Important;
+	/* 	color: black !Important; */
 }
 
 a:hover {
@@ -434,7 +444,7 @@ a:hover {
 	-moz-border-radius: 2px;
 	border-radius: 2px;
 	font-size: 14px;
-	height: 15px;
+	/* 	height: 15px; */
 	padding: 5px;
 }
 
@@ -464,6 +474,23 @@ a:hover {
 	border: 1px solid #a6a6a6;
 	padding: 0;
 	vertical-align: middle;
+}
+
+.button-table td select {
+	-webkit-border-radius: 2px 5px 5px;
+	-moz-border-radius: 2px 5px 5px;
+	border-radius: 2px 5px 5px;
+	font-size: 12px;
+	height: 26px;
+	line-height: 26px;
+	background: #fff;
+	margin: 0 auto;
+	box-sizing: content-box;
+	border: 1px solid #a6a6a6;
+	padding: 0;
+	vertical-align: middle;
+	position: relative;
+	bottom: 2px;
 }
 
 /** VIEW TABLE **/
@@ -500,7 +527,7 @@ table.view-table textarea {
 /** 헤더 아이콘 및 텍스트 **/
 div.header img {
 	position: relative;
-	top: 4px;
+	top: 3px;
 }
 
 div.header {
@@ -508,4 +535,44 @@ div.header {
 	margin-bottom: 2px;
 	font-weight: 800;
 	font-size: 12px;
+}
+
+/** 결재 진행상태 **/
+img.line {
+	position: relative;
+	top: 3px;
+}
+
+img.dot {
+	height: 23px;
+	width: 11px;
+}
+
+
+span.text {
+	position: relative;
+	display: inline-block;
+	top: 2px;
+}
+
+span.inactive {
+	z-index: 99999;
+	position: relative;
+	text-align: center !important;
+	height: 23px;
+	display: inline-block;
+	bottom: 7px;
+	font-size: 12px;
+	background-image: url("/Windchill/extcore/images/process-nbg.gif");
+}
+
+span.active {
+	z-index: 99999;
+	position: relative;
+	text-align: center !important;
+	height: 23px;
+	display: inline-block;
+	bottom: 7px;
+	font-size: 12px;
+	background-image: url("/Windchill/extcore/images/process-sbg.gif");
 }

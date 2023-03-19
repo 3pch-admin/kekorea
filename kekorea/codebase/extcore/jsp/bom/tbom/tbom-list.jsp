@@ -1,4 +1,9 @@
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -56,10 +61,20 @@
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('tbom-list');">
-					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('tbom-list');">
+					<!-- exportExcel 함수참고 -->
+					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('tbom-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('tbom-list');">
+					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
+					<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
@@ -72,14 +87,17 @@
 			let myGridID;
 			function _layout() {
 				return [ {
-					dataField : "projectType_name",
-					headerText : "작번유형",
+					dataField : "name",
+					headerText : "T-BOM 제목",
 					dataType : "string",
-					width : 80,
+					width : 300,
+					style : "underline",
 					filter : {
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true
+				// 구분1 칼럼 셀 세로 병합 실행
 				}, {
 					dataField : "info",
 					headerText : "",
@@ -91,17 +109,24 @@
 						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
 							"default" : "/Windchill/extcore/images/details.gif" // default
 						},
+						onClick : function(event) {
+							const oid = event.item.loid;
+							const url = getCallUrl("/partlist/info?oid=" + oid);
+							popup(url);
+						}
 					},
 					filter : {
 						showIcon : false,
 						inline : false
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
-					dataField : "name",
-					headerText : "T-BOM 제목",
+					dataField : "projectType_name",
+					headerText : "설계구분",
 					dataType : "string",
-					style : "left indent10 underline",
-					width : 300,
+					width : 80,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -129,6 +154,13 @@
 					headerText : "KEK 작번",
 					dataType : "string",
 					width : 100,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -137,6 +169,7 @@
 					dataField : "keNumber",
 					headerText : "KE 작번",
 					dataType : "string",
+					style : "underline",
 					width : 100,
 					filter : {
 						showIcon : true,
@@ -180,15 +213,13 @@
 						inline : true
 					},
 				}, {
-					dataField : "pdate",
+					dataField : "pdate_txt",
 					headerText : "발행일",
 					dataType : "string",
 					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true,
-						displayFormatValues : true
-					// 포맷팅 형태로 필터링 처리
 					},
 				}, {
 					dataField : "model",
@@ -208,18 +239,33 @@
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
-					dataField : "createdDate",
+					dataField : "createdDate_txt",
 					headerText : "작성일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
+					dataType : "string",
 					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true,
-						displayFormatValues : true
-					// 포맷팅 형태로 필터링 처리
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
+				}, {
+					dataField : "modifiedDate_txt",
+					headerText : "수정일",
+					dataType : "string",
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true,
+					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
 					dataField : "state",
 					headerText : "상태",
@@ -229,8 +275,11 @@
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				} ]
-			}
+			};
 
 			function createAUIGrid(columnLayout) {
 				const props = {
@@ -250,7 +299,10 @@
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-				// 그리드 공통속성 끝
+					// 그리드 공통속성 끝
+					enableCellMerge : true,
+					cellMergePolicy : "withNull",
+					fixedColumnCount : 1,
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
@@ -269,20 +321,11 @@
 				});
 			}
 
-			function auiCellClickHandler(event) {
-				const dataField = event.dataField;
-				if (dataField === "info") {
-
-				} else if (dataField === "name") {
-					const oid = event.item.oid;
-					const url = getCallUrl("/tbom/view?oid=" + oid);
-					popup(url);
-				}
-			}
-
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/tbom/list");
+				const psize = document.getElementById("psize").value;
+				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -292,6 +335,11 @@
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
+			}
+			
+			function create() {
+				const url = getCallUrl("/tbom/create");
+				popup(url);
 			}
 
 			// jquery 삭제를 해가는 쪽으로 한다..
@@ -309,9 +357,11 @@
 
 				// 사용자 검색 바인딩 see base.js finderUser function 
 				finderUser("creator");
-				
+
 				// 날짜 검색용 바인딩 see base.js twindate funtion
 				twindate("created");
+
+				selectbox("psize");
 			});
 
 			document.addEventListener("keydown", function(event) {

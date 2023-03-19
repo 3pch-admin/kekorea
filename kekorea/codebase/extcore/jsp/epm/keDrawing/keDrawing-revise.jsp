@@ -29,6 +29,7 @@
 		dataField : "name",
 		headerText : "DRAWING TITLE",
 		dataType : "string",
+		style : "left indent10",
 		editable : false
 	}, {
 		dataField : "keNumber",
@@ -44,14 +45,14 @@
 		editable : false
 	}, {
 		dataField : "version",
-		headerText : "버전",
+		headerText : "버전(개정전)",
 		dataType : "numeric",
 		width : 80,
 		formatString : "###0",
 		editable : false,
 	}, {
 		dataField : "next",
-		headerText : "개정버전",
+		headerText : "버전(개정후)",
 		dataType : "numeric",
 		width : 80,
 		formatString : "###0",
@@ -60,10 +61,9 @@
 		dataField : "note",
 		headerText : "개정사유",
 		dataType : "string",
-		width : 250
 	}, {
 		dataField : "primary",
-		headerText : "도면파일",
+		headerText : "개정도면",
 		dataType : "string",
 		width : 100,
 		renderer : {
@@ -102,7 +102,10 @@
 	function readyHandler() {
 		// 화면에서 받아온 데이터 그리드로 추가
 		for (let i = 0; i < data.length; i++) {
-			data[i].item.primary = "";
+			data[i].item = {
+				primary : "",
+				note : ""
+			}
 			AUIGrid.addRow(myGridID, data[i].item, "last");
 		}
 	}
@@ -175,25 +178,26 @@
 			const keNumberNext = item.keNumberNext;
 			const keNumber = item.keNumber;
 
-			if (keNumberNext !== keNumber) {
-				alert("개정전/후의 도번이 일치 하지 않습니다.\n데이터를 확인해주세요.");
+			if (isNull(item.primary)) {
+				AUIGrid.showToastMessage(myGridID, i, 7, "개정도면을 선택하세요.");
 				return false;
 			}
 
-			if (next === undefined) {
-				AUIGrid.showToastMessage(myGridID, i, 6, "개정도면을 선택하세요.");
+			if (keNumberNext !== keNumber) {
+				AUIGrid.showToastMessage(myGridID, i, 3, "개정전/후의 도번이 일치 하지 않습니다.");
 				return false;
 			}
 
 			if (version >= next) {
-				alert("개정후 도면의 버전이 개정전 도면의 저번이 겉거나 혹은 더 낮습니다.");
+				AUIGrid.showToastMessage(myGridID, i, 5, "개정후 도면의 버전이 개정전 도면의 버전과 같거나 혹은 더 낮습니다.");
 				return false;
 			}
 
 			if (isNull(item.note)) {
-				AUIGrid.showToastMessage(myGridID, i, 5, "개정사유를 입력하세요.");
+				AUIGrid.showToastMessage(myGridID, i, 6, "개정사유를 입력하세요.");
 				return false;
 			}
+
 		}
 
 		if (!confirm("개정 하시겠습니까?")) {
@@ -214,5 +218,10 @@
 
 	document.addEventListener("DOMContentLoaded", function() {
 		createAUIGrid(columns);
+		AUIGrid.resize(myGridID);
+	});
+
+	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID);
 	});
 </script>

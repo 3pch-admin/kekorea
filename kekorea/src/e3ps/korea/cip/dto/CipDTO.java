@@ -38,10 +38,7 @@ public class CipDTO {
 	private String customer_oid;
 	private String note;
 	private String creator;
-
-	@JsonIgnore
 	private Timestamp createdDate;
-
 	private String createdDate_txt;
 	private String preView;
 	private String icons;

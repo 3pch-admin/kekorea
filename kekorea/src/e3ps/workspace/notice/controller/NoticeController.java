@@ -2,6 +2,8 @@ package e3ps.workspace.notice.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.annotation.Description;
@@ -13,12 +15,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.doc.meeting.dto.MeetingDTO;
 import e3ps.doc.meeting.service.MeetingHelper;
 import e3ps.workspace.notice.dto.NoticeDTO;
-import e3ps.workspace.notice.service.NoticeHelper;;
+import e3ps.workspace.notice.service.NoticeHelper;
+import wt.org.WTUser;
+import wt.session.SessionHelper;;
 
 @Controller
 @RequestMapping(value = "/notice/**")
@@ -29,6 +36,8 @@ public class NoticeController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser)SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/workspace/notice/notice-list.jsp");
 		return model;
@@ -73,4 +82,35 @@ public class NoticeController extends BaseController {
 		}
 		return result;
 	}
+	
+	@Description(value = "공지사항 그리드 저장 - 관리자용")
+	@PostMapping(value = "/delete")
+	@ResponseBody
+	public Map<String, Object> delete(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
+			throws Exception {
+		ArrayList<LinkedHashMap<String, Object>> removeRows = params.get("removeRows");
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			ArrayList<NoticeDTO> removeRow = new ArrayList<>();
+			for (LinkedHashMap<String, Object> remove : removeRows) {
+				NoticeDTO dto = mapper.convertValue(remove, NoticeDTO.class);
+				removeRow.add(dto);
+			}
+
+			HashMap<String, List<NoticeDTO>> dataMap = new HashMap<>();
+			dataMap.put("removeRows", removeRow); // 삭제행
+
+			NoticeHelper.service.delete(dataMap);
+			result.put("result", SUCCESS);
+			result.put("msg", SAVE_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+
 }

@@ -55,7 +55,6 @@ public class StandardHistoryService extends StandardManager implements HistorySe
 						"projectReference.key.id", idx, idx_h);
 				QuerySpecUtils.toEqualsAnd(query, idx_h, History.class, "projectReference.key.id",
 						project.getPersistInfo().getObjectIdentifier().getId());
-				;
 				QueryResult qr = PersistenceHelper.manager.find(query);
 				History history = null;
 				if (qr.hasMoreElements()) {
@@ -76,15 +75,27 @@ public class StandardHistoryService extends StandardManager implements HistorySe
 					String code = editRow.get(header.get("key")); // option value....
 
 					if (!StringUtils.isNull(code)) {
-						System.out.println("code=" + code);
 						CommonCode optionCode = CommonCodeHelper.manager.getCommonCode(code, "OPTION");
 
-						QueryResult result = PersistenceHelper.manager.navigate(optionCode, "history",
-								HistoryOptionLink.class, false);
+						QuerySpec qs = new QuerySpec();
+						int idx_link = qs.appendClassList(HistoryOptionLink.class, true);
+						int _idx = qs.appendClassList(History.class, false);
+						QuerySpecUtils.toInnerJoin(qs, HistoryOptionLink.class, History.class, "roleAObjectRef.key.id",
+								WTAttributeNameIfc.ID_NAME, idx_link, _idx);
+						QuerySpecUtils.toEqualsAnd(qs, idx_link, HistoryOptionLink.class, "roleAObjectRef.key.id",
+								history.getPersistInfo().getObjectIdentifier().getId());
+						QuerySpecUtils.toEqualsAnd(qs, idx_link, HistoryOptionLink.class, "roleBObjectRef.key.id",
+								optionCode.getPersistInfo().getObjectIdentifier().getId());
+						QueryResult result = PersistenceHelper.manager.find(qs);
+
 						if (result.hasMoreElements()) {
-							HistoryOptionLink link = (HistoryOptionLink) result.nextElement();
-							link.setDataField(dataField);
-							PersistenceHelper.manager.modify(link);
+							Object[] obj = (Object[]) result.nextElement();
+							HistoryOptionLink link = (HistoryOptionLink) obj[0];
+							PersistenceHelper.manager.delete(link);
+							// 기존꺼지우고 새로 생성
+							HistoryOptionLink newLink = HistoryOptionLink.newHistoryOptionLink(history, optionCode);
+							newLink.setDataField(dataField);
+							PersistenceHelper.manager.save(newLink);
 						} else {
 							HistoryOptionLink link = HistoryOptionLink.newHistoryOptionLink(history, optionCode);
 							link.setDataField(dataField);

@@ -13,15 +13,15 @@ import wt.fc.Item;
 import wt.ownership.Ownable;
 import wt.util.WTException;
 
-@GenAsPersistable(superClass = Item.class, interfaces = { Ownable.class, ContentHolder.class },
+@GenAsPersistable(superClass = Item.class, interfaces = { ContentHolder.class, Ownable.class },
 
 		properties = {
 
-				@GeneratedProperty(name = "version", type = Integer.class, javaDoc = "버전", constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "version", type = Integer.class, javaDoc = "버전", initialValue = "1", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "latest", type = Boolean.class, javaDoc = "최신여부", initialValue = "true", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "note", type = String.class, constraints = @PropertyConstraints(upperLimit = 2000))
+				@GeneratedProperty(name = "note", type = String.class, javaDoc = "개정사유", constraints = @PropertyConstraints(upperLimit = 2000))
 
 		},
 

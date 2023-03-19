@@ -21,6 +21,26 @@ if ("keDrawing".equals(obj)) {
 	<script type="text/javascript">
 		let _myGridID;
 		const _columns = [ {
+			dataField : "name",
+			headerText : "도면일람표 제목",
+			dataType : "string",
+			width : 350,
+			style : "left indent10 underline",
+			renderer : {
+				type : "LinkRenderer",
+				baseUrl : "javascript",
+				jsCallback : function(rowIndex, columnIndex, value, item) {
+					const oid = item.oid;
+					const url = getCallUrl("/workOrder/view?oid=" + oid);
+					popup(url);
+				}
+			},
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+			cellMerge : true
+		}, {
 			dataField : "projectType_name",
 			headerText : "작번유형",
 			dataType : "string",
@@ -29,17 +49,6 @@ if ("keDrawing".equals(obj)) {
 				showIcon : true,
 				inline : true
 			},
-		}, {
-			dataField : "name",
-			headerText : "도면일람표 제목",
-			dataType : "string",
-			width : 350,
-			style : "left indent10 underline",
-			filter : {
-				showIcon : true,
-				inline : true
-			},
-			cellMerge : true
 		}, {
 			dataField : "customer_name",
 			headerText : "거래처",
@@ -116,15 +125,6 @@ if ("keDrawing".equals(obj)) {
 				inline : true
 			},
 		}, {
-			dataField : "state",
-			headerText : "상태",
-			dataType : "string",
-			width : 80,
-			filter : {
-				showIcon : true,
-				inline : true
-			},
-		}, {
 			dataField : "model",
 			headerText : "모델",
 			dataType : "string",
@@ -143,6 +143,18 @@ if ("keDrawing".equals(obj)) {
 				inline : true
 			},
 		}, {
+			dataField : "state",
+			headerText : "상태",
+			dataType : "string",
+			width : 80,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+			cellMerge : true,
+			mergeRef : "name",
+			mergePolicy : "restrict"
+		}, {
 			dataField : "creator",
 			headerText : "작성자",
 			dataType : "string",
@@ -151,6 +163,9 @@ if ("keDrawing".equals(obj)) {
 				showIcon : true,
 				inline : true
 			},
+			cellMerge : true,
+			mergeRef : "name",
+			mergePolicy : "restrict"
 		}, {
 			dataField : "createdDate_txt",
 			headerText : "작성일",
@@ -160,11 +175,14 @@ if ("keDrawing".equals(obj)) {
 				showIcon : true,
 				inline : true
 			},
+			cellMerge : true,
+			mergeRef : "name",
+			mergePolicy : "restrict"
 		}, {
-			dataField : "primary",
-			headerText : "도면파일",
+			dataField : "cover",
+			headerText : "표지",
 			dataType : "string",
-			width : 100,
+			width : 80,
 			editable : false,
 			renderer : {
 				type : "TemplateRenderer",
@@ -173,6 +191,25 @@ if ("keDrawing".equals(obj)) {
 				showIcon : false,
 				inline : false
 			},
+			cellMerge : true,
+			mergeRef : "name",
+			mergePolicy : "restrict"
+		}, {
+			dataField : "secondary",
+			headerText : "도면파일",
+			dataType : "string",
+			width : 80,
+			editable : false,
+			renderer : {
+				type : "TemplateRenderer",
+			},
+			filter : {
+				showIcon : false,
+				inline : false
+			},
+			cellMerge : true,
+			mergeRef : "name",
+			mergePolicy : "restrict"
 		} ]
 
 		function _createAUIGrid(columnLayout) {
@@ -187,14 +224,15 @@ if ("keDrawing".equals(obj)) {
 				enableFilter : true,
 				selectionMode : "multipleCells",
 				showInlineFilter : true,
-				enableRightDownFocus : true,
 				filterLayerWidth : 320,
 				filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				// 그리드 공통속성 끝
+				fixedColumnCount : 1,
+				cellMergePolicy : "withNull",
 				enableCellMerge : true,
 			}
 			_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-			AUIGrid.setGridData(_myGridID,	<%=data%>);
+			AUIGrid.setGridData(_myGridID, <%=data%>);
 		}
 	</script>
 </div>

@@ -1,4 +1,8 @@
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -48,10 +52,19 @@
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('agree-list');">
-					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('agree-list');">
+					<!-- exportExcel 함수참고 -->
+					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('agree-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('agree-list');">
 				</td>
 				<td class="right">
+					<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
@@ -125,10 +138,10 @@
 						inline : true
 					},
 				}, {
-					dataField : "material",
+					dataField : "point",
 					headerText : "진행단계",
 					dataType : "string",
-					width : 150,
+					width : 350,
 					filter : {
 						showIcon : false,
 						inline : false
@@ -191,13 +204,14 @@
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
-				
+
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
 				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					vScrollChangeHandler(event); // lazy loading
 				});
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
@@ -209,8 +223,11 @@
 				const url = getCallUrl("/workspace/agree");
 				// 검색 변수
 				const approvalTitle = document.getElementById("approvalTitle").value;
+				const psize = document.getElementById("psize").value;
 				//검색 변수 담기
 				params.approvalTitle = approvalTitle;
+				params.psize = psize;
+
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -222,13 +239,17 @@
 				});
 			}
 
+			function exportExcel() {
+				const exceptColumnFields = [ "reads", "point" ];
+				exportToExcel("검토함 리스트", "검토함", "검토함 리스트", exceptColumnFields, "<%=sessionUser.getFullName()%>");
+			}
 
 			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("agree-list");
 				// 컨텍스트 메뉴 시작
-				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
@@ -236,10 +257,11 @@
 				// 그리드 생성
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+
+				finderUser("submiter");
+				twindate("receive");
+				selectbox("psize");
 			});
-			
-			finderUser("submiter");
-			twindate("receive");
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기

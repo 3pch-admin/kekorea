@@ -17,13 +17,13 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "state", type = String.class, constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "state", type = String.class, javaDoc = "상태값", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "version", type = Integer.class, constraints = @PropertyConstraints(required = true), initialValue = "1"),
+				@GeneratedProperty(name = "version", type = Integer.class, javaDoc = "버전", constraints = @PropertyConstraints(required = true), initialValue = "1"),
 
-				@GeneratedProperty(name = "latest", type = Boolean.class, constraints = @PropertyConstraints(required = true), initialValue = "true"),
+				@GeneratedProperty(name = "latest", type = Boolean.class, javaDoc = "최신버전 여부", initialValue = "true", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "note", type = String.class, constraints = @PropertyConstraints(upperLimit = 2000))
+				@GeneratedProperty(name = "note", type = String.class, javaDoc = "개정사유", constraints = @PropertyConstraints(upperLimit = 2000))
 
 		},
 
@@ -35,7 +35,7 @@ import wt.util.WTException;
 
 								constraints = @PropertyConstraints(required = true)),
 
-						myRole = @MyRole(name = "kePart", cardinality = Cardinality.ONE))
+						myRole = @MyRole(name = "iteration", cardinality = Cardinality.ONE))
 
 		}
 

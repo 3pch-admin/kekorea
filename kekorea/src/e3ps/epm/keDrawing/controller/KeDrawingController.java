@@ -21,13 +21,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.doc.meeting.dto.MeetingTemplateDTO;
-import e3ps.doc.meeting.service.MeetingHelper;
+import e3ps.common.util.ContentUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
 import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
-import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 
@@ -173,6 +171,8 @@ public class KeDrawingController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
 		KeDrawingDTO dto = new KeDrawingDTO(keDrawing);
+		String[] primarys = ContentUtils.getPrimary(dto.getOid());
+		model.addObject("primarys", primarys);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/epm/keDrawing/keDrawing-view");
 		return model;
@@ -180,9 +180,9 @@ public class KeDrawingController extends BaseController {
 
 	@Description(value = "KE 도면 이력정보 페이지")
 	@GetMapping(value = "/history")
-	public ModelAndView history(@RequestParam String oid) throws Exception {
+	public ModelAndView history(@RequestParam String moid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		KeDrawingMaster master = (KeDrawingMaster) CommonUtils.getObject(oid);
+		KeDrawingMaster master = (KeDrawingMaster) CommonUtils.getObject(moid);
 		JSONArray list = KeDrawingHelper.manager.history(master);
 		model.addObject("list", list);
 		model.setViewName("popup:/epm/keDrawing/keDrawing-history");

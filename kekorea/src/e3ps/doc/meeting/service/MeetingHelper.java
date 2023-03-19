@@ -16,14 +16,12 @@ import e3ps.doc.meeting.dto.MeetingDTO;
 import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.project.Project;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import wt.doc.WTDocumentMaster;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
-import wt.query.ClassAttribute;
-import wt.query.OrderBy;
 import wt.query.QuerySpec;
-import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
 
@@ -35,6 +33,9 @@ public class MeetingHelper {
 	// 회의록이 저장되어지는 폴더 위치 상수
 	public static final String LOCATION = "/Default/프로젝트/회의록";
 
+	/**
+	 * 회의록 템플릿 조회
+	 */
 	public Map<String, Object> template(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<MeetingTemplateDTO> list = new ArrayList<>();
@@ -59,32 +60,78 @@ public class MeetingHelper {
 		return map;
 	}
 
+	/**
+	 * 회의록 조회
+	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		ArrayList<MeetingDTO> list = new ArrayList<>();
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Meeting.class, true);
-		int idx_link = query.appendClassList(MeetingProjectLink.class, true);
-		int idx_p = query.appendClassList(Project.class, true);
-
-		QuerySpecUtils.toInnerJoin(query, Meeting.class, MeetingProjectLink.class, WTAttributeNameIfc.ID_NAME,
-				"roleAObjectRef.key.id", idx, idx_link);
-		QuerySpecUtils.toInnerJoin(query, Project.class, MeetingProjectLink.class, WTAttributeNameIfc.ID_NAME,
-				"roleBObjectRef.key.id", idx_p, idx_link);
 
 		QuerySpecUtils.toOrderBy(query, idx, Meeting.class, Meeting.CREATE_TIMESTAMP, true);
-		QuerySpecUtils.toOrderBy(query, idx, Meeting.class, Meeting.NAME, false);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
+
+		JSONArray list = new JSONArray();
+
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			Meeting meeting = (Meeting) obj[0];
-			MeetingProjectLink link = (MeetingProjectLink) obj[1];
-			Project project = (Project) obj[2];
-			MeetingDTO column = new MeetingDTO(link);
-			list.add(column);
+
+			JSONObject node = new JSONObject();
+			node.put("oid", meeting.getPersistInfo().getObjectIdentifier().getStringValue());
+			node.put("name", meeting.getName());
+			QueryResult group = PersistenceHelper.manager.navigate(meeting, "project", MeetingProjectLink.class, false);
+			int isNode = 1;
+			JSONArray children = new JSONArray();
+			while (group.hasMoreElements()) {
+				MeetingProjectLink link = (MeetingProjectLink) group.nextElement();
+				MeetingDTO dto = new MeetingDTO(link);
+				if (isNode == 1) {
+					node.put("poid", dto.getPoid());
+					node.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
+					node.put("projectType_name", dto.getProjectType_name());
+					node.put("customer_name", dto.getCustomer_name());
+					node.put("install_name", dto.getInstall_name());
+					node.put("mak_name", dto.getMak_name());
+					node.put("detail_name", dto.getDetail_name());
+					node.put("kekNumber", dto.getKekNumber());
+					node.put("keNumber", dto.getKeNumber());
+					node.put("userId", dto.getUserId());
+					node.put("description", dto.getDescription());
+					node.put("state", dto.getState());
+					node.put("model", dto.getModel());
+					node.put("pdate_txt", dto.getPdate_txt());
+					node.put("creator", dto.getCreator());
+					node.put("createdDate_txt", dto.getCreatedDate_txt());
+				} else {
+					JSONObject data = new JSONObject();
+					data.put("name", dto.getName());
+					data.put("oid", dto.getOid());
+					data.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
+					data.put("poid", dto.getPoid());
+					data.put("projectType_name", dto.getProjectType_name());
+					data.put("customer_name", dto.getCustomer_name());
+					data.put("install_name", dto.getInstall_name());
+					data.put("mak_name", dto.getMak_name());
+					data.put("detail_name", dto.getDetail_name());
+					data.put("kekNumber", dto.getKekNumber());
+					data.put("keNumber", dto.getKeNumber());
+					data.put("userId", dto.getUserId());
+					data.put("description", dto.getDescription());
+					data.put("state", dto.getState());
+					data.put("model", dto.getModel());
+					data.put("pdate_txt", dto.getPdate_txt());
+					data.put("creator", dto.getCreator());
+					data.put("createdDate_txt", dto.getCreatedDate_txt());
+					children.add(data);
+				}
+				isNode++;
+			}
+			node.put("children", children);
+			list.add(node);
 		}
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());

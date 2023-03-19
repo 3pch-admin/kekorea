@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.ContentUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
 import lombok.Getter;
@@ -21,13 +22,14 @@ public class KeDrawingDTO {
 	private int lotNo;
 	private String creator;
 	private Timestamp createdDate;
-	private String created_txt;
+	private String createdDate_txt;
 	private String modifier;
 	private Timestamp modifiedDate;
-	private String modified_txt;
+	private String modifiedDate_txt;
 	private boolean latest;
 	private String primary;
 	private String note;
+	private String preView;
 
 	// 변수 담기용
 	private String primaryPath;
@@ -48,11 +50,12 @@ public class KeDrawingDTO {
 		setLatest(keDrawing.getLatest());
 		setCreator(master.getOwnership().getOwner().getFullName());
 		setCreatedDate(master.getCreateTimestamp());
-		setCreated_txt(CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+		setCreatedDate_txt(CommonUtils.getPersistableTime(master.getCreateTimestamp()));
 		setModifier(keDrawing.getOwnership().getOwner().getFullName());
 		setModifiedDate(keDrawing.getModifyTimestamp());
-		setModified_txt(CommonUtils.getPersistableTime(keDrawing.getModifyTimestamp()));
+		setModifiedDate_txt(CommonUtils.getPersistableTime(keDrawing.getModifyTimestamp()));
 		setPrimary(AUIGridUtils.primaryTemplate(keDrawing));
+		setPreView(ContentUtils.getPreViewBase64(keDrawing));
 		setNote(keDrawing.getNote());
 	}
 }

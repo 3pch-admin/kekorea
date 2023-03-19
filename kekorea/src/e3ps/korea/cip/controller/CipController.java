@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
+import e3ps.common.util.CommonUtils;
 import e3ps.korea.cip.dto.CipDTO;
 import e3ps.korea.cip.service.CipHelper;
 import wt.org.WTUser;
@@ -38,10 +39,10 @@ public class CipController extends BaseController {
 		JSONArray maks = CommonCodeHelper.manager.parseJson("MAK");
 		JSONArray customers = CommonCodeHelper.manager.parseJson("CUSTOMER");
 		JSONArray installs = CommonCodeHelper.manager.parseJson("INSTALL");
+		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		String userId = sessionUser.getName();
-		model.addObject("name", sessionUser.getFullName());
-		model.addObject("userId", userId);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("maks", maks);
 		model.addObject("installs", installs);
 		model.addObject("customers", customers);

@@ -88,23 +88,14 @@ public class StringUtils {
 	}
 
 	/**
-	 * @param value : String 값
-	 * @return String
-	 *         <p>
-	 *         parameter String 값이 null 일 경우 공백 return
-	 *         </p>
+	 * 값 체크후 null 값이면 공백 리턴
 	 */
 	public static String replaceToValue(String value) {
 		return replaceToValue(value, EPMTY_CHAR);
 	}
 
 	/**
-	 * @param value  : String 값
-	 * @param dValue : String 값이 null 일 경우 return 될 값
-	 * @return String
-	 *         <p>
-	 *         parameter String 값이 null 일 경우 parameter dValue 값 return
-	 *         </p>
+	 * 값 체크후 null 값이면 두번째 파라미터 리턴, 아닐경우 원래 값 리턴
 	 */
 	public static String replaceToValue(String value, String dValue) {
 		if (isNull(value)) {

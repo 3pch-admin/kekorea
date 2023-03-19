@@ -26,6 +26,8 @@ import e3ps.doc.meeting.MeetingTemplate;
 import e3ps.doc.meeting.dto.MeetingDTO;
 import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.doc.meeting.service.MeetingHelper;
+import wt.org.WTUser;
+import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/meeting/**")
@@ -36,6 +38,8 @@ public class MeetingController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/document/meeting/meeting-list.jsp");
 		return model;
@@ -61,6 +65,8 @@ public class MeetingController extends BaseController {
 	public ModelAndView template() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/document/meeting/meeting-template-list.jsp");
 		return model;
@@ -222,7 +228,7 @@ public class MeetingController extends BaseController {
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		MeetingProjectLink link = (MeetingProjectLink)CommonUtils.getObject(oid);
+		MeetingProjectLink link = (MeetingProjectLink) CommonUtils.getObject(oid);
 		MeetingDTO dto = new MeetingDTO(link);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/document/meeting/meeting-view");

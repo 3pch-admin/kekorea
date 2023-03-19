@@ -2,6 +2,7 @@ package e3ps.epm.keDrawing.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import e3ps.common.util.CommonUtils;
@@ -20,14 +21,25 @@ import net.sf.json.JSONArray;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.org.WTPrincipal;
 import wt.query.QuerySpec;
+import wt.queue.ProcessingQueue;
+import wt.queue.QueueHelper;
 import wt.services.ServiceFactory;
+import wt.session.SessionHelper;
 import wt.util.WTAttributeNameIfc;
 
 public class KeDrawingHelper {
 
 	public static final KeDrawingHelper manager = new KeDrawingHelper();
 	public static final KeDrawingService service = ServiceFactory.getService(KeDrawingService.class);
+
+	/**
+	 * 큐 관련 상수
+	 */
+	private static final String processQueueName = "PdfProcessQueue";
+	private static final String className = "e3ps.common.aspose.AsposeUtils";
+	private static final String methodName = "pdfToImage";
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		ArrayList<KeDrawingDTO> list = new ArrayList<>();
@@ -71,7 +83,7 @@ public class KeDrawingHelper {
 
 			query.appendOpenParen();
 			QuerySpecUtils.toBoolean(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
-			QuerySpecUtils.toBooleanOr(query, idx_m, getClass(), modifiedTo, latest);
+			QuerySpecUtils.toBooleanOr(query, idx, KeDrawing.class, KeDrawing.LATEST, false);
 			query.appendCloseParen();
 		}
 
@@ -105,11 +117,7 @@ public class KeDrawingHelper {
 	}
 
 	/**
-	 * 마지막 KE 도며인지 확인 하는 함수
-	 * 
-	 * @param master : KE도면 마스터 객체
-	 * @return boolean
-	 * @throws Exception
+	 * 마지막 KE 도면인지 확인 하는 함수
 	 */
 	public boolean isLast(KeDrawingMaster master) throws Exception {
 		QuerySpec query = new QuerySpec();
@@ -125,10 +133,6 @@ public class KeDrawingHelper {
 
 	/**
 	 * 현재버전의 KE 도면의 이전 버전의 도면을 가져오는 함수
-	 * 
-	 * @param keDrawing : 현재 버전의 KE 도면 객체
-	 * @return KeDrawing
-	 * @throws Exception
 	 */
 	public KeDrawing getPreKeDrawing(KeDrawing keDrawing) throws Exception {
 		QuerySpec query = new QuerySpec();
@@ -162,9 +166,9 @@ public class KeDrawingHelper {
 
 		for (KeDrawingDTO dto : editRow) {
 			String oid = dto.getOid();
-			KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid); // 원본 객체 가져오기..
-			String orgKeNumber = keDrawing.getMaster().getKeNumber();
-			int orgLotNo = keDrawing.getMaster().getLotNo();
+			KeDrawingMaster master = (KeDrawingMaster) CommonUtils.getObject(dto.getMoid());
+			String orgKeNumber = master.getKeNumber();
+			int orgLotNo = master.getLotNo();
 			String keNumber = dto.getKeNumber();
 			int lotNo = dto.getLotNo();
 
@@ -184,7 +188,7 @@ public class KeDrawingHelper {
 	}
 
 	/**
-	 * KE 도면 번호+버전+LOT NO으로 중복 있는지 확인
+	 * KE 도면 번호+LOT NO으로 중복 있는지 확인
 	 */
 	private boolean exist(String keNumber, int lotNo) throws Exception {
 		QuerySpec query = new QuerySpec();
@@ -243,7 +247,7 @@ public class KeDrawingHelper {
 		int idx = query.appendClassList(KeDrawing.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, KeDrawing.class, "masterReference.key.id",
 				master.getPersistInfo().getObjectIdentifier().getId());
-		QuerySpecUtils.toOrderBy(query, idx, KeDrawing.class, KeDrawing.VERSION, false);
+		QuerySpecUtils.toOrderBy(query, idx, KeDrawing.class, KeDrawing.VERSION, true);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -252,5 +256,22 @@ public class KeDrawingHelper {
 			list.add(dto);
 		}
 		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * PDF -> 미리보기 파일 생성 백그라운드 메소드 서버 실행
+	 */
+	public void postAfterAction(String oid, String pdfPath) throws Exception {
+		WTPrincipal principal = SessionHelper.manager.getPrincipal();
+		ProcessingQueue queue = (ProcessingQueue) QueueHelper.manager.getQueue(processQueueName, ProcessingQueue.class);
+
+		Hashtable<String, String> hash = new Hashtable<>();
+		hash.put("oid", oid);
+		hash.put("pdfPath", pdfPath);
+
+		Class[] argClasses = { Hashtable.class };
+		Object[] argObjects = { hash };
+
+		queue.addEntry(principal, methodName, className, argClasses, argObjects);
 	}
 }

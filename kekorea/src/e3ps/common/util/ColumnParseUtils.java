@@ -20,7 +20,7 @@ import e3ps.korea.cip.Cip;
 import e3ps.korea.cip.dto.CipDTO;
 import e3ps.part.beans.PartDTO;
 import e3ps.part.kePart.KePart;
-import e3ps.part.kePart.beans.KePartColumnData;
+import e3ps.part.kePart.beans.KePartDTO;
 import e3ps.project.Project;
 import e3ps.project.dto.ProjectDTO;
 import wt.doc.WTDocument;
@@ -60,7 +60,7 @@ public class ColumnParseUtils {
 				list.add(data);
 				// kepart
 			} else if (per instanceof KePart) {
-				KePartColumnData data = parse((KePart) per);
+				KePartDTO data = parse((KePart) per);
 				list.add(data);
 				// epm
 			} else if (per instanceof EPMDocument) {
@@ -91,8 +91,8 @@ public class ColumnParseUtils {
 		return new EpmDTO(per);
 	}
 
-	private static KePartColumnData parse(KePart per) throws Exception {
-		return new KePartColumnData(per);
+	private static KePartDTO parse(KePart per) throws Exception {
+		return new KePartDTO(per);
 	}
 
 	private static CategoryColumnData parse(Category per, CategoryItemsLink link) throws Exception {

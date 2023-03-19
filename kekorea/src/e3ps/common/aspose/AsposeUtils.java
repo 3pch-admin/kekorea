@@ -1,6 +1,9 @@
 package e3ps.common.aspose;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.sql.Timestamp;
@@ -8,8 +11,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 
+import javax.imageio.ImageIO;
+
+import org.apache.poi.hslf.blip.Bitmap;
+
 import com.aspose.pdf.Document;
 import com.aspose.pdf.License;
+import com.aspose.pdf.Page;
+import com.aspose.pdf.devices.PngDevice;
+import com.aspose.pdf.devices.Resolution;
 
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.QuerySpecUtils;
@@ -18,11 +28,13 @@ import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
+import wt.content.ContentItem;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.pom.Transaction;
 import wt.query.QuerySpec;
 import wt.util.WTAttributeNameIfc;
 import wt.util.WTProperties;
@@ -40,6 +52,9 @@ public class AsposeUtils {
 		license.setLicense(licPath);
 	}
 
+	/**
+	 * PDF 병합 기능
+	 */
 	public static void attachMergePdf(Hashtable<String, String> hash) throws Exception {
 
 		System.out.println("도면 일람표 PDF 병합 시작 = " + new Timestamp(new Date().getTime()));
@@ -112,7 +127,7 @@ public class AsposeUtils {
 		firstPdf.save(mergePdfPath);
 
 		ApplicationData dd = ApplicationData.newApplicationData(workOrder);
-		dd.setRole(ContentRoleType.PRIMARY);
+		dd.setRole(ContentRoleType.SECONDARY);
 		PersistenceHelper.manager.save(dd);
 		ContentServerHelper.service.updateContent(workOrder, dd, mergePdfPath);
 
@@ -124,5 +139,73 @@ public class AsposeUtils {
 			ff.delete();
 		}
 		System.out.println("도면 일람표 PDF 병합 종료 = " + new Timestamp(new Date().getTime()));
+	}
+
+	public static void pdfToImage(Hashtable<String, String> hash) throws Exception {
+		System.out.println("도면 일람표 PDF 이미지 변환 시작 = " + new Timestamp(new Date().getTime()));
+
+		String oid = hash.get("oid");
+		String pdfPath = hash.get("pdfPath");
+
+		KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
+
+		Document pdfDocument = null;
+		Transaction trs = new Transaction();
+
+		String thumbnailPath = WTProperties.getLocalProperties().getProperty("wt.temp") + File.separator + "thumbnail";
+		File thumbnailFolder = new File(thumbnailPath);
+		if (!thumbnailFolder.exists()) {
+			thumbnailFolder.mkdirs();
+		}
+
+		QueryResult result = ContentHelper.service.getContentsByRole(keDrawing, ContentRoleType.THUMBNAIL);
+		if (result.hasMoreElements()) {
+			ContentItem item = (ContentItem) result.nextElement();
+			ContentServerHelper.service.deleteContent(keDrawing, item);
+		}
+
+		File pdf = new File(pdfPath);
+		AsposeUtils.setAsposeLic();
+
+		pdfDocument = new Document(new FileInputStream(pdf));
+		String imagePath = thumbnailPath + File.separator + keDrawing.getMaster().getKeNumber() + ".png";
+
+		// PDF를 이미지로 변환합니다.
+		FileOutputStream imageStream = new FileOutputStream(imagePath);
+		// 페이지를 이미지로 저장합니다.
+		Resolution resolution = new Resolution(300);
+		PngDevice pngDevice = new PngDevice(resolution);
+		pngDevice.process(pdfDocument.getPages().get_Item(1), imageStream);
+
+		BufferedImage image = ImageIO.read(new File(imagePath));
+
+		Page pdfPage = pdfDocument.getPages().get_Item(1);
+		double pdfPageWidth = pdfPage.getPageInfo().getWidth();
+		double pdfPageHeight = pdfPage.getPageInfo().getHeight();
+
+		BufferedImage resizedImage = new BufferedImage((int) pdfPageWidth, (int) pdfPageHeight, image.getType());
+		Graphics2D g = resizedImage.createGraphics();
+		g.drawImage(image, 0, 0, (int) pdfPageWidth, (int) pdfPageHeight, null);
+		g.dispose();
+
+		// 크기가 변경된 이미지 파일을 저장합니다.
+		FileOutputStream outputStream = new FileOutputStream(imagePath);
+		ImageIO.write(resizedImage, "png", outputStream);
+		outputStream.close();
+
+		ApplicationData data = ApplicationData.newApplicationData(keDrawing);
+		data.setRole(ContentRoleType.THUMBNAIL);
+		PersistenceHelper.manager.save(data);
+		ContentServerHelper.service.updateContent(keDrawing, data, imagePath);
+
+		pdfDocument.close();
+
+		File[] files = thumbnailFolder.listFiles();
+		for (File ff : files) {
+			System.out.println("삭제되는 파일들 = " + ff.getName());
+			ff.delete();
+		}
+
+		System.out.println("도면 일람표 PDF 이미지 변환 종료 = " + new Timestamp(new Date().getTime()));
 	}
 }

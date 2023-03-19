@@ -1,3 +1,4 @@
+<%@page import="wt.org.WTUser"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="org.json.JSONArray"%>
@@ -6,8 +7,8 @@
 JSONArray maks = (JSONArray) request.getAttribute("maks");
 JSONArray installs = (JSONArray) request.getAttribute("installs");
 JSONArray customers = (JSONArray) request.getAttribute("customers");
-String userId = (String) request.getAttribute("userId");
-String name = (String) request.getAttribute("name");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
 <!DOCTYPE html>
 <html>
@@ -41,23 +42,59 @@ String name = (String) request.getAttribute("name");
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th>공지사항 제목</th>
+				<th>항목</th>
 				<td class="indent5">
 					<input type="text" name="fileName" class="width-200">
 				</td>
-				<th>설명</th>
+				<th>개선내용</th>
 				<td class="indent5">
 					<input type="text" name="description" class="width-200">
 				</td>
-				<th>작성자</th>
+				<th>개선책</th>
 				<td class="indent5">
-					<input type="text" name="creator" id="creator" class="width-200">
+					<input type="text" name="description" class="width-200">
 				</td>
-				<th>작성일</th>
+				<th>적용/미적용</th>
 				<td class="indent5">
-					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
-					~
-					<input type="text" name="createdTo" id="createdTo" class="width-100">
+					<select name="apply" id="apply" class="width-200">
+						<option value="">선택</option>
+						<option value="">적용</option>
+						<option value="">미적용</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>막종</th>
+				<td class="indent5">
+					<select name="apply" id="apply" class="width-200">
+						<option value="">선택</option>
+						<option value="">적용</option>
+						<option value="">미적용</option>
+					</select>
+				</td>
+				<th>막종상세</th>
+				<td class="indent5">
+					<select name="apply" id="apply" class="width-200">
+						<option value="">선택</option>
+						<option value="">적용</option>
+						<option value="">미적용</option>
+					</select>
+				</td>
+				<th>거래처</th>
+				<td class="indent5">
+					<select name="apply" id="apply" class="width-200">
+						<option value="">선택</option>
+						<option value="">적용</option>
+						<option value="">미적용</option>
+					</select>
+				</td>
+				<th>설치장소</th>
+				<td class="indent5">
+					<select name="apply" id="apply" class="width-200">
+						<option value="">선택</option>
+						<option value="">적용</option>
+						<option value="">미적용</option>
+					</select>
 				</td>
 			</tr>
 		</table>
@@ -66,30 +103,42 @@ String name = (String) request.getAttribute("name");
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('cip-list');">
-					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('cip-list');">
+					<!-- exportExcel 함수참고 -->
+					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('cip-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('cip-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 				</td>
 				<td class="right">
+					<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
 		</table>
 
 		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
-			const maks = <%=maks%>
-			const installs = <%=installs%>
-			const customers = <%=customers%>
+			const maks =
+		<%=maks%>
+			const installs =
+		<%=installs%>
+			const customers =
+		<%=customers%>
 			let recentGridItem = null;
-			let subListMap = {};
-			let success = true;
+			let detailMap = {};
+			let installMap = {};
 			const list = [ "적용완료", "일부적용", "미적용", "검토중" ];
 			function _layout() {
 				return [ {
@@ -97,18 +146,17 @@ String name = (String) request.getAttribute("name");
 					headerText : "항목",
 					dataType : "string",
 					width : 120,
-					editRenderer: {
-						type: "InputEditRenderer",
-
-						// ID는 고유값만 가능하도록 에디팅 유효성 검사
-						validator: function (oldValue, newValue, item, dataField) {
+					editRenderer : {
+						type : "InputEditRenderer",
+						validator : function(oldValue, newValue, item, dataField) {
 							let isValid = true;
-							if(newValue === "") {
+							if (newValue === "") {
 								isValid = false;
-								success = false;
 							}
-							// 리턴값은 Object 이며 validate 의 값이 true 라면 패스, false 라면 message 를 띄움
-							return { "validate": isValid, "message": "항목 값은 공백을 입력 할 수 없습니다." };
+							return {
+								"validate" : isValid,
+								"message" : "항목은 공백을 입력 할 수 없습니다."
+							};
 						}
 					},
 					filter : {
@@ -120,6 +168,19 @@ String name = (String) request.getAttribute("name");
 					headerText : "개선내용",
 					dataType : "string",
 					width : 300,
+					editRenderer : {
+						type : "InputEditRenderer",
+						validator : function(oldValue, newValue, item, dataField) {
+							let isValid = true;
+							if (newValue === "") {
+								isValid = false;
+							}
+							return {
+								"validate" : isValid,
+								"message" : "개선내용은 공백을 입력 할 수 없습니다."
+							};
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -129,6 +190,19 @@ String name = (String) request.getAttribute("name");
 					headerText : "개선책",
 					dataType : "string",
 					width : 300,
+					editRenderer : {
+						type : "InputEditRenderer",
+						validator : function(oldValue, newValue, item, dataField) {
+							let isValid = true;
+							if (newValue === "") {
+								isValid = false;
+							}
+							return {
+								"validate" : isValid,
+								"message" : "개선책 공백을 입력 할 수 없습니다."
+							};
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -149,12 +223,27 @@ String name = (String) request.getAttribute("name");
 							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
-					},					
+					},
 					editRenderer : {
-						type : "DropDownListRenderer",
-						showEditorBtn : false,
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true, // 자동완성 모드 설정
+						autoEasyMode : true,
+						matchFromFirst : false, // 처음부터 매치가 아닌 단순 포함되는 자동완성
 						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
 						list : list,
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							let isValid = false;
+							for (let i = 0, len = list.length; i < len; i++) { // keyValueList 있는 값만..
+								if (list[i] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						}
 					},
 					filter : {
 						showIcon : true,
@@ -176,16 +265,31 @@ String name = (String) request.getAttribute("name");
 							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
-					},					
+					},
 					editRenderer : {
-						type : "DropDownListRenderer",
-						showEditorBtn : false,
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true, // 자동완성 모드 설정
+						autoEasyMode : true,
+						matchFromFirst : false, // 처음부터 매치가 아닌 단순 포함되는 자동완성
 						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기						
 						list : maks, //key-value Object 로 구성된 리스트
 						keyField : "key", // key 에 해당되는 필드명
 						valueField : "value", // value 에 해당되는 필드명,
 						descendants : [ "detail_code" ], // 자손 필드들
-						descendantDefaultValues : [ "-" ], // 변경 시 자손들에게 기본값 지정
+						descendantDefaultValues : [ "" ], // 변경 시 자손들에게 기본값 지정
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							let isValid = false;
+							for (let i = 0, len = maks.length; i < len; i++) { // keyValueList 있는 값만..
+								if (maks[i]["value"] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						}
 					},
 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
 						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
@@ -217,16 +321,33 @@ String name = (String) request.getAttribute("name");
 							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
-					},					
+					},
 					editRenderer : {
-						type : "DropDownListRenderer",
-						showEditorBtn : false,
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true, // 자동완성 모드 설정
+						autoEasyMode : true,
+						matchFromFirst : false, // 처음부터 매치가 아닌 단순 포함되는 자동완성
 						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기						
 						keyField : "key", // key 에 해당되는 필드명
 						valueField : "value", // value 에 해당되는 필드명,
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							const param = item.mak_code;
+							const dd = detailMap[param]; // param으로 보관된 리스트가 있는지 여부
+							let isValid = false;
+							for (let i = 0, len = dd.length; i < len; i++) { // keyValueList 있는 값만..
+								if (dd[i]["value"] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						},
 						listFunction : function(rowIndex, columnIndex, item, dataField) {
-							var param = item.mak_code;
-							var dd = subListMap[param]; // param으로 보관된 리스트가 있는지 여부
+							const param = item.mak_code;
+							const dd = detailMap[param]; // param으로 보관된 리스트가 있는지 여부
 							if (dd === undefined) {
 								return [];
 							}
@@ -236,7 +357,7 @@ String name = (String) request.getAttribute("name");
 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
 						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
 						const param = item.mak_code;
-						const dd = subListMap[param]; // param으로 보관된 리스트가 있는지 여부
+						const dd = detailMap[param]; // param으로 보관된 리스트가 있는지 여부
 						if (dd === undefined)
 							return value;
 						for (let i = 0, len = dd.length; i < len; i++) {
@@ -267,14 +388,31 @@ String name = (String) request.getAttribute("name");
 							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
-					},					
+					},
 					editRenderer : {
-						type : "DropDownListRenderer",
-						showEditorBtn : false,
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true, // 자동완성 모드 설정
+						autoEasyMode : true,
+						matchFromFirst : false, // 처음부터 매치가 아닌 단순 포함되는 자동완성
 						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기						
 						list : customers, //key-value Object 로 구성된 리스트
 						keyField : "key", // key 에 해당되는 필드명
-						valueField : "value",
+						valueField : "value", // value 에 해당되는 필드명,
+						descendants : [ "install_code" ], // 자손 필드들
+						descendantDefaultValues : [ "" ], // 변경 시 자손들에게 기본값 지정						
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							let isValid = false;
+							for (let i = 0, len = customers.length; i < len; i++) { // keyValueList 있는 값만..
+								if (customers[i]["value"] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						}
 					},
 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
 						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
@@ -306,20 +444,48 @@ String name = (String) request.getAttribute("name");
 							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
-					},					
+					},
 					editRenderer : {
-						type : "DropDownListRenderer",
-						showEditorBtn : false,
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true, // 자동완성 모드 설정
+						autoEasyMode : true,
+						matchFromFirst : false, // 처음부터 매치가 아닌 단순 포함되는 자동완성
 						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기						
-						list : installs, //key-value Object 로 구성된 리스트
 						keyField : "key", // key 에 해당되는 필드명
-						valueField : "value",
+						valueField : "value", // value 에 해당되는 필드명,
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							const param = item.customer_code;
+							const dd = installMap[param]; // param으로 보관된 리스트가 있는지 여부
+							let isValid = false;
+							for (let i = 0, len = dd.length; i < len; i++) { // keyValueList 있는 값만..
+								if (dd[i]["value"] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						},
+						listFunction : function(rowIndex, columnIndex, item, dataField) {
+							const param = item.customer_code;
+							const dd = installMap[param]; // param으로 보관된 리스트가 있는지 여부
+							if (dd === undefined) {
+								return [];
+							}
+							return dd;
+						},
 					},
 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
 						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
-						for (let i = 0, len = installs.length; i < len; i++) {
-							if (installs[i]["key"] == value) {
-								retStr = installs[i]["value"];
+						const param = item.customer_code;
+						const dd = installMap[param]; // param으로 보관된 리스트가 있는지 여부
+						if (dd === undefined)
+							return value;
+						for (let i = 0, len = dd.length; i < len; i++) {
+							if (dd[i]["key"] == value) {
+								retStr = dd[i]["value"];
 								break;
 							}
 						}
@@ -353,7 +519,7 @@ String name = (String) request.getAttribute("name");
 						inline : false
 					},
 				}, {
-					dataField : "",
+					dataField : "preViewBtn",
 					headerText : "",
 					width : 100,
 					editable : false,
@@ -362,7 +528,7 @@ String name = (String) request.getAttribute("name");
 						labelText : "파일선택",
 						onclick : function(rowIndex, columnIndex, value, item) {
 							recentGridItem = item;
-							const oid = item.oid;
+							const oid = item._$uid;
 							const url = getCallUrl("/aui/preview?oid=" + oid + "&method=preView");
 							popup(url, 1000, 200);
 						}
@@ -384,7 +550,7 @@ String name = (String) request.getAttribute("name");
 						inline : false
 					},
 				}, {
-					dataField : "",
+					dataField : "iconsBtn",
 					headerText : "",
 					width : 100,
 					editable : false,
@@ -393,7 +559,7 @@ String name = (String) request.getAttribute("name");
 						labelText : "파일선택",
 						onclick : function(rowIndex, columnIndex, value, item) {
 							recentGridItem = item;
-							const oid = item.oid;
+							const oid = item._$uid;
 							const url = getCallUrl("/aui/secondary?oid=" + oid + "&method=setSecondary");
 							popup(url, 1000, 400);
 						}
@@ -407,6 +573,7 @@ String name = (String) request.getAttribute("name");
 					headerText : "작성자",
 					dataType : "string",
 					width : 100,
+					editable : false,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -417,41 +584,43 @@ String name = (String) request.getAttribute("name");
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
 					width : 100,
+					editable : false,
 					filter : {
 						showIcon : true,
 						inline : true,
 						displayFormatValues : true
-						// 포맷팅 형태로 필터링 처리
+					// 포맷팅 형태로 필터링 처리
 					},
 				} ]
 			}
 
 			function createAUIGrid(columns) {
 				const props = {
-						// 그리드 공통속성 시작
-						headerHeight : 30,
-						rowHeight : 30,
-						showRowNumColumn : true,
-						showRowCheckColumn : true,
-						showStateColumn : true,
-						rowNumHeaderText : "번호",
-						noDataMessage : "검색 결과가 없습니다.",
-						enableFilter : true,
-						selectionMode : "multipleCells",
-						enableMovingColumn : true,
-						showInlineFilter : true,
-						useContextMenu : true,
-						enableRightDownFocus : true,
-						filterLayerWidth : 320,
-						filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-						// 그리드 공통속성 끝
-						editable : true,
+					// 그리드 공통속성 시작
+					headerHeight : 30,
+					rowHeight : 30,
+					showRowNumColumn : true,
+					showRowCheckColumn : true,
+					showStateColumn : true,
+					rowNumHeaderText : "번호",
+					noDataMessage : "검색 결과가 없습니다.",
+					enableFilter : true,
+					selectionMode : "multipleCells",
+					enableMovingColumn : true,
+					showInlineFilter : true,
+					useContextMenu : true,
+					enableRightDownFocus : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+					// 그리드 공통속성 끝
+					editable : true,
+					enterKeyColumnBase : true
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
 				loadGridData();
-				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
+
 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
-				
+
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
@@ -464,6 +633,17 @@ String name = (String) request.getAttribute("name");
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
 				});
+
+				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+			}
+
+			function auiCellClickHandler(event) {
+				const dataField = event.dataField;
+				const oid = event.item.oid;
+				if (dataField === "preView") {
+					const url = getCallUrl("/aui/thumbnail?oid=" + oid);
+					popup(url);
+				}
 			}
 
 			function auiCellEditEndHandler(event) {
@@ -474,49 +654,40 @@ String name = (String) request.getAttribute("name");
 					const mak = item.mak_code;
 					const url = getCallUrl("/commonCode/getChildrens?parentCode=" + mak + "&codeType=MAK");
 					call(url, null, function(data) {
-						subListMap[mak] = data.list;
+						detailMap[mak] = data.list;
 					}, "GET");
 				}
-			}
 
-			function auiCellClickHandler(event) {
-				const oid = event.item.oid;
-				const dataField = event.dataField;
-				if (dataField == "preView" && oid.indexOf("Cip") > -1) {
-					const url = getCallUrl("/aui/thumbnail?oid=" + oid);
-					popup(url);
+				if (dataField === "customer_code") {
+					const customer = item.customer_code;
+					const url = getCallUrl("/commonCode/getChildrens?parentCode=" + customer + "&codeType=CUSTOMER");
+					call(url, null, function(data) {
+						installMap[customer] = data.list;
+					}, "GET");
 				}
 			}
 
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/cip/list");
+				const psize = document.getElementById("psize").value;
+				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
+				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
+					parent.closeLayer();
 				});
-			}
-
-			function auiAddRowHandler(event) {
-				const selected = AUIGrid.getSelectedIndex(myGridID);
-				if (selected.length <= 0) {
-					return;
-				}
-
-				const rowIndex = selected[0];
-				const colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "item");
-				AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex);
-				AUIGrid.openInputer(myGridID);
 			}
 
 			function preView(data) {
 				const preView = data.base64;
 				const preViewPath = data.fullPath;
 				AUIGrid.updateRowsById(myGridID, {
-					oid : recentGridItem.oid,
+					_$uid : recentGridItem._$uid,
 					preView : preView,
 					preViewPath : preViewPath
 				});
@@ -531,7 +702,7 @@ String name = (String) request.getAttribute("name");
 				}
 
 				AUIGrid.updateRowsById(myGridID, {
-					oid : recentGridItem.oid,
+					_$uid : recentGridItem._$uid,
 					secondaryPaths : arr,
 					icons : template
 				});
@@ -540,8 +711,6 @@ String name = (String) request.getAttribute("name");
 			// 행 추가
 			function addRow() {
 				const item = new Object();
-				item.createdDate = new Date();
-				item.creator = "<%=name%>";
 				item.latest = true;
 				AUIGrid.addRow(myGridID, item, "first");
 			}
@@ -556,17 +725,17 @@ String name = (String) request.getAttribute("name");
 			}
 
 			function save() {
-
-				// 저장전에 검증ㄷ되어야..
-				if (!confirm("저장 하시겠습니까?")) {
-					return false;
-				}
-
 				const url = getCallUrl("/cip/save");
 				const params = new Object();
 				const addRows = AUIGrid.getAddedRowItems(myGridID);
 				const removeRows = AUIGrid.getRemovedItems(myGridID);
 				const editRows = AUIGrid.getEditedRowItems(myGridID);
+
+				// 변경 점이 없는거 체크
+				if (addRows.length == 0 && removeRows.length == 0 && editRows.length == 0) {
+					alert("변경된 내용이 없습니다.");
+					return false;
+				}
 
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
@@ -588,19 +757,19 @@ String name = (String) request.getAttribute("name");
 						return false;
 					}
 					if (isNull(item.mak_code)) {
-						AUIGrid.showToastMessage(myGridID, i, 4, "막종 값을 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, i, 4, "막종을 선택하세요.");
 						return false;
 					}
 					if (isNull(item.detail_code)) {
-						AUIGrid.showToastMessage(myGridID, i, 5, "막종상세 값을 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, i, 5, "막종상세를 선택하세요.");
 						return false;
 					}
 					if (isNull(item.customer_code)) {
-						AUIGrid.showToastMessage(myGridID, i, 6, "거래처 값을 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, i, 6, "거래처를 선택하세요.");
 						return false;
 					}
 					if (isNull(item.install_code)) {
-						AUIGrid.showToastMessage(myGridID, i, 7, "설치장소 값을 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, i, 7, "설치장소를 선택하세요.");
 						return false;
 					}
 					if (isNull(item.preView)) {
@@ -612,18 +781,70 @@ String name = (String) request.getAttribute("name");
 						return false;
 					}
 				}
+
+				for (let i = 0; i < editRows.length; i++) {
+					const item = editRows[i];
+
+					if (isNull(item.item)) {
+						AUIGrid.showToastMessage(myGridID, i, 0, "항목 값은 공백을 입력 할 수 없습니다.");
+						return false;
+					}
+					if (isNull(item.improvements)) {
+						AUIGrid.showToastMessage(myGridID, i, 1, "개선내용 값은 공백을 입력 할 수 없습니다.");
+						return false;
+					}
+					if (isNull(item.improvement)) {
+						AUIGrid.showToastMessage(myGridID, i, 2, "개선책 값은 공백을 입력 할 수 없습니다.");
+						return false;
+					}
+					if (isNull(item.apply)) {
+						AUIGrid.showToastMessage(myGridID, i, 3, "적용/미적용 값을 선택하세요.");
+						return false;
+					}
+					if (isNull(item.mak_code)) {
+						AUIGrid.showToastMessage(myGridID, i, 4, "막종을 선택하세요.");
+						return false;
+					}
+					if (isNull(item.detail_code)) {
+						AUIGrid.showToastMessage(myGridID, i, 5, "막종상세를 선택하세요.");
+						return false;
+					}
+					if (isNull(item.customer_code)) {
+						AUIGrid.showToastMessage(myGridID, i, 6, "거래처를 선택하세요.");
+						return false;
+					}
+					if (isNull(item.install_code)) {
+						AUIGrid.showToastMessage(myGridID, i, 7, "설치장소를 선택하세요.");
+						return false;
+					}
+					if (isNull(item.preView)) {
+						AUIGrid.showToastMessage(myGridID, i, 9, "미리보기를 선택하세요.");
+						return false;
+					}
+					if (isNull(item.icons)) {
+						AUIGrid.showToastMessage(myGridID, i, 11, "첨부파일을 선택하세요.");
+						return false;
+					}
+				}
+
+				if (!confirm("저장 하시겠습니까?")) {
+					return false;
+				}
+
 				params.addRows = addRows;
 				params.removeRows = removeRows;
 				params.editRows = editRows;
-				console.log(params);
 				call(url, params, function(data) {
 					alert(data.msg);
 					if (data.result) {
 						loadGridData();
-					} else {
-						// 실패 햇을 경우 처리..
 					}
 				});
+			}
+
+			function exportExcel() {
+				const exceptColumnFields = [ "preView", "preViewBtn", "icons", "iconsBtn" ];
+				exportToExcel("CIP 리스트", "CIP", "CIP 리스트", exceptColumnFields, "<%=sessionUser.getFullName()%>");
 			}
 
 			// jquery 삭제를 해가는 쪽으로 한다..
@@ -631,7 +852,7 @@ String name = (String) request.getAttribute("name");
 				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("cip-list");
 				// 컨텍스트 메뉴 시작
-				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
@@ -639,11 +860,7 @@ String name = (String) request.getAttribute("name");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 
-				// 사용자 검색 바인딩 see base.js finderUser function 
-				finderUser("creator");
-				
-				// 날짜 검색용 바인딩 see base.js twindate funtion
-				twindate("created");
+				selectbox("psize");
 			});
 
 			document.addEventListener("keydown", function(event) {

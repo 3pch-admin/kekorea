@@ -13,6 +13,12 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 <%@include file="/extcore/include/auigrid.jsp"%>
 <table class="button-table">
 	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				회의록 정보
+			</div>
+		</td>
 		<td class="right">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
@@ -38,22 +44,24 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 			<jsp:include page="/extcore/include/project-include.jsp">
 				<jsp:param value="<%=dto.getOid()%>" name="oid" />
 				<jsp:param value="view" name="mode" />
+				<jsp:param value="false" name="multi" />
 				<jsp:param value="meeting" name="obj" />
+				<jsp:param value="180" name="height" />
 			</jsp:include>
 		</td>
 	</tr>
 	<tr>
 		<th>내용</th>
 		<td class="indent5" colspan="3">
-			<textarea name="description" id="description" rows="8" readonly="readonly"><%=dto.getContent()%></textarea>
+			<textarea name="description" id="description"  readonly="readonly"><%=dto.getContent()%></textarea>
 		</td>
 	</tr>
 	<tr>
 		<th>첨부파일</th>
 		<td class="indent5" colspan="3">
-			<jsp:include page="/extcore/include/secondary-include.jsp">
+			<jsp:include page="/extcore/include/attachment-view.jsp">
 				<jsp:param value="<%=dto.getOid()%>" name="oid" />
-				<jsp:param value="view" name="mode" />
+				<jsp:param value="secondary" name="mode" />
 			</jsp:include>
 		</td>
 	</tr>
@@ -78,10 +86,16 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 			}
 		});
 	}
-
+	
 	document.addEventListener("DOMContentLoaded", function() {
 		// DOM이 로드된 후 실행할 코드 작성
 		_createAUIGrid(_columns);
+		AUIGrid.resize(_myGridID);
+		loadTinymce();
+	});
+	
+
+	window.addEventListener("resize", function() {
 		AUIGrid.resize(_myGridID);
 	});
 </script>

@@ -1,4 +1,9 @@
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,7 +16,7 @@
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
@@ -43,13 +48,6 @@
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
-<!-- 					<input type="text" name="created" id="created" class="width-200"> -->
-<!-- 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" data-target="created"> -->
-<!-- 					data-target 달력 태그 ID -->
-<!-- 					<input type="hidden" name="createdFrom" id="createdFrom"> -->
-<!-- 					달력 태그 아이디값 + From -->
-<!-- 					<input type="hidden" name="createdTo" id="createdTo"> -->
-<!-- 					달력 태그 아이디값 + To -->
 					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
 					~
 					<input type="text" name="createdTo" id="createdTo" class="width-100">
@@ -61,18 +59,35 @@
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('notice-list');">
-					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('notice-list');">
+					<!-- exportExcel 함수참고 -->
+					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('notice-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('notice-list');">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
+					<%
+					if (isAdmin) {
+					%>
+					<input type="button" value="저장" title="저장" onclick="save();">
+					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
+					<%
+					}
+					%>
 				</td>
 				<td class="right">
+					<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
 		</table>
 
-		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 715px; border-top: 1px solid #3180c3;"></div>
+		<!-- 그리드 리스트 4행 670px 1행 35px 0행 600px -->
+		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
@@ -190,6 +205,40 @@
 				});
 			}
 
+			function save() {
+				const url = getCallUrl("/notice/delete");
+				const params = new Object();
+				const removeRows = AUIGrid.getRemovedItems(myGridID);
+				if (removeRows.length === 0) {
+					alert("변경된 내용이 없습니다.");
+					return false;
+				}
+
+				params.removeRows = removeRows;
+
+				if (!confirm("저장 하시겠습니까?")) {
+					return false;
+				}
+
+				parent.openLayer();
+				call(url, params, function(data) {
+					alert(data.msg);
+					parent.closeLayer();
+					if (data.result) {
+						loadGridData();
+					}
+				});
+			}
+
+			// 행 삭제
+			function deleteRow() {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				for (let i = checkedItems.length - 1; i >= 0; i--) {
+					const rowIndex = checkedItems[i].rowIndex;
+					AUIGrid.removeRow(myGridID, rowIndex);
+				}
+			}
+
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/notice/list");
@@ -200,12 +249,17 @@
 				const creator = document.getElementById("creator").value;
 				const createdFrom = document.getElementById("createdFrom").value;
 				const createdTo = document.getElementById("createdTo").value;
+
+				// 페이징 개수
+				const psize = document.getElementById("psize").value;
 				// 검색 변수 담기
 				params.name = name;
 				params.description = description;
 				params.creator = creator;
 				params.createdFrom = createdFrom;
 				params.createdTo = createdTo;
+				// 페이지 사이즈
+				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -222,10 +276,15 @@
 				popup(url, 1200, 500);
 			}
 
+			function exportExcel() {
+				const exceptColumnFields = [ "primary" ];
+				exportToExcel("공지사항 리스트", "공지사항", "공지사항 리스트", exceptColumnFields, "<%=sessionUser.getFullName()%>");
+			}
+
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("notice-list");
 				// 컨텍스트 메뉴 시작
-				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
@@ -233,11 +292,13 @@
 				// 그리드 생성
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+
+				finderUser("creator");
+				twindate("created");
+
+				selectbox("psize");
 			});
 
-			finderUser("creator");
-			twindate("created");
-			
 			document.addEventListener("keydown", function(event) {
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {

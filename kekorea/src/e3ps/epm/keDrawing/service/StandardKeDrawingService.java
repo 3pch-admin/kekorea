@@ -1,24 +1,34 @@
 package e3ps.epm.keDrawing.service;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import com.aspose.pdf.Document;
+import com.aspose.pdf.devices.PngDevice;
+import com.aspose.pdf.devices.Resolution;
+
+import e3ps.common.aspose.AsposeUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
 import e3ps.epm.keDrawing.dto.KeDrawingDTO;
+import e3ps.epm.workOrder.service.WorkOrderHelper;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
+import wt.content.ContentItem;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.ownership.Ownership;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
 import wt.util.WTException;
+import wt.util.WTProperties;
 
 public class StandardKeDrawingService extends StandardManager implements KeDrawingService {
 
@@ -37,6 +47,8 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 		try {
 			trs.start();
 
+			Ownership ownership = CommonUtils.sessionOwner();
+
 			for (KeDrawingDTO dto : addRows) {
 				String name = dto.getName();
 				String keNumber = dto.getKeNumber();
@@ -48,11 +60,11 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				master.setKeNumber(keNumber);
 				master.setName(name);
 				master.setLotNo(lotNo);
-				master.setOwnership(CommonUtils.sessionOwner());
+				master.setOwnership(ownership);
 				master = (KeDrawingMaster) PersistenceHelper.manager.save(master);
 
 				KeDrawing keDrawing = KeDrawing.newKeDrawing();
-				keDrawing.setOwnership(CommonUtils.sessionOwner());
+				keDrawing.setOwnership(ownership);
 				keDrawing.setVersion(version);
 				keDrawing.setMaster(master);
 				keDrawing.setLatest(true);
@@ -62,13 +74,16 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				dd.setRole(ContentRoleType.PRIMARY);
 				PersistenceHelper.manager.save(dd);
 				ContentServerHelper.service.updateContent(keDrawing, dd, primaryPath);
+
+				KeDrawingHelper.manager.postAfterAction(
+						keDrawing.getPersistInfo().getObjectIdentifier().getStringValue(), primaryPath);
 			}
 
 			for (KeDrawingDTO dto : removeRows) {
 				String oid = dto.getOid();
 				KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
 				KeDrawingMaster master = keDrawing.getMaster();
-				boolean isLast = KeDrawingHelper.manager.isLast(keDrawing.getMaster());
+				boolean isLast = KeDrawingHelper.manager.isLast(master);
 				if (isLast) {
 					PersistenceHelper.manager.delete(keDrawing);
 					PersistenceHelper.manager.delete(master);
@@ -102,6 +117,9 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 					ApplicationData dd = ApplicationData.newApplicationData(keDrawing);
 					dd.setRole(ContentRoleType.PRIMARY);
 					dd = (ApplicationData) ContentServerHelper.service.updateContent(keDrawing, dd, primaryPath);
+
+					KeDrawingHelper.manager.postAfterAction(
+							keDrawing.getPersistInfo().getObjectIdentifier().getStringValue(), primaryPath);
 				}
 			}
 
@@ -147,6 +165,9 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				ApplicationData dd = ApplicationData.newApplicationData(latest);
 				dd.setRole(ContentRoleType.PRIMARY);
 				dd = (ApplicationData) ContentServerHelper.service.updateContent(latest, dd, primaryPath);
+
+				KeDrawingHelper.manager.postAfterAction(latest.getPersistInfo().getObjectIdentifier().getStringValue(),
+						primaryPath);
 			}
 
 			trs.commit();

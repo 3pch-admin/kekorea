@@ -1,39 +1,37 @@
 package e3ps;
 
-import e3ps.admin.commonCode.CommonCode;
-import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.common.util.QuerySpecUtils;
-import e3ps.korea.history.History;
-import e3ps.project.Project;
-import e3ps.project.ProjectUserLink;
-import wt.doc.WTDocument;
-import wt.doc.WTDocumentMaster;
-import wt.fc.PersistenceHelper;
-import wt.fc.QueryResult;
-import wt.fc.ReferenceFactory;
-import wt.query.ClassAttribute;
-import wt.query.OrderBy;
-import wt.query.QuerySpec;
-import wt.query.SearchCondition;
-import wt.util.WTAttributeNameIfc;
+import java.io.File;
+import java.io.FileOutputStream;
+
+import com.aspose.pdf.Document;
+import com.aspose.pdf.devices.PngDevice;
+import com.aspose.pdf.devices.Resolution;
+
+import e3ps.common.aspose.AsposeUtils;
 
 public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-		CommonCode userTypeCode = CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE");
-		
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(ProjectUserLink.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, ProjectUserLink.USER_TYPE, "ELEC");
-		QueryResult result = PersistenceHelper.manager.find(query);
-		while(result.hasMoreElements()) {
-			Object[] obj =(Object[])result.nextElement();
-			ProjectUserLink link = (ProjectUserLink)obj[0];
-			link.setUserType(userTypeCode);
-			PersistenceHelper.manager.modify(link);
+//		PDDocument document = PDDocument.load(new File("D:" + File.separator + "2.pdf"));
+//		PDFRenderer renderer = new PDFRenderer(document);
+//		BufferedImage image = renderer.renderImage(0);
+//		ImageIO.write(image, "PNG", new File("D:" + File.separator + "output.png"));
+
+		AsposeUtils.setAsposeLic();
+		Document pdfDocument = new Document("D:" + File.separator + "2.pdf");
+
+		// PDF를 이미지로 변환합니다.
+		for (int pageCount = 1; pageCount <= pdfDocument.getPages().size(); pageCount++) {
+			FileOutputStream imageStream = new FileOutputStream("D:" + File.separator + "output_" + pageCount + ".png");
+			// 페이지를 이미지로 저장합니다.
+			Resolution resolution = new Resolution(300);
+			PngDevice pngDevice = new PngDevice(resolution);
+			pngDevice.process(pdfDocument.getPages().get_Item(pageCount), imageStream);
 		}
-		System.out.println("프로젝트 유저 링크 변경 = " + userTypeCode.getName());
+
+		pdfDocument.close();
+		System.out.println("종료,,,:");
 		System.exit(0);
 	}
 }

@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import e3ps.bom.partlist.PartListMasterProjectLink;
+import e3ps.bom.partlist.dto.PartListDTO;
 import e3ps.bom.tbom.TBOMData;
 import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.TBOMMasterDataLink;
@@ -18,8 +20,13 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.epm.keDrawing.KeDrawing;
+import e3ps.epm.keDrawing.KeDrawingMaster;
+import e3ps.part.kePart.KePart;
+import e3ps.part.kePart.KePartMaster;
 import e3ps.project.Project;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -35,30 +42,78 @@ public class TBOMHelper {
 	public static final TBOMHelper manager = new TBOMHelper();
 	public static final TBOMService service = ServiceFactory.getService(TBOMService.class);
 
+	/**
+	 * T-BOM 조회
+	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<TBOMMasterDTO> list = new ArrayList<>();
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(TBOMMaster.class, true);
-		int idx_link = query.appendClassList(TBOMMasterProjectLink.class, true);
-		int idx_p = query.appendClassList(Project.class, true);
-
-		QuerySpecUtils.toInnerJoin(query, TBOMMasterProjectLink.class, TBOMMaster.class, "roleAObjectRef.key.id",
-				WTAttributeNameIfc.ID_NAME, idx_link, idx);
-		QuerySpecUtils.toInnerJoin(query, TBOMMasterProjectLink.class, Project.class, "roleBObjectRef.key.id",
-				WTAttributeNameIfc.ID_NAME, idx_link, idx_p);
-
 		QuerySpecUtils.toOrderBy(query, idx, TBOMMaster.class, TBOMMaster.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
+
+		JSONArray list = new JSONArray();
+
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			TBOMMaster master = (TBOMMaster) obj[0];
-			Project project = (Project) obj[2];
-			TBOMMasterDTO column = new TBOMMasterDTO(master, project);
-			list.add(column);
+
+			JSONObject node = new JSONObject();
+			node.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+			node.put("name", master.getName());
+			QueryResult group = PersistenceHelper.manager.navigate(master, "project", TBOMMasterProjectLink.class,
+					false);
+			int isNode = 1;
+			JSONArray children = new JSONArray();
+			while (group.hasMoreElements()) {
+				TBOMMasterProjectLink link = (TBOMMasterProjectLink) group.nextElement();
+				TBOMDTO dto = new TBOMDTO(link);
+				if (isNode == 1) {
+					node.put("poid", dto.getPoid());
+					node.put("projectType_name", dto.getProjectType_name());
+					node.put("customer_name", dto.getCustomer_name());
+					node.put("install_name", dto.getInstall_name());
+					node.put("mak_name", dto.getMak_name());
+					node.put("detail_name", dto.getDetail_name());
+					node.put("kekNumber", dto.getKekNumber());
+					node.put("keNumber", dto.getKeNumber());
+					node.put("userId", dto.getUserId());
+					node.put("description", dto.getDescription());
+					node.put("state", dto.getState());
+					node.put("model", dto.getModel());
+					node.put("pdate_txt", dto.getPdate_txt());
+					node.put("creator", dto.getCreator());
+					node.put("createdDate_txt", dto.getCreatedDate_txt());
+					node.put("modifiedDate_txt", dto.getModifiedDate_txt());
+				} else {
+					JSONObject data = new JSONObject();
+					data.put("name", dto.getName());
+					data.put("oid", dto.getOid());
+					data.put("poid", dto.getPoid());
+					data.put("projectType_name", dto.getProjectType_name());
+					data.put("customer_name", dto.getCustomer_name());
+					data.put("install_name", dto.getInstall_name());
+					data.put("mak_name", dto.getMak_name());
+					data.put("detail_name", dto.getDetail_name());
+					data.put("kekNumber", dto.getKekNumber());
+					data.put("keNumber", dto.getKeNumber());
+					data.put("userId", dto.getUserId());
+					data.put("description", dto.getDescription());
+					data.put("state", dto.getState());
+					data.put("model", dto.getModel());
+					data.put("pdate_txt", dto.getPdate_txt());
+					data.put("creator", dto.getCreator());
+					data.put("createdDate_txt", dto.getCreatedDate_txt());
+					data.put("modifiedDate_txt", dto.getModifiedDate_txt());
+					children.add(data);
+				}
+				isNode++;
+			}
+			node.put("children", children);
+			list.add(node);
 		}
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
@@ -218,5 +273,33 @@ public class TBOMHelper {
 			}
 		}
 		return compareData;
+	}
+
+	/**
+	 * T-BOM 등록시 가져올 KE 부품들
+	 */
+	public Map<String, Object> getData(String number) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(KePart.class, true);
+		int idx_m = query.appendClassList(KePartMaster.class, true);
+		QuerySpecUtils.toInnerJoin(query, KePart.class, KePartMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_m);
+		QuerySpecUtils.toBooleanAnd(query, idx, KePart.class, KePart.LATEST, true);
+		QuerySpecUtils.toEqualsAnd(query, idx_m, KePartMaster.class, KePartMaster.KE_NUMBER, number);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			KePart kePart = (KePart) obj[0];
+			KePartMaster master = (KePartMaster) obj[1];
+			map.put("name", master.getName());
+			map.put("keNumber", master.getKeNumber());
+			map.put("code", master.getCode());
+			map.put("model", master.getModel());
+			map.put("lotNo", master.getLotNo());
+			map.put("oid", kePart.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("ok", true);
+		}
+		return map;
 	}
 }

@@ -5,6 +5,12 @@
 <%@include file="/extcore/include/auigrid.jsp"%>
 <table class="button-table">
 	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				도면일람표 등록
+			</div>
+		</td>
 		<td class="right">
 			<input type="button" value="등록" title="등록" onclick="create();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
@@ -71,6 +77,12 @@
 			type : "CheckBoxEditRenderer",
 		},
 	}, {
+		dataField : "dataType",
+		headerText : "파일유형",
+		dataType : "string",
+		width : 100,
+		editable : false,
+	}, {
 		dataField : "name",
 		headerText : "DRAWING TITLE",
 		dataType : "string",
@@ -80,7 +92,17 @@
 		dataField : "number",
 		headerText : "DWG. NO",
 		dataType : "string",
-		width : 200
+		width : 200,
+		editRenderer : {
+			type : "InputEditRenderer",
+			maxlength : 10,
+			regExp : "^[a-zA-Z0-9]+$",
+			autoUpperCase : true,
+		},
+		headerTooltip : {
+			show : true,
+			tooltipHtml : "품번 입력시 서버의 데이터를 가져와서 정보를 입력합니다.<br>같은 도번이 존재할시 데이터의 우선순위는 KEK의 도면 데이터를 가져옵니다."
+		},
 	}, {
 		dataField : "current",
 		headerText : "CURRENT VER",
@@ -96,8 +118,13 @@
 	}, {
 		dataField : "lotNo",
 		headerText : "LOT",
-		dataType : "string",
-		width : 100
+		dataType : "numeric",
+		width : 100,
+		formatString : "###0",
+		editRenderer : {
+			type : "InputEditRenderer",
+			onlyNumeric : true, // 0~9만 입력가능
+		},
 	}, {
 		dataField : "createdDate",
 		headerText : "등록일",
@@ -160,6 +187,7 @@
 						current : data.current,
 						lotNo : data.lotNo,
 						oid : data.oid,
+						dataType : "KE도면",
 						createdDate : new Date()
 					}
 					AUIGrid.updateRow(myGridID, item, event.rowIndex);
@@ -205,7 +233,9 @@
 
 	document.addEventListener("DOMContentLoaded", function() {
 		createAUIGrid(columns);
-		_createAUIGrid(_columns)
+		_createAUIGrid(_columns);
+		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
 	})
 
 	window.addEventListener("resize", function() {

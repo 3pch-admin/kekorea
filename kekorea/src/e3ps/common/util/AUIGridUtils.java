@@ -48,10 +48,6 @@ public class AUIGridUtils {
 
 	/**
 	 * AUIGrid 주 첨부파일 아이콘으로 표시 하기 위한 함수
-	 * 
-	 * @param holder : 주 첨부파일과 관련된 객체
-	 * @return String[]
-	 * @throws Exception
 	 */
 	public static String primaryTemplate(ContentHolder holder) throws Exception {
 		String template = "";
@@ -61,17 +57,13 @@ public class AUIGridUtils {
 			String ext = FileUtil.getExtension(data.getFileName());
 			String icon = CommonContentHelper.manager.getIcon(ext);
 			String url = ContentHelper.getDownloadURL(holder, data, false, data.getFileName()).toString();
-			template += "<a href=" + url + "><img src=" + icon + " style='position: relative; top: 2px;'></a>&nbsp;";
+			template += "<a href=" + url + "><img src=" + icon + " style='position: relative; top: 2px;'></a>";
 		}
 		return template;
 	}
 
 	/**
 	 * AUIGrid 첨부파일 아이콘으로 표시 하기 위한 함수
-	 * 
-	 * @param holder : 첨부파일과 관련된 객체
-	 * @return String
-	 * @throws Exception
 	 */
 	public static String secondaryTemplate(ContentHolder holder) throws Exception {
 		String template = "";
@@ -80,7 +72,8 @@ public class AUIGridUtils {
 			ApplicationData data = (ApplicationData) result.nextElement();
 			String ext = FileUtil.getExtension(data.getFileName());
 			String icon = CommonContentHelper.manager.getIcon(ext);
-			template += "<a><img src=" + icon + " style='position: relative; top: 2px;'></a>&nbsp;";
+			String url = ContentHelper.getDownloadURL(holder, data, false, data.getFileName()).toString();
+			template += "<a href=" + url + "><img src=" + icon + " style='position: relative; top: 2px;'></a>&nbsp;";
 		}
 		return template;
 	}
