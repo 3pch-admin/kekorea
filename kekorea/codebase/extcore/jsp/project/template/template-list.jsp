@@ -250,13 +250,15 @@
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+				
+				finderUser("modifier");
+				finderUser("creator");
+
+				twindate("created");
+				twindate("modified");
 			});
 
-			finderUser("modifier");
-			finderUser("creator");
 
-			twindate("created");
-			twindate("modified");
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기

@@ -389,7 +389,11 @@ JSONArray departments = new JSONArray(list);
 				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
+<<<<<<< HEAD
 					vScrollChangeHandler(event);
+=======
+					vScrollChangeHandler(event); // lazy loading
+>>>>>>> 3242d2b2bc67669b5d3106eb4b9632eeb7d04726
 				});
 
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
