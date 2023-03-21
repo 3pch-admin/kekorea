@@ -344,6 +344,7 @@
 				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					vScrollChangeHandler(event);
 				});
 
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
@@ -385,13 +386,15 @@
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+				
+				selectbox("state");
+				finderUser("creator");
+				finderUser("modifier");
+				twindate("created");
+				twindate("modified");
 			});
 
-			selectbox("state");
-			finderUser("creator");
-			finderUser("modifier");
-			twindate("created");
-			twindate("modified");
+			
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
