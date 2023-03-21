@@ -70,9 +70,7 @@ public class WorkOrderHelper {
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WorkOrder.class, true);
-
 		QuerySpecUtils.toOrderBy(query, idx, WorkOrder.class, WorkOrder.CREATE_TIMESTAMP, true);
-
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 

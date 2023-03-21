@@ -19,7 +19,10 @@ import org.springframework.web.servlet.ModelAndView;
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
+import e3ps.common.util.CommonUtils;
 import e3ps.epm.numberRule.service.NumberRuleHelper;
+import wt.org.WTUser;
+import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/numberRule/**")
@@ -35,7 +38,10 @@ public class NumberRuleController extends BaseController {
 		ArrayList<CommonCode> businessSectors = CommonCodeHelper.manager.getArrayCodeList("BUSINESS_SECTOR");
 		ArrayList<CommonCode> classificationWritingDepartment = CommonCodeHelper.manager
 				.getArrayCodeList("CLASSIFICATION_WRITING_DEPARTMENT");
-
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("drawingCompanys", drawingCompanys);
 		model.addObject("writtenDocuments", writtenDocuments);
 		model.addObject("businessSectors", businessSectors);

@@ -357,4 +357,30 @@ public class KeDrawingHelper {
 		}
 		return null;
 	}
+
+	/**
+	 * 도면 일람표랑 연결된 내용 있는지 확인
+	 */
+	public Map<String, Object> isWorkOrder(ArrayList<KeDrawingDTO> removeRow) throws Exception {
+		Map<String, Object> result = new HashMap<>();
+
+		for (KeDrawingDTO dto : removeRow) {
+			KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(dto.getOid());
+			QuerySpec query = new QuerySpec();
+			int idx_l = query.appendClassList(WorkOrderDataLink.class, true);
+			int idx = query.appendClassList(KeDrawing.class, false);
+			QuerySpecUtils.toInnerJoin(query, WorkOrderDataLink.class, KeDrawing.class, "roleBObjectRef.key.id",
+					WTAttributeNameIfc.ID_NAME, idx_l, idx);
+			QuerySpecUtils.toEqualsAnd(query, idx_l, WorkOrderDataLink.class, "roleBObjectRef.key.id",
+					keDrawing.getPersistInfo().getObjectIdentifier().getId());
+			QueryResult qr = PersistenceHelper.manager.find(query);
+			if (qr.size() > 0) {
+				result.put("workOrder", true);
+				result.put("msg", "도면일람표에 사용된 도면 입니다.\n도면번호 = " + dto.getKeNumber());
+				return result;
+			}
+		}
+		result.put("workOrder", false);
+		return result;
+	}
 }

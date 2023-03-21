@@ -276,7 +276,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						keyField : "key", // key 에 해당되는 필드명
 						valueField : "value", // value 에 해당되는 필드명,
 						descendants : [ "detail_code" ], // 자손 필드들
-						descendantDefaultValues : [ "" ], // 변경 시 자손들에게 기본값 지정
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
 							for (let i = 0, len = maks.length; i < len; i++) { // keyValueList 있는 값만..
@@ -399,7 +398,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						keyField : "key", // key 에 해당되는 필드명
 						valueField : "value", // value 에 해당되는 필드명,
 						descendants : [ "install_code" ], // 자손 필드들
-						descendantDefaultValues : [ "" ], // 변경 시 자손들에게 기본값 지정						
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
 							for (let i = 0, len = customers.length; i < len; i++) { // keyValueList 있는 값만..

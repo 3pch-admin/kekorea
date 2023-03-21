@@ -20,8 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.doc.meeting.dto.MeetingDTO;
-import e3ps.doc.meeting.service.MeetingHelper;
 import e3ps.workspace.notice.dto.NoticeDTO;
 import e3ps.workspace.notice.service.NoticeHelper;
 import wt.org.WTUser;

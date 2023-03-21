@@ -67,36 +67,31 @@ public class KoreaController extends BaseController {
 
 	@Description(value = "한국 생산 차트 페이지")
 	@GetMapping(value = "/chart")
-	public ModelAndView chart(@RequestParam String code, @RequestParam(required = false) String projectType)
-			throws Exception {
+	public ModelAndView chart(@RequestParam String code) throws Exception {
 		ModelAndView model = new ModelAndView();
-		CommonCode makCode = CommonCodeHelper.manager.getCommonCode(code, "MAK");
 		WTUser sessionUser = CommonUtils.sessionUser();
-		ArrayList<CommonCode> customers = CommonCodeHelper.manager.getArrayCodeList("CUSTOMER");
-		ArrayList<CommonCode> installs = OrgHelper.manager.getUserInstalls(sessionUser);
-		if (installs.size() == 0) {
-			installs = CommonCodeHelper.manager.getArrayCodeList("INSTALL");
-		}
 		boolean isAdmin = CommonUtils.isAdmin();
+		ArrayList<String> data = KoreaHelper.manager.data(code);
+		Map<String, ArrayList<String>> drillDown = KoreaHelper.manager.drillDown(code, data);
+		CommonCode makCode = CommonCodeHelper.manager.getCommonCode(code, "MAK");
+		model.addObject("makCode", makCode);
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
-		model.addObject("makCode", makCode);
-		model.addObject("projectType", projectType);
-		model.addObject("code", code);
-		model.addObject("customers", customers);
-		model.addObject("installs", installs);
+		model.addObject("data", data);
+		model.addObject("drillDown", drillDown);
 		model.setViewName("/extcore/jsp/korea/korea-chart.jsp");
 		return model;
 	}
 
 	@Description(value = "한국생산 탭 페이지")
-	@GetMapping(value = "/tabper")
-	public ModelAndView tabper() throws Exception {
+	@GetMapping(value = "/vtabper")
+	public ModelAndView vtabper() throws Exception {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = CommonUtils.sessionUser();
 		ArrayList<CommonCode> maks = OrgHelper.manager.getUserMaks(sessionUser);
 		model.addObject("maks", maks);
-		model.setViewName("/extcore/jsp/korea/korea-tabper.jsp");
+		model.setViewName("/extcore/jsp/korea/korea-vtabper.jsp");
 		return model;
 	}
 }

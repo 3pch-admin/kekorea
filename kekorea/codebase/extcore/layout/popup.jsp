@@ -5,9 +5,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><tiles:insertAttribute name="title" ignore="false"></tiles:insertAttribute></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
 <link rel="stylesheet" href="/Windchill/jsp/asset/ax5ui-mask/dist/ax5mask.css">
 <script type="text/javascript" src="/Windchill/jsp/asset/ax5core/dist/ax5core.min.js"></script>

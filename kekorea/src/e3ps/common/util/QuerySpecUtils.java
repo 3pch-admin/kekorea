@@ -5,14 +5,11 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import e3ps.epm.keDrawing.KeDrawing;
 import wt.enterprise.RevisionControlled;
 import wt.iba.definition.litedefinition.AttributeDefDefaultView;
 import wt.iba.definition.service.IBADefinitionHelper;
 import wt.iba.value.StringValue;
 import wt.org.WTUser;
-import wt.part.WTPart;
-import wt.part.WTPartMaster;
 import wt.query.ArrayExpression;
 import wt.query.ClassAttribute;
 import wt.query.ColumnExpression;
@@ -84,6 +81,9 @@ public class QuerySpecUtils {
 	 */
 	public static void toEqualsAnd(QuerySpec query, int idx, Class clazz, String column, Object value)
 			throws Exception {
+		if (value == null) {
+			return;
+		}
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -103,6 +103,9 @@ public class QuerySpecUtils {
 	 * 쿼리문에 equals (or) 조건 추가
 	 */
 	public static void toEqualsOr(QuerySpec query, int idx, Class clazz, String column, Object value) throws Exception {
+		if (value == null) {
+			return;
+		}
 		if (query.getConditionCount() > 0) {
 			query.appendOr();
 		}
@@ -123,6 +126,9 @@ public class QuerySpecUtils {
 	 */
 	public static void toLikeLeftOr(QuerySpec query, int idx, Class clazz, String column, String value)
 			throws Exception {
+		if (StringUtils.isNull(value)) {
+			return;
+		}
 		if (query.getConditionCount() > 0) {
 			query.appendOr();
 		}
@@ -138,6 +144,9 @@ public class QuerySpecUtils {
 	 */
 	public static void toLikeRightOr(QuerySpec query, int idx, Class clazz, String column, String value)
 			throws Exception {
+		if (StringUtils.isNull(value)) {
+			return;
+		}
 		if (query.getConditionCount() > 0) {
 			query.appendOr();
 		}
@@ -152,6 +161,9 @@ public class QuerySpecUtils {
 	 * 쿼리문에 '%' like '%' (or) 조건 추가
 	 */
 	public static void toLikeOr(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
+		if (StringUtils.isNull(value)) {
+			return;
+		}
 		if (query.getConditionCount() > 0) {
 			query.appendOr();
 		}
@@ -167,6 +179,9 @@ public class QuerySpecUtils {
 	 */
 	public static void toLikeLeftAnd(QuerySpec query, int idx, Class clazz, String column, String value)
 			throws Exception {
+		if (StringUtils.isNull(value)) {
+			return;
+		}
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -182,6 +197,9 @@ public class QuerySpecUtils {
 	 */
 	public static void toLikeRightAnd(QuerySpec query, int idx, Class clazz, String column, String value)
 			throws Exception {
+		if (StringUtils.isNull(value)) {
+			return;
+		}
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -283,6 +301,9 @@ public class QuerySpecUtils {
 	 */
 	public static void toTimeGreaterEqualsThan(QuerySpec query, int idx, Class clazz, String column, String time)
 			throws Exception {
+		if (StringUtils.isNull(time)) {
+			return;
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = sdf.parse(time, new ParsePosition(0));
 		Timestamp fromTime = new Timestamp(date.getTime());
@@ -294,6 +315,9 @@ public class QuerySpecUtils {
 	 */
 	public static void toTimeGreaterEqualsThan(QuerySpec query, int idx, Class clazz, String column, Timestamp time)
 			throws Exception {
+		if (time == null) {
+			return;
+		}
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -306,8 +330,11 @@ public class QuerySpecUtils {
 	 */
 	public static void toTimeLessEqualsThan(QuerySpec query, int idx, Class clazz, String column, String time)
 			throws Exception {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date date = sdf.parse(time, new ParsePosition(0));
+		if (StringUtils.isNull(time)) {
+			return;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = sdf.parse(time + " 23:59:59", new ParsePosition(0));
 		Timestamp toTime = new Timestamp(date.getTime());
 		toTimeLessEqualsThan(query, idx, clazz, column, toTime);
 	}
@@ -317,6 +344,9 @@ public class QuerySpecUtils {
 	 */
 	public static void toTimeLessEqualsThan(QuerySpec query, int idx, Class clazz, String column, Timestamp time)
 			throws Exception {
+		if (time == null) {
+			return;
+		}
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -329,6 +359,9 @@ public class QuerySpecUtils {
 	 */
 	public static void toTimeGreaterThan(QuerySpec query, int idx, Class clazz, String column, String time)
 			throws Exception {
+		if (StringUtils.isNull(time)) {
+			return;
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = sdf.parse(time, new ParsePosition(0));
 		Timestamp fromTime = new Timestamp(date.getTime());
@@ -340,6 +373,9 @@ public class QuerySpecUtils {
 	 */
 	public static void toTimeGreaterThan(QuerySpec query, int idx, Class clazz, String column, Timestamp time)
 			throws Exception {
+		if (time == null) {
+			return;
+		}
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -352,8 +388,11 @@ public class QuerySpecUtils {
 	 */
 	public static void toTimeLessThan(QuerySpec query, int idx, Class clazz, String column, String time)
 			throws Exception {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date date = sdf.parse(time, new ParsePosition(0));
+		if (StringUtils.isNull(time)) {
+			return;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = sdf.parse(time + " 23:59:59", new ParsePosition(0));
 		Timestamp toTime = new Timestamp(date.getTime());
 		toTimeLessThan(query, idx, clazz, column, toTime);
 	}
@@ -363,6 +402,9 @@ public class QuerySpecUtils {
 	 */
 	public static void toTimeLessThan(QuerySpec query, int idx, Class clazz, String column, Timestamp time)
 			throws Exception {
+		if (time == null) {
+			return;
+		}
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -375,6 +417,9 @@ public class QuerySpecUtils {
 	 */
 	public static void toNotEqualsAnd(QuerySpec query, int idx, Class clazz, String column, String value)
 			throws Exception {
+		if (StringUtils.isNull(value)) {
+			return;
+		}
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -426,7 +471,6 @@ public class QuerySpecUtils {
 		if (StringUtils.isNull(oid)) {
 			return;
 		}
-
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}
@@ -451,6 +495,9 @@ public class QuerySpecUtils {
 	}
 
 	public static void toIn(QuerySpec query, int idx, Class clazz, String column, Object value) throws Exception {
+		if (value == null) {
+			return;
+		}
 		if (query.getConditionCount() > 0) {
 			query.appendAnd();
 		}

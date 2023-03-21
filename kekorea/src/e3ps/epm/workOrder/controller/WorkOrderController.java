@@ -119,11 +119,11 @@ public class WorkOrderController extends BaseController {
 	}
 
 	@Description(value = "작업지시서 탭 페이지")
-	@GetMapping(value = "/tabper")
-	public ModelAndView tabper(@RequestParam String oid) throws Exception {
+	@GetMapping(value = "/vtabper")
+	public ModelAndView vtabper(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.addObject("oid", oid);
-		model.setViewName("popup:/epm/workOrder/workOrder-tabper");
+		model.setViewName("popup:/epm/workOrder/workOrder-vtabper");
 		return model;
 	}
 }

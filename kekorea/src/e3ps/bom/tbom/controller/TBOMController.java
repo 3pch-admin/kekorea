@@ -131,12 +131,12 @@ public class TBOMController extends BaseController {
 	}
 
 	@Description(value = "T-BOM 탭 페이지")
-	@GetMapping(value = "/tabper")
-	public ModelAndView tabper(@RequestParam String oid, @RequestParam String moid) throws Exception {
+	@GetMapping(value = "/vtabper")
+	public ModelAndView vtabper(@RequestParam String oid, @RequestParam String moid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.addObject("oid", oid);
 		model.addObject("moid", moid);
-		model.setViewName("popup:/bom/tbom/tbom-tabper");
+		model.setViewName("popup:/bom/tbom/tbom-vtabper");
 		return model;
 	}
 }

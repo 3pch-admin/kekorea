@@ -38,7 +38,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="creator" id="creator">
+					<input type="text" name="creator" id="creator" data-multi="false" data-method="setUser">
+					<input type="hidden" name="creatorOid" id="creatorOid">
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
@@ -52,7 +53,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<!-- exportExcel 함수참고 -->
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('notice-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('notice-list');">
@@ -219,13 +219,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const url = getCallUrl("/notice/list");
 				const name = document.getElementById("name").value;
 				const description = document.getElementById("description").value;
-				const creator = document.getElementById("creator").value;
+				const creatorOid = document.getElementById("creatorOid").value;
 				const createdFrom = document.getElementById("createdFrom").value;
 				const createdTo = document.getElementById("createdTo").value;
 				const psize = document.getElementById("psize").value;
 				params.name = name;
 				params.description = description;
-				params.creator = creator;
+				params.creatorOid = creatorOid;
 				params.createdFrom = createdFrom;
 				params.createdTo = createdTo;
 				params.psize = psize;

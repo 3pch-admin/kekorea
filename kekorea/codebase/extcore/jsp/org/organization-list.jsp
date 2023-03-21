@@ -114,12 +114,9 @@ JSONArray departments = new JSONArray(list);
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
-			const maks =
-		<%=maks%>
-			const installs =
-		<%=installs%>
-			const departments =
-		<%=departments%>
+			const maks = <%=maks%>
+			const installs = <%=installs%>
+			const departments = <%=departments%>
 			const dutys = [ "사장", "부사장", "PL", "TL" ];
 			function _layout() {
 				return [ {
@@ -321,6 +318,7 @@ JSONArray departments = new JSONArray(list);
 					headerText : "이메일",
 					dataType : "string",
 					width : 250,
+					style : "aui-left",
 					filter : {
 						showIcon : true,
 						inline : true
@@ -356,7 +354,7 @@ JSONArray departments = new JSONArray(list);
 			function createAUIGrid(columnLayout) {
 				// 그리드 속성
 				const props = {
-						// 그리드 공통속성 시작
+					// 그리드 공통속성 시작
 					headerHeight : 30,
 					rowHeight : 30,
 					showRowNumColumn : true,
@@ -379,28 +377,24 @@ JSONArray departments = new JSONArray(list);
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
-				
+
 				// 동적 수정여부 체크
-				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin );
-				
+				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
+
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
 				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
-<<<<<<< HEAD
 					vScrollChangeHandler(event);
-=======
-					vScrollChangeHandler(event); // lazy loading
->>>>>>> 3242d2b2bc67669b5d3106eb4b9632eeb7d04726
 				});
 
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
 				});
 			}
-			
+
 			function auiCellEditBegin(event) {
 				const item = event.item;
 				if("<%=sessionUser.getName()%>" !== item.id) {
