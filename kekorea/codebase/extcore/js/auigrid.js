@@ -231,6 +231,7 @@ function exportToExcel(fileName, headerName, sheetName, exceptColumnFields, crea
 		fileName: fileName,
 		progressBar: true,
 		sheetName: sheetName,
+		exportWithStyle: true,
 		exceptColumnFields: exceptColumnFields,
 		// 헤더 내용
 		headers: [{

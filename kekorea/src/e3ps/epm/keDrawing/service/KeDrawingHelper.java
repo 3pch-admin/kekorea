@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.ContentUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.epm.keDrawing.KeDrawing;
@@ -19,6 +21,7 @@ import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.project.Project;
 import net.sf.json.JSONArray;
 import wt.fc.PagingQueryResult;
+import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.WTPrincipal;
@@ -273,5 +276,85 @@ public class KeDrawingHelper {
 		Object[] argObjects = { hash };
 
 		queue.addEntry(principal, methodName, className, argClasses, argObjects);
+	}
+
+	/**
+	 * KE 도면 등록시 CREO, AUTOCAD 규격 체크 ..
+	 */
+	public Map<String, Object> numberValidate(ArrayList<KeDrawingDTO> addRow, ArrayList<KeDrawingDTO> editRow)
+			throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+
+		result.put("isExist", false);
+		return result;
+	}
+
+	/**
+	 * 도면 일람표에 사용된 데이터들 가져오기
+	 */
+	public JSONArray getData(WorkOrder workOrder) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WorkOrder.class, true);
+		int idx_l = query.appendClassList(WorkOrderDataLink.class, true);
+
+		QuerySpecUtils.toInnerJoin(query, WorkOrder.class, WorkOrderDataLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_l);
+		QuerySpecUtils.toEqualsAnd(query, idx_l, WorkOrderDataLink.class, "roleAObjectRef.key.id",
+				workOrder.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toOrderBy(query, idx_l, WorkOrderDataLink.class, WorkOrderDataLink.SORT, true);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WorkOrder order = (WorkOrder) obj[0];
+			WorkOrderDataLink link = (WorkOrderDataLink) obj[1];
+			Map<String, Object> map = new HashMap();
+
+			map.put("oid", order.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("dataType", link.getDataType());
+			map.put("lotNo", link.getLotNo());
+			map.put("current", link.getCurrent());
+			map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
+			map.put("note", link.getNote());
+			Persistable per = link.getData();
+			if (per instanceof KeDrawing) {
+				KeDrawing keDrawing = (KeDrawing) per;
+				map.put("name", keDrawing.getMaster().getName());
+				map.put("number", keDrawing.getMaster().getKeNumber());
+				map.put("rev", keDrawing.getVersion());
+				map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
+				map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
+				KeDrawing latest = getLatest(keDrawing);
+				map.put("latest", latest.getVersion());
+			}
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 최신 KE 도면
+	 */
+	public KeDrawing getLatest(KeDrawing keDrawing) throws Exception {
+		return getLatest(keDrawing.getMaster().getKeNumber());
+	}
+
+	public KeDrawing getLatest(String number) throws Exception {
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(KeDrawing.class, true);
+		int idx_m = query.appendClassList(KeDrawingMaster.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, KeDrawing.class, KeDrawingMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_m);
+		QuerySpecUtils.toEqualsAnd(query, idx_m, KeDrawingMaster.class, KeDrawingMaster.KE_NUMBER, number);
+		QuerySpecUtils.toBooleanAnd(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			KeDrawing latest = (KeDrawing) obj[0];
+			return latest;
+		}
+		return null;
 	}
 }

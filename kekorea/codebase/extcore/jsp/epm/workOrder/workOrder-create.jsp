@@ -77,6 +77,16 @@
 			type : "CheckBoxEditRenderer",
 		},
 	}, {
+		dataField : "preView",
+		headerText : "미리보기",
+		width : 80,
+		editable : false,
+		renderer : {
+			type : "ImageRenderer",
+			altField : null,
+			imgHeight : 34,
+		},
+	}, {
 		dataField : "dataType",
 		headerText : "파일유형",
 		dataType : "string",
@@ -124,6 +134,7 @@
 		editRenderer : {
 			type : "InputEditRenderer",
 			onlyNumeric : true, // 0~9만 입력가능
+			maxlength : 3,
 		},
 	}, {
 		dataField : "createdDate",
@@ -141,17 +152,16 @@
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-			headerHeight : 30, // 헤더높이
-			rowHeight : 30, // 행 높이
-			showRowNumColumn : true, // 번호 행 출력 여부
-			showStateColumn : true, // 상태표시 행 출력 여부
+			headerHeight : 30,
+			rowHeight : 30,
+			showRowNumColumn : true,
+			showRowCheckColumn : true,
+			showStateColumn : true,
+			rowNumHeaderText : "번호",
 			selectionMode : "multipleCells",
-			editable : true,
-			fillColumnSizeMode : true,
-			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
 			// 복사 후 편집 이벤트 발생하는 속성
 			$compaEventOnPaste : true,
-			showRowCheckColumn : true,
+			editable : true
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		readyHandler();
@@ -170,7 +180,7 @@
 	function readyHandler() {
 		const item = new Object();
 		item.createdDate = new Date();
-		AUIGrid.addRow(myGridID, item, "first");
+		AUIGrid.addRow(myGridID, item, "last"); // 끝에??
 	}
 
 	function auiCellEditEndHandler(event) {
@@ -188,6 +198,7 @@
 						lotNo : data.lotNo,
 						oid : data.oid,
 						dataType : "KE도면",
+						sort : event.rowIndex,
 						createdDate : new Date()
 					}
 					AUIGrid.updateRow(myGridID, item, event.rowIndex);
@@ -216,9 +227,20 @@
 		const params = new Object();
 		const addRows = AUIGrid.getAddedRowItems(myGridID); // 도면 일람표
 		const _addRows = AUIGrid.getAddedRowItems(_myGridID); // 프로젝트
+		
+		_addRows.sort(function(a, b) {
+			return a.sort - b.sort;
+		});
+
+		addRows.sort(function(a, b) {
+			return a.sort - b.sort;
+		});
+
 		params.name = document.getElementById("name").value;
 		params.addRows = addRows;
 		params._addRows = _addRows;
+		params.secondarys = toArray("secondarys");
+		console.log(params);
 		const url = getCallUrl("/workOrder/create");
 		call(url, params, function(data) {
 			alert(data.msg);

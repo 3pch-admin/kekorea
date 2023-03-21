@@ -6,20 +6,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 %>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<table class="button-table">
-	<tr>
-		<td class="left">
-			<div class="header">
-				<img src="/Windchill/extcore/images/header.png">
-				KE 도면 버전이력
-			</div>
-		</td>
-		<td class="right">
-			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
-		</td>
-	</tr>
-</table>
-<div id="_grid_wrap" style="height: 440px; border-top: 1px solid #3180c3;"></div>
+<div id="grid_wrap" style="height: 550px; border-top: 1px solid #3180c3;"></div>
 
 <script type="text/javascript">
 	let myGridID;
@@ -158,15 +145,11 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 		// 그리드 공통속성 끝
 		}
-		myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
+		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		AUIGrid.setGridData(myGridID, <%=list%>);
 	}
-
-	document.addEventListener("DOMContentLoaded", function() {
-		createAUIGrid(columns);
-		AUIGrid.resize(myGridID);
-	});
-
+	createAUIGrid(columns);
+	AUIGrid.resize(myGridID);
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
 	});

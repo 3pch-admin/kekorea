@@ -49,18 +49,16 @@
 		}
 
 		const params = new Object();
-		const content = tinymce.activeEditor.getContent();
 		const url = getCallUrl("/notice/create");
 		params.name = document.getElementById("name").value;
-		params.description = content;
+		params.description = document.getElementById("description").value;
 		params.primarys = toArray("primarys");
+		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
-			} else {
-				// 실패시 처리할 부분..
 			}
 		})
 	}

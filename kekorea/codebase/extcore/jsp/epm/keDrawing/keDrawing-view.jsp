@@ -7,29 +7,12 @@ String[] primarys = (String[]) request.getAttribute("primarys");
 %>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- hidden -->
-<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
-<input type="hidden" name="moid" id="moid" value="<%=dto.getMoid()%>">
-<table class="button-table">
-	<tr>
-		<td class="left">
-			<div class="header">
-				<img src="/Windchill/extcore/images/header.png">
-				KE 도면 정보
-			</div>
-		</td>
-		<td class="right">
-			<input type="button" value="버전이력" title="버전이력" onclick="history();">
-			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
-		</td>
-	</tr>
-</table>
-
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid() %>">
 <table class="view-table">
 	<colgroup>
-		<col width="130">
+		<col width="150">
 		<col width="600">
-		<col width="130">
+		<col width="150">
 		<col width="600">
 		<col width="300">
 	</colgroup>
@@ -86,30 +69,13 @@ String[] primarys = (String[]) request.getAttribute("primarys");
 <jsp:include page="/extcore/include/workOrder-include.jsp">
 	<jsp:param value="<%=dto.getOid()%>" name="oid" />
 	<jsp:param value="keDrawing" name="obj" />
-	<jsp:param value="330" name="height" />
+	<jsp:param value="340" name="height" />
 </jsp:include>
 
-
 <script type="text/javascript">
-	function history() {
-		const oid = document.getElementById("oid").value;
-		const url = getCallUrl("/keDrawing/history?oid=" + oid);
-		popup(url, 1100, 500);
-	}
-
 	function preView() {
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/aui/thumbnail?oid=" + oid);
 		popup(url);
 	}
-
-	document.addEventListener("DOMContentLoaded", function() {
-		// DOM이 로드된 후 실행할 코드 작성
-		_createAUIGrid(_columns);
-		AUIGrid.resize(_myGridID);
-	});
-
-	window.addEventListener("resize", function() {
-		AUIGrid.resize(_myGridID);
-	});
 </script>

@@ -27,6 +27,15 @@ import wt.session.SessionHelper;
 @RequestMapping(value = "/korea/**")
 public class KoreaController extends BaseController {
 
+	@Description(value = "한국 생산 리스트+차트 프레임 페이지")
+	@GetMapping(value = "/info")
+	public ModelAndView info(@RequestParam String code) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("code", code);
+		model.setViewName("/extcore/jsp/korea/korea-info.jsp");
+		return model;
+	}
+
 	@Description(value = "한국 생산 차트 리스트 페이지")
 	@GetMapping(value = "/list")
 	public ModelAndView list(@RequestParam String code) throws Exception {
@@ -77,6 +86,17 @@ public class KoreaController extends BaseController {
 		model.addObject("customers", customers);
 		model.addObject("installs", installs);
 		model.setViewName("/extcore/jsp/korea/korea-chart.jsp");
+		return model;
+	}
+
+	@Description(value = "한국생산 탭 페이지")
+	@GetMapping(value = "/tabper")
+	public ModelAndView tabper() throws Exception {
+		ModelAndView model = new ModelAndView();
+		WTUser sessionUser = CommonUtils.sessionUser();
+		ArrayList<CommonCode> maks = OrgHelper.manager.getUserMaks(sessionUser);
+		model.addObject("maks", maks);
+		model.setViewName("/extcore/jsp/korea/korea-tabper.jsp");
 		return model;
 	}
 }

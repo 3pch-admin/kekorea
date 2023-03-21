@@ -15,9 +15,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
+import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -102,6 +104,26 @@ public class WorkOrderController extends BaseController {
 		WorkOrderDTO dto = new WorkOrderDTO(workOrder);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/epm/workOrder/workOrder-view");
+		return model;
+	}
+	
+	@Description(value = "도면 일람표에 등록된 도면 정보 페이지")
+	@GetMapping(value = "/data")
+	public ModelAndView data(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
+		JSONArray list = KeDrawingHelper.manager.getData(workOrder);
+		model.addObject("list", list);
+		model.setViewName("popup:/epm/workOrder/workOrder-data");
+		return model;
+	}
+
+	@Description(value = "작업지시서 탭 페이지")
+	@GetMapping(value = "/tabper")
+	public ModelAndView tabper(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("oid", oid);
+		model.setViewName("popup:/epm/workOrder/workOrder-tabper");
 		return model;
 	}
 }

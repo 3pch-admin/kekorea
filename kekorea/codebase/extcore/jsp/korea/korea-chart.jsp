@@ -1,12 +1,20 @@
+<%@page import="java.util.Enumeration"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.korea.service.KoreaHelper"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	String code = (String)request.getAttribute("code");
-	CommonCode makCode = (CommonCode) request.getAttribute("makCode");
-	ArrayList<CommonCode> customers = (ArrayList<CommonCode>) request.getAttribute("customers");
-	ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("installs");
+String code = (String) request.getAttribute("code");
+CommonCode makCode = (CommonCode) request.getAttribute("makCode");
+ArrayList<CommonCode> customers = (ArrayList<CommonCode>) request.getAttribute("customers");
+ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("installs");
+
+Enumeration en = request.getParameterNames();
+while(en.hasMoreElements()){
+	String key= (String)en.nextElement();
+	System.out.println(key);
+}
+
 %>
 <!DOCTYPE html>
 <html>
@@ -19,9 +27,8 @@
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
 </head>
 <body>
-<div id="container" style="height: 430px;"></div>
-<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
-		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
+	<div id="container" style="height: 380px;"></div>
+
 	<script type="text/javascript">
 //Create the chart
 Highcharts.chart('container', {

@@ -201,8 +201,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/kePart/view?oid=" + oid);
-							popup(url, 1300, 650);
+							const moid = item.moid;
+							const url = getCallUrl("/kePart/tabper?oid=" + oid + "&moid=" + moid);
+							popup(url, 1400, 700);
 						}
 					},
 					editRenderer : {
@@ -211,16 +212,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						regExp : "^[a-zA-Z0-9]+$",
 						autoUpperCase : true,
 						maxlength : 10,
-					// 						validator : function(oldValue, newValue, item) {
-					// 							var isValid = false;
-					// 							if (newValue && newValue.length == 10) {
-					// 								isValid = true;
-					// 							}
-					// 							return {
-					// 								"validate" : isValid,
-					// 								"message" : "품번의 값은 반드시 10자리로 작성이 되어야합니다."
-					// 							};
-					// 						}						
 					},
 					filter : {
 						showIcon : true,
@@ -617,10 +608,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			function revise() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				if (checkedItems.length == 0) {
-					alert("개정할 도면을 선택하세요.");
+					alert("개정할 부품을 선택하세요.");
 					return false;
 				}
 
+				console.log(checkedItems);
 				for (let i = 0; i < checkedItems.length; i++) {
 					const oid = checkedItems[i].item.oid;
 					const latest = checkedItems[i].item.latest;
@@ -642,7 +634,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						return false;
 					}
 				}
-
+				console.log(checkedItems);
 				const url = getCallUrl("/kePart/revise");
 				const panel = popup(url, 1600, 550);
 				panel.list = checkedItems;

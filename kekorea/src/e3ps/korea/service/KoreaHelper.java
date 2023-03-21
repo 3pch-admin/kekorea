@@ -29,26 +29,22 @@ public class KoreaHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		WTUser sessionUser = CommonUtils.sessionUser();
-		ArrayList<CommonCode> maks = OrgHelper.manager.getUserMaks(sessionUser);
-		if (maks.size() == 0) {
-			maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
-		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<ProjectDTO> list = new ArrayList<ProjectDTO>();
+		String code = (String) params.get("code");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);
 
-		query.appendOpenParen();
-		for (CommonCode mak : maks) {
-			QuerySpecUtils.toEqualsOr(query, idx, Project.class, "makReference.key.id",
-					mak.getPersistInfo().getObjectIdentifier().getId());
-		}
-		query.appendCloseParen();
+		CommonCode makCode = CommonCodeHelper.manager.getCommonCode(code, "MAK");
+		QuerySpecUtils.toEqualsOr(query, idx, Project.class, "makReference.key.id",
+				makCode.getPersistInfo().getObjectIdentifier().getId());
 
 		ClassAttribute ca = new ClassAttribute(Project.class, Project.P_DATE);
 		OrderBy by = new OrderBy(ca, false);
 		query.appendOrderBy(by, new int[] { idx });
+
+		System.out.println(query);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();

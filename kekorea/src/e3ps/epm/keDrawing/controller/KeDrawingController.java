@@ -97,6 +97,9 @@ public class KeDrawingController extends BaseController {
 			dataMap.put("editRows", editRow); // 수정행
 			dataMap.put("removeRows", removeRow); // 삭제행
 
+			// creo, auto cad check..
+			result = KeDrawingHelper.manager.numberValidate(addRow, editRow);
+
 			result = KeDrawingHelper.manager.isValid(addRow, editRow);
 			// true 중복있음
 			if ((boolean) result.get("isExist")) {
@@ -163,6 +166,16 @@ public class KeDrawingController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "KE 도면 탭 페이지")
+	@GetMapping(value = "/tabper")
+	public ModelAndView tabper(@RequestParam String oid, @RequestParam String moid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("oid", oid);
+		model.addObject("moid", moid);
+		model.setViewName("popup:/epm/keDrawing/keDrawing-tabper");
+		return model;
 	}
 
 	@Description(value = "KE 도면 정보 페이지")

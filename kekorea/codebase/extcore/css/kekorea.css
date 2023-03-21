@@ -401,6 +401,10 @@ table.view-table td {
 	border-right: 1px solid #a6a6a6;
 }
 
+table.view-table td a {
+	color: blue !important;
+}
+
 /** A link CSS **/
 a {
 	text-decoration: none !important;
@@ -436,7 +440,7 @@ a:hover {
 }
 
 /** INPUT CSS **/
-.create-table td input[type='text'], .search-table td input[type='text'] {
+.create-table td input[type='text'], .search-table td input[type='text'], .button-table td input[type='text'] {
 	border: 1px solid #a6a6a6;
 	background: #fff;
 	color: #333;
@@ -548,7 +552,6 @@ img.dot {
 	width: 11px;
 }
 
-
 span.text {
 	position: relative;
 	display: inline-block;
@@ -575,4 +578,20 @@ span.active {
 	bottom: 7px;
 	font-size: 12px;
 	background-image: url("/Windchill/extcore/images/process-sbg.gif");
+}
+
+/** 로딩 레이어 CSS **/
+div#loading_layer {
+	z-index: 9999999;
+	display: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+/** AUI TD 왼쪽 정렬 **/
+.aui-left {
+	text-align: left !important;
+	text-indent: 10px !important;
 }

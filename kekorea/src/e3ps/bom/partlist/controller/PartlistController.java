@@ -31,7 +31,7 @@ public class PartlistController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
-		WTUser sessionUser = (WTUser)SessionHelper.manager.getPrincipal();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/bom/partlist/partlist-list.jsp");
@@ -140,6 +140,16 @@ public class PartlistController extends BaseController {
 		model.addObject("data", data);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/bom/partlist/partlist-info");
+		return model;
+	}
+
+	@Description(value = "수배표 탭 페이지")
+	@GetMapping(value = "/tabper")
+	public ModelAndView tabper(@RequestParam String oid, @RequestParam String moid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("oid", oid);
+		model.addObject("moid", moid);
+		model.setViewName("popup:/bom/partlist/partlist-tabper");
 		return model;
 	}
 }

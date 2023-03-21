@@ -9,21 +9,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=100"></script>
 </head>
 <body>
 	<form>
-		<!-- 리스트 검색시 반드시 필요한 히든 값 -->
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
-		<!-- 검색 테이블 -->
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -55,7 +49,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<!-- 버튼 테이블 -->
 		<table class="button-table">
 			<tr>
 				<td class="left">
@@ -86,9 +79,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<!-- 그리드 리스트 4행 670px 1행 35px 0행 600px -->
 		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
-		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -98,13 +89,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "공지사항 제목",
 					dataType : "string",
 					width : 350,
-					style : "left indent10",
+					style : "aui-left",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							alert(oid);
 						}
 					},
 					filter : {
@@ -115,13 +105,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "description",
 					headerText : "내용",
 					dataType : "string",
-					style : "left indent10",
+					style : "aui-left",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							alert(oid);
 						}
 					},
 					filter : {
@@ -132,7 +121,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "creator",
 					headerText : "작성자",
 					dataType : "string",
-					width : 100, // 작성자, 수정자 등 사람 이름은 100 사이즈로 조절
+					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -142,12 +131,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "작성일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
-					width : 100, // 작성일, 수정일 등 날짜 표기는 100 사이즈로 조절
+					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true,
 						displayFormatValues : true
-					// 포맷팅 형태로 필터링 처리
 					},
 				}, {
 					dataField : "primary",
@@ -164,11 +152,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				} ]
 			}
 
-			// AUIGrid 생성 함수
 			function createAUIGrid(columnLayout) {
-				// 그리드 속성
 				const props = {
-					// 그리드 공통속성 시작
 					headerHeight : 30,
 					rowHeight : 30,
 					showRowNumColumn : true,
@@ -184,24 +169,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					// 그리드 공통속성 끝
-					fillColumnSizeMode : true
 				};
-
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
-
-				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
-
-				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
-					vScrollChangeHandler(event); // lazy loading
+					hideContextMenu();
+					vScrollChangeHandler(event);
 				});
-
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					hideContextMenu();
 				});
 			}
 
@@ -214,12 +191,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					return false;
 				}
 
-				params.removeRows = removeRows;
-
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
 				}
 
+				params.removeRows = removeRows;
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
@@ -230,7 +206,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				});
 			}
 
-			// 행 삭제
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
@@ -242,23 +217,17 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/notice/list");
-
-				// 검색 변수
 				const name = document.getElementById("name").value;
 				const description = document.getElementById("description").value;
 				const creator = document.getElementById("creator").value;
 				const createdFrom = document.getElementById("createdFrom").value;
 				const createdTo = document.getElementById("createdTo").value;
-
-				// 페이징 개수
 				const psize = document.getElementById("psize").value;
-				// 검색 변수 담기
 				params.name = name;
 				params.description = description;
 				params.creator = creator;
 				params.createdFrom = createdFrom;
 				params.createdTo = createdTo;
-				// 페이지 사이즈
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -283,19 +252,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("notice-list");
-				// 컨텍스트 메뉴 시작
-				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns); 
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
 				});
-				// 그리드 생성
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-
 				finderUser("creator");
 				twindate("created");
-
 				selectbox("psize");
 			});
 
@@ -306,7 +271,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				}
 			})
 
-			// 컨텍스트 메뉴 숨기기
 			document.addEventListener("click", function(event) {
 				hideContextMenu();
 			})

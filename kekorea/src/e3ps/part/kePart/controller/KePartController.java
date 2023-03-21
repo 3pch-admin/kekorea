@@ -185,12 +185,23 @@ public class KePartController extends BaseController {
 
 	@Description(value = "KE 부품 이력정보 페이지")
 	@GetMapping(value = "/history")
-	public ModelAndView history(@RequestParam String oid) throws Exception {
+	public ModelAndView history(@RequestParam String moid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		KePartMaster master = (KePartMaster) CommonUtils.getObject(oid);
+		KePartMaster master = (KePartMaster) CommonUtils.getObject(moid);
 		JSONArray list = KePartHelper.manager.history(master);
 		model.addObject("list", list);
 		model.setViewName("popup:/part/kePart/kePart-history");
 		return model;
 	}
+	
+	@Description(value = "KE 부품 탭 페이지")
+	@GetMapping(value = "/tabper")
+	public ModelAndView tabper(@RequestParam String oid, @RequestParam String moid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("oid", oid);
+		model.addObject("moid", moid);
+		model.setViewName("popup:/part/kePart/kePart-tabper");
+		return model;
+	}
+
 }

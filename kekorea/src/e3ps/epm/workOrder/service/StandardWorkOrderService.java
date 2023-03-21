@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import e3ps.common.Constants;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
+import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
@@ -38,6 +39,7 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 		String description = dto.getDescription();
 		ArrayList<Map<String, Object>> addRows = dto.getAddRows(); // 도면 일람표
 		ArrayList<Map<String, String>> _addRows = dto.get_addRows(); // 작번
+		ArrayList<String> secondarys = dto.getSecondarys();
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
@@ -59,13 +61,20 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 
 			int sort = 0;
 			ArrayList<WorkOrderDataLink> list = new ArrayList<>();
-			for (Map<String, Object> addRow : addRows) {
+			// 역순...
+			for (int i = addRows.size() - 1; i >= 0; i--) {
+				Map<String, Object> addRow = addRows.get(i);
 				String oid = (String) addRow.get("oid");
 				int current = (int) addRow.get("current");
 				int lotNo = (int) addRow.get("lotNo");
 				String dataType = (String) addRow.get("dataType");
 				String note = (String) addRow.get("note");
 				Persistable persistable = (Persistable) CommonUtils.getObject(oid);
+				if (persistable instanceof KeDrawing) {
+					KeDrawing k = (KeDrawing) persistable;
+					System.out.println("=" + k.getMaster().getName());
+
+				}
 				WorkOrderDataLink link = WorkOrderDataLink.newWorkOrderDataLink(workOrder, persistable);
 				link.setSort(sort);
 				link.setDataType(dataType);
@@ -75,6 +84,14 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 				PersistenceHelper.manager.save(link);
 				sort++;
 				list.add(link);
+			}
+
+			// 첨부 파일
+			for (String secondary : secondarys) {
+				ApplicationData dd = ApplicationData.newApplicationData(workOrder);
+				dd.setRole(ContentRoleType.SECONDARY);
+				PersistenceHelper.manager.save(dd);
+				ContentServerHelper.service.updateContent(workOrder, dd, secondary);
 			}
 
 			// create cover workorder

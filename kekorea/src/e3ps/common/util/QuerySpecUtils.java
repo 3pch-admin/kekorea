@@ -13,6 +13,7 @@ import wt.iba.value.StringValue;
 import wt.org.WTUser;
 import wt.part.WTPart;
 import wt.part.WTPartMaster;
+import wt.query.ArrayExpression;
 import wt.query.ClassAttribute;
 import wt.query.ColumnExpression;
 import wt.query.ConstantExpression;
@@ -446,6 +447,22 @@ public class QuerySpecUtils {
 
 		if (!StringUtils.isNull(createdTo)) {
 			toTimeLessEqualsThan(query, idx, clazz, column, createdTo);
+		}
+	}
+
+	public static void toIn(QuerySpec query, int idx, Class clazz, String column, Object value) throws Exception {
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+
+		SearchCondition sc = null;
+		ClassAttribute ca = new ClassAttribute(clazz, column);
+		if (value instanceof long[]) {
+			sc = new SearchCondition(ca, SearchCondition.IN, new ArrayExpression((long[]) value));
+			query.appendWhere(sc, new int[] { idx });
+		} else if (value instanceof String[]) {
+			sc = new SearchCondition(ca, SearchCondition.IN, new ArrayExpression((String[]) value));
+			query.appendWhere(sc, new int[] { idx });
 		}
 	}
 }

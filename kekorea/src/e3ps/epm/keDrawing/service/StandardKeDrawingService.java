@@ -1,25 +1,15 @@
 package e3ps.epm.keDrawing.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
 
-import com.aspose.pdf.Document;
-import com.aspose.pdf.devices.PngDevice;
-import com.aspose.pdf.devices.Resolution;
-
-import e3ps.common.aspose.AsposeUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
 import e3ps.epm.keDrawing.dto.KeDrawingDTO;
-import e3ps.epm.workOrder.service.WorkOrderHelper;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
-import wt.content.ContentItem;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.fc.PersistenceHelper;
@@ -28,7 +18,6 @@ import wt.ownership.Ownership;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
 import wt.util.WTException;
-import wt.util.WTProperties;
 
 public class StandardKeDrawingService extends StandardManager implements KeDrawingService {
 

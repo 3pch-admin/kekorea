@@ -160,8 +160,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/keDrawing/view?oid=" + oid);
-							popup(url, 1300, 600);
+							const moid = item.moid;
+							const url = getCallUrl("/keDrawing/tabper?oid=" + oid + "&moid=" + moid);
+							popup(url, 1400, 700);
 						}
 					},
 					filter : {
@@ -180,8 +181,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/keDrawing/view?oid=" + oid);
-							popup(url, 1100, 600);
+							const moid = item.moid;
+							const url = getCallUrl("/keDrawing/tabper?oid=" + oid + "&moid=" + moid);
+							popup(url, 1400, 700);
 						}
 					},
 					filter : {
@@ -356,7 +358,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					// 그리드 공통속성 끝
 					editable : true
-				// 					fillColumnSizeMode : true // grid 컬럼 정의에서 하나의 컬럼자체에 width 를 안줄경우 해당 옵션은 필요 없다.
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
@@ -573,12 +574,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					const rowIndex = checkedItems[i].rowIndex;
 
 					if (!latest) {
-						alert("최신버전이 아닌 도면이 포함되어있습니다.\n" + rowIndex + "행 데이터");
+						alert("최신버전이 아닌 도면이 포함되어있습니다.\n" + (rowindex + 1) + "행 데이터");
 						return false;
 					}
 
 					if (oid === undefined) {
-						alert("신규로 작성한 데이터가 존재합니다.\n" + rowIndex + "행 데이터");
+						alert("신규로 작성한 데이터가 존재합니다.\n" + (rowindex + 1) + "행 데이터");
 						return false;
 					}
 				}
