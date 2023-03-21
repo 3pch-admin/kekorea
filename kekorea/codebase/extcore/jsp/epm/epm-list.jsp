@@ -140,6 +140,13 @@
 					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('epm-list');">
 				</td>
 				<td class="right">
+					<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
@@ -350,19 +357,25 @@
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
 				});
+				
+				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 			}
 
 			function auiCellClickHandler(event) {
 				const oid = event.item.oid;
 				const dataField = event.dataField;
+				if (dataField === "name") {
 				const url = getCallUrl("/epm/view");
 				const popup = url + "?oid=" + oid + "&popup=true";
 				window.open(popup, 1500, 750, "no");
+				}
 			}
 
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/epm/list");
+				const psize = document.getElementById("psize").value;
+				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -386,15 +399,13 @@
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				
+				selectbox("psize");
 				selectbox("state");
 				finderUser("creator");
 				finderUser("modifier");
 				twindate("created");
 				twindate("modified");
 			});
-
-			
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
