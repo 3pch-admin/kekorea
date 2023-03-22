@@ -12,7 +12,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <%@include file="/extcore/include/css.jsp"%>
 <%@include file="/extcore/include/script.jsp"%>
 <%@include file="/extcore/include/auigrid.jsp"%>
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=100"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
 	<form>
@@ -190,6 +190,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					alert("변경된 내용이 없습니다.");
 					return false;
 				}
+				
+
 
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
@@ -209,6 +211,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
+					const item = checkedItems[i].item;
+					if(!checker("<%=sessionUser.getName()%>", item.creatorId)) {
+						alert("데이터 작성자가 아닙니다.");
+						return false;
+					}
 					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
@@ -252,7 +259,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("notice-list");
-				const contenxtHeader = genColumnHtml(columns); 
+				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler

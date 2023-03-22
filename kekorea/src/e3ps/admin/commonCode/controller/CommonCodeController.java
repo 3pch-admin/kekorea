@@ -26,7 +26,7 @@ import e3ps.common.util.AUIGridUtils;
 public class CommonCodeController extends BaseController {
 
 	@Description(value = "코드 관리 리스트 페이지")
-	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		CommonCodeType[] codeTypes = CommonCodeType.getCommonCodeTypeSet();
@@ -39,7 +39,7 @@ public class CommonCodeController extends BaseController {
 
 	@Description(value = "코드 관리 리스트 가져 오는 함수")
 	@ResponseBody
-	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -55,29 +55,12 @@ public class CommonCodeController extends BaseController {
 
 	@Description(value = "코드 관리 등록 함수")
 	@ResponseBody
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	@PostMapping(value = "/create")
 	public Map<String, Object> create(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			CommonCodeHelper.service.create(params);
 			result.put("msg", SAVE_MSG);
-			result.put("result", SUCCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("result", FAIL);
-			result.put("msg", e.toString());
-		}
-		return result;
-	}
-
-	@Description(value = "코드관리 리스트 AUIGrid 코드 리모트 렌더러 호출 함수")
-	@ResponseBody
-	@RequestMapping(value = "/remoter", method = RequestMethod.POST)
-	public Map<String, Object> remoter(@RequestBody Map<String, Object> params) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			ArrayList<Map<String, Object>> list = AUIGridUtils.remoter(params);
-			result.put("list", list);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -58,6 +58,8 @@ public class ConfigSheetController extends BaseController {
 	public ModelAndView create() throws Exception {
 		ModelAndView model = new ModelAndView();
 		JSONArray categorys = CommonCodeHelper.manager.parseJson("CATEGORY");
+		net.sf.json.JSONArray baseData = ConfigSheetHelper.manager.loadBaseGridData();
+		model.addObject("baseData", baseData);
 		model.addObject("categorys", categorys);
 		model.setViewName("popup:/korea/configSheet/configSheet-create");
 		return model;

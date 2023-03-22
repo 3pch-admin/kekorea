@@ -16,6 +16,7 @@ public class NoticeDTO {
 	private String name;
 	private String description;
 	private String creator;
+	private String creatorId;
 	private Timestamp createdDate;
 	private String primary;
 
@@ -31,6 +32,7 @@ public class NoticeDTO {
 		setName(notice.getName());
 		setDescription(notice.getDescription());
 		setCreator(notice.getOwnership().getOwner().getFullName());
+		setCreatorId(notice.getOwnership().getOwner().getName());
 		setCreatedDate(notice.getCreateTimestamp());
 		setPrimary(AUIGridUtils.primaryTemplate(notice));
 	}

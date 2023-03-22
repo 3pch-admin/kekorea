@@ -219,13 +219,11 @@ function requestAdditionalData() {
  * 엑셀 익스포트
  */
 function exportToExcel(fileName, headerName, sheetName, exceptColumnFields, creator) {
-
 	const date = new Date();
 	const year = date.getFullYear();
 	const month = (date.getMonth() + 1).toString().padStart(2, '0');
 	const day = date.getDate().toString().padStart(2, '0');
 	const today = year + "/" + month + "/" + day;
-
 	AUIGrid.exportToXlsx(myGridID, {
 		// 저장하기 파일명
 		fileName: fileName,
@@ -254,4 +252,14 @@ function exportToExcel(fileName, headerName, sheetName, exceptColumnFields, crea
 				{ textAlign: "right", fontWeight: "bold", color: "#ffffff", background: "#222222" }
 		}]
 	});
+}
+
+/**
+ * 그리드 데이터 삭제 및 수정시 작성자 체크
+ */
+function checker(sessionId, creatorId) {
+	if (sessionId === creatorId) {
+		return true;
+	}
+	return false;
 }
