@@ -47,7 +47,7 @@
 			<tr>
 				<th>기간</th>
 				<td class="indent5">
-					<input type="text" name="partName">
+					<input type="text" name="duration" id="duration">
 				</td>
 				<th>수정자</th>
 				<td class="indent5">
@@ -71,6 +71,13 @@
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
+					<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
@@ -222,6 +229,11 @@
 				const url = getCallUrl("/template/list");
 				const templateName = document.getElementById("templateName").value;
 				const duration = document.getElementById("duration").value;
+				const psize = document.getElementById("psize").value;
+				
+				params.templateName = templateName;
+				params.duration = duration;
+				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -256,9 +268,9 @@
 
 				twindate("created");
 				twindate("modified");
+				
+				selectbox("psize");
 			});
-
-
 
 			document.addEventListener("keydown", function(event) {
 				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기

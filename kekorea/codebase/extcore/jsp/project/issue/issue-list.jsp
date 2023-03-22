@@ -90,6 +90,13 @@
 					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('issue-list');">
 				</td>
 				<td class="right">
+				<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
@@ -262,8 +269,10 @@
 				const url = getCallUrl("/issue/list");
 				const issueName = document.getElementById("issueName").value;
 				const description = document.getElementById("description").value;
+				const psize = document.getElementById("psize").value;
 				params.issueName = issueName;
 				params.description = description;
+				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -290,6 +299,7 @@
 				
 				finderUser("creator");
 				twindate("created");
+				selectbox("psize");
 			});
 
 			
