@@ -35,7 +35,7 @@ public class TBOMController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
-		WTUser sessionUser = (WTUser)SessionHelper.manager.getPrincipal();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/bom/tbom/tbom-list.jsp");
@@ -98,7 +98,7 @@ public class TBOMController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description(value = "T-BOM 그리드 저장 함수")
 	@ResponseBody
 	@PostMapping(value = "/save")
@@ -127,6 +127,16 @@ public class TBOMController extends BaseController {
 		model.addObject("headers", headers);
 		model.addObject("count", count);
 		model.setViewName("popup:/bom/tbom/tbom-compare");
+		return model;
+	}
+
+	@Description(value = "T-BOM 탭 페이지")
+	@GetMapping(value = "/vtabper")
+	public ModelAndView vtabper(@RequestParam String oid, @RequestParam String moid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("oid", oid);
+		model.addObject("moid", moid);
+		model.setViewName("popup:/bom/tbom/tbom-vtabper");
 		return model;
 	}
 }

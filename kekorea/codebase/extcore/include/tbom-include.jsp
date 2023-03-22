@@ -237,5 +237,10 @@ if ("kePart".equals(obj)) {
 			_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 			AUIGrid.setGridData(_myGridID, <%=data%>);
 		}
+		_createAUIGrid(_columns);
+		AUIGrid.resize(_myGridID);
+		window.addEventListener("resize", function() {
+			AUIGrid.resize(_myGridID);
+		});
 	</script>
 </div>

@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.korea.history.History;
 import e3ps.korea.history.HistoryOptionLink;
 import e3ps.project.Project;
+import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.query.QuerySpec;
@@ -34,8 +36,8 @@ public class HistoryHelper {
 		query.appendWhere(sc, new int[] { idx, idx_p });
 
 		QuerySpecUtils.toOrderBy(query, idx, History.class, History.CREATE_TIMESTAMP, false);
-		QueryResult result = PersistenceHelper.manager.find(query);
-
+		PageQueryUtils pager = new PageQueryUtils(params, query);
+		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			History history = (History) obj[0];
@@ -56,6 +58,8 @@ public class HistoryHelper {
 			}
 			dataList.add(dataMap);
 		}
+		map.put("sessionid", pager.getSessionId());
+		map.put("curPage", pager.getCpage());
 		map.put("list", dataList);
 		return map;
 	}

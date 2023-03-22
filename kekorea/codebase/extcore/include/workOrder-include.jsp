@@ -196,7 +196,7 @@ if ("keDrawing".equals(obj)) {
 			mergePolicy : "restrict"
 		}, {
 			dataField : "secondary",
-			headerText : "도면파일",
+			headerText : "첨부파일",
 			dataType : "string",
 			width : 80,
 			editable : false,
@@ -234,5 +234,11 @@ if ("keDrawing".equals(obj)) {
 			_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 			AUIGrid.setGridData(_myGridID, <%=data%>);
 		}
+
+		_createAUIGrid(_columns);
+		AUIGrid.resize(_myGridID);
+		window.addEventListener("resize", function() {
+			AUIGrid.resize(_myGridID);
+		});
 	</script>
 </div>

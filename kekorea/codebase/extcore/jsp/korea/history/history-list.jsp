@@ -17,21 +17,15 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
 </head>
 <body>
 	<form>
-		<!-- 리스트 검색시 반드시 필요한 히든 값 -->
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
-		<!-- 검색 테이블 -->
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -65,11 +59,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			</tr>
 		</table>
 
-		<!-- 버튼 테이블 -->
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<!-- exportExcel 함수참고 -->
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('history-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('history-list');">
@@ -88,9 +80,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			</tr>
 		</table>
 
-		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
-		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -107,7 +97,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					showIcon : true,
 					inline : true,
 					displayFormatValues : true
-					// 포맷팅 형태로 필터링 처리
 				},				
 			}, {
 				dataField : "install",
@@ -161,23 +150,22 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				width : 130,
 				renderer : {
 					type : "IconRenderer",
-					iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+					iconWidth : 16, 
 					iconHeight : 16,
 					iconPosition : "aisleRight",
-					iconTableRef : { // icon 값 참조할 테이블 레퍼런스
+					iconTableRef : { 
 						"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
 					},
 					onClick : function(event) {
-						// 아이콘을 클릭하면 수정으로 진입함.
 						AUIGrid.openInputer(event.pid);
 					}
 				},
 				editRenderer : {
 					type : "ComboBoxRenderer",
-					autoCompleteMode : true, // 자동완성 모드 설정
+					autoCompleteMode : true,
 					autoEasyMode : true,
-					matchFromFirst : false, // 처음부터 매치가 아닌 단순 포함되는 자동완성
-					showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
+					matchFromFirst : false, 
+					showEditorBtnOver : false,
 					list : list,
 					validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 						let isValid = false;
@@ -209,25 +197,24 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				width : 130,
 				renderer : {
 					type : "IconRenderer",
-					iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+					iconWidth : 16, 
 					iconHeight : 16,
 					iconPosition : "aisleRight",
-					iconTableRef : { // icon 값 참조할 테이블 레퍼런스
+					iconTableRef : { 
 						"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
 					},
 					onClick : function(event) {
-						// 아이콘을 클릭하면 수정으로 진입함.
 						AUIGrid.openInputer(event.pid);
 					}
 				},
 				editRenderer : {
 					type : "ComboBoxRenderer",
-					autoCompleteMode : true, // 자동완성 모드 설정
+					autoCompleteMode : true,
 					autoEasyMode : true,
-					matchFromFirst : false, // 처음부터 매치가 아닌 단순 포함되는 자동완성
-					showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
-					keyField : "key", // key 에 해당되는 필드명
-					valueField : "value", // value 에 해당되는 필드명,
+					matchFromFirst : false, 
+					showEditorBtnOver : false,
+					keyField : "key", 
+					valueField : "value",
 					list : <%=array%>,
 					validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 						let isValid = false;
@@ -263,7 +250,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function createAUIGrid(columnLayout) {
 				const props = {
-					// 그리드 공통속성 시작
 					headerHeight : 30,
 					rowHeight : 30,
 					showRowNumColumn : true,
@@ -279,30 +265,21 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					// 그리드 공통속성 끝
 					editable : true
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				// 그리드 데이터 로딩
 				loadGridData();
-				
-				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
-
-				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
-					vScrollChangeHandler(event); // lazy loading
+					hideContextMenu(); 
 				});
-
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					hideContextMenu(); 
 				});
 			}
 
 
 			function save() {
-
 				const url = getCallUrl("/history/save");
 				const editRows = AUIGrid.getEditedRowItems(myGridID);
 				const removeRows = AUIGrid.getRemovedItems(myGridID);
@@ -345,23 +322,16 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				});
 			}
 
-			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("history-list");
-				// 컨텍스트 메뉴 시작
 				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
 				});
-				// DOM이 로드된 후 실행할 코드 작성
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				
-				// 사용자 검색 바인딩 see base.js finderUser function 
 				finderUser("creator");
-				
-				// 날짜 검색용 바인딩 see base.js twindate funtion
 				twindate("created");
 				selectbox("psize");
 			});
@@ -372,14 +342,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 			
 			document.addEventListener("keydown", function(event) {
-				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}
 			})
 
-			// 컨텍스트 메뉴 숨기기
 			document.addEventListener("click", function(event) {
 				hideContextMenu();
 			})

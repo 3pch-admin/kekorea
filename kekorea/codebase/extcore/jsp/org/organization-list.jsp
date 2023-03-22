@@ -70,11 +70,20 @@ JSONArray departments = new JSONArray(list);
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('organization-list');">
-					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('organization-list');">
+					<!-- exportExcel 함수참고 -->
+					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('organization-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('organization-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 				</td>
 				<td class="right">
+					<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
@@ -105,12 +114,9 @@ JSONArray departments = new JSONArray(list);
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
-			const maks =
-		<%=maks%>
-			const installs =
-		<%=installs%>
-			const departments =
-		<%=departments%>
+			const maks = <%=maks%>
+			const installs = <%=installs%>
+			const departments = <%=departments%>
 			const dutys = [ "사장", "부사장", "PL", "TL" ];
 			function _layout() {
 				return [ {
@@ -156,7 +162,6 @@ JSONArray departments = new JSONArray(list);
 						showIcon : true,
 						inline : true
 					},
-					editable : true,
 					renderer : {
 						type : "IconRenderer",
 						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
@@ -183,7 +188,6 @@ JSONArray departments = new JSONArray(list);
 					headerText : "부서",
 					dataType : "string",
 					width : 150,
-					editable : true,
 					renderer : {
 						type : "IconRenderer",
 						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
@@ -221,8 +225,7 @@ JSONArray departments = new JSONArray(list);
 					dataField : "mak",
 					headerText : "막종",
 					dataType : "string",
-					style : "left indent10",
-					editable : true,
+					style : "aui-left",
 					headerTooltip : {
 						show : true,
 						tooltipHtml : "한국 생산의 차트에서 사용자가 원하는 막종만 볼 수 있도록 설정 하는 컬럼입니다."
@@ -268,8 +271,7 @@ JSONArray departments = new JSONArray(list);
 					dataField : "install",
 					headerText : "설치장소",
 					dataType : "string",
-					style : "left indent10",
-					editable : true,
+					style : "aui-left",
 					headerTooltip : {
 						show : true,
 						tooltipHtml : "한국 생산의 차트에서 사용자가 원하는 설치장소만 볼 수 있도록 설정 하는 컬럼입니다."
@@ -316,7 +318,7 @@ JSONArray departments = new JSONArray(list);
 					headerText : "이메일",
 					dataType : "string",
 					width : 250,
-					editable : true,
+					style : "aui-left",
 					filter : {
 						showIcon : true,
 						inline : true
@@ -352,49 +354,50 @@ JSONArray departments = new JSONArray(list);
 			function createAUIGrid(columnLayout) {
 				// 그리드 속성
 				const props = {
-						// 그리드 공통속성 시작
-						headerHeight : 30,
-						rowHeight : 30,
-						showRowNumColumn : true,
-						showRowCheckColumn : true,
-						showStateColumn : true,
-						rowNumHeaderText : "번호",
-						noDataMessage : "검색 결과가 없습니다.",
-						enableFilter : true,
-						selectionMode : "multipleCells",
-						enableMovingColumn : true,
-						showInlineFilter : true,
-						useContextMenu : true,
-						enableRightDownFocus : true,
-						filterLayerWidth : 320,
-						filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+					// 그리드 공통속성 시작
+					headerHeight : 30,
+					rowHeight : 30,
+					showRowNumColumn : true,
+					showRowCheckColumn : true,
+					showStateColumn : true,
+					rowNumHeaderText : "번호",
+					noDataMessage : "검색 결과가 없습니다.",
+					enableFilter : true,
+					selectionMode : "multipleCells",
+					enableMovingColumn : true,
+					showInlineFilter : true,
+					useContextMenu : true,
+					enableRightDownFocus : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					// 그리드 공통속성 끝
+					editable : true
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
-				
+
 				// 동적 수정여부 체크
-				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin );
-				
+				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
+
 				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
 				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
-					vScrollChangeHandler(event); // lazy loading
+					vScrollChangeHandler(event);
 				});
 
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu(); // 컨텍스트 메뉴 감추기
 				});
 			}
-			
+
 			function auiCellEditBegin(event) {
 				const item = event.item;
-				if("<%=sessionUser.getName() %>" !== item.id) {
+				if("<%=sessionUser.getName()%>" !== item.id) {
 					return false;
 				}
 				return true;
@@ -406,6 +409,8 @@ JSONArray departments = new JSONArray(list);
 				const userName = document.getElementById("userName").value;
 				const userId = document.getElementById("userId").value;
 				const oid = document.getElementById("oid").value;
+				const psize = document.getElementById("psize").value;
+				params.psize = psize;
 				params.oid = oid;
 				params.userName = userName;
 				params.userId = userId;
@@ -432,40 +437,32 @@ JSONArray departments = new JSONArray(list);
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
-					// 레이더 닫고
 					parent.closeLayer();
 					if (data.result) {
-						// 다시 안에서 레이어 오픈..
 						loadGridData();
-					} else {
-						// 실패 처리..
 					}
 				})
 			}
 
-			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
-				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("organization-list");
-				// 컨텍스트 메뉴 시작
-				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns); // 리스트
 				AUIGrid.resize(myGridID); // 리스트
+				selectbox("psize");
 			});
 
 			document.addEventListener("keydown", function(event) {
-				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}
 			})
-			
-			// 컨텍스트 메뉴 숨기기
+
 			document.addEventListener("click", function(event) {
 				hideContextMenu();
 			})

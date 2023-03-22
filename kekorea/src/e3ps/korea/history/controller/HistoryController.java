@@ -10,15 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.admin.spec.service.SpecHelper;
 import e3ps.common.controller.BaseController;
-import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.korea.history.service.HistoryHelper;
 import wt.org.WTUser;
@@ -60,23 +57,6 @@ public class HistoryController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "이력관리 리스트 AUIGrid KEK작번 리모트 렌더러 호출 함수")
-	@ResponseBody
-	@RequestMapping(value = "/remoter", method = RequestMethod.POST)
-	public Map<String, Object> remoter(@RequestBody Map<String, Object> params) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			ArrayList<Map<String, Object>> list = AUIGridUtils.remoter(params);
-			result.put("list", list);
-			result.put("result", SUCCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("result", FAIL);
-			result.put("msg", e.toString());
-		}
-		return result;
-	}
-
 	@Description(value = "이력 관리 등록 함수")
 	@ResponseBody
 	@PostMapping(value = "/save")
@@ -92,17 +72,5 @@ public class HistoryController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
-	}
-
-	@Description(value = "작번 관련 이력")
-	@RequestMapping(value = "/view", method = RequestMethod.GET)
-	public ModelAndView view(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		ArrayList<Map<String, Object>> list = HistoryHelper.manager.view(oid);
-		ArrayList<Map<String, Object>> headers = SpecHelper.manager.getSpecKeyValue();
-		model.addObject("headers", headers);
-		model.addObject("list", list);
-		model.setViewName("popup:/korea/history/history-view");
-		return model;
 	}
 }

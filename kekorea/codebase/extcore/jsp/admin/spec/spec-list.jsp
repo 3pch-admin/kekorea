@@ -9,52 +9,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=12"></script>
 </head>
 <body>
 	<form>
-		<!-- 검색 테이블 -->
-		<table class="search-table">
-			<colgroup>
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
-			</colgroup>
-			<tr>
-				<th>공지사항 제목</th>
-				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-200">
-				</td>
-				<th>설명</th>
-				<td class="indent5">
-					<input type="text" name="description" class="width-200">
-				</td>
-				<th>작성자</th>
-				<td class="indent5">
-					<input type="text" name="creator" id="creator" class="width-200">
-				</td>
-				<th>작성일</th>
-				<td class="indent5">
-					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
-					~
-					<input type="text" name="createdTo" id="createdTo" class="width-100">
-				</td>
-			</tr>
-		</table>
-
-		<!-- 버튼 테이블 -->
 		<table class="button-table">
 			<tr>
 				<td class="left">
@@ -64,19 +25,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 				</td>
 				<td class="right">
-					<select name="psize" id="psize">
-						<option value="30">30</option>
-						<option value="50">50</option>
-						<option value="100">100</option>
-						<option value="200">200</option>
-						<option value="300">300</option>
-					</select>				
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
 		</table>
 
-		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
@@ -135,10 +88,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}, {
 				dataField : "codeType",
 				headerText : "코드타입",
-				dataType : "string", // 날짜 및 사람명 컬럼 사이즈 100
+				dataType : "string",
 				width : 120,
-				labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
-					let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+				labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+					let retStr = ""; 
 					for (let i = 0, len = list.length; i < len; i++) {
 						if (list[i]["key"] == value) {
 							retStr = list[i]["value"];
@@ -159,7 +112,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				formatString : "###0",
 				editRenderer : {
 					type : "InputEditRenderer",
-					onlyNumeric : true, // 0~9만 입력가능
+					onlyNumeric : true, 
 				},
 				filter : {
 					showIcon : false,
@@ -195,12 +148,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				},
 			} ]
 
-			// AUIGrid 생성 함수
 			function createAUIGrid(columnLayout) {
-				// 그리드 속성
 				const props = {
 					rowIdField : "oid",
-					// 그리드 공통속성 시작
 					headerHeight : 30,
 					rowHeight : 30,
 					showRowNumColumn : true,
@@ -213,37 +163,25 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					showInlineFilter : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					// 그리드 공통속성 끝
 					displayTreeOpen : true,
 					editable : true
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinish);
 				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
-
-				// 스크롤 체인지 핸들러.
-				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					vScrollChangeHandler(event); // lazy loading
-				});
-
 				AUIGrid.bind(myGridID, "cellEditEndBefore", auiCellEditEndBefore);
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 			}
 
 			function auiCellClickHandler(event) {
 				const item = event.item;
-				rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); // rowIdField 얻기
+				rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); 
 				rowId = item[rowIdField];
-
-				// 이미 체크 선택되었는지 검사
 				if (AUIGrid.isCheckedRowById(event.pid, rowId)) {
-					// 엑스트라 체크박스 체크해제 추가
 					AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
 				} else {
-					// 엑스트라 체크박스 체크 추가
 					AUIGrid.addCheckedRowsByIds(event.pid, rowId);
 				}
 			}
@@ -261,7 +199,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				return value;
 			}
 
-			// 저장
 			function save() {
 				const url = getCallUrl("/spec/save");
 				const params = new Object();
@@ -309,8 +246,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					alert(data.msg);
 					if (data.result) {
 						loadGridData();
-					} else {
-						// 실패...
 					}
 				})
 			}
@@ -363,8 +298,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/spec/list");
-				const psize = document.getElementById("psize").value;
-				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -374,7 +307,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				});
 			}
 
-			// 행 추가
 			function addRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				if (checkedItems.length <= 0) {
@@ -387,14 +319,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					return false;
 				}
 
-				let selItem;
-				let parentItem;
-				let parentRowId;
-
-				selItem = checkedItems[0].item;
-				// 선택 행의 동급 레벨로 추가하기 위해 선택행의 부모 가져오기
-				parentItem = AUIGrid.getParentItemByRowId(myGridID, selItem.oid);
-				parentRowId = parentItem.oid;
+				const selItem = checkedItems[0].item;
+				const parentItem = AUIGrid.getParentItemByRowId(myGridID, selItem.oid);
+				const parentRowId = parentItem.oid;
 
 				const newItem = new Object();
 				newItem.parentRowId = parentRowId; // 부모의 rowId 값을 보관해 놓음...나중에 개발자가 유용하게 쓰기 위함...실제 그리드는 사용하지 않음.
@@ -403,7 +330,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "last");
 			}
 
-			// 행 추가
 			function addTreeRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				if (checkedItems.length <= 0) {
@@ -418,7 +344,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 				const selItem = checkedItems[0].item;
 				const parentRowId = selItem.oid; // 선택행의 자식으로 행 추가
-
 				const newItem = new Object();
 				newItem.parentRowId = parentRowId; // 부모의 rowId 값을 보관해 놓음...나중에 개발자가 유용하게 쓰기 위함...실제 그리드는 사용하지 않음.
 				newItem.enable = true;
@@ -426,7 +351,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "selectionDown");
 			}
 
-			// 행 삭제
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
@@ -435,22 +359,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				}
 			}
 
-			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
-				// DOM이 로드된 후 실행할 코드 작성
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-
-				// 사용자 검색 바인딩 see base.js finderUser function 
-				finderUser("creator");
-
-				// 날짜 검색용 바인딩 see base.js twindate funtion
-				twindate("created");
-				selectbox("psize");
 			});
 
 			document.addEventListener("keydown", function(event) {
-				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();

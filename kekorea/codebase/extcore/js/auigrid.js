@@ -48,7 +48,7 @@ function getLocalStorageValue(storageID) {
 function resetColumnLayout(storageID) {
 	if (typeof (Storage) != "undefined") { // Check browser support
 		localStorage.removeItem(storageID);
-		localStorage.removeItem("psize");
+		localStorage.removeItem(storageID + "_psize");
 		alert("저장된 그리드의 상태를 초기화했습니다.\r\n브라우저를 종료하거나 F5 로 갱신했을 때 원래 상태로 출력됩니다.");
 	} else {
 		alert("localStorage 를 지원하지 않는 브라우저입니다.");
@@ -231,6 +231,7 @@ function exportToExcel(fileName, headerName, sheetName, exceptColumnFields, crea
 		fileName: fileName,
 		progressBar: true,
 		sheetName: sheetName,
+		exportWithStyle: true,
 		exceptColumnFields: exceptColumnFields,
 		// 헤더 내용
 		headers: [{

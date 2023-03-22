@@ -1249,10 +1249,6 @@ public class OrgHelper {
 
 	/**
 	 * 그리드에 표현할 막종 목록
-	 * 
-	 * @param people : 사용자 객체
-	 * @return String
-	 * @throws Exception
 	 */
 	public String getGridMaks(People people) throws Exception {
 		String mak = "";
@@ -1493,6 +1489,33 @@ public class OrgHelper {
 			People people = (People) obj[0];
 			UserDTO dto = new UserDTO(people);
 			list.add(dto);
+		}
+		return list;
+	}
+
+	/**
+	 * 사용자 검색 후 KEY-VALUE 값 ArrayList 에 담아서 리턴
+	 */
+	public ArrayList<Map<String, String>> keyValue(Map<String, String> params) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		String value = params.get("value");
+		System.out.println("valu=" + value);
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(People.class, true);
+		query.appendOpenParen();
+		QuerySpecUtils.toLikeAnd(query, idx, People.class, People.NAME, value);
+		QuerySpecUtils.toLikeOr(query, idx, People.class, People.ID, value);
+		query.appendCloseParen();
+		System.out.println(query);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			People people = (People) obj[0];
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", people.getWtUser().getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", people.getName());
+			list.add(map);
 		}
 		return list;
 	}

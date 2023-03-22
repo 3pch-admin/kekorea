@@ -98,10 +98,20 @@ public class OrgController extends BaseController {
 
 	@Description(value = "조직도 팝업 페이지")
 	@GetMapping(value = "/popup")
-	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
+	public ModelAndView popup(@RequestParam String method, @RequestParam String multi, @RequestParam String openerId)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		ArrayList<HashMap<String, String>> list = OrgHelper.manager.getDepartmentMap();
+		JSONArray maks = CommonCodeHelper.manager.parseJson("MAK");
+		JSONArray installs = CommonCodeHelper.manager.parseJson("INSTALL");
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("maks", maks);
+		model.addObject("installs", installs);
+		model.addObject("list", list);
 		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.addObject("method", method);
+		model.addObject("openerId", openerId);
 		model.setViewName("popup:/org/organization-popup");
 		return model;
 	}
@@ -147,5 +157,21 @@ public class OrgController extends BaseController {
 		model.addObject("dto", dto);
 		model.setViewName("popup:/org/user-view");
 		return model;
+	}
+
+	@Description(value = "정보 KEY-VALUE")
+	@PostMapping(value = "/keyValue")
+	@ResponseBody
+	public Map<String, Object> keyValue(@RequestBody Map<String, String> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ArrayList<Map<String, String>> list = OrgHelper.manager.keyValue(params);
+			result.put("result", SUCCESS);
+			result.put("list", list);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
 	}
 }

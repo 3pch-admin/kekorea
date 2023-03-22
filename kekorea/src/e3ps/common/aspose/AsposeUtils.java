@@ -127,7 +127,7 @@ public class AsposeUtils {
 		firstPdf.save(mergePdfPath);
 
 		ApplicationData dd = ApplicationData.newApplicationData(workOrder);
-		dd.setRole(ContentRoleType.SECONDARY);
+		dd.setRole(ContentRoleType.THUMBNAIL);
 		PersistenceHelper.manager.save(dd);
 		ContentServerHelper.service.updateContent(workOrder, dd, mergePdfPath);
 

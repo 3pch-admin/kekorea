@@ -176,10 +176,36 @@ function isNull(value) {
 // axisj user 검색 바인딩 공용 
 function finderUser(id) {
 	axdom("#" + id).bindSelector({
+		reserveKeys: {
+			options: "list",
+			optionValue: "oid",
+			optionText: "name"
+		},
+		optionPrintLength: "all",
+		onsearch: function(id, obj, callBack) {
+			const value = document.getElementById(id).value;
+			const params = new Object();
+			const url = getCallUrl("/org/keyValue");
+			params.value = value;
+			params.obj = obj;
+			console.log(params);
+			call(url, params, function(data) {
+				callBack({
+					options: data.list
+				})
+			})
+		},
+		onchange: function() {
+			const id = this.targetID;
+			const value = this.selectedOption.oid
+			document.getElementById(id + "Oid").value = value;
+		},
 		finder: {
 			onclick: function() { // {Function} - 파인더 버튼 클릭 이벤트 콜백함수 (optional)
-				const url = getCallUrl("/org/popup");
-				popup(url, 1200, 600);
+				const multi = document.getElementById(id).dataset.multi;
+				const method = document.getElementById(id).dataset.method;
+				const url = getCallUrl("/org/popup?method=" + method + "&multi=" + multi + "&openerId=" + id);
+				popup(url, 1300, 600);
 			}
 		},
 	})
@@ -202,4 +228,13 @@ function twindate(endIdPrefix) {
 // axisj select 박스 바인딩
 function selectbox(id) {
 	axdom("#" + id).bindSelect();
+}
+
+// 선택한 사용자 세팅
+function inputUser(openerId, data) {
+	const input = opener.document.getElementById(openerId);
+	const el = opener.document.getElementById(openerId + "Oid");
+	const item = data.item;
+	input.value = item.name;
+	el.value = item.woid;
 }

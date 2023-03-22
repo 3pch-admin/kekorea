@@ -9,21 +9,15 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
-		<!-- 리스트 검색시 반드시 필요한 히든 값 -->
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
-		<!-- 검색 테이블 -->
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -94,11 +88,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			</tr>
 		</table>
 
-		<!-- 버튼 테이블 -->
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<!-- exportExcel 함수참고 -->
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('keDrawing-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('keDrawing-list');">
@@ -126,9 +118,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			</tr>
 		</table>
 
-		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
-		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -142,7 +132,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					formatString : "###0",
 					editRenderer : {
 						type : "InputEditRenderer",
-						onlyNumeric : true, // 0~9만 입력가능
+						onlyNumeric : true, 
 						maxlength : 3,
 					},
 					filter : {
@@ -160,8 +150,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/keDrawing/view?oid=" + oid);
-							popup(url, 1300, 600);
+							const moid = item.moid;
+							const url = getCallUrl("/keDrawing/tabper?oid=" + oid + "&moid=" + moid);
+							popup(url, 1400, 700);
 						}
 					},
 					filter : {
@@ -180,8 +171,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/keDrawing/view?oid=" + oid);
-							popup(url, 1100, 600);
+							const moid = item.moid;
+							const url = getCallUrl("/keDrawing/tabper?oid=" + oid + "&moid=" + moid);
+							popup(url, 1400, 700);
 						}
 					},
 					filter : {
@@ -334,11 +326,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				} ]
 			}
 
-			// AUIGrid 생성 함수
 			function createAUIGrid(columnLayout) {
-				// 그리드 속성
 				const props = {
-					// 그리드 공통속성 시작
 					headerHeight : 30,
 					rowHeight : 30,
 					showRowNumColumn : true,
@@ -354,30 +343,20 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					// 그리드 공통속성 끝
 					editable : true
-				// 					fillColumnSizeMode : true // grid 컬럼 정의에서 하나의 컬럼자체에 width 를 안줄경우 해당 옵션은 필요 없다.
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
-
-				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
-
-				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					hideContextMenu(); 
 					vScrollChangeHandler(event); // lazy loading
 				});
-
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					hideContextMenu(); 
 				});
-
 				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRowHandler);
-
-				// 행 추가후
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinishHandler);
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 			}
@@ -435,7 +414,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				});
 			}
 
-			// 행 추가
 			function addRow() {
 				const item = {
 					latest : true,
@@ -443,7 +421,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				AUIGrid.addRow(myGridID, item, "first");
 			}
 
-			// 행 삭제
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
@@ -458,19 +435,16 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					alert("도면파일 이름명을 체크하세요. \nDWG NO : 9자리, 버전 3자리의 양식을 맞춰주세요.");
 					return false;
 				}
-
 				const start = name.indexOf("-");
 				if (start <= -1) {
 					alert("도면파일 이름의 양식이 맞지 않습니다.\nDWG NO-버전 형태의 파일명만 허용됩니다.");
 					return false;
 				}
-
 				const end = name.lastIndexOf(".");
 				if (end <= -1) {
 					alert("도면파일 확장자를 체크해주세요.");
 					return false;
 				}
-
 				const ext = name.substring(end + 1);
 				if (ext.toLowerCase() !== "pdf") {
 					alert("PDF 파일 형식의 도면파일만 허용됩니다.");
@@ -497,7 +471,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				});
 			}
 
-			// 저장
 			function create() {
 				const url = getCallUrl("/keDrawing/create");
 				const params = new Object();
@@ -509,7 +482,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					alert("변경된 내용이 없습니다.");
 					return false;
 				}
-				// 새로 추가한 행 검증
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
 
@@ -529,7 +501,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					}
 				}
 
-				// 수정한 행 검증
 				for (let i = 0; i < editRows.length; i++) {
 					const item = editRows[i];
 					if (item.lotNo === 0) {
@@ -562,30 +533,36 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function revise() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				
 				if (checkedItems.length == 0) {
 					alert("개정할 도면을 선택하세요.");
 					return false;
 				}
-
+				console.log(checkedItems);
 				for (let i = 0; i < checkedItems.length; i++) {
 					const oid = checkedItems[i].item.oid;
 					const latest = checkedItems[i].item.latest;
 					const rowIndex = checkedItems[i].rowIndex;
 
 					if (!latest) {
-						alert("최신버전이 아닌 도면이 포함되어있습니다.\n" + rowIndex + "행 데이터");
+						alert("최신버전이 아닌 도면이 포함되어있습니다.\n" + (rowIndex + 1) + "행 데이터");
 						return false;
 					}
 
 					if (oid === undefined) {
-						alert("신규로 작성한 데이터가 존재합니다.\n" + rowIndex + "행 데이터");
+						alert("신규로 작성한 데이터가 존재합니다.\n" + (rowIndex + 1) + "행 데이터");
 						return false;
 					}
 				}
 
+				const a = [{
+					keNumber : "123",
+				}, {
+					keNumber : "456"
+				}]
 				const url = getCallUrl("/keDrawing/revise");
-				const panel = popup(url, 1600, 550);
-				panel.list = checkedItems;
+				const p = popup(url, 1600, 550);
+				p.datas = a;
 			}
 
 			function exportExcel() {
@@ -594,9 +571,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
-				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("keDrawing-list");
-				// 컨텍스트 메뉴 시작
 				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
@@ -604,27 +579,20 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-
-				// 사용자 검색 바인딩 see base.js finderUser function 
 				finderUser("creator");
 				finderUser("modifier");
-
-				// 날짜 검색용 바인딩 see base.js twindate funtion
 				twindate("created");
 				twindate("modified");
-
 				selectbox("psize");
 			});
 
 			document.addEventListener("keydown", function(event) {
-				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}
 			})
 
-			// 컨텍스트 메뉴 숨기기
 			document.addEventListener("click", function(event) {
 				hideContextMenu();
 			})

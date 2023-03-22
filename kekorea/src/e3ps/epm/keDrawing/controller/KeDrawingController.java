@@ -97,6 +97,14 @@ public class KeDrawingController extends BaseController {
 			dataMap.put("editRows", editRow); // 수정행
 			dataMap.put("removeRows", removeRow); // 삭제행
 
+			result = KeDrawingHelper.manager.isWorkOrder(removeRow);
+			if((boolean)result.get("workOrder")) {
+				result.put("result", FAIL);
+				return result;
+			}
+			
+			result = KeDrawingHelper.manager.numberValidate(addRow, editRow);
+
 			result = KeDrawingHelper.manager.isValid(addRow, editRow);
 			// true 중복있음
 			if ((boolean) result.get("isExist")) {
@@ -163,6 +171,16 @@ public class KeDrawingController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "KE 도면 탭 페이지")
+	@GetMapping(value = "/vtabper")
+	public ModelAndView vtabper(@RequestParam String oid, @RequestParam String moid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("oid", oid);
+		model.addObject("moid", moid);
+		model.setViewName("popup:/epm/keDrawing/keDrawing-vtabper");
+		return model;
 	}
 
 	@Description(value = "KE 도면 정보 페이지")

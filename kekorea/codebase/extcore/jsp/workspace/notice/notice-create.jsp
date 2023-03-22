@@ -2,10 +2,15 @@
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <table class="button-table">
 	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				공지사항 등록
+			</div>
+		</td>
 		<td class="right">
 			<input type="button" value="등록" title="등록" onclick="create();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
@@ -41,7 +46,6 @@
 	</tr>
 </table>
 <script type="text/javascript">
-	// 등록
 	function create() {
 
 		if (!confirm("등록 하시겠습니까?")) {
@@ -49,20 +53,17 @@
 		}
 
 		const params = new Object();
-		const content = tinymce.activeEditor.getContent();
 		const url = getCallUrl("/notice/create");
 		params.name = document.getElementById("name").value;
-		params.description = content;
+		params.description = document.getElementById("description").value;
 		params.primarys = toArray("primarys");
+		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
-			} else {
-				// 실패시 처리할 부분..
 			}
 		})
 	}
-
 </script>

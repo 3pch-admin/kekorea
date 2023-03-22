@@ -80,10 +80,6 @@ public class AUIGridUtils {
 
 	/**
 	 * 뷰어블 파일을 AUIGrid 상 표기 위한 함수
-	 * 
-	 * @param epm : 도면 객체
-	 * @return String
-	 * @throws Exception
 	 */
 	public static String getThumnailSmall(EPMDocument epm) throws Exception {
 		String thumnail_mini = FileHelper.getViewContentURLForType(PublishUtils.findRepresentable(epm),

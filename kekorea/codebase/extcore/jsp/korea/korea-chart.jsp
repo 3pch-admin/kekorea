@@ -1,12 +1,14 @@
+<%@page import="java.util.Map"%>
+<%@page import="java.util.Enumeration"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.korea.service.KoreaHelper"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	String code = (String)request.getAttribute("code");
-	CommonCode makCode = (CommonCode) request.getAttribute("makCode");
-	ArrayList<CommonCode> customers = (ArrayList<CommonCode>) request.getAttribute("customers");
-	ArrayList<CommonCode> installs = (ArrayList<CommonCode>) request.getAttribute("installs");
+CommonCode makCode = (CommonCode) request.getAttribute("makCode");
+ArrayList<String> data = (ArrayList<String>) request.getAttribute("data");
+Map<String, ArrayList<String>> drillDown = (Map<String, ArrayList<String>>) request.getAttribute("drillDown");
+System.out.println(drillDown);
 %>
 <!DOCTYPE html>
 <html>
@@ -19,9 +21,8 @@
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
 </head>
 <body>
-<div id="container" style="height: 430px;"></div>
-<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
-		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
+	<div id="container" style="height: 380px;"></div>
+
 	<script type="text/javascript">
 //Create the chart
 Highcharts.chart('container', {
@@ -32,10 +33,6 @@ Highcharts.chart('container', {
         align: 'left',
         text: '<%=makCode.getName()%> 막종 작번 개수'
     },
-//     subtitle: {
-//         align: 'left',
-//         text: 'Click the columns to view versions. Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
-//     },
     accessibility: {
         announceNewData: {
             enabled: true
@@ -53,7 +50,7 @@ Highcharts.chart('container', {
         series: {
             borderWidth: 0,
             dataLabels: {
-                enabled: true,
+            	enabled :true,
                 format: '{point.y}개'
             },
             pointWidth: 20,
@@ -73,14 +70,25 @@ Highcharts.chart('container', {
             	}
             },
             data: [
-            	<%for (CommonCode customer : customers) {%>
+            	<%
+            	for (String dataValue : data) {
+            		String name = dataValue.split("&")[0];
+            		String key = dataValue.split("&")[1];
+            		String value = dataValue.split("&")[2];
+            	%>
                 {
-                    name: '<%=customer.getName()%>',
-                    y: <%=KoreaHelper.manager.yAxisValue(code, customer)%>,
-                    drilldown: '<%=customer.getCode()%>'
+                    name: '<%=name%>',
+                    y: <%=value%>,
+                    drilldown: '<%=key%>'
                 },
                 <%}%>
-            ]
+            ],
+            dataLabels: {
+                enabled: function() {
+                  return this.y !== 0;
+                }
+              },
+            showInLegend: false
         }
     ],
     drilldown: {
@@ -90,14 +98,25 @@ Highcharts.chart('container', {
             }
         },
         series: [
-        	<%for (CommonCode customer : customers) {%>
+        	<%
+        	for (String dataValue : data) {
+        		String name = dataValue.split("&")[0];
+        		String key = dataValue.split("&")[1];
+        		ArrayList<String> drill = drillDown.get(key);
+        	%>
             {
-                name: '<%=customer.getName()%>',
-                id: '<%=customer.getCode()%>',
+                name: '<%=name%>',
+                id: '<%=key%>',
                 data: [
-                <%for (CommonCode install : installs) {%>
-                	['<%=install.getName()%>', <%=KoreaHelper.manager.yAxisValueForInstall(code, customer, install)%>],
-                <%}%>
+                <%
+                	for (String drillValue : drill) {
+                		String drillName = drillValue.split("&")[0];
+                		String value = drillValue.split("&")[2];
+                %>
+                	['<%=drillName%>', <%=value%>],
+                <%
+               	 }
+                %>
                 ]
             },
             <%}%>

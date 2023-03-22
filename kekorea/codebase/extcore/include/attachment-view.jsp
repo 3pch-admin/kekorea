@@ -20,7 +20,8 @@ for (String[] secondary : secondarys) {
 <div>
 	<p>
 		<a href="<%=secondary[5]%>">
-			<img src="<%=secondary[4]%>"><%=secondary[2]%>
+			<span style="position: relative; bottom: 2px;"><%=secondary[2]%></span>
+			<img src="<%=secondary[4]%>" style="position: relative; top: 1px;">
 		</a>
 	</p>
 </div>
