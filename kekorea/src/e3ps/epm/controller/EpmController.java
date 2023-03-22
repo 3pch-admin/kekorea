@@ -20,6 +20,8 @@ import e3ps.epm.service.EpmHelper;
 import e3ps.project.Project;
 import e3ps.project.dto.ProjectDTO;
 import wt.epm.EPMDocument;
+import wt.org.WTUser;
+import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/epm/**")
@@ -53,6 +55,10 @@ public class EpmController extends BaseController {
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/epm/epm-list.jsp");
 		return model;
 	}
@@ -71,7 +77,7 @@ public class EpmController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description(value = "도면 정보 페이지")
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
@@ -82,5 +88,4 @@ public class EpmController extends BaseController {
 		model.setViewName("/extcore/jsp/epm/epm-view.jsp");
 		return model;
 	}
-	
 }

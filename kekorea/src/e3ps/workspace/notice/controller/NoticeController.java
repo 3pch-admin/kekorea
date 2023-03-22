@@ -12,7 +12,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import e3ps.common.controller.BaseController;
+import e3ps.common.util.CommonUtils;
+import e3ps.workspace.notice.Notice;
+import e3ps.workspace.notice.dto.NoticeDTO;
+import e3ps.workspace.notice.service.NoticeHelper;
+import wt.org.WTUser;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -20,10 +31,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.workspace.notice.Notice;
 import e3ps.workspace.notice.dto.NoticeDTO;
 import e3ps.workspace.notice.service.NoticeHelper;
 import wt.org.WTUser;
-import wt.session.SessionHelper;;
+import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/notice/**")
@@ -34,7 +46,7 @@ public class NoticeController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
-		WTUser sessionUser = (WTUser)SessionHelper.manager.getPrincipal();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/workspace/notice/notice-list.jsp");
@@ -55,7 +67,6 @@ public class NoticeController extends BaseController {
 		}
 		return result;
 	}
-	
 
 	@Description(value = "공지사항 등록 페이지")
 	@GetMapping(value = "/create")
@@ -80,7 +91,7 @@ public class NoticeController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description(value = "공지사항 그리드 저장 - 관리자용")
 	@PostMapping(value = "/delete")
 	@ResponseBody
@@ -111,4 +122,14 @@ public class NoticeController extends BaseController {
 		return result;
 	}
 
+	@Description(value = "공지사항 뷰 페이지")
+	@GetMapping(value = "/view")
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Notice notice = (Notice) CommonUtils.getObject(oid);
+		NoticeDTO dto = new NoticeDTO(notice);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/bom/partlist/partlist-view");
+		return model;
+	}
 }

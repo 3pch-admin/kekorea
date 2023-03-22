@@ -1,8 +1,8 @@
 <%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
 <!DOCTYPE html>
 <html>
@@ -12,10 +12,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 <%@include file="/extcore/include/css.jsp"%>
 <%@include file="/extcore/include/script.jsp"%>
 <%@include file="/extcore/include/auigrid.jsp"%>
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
 	<form>
+		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
@@ -132,7 +135,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					formatString : "###0",
 					editRenderer : {
 						type : "InputEditRenderer",
-						onlyNumeric : true, 
+						onlyNumeric : true,
 						maxlength : 3,
 					},
 					filter : {
@@ -144,14 +147,14 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					dataField : "name",
 					headerText : "DRAWING TITLE",
 					dataType : "string",
-					style : "left indent10 underline",
+					style : "aui-left",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const moid = item.moid;
-							const url = getCallUrl("/keDrawing/tabper?oid=" + oid + "&moid=" + moid);
+							const url = getCallUrl("/keDrawing/view?oid=" + oid);
 							popup(url, 1400, 700);
 						}
 					},
@@ -172,7 +175,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const moid = item.moid;
-							const url = getCallUrl("/keDrawing/tabper?oid=" + oid + "&moid=" + moid);
+							const url = getCallUrl("/keDrawing/view?oid=" + oid);
 							popup(url, 1400, 700);
 						}
 					},
@@ -350,11 +353,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				loadGridData();
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					hideContextMenu(); 
-					vScrollChangeHandler(event); // lazy loading
+					hideContextMenu();
+					vScrollChangeHandler(event);
 				});
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-					hideContextMenu(); 
+					hideContextMenu();
 				});
 				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRowHandler);
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinishHandler);
@@ -533,7 +536,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function revise() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				
+
 				if (checkedItems.length == 0) {
 					alert("개정할 도면을 선택하세요.");
 					return false;
@@ -555,11 +558,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					}
 				}
 
-				const a = [{
+				const a = [ {
 					keNumber : "123",
 				}, {
 					keNumber : "456"
-				}]
+				} ]
 				const url = getCallUrl("/keDrawing/revise");
 				const p = popup(url, 1600, 550);
 				p.datas = a;
@@ -567,12 +570,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function exportExcel() {
 				const exceptColumnFields = [ "preView", "button", "primary" ];
-				exportToExcel("KE 도면 리스트", "KE 도면", "KE 도면 리스트", exceptColumnFields, "<%=sessionUser.getFullName()%>");
+				const sessionName = document.getElementById("sessionName").value;
+				exportToExcel("KE 도면 리스트", "KE 도면", "KE 도면 리스트", exceptColumnFields, sessionName);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("keDrawing-list");
-				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler

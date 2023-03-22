@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -31,6 +30,8 @@ public class WorkspaceController extends BaseController {
 	public ModelAndView agree() throws Exception {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/workspace/agree-list.jsp");
 		return model;
@@ -56,6 +57,8 @@ public class WorkspaceController extends BaseController {
 	public ModelAndView approval() throws Exception {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/workspace/approval-list.jsp");
 		return model;
@@ -81,6 +84,8 @@ public class WorkspaceController extends BaseController {
 	public ModelAndView receive() throws Exception {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/workspace/receive-list.jsp");
 		return model;
@@ -106,6 +111,8 @@ public class WorkspaceController extends BaseController {
 	public ModelAndView progress() throws Exception {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/workspace/progress-list.jsp");
 		return model;
@@ -131,6 +138,8 @@ public class WorkspaceController extends BaseController {
 	public ModelAndView complete() throws Exception {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/workspace/complete-list.jsp");
 		return model;
@@ -156,6 +165,8 @@ public class WorkspaceController extends BaseController {
 	public ModelAndView reject() throws Exception {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/workspace/reject-list.jsp");
 		return model;

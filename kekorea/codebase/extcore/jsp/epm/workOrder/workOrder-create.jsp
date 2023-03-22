@@ -240,7 +240,6 @@
 		params.addRows = addRows;
 		params._addRows = _addRows;
 		params.secondarys = toArray("secondarys");
-		console.log(params);
 		const url = getCallUrl("/workOrder/create");
 		call(url, params, function(data) {
 			alert(data.msg);

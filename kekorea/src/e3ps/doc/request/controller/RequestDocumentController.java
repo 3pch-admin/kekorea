@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
+import e3ps.common.util.CommonUtils;
 import e3ps.doc.request.dto.RequestDocumentDTO;
 import e3ps.doc.request.service.RequestDocumentHelper;
 import e3ps.org.service.OrgHelper;
@@ -37,7 +38,11 @@ public class RequestDocumentController extends BaseController {
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/extcore/jsp/document/request/request-list.jsp");
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.setViewName("/extcore/jsp/document/request/requestDocument-list.jsp");
 		return model;
 	}
 
@@ -122,7 +127,7 @@ public class RequestDocumentController extends BaseController {
 		model.addObject("softs", softs);
 		model.addObject("machines", machines);
 		model.addObject("list", list);
-		model.setViewName("popup:/document/request/request-create");
+		model.setViewName("popup:/document/request/requestDocument-create");
 		return model;
 	}
 }

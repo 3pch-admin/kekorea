@@ -594,4 +594,9 @@ div#loading_layer {
 .aui-left {
 	text-align: left !important;
 	text-indent: 10px !important;
+	color: blue !important;
+}
+
+.aui-grid-renderer-base>a {
+	color: blue !important;
 }

@@ -82,7 +82,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "CONFIG SHEET 제목",
 					dataType : "string",
 					width : 350,
-					style : "left indent10 underline",
+					style : "underline",
+					headerTooltip : {
+						show : true,
+						tooltipHtml : "등록된 CONFIG SHEET를 선택하고 등록버튼을 누르면 기존의 CONFIG SHEET내용을 가져옵니다."
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -164,7 +168,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "작업 내용",
 					dataType : "string",
 					width : 450,
-					style : "left indent10",
+					style : "aui-left",
 					filter : {
 						showIcon : true,
 						inline : true
@@ -245,6 +249,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu();
 				});
+				AUIGrid.bind(myGridID, "cellDoubleClick", auiCellDoubleClickHandler);
+			}
+
+			function auiCellDoubleClickHandler(event) {
+				const dataField = event.dataField;
+				const oid = event.item.oid;
+				if (dataField === "name") {
+					const url = getCallUrl("/configSheet/view?oid=" + oid);
+					popup(url);
+				}
 			}
 
 			function loadGridData() {
@@ -264,18 +278,31 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function create() {
-				const url = getCallUrl("/configSheet/create");
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				if (checkedItems.length > 1) {
+					alert("기존 정보를 가져올 CONFIG SHEET는 하나만 선택 가능합니다.");
+					return false;
+				}
+				let oid;
+				if (checkedItems.length === 1) {
+					oid = checkedItems[0].item.oid;
+				}
+				let url;
+				if (oid !== undefined) {
+					url = getCallUrl("/configSheet/create?oid=" + oid);
+				} else {
+					url = getCallUrl("/configSheet/create");
+				}
 				popup(url);
 			}
 
 			function exportExcel() {
 				const exceptColumnFields = [ "primary" ];
-				exportToExcel("CONFIG SHEET 리스트", "CONFIG SHEET", "CONFIG SHEET 리스트", exceptColumnFields, "<%=sessionUser.getFullName()%>");
 			}
-			
+
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("configSheet-list");
-				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
@@ -283,6 +310,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				createAUIGrid(columns);
 				finderUser("creator");
 				twindate("created");
+				selectbox("psize");
 			});
 
 			document.addEventListener("keydown", function(event) {

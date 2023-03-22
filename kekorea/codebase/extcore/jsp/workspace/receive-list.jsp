@@ -1,6 +1,7 @@
 <%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
 <!DOCTYPE html>
@@ -8,21 +9,18 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
-		<!-- 리스트 검색시 반드시 필요한 히든 값 -->
+		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
-		<!-- 검색 테이블 -->
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -50,11 +48,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<!-- 버튼 테이블 -->
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<!-- exportExcel 함수참고 -->
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('receive-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('receive-list');">
@@ -74,9 +70,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
-		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -129,7 +123,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "name",
 					headerText : "결재 제목",
 					dataType : "string",
-					style : "left indent10",
+					style : "aui-left",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
@@ -182,11 +176,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				} ]
 			}
 
-			// AUIGrid 생성 함수
 			function createAUIGrid(columnLayout) {
-				// 그리드 속성
 				const props = {
-					// 그리드 공통속성 시작
 					headerHeight : 30,
 					rowHeight : 30,
 					showRowNumColumn : true,
@@ -202,24 +193,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-				// 그리드 공통속성 끝
 				};
-
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
-
-				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
-
-				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
-					vScrollChangeHandler(event); // lazy loading
+					hideContextMenu();
+					vScrollChangeHandler(event);
 				});
-
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					hideContextMenu();
 				});
 			}
 
@@ -241,39 +224,33 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				});
 			}
 
-			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
-				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("receive-list");
-				// 컨텍스트 메뉴 시작
-				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				let contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-
 				finderUser("submiter");
 				twindate("receive");
-
 				selectbox("psize");
 			});
 
 			function exportExcel() {
 				const exceptColumnFields = [ "reads", "point" ];
-				exportToExcel("수신함 리스트", "수신함", "수신함 리스트", exceptColumnFields, "<%=sessionUser.getFullName()%>");
+				const sessionName = document.getElementById("sessionName").value;
+				exportToExcel("수신함 리스트", "수신함", "수신함 리스트", exceptColumnFields, sessionName);
 			}
 
 			document.addEventListener("keydown", function(event) {
-				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}
 			})
 
-			// 컨텍스트 메뉴 숨기기
 			document.addEventListener("click", function(event) {
 				hideContextMenu();
 			})

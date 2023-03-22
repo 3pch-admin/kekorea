@@ -1,3 +1,4 @@
+<%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.common.util.ContentUtils"%>
 <%@page import="e3ps.epm.keDrawing.dto.KeDrawingDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -5,7 +6,7 @@
 <%
 JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 net.sf.json.JSONArray baseData = (net.sf.json.JSONArray) request.getAttribute("baseData");
-out.println(baseData);
+String oid = (String) request.getAttribute("oid");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
 <table class="button-table">
@@ -17,6 +18,7 @@ out.println(baseData);
 			</div>
 		</td>
 		<td class="right">
+			<input type="button" value="등록" title="등록" onclick="create();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -58,7 +60,7 @@ out.println(baseData);
 			<tr>
 				<th class="lb">설명</th>
 				<td class="indent5">
-					<textarea name="description" id="description" rows="6" cols=""></textarea>
+					<textarea name="description" id="description" rows="6"></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -95,8 +97,7 @@ out.println(baseData);
 
 <script type="text/javascript">
 	let myGridID;
-	const categorys =
-<%=categorys%>
+	const categorys = <%=categorys%>
 	let itemListMap = {};
 	let specListMap = {};
 	const columns = [ {
@@ -111,7 +112,7 @@ out.println(baseData);
 			iconHeight : 16,
 			iconPosition : "aisleRight",
 			iconTableRef : {
-				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 			},
 			onClick : function(event) {
 				AUIGrid.openInputer(event.pid);
@@ -137,7 +138,7 @@ out.println(baseData);
 						}
 					}
 				}
-				for (let i = 0, len = categorys.length; i < len; i++) { // keyValueList 있는 값만..
+				for (let i = 0, len = categorys.length; i < len; i++) {
 					if (categorys[i]["value"] == newValue) {
 						isValid = true;
 						break;
@@ -173,7 +174,7 @@ out.println(baseData);
 			iconHeight : 16,
 			iconPosition : "aisleRight",
 			iconTableRef : {
-				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 			},
 			onClick : function(event) {
 				AUIGrid.openInputer(event.pid);
@@ -246,7 +247,7 @@ out.println(baseData);
 			iconHeight : 16,
 			iconPosition : "aisleRight",
 			iconTableRef : {
-				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 			},
 			onClick : function(event) {
 				AUIGrid.openInputer(event.pid);
@@ -272,7 +273,7 @@ out.println(baseData);
 						}
 					}
 				}
-				for (let i = 0, len = dd.length; i < len; i++) { // keyValueList 있는 값만..
+				for (let i = 0, len = dd.length; i < len; i++) {
 					if (dd[i]["value"] == newValue) {
 						isValid = true;
 						break;
@@ -334,33 +335,35 @@ out.println(baseData);
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 		readyHandler();
-		AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
+		auiReadyHandler();
+		// 		AUIGrid.bind(myGridID, "ready", auiReadyHandler);
 	}
 
-	function auiCellEditBegin(event) {
-		const item = event.item;
-		const dataField = event.dataField;
-		if (dataField === "item_code") {
-			const categoryCode = item.category_code;
-			const url = getCallUrl("/commonCode/getChildrens?parentCode=" + categoryCode + "&codeType=CATEGORY");
-			call(url, null, function(data) {
-				itemListMap[categoryCode] = data.list;
-			}, "GET");
-		}
-
-		if (dataField === "item_code") {
-			const itemCode = item.item_code;
-			const url = getCallUrl("/commonCode/getChildrens?parentCode=" + itemCode + "&codeType=CATEGORY_ITEM");
-			call(url, null, function(data) {
-				specListMap[itemCode] = data.list;
-			}, "GET");
+	function auiReadyHandler(event) {
+		const item = AUIGrid.getGridData(myGridID);
+		for (let i = 0; i < item.length; i++) {
+			if (itemListMap.length === undefined) {
+				const categoryCode = item[i].category_code;
+				const url = getCallUrl("/commonCode/getChildrens?parentCode=" + categoryCode + "&codeType=CATEGORY");
+				call(url, null, function(data) {
+					itemListMap[categoryCode] = data.list;
+				}, "GET");
+			}
+			if (specListMap.length === undefined) {
+				const itemCode = item[i].item_code;
+				if (itemCode !== "") {
+					const url = getCallUrl("/commonCode/getChildrens?parentCode=" + itemCode + "&codeType=CATEGORY_ITEM");
+					call(url, null, function(data) {
+						specListMap[itemCode] = data.list;
+					}, "GET");
+				}
+			}
 		}
 	}
 
 	function readyHandler() {
-		AUIGrid.addRow(myGridID,
-<%=baseData%>
-	);
+		const data = <%=baseData%>
+		AUIGrid.addRow(myGridID, data);
 	}
 
 	function auiCellEditEndHandler(event) {
@@ -397,6 +400,36 @@ out.println(baseData);
 		}
 	};
 
+	function create() {
+		if (!confirm("저장 하시겠습니까?")) {
+			return false;
+		}
+
+		const url = getCallUrl("/configSheet/create");
+		const params = new Object();
+		const addRows = AUIGrid.getAddedRowItems(myGridID);
+		const _addRows = AUIGrid.getAddedRowItems(_myGridID);
+		const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
+
+		addRows.sort(function(a, b) {
+			return a.sort - b.sort;
+		});
+
+		params.name = document.getElementById("name").value;
+		params.description = document.getElementById("description").value;
+		params.addRows = addRows;
+		params._addRows = _addRows;
+		params._addRows_ = _addRows_;
+		params.secondarys = toArray("secondarys");
+		call(url, params, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			}
+		})
+	}
+
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs({
 			active : 0,
@@ -404,13 +437,11 @@ out.println(baseData);
 				const tabId = ui.panel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
-					createAUIGrid("#myGrid1", "normal");
+					_createAUIGrid(_columns);
+					_createAUIGrid_(_columns_);
 					break;
 				case "tabs-2":
-					createAUIGrid("#myGrid2", "tree");
-					break;
-				case "tabs-3":
-					createAUIGrid("#myGrid3", "paging");
+					AUIGrid.resize(myGridID);
 					break;
 				}
 			},
@@ -439,13 +470,6 @@ out.println(baseData);
 				}
 			}
 		});
-
-		createAUIGrid(columns);
-		_createAUIGrid(_columns);
-		_createAUIGrid_(_columns_);
-		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID);
-		AUIGrid.resize(_myGridID_);
 	});
 
 	window.addEventListener("resize", function() {

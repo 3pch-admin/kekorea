@@ -638,6 +638,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			function auiCellClickHandler(event) {
 				const dataField = event.dataField;
 				const oid = event.item.oid;
+				const preView = event.item.preView;
+				alert(preView);
 				if (dataField === "preView") {
 					const url = getCallUrl("/aui/thumbnail?oid=" + oid);
 					popup(url);
