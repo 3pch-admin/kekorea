@@ -1,9 +1,12 @@
 package e3ps.korea.configSheet.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import e3ps.admin.commonCode.CommonCode;
 import e3ps.common.util.PageQueryUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.korea.configSheet.ConfigSheetDTO;
 import e3ps.korea.configSheet.ConfigSheetProjectLink;
@@ -14,6 +17,7 @@ import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.query.QuerySpec;
 import wt.services.ServiceFactory;
+import wt.util.WTAttributeNameIfc;
 
 public class ConfigSheetHelper {
 
@@ -25,6 +29,7 @@ public class ConfigSheetHelper {
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ConfigSheet.class, true);
+		QuerySpecUtils.toOrderBy(query, idx, ConfigSheet.class, ConfigSheet.CREATE_TIMESTAMP, false);
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 
@@ -89,5 +94,37 @@ public class ConfigSheetHelper {
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
 		return map;
+	}
+
+	public JSONArray loadBaseGridData() throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx_q = query.appendClassList(CommonCode.class, true);
+		int idx_i = query.appendClassList(CommonCode.class, true);
+		int idx_s = query.appendClassList(CommonCode.class, true);
+
+		QuerySpecUtils.toInnerJoin(query, CommonCode.class, CommonCode.class, WTAttributeNameIfc.ID_NAME,
+				"parentReference.key.id", idx_q, idx_i);
+		QuerySpecUtils.toInnerJoin(query, CommonCode.class, CommonCode.class, WTAttributeNameIfc.ID_NAME,
+				"parentReference.key.id", idx_i, idx_s);
+		QuerySpecUtils.toOrderBy(query, idx_q, CommonCode.class, CommonCode.SORT, false);
+		System.out.println(query);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			CommonCode spec = (CommonCode) obj[2];
+			CommonCode item = spec.getParent();
+			CommonCode category = item.getParent();
+
+			Map<String, String> map = new HashMap<>();
+			map.put("category_code", category.getCode());
+			map.put("item_code", item.getCode());
+			map.put("item_name", item.getName());
+			map.put("spec_code", spec.getCode());
+			map.put("spec_name", spec.getName());
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
 	}
 }

@@ -4,6 +4,8 @@
 <%@page import="org.json.JSONArray"%>
 <%
 JSONArray categorys = (JSONArray) request.getAttribute("categorys");
+net.sf.json.JSONArray baseData = (net.sf.json.JSONArray) request.getAttribute("baseData");
+out.println(baseData);
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
 <table class="button-table">
@@ -87,13 +89,14 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 				</td>
 			</tr>
 		</table>
-		<div id="grid_wrap" style="height: 400px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 800px; border-top: 1px solid #3180c3;"></div>
 	</div>
 </div>
 
 <script type="text/javascript">
 	let myGridID;
-	const categorys = <%=categorys%>
+	const categorys =
+<%=categorys%>
 	let itemListMap = {};
 	let specListMap = {};
 	const columns = [ {
@@ -126,6 +129,14 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 			descendants : [ "item_code" ],
 			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 				let isValid = false;
+				if (fromClipboard) {
+					for (let i = 0; i < categorys.length; i++) {
+						const key = categorys[i]["key"];
+						if (newValue === key) {
+							isValid = true;
+						}
+					}
+				}
 				for (let i = 0, len = categorys.length; i < len; i++) { // keyValueList 있는 값만..
 					if (categorys[i]["value"] == newValue) {
 						isValid = true;
@@ -136,7 +147,7 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 					"validate" : isValid,
 					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
 				};
-			}
+			},
 		},
 		labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
 			let retStr = "";
@@ -153,6 +164,9 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 		headerText : "ITEM",
 		dataType : "string",
 		width : 200,
+		cellMerge : true,
+		mergeRef : "category_code",
+		mergePolicy : "restrict",
 		renderer : {
 			type : "IconRenderer",
 			iconWidth : 16,
@@ -178,7 +192,15 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 				const param = item.category_code;
 				const dd = itemListMap[param];
 				let isValid = false;
-				for (let i = 0, len = dd.length; i < len; i++) { // keyValueList 있는 값만..
+				if (fromClipboard) {
+					for (let i = 0; i < dd.length; i++) {
+						const key = dd[i]["key"];
+						if (newValue === key) {
+							isValid = true;
+						}
+					}
+				}
+				for (let i = 0, len = dd.length; i < len; i++) {
 					if (dd[i]["value"] == newValue) {
 						isValid = true;
 						break;
@@ -242,6 +264,14 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 				const param = item.item_code;
 				const dd = specListMap[param];
 				let isValid = false;
+				if (fromClipboard) {
+					for (let i = 0; i < dd.length; i++) {
+						const key = dd[i]["key"];
+						if (newValue === key) {
+							isValid = true;
+						}
+					}
+				}
 				for (let i = 0, len = dd.length; i < len; i++) { // keyValueList 있는 값만..
 					if (dd[i]["value"] == newValue) {
 						isValid = true;
@@ -297,12 +327,40 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 			rowNumHeaderText : "번호",
 			selectionMode : "multipleCells",
 			showRowCheckColumn : true,
-			editable : true,
 			enableCellMerge : true,
-			enterKeyColumnBase : true
+			enterKeyColumnBase : true,
+			editable : true,
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+		readyHandler();
+		AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
+	}
+
+	function auiCellEditBegin(event) {
+		const item = event.item;
+		const dataField = event.dataField;
+		if (dataField === "item_code") {
+			const categoryCode = item.category_code;
+			const url = getCallUrl("/commonCode/getChildrens?parentCode=" + categoryCode + "&codeType=CATEGORY");
+			call(url, null, function(data) {
+				itemListMap[categoryCode] = data.list;
+			}, "GET");
+		}
+
+		if (dataField === "item_code") {
+			const itemCode = item.item_code;
+			const url = getCallUrl("/commonCode/getChildrens?parentCode=" + itemCode + "&codeType=CATEGORY_ITEM");
+			call(url, null, function(data) {
+				specListMap[itemCode] = data.list;
+			}, "GET");
+		}
+	}
+
+	function readyHandler() {
+		AUIGrid.addRow(myGridID,
+<%=baseData%>
+	);
 	}
 
 	function auiCellEditEndHandler(event) {
@@ -316,8 +374,8 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 				itemListMap[categoryCode] = data.list;
 			}, "GET");
 		}
-		
-		if(dataField === "item_code") {
+
+		if (dataField === "item_code") {
 			const itemCode = item.item_code;
 			const url = getCallUrl("/commonCode/getChildrens?parentCode=" + itemCode + "&codeType=CATEGORY_ITEM");
 			call(url, null, function(data) {
@@ -338,9 +396,50 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 			AUIGrid.removeRow(myGridID, rowIndex);
 		}
 	};
-	
+
 	document.addEventListener("DOMContentLoaded", function() {
-		$("#tabs").tabs();
+		$("#tabs").tabs({
+			active : 0,
+			create : function(event, ui) {
+				const tabId = ui.panel.prop("id");
+				switch (tabId) {
+				case "tabs-1":
+					createAUIGrid("#myGrid1", "normal");
+					break;
+				case "tabs-2":
+					createAUIGrid("#myGrid2", "tree");
+					break;
+				case "tabs-3":
+					createAUIGrid("#myGrid3", "paging");
+					break;
+				}
+			},
+			activate : function(event, ui) {
+				var tabId = ui.newPanel.prop("id");
+				switch (tabId) {
+				case "tabs-1":
+					const _isCreated_ = AUIGrid.isCreated(_myGridID);
+					const _isCreated = AUIGrid.isCreated(_myGridID_);
+					if (_isCreated_ && _isCreated) {
+						AUIGrid.resize(_myGridID);
+						AUIGrid.resize(_myGridID_);
+					} else {
+						_createAUIGrid(_columns);
+						_createAUIGrid_(_columns_);
+					}
+					break;
+				case "tabs-2":
+					const isCreated = AUIGrid.isCreated(myGridID);
+					if (isCreated) {
+						AUIGrid.resize(myGridID);
+					} else {
+						createAUIGrid(columns);
+					}
+					break;
+				}
+			}
+		});
+
 		createAUIGrid(columns);
 		_createAUIGrid(_columns);
 		_createAUIGrid_(_columns_);

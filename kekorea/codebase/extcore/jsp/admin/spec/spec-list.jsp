@@ -45,7 +45,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				headerText : "코드 명",
 				dataType : "string",
 				width : 500,
-				style : "left",
+				style : "aui-left",
 				editRenderer : {
 					type : "InputEditRenderer",
 					validator : function(oldValue, newValue, item, dataField) {
@@ -90,8 +90,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				headerText : "코드타입",
 				dataType : "string",
 				width : 120,
+				editable : false,
 				labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
-					let retStr = ""; 
+					let retStr = "";
 					for (let i = 0, len = list.length; i < len; i++) {
 						if (list[i]["key"] == value) {
 							retStr = list[i]["value"];
@@ -112,7 +113,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				formatString : "###0",
 				editRenderer : {
 					type : "InputEditRenderer",
-					onlyNumeric : true, 
+					onlyNumeric : true,
 				},
 				filter : {
 					showIcon : false,
@@ -134,14 +135,14 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					},
 				},
 				filter : {
-					showIcon : true,
-					inline : true
+					showIcon : false,
+					inline : false
 				},
 			}, {
 				dataField : "description",
 				headerText : "설명",
 				dataType : "string",
-				style : "left indent10",
+				style : "aui-left",
 				filter : {
 					showIcon : true,
 					inline : true
@@ -177,7 +178,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function auiCellClickHandler(event) {
 				const item = event.item;
-				rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); 
+				rowIdField = AUIGrid.getProp(event.pid, "rowIdField");
 				rowId = item[rowIdField];
 				if (AUIGrid.isCheckedRowById(event.pid, rowId)) {
 					AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
@@ -213,24 +214,26 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
+					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item.oid);
 					if (isNull(item.name)) {
-						AUIGrid.showToastMessage(myGridID, i + 1, 0, "코드 명 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "코드 명 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 					if (isNull(item.code)) {
-						AUIGrid.showToastMessage(myGridID, i + 1, 1, "코드 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "코드 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 				}
 
 				for (let i = 0; i < editRows.length; i++) {
 					const item = editRows[i];
+					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item.oid);
 					if (isNull(item.name)) {
-						AUIGrid.showToastMessage(myGridID, i + 1, 0, "코드 명 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "코드 명 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 					if (isNull(item.code)) {
-						AUIGrid.showToastMessage(myGridID, i + 1, 1, "코드 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "코드 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 				}
@@ -254,10 +257,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				const dataField = event.dataField;
 				const rowIndex = event.rowIndex;
 				if (rowIndex == 0) {
-					return false;
-				}
-
-				if (dataField === "codeType") {
 					return false;
 				}
 				return true;
@@ -324,7 +323,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				const parentRowId = parentItem.oid;
 
 				const newItem = new Object();
-				newItem.parentRowId = parentRowId; // 부모의 rowId 값을 보관해 놓음...나중에 개발자가 유용하게 쓰기 위함...실제 그리드는 사용하지 않음.
+				newItem.parentRowId = parentRowId;
 				newItem.enable = true;
 				newItem.sort = 0;
 				AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "last");
@@ -343,9 +342,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				}
 
 				const selItem = checkedItems[0].item;
-				const parentRowId = selItem.oid; // 선택행의 자식으로 행 추가
+				const parentRowId = selItem.oid;
 				const newItem = new Object();
-				newItem.parentRowId = parentRowId; // 부모의 rowId 값을 보관해 놓음...나중에 개발자가 유용하게 쓰기 위함...실제 그리드는 사용하지 않음.
+				newItem.parentRowId = parentRowId;
 				newItem.enable = true;
 				newItem.sort = 0;
 				AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "selectionDown");

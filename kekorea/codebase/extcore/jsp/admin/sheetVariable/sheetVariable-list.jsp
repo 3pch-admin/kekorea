@@ -4,57 +4,16 @@
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
-		<!-- 검색 테이블 -->
-		<table class="search-table">
-			<colgroup>
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
-			</colgroup>
-			<tr>
-				<th>공지사항 제목</th>
-				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-200">
-				</td>
-				<th>설명</th>
-				<td class="indent5">
-					<input type="text" name="description" class="width-200">
-				</td>
-				<th>작성자</th>
-				<td class="indent5">
-					<input type="text" name="creator" id="creator"  class="width-200">
-				</td>
-				<th>작성일</th>
-				<td class="indent5">
-					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
-					~
-					<input type="text" name="createdTo" id="createdTo" class="width-100">
-				</td>
-			</tr>
-		</table>
-
-		<!-- 버튼 테이블 -->
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('sheetVariable-list');">
-					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('sheetVariable-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="자식 추가" title="자식 추가" class="orange" onclick="addTreeRow();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
@@ -66,10 +25,7 @@
 			</tr>
 		</table>
 
-		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
-		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
-		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
 			const list = [ {
@@ -83,158 +39,165 @@
 				"value" : "사양"
 			} ];
 
-			function _layout() {
-				return [ {
-					dataField : "name",
-					headerText : "코드 명",
-					dataType : "string",
-					width : 350,
-					style : "left",
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "code",
-					headerText : "코드",
-					dataType : "string",
-					width : 100,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "codeType",
-					headerText : "코드타입",
-					dataType : "string", // 날짜 및 사람명 컬럼 사이즈 100
-					width : 100,
-					renderer : {
-						type : "IconRenderer",
-						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
-						iconHeight : 16,
-						iconPosition : "aisleRight",
-						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
-						},
-						onClick : function(event) {
-							// 아이콘을 클릭하면 수정으로 진입함.
-							AUIGrid.openInputer(event.pid);
+			const columns = [ {
+				dataField : "name",
+				headerText : "코드 명",
+				dataType : "string",
+				width : 350,
+				style : "aui-left",
+				editRenderer : {
+					type : "InputEditRenderer",
+					validator : function(oldValue, newValue, item, dataField) {
+						let isValid = true;
+						if (newValue === "") {
+							isValid = false;
 						}
-					},
-					editRenderer : {
-						type : "DropDownListRenderer",
-						showEditorBtn : false,
-						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
-						list : list,
-						keyField : "key", // key 에 해당되는 필드명
-						valueField : "value", // value 에 해당되는 필드명,
-					},
-					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
-						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
-						for (let i = 0, len = list.length; i < len; i++) {
-							if (list[i]["key"] == value) {
-								retStr = list[i]["value"];
-								break;
-							}
+						return {
+							"validate" : isValid,
+							"message" : "코드명은 공백을 입력 할 수 없습니다."
+						};
+					}
+				},
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			}, {
+				dataField : "code",
+				headerText : "코드",
+				dataType : "string",
+				width : 100,
+				editRenderer : {
+					type : "InputEditRenderer",
+					validator : function(oldValue, newValue, item, dataField) {
+						let isValid = true;
+						if (newValue === "") {
+							isValid = false;
 						}
-						return retStr == "" ? value : retStr;
+						return {
+							"validate" : isValid,
+							"message" : "코드는 공백을 입력 할 수 없습니다."
+						};
+					}
+				},
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			}, {
+				dataField : "codeType",
+				headerText : "코드타입",
+				dataType : "string",
+				width : 120,
+				editable : false,
+				labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+					let retStr = "";
+					for (let i = 0, len = list.length; i < len; i++) {
+						if (list[i]["key"] == value) {
+							retStr = list[i]["value"];
+							break;
+						}
+					}
+					return retStr == "" ? value : retStr;
+				},
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			}, {
+				dataField : "sort",
+				headerText : "정렬",
+				dataType : "numeric",
+				width : 100,
+				formatString : "###0",
+				editRenderer : {
+					type : "InputEditRenderer",
+					onlyNumeric : true,
+				},
+				filter : {
+					showIcon : false,
+					inline : false
+				},
+			}, {
+				dataField : "enable",
+				headerText : "사용여부",
+				dataType : "boolean",
+				width : 100,
+				renderer : {
+					type : "CheckBoxEditRenderer",
+					editable : true,
+					disabledFunction : function(rowIndex, columnIndex, value, isChecked, item, dataField) {
+						if (rowIndex != 0) {
+							return false;
+						}
+						return true;
 					},
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "sort",
-					headerText : "정렬",
-					dataType : "numeric",
-					width : 100,
-					formatString : "###0",
-					editRenderer : {
-						type : "InputEditRenderer",
-						onlyNumeric : true, // 0~9만 입력가능
-					},
-					filter : {
-						showIcon : false,
-						inline : false
-					},
-				}, {
-					dataField : "enable",
-					headerText : "사용여부",
-					dataType : "boolean",
-					width : 100,
-					renderer : {
-						type : "CheckBoxEditRenderer",
-						editable : true,
-						disabledFunction : function(rowIndex, columnIndex, value, isChecked, item, dataField) {
-							if (rowIndex != 0) {
-								return false;
-							}
-							return true;
-						},
-					},
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "description",
-					headerText : "설명",
-					dataType : "string",
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				} ]
-			}
+				},
+				filter : {
+					showIcon : false,
+					inline : false
+				},
+			}, {
+				dataField : "description",
+				headerText : "설명",
+				dataType : "string",
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			} ]
 
 			// AUIGrid 생성 함수
 			function createAUIGrid(columnLayout) {
-				// 그리드 속성
 				const props = {
-						// 그리드 공통속성 시작
-						headerHeight : 30,
-						rowHeight : 30,
-						showRowNumColumn : true,
-						showRowCheckColumn : true,
-						showStateColumn : true,
-						rowNumHeaderText : "번호",
-						noDataMessage : "검색 결과가 없습니다.",
-						enableFilter : true,
-						selectionMode : "multipleCells",
-						enableMovingColumn : true,
-						showInlineFilter : true,
-						useContextMenu : true,
-						enableRightDownFocus : true,
-						filterLayerWidth : 320,
-						filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-						// 그리드 공통속성 끝
-					fillColumnSizeMode : true,
-					editable : true,
-					enableRowCheckShiftKey : true,
+					rowIdField : "oid",
+					headerHeight : 30,
+					rowHeight : 30,
+					showRowNumColumn : true,
+					showRowCheckColumn : true,
+					showStateColumn : true,
+					rowNumHeaderText : "번호",
+					noDataMessage : "검색 결과가 없습니다.",
+					enableFilter : true,
+					selectionMode : "multipleCells",
+					showInlineFilter : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					displayTreeOpen : true,
+					editable : true
 				};
-
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinish);
 				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
-
-				// 컨텍스트 메뉴 이벤트 바인딩
-				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
-
-				// 스크롤 체인지 핸들러.
-				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
-					vScrollChangeHandler(event); // lazy loading
-				});
-
-				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
-				});
+				AUIGrid.bind(myGridID, "cellEditEndBefore", auiCellEditEndBefore);
+				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 			}
 
-			// 저장
+			function auiCellEditEndBefore(event) {
+				const dataField = event.dataField;
+				const value = event.value;
+				if (dataField === "code") {
+					const isUnique = AUIGrid.isUniqueValue(myGridID, "code", value);
+					const editValue = AUIGrid.getInitCellValue(myGridID, event.item.oid, "code");
+					if (!isUnique && value !== editValue) {
+						alert("입력하신 코드는 이미 존재합니다.");
+						return "";
+					}
+				}
+				return value;
+			}
+
+			function auiCellClickHandler(event) {
+				const item = event.item;
+				rowIdField = AUIGrid.getProp(event.pid, "rowIdField");
+				rowId = item[rowIdField];
+				if (AUIGrid.isCheckedRowById(event.pid, rowId)) {
+					AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
+				} else {
+					AUIGrid.addCheckedRowsByIds(event.pid, rowId);
+				}
+			}
 			function save() {
 
 				if (!confirm("저장 하시겠습니까?")) {
@@ -249,20 +212,26 @@
 
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
+					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item.oid);
 					if (isNull(item.name)) {
-						AUIGrid.showToastMessage(myGridID, i + 1, 0, "코드 명 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "코드 명 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 					if (isNull(item.code)) {
-						AUIGrid.showToastMessage(myGridID, i + 1, 1, "코드 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "코드 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
-					if (isNull(item.codeType)) {
-						AUIGrid.showToastMessage(myGridID, i + 1, 2, "코드 타입 값을 선택하세요.");
+				}
+
+				for (let i = 0; i < editRows.length; i++) {
+					const item = editRows[i];
+					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item.oid);
+					if (isNull(item.name)) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "코드 명 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
-					if (isNull(item.sort)) {
-						AUIGrid.showToastMessage(myGridID, i + 1, 3, "정렬 값은 공백을 입력 할 수 없습니다.");
+					if (isNull(item.code)) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "코드 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 				}
@@ -275,8 +244,6 @@
 					alert(data.msg);
 					if (data.result) {
 						loadGridData();
-					} else {
-						// 실패...
 					}
 				})
 			}
@@ -285,10 +252,6 @@
 				const dataField = event.dataField;
 				const rowIndex = event.rowIndex;
 				if (rowIndex == 0) {
-					return false;
-				}
-
-				if (dataField === "codeType") {
 					return false;
 				}
 				return true;
@@ -345,91 +308,68 @@
 				});
 			}
 
-			// 행 추가
 			function addRow() {
-				const selectedItems = AUIGrid.getSelectedItems(myGridID);
-				var selItem;
-				var parentItem;
-				var parentRowId;
-
-				if (selectedItems.length > 0) {
-					selItem = selectedItems[0].item;
-
-					// 선택 행의 동급 레벨로 추가하기 위해 선택행의 부모 가져오기
-					parentItem = AUIGrid.getParentItemByRowId(myGridID, selItem.oid);
-					parentRowId;
-
-					if (parentItem) {
-						parentRowId = parentItem.oid;
-					} else {
-						parentRowId = null; // parentRowId 를 null 로 하면 최상위 행이 생깁니다.
-					}
-				} else {
-					// 선택행이 없으므로 최상단에 행 추가시킴.
-					parentRowId = null;
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				if (checkedItems.length <= 0) {
+					alert("행을 추가할 행을 선택하세요.");
+					return false;
 				}
 
-				var newItem = new Object();
+				if (checkedItems.length > 1) {
+					alert("하나의 행을 선택하세요.");
+					return false;
+				}
+
+				const selItem = checkedItems[0].item;
+				const parentItem = AUIGrid.getParentItemByRowId(myGridID, selItem.oid);
+				const parentRowId = parentItem.oid;
+
+				const newItem = new Object();
 				newItem.parentRowId = parentRowId; // 부모의 rowId 값을 보관해 놓음...나중에 개발자가 유용하게 쓰기 위함...실제 그리드는 사용하지 않음.
 				newItem.enable = true;
+				newItem.sort = 0;
 				AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "last");
 			}
 
-			// 행 추가
 			function addTreeRow() {
-				var selectedItems = AUIGrid.getSelectedItems(myGridID);
-				if (selectedItems.length <= 0)
-					return;
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				if (checkedItems.length <= 0) {
+					alert("자식행을 추가할 행을 선택하세요.");
+					return false;
+				}
 
-				var selItem = selectedItems[0].item;
-				var parentRowId = selItem.oid; // 선택행의 자식으로 행 추가
+				if (checkedItems.length > 1) {
+					alert("하나의 행을 선택하세요.");
+					return false;
+				}
 
-				var newItem = new Object();
-				newItem.parentRowId = parentRowId; // 부모의 rowId 값을 보관해 놓음...나중에 개발자가 유용하게 쓰기 위함...실제 그리드는 사용하지 않음.
+				const selItem = checkedItems[0].item;
+				const parentRowId = selItem.oid;
+				const newItem = new Object();
+				newItem.parentRowId = parentRowId;
 				newItem.enable = true;
+				newItem.sort = 0;
 				AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "selectionDown");
 			}
 
-			// 행 삭제
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				for (const i = checkedItems.length - 1; i >= 0; i--) {
+				for (let i = checkedItems.length - 1; i >= 0; i--) {
 					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
 			}
 
-			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
-				// DOM이 로드된 후 실행할 코드 작성
-				const columns = loadColumnLayout("sheetVariable-list");
-				// 컨텍스트 메뉴 시작
-				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
-				$("#h_item_ul").append(contenxtHeader);
-				$("#headerMenu").menu({
-					select : headerMenuSelectHandler
-				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				
-				// 사용자 검색 바인딩 see base.js finderUser function 
-				finderUser("creator");
-				
-				// 날짜 검색용 바인딩 see base.js twindate funtion
-				twindate("created");
 			});
 
 			document.addEventListener("keydown", function(event) {
-				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}
-			})
-
-			// 컨텍스트 메뉴 숨기기
-			document.addEventListener("click", function(event) {
-				hideContextMenu();
 			})
 
 			window.addEventListener("resize", function() {
