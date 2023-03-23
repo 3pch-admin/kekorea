@@ -8,21 +8,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
 	<form>
-		<!-- 리스트 검색시 반드시 필요한 히든 값 -->
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
-		<!-- 검색 테이블 -->
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -34,13 +28,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<th>결재 제목</th>
 				<td colspan="3" class="indent5">
 					<input type="text" name="approvalTitle" id="approvalTitle" class="AXInput width-300">
-					<!-- 					<input type="date" name="fileName" id="fileName" class="AXInput" placeholder="년도-월-일"> -->
 				</td>
 			</tr>
 			<tr>
 				<th>기안자</th>
 				<td class="indent5">
-					<input type="text" name="submiter" id="submiter">
+					<input type="text" name="submiter" id="submiter" data-multi="false" data-method="setUser">
+					<input type="hidden" name="submiterOid" id="submiterOid">
 				</td>
 				<th>수신일</th>
 				<td class="indent5">
@@ -51,11 +45,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<!-- 버튼 테이블 -->
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<!-- exportExcel 함수참고 -->
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('approval-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('approval-list');">
@@ -75,9 +67,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
-		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -151,15 +141,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : false,
 						inline : false
 					},
-					renderer : { // HTML 템플릿 렌더러 사용
+					renderer : {
 						type : "TemplateRenderer"
 					},
-// 					// dataField 로 정의된 필드 값이 HTML 이라면 labelFunction 으로 처리할 필요 없음.
-// 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // HTML 템플릿 작성
-// 						let template = '<img src="/Windchill/extcore/images/process-nleft.gif">';
-// 						template += '<img src="/Windchill/extcore/images/process-sleft.gif">';
-// 						return template; // HTML 템플릿 반환..그대도 innerHTML 속성값으로 처리됨
-// 					}
 				}, {
 					dataField : "submiter",
 					headerText : "기안자",
@@ -192,11 +176,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				} ]
 			}
 
-			// AUIGrid 생성 함수
 			function createAUIGrid(columnLayout) {
-				// 그리드 속성
 				const props = {
-					// 그리드 공통속성 시작
 					headerHeight : 30,
 					rowHeight : 30,
 					showRowNumColumn : true,
@@ -212,36 +193,37 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-				// 그리드 공통속성 끝
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
 
-				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
-				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
-					vScrollChangeHandler(event); // lazy loading
+					hideContextMenu();
+					vScrollChangeHandler(event);
 				});
 
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					hideContextMenu();
 				});
 			}
 
 			function loadGridData() {
 				const url = getCallUrl("/workspace/approval");
 				const params = new Object();
-				// 검색 변수
 				const approvalTitle = document.getElementById("approvalTitle").value;
 				const psize = document.getElementById("psize").value;
-				// 검색 변수 담기
+				const submiterOid = document.getElementById("submiterOid").value;
+				const receiveFrom = document.getElementById("receiveFrom").value;
+				const receiveTo = document.getElementById("receiveTo").value;
 				params.approvalTitle = approvalTitle;
 				params.psize = psize;
+				params.submiterOid = submiterOid;
+				params.receiveFrom = receiveFrom;
+				params.receiveTo = receiveTo;
+				
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -258,17 +240,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				exportToExcel("결재함 리스트", "결재함", "결재함 리스트", exceptColumnFields, "<%=sessionUser.getFullName()%>");
 			}
 
-			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
-				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("approval-list");
-				// 컨텍스트 메뉴 시작
-				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
 				});
-				// 그리드 생성
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 
@@ -279,14 +257,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			});
 
 			document.addEventListener("keydown", function(event) {
-				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}
 			})
 
-			// 컨텍스트 메뉴 숨기기
 			document.addEventListener("click", function(event) {
 				hideContextMenu();
 			})
