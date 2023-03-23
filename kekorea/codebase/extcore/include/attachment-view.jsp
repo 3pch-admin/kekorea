@@ -11,7 +11,12 @@ String mode = request.getParameter("mode");
 if ("primary".equals(mode)) {
 	String[] primarys = ContentUtils.getPrimary(oid);
 %>
-<div><%=primarys[6]%></div>
+<div>
+	<a href="<%=primarys[5]%>">
+		<span style="position: relative; bottom: 2px;"><%=primarys[2]%></span>
+		<img src="<%=primarys[4]%>" style="position: relative; top: 1px;">
+	</a>
+</div>
 <%
 } else if ("secondary".equals(mode)) {
 Vector<String[]> secondarys = ContentUtils.getSecondary(oid);

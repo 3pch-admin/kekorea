@@ -48,9 +48,7 @@
 <script type="text/javascript">
 	function create() {
 
-		if (!confirm("등록 하시겠습니까?")) {
-			return false;
-		}
+		
 
 		const params = new Object();
 		const url = getCallUrl("/notice/create");
@@ -65,7 +63,9 @@
 			alert("내용 값은 공백을 입력 할 수 없습니다.");
 			return false;
 		}
-		
+		if (!confirm("등록 하시겠습니까?")) {
+			return false;
+		}
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);

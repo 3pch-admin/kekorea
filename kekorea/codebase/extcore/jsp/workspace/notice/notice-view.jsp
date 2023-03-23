@@ -1,3 +1,5 @@
+<%@page import="wt.log4j.SystemOutFacade"%>
+<%@page import="java.sql.Timestamp"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.common.util.ContentUtils"%>
 <%@page import="e3ps.workspace.notice.dto.NoticeDTO"%>
@@ -46,7 +48,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				<th class="lb">작성자</th>
 				<td class="indent5"><%=dto.getCreator()%></td>
 				<th class="lb">작성일</th>
-				<td class="indent5"><%=dto.getCreatedDate()%></td>
+				<td class="indent5"><%=dto.getCreatedDate().toString().substring(0, 10)%></td>
 			</tr>
 			<tr>
 				<th class="lb">설명</th>
