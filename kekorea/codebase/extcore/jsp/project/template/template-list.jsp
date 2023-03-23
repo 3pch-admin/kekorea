@@ -225,15 +225,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const params = new Object();
 				const url = getCallUrl("/template/list");
 				const templateName = document.getElementById("templateName").value;
-<<<<<<< HEAD
 				const duration = document.getElementById("duration").value;
 				const psize = document.getElementById("psize").value;
 				
 				params.templateName = templateName;
 				params.duration = duration;
-=======
 				const psize = document.getElementById("psize").value;
->>>>>>> f0e2ccc19de4fb61640104974eff4eb418644025
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -296,12 +293,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				finderUser("creator");
 				twindate("created");
 				twindate("modified");
-<<<<<<< HEAD
 				
 				selectbox("psize");
 			});
 
-=======
 				selectbox("psize");
 			});
 
@@ -311,7 +306,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				exportToExcel("공지사항 리스트", "공지사항", "공지사항 리스트", exceptColumnFields, sessionName);
 			}
 
->>>>>>> f0e2ccc19de4fb61640104974eff4eb418644025
 			document.addEventListener("keydown", function(event) {
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
