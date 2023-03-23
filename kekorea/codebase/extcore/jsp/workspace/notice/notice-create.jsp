@@ -47,20 +47,21 @@
 </table>
 <script type="text/javascript">
 	function create() {
-
-		
-
 		const params = new Object();
 		const url = getCallUrl("/notice/create");
-		params.name = document.getElementById("name").value;
-		params.description = document.getElementById("description").value;
+		const name = document.getElementById("name");
+		const description = document.getElementById("description");
+		params.name = name.value;
+		params.description = description.value;
 		params.primarys = toArray("primarys");
 		if (isNull(params.name)) {
 			alert("공지사항 제목 값은 공백을 입력 할 수 없습니다.");
+			name.focus();
 			return false;
 		}
 		if (isNull(params.description)) {
 			alert("내용 값은 공백을 입력 할 수 없습니다.");
+			description.focus();
 			return false;
 		}
 		if (!confirm("등록 하시겠습니까?")) {
@@ -75,4 +76,8 @@
 			}
 		})
 	}
+
+	document.addEventListener("DOMContentLoaded", function() {
+		document.getElementById("name").focus();
+	})
 </script>

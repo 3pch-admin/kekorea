@@ -22,6 +22,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.ptc.wpcfg.deliverables.library.EPMDocumentMaker;
 
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
@@ -207,6 +208,7 @@ public class WorkOrderHelper {
 			map.put("lotNo", master.getLotNo());
 			map.put("current", keDrawing.getVersion());
 			map.put("ok", true);
+			map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
 			map.put("oid", keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
 		}
 		return map;

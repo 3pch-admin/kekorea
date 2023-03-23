@@ -124,6 +124,10 @@ if ("meeting".equals(obj)) {
 				showIcon : true,
 				inline : true
 			},
+		}, {
+			dataField : "oid",
+			headerText : "",
+			visible : false
 		} ]
 
 		function _createAUIGrid(columnLayout) {

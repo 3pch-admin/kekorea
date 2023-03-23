@@ -139,7 +139,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "KEK 작번",
 					dataType : "string",
 					width : 130,
-					style : "underline",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
@@ -157,7 +156,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "KE 작번",
 					dataType : "string",
 					width : 130,
-					style : "underline",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",

@@ -64,6 +64,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<td class="indent5">
 					<select name="kekState" id="kekState" class="width-200">
 						<option value="">선택</option>
+						<option value="준비">준비</option>
+						<option value="설계중">설계중</option>
+						<option value="설계완료">설계완료</option>
+						<option value="작업완료">작업완료</option>
+						<option value="중단됨">중단됨</option>
+						<option value="취소">취소</option>
 					</select>
 				</td>
 				<th>모델</th>
@@ -456,7 +462,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const sessionName = document.getElementById("sessionName").value;
 				exportToExcel("공지사항 리스트", "공지사항", "공지사항 리스트", exceptColumnFields, sessionName);
 			}
-			
+
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("project-list");
 				const contenxtHeader = genColumnHtml(columns);
@@ -467,7 +473,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 				selectbox("kekState");
-				selectbox("customer_name");
 				selectbox("install_name");
 				selectbox("projectType");
 				selectbox("template");
@@ -476,6 +481,24 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				finderUser("elec");
 				finderUser("machine");
 				twindate("pdate");
+
+				$("#customer_name").bindSelect({
+					onchange : function() {
+						console.log(this);
+						const parent_code = this.optionValue;
+						$("#ins_location").bindSelect({
+							ajaxUrl : getCallUrl("/commonCode/getChildrens"),
+							ajaxPars : "parentCode=" + parent_code + "&codeType=CUSTOMER",
+							reserveKeys : {
+								options : "list",
+								optionValue : "value",
+								optionText : "name"
+							},
+							setValue : this.optionValue,
+							alwaysOnChange : true,
+						})
+					}
+				})
 			});
 
 			document.addEventListener("keydown", function(event) {

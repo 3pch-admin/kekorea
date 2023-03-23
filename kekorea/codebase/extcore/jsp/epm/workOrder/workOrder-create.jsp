@@ -18,54 +18,70 @@
 	</tr>
 </table>
 
-<table class="create-table">
-	<colgroup>
-		<col width="130">
-		<col width="*">
-	</colgroup>
-	<tr>
-		<th class="req lb">도면 일람표 명</th>
-		<td class="indent5">
-			<input type="text" name="name" id="name" class="AXInput width-500">
-		</td>
-	</tr>
-	<tr>
-		<th class="req lb">KEK 작번</th>
-		<td>
-			<jsp:include page="/extcore/include/project-include.jsp">
-				<jsp:param value="" name="oid" />
-				<jsp:param value="create" name="mode" />
-				<jsp:param value="true" name="multi" />
-				<jsp:param value="" name="obj" />
-				<jsp:param value="150" name="height" />
-			</jsp:include>
-		</td>
-	</tr>
-	<tr>
-		<th class="req lb">작업 내용</th>
-		<td class="indent5">
-			<textarea name="description" id="description" rows="8"></textarea>
-		</td>
-	</tr>
-	<tr>
-		<th class="lb">첨부파일</th>
-		<td class="indent5">
-			<jsp:include page="/extcore/include/secondary-include.jsp">
-				<jsp:param value="" name="oid" />
-				<jsp:param value="create" name="mode" />
-			</jsp:include>
-		</td>
-	</tr>
-</table>
-<table class="button-table">
-	<tr>
-		<td class="left">
-			<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
-			<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
-		</td>
-	</tr>
-</table>
-<div id="grid_wrap" style="height: 400px; border-top: 1px solid #3180c3;"></div>
+<div id="tabs">
+	<ul>
+		<li>
+			<a href="#tabs-1">기본정보</a>
+		</li>
+		<li>
+			<a href="#tabs-2">도면 일람표</a>
+		</li>
+	</ul>
+	<div id="tabs-1">
+		<table class="create-table">
+			<colgroup>
+				<col width="160">
+				<col width="*">
+			</colgroup>
+			<tr>
+				<th class="req lb">도면 일람표 명</th>
+				<td class="indent5">
+					<input type="text" name="name" id="name" class="AXInput width-500">
+				</td>
+			</tr>
+			<tr>
+				<th class="req lb">KEK 작번</th>
+				<td>
+					<jsp:include page="/extcore/include/project-include.jsp">
+						<jsp:param value="" name="oid" />
+						<jsp:param value="create" name="mode" />
+						<jsp:param value="true" name="multi" />
+						<jsp:param value="" name="obj" />
+						<jsp:param value="250" name="height" />
+					</jsp:include>
+				</td>
+			</tr>
+			<tr>
+				<th class="req lb">작업 내용</th>
+				<td class="indent5">
+					<textarea name="description" id="description" rows="8"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<th class="lb">첨부파일</th>
+				<td class="indent5">
+					<jsp:include page="/extcore/include/secondary-include.jsp">
+						<jsp:param value="" name="oid" />
+						<jsp:param value="create" name="mode" />
+					</jsp:include>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div id="tabs-2">
+		<table class="button-table">
+			<tr>
+				<td class="left">
+					<input type="button" value="행 추가(이전)" title="행 추가(이전)" class="blue" onclick="addBeforeRow();">
+					<input type="button" value="행 추가(이후)" title="행 추가(이후)" class="orange" onclick="addAfterRow();">
+					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
+				</td>
+			</tr>
+		</table>
+		<div id="grid_wrap" style="height: 800px; border-top: 1px solid #3180c3;"></div>
+	</div>
+</div>
+
 <script type="text/javascript">
 	let myGridID;
 	const columns = [ {
@@ -133,7 +149,7 @@
 		formatString : "###0",
 		editRenderer : {
 			type : "InputEditRenderer",
-			onlyNumeric : true, // 0~9만 입력가능
+			onlyNumeric : true,
 			maxlength : 3,
 		},
 	}, {
@@ -162,20 +178,70 @@
 			showDragKnobColumn : true,
 			enableDrag : true,
 			enableMultipleDrag : true,
-			enableDragByCellDrag : true,
 			enableDrop : true,
-
 			$compaEventOnPaste : true,
-			editable : true
+			editable : true,
+			enableRowCheckShiftKey : true,
+			useContextMenu : true,
+			enableRightDownFocus : true,
+			contextMenuItems : [ {
+				label : "선택된 행 이전 추가",
+				callback : contextItemHandler
+			}, {
+				label : "선택된 행 이후 추가",
+				callback : contextItemHandler
+			}, {
+				label : "_$line"
+			}, {
+				label : "선택된 행 삭제",
+				callback : contextItemHandler
+			} ],
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		readyHandler();
 		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 	}
 
-	// 행 삭제
+	function auiCellClickHandler(event) {
+		const dataField = event.dataField;
+		const oid = event.item.oid;
+		const preView = event.item.preView;
+		if (dataField === "preView") {
+			if (oid !== undefined && preView !== undefined) {
+				const url = getCallUrl("/aui/thumbnail?oid=" + oid);
+				popup(url);
+			}
+		}
+	}
+
+	function contextItemHandler(event) {
+		const item = new Object();
+		switch (event.contextIndex) {
+		case 0:
+			item.createdDate = new Date();
+			AUIGrid.addRow(myGridID, item, "selectionUp");
+			break;
+		case 1:
+			item.createdDate = new Date();
+			AUIGrid.addRow(myGridID, item, "selectionDown");
+			break;
+		case 3:
+			const selectedItems = AUIGrid.getSelectedItems(myGridID);
+			for (let i = selectedItems.length - 1; i >= 0; i--) {
+				const rowIndex = selectedItems[i].rowIndex;
+				AUIGrid.removeRow(myGridID, rowIndex);
+			}
+			break;
+		}
+	}
+
 	function deleteRow() {
 		const checked = AUIGrid.getCheckedRowItems(myGridID);
+		if (checked.length === 0) {
+			alert("삭제할 행을 선택하세요.");
+			return false;
+		}
 		for (let i = checked.length - 1; i >= 0; i--) {
 			const rowIndex = checked[i].rowIndex;
 			AUIGrid.removeRow(myGridID, rowIndex);
@@ -185,7 +251,7 @@
 	function readyHandler() {
 		const item = new Object();
 		item.createdDate = new Date();
-		AUIGrid.addRow(myGridID, item, "last"); // 끝에??
+		AUIGrid.addRow(myGridID, item, "last");
 	}
 
 	function auiCellEditEndHandler(event) {
@@ -204,7 +270,8 @@
 						oid : data.oid,
 						dataType : "KE도면",
 						sort : event.rowIndex,
-						createdDate : new Date()
+						createdDate : new Date(),
+						preView : data.preView
 					}
 					AUIGrid.updateRow(myGridID, item, event.rowIndex);
 				} else {
@@ -216,22 +283,38 @@
 		}
 	}
 
-	// 행 추가
-	function addRow() {
+	function addBeforeRow() {
+		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+		if (checkedItems.length === 0) {
+			alert("추가하려는 행의 기준이 되는 행을 선택하세요.");
+			return false;
+		}
 		const item = new Object();
+		const rowIndex = checkedItems[0].rowIndex;
 		item.createdDate = new Date();
-		AUIGrid.addRow(myGridID, item, "last");
+		AUIGrid.addRow(myGridID, item, rowIndex);
 	}
 
-	// 등록
+	function addAfterRow() {
+		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+		if (checkedItems.length === 0) {
+			alert("추가하려는 행의 기준이 되는 행을 선택하세요.");
+			return false;
+		}
+		const item = new Object();
+		const rowIndex = checkedItems[0].rowIndex;
+		item.createdDate = new Date();
+		AUIGrid.addRow(myGridID, item, rowIndex + 1);
+	}
+
 	function create() {
 
 		if (!confirm("등록 하시겠습니까?")) {
 			return false;
 		}
 		const params = new Object();
-		const addRows = AUIGrid.getAddedRowItems(myGridID); // 도면 일람표
-		const _addRows = AUIGrid.getAddedRowItems(_myGridID); // 프로젝트
+		const addRows = AUIGrid.getAddedRowItems(myGridID);
+		const _addRows = AUIGrid.getAddedRowItems(_myGridID);
 
 		_addRows.sort(function(a, b) {
 			return a.sort - b.sort;
@@ -251,17 +334,46 @@
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
-			} else {
-				// 실패시 처리할 부분..
 			}
 		})
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
-		createAUIGrid(columns);
-		_createAUIGrid(_columns);
-		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID);
+		$("#tabs").tabs({
+			active : 0,
+			create : function(event, ui) {
+				const tabId = ui.panel.prop("id");
+				switch (tabId) {
+				case "tabs-1":
+					_createAUIGrid(_columns);
+					break;
+				case "tabs-2":
+					createAUIGrid(columns);
+					break;
+				}
+			},
+			activate : function(event, ui) {
+				var tabId = ui.newPanel.prop("id");
+				switch (tabId) {
+				case "tabs-1":
+					const _isCreated = AUIGrid.isCreated(_myGridID_);
+					if (_isCreated_ && _isCreated) {
+						AUIGrid.resize(_myGridID);
+					} else {
+						_createAUIGrid(_columns);
+					}
+					break;
+				case "tabs-2":
+					const isCreated = AUIGrid.isCreated(myGridID);
+					if (isCreated) {
+						AUIGrid.resize(myGridID);
+					} else {
+						createAUIGrid(columns);
+					}
+					break;
+				}
+			}
+		});
 	})
 
 	window.addEventListener("resize", function() {

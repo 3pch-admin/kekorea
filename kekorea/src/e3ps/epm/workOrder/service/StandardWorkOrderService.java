@@ -61,7 +61,6 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 
 			int sort = 0;
 			ArrayList<WorkOrderDataLink> list = new ArrayList<>();
-			// 역순...
 			for (int i = addRows.size() - 1; i >= 0; i--) {
 				Map<String, Object> addRow = addRows.get(i);
 				String oid = (String) addRow.get("oid");
@@ -86,7 +85,6 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 				list.add(link);
 			}
 
-			// 첨부 파일
 			for (String secondary : secondarys) {
 				ApplicationData dd = ApplicationData.newApplicationData(workOrder);
 				dd.setRole(ContentRoleType.SECONDARY);
@@ -94,7 +92,6 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 				ContentServerHelper.service.updateContent(workOrder, dd, secondary);
 			}
 
-			// create cover workorder
 			Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
 			File tempFile = ContentUtils.getTempFile(workOrder.getName() + "_도면일람표.xlsx");
 			FileOutputStream fos = new FileOutputStream(tempFile);

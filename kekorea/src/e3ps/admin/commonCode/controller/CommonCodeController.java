@@ -73,10 +73,11 @@ public class CommonCodeController extends BaseController {
 	@Description(value = "코드의 자식 코드 가져오는 함수")
 	@ResponseBody
 	@GetMapping(value = "/getChildrens")
-	public Map<String, Object> getChildrens(@RequestParam String parentCode, String codeType) throws Exception {
+	public Map<String, Object> getChildrens(@RequestParam String parentCode, @RequestParam String codeType) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			ArrayList<Map<String, Object>> childrens = CommonCodeHelper.manager.getChildrens(parentCode, codeType);
+			System.out.println(childrens);
 			result.put("list", childrens);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

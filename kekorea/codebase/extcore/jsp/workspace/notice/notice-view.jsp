@@ -6,9 +6,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
-String[] primarys = (String[]) request.getAttribute("primarys");
-JSONArray list = (JSONArray) request.getAttribute("list");
-JSONArray data = (JSONArray) request.getAttribute("data");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
@@ -42,7 +39,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			</colgroup>
 			<tr>
 				<th class="lb">공지사항 제목</th>
-				<td class="indent5"  colspan="3"><%=dto.getName()%></td>
+				<td class="indent5" colspan="3"><%=dto.getName()%></td>
 			</tr>
 			<tr>
 				<th class="lb">작성자</th>
@@ -67,7 +64,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			</tr>
 			<tr>
 				<th class="lb">첨부파일</th>
-				<td class="indent5" colspan="3" >
+				<td class="indent5" colspan="3">
 					<jsp:include page="/extcore/include/attachment-view.jsp">
 						<jsp:param value="<%=dto.getOid()%>" name="oid" />
 						<jsp:param value="secondary" name="mode" />
@@ -78,29 +75,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 	</div>
 </div>
 <script type="text/javascript">
-	function preView() {
-		const oid = document.getElementById("oid").value;
-		const url = getCallUrl("/aui/thumbnail?oid=" + oid);
-		popup(url);
-	}
-
 	document.addEventListener("DOMContentLoaded", function() {
-		$("#tabs").tabs({
-			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					_createAUIGrid(_columns);
-					AUIGrid.resize(_myGridID);
-					break;
-				}
-			},
-		});
+		$("#tabs").tabs();
 	})
-
-	window.addEventListener("resize", function() {
-		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID);
-	});
 </script>

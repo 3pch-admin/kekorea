@@ -312,6 +312,11 @@ public class StandardDocumentService extends StandardManager implements Document
 				mm = WorkspaceHelper.manager.getMaster(document);
 			}
 
+			// 부품 문서 도면 
+			// 버전이 관리
+			// A.1 > A.2 > A.3
+			// A.1 체크
+			
 			Folder cFolder = CheckInOutTaskLogic.getCheckoutFolder();
 			CheckoutLink clink = WorkInProgressHelper.service.checkout(document, cFolder, "문서 수정 체크 아웃");
 			document = (WTDocument) clink.getWorkingCopy();
