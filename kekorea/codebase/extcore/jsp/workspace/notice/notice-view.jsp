@@ -19,7 +19,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="삭제" title="삭제" class="red" >
+			<input type="button" value="삭제" title="삭제" class="red">
 			<input type="button" value="수정" title="수정" class="green">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
@@ -41,133 +41,36 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			</colgroup>
 			<tr>
 				<th class="lb">공지사항 제목</th>
-				<td colspan="3" class="indent5"></td>
+				<td colspan="3" class="indent5"><%=dto.getName()%></td>
 			</tr>
 			<tr>
 				<th class="lb">작성자</th>
-				<td class="indent5"></td>
+				<td class="indent5"><%=dto.getCreator()%></td>
 				<th class="lb">작성일</th>
-				<td class="indent5"></td> 
+				<td class="indent5"><%=dto.getCreatedDate()%></td>
 			</tr>
 			<tr>
 				<th class="lb">설명</th>
-				<td colspan="3" class="indent5" >
-				<textarea name="descriptionNotice" id="descriptionNotice" rows="4" cols="" readonly="readonly"></textarea>
+				<td colspan="3" class="indent5">
+					<textarea name="descriptionNotice" id="descriptionNotice" rows="4" cols="" readonly="readonly"><%=dto.getDescription()%></textarea>
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">주 첨부파일</th>
-				<td colspan="3" class="indent5"></td>
+				<td colspan="3" class="indent5">
+					<jsp:include page="/extcore/include/attachment-view.jsp">
+						<jsp:param value="<%=dto.getOid()%>" name="oid" />
+						<jsp:param value="secondary" name="mode" />
+					</jsp:include>
+				</td>
 			</tr>
 			<tr>
 				<th class="lb">첨부파일</th>
-				<td colspan="3" class="indent5"></td>
-			</tr>
-			<tr>
-				<th class="lb">공지사항</th>
-				<td class="indent5" colspan="4">
-					<div id="_grid_wrap" style="height: 350px; border-top: 1px solid #3180c3; margin: 5px 5px 5px 5px;"></div>
-					<script type="text/javascript">
-						let _myGridID;
-						const _columns = [ {
-							dataField : "name",
-							headerText : "공지사항 제목",
-							dataType : "string",
-							width : 350,
-							style : "aui-left",
-							renderer : {
-								type : "LinkRenderer",
-								baseUrl : "javascript",
-								jsCallback : function(rowIndex, columnIndex, value, item) {
-									const oid = item.oid;
-									const url = getCallUrl("/notice/view?oid=" + oid);
-									popup(url, 1400, 700);
-								}
-							},
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-						}, {
-							dataField : "description",
-							headerText : "내용",
-							dataType : "string",
-							style : "aui-left",
-							renderer : {
-								type : "LinkRenderer",
-								baseUrl : "javascript",
-								jsCallback : function(rowIndex, columnIndex, value, item) {
-									const oid = item.oid;
-									const url = getCallUrl("/notice/view?oid=" + oid);
-									popup(url, 1400, 700);
-								}
-							},
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-						}, {
-							dataField : "creator",
-							headerText : "작성자",
-							dataType : "string",
-							width : 100,
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-						}, {
-							dataField : "createdDate",
-							headerText : "작성일",
-							dataType : "date",
-							formatString : "yyyy-mm-dd",
-							width : 100,
-							filter : {
-								showIcon : true,
-								inline : true,
-								displayFormatValues : true
-							},
-						}, {
-							dataField : "primary",
-							headerText : "첨부파일",
-							dataType : "string",
-							width : 80,
-							renderer : {
-								type : "TemplateRenderer"
-							},
-							filter : {
-								showIcon : false,
-								inline : false
-							},
-							cellMerge : true,
-							mergeRef : "name",
-							mergePolicy : "restrict"
-						} ]
-
-						function _createAUIGrid(columnLayout) {
-							const props = {
-								// 그리드 공통속성 시작
-								headerHeight : 30,
-								rowHeight : 30,
-								showRowNumColumn : true,
-								showStateColumn : true,
-								rowNumHeaderText : "번호",
-								noDataMessage : "관련된 공지사항이 없습니다.",
-								enableFilter : true,
-								selectionMode : "multipleCells",
-								showInlineFilter : true,
-								filterLayerWidth : 320,
-								filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-								// 그리드 공통속성 끝
-								fixedColumnCount : 1,
-								cellMergePolicy : "withNull",
-								enableCellMerge : true,
-							}
-							_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-							AUIGrid.setGridData(_myGridID,
-					<%=data%>
-						);
-						}
-					</script>
+				<td colspan="3" class="indent5">
+					<jsp:include page="/extcore/include/attachment-view.jsp">
+						<jsp:param value="<%=dto.getOid()%>" name="oid" />
+						<jsp:param value="secondary" name="mode" />
+					</jsp:include>
 				</td>
 			</tr>
 		</table>
