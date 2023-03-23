@@ -450,9 +450,6 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 	</div>
 </div>
 
-
-
-
 <script type="text/javascript">
 	function preView() {
 		const oid = document.getElementById("oid").value;

@@ -19,7 +19,6 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="삭제" title="삭제" class="red">
 			<input type="button" value="수정" title="수정" class="green">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
@@ -41,7 +40,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			</colgroup>
 			<tr>
 				<th class="lb">공지사항 제목</th>
-				<td colspan="3" class="indent5"><%=dto.getName()%></td>
+				<td class="indent5"  colspan="3"><%=dto.getName()%></td>
 			</tr>
 			<tr>
 				<th class="lb">작성자</th>
@@ -52,21 +51,21 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			<tr>
 				<th class="lb">설명</th>
 				<td colspan="3" class="indent5">
-					<textarea name="descriptionNotice" id="descriptionNotice" rows="4" cols="" readonly="readonly"><%=dto.getDescription()%></textarea>
+					<textarea name="descriptionNotice" id="descriptionNotice" rows="12" cols="" readonly="readonly"><%=dto.getDescription()%></textarea>
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">주 첨부파일</th>
-				<td colspan="3" class="indent5">
+				<td class="indent5" colspan="3">
 					<jsp:include page="/extcore/include/attachment-view.jsp">
 						<jsp:param value="<%=dto.getOid()%>" name="oid" />
-						<jsp:param value="secondary" name="mode" />
+						<jsp:param value="primary" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">첨부파일</th>
-				<td colspan="3" class="indent5">
+				<td class="indent5" colspan="3" >
 					<jsp:include page="/extcore/include/attachment-view.jsp">
 						<jsp:param value="<%=dto.getOid()%>" name="oid" />
 						<jsp:param value="secondary" name="mode" />
@@ -95,19 +94,6 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 					break;
 				}
 			},
-			activate : function(event, ui) {
-				var tabId = ui.newPanel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					const _isCreated = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated_ && _isCreated) {
-						AUIGrid.resize(_myGridID);
-					} else {
-						_createAUIGrid(_columns);
-					}
-					break;
-				}
-			}
 		});
 	})
 

@@ -39,7 +39,7 @@
 		<th class="lb">첨부파일</th>
 		<td class="indent5">
 			<jsp:include page="/extcore/include/primary-include.jsp">
-				<jsp:param value="" name="oid" />
+				<jsp:param value="primary" name="oid" />
 				<jsp:param value="create" name="mode" />
 			</jsp:include>
 		</td>

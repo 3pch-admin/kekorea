@@ -99,7 +99,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/notice/view?oid=" + oid);
-							popup(url, 1400, 700);
+							popup(url, 1400, 600);
 						}
 					},
 					filter : {
@@ -117,7 +117,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/notice/view?oid=" + oid);
-							popup(url, 1400, 700);
+							popup(url, 1400, 600);
 						}
 					},
 					filter : {
