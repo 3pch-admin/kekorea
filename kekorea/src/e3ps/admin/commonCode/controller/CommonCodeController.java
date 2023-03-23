@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 import e3ps.admin.commonCode.CommonCodeType;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
-import e3ps.common.util.AUIGridUtils;
 
 @Controller
 @RequestMapping(value = "/commonCode/**")
@@ -89,27 +87,7 @@ public class CommonCodeController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "코드의 자식 코드 가져오는 함수")
-	@ResponseBody
-	@PostMapping(value = "/getChildrens")
-	public Map<String, Object> getChildrens(@RequestBody Map<String, Object> params) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		String parentCode = (String) params.get("parentCode");
-		String codeType = (String) params.get("codeType");
-		try {
-			ArrayList<Map<String, Object>> childrens = CommonCodeHelper.manager.getChildrens(parentCode, codeType);
-			System.out.println(childrens);
-			result.put("list", childrens);
-			result.put("result", SUCCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("result", FAIL);
-			result.put("msg", e.toString());
-		}
-		return result;
-	}
-
-	@Description(value = "코드의 자식 코드 가져오는 함수 (AXISJ Bind Select 용)")
+	@Description(value = "코드의 자식 코드 가져오는 함수 AXISJ")
 	@ResponseBody
 	@PostMapping(value = "/getChildrens")
 	public Map<String, Object> getChildrens(@RequestParam String parentOid) throws Exception {

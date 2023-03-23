@@ -3156,35 +3156,21 @@ public class ProjectHelper {
 		String kekState = (String) params.get("kekState");
 		String model = (String) params.get("model");
 		String projectType = (String) params.get("projectType"); // 프로젝트 타입 샘플용
-		String predate = (String) params.get("predate");
-		String postdate = (String) params.get("postdate");
+		String pdateFrom = (String) params.get("pdateFrom");
+		String pdateTo = (String) params.get("pdateTo");
 		String template = (String) params.get("template");
 		String description = (String) params.get("description");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);
 
-		if (!StringUtils.isNull(kekNumber)) {
-			QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.KEK_NUMBER, kekNumber);
-		}
-
-		if (!StringUtils.isNull(keNumber)) {
-			QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.KE_NUMBER, keNumber);
-		}
-
-		if (!StringUtils.isNull(model)) {
-			QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.MODEL, model);
-		}
-
-		if (!StringUtils.isNull(kekState)) {
-			QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.KEK_STATE, kekState);
-		}
+		QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.KEK_NUMBER, kekNumber);
+		QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.KE_NUMBER, keNumber);
+		QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.MODEL, model);
+		QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.KEK_STATE, kekState);
 
 		if (!StringUtils.isNull(projectType)) {
-			// 코드랑 연결된 내용
-			// 코드, 코드유형으로 CommonCode 객체를 찾아온 후 프로젝트랑 연결된 컬럼과 쿼리 작성
-			// 코드 유형은 CommonCodeTypeRB_ko.rbinfo 파일참조
-			CommonCode projectTypeCode = CommonCodeHelper.manager.getCommonCode(projectType, "PROJECT_TYPE");
+			CommonCode projectTypeCode = (CommonCode) CommonUtils.getObject(projectType);
 			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "projectTypeReference.key.id",
 					projectTypeCode.getPersistInfo().getObjectIdentifier().getId());
 		}
@@ -3219,18 +3205,8 @@ public class ProjectHelper {
 					t.getPersistInfo().getObjectIdentifier().getId());
 		}
 
-		if (!StringUtils.isNull(predate)) {
-
-		}
-
-		if (!StringUtils.isNull(postdate)) {
-
-		}
-
-		if (!StringUtils.isNull(description)) {
-			QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.DESCRIPTION, description);
-		}
-
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, Project.class, Project.P_DATE, pdateFrom, pdateTo);
+		QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.DESCRIPTION, description);
 		QuerySpecUtils.toOrderBy(query, idx, Project.class, Project.P_DATE, false);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);

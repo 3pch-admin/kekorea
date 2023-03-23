@@ -137,7 +137,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 			<select name="pTemplate" id="pTemplate" class="AXSelect wid300">
 				<option value="">선택</option>
 				<%
-				for (HashMap<String, Object> map : list) {
+				for (HashMap<String, String> map : list) {
 					String key = (String) map.get("value");
 					String value = (String) map.get(key);
 				%>

@@ -160,6 +160,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('project-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('project-list');">
+					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -484,11 +485,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 				$("#customer_name").bindSelect({
 					onchange : function() {
-						console.log(this);
-						const parent_code = this.optionValue;
-						$("#ins_location").bindSelect({
-							ajaxUrl : getCallUrl("/commonCode/getChildrens"),
-							ajaxPars : "parentCode=" + parent_code + "&codeType=CUSTOMER",
+						const oid = this.optionValue;
+						$("#install_name").bindSelect({
+							ajaxUrl : getCallUrl("/commonCode/getChildrensByOid?parentOid=" + oid),
 							reserveKeys : {
 								options : "list",
 								optionValue : "value",
@@ -500,6 +499,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					}
 				})
 			});
+
+			function create() {
+				const url = getCallUrl("/project/create");
+				popup(url, 1200, 500);
+			}
 
 			document.addEventListener("keydown", function(event) {
 				const keyCode = event.keyCode || event.which;

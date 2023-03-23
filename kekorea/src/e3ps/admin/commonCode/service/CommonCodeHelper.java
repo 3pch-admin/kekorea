@@ -249,4 +249,24 @@ public class CommonCodeHelper {
 		}
 		return list;
 	}
+
+	public ArrayList<Map<String, String>> getValueMap(String codeType) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(CommonCode.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
+		QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, true);
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.SORT, false);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Map<String, String> map = new HashMap<>();
+			CommonCode commonCode = (CommonCode) obj[0];
+			map.put("key", commonCode.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("value", commonCode.getName());
+			list.add(map);
+		}
+		return list;
+	}
 }

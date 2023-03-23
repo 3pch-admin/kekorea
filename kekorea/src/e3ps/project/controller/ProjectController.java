@@ -50,9 +50,9 @@ public class ProjectController extends BaseController {
 		String before = date.toString().substring(0, 10);
 		String end = DateUtils.getCurrentTimestamp().toString().substring(0, 10);
 
-		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getArrayKeyValueMap("CUSTOMER");
-		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getArrayKeyValueMap("MAK");
-		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getArrayKeyValueMap("PROJECT_TYPE");
+		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
+		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
 		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
 
 		org.json.JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
@@ -114,7 +114,7 @@ public class ProjectController extends BaseController {
 		ArrayList<CommonCode> customers = CommonCodeHelper.manager.getArrayCodeList("CUSTOMER");
 		ArrayList<CommonCode> projectTypes = CommonCodeHelper.manager.getArrayCodeList("PROJECT_TYPE");
 		ArrayList<CommonCode> maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
-		ArrayList<HashMap<String, Object>> list = TemplateHelper.manager.getTemplateArrayMap();
+		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
 		model.addObject("list", list);
 		model.addObject("maks", maks);
 		model.addObject("customers", customers);
