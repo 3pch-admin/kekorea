@@ -9,11 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.project.issue.IssueProjectLink;
+import e3ps.project.issue.beans.IssueDTO;
 import e3ps.project.issue.service.IssueHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -47,5 +50,16 @@ public class IssueController extends BaseController {
 			result.put("result", FAIL);
 		}
 		return result;
+	}
+	
+	@Description(value = "특이사항 뷰 페이지")
+	@GetMapping(value = "/view")
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		IssueProjectLink issue = (IssueProjectLink) CommonUtils.getObject(oid);
+		IssueDTO dto = new IssueDTO(issue);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/project/issue/issue-view");
+		return model;
 	}
 }

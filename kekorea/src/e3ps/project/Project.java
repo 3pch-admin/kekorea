@@ -22,7 +22,9 @@ import wt.util.WTException;
 		properties = {
 
 				@GeneratedProperty(name = "kekNumber", type = String.class, javaDoc = "KEK 작번", constraints = @PropertyConstraints(required = true)),
-
+				
+				@GeneratedProperty(name = "pType", type = String.class, javaDoc = "작번 유형", constraints = @PropertyConstraints(required = true)),
+				
 				@GeneratedProperty(name = "pDate", type = Timestamp.class, javaDoc = "작번 발행일", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "keNumber", type = String.class, javaDoc = "KE 작번", constraints = @PropertyConstraints(required = true)),
