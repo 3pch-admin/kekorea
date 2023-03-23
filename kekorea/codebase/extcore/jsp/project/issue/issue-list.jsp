@@ -100,11 +100,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					%>
 				</td>
 				<td class="right">
-<<<<<<< HEAD
-				<select name="psize" id="psize">
-=======
 					<select name="psize" id="psize">
->>>>>>> f0e2ccc19de4fb61640104974eff4eb418644025
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -275,10 +271,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const issueName = document.getElementById("issueName").value;
 				const description = document.getElementById("description").value;
 				const psize = document.getElementById("psize").value;
-<<<<<<< HEAD
-=======
-				params.psize = psize;
->>>>>>> f0e2ccc19de4fb61640104974eff4eb418644025
 				params.issueName = issueName;
 				params.description = description;
 				params.psize = psize;
