@@ -1,6 +1,7 @@
 package e3ps.workspace.dto;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
@@ -102,6 +103,18 @@ public class ApprovalLineDTO {
 				+ "<img src='/Windchill/extcore/images/process-nright.gif' class='line'>";
 
 		point += "<img src='/Windchill/extcore/images/process-line.gif' class='line dot'>";
+
+		ArrayList<ApprovalLine> approvalLines = WorkspaceHelper.manager.getApprovalLines(master);
+		for (int i = 0; i < approvalLines.size(); i++) {
+			ApprovalLine approvalLine = (ApprovalLine) approvalLines.get(i);
+			point += "<img src='/Windchill/extcore/images/process-nleft.gif' class='line'><span class='inactive'><span class='text'>"
+					+ approvalLine.getOwnership().getOwner().getFullName() + "</span></span>"
+					+ "<img src='/Windchill/extcore/images/process-nright.gif' class='line'>";
+
+			if (i != approvalLines.size() - 1) {
+				point += "<img src='/Windchill/extcore/images/process-line.gif' class='line dot'>";
+			}
+		}
 
 		setPoint(point);
 //		

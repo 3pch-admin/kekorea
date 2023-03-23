@@ -98,11 +98,11 @@ public class KeDrawingController extends BaseController {
 			dataMap.put("removeRows", removeRow); // 삭제행
 
 			result = KeDrawingHelper.manager.isWorkOrder(removeRow);
-			if((boolean)result.get("workOrder")) {
+			if ((boolean) result.get("workOrder")) {
 				result.put("result", FAIL);
 				return result;
 			}
-			
+
 			result = KeDrawingHelper.manager.numberValidate(addRow, editRow);
 
 			result = KeDrawingHelper.manager.isValid(addRow, editRow);
@@ -173,16 +173,6 @@ public class KeDrawingController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "KE 도면 탭 페이지")
-	@GetMapping(value = "/vtabper")
-	public ModelAndView vtabper(@RequestParam String oid, @RequestParam String moid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		model.addObject("oid", oid);
-		model.addObject("moid", moid);
-		model.setViewName("popup:/epm/keDrawing/keDrawing-vtabper");
-		return model;
-	}
-
 	@Description(value = "KE 도면 정보 페이지")
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
@@ -190,20 +180,13 @@ public class KeDrawingController extends BaseController {
 		KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
 		KeDrawingDTO dto = new KeDrawingDTO(keDrawing);
 		String[] primarys = ContentUtils.getPrimary(dto.getOid());
+		JSONArray list = KeDrawingHelper.manager.history(keDrawing.getMaster());
+		JSONArray data = KeDrawingHelper.manager.jsonArrayAui(oid);
+		model.addObject("data", data);
+		model.addObject("list", list);
 		model.addObject("primarys", primarys);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/epm/keDrawing/keDrawing-view");
-		return model;
-	}
-
-	@Description(value = "KE 도면 이력정보 페이지")
-	@GetMapping(value = "/history")
-	public ModelAndView history(@RequestParam String moid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		KeDrawingMaster master = (KeDrawingMaster) CommonUtils.getObject(moid);
-		JSONArray list = KeDrawingHelper.manager.history(master);
-		model.addObject("list", list);
-		model.setViewName("popup:/epm/keDrawing/keDrawing-history");
 		return model;
 	}
 }

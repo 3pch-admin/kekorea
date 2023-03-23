@@ -27,5 +27,12 @@ for (String[] secondary : secondarys) {
 </div>
 <%
 }
+if (secondarys.size() == 0) {
+%>
+<font color="red">
+	<b>등록된 첨부파일이 없습니다.</b>
+</font>
+<%
+}
 }
 %>

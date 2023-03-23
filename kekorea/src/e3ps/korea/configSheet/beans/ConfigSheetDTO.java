@@ -1,9 +1,13 @@
-package e3ps.korea.configSheet;
+package e3ps.korea.configSheet.beans;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Map;
 
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.korea.configSheet.ConfigSheet;
+import e3ps.korea.configSheet.ConfigSheetProjectLink;
 import e3ps.project.Project;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,8 +38,24 @@ public class ConfigSheetDTO {
 	private Timestamp createdDate;
 	private String createdDate_txt;
 
+	// 변수용
+	private ArrayList<String> secondarys = new ArrayList<>();
+	private ArrayList<Map<String, String>> addRows = new ArrayList<>();
+	private ArrayList<Map<String, String>> _addRows = new ArrayList<>();
+	private ArrayList<Map<String, String>> _addRows_ = new ArrayList<>();
+
 	public ConfigSheetDTO() {
 
+	}
+
+	public ConfigSheetDTO(ConfigSheet configSheet) throws Exception {
+		setOid(configSheet.getPersistInfo().getObjectIdentifier().getStringValue());
+		setName(configSheet.getName());
+		setContent(StringUtils.replaceToValue(configSheet.getDescription()));
+		setState(configSheet.getState());
+		setCreator(configSheet.getOwnership().getOwner().getFullName());
+		setCreatedDate(configSheet.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(configSheet.getCreateTimestamp()));
 	}
 
 	public ConfigSheetDTO(ConfigSheetProjectLink link) throws Exception {
@@ -76,6 +96,7 @@ public class ConfigSheetDTO {
 			setPdate(project.getPDate());
 			setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
 		}
+		setState(configSheet.getState());
 		setCreator(configSheet.getOwnership().getOwner().getFullName());
 		setCreatedDate(configSheet.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(configSheet.getCreateTimestamp()));

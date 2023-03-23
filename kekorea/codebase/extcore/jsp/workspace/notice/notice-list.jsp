@@ -16,6 +16,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 </head>
 <body>
 	<form>
+		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
@@ -95,6 +98,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
+							const url = getCallUrl("/notice/view?oid=" + oid);
 						}
 					},
 					filter : {
@@ -111,6 +115,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
+							const url = getCallUrl("/notice/view?oid=" + oid);
 						}
 					},
 					filter : {
@@ -190,8 +195,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					alert("변경된 내용이 없습니다.");
 					return false;
 				}
-				
-
 
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
@@ -210,9 +213,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const sessionId = document.getElementById("sessionId").value;
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
 					const item = checkedItems[i].item;
-					if(!checker("<%=sessionUser.getName()%>", item.creatorId)) {
+					if (!checker(sessionId, item.creatorId)) {
 						alert("데이터 작성자가 아닙니다.");
 						return false;
 					}
@@ -254,7 +258,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function exportExcel() {
 				const exceptColumnFields = [ "primary" ];
-				exportToExcel("공지사항 리스트", "공지사항", "공지사항 리스트", exceptColumnFields, "<%=sessionUser.getFullName()%>");
+				const sessionName = document.getElementById("sessionName").value;
+				exportToExcel("공지사항 리스트", "공지사항", "공지사항 리스트", exceptColumnFields, sessionName);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {

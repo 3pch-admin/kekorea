@@ -42,6 +42,7 @@ public class ProjectController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MONTH, -4);
@@ -67,6 +68,7 @@ public class ProjectController extends BaseController {
 		model.addObject("maks", maks);
 		model.addObject("before", before);
 		model.addObject("end", end);
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/project/project-list.jsp");
 		return model;

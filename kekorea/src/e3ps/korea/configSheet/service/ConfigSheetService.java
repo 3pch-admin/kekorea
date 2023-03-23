@@ -1,7 +1,7 @@
 package e3ps.korea.configSheet.service;
 
 import e3ps.doc.meeting.dto.MeetingDTO;
-import e3ps.korea.configSheet.ConfigSheetDTO;
+import e3ps.korea.configSheet.beans.ConfigSheetDTO;
 import wt.method.RemoteInterface;
 
 @RemoteInterface

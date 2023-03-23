@@ -142,14 +142,4 @@ public class PartlistController extends BaseController {
 		model.setViewName("popup:/bom/partlist/partlist-info");
 		return model;
 	}
-
-	@Description(value = "수배표 탭 페이지")
-	@GetMapping(value = "/vtabper")
-	public ModelAndView vtabper(@RequestParam String oid, @RequestParam String moid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		model.addObject("oid", oid);
-		model.addObject("moid", moid);
-		model.setViewName("popup:/bom/partlist/partlist-vtabper");
-		return model;
-	}
 }

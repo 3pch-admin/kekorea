@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <!-- 공통 CSS -->
-<link rel="stylesheet" href="/Windchill/extcore/css/kekorea.css?v=589">
+<link rel="stylesheet" href="/Windchill/extcore/css/kekorea.css?v=563122211190">
 
 <!-- jquery ui -->
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">

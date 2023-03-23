@@ -1,24 +1,27 @@
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
 	<form>
-		<!-- 리스트 검색시 반드시 필요한 히든 값 -->
+		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
-		<!-- 검색 테이블 -->
+
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -117,23 +120,35 @@
 			</tr>
 		</table>
 
-		<!-- 버튼 테이블 -->
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('request-list');">
-					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('request-list');">
+					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('requestDocument-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('requestDocument-list');">
+					<%
+					if (isAdmin) {
+					%>
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
+					<%
+					}
+					%>
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
+					<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
 		</table>
 
-		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 600px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
@@ -153,7 +168,7 @@
 					headerText : "의뢰서 제목",
 					dataType : "string",
 					width : 350,
-					style : "left indent10",
+					style : "aui-left",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
@@ -233,7 +248,7 @@
 					headerText : "작업 내용",
 					dataType : "string",
 					width : 450,
-					style : "left indent10",
+					style : "aui-left",
 					filter : {
 						showIcon : true,
 						inline : true
@@ -282,7 +297,8 @@
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
 					},
 				}, {
 					dataField : "docType",
@@ -312,7 +328,6 @@
 						showIcon : true,
 						inline : true,
 						displayFormatValues : true
-					// 포맷팅 형태로 필터링 처리
 					},
 				}, {
 					dataField : "modifier",
@@ -333,16 +348,12 @@
 						showIcon : true,
 						inline : true,
 						displayFormatValues : true
-					// 포맷팅 형태로 필터링 처리
 					},
 				} ]
 			}
 
-			// AUIGrid 생성 함수
 			function createAUIGrid(columnLayout) {
-				// 그리드 속성
 				const props = {
-					// 그리드 공통속성 시작
 					headerHeight : 30,
 					rowHeight : 30,
 					showRowNumColumn : true,
@@ -358,23 +369,16 @@
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-				// 그리드 공통속성 끝
 				};
-
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
-				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
-
-				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
-					vScrollChangeHandler(event); // lazy loading
+					hideContextMenu();
+					vScrollChangeHandler(event);
 				});
-
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					hideContextMenu();
 				});
 			}
 
@@ -390,8 +394,6 @@
 					alert(data.msg);
 					if (data.result) {
 						loadGridData();
-					} else {
-						// 실패..
 					}
 				})
 			}
@@ -404,7 +406,9 @@
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/request/list");
-				AUIGrid.showAjaxLoader(myGridID); // .. 프리로더 개선해야함..
+				const psize = document.getElementById("psize").value;
+				params.psize = psize;
+				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
 					document.getElementById("curPage").value = data.curPage;
@@ -415,7 +419,6 @@
 				});
 			}
 
-			// 행 삭제
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
@@ -424,43 +427,36 @@
 				}
 			}
 
-			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
-				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("request-list");
-				// 컨텍스트 메뉴 시작
-				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-
-				// 셀렉트 박스
 				selectbox("projectType_name");
-
-				// 사용자 검색 바인딩 see base.js finderUser function 
 				finderUser("creator");
-
-				// 사용자 검색 바인딩 see base.js finderUser function 
 				finderUser("modifier");
-
-				// 날짜 검색용 바인딩 see base.js twindate funtion
 				twindate("created");
 				twindate("modified");
-
+				selectbox("psize");
 			});
 
+			function exportExcel() {
+				const exceptColumnFields = [ "primary" ];
+				const sessionName = document.getElementById("sessionName").value;
+				exportToExcel("공지사항 리스트", "공지사항", "공지사항 리스트", exceptColumnFields, sessionName);
+			}
+
 			document.addEventListener("keydown", function(event) {
-				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}
 			})
 
-			// 컨텍스트 메뉴 숨기기
 			document.addEventListener("click", function(event) {
 				hideContextMenu();
 			})

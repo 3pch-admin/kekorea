@@ -26,6 +26,8 @@ import e3ps.common.util.CommonUtils;
 import e3ps.doc.service.DocumentHelper;
 import e3ps.korea.cip.dto.CipDTO;
 import e3ps.korea.cip.service.CipHelper;
+import wt.org.WTUser;
+import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/document/**")
@@ -36,7 +38,9 @@ public class DocumentController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/document/document-list.jsp");
 		return model;
 	}

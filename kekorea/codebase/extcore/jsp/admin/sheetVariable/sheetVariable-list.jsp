@@ -45,19 +45,6 @@
 				dataType : "string",
 				width : 350,
 				style : "aui-left",
-				editRenderer : {
-					type : "InputEditRenderer",
-					validator : function(oldValue, newValue, item, dataField) {
-						let isValid = true;
-						if (newValue === "") {
-							isValid = false;
-						}
-						return {
-							"validate" : isValid,
-							"message" : "코드명은 공백을 입력 할 수 없습니다."
-						};
-					}
-				},
 				filter : {
 					showIcon : true,
 					inline : true
@@ -66,20 +53,7 @@
 				dataField : "code",
 				headerText : "코드",
 				dataType : "string",
-				width : 100,
-				editRenderer : {
-					type : "InputEditRenderer",
-					validator : function(oldValue, newValue, item, dataField) {
-						let isValid = true;
-						if (newValue === "") {
-							isValid = false;
-						}
-						return {
-							"validate" : isValid,
-							"message" : "코드는 공백을 입력 할 수 없습니다."
-						};
-					}
-				},
+				width : 130,
 				filter : {
 					showIcon : true,
 					inline : true
@@ -171,8 +145,19 @@
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinish);
 				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
 				AUIGrid.bind(myGridID, "cellEditEndBefore", auiCellEditEndBefore);
-				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+// 				AUIGrid.bind(myGridID, "ready", auiReadyHandler);
 			}
+			
+// 			function auiReadyHandler() {
+// 				const data = AUIGrid.getTreeGridData(myGridID);
+// 				for(let i=0; i<data.length; i++) {
+// 					const item = data[i];
+// 					console.log(item);
+// 					if(item.codeType === "ITEM") {
+// 						AUIGrid.expandItemByRowId(myGridID, item.oid, false);
+// 					}
+// 				}
+// 			}
 
 			function auiCellEditEndBefore(event) {
 				const dataField = event.dataField;
@@ -188,16 +173,6 @@
 				return value;
 			}
 
-			function auiCellClickHandler(event) {
-				const item = event.item;
-				rowIdField = AUIGrid.getProp(event.pid, "rowIdField");
-				rowId = item[rowIdField];
-				if (AUIGrid.isCheckedRowById(event.pid, rowId)) {
-					AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
-				} else {
-					AUIGrid.addCheckedRowsByIds(event.pid, rowId);
-				}
-			}
 			function save() {
 
 				if (!confirm("저장 하시겠습니까?")) {

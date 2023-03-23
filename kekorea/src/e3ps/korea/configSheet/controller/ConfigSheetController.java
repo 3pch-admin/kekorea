@@ -17,7 +17,13 @@ import org.springframework.web.servlet.ModelAndView;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.korea.configSheet.ConfigSheetDTO;
+import e3ps.common.util.ContentUtils;
+import e3ps.common.util.StringUtils;
+import e3ps.epm.keDrawing.KeDrawing;
+import e3ps.epm.keDrawing.dto.KeDrawingDTO;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
+import e3ps.korea.configSheet.ConfigSheet;
+import e3ps.korea.configSheet.beans.ConfigSheetDTO;
 import e3ps.korea.configSheet.service.ConfigSheetHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -55,10 +61,17 @@ public class ConfigSheetController extends BaseController {
 
 	@Description(value = "CONFIG SHEET 등록 페이지")
 	@GetMapping(value = "/create")
-	public ModelAndView create() throws Exception {
+	public ModelAndView create(@RequestParam(required = false) String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		JSONArray categorys = CommonCodeHelper.manager.parseJson("CATEGORY");
-		net.sf.json.JSONArray baseData = ConfigSheetHelper.manager.loadBaseGridData();
+
+		net.sf.json.JSONArray baseData = null;
+		if (!StringUtils.isNull(oid)) {
+			baseData = ConfigSheetHelper.manager.loadBaseGridData(oid);
+		} else {
+			baseData = ConfigSheetHelper.manager.loadBaseGridData();
+		}
+		model.addObject("oid", oid);
 		model.addObject("baseData", baseData);
 		model.addObject("categorys", categorys);
 		model.setViewName("popup:/korea/configSheet/configSheet-create");
@@ -79,5 +92,19 @@ public class ConfigSheetController extends BaseController {
 			result.put("result", FAIL);
 		}
 		return result;
+	}
+
+	@Description(value = "CONFIG SHEET 정보 페이지")
+	@GetMapping(value = "/view")
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
+		net.sf.json.JSONArray data = ConfigSheetHelper.manager.loadBaseGridData(oid);
+		ConfigSheetDTO dto = new ConfigSheetDTO(configSheet);
+		model.addObject("oid", oid);
+		model.addObject("data", data);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/korea/configSheet/configSheet-view");
+		return model;
 	}
 }

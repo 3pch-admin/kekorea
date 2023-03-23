@@ -102,28 +102,10 @@ public class WorkOrderController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
 		WorkOrderDTO dto = new WorkOrderDTO(workOrder);
-		model.addObject("dto", dto);
-		model.setViewName("popup:/epm/workOrder/workOrder-view");
-		return model;
-	}
-	
-	@Description(value = "도면 일람표에 등록된 도면 정보 페이지")
-	@GetMapping(value = "/data")
-	public ModelAndView data(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
 		JSONArray list = KeDrawingHelper.manager.getData(workOrder);
 		model.addObject("list", list);
-		model.setViewName("popup:/epm/workOrder/workOrder-data");
-		return model;
-	}
-
-	@Description(value = "작업지시서 탭 페이지")
-	@GetMapping(value = "/vtabper")
-	public ModelAndView vtabper(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		model.addObject("oid", oid);
-		model.setViewName("popup:/epm/workOrder/workOrder-vtabper");
+		model.addObject("dto", dto);
+		model.setViewName("popup:/epm/workOrder/workOrder-view");
 		return model;
 	}
 }

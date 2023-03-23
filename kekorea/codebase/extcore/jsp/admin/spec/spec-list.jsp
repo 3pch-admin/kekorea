@@ -46,19 +46,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				dataType : "string",
 				width : 500,
 				style : "aui-left",
-				editRenderer : {
-					type : "InputEditRenderer",
-					validator : function(oldValue, newValue, item, dataField) {
-						let isValid = true;
-						if (newValue === "") {
-							isValid = false;
-						}
-						return {
-							"validate" : isValid,
-							"message" : "코드명은 공백을 입력 할 수 없습니다."
-						};
-					}
-				},
 				filter : {
 					showIcon : true,
 					inline : true
@@ -68,19 +55,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				headerText : "코드",
 				dataType : "string",
 				width : 120,
-				editRenderer : {
-					type : "InputEditRenderer",
-					validator : function(oldValue, newValue, item, dataField) {
-						let isValid = true;
-						if (newValue === "") {
-							isValid = false;
-						}
-						return {
-							"validate" : isValid,
-							"message" : "코드는 공백을 입력 할 수 없습니다."
-						};
-					}
-				},
 				filter : {
 					showIcon : true,
 					inline : true
@@ -173,18 +147,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinish);
 				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
 				AUIGrid.bind(myGridID, "cellEditEndBefore", auiCellEditEndBefore);
-				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
-			}
-
-			function auiCellClickHandler(event) {
-				const item = event.item;
-				rowIdField = AUIGrid.getProp(event.pid, "rowIdField");
-				rowId = item[rowIdField];
-				if (AUIGrid.isCheckedRowById(event.pid, rowId)) {
-					AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
-				} else {
-					AUIGrid.addCheckedRowsByIds(event.pid, rowId);
-				}
 			}
 
 			function auiCellEditEndBefore(event) {

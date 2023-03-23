@@ -1,6 +1,7 @@
 <%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
 <!DOCTYPE html>
@@ -15,6 +16,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 </head>
 <body>
 	<form>
+<<<<<<< HEAD
+=======
+		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
+>>>>>>> f0e2ccc19de4fb61640104974eff4eb418644025
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
@@ -134,6 +141,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "진행단계",
 					dataType : "string",
 					width : 350,
+					renderer : {
+						type : "TemplateRenderer"
+					},
 					filter : {
 						showIcon : false,
 						inline : false
@@ -187,14 +197,17 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-				// 그리드 공통속성 끝
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
+<<<<<<< HEAD
 
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
+=======
+				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+>>>>>>> f0e2ccc19de4fb61640104974eff4eb418644025
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
 					vScrollChangeHandler(event);
@@ -209,6 +222,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const url = getCallUrl("/workspace/agree");
 				const approvalTitle = document.getElementById("approvalTitle").value;
 				const psize = document.getElementById("psize").value;
+<<<<<<< HEAD
 				const submiterOid = document.getElementById("submiterOid").value;
 				const receiveFrom = document.getElementById("receiveFrom").value;
 				const receiveTo = document.getElementById("receiveTo").value;
@@ -219,6 +233,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				params.receiveFrom = receiveFrom;
 				params.receiveTo = receiveTo;
 
+=======
+				params.approvalTitle = approvalTitle;
+				params.psize = psize;
+>>>>>>> f0e2ccc19de4fb61640104974eff4eb418644025
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -232,19 +250,23 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function exportExcel() {
 				const exceptColumnFields = [ "reads", "point" ];
-				exportToExcel("검토함 리스트", "검토함", "검토함 리스트", exceptColumnFields, "<%=sessionUser.getFullName()%>");
+				const sessionName = document.getElementById("sessionName").value;
+				exportToExcel("검토함 리스트", "검토함", "검토함 리스트", exceptColumnFields, sessionName);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("agree-list");
+<<<<<<< HEAD
 				const contenxtHeader = genColumnHtml(columns);
+=======
+				const contenxtHeader = genColumnHtml(columns); 
+>>>>>>> f0e2ccc19de4fb61640104974eff4eb418644025
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-
 				finderUser("submiter");
 				twindate("receive");
 				selectbox("psize");

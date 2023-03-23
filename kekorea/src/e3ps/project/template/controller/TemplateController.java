@@ -21,6 +21,8 @@ import e3ps.project.Project;
 import e3ps.project.dto.ProjectDTO;
 import e3ps.project.template.service.TemplateHelper;
 import net.sf.json.JSONArray;
+import wt.org.WTUser;
+import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/template/**")
@@ -31,6 +33,10 @@ public class TemplateController extends BaseController {
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/project/template/template-list.jsp");
 		return model;
 	}
@@ -108,7 +114,7 @@ public class TemplateController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
-		}create
+		}
 		return result;
 	}
 
