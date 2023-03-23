@@ -267,7 +267,7 @@ public class KeDrawingHelper {
 	public void postAfterAction(String oid, String pdfPath) throws Exception {
 		WTPrincipal principal = SessionHelper.manager.getPrincipal();
 		ProcessingQueue queue = (ProcessingQueue) QueueHelper.manager.getQueue(processQueueName, ProcessingQueue.class);
-
+		
 		Hashtable<String, String> hash = new Hashtable<>();
 		hash.put("oid", oid);
 		hash.put("pdfPath", pdfPath);

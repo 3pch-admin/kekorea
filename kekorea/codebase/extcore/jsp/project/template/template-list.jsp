@@ -49,7 +49,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>기간</th>
 				<td class="indent5">
-					<input type="text" name="partName">
+					<input type="text" name="duration" id="duration">
 				</td>
 				<th>수정자</th>
 				<td class="indent5">
@@ -225,6 +225,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const params = new Object();
 				const url = getCallUrl("/template/list");
 				const templateName = document.getElementById("templateName").value;
+				const duration = document.getElementById("duration").value;
+				const psize = document.getElementById("psize").value;
+				
+				params.templateName = templateName;
+				params.duration = duration;
 				const psize = document.getElementById("psize").value;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
@@ -288,6 +293,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				finderUser("creator");
 				twindate("created");
 				twindate("modified");
+				
+				selectbox("psize");
+			});
+
 				selectbox("psize");
 			});
 

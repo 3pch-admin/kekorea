@@ -627,7 +627,10 @@ public class WorkspaceHelper {
 		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
 
 		String approvalTitle = (String) params.get("approvalTitle"); // 결재 제목
-
+		String submiterOid = (String) params.get("submiterOid"); // 작성자
+		String receiveFrom = (String) params.get("receiveFrom");
+		String receiveTo = (String) params.get("receiveTo");
+		
 		// 쿼리문 작성
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ApprovalLine.class, true);
@@ -637,7 +640,11 @@ public class WorkspaceHelper {
 				WTAttributeNameIfc.ID_NAME, idx, idx_master);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, AGREE_READY);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, AGREE_LINE);
-
+		QuerySpecUtils.toTimeGreaterEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveFrom);
+		QuerySpecUtils.toTimeLessEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveTo);
+		QuerySpecUtils.toCreator(query, idx, ApprovalLine.class, submiterOid);
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, true);
+		
 		WTUser sessionUser = CommonUtils.sessionUser();
 		if (!CommonUtils.isAdmin()) {
 			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, "ownership.owner.key.id",
@@ -671,9 +678,9 @@ public class WorkspaceHelper {
 		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
 		boolean isAdmin = CommonUtils.isAdmin();
 		String name = (String) params.get("name");
-		String creatorsOid = (String) params.get("creatorsOid");
-		String predate = (String) params.get("predate");
-		String postdate = (String) params.get("postdate");
+		String submiterOid = (String) params.get("submiterOid");
+		String receiveFrom = (String) params.get("receiveFrom");
+		String receiveTo = (String) params.get("receiveTo");
 		String approvalTitle = (String) params.get("approvalTitle");
 
 		QuerySpec query = new QuerySpec();
@@ -686,6 +693,11 @@ public class WorkspaceHelper {
 		// 쿼리 수정할 예정
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, APPROVAL_APPROVING);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, APPROVAL_LINE);
+		QuerySpecUtils.toTimeGreaterEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveFrom);
+		QuerySpecUtils.toTimeLessEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveTo);
+		QuerySpecUtils.toCreator(query, idx, ApprovalLine.class, submiterOid);
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, true);
+		
 
 		if (!isAdmin) {
 			WTUser sessionUser = CommonUtils.sessionUser();
@@ -693,27 +705,10 @@ public class WorkspaceHelper {
 					sessionUser.getPersistInfo().getObjectIdentifier().getId());
 		}
 
-		// 기안자를 찾는거
-		if (!StringUtils.isNull(creatorsOid)) {
-			WTUser wtUser = (WTUser) CommonUtils.getObject(creatorsOid);
+		if (!StringUtils.isNull(submiterOid)) {
+			WTUser wtUser = (WTUser) CommonUtils.getObject(submiterOid);
 			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, "ownership.owner.key.id",
 					wtUser.getPersistInfo().getObjectIdentifier().getId());
-		}
-
-		if (!StringUtils.isNull(predate)) {
-			Timestamp pre = DateUtils.convertStartDate(predate);
-			QuerySpecUtils.toTimeGreaterEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, pre);
-		}
-
-		if (!StringUtils.isNull(postdate)) {
-			Timestamp post = DateUtils.convertStartDate(postdate);
-			QuerySpecUtils.toTimeLessEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, post);
-		}
-
-		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, true);
-
-		if (!StringUtils.isNull(name)) {
-			QuerySpecUtils.toLikeAnd(query, idx, ApprovalLine.class, ApprovalLine.NAME, name);
 		}
 
 		if (!StringUtils.isNull(approvalTitle)) {
