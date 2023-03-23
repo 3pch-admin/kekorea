@@ -129,7 +129,7 @@ public class NoticeController extends BaseController {
 		Notice notice = (Notice) CommonUtils.getObject(oid);
 		NoticeDTO dto = new NoticeDTO(notice);
 		model.addObject("dto", dto);
-		model.setViewName("popup:/bom/partlist/partlist-view");
+		model.setViewName("popup:/workspace/notice/notice-view");
 		return model;
 	}
 }

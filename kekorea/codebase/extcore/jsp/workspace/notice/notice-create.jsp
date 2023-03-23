@@ -57,6 +57,15 @@
 		params.name = document.getElementById("name").value;
 		params.description = document.getElementById("description").value;
 		params.primarys = toArray("primarys");
+		if (isNull(params.name)) {
+			alert("공지사항 제목 값은 공백을 입력 할 수 없습니다.");
+			return false;
+		}
+		if (isNull(params.description)) {
+			alert("내용 값은 공백을 입력 할 수 없습니다.");
+			return false;
+		}
+		
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
