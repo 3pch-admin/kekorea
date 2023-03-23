@@ -133,7 +133,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<%
 						for (Map<String, String> map : list) {
 							String oid = map.get("key");
-							String name = map.get("name");
+							String name = map.get("value");
 						%>
 						<option value="<%=oid%>"><%=name%></option>
 						<%

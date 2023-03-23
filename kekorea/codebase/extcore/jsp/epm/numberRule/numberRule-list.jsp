@@ -1,8 +1,20 @@
+<%@page import="java.sql.Timestamp"%>
 <%@page import="wt.org.WTUser"%>
+<%@page import="e3ps.admin.commonCode.CommonCode"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="e3ps.admin.commonCode.CommonCodeType"%>
+<%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+Timestamp time = (Timestamp) request.getAttribute("time");
+ArrayList<CommonCode> sizes = (ArrayList<CommonCode>) request.getAttribute("sizes");
+ArrayList<CommonCode> drawingCompanys = (ArrayList<CommonCode>) request.getAttribute("drawingCompanys");
+ArrayList<CommonCode> writtenDocuments = (ArrayList<CommonCode>) request.getAttribute("writtenDocuments");
+ArrayList<CommonCode> businessSectors = (ArrayList<CommonCode>) request.getAttribute("businessSectors");
+ArrayList<CommonCode> classificationWritingDepartment = (ArrayList<CommonCode>) request
+		.getAttribute("classificationWritingDepartment");
 %>
 <!DOCTYPE html>
 <html>
@@ -12,59 +24,110 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <%@include file="/extcore/include/css.jsp"%>
 <%@include file="/extcore/include/script.jsp"%>
 <%@include file="/extcore/include/auigrid.jsp"%>
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=100"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
 	<form>
+		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
+		<input type="hidden" name="time" id="time" value="<%=time%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
-		<table class="search-table">
-			<colgroup>
-				<col width="130">
-				<col width="800">
-				<col width="130">
-				<col width="800">
-			</colgroup>
+		<table class="search_table">
 			<tr>
-				<th>공지사항 제목</th>
-				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-300">
+				<th>사업부문</th>
+				<td>
+					<select name="size" id="size" class="AXSelect w200">
+						<option value="">선택</option>
+						<%
+						for (CommonCode commonCode : sizes) {
+							String value = commonCode.getPersistInfo().getObjectIdentifier().getStringValue();
+							String display = commonCode.getName();
+						%>
+						<option value="<%=value%>"><%=display%></option>
+						<%
+						}
+						%>
+					</select>
 				</td>
-				<th>내용</th>
-				<td class="indent5">
-					<input type="text" name="description" id="description" class="width-300">
+				<th>작성기간</th>
+				<td>&nbsp;</td>
+				<th>도면번호</th>
+				<td>
+					<input type="text" name="kekNumber" class="AXInput wid200">
+				</td>
+				<th>도면생성회사</th>
+				<td>
+					<select name="size" id="size" class="AXSelect w200">
+						<option value="">선택</option>
+						<%
+						for (CommonCode commonCode : sizes) {
+							String value = commonCode.getPersistInfo().getObjectIdentifier().getStringValue();
+							String display = commonCode.getName();
+						%>
+						<option value="<%=value%>"><%=display%></option>
+						<%
+						}
+						%>
+					</select>
 				</td>
 			</tr>
 			<tr>
-				<th>작성자</th>
-				<td class="indent5">
-					<input type="text" name="creator" id="creator" data-multi="false" data-method="setUser">
-					<input type="hidden" name="creatorOid" id="creatorOid">
+				<th>사이즈</th>
+				<td>
+					<select name="size" id="size" class="AXSelect w200">
+						<option value="">선택</option>
+						<%
+						for (CommonCode commonCode : sizes) {
+							String value = commonCode.getPersistInfo().getObjectIdentifier().getStringValue();
+							String display = commonCode.getName();
+						%>
+						<option value="<%=value%>"><%=display%></option>
+						<%
+						}
+						%>
+					</select>
 				</td>
-				<th>작성일</th>
-				<td class="indent5">
-					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
-					~
-					<input type="text" name="createdTo" id="createdTo" class="width-100">
+				<th>도면구분</th>
+				<td>&nbsp;</td>
+				<th>년도</th>
+				<td>&nbsp;</td>
+				<th>관리번호</th>
+				<td>
+					<input type="text" name="kekNumber" class="AXInput wid200">
+				</td>
+			</tr>
+			<tr>
+				<th>부품도구분</th>
+				<td>&nbsp;</td>
+				<th>진행상태</th>
+				<td>
+					<select name="state" id="state" class="AXSelect w200">
+						<option value="">선택</option>
+						<option value="진행중">진행중</option>
+						<option value="완료">완료</option>
+						<option value="폐기">폐기</option>
+					</select>
+				</td>
+				<th>작성부서</th>
+				<td>&nbsp;</td>
+				<th>작성자</th>
+				<td>
+					<input type="text" name="kekNumber" class="AXInput wid200">
 				</td>
 			</tr>
 		</table>
-
-		<table class="button-table">
+		<!-- button table -->
+		<table class="btn_table">
 			<tr>
 				<td class="left">
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
-					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('numberRule-list');">
-					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('numberRule-list');">
-					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
-					<%
-					if (isAdmin) {
-					%>
-					<input type="button" value="저장" title="저장" onclick="save();">
-					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
-					<%
-					}
-					%>
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('keDrawing-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('keDrawing-list');">
+					<input type="button" value="저장" title="저장" onclick="create();">
+					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
+					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -74,12 +137,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<option value="200">200</option>
 						<option value="300">300</option>
 					</select>
-					<input type="button" value="조회" title="조회" onclick="loadGridData();">
+					<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
 				</td>
 			</tr>
 		</table>
-
-		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 450px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -88,11 +150,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "number",
 					headerText : "도면번호",
 					dataType : "string",
+					width : 150,
 					filter : {
 						showIcon : true,
 						inline : true
 					},
-					width : 150
 				}, {
 					dataField : "name",
 					headerText : "도면명",
@@ -146,8 +208,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "CheckBoxEditRenderer",
 					},
 					filter : {
-						showIcon : false,
-						inline : false
+						showIcon : true,
+						inline : true
 					},
 				}, {
 					dataField : "version",
@@ -162,27 +224,25 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "creator",
 					headerText : "작성자",
 					dataType : "string",
-					width : 80,
+					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 				}, {
-					dataField : "createdDate",
+					dataField : "createdDate_txt",
 					headerText : "작성일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
+					dataType : "string",
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true,
-						displayFormatValues : true
+						inline : true
 					},
 				}, {
 					dataField : "modifier",
 					headerText : "수정자",
 					dataType : "string",
-					width : 80,
+					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -195,8 +255,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					width : 100,
 					filter : {
 						showIcon : true,
-						inline : true,
-						displayFormatValues : true
+						inline : true
 					},
 				} ]
 			}
@@ -218,6 +277,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+					editable : true
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
@@ -231,75 +291,37 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				});
 			}
 
-			function save() {
-				const url = getCallUrl("/notice/delete");
-				const params = new Object();
-				const removeRows = AUIGrid.getRemovedItems(myGridID);
-				if (removeRows.length === 0) {
-					alert("변경된 내용이 없습니다.");
-					return false;
-				}
-
-				if (!confirm("저장 하시겠습니까?")) {
-					return false;
-				}
-
-				params.removeRows = removeRows;
-				parent.openLayer();
-				call(url, params, function(data) {
-					alert(data.msg);
-					parent.closeLayer();
-					if (data.result) {
-						loadGridData();
-					}
-				});
-			}
-
-			function deleteRow() {
-				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				for (let i = checkedItems.length - 1; i >= 0; i--) {
-					const rowIndex = checkedItems[i].rowIndex;
-					AUIGrid.removeRow(myGridID, rowIndex);
-				}
-			}
-
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/numberRule/list");
-				const name = document.getElementById("name").value;
-				const description = document.getElementById("description").value;
-				const creatorOid = document.getElementById("creatorOid").value;
-				const createdFrom = document.getElementById("createdFrom").value;
-				const createdTo = document.getElementById("createdTo").value;
 				const psize = document.getElementById("psize").value;
-				params.name = name;
-				params.description = description;
-				params.creatorOid = creatorOid;
-				params.createdFrom = createdFrom;
-				params.createdTo = createdTo;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
-					document.getElementById("sessionid").value = data.sessionid;
-					document.getElementById("curPage").value = data.curPage;
+					$("input[name=sessionid]").val(data.sessionid);
+					$("input[name=curPage]").val(data.curPage);
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
-				});
+				})
 			}
 
-			function create() {
-				const url = getCallUrl("/numberRule/create");
-				popup(url, 1200, 500);
-			}
-
-			function exportExcel() {
-
+			function addRow() {
+				const sessionName = document.getElementById("sessionName").value;
+				const time = document.getElementById("time").value;
+				const item = {
+					creator : sessionName,
+					modifier : sessionName,
+					createdDate_txt : time,
+					modifiedDate_txt : time,
+					latest : true,
+				};
+				AUIGrid.addRow(myGridID, item, "first");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
-				const columns = loadColumnLayout("numberRule-list");
+				const columns = loadColumnLayout("keDrawing-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({

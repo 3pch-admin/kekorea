@@ -260,7 +260,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					mergeRef : "name",
 					mergePolicy : "restrict"
 				}, {
-					dataField : "secondary",
+					dataField : "primary",
 					headerText : "첨부파일",
 					dataType : "string",
 					width : 80,

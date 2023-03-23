@@ -107,7 +107,7 @@ public class WorkOrderHelper {
 					node.put("creator", dto.getCreator());
 					node.put("createdDate_txt", dto.getCreatedDate_txt());
 					node.put("cover", dto.getCover());
-					node.put("secondary", dto.getSecondary());
+					node.put("primary", dto.getPrimary());
 				} else {
 					JSONObject data = new JSONObject();
 					data.put("name", dto.getName());
@@ -128,7 +128,7 @@ public class WorkOrderHelper {
 					data.put("creator", dto.getCreator());
 					data.put("createdDate_txt", dto.getCreatedDate_txt());
 					data.put("cover", dto.getCover());
-					data.put("secondary", dto.getSecondary());
+					data.put("primary", dto.getPrimary());
 					children.add(data);
 				}
 				isNode++;

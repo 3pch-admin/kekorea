@@ -10,7 +10,6 @@
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@page import="wt.fc.PagingQueryResult"%>
 <%@page import="e3ps.common.util.PageQueryUtils"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
