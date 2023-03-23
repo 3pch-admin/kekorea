@@ -7,6 +7,7 @@
 	
 3. State ResourceBuild 실행
 	- Shell -> ResourceBuild.bat wt.lifecycle.**
+	- Shell -> ResourceBuild.bat wt.doc.**
 	- codebase -> ant -f MakeJar.xml
 	
 4. Queue 생성
