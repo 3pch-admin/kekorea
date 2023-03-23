@@ -1,10 +1,12 @@
 package e3ps.epm.keDrawing.controller;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
@@ -39,6 +41,8 @@ public class KeDrawingController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = CommonUtils.sessionUser();
 		boolean isAdmin = CommonUtils.isAdmin();
+		Timestamp time = new Timestamp(new Date().getTime());
+		model.addObject("time", time);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/epm/keDrawing/keDrawing-list.jsp");

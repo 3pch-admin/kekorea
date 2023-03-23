@@ -39,7 +39,7 @@ public class WorkOrderDTO {
 	private Timestamp createdDate;
 	private String createdDate_txt;
 	private String cover;
-	private String secondary;
+	private String primary;
 
 	// 트리구현
 	private String id = "";
@@ -105,7 +105,7 @@ public class WorkOrderDTO {
 		}
 		setCreator(workOrder.getOwnership().getOwner().getFullName());
 		setCover(AUIGridUtils.primaryTemplate(workOrder));
-		setSecondary(AUIGridUtils.secondaryTemplate(workOrder));
+		setPrimary(AUIGridUtils.primaryTemplate(workOrder));
 		setCreatedDate(workOrder.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(workOrder.getCreateTimestamp()));
 	}

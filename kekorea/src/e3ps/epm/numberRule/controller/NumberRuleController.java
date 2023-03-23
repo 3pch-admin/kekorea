@@ -1,8 +1,10 @@
 package e3ps.epm.numberRule.controller;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Date;
 
 import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
@@ -40,6 +42,8 @@ public class NumberRuleController extends BaseController {
 				.getArrayCodeList("CLASSIFICATION_WRITING_DEPARTMENT");
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		Timestamp time = new Timestamp(new Date().getTime());
+		model.addObject("time", time);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("drawingCompanys", drawingCompanys);

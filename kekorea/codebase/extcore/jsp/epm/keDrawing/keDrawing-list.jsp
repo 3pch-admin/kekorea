@@ -1,8 +1,10 @@
+<%@page import="java.sql.Timestamp"%>
 <%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+Timestamp time = (Timestamp) request.getAttribute("time");
 %>
 <!DOCTYPE html>
 <html>
@@ -19,6 +21,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
+		<input type="hidden" name="time" id="time" value="<%=time%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
@@ -168,7 +171,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataType : "string",
 					width : 100,
 					editable : false,
-					style : "underline",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
@@ -221,10 +223,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						inline : true
 					},
 				}, {
-					dataField : "createdDate",
+					dataField : "createdDate_txt",
 					headerText : "작성일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
+					dataType : "string",
 					width : 100,
 					editable : false,
 					headerTooltip : {
@@ -234,7 +235,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					filter : {
 						showIcon : true,
 						inline : true,
-						displayFormatValues : true
 					},
 				}, {
 					dataField : "modifier",
@@ -251,10 +251,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						inline : true
 					},
 				}, {
-					dataField : "modifiedDate",
+					dataField : "modifiedDate_txt",
 					headerText : "수정일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
+					dataType : "string",
 					width : 100,
 					editable : false,
 					headerTooltip : {
@@ -264,7 +263,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					filter : {
 						showIcon : true,
 						inline : true,
-						displayFormatValues : true
 					},
 				}, {
 					dataField : "preView",
@@ -348,7 +346,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					editable : true
 				};
-
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
@@ -418,7 +415,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function addRow() {
+				const sessionName = document.getElementById("sessionName").value;
+				const time = document.getElementById("time").value;
 				const item = {
+					creator : sessionName,
+					modifier : sessionName,
+					createdDate_txt : time,
+					modifiedDate_txt : time,
 					latest : true,
 				};
 				AUIGrid.addRow(myGridID, item, "first");
@@ -463,6 +466,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					alert("도면파일의 버전 자리수를 확인해주세요. 등록가능한 버전의 자리수는 3자리여야 합니다.");
 					return false;
 				}
+				
 				const template = "<img src='" + data.icon + "' style='position: relative; top: 2px;'>";
 				AUIGrid.updateRowsById(myGridID, {
 					_$uid : recentGridItem._$uid,
@@ -485,34 +489,36 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					alert("변경된 내용이 없습니다.");
 					return false;
 				}
+				
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
-
+					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
 					if (item.lotNo === 0) {
-						AUIGrid.showToastMessage(myGridID, i, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
 						return false;
 					}
 
 					if (isNull(item.name)) {
-						AUIGrid.showToastMessage(myGridID, i, 1, "DRAWING TITLE의 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "DRAWING TITLE의 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 
 					if (isNull(item.primary)) {
-						AUIGrid.showToastMessage(myGridID, i, 9, "도면파일을 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 9, "도면파일을 선택하세요.");
 						return false;
 					}
 				}
 
 				for (let i = 0; i < editRows.length; i++) {
 					const item = editRows[i];
+					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
 					if (item.lotNo === 0) {
-						AUIGrid.showToastMessage(myGridID, i, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
 						return false;
 					}
 
 					if (isNull(item.name)) {
-						AUIGrid.showToastMessage(myGridID, i, 1, "DRAWING TITLE의 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "DRAWING TITLE의 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 				}
@@ -541,7 +547,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					alert("개정할 도면을 선택하세요.");
 					return false;
 				}
-				console.log(checkedItems);
+
 				for (let i = 0; i < checkedItems.length; i++) {
 					const oid = checkedItems[i].item.oid;
 					const latest = checkedItems[i].item.latest;
@@ -558,14 +564,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					}
 				}
 
-				const a = [ {
-					keNumber : "123",
-				}, {
-					keNumber : "456"
-				} ]
 				const url = getCallUrl("/keDrawing/revise");
 				const p = popup(url, 1600, 550);
-				p.datas = a;
+				p.datas = checkedItems;
 			}
 
 			function exportExcel() {

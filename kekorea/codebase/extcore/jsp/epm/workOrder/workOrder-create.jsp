@@ -159,7 +159,12 @@
 			showStateColumn : true,
 			rowNumHeaderText : "번호",
 			selectionMode : "multipleCells",
-			// 복사 후 편집 이벤트 발생하는 속성
+			showDragKnobColumn : true,
+			enableDrag : true,
+			enableMultipleDrag : true,
+			enableDragByCellDrag : true,
+			enableDrop : true,
+
 			$compaEventOnPaste : true,
 			editable : true
 		};
@@ -227,7 +232,7 @@
 		const params = new Object();
 		const addRows = AUIGrid.getAddedRowItems(myGridID); // 도면 일람표
 		const _addRows = AUIGrid.getAddedRowItems(_myGridID); // 프로젝트
-		
+
 		_addRows.sort(function(a, b) {
 			return a.sort - b.sort;
 		});

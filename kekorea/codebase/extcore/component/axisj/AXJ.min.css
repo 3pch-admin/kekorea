@@ -6363,7 +6363,7 @@ button, button:hover {
 
 .AXanchorSelect .selectedTextBox {
 	display: block;
-	border: 1px solid #ccc;
+	border: 1px solid #a6a6a6;
 	-webkit-border-radius: 2px;
 	-moz-border-radius: 2px;
 	border-radius: 2px;
