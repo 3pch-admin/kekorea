@@ -252,7 +252,7 @@ public interface PartService {
 	 * @throws WTException
 	 */
 	public abstract Map<String, Object> createUnitBomAction(Map<String, Object> param) throws WTException;
-	
+
 	/**
 	 * UNIT BOM 재전송
 	 * 
@@ -279,4 +279,9 @@ public interface PartService {
 	 * @throws WTException
 	 */
 	public abstract Map<String, Object> createUnitCodeAction(Map<String, Object> param) throws WTException;
+
+	/**
+	 * 부품 일괄 등록
+	 */
+	public abstract void bundle(Map<String, Object> params) throws Exception;
 }

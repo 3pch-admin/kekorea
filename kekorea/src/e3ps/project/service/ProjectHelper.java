@@ -30,6 +30,7 @@ import wt.query.OrderBy;
 import wt.query.QuerySpec;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
+import wt.util.WTAttributeNameIfc;
 
 public class ProjectHelper {
 
@@ -3143,21 +3144,28 @@ public class ProjectHelper {
 		return list;
 	}
 
+	/**
+	 * 작번 조회 함수
+	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<ProjectDTO> list = new ArrayList<ProjectDTO>();
 
 		String kekNumber = (String) params.get("kekNumber");
 		String keNumber = (String) params.get("keNumber");
-		String mak = (String) params.get("mak");
-		String detail = (String) params.get("detail");
-		String install = (String) params.get("install");
-		String customer = (String) params.get("customer");
-		String kekState = (String) params.get("kekState");
-		String model = (String) params.get("model");
-		String projectType = (String) params.get("projectType"); // 프로젝트 타입 샘플용
 		String pdateFrom = (String) params.get("pdateFrom");
 		String pdateTo = (String) params.get("pdateTo");
+		String userId = (String) params.get("userId");
+		String kekState = (String) params.get("kekState");
+		String model = (String) params.get("model");
+		String customer_name = (String) params.get("customer_name");
+		String install_name = (String) params.get("install_name");
+		String projectType = (String) params.get("projectType");
+		String machineOid = (String) params.get("machineOid");
+		String elecOid = (String) params.get("elecOid");
+		String softOid = (String) params.get("softOid");
+		String mak_name = (String) params.get("mak_name");
+		String detail_name = (String) params.get("detail_name");
 		String template = (String) params.get("template");
 		String description = (String) params.get("description");
 
@@ -3166,8 +3174,22 @@ public class ProjectHelper {
 
 		QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.KEK_NUMBER, kekNumber);
 		QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.KE_NUMBER, keNumber);
-		QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.MODEL, model);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, Project.class, Project.P_DATE, pdateFrom, pdateTo);
+		QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.USER_ID, userId);
 		QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.KEK_STATE, kekState);
+		QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.MODEL, model);
+
+		if (!StringUtils.isNull(customer_name)) {
+			CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer_name);
+			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "customerReference.key.id",
+					customerCode.getPersistInfo().getObjectIdentifier().getId());
+		}
+
+		if (!StringUtils.isNull(install_name)) {
+			CommonCode installCode = (CommonCode) CommonUtils.getObject(install_name);
+			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "installReference.key.id",
+					installCode.getPersistInfo().getObjectIdentifier().getId());
+		}
 
 		if (!StringUtils.isNull(projectType)) {
 			CommonCode projectTypeCode = (CommonCode) CommonUtils.getObject(projectType);
@@ -3175,28 +3197,64 @@ public class ProjectHelper {
 					projectTypeCode.getPersistInfo().getObjectIdentifier().getId());
 		}
 
-		if (!StringUtils.isNull(mak)) {
-			CommonCode makCode = (CommonCode) CommonUtils.getObject(mak);
+		if (!StringUtils.isNull(machineOid)) {
+			WTUser machine = (WTUser) CommonUtils.getObject(machineOid);
+			CommonCode machineCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
+			int idx_u = query.appendClassList(WTUser.class, false);
+
+			QuerySpecUtils.toInnerJoin(query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleAObjectRef.key.id", idx, idx_plink);
+			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleBObjectRef.key.id", idx_u, idx_plink);
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
+					machine.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+					machineCode.getPersistInfo().getObjectIdentifier().getId());
+		}
+
+		if (!StringUtils.isNull(elecOid)) {
+			WTUser elec = (WTUser) CommonUtils.getObject(machineOid);
+			CommonCode elecCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
+			int idx_u = query.appendClassList(WTUser.class, false);
+
+			QuerySpecUtils.toInnerJoin(query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleAObjectRef.key.id", idx, idx_plink);
+			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleBObjectRef.key.id", idx_u, idx_plink);
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
+					elec.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+					elecCode.getPersistInfo().getObjectIdentifier().getId());
+		}
+
+		if (!StringUtils.isNull(softOid)) {
+			WTUser soft = (WTUser) CommonUtils.getObject(machineOid);
+			CommonCode softCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
+			int idx_u = query.appendClassList(WTUser.class, false);
+
+			QuerySpecUtils.toInnerJoin(query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleAObjectRef.key.id", idx, idx_plink);
+			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleBObjectRef.key.id", idx_u, idx_plink);
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
+					soft.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+					softCode.getPersistInfo().getObjectIdentifier().getId());
+		}
+
+		if (!StringUtils.isNull(mak_name)) {
+			CommonCode makCode = (CommonCode) CommonUtils.getObject(mak_name);
 			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "makReference.key.id",
 					makCode.getPersistInfo().getObjectIdentifier().getId());
 		}
 
-		if (!StringUtils.isNull(detail)) {
-			CommonCode detailCode = (CommonCode) CommonUtils.getObject(detail);
+		if (!StringUtils.isNull(detail_name)) {
+			CommonCode detailCode = (CommonCode) CommonUtils.getObject(detail_name);
 			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "detailReference.key.id",
 					detailCode.getPersistInfo().getObjectIdentifier().getId());
-		}
-
-		if (!StringUtils.isNull(install)) {
-			CommonCode installCode = (CommonCode) CommonUtils.getObject(install);
-			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "installReference.key.id",
-					installCode.getPersistInfo().getObjectIdentifier().getId());
-		}
-
-		if (!StringUtils.isNull(customer)) {
-			CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer);
-			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "customerReference.key.id",
-					customerCode.getPersistInfo().getObjectIdentifier().getId());
 		}
 
 		if (!StringUtils.isNull(template)) {
@@ -3205,7 +3263,6 @@ public class ProjectHelper {
 					t.getPersistInfo().getObjectIdentifier().getId());
 		}
 
-		QuerySpecUtils.toTimeGreaterAndLess(query, idx, Project.class, Project.P_DATE, pdateFrom, pdateTo);
 		QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.DESCRIPTION, description);
 		QuerySpecUtils.toOrderBy(query, idx, Project.class, Project.P_DATE, false);
 

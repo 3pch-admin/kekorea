@@ -3,9 +3,6 @@ package e3ps.korea.cip.dto;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
@@ -38,6 +35,7 @@ public class CipDTO {
 	private String customer_oid;
 	private String note;
 	private String creator;
+	private String creatorId;
 	private Timestamp createdDate;
 	private String createdDate_txt;
 	private String preView;
@@ -65,6 +63,7 @@ public class CipDTO {
 		setDetail_oid(cip.getPersistInfo().getObjectIdentifier().getStringValue());
 		setNote(cip.getNote());
 		setCreator(cip.getOwnership().getOwner().getFullName());
+		setCreatorId(cip.getOwnership().getOwner().getName());
 		setCreatedDate(cip.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(cip.getCreateTimestamp()));
 		setInstall_code(cip.getInstall().getCode());

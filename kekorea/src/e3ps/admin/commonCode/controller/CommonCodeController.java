@@ -93,7 +93,7 @@ public class CommonCodeController extends BaseController {
 	public Map<String, Object> getChildrens(@RequestParam String parentOid) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			ArrayList<Map<String, Object>> childrens = CommonCodeHelper.manager.getChildrens(parentOid);
+			ArrayList<Map<String, String>> childrens = CommonCodeHelper.manager.getChildrens(parentOid);
 			result.put("list", childrens);
 			result.put("result", "ok"); // AXISJ 전용 성공 값
 		} catch (Exception e) {

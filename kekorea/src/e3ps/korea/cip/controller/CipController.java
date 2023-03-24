@@ -1,6 +1,11 @@
 package e3ps.korea.cip.controller;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Date;
+import java.util.Date;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,8 +44,18 @@ public class CipController extends BaseController {
 		JSONArray maks = CommonCodeHelper.manager.parseJson("MAK");
 		JSONArray customers = CommonCodeHelper.manager.parseJson("CUSTOMER");
 		JSONArray installs = CommonCodeHelper.manager.parseJson("INSTALL");
+
+		ArrayList<Map<String, String>> customer_list = CommonCodeHelper.manager.getValueMap("CUSTOMER");
+		ArrayList<Map<String, String>> mak_list = CommonCodeHelper.manager.getValueMap("MAK");
+
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		
+		Timestamp time = new Timestamp(new Date().getTime());
+		
+		model.addObject("time", time);
+		model.addObject("mak_list", mak_list);
+		model.addObject("customer_list", customer_list);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("maks", maks);

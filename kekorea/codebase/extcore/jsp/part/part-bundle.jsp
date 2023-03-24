@@ -1,181 +1,331 @@
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- AUIGrid 사용을 위한 필수 부분 -->
+<%@include file="/extcore/include/css.jsp"%>
+<%@include file="/extcore/include/script.jsp"%>
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
-	<table>
-		<tr>
-			<td>
-				<input type="button" value="저장" title="저장" class="outline" id="saveBtn">
-			</td>
-		</tr>
-	</table>
-	<!-- AUIGrid -->
-	<div id="grid_wrap" style="height: 500px; border-top: 1px solid #3180c3; margin-bottom: 10px;"></div>
-	<!-- Attach File Area -->
-	<div class="AXUpload5" id="secondary_layer"></div>
-	<div class="AXUpload5QueueBox_list" id="uploadQueueBox" style="height: 200px;"></div>
-	<script type="text/javascript">
-		let myGridID;
-		const columns = [ {
-			dataField : "dwg_check",
-			headerText : "체크(DWG_NO)",
-			dataType : "string",
-			width : 120,
-			editable : false,
-			renderer : {
-				type : "CheckBoxEditRenderer",
-			},
-		}, {
-			dataField : "ycode_check",
-			headerText : "체크(YCODE)",
-			dataType : "string",
-			width : 120,
-			editable : false,
-			renderer : {
-				type : "CheckBoxEditRenderer",
-			},
-		}, {
-			dataField : "number",
-			headerText : "품번",
-			dataType : "string",
-			width : 150,
-		}, {
-			dataField : "name",
-			headerText : "품명",
-			dataType : "string",
-			width : 250,
-		}, {
-			dataField : "spec",
-			headerText : "규격",
-			dataType : "string",
-		}, {
-			dataField : "maker",
-			headerText : "메이커",
-			dataType : "string",
-			width : 150,
-		}, {
-			dataField : "customer",
-			headerText : "기본구매처",
-			dataType : "string",
-			width : 150,
-		}, {
-			dataField : "unit",
-			headerText : "기준단위",
-			dataType : "string",
-			width : 100,
-		}, {
-			dataField : "price",
-			headerText : "단가",
-			dataType : "numeric",
-			width : 150,
-			formatString : "#,###",
-			editRenderer : {
-				type : "InputEditRenderer",
-				onlyNumeric : true, // 0~9만 입력가능
-			},
-		}, {
-			dataField : "currency",
-			headerText : "통화",
-			dataType : "string",
-			width : 100,
-		}, ]
+	<form>
+		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
+		<input type="hidden" name="sessionid" id="sessionid">
+		<input type="hidden" name="curPage" id="curPage">
 
-		let secondary = new AXUpload5();
-		function load() {
-			secondary.setConfig({
-				isSingleUpload : false,
-				targetID : "secondary_layer",
-				uploadFileName : "secondary",
-				buttonTxt : "파일 선택",
-				uploadMaxFileSize : (1024 * 1024 * 1024),
-				uploadUrl : "/Windchill/plm/content/aui/auiUpload",
-				dropBoxID : "uploadQueueBox",
-				queueBoxID : "uploadQueueBox",
-				uploadPars : {
-					roleType : "secondary"
+		<table class="button-table">
+			<tr>
+				<td class="left">
+					<input type="button" value="행 추가(이전)" title="행 추가(이전)" class="blue" onclick="addBeforeRow();">
+					<input type="button" value="행 추가(이후)" title="행 추가(이후)" class="orange" onclick="addAfterRow();">
+					<input type="button" value="저장" title="저장" class="red" onclick="save('')">
+					<input type="button" value="저장(ERP)" title="저장(ERP)" onclick="save('true')">
+				</td>
+			</tr>
+		</table>
+
+		<table class="create-table">
+			<colgroup>
+				<col width="150">
+				<col width="*">
+			</colgroup>
+			<tr>
+				<td colspan="2">
+					<div id="grid_wrap" style="height: 400px; border-top: 1px solid #3180c3; margin: 5px 5px 5px 5px;"></div>
+				</td>
+			</tr>
+			<tr>
+				<th class="lb">첨부파일</th>
+				<td class="indent5">
+					<div class="AXUpload5" id="secondary_layer"></div>
+					<div class="AXUpload5QueueBox_list" id="uploadQueueBox" style="height: 300px;"></div>
+				</td>
+		</table>
+		<script type="text/javascript">
+			let myGridID;
+			const columns = [ {
+				dataField : "dwg_check",
+				headerText : "체크(DWG_NO)",
+				dataType : "string",
+				width : 120,
+				editable : false,
+			}, {
+				dataField : "ycode_check",
+				headerText : "체크(YCODE)",
+				dataType : "string",
+				width : 120,
+				editable : false,
+			}, {
+				dataField : "number",
+				headerText : "품번",
+				dataType : "string",
+				width : 150,
+			}, {
+				dataField : "name",
+				headerText : "품명",
+				dataType : "string",
+				width : 250,
+			}, {
+				dataField : "spec",
+				headerText : "규격",
+				dataType : "string",
+			}, {
+				dataField : "maker",
+				headerText : "메이커",
+				dataType : "string",
+				width : 150,
+			}, {
+				dataField : "customer",
+				headerText : "기본구매처",
+				dataType : "string",
+				width : 150,
+			}, {
+				dataField : "unit",
+				headerText : "기준단위",
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "price",
+				headerText : "단가",
+				dataType : "numeric",
+				width : 150,
+				formatString : "#,###",
+				editRenderer : {
+					type : "InputEditRenderer",
+					onlyNumeric : true,
 				},
-				uploadMaxFileCount : 100,
-				deleteUrl : "/Windchill/plm/content/delete",
-				fileKeys : {},
-				onComplete : function() {
-				},
-			})
-		}
-		load();
+			}, {
+				dataField : "currency",
+				headerText : "통화",
+				dataType : "string",
+				width : 100,
+			} ]
 
-		function createAUIGrid(columnLayout) {
-			const props = {
-				rowIdField : "rowId",
-				// 공통
-				headerHeight : 30, // 헤더 행 높이
-				rowHeight : 30, // 행 높이
-				showRowNumColumn : true, // 번호 컬럼 표시
-				rowNumHeaderText : "번호", // 번호 컬럼 이름 변경
-				showStateColumn : true, // 컬럼 상태 표기 행
-				showRowCheckColumn : true, // 체크 박스 표시 여부 행
-				selectionMode : "multipleCells", // 그리드 선택 모드
-				// 공통 끝
-				editable : true, // 수정 가능 여부
-				fillColumnSizeMode : true, // 화면 꽉채우기
+			let secondary = new AXUpload5();
+			function load() {
+				secondary.setConfig({
+					isSingleUpload : false,
+					targetID : "secondary_layer",
+					uploadFileName : "secondary",
+					buttonTxt : "파일 선택",
+					uploadMaxFileSize : (1024 * 1024 * 1024),
+					uploadUrl : getCallUrl("/aui/upload"),
+					dropBoxID : "uploadQueueBox",
+					queueBoxID : "uploadQueueBox",
+					uploadPars : {
+						roleType : "secondary"
+					},
+					uploadMaxFileCount : 100,
+					deleteUrl : getCallUrl("/content/delete"),
+					fileKeys : {},
+					onComplete : function() {
+						let form = document.querySelector("form");
+						for (let i = 0; i < this.length; i++) {
+							let secondaryTag = document.createElement("input");
+							secondaryTag.type = "hidden";
+							secondaryTag.name = "secondarys";
+							secondaryTag.value = this[i].fullPath;
+							form.appendChild(secondaryTag);
+						}
+					},
+				})
 			}
 
-			myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-			// 그리드 생성후 작업
-			readyHandler();
-			AUIGrid.bind(myGridID, "cellEditEnd", cellEditEndHandler);
-		}
+			function createAUIGrid(columnLayout) {
+				const props = {
+					headerHeight : 30,
+					rowHeight : 30,
+					showRowNumColumn : true,
+					rowNumHeaderText : "번호",
+					showStateColumn : true,
+					showRowCheckColumn : true,
+					selectionMode : "multipleCells",
+					editable : true,
+					useContextMenu : true,
+					enableRightDownFocus : true,
+					showDragKnobColumn : true,
+					enableDrag : true,
+					enableMultipleDrag : true,
+					enableDrop : true,
+					$compaEventOnPaste : true,
+					enableRowCheckShiftKey : true,
+					contextMenuItems : [ {
+						label : "선택된 행 이전 추가",
+						callback : contextItemHandler
+					}, {
+						label : "선택된 행 이후 추가",
+						callback : contextItemHandler
+					}, {
+						label : "_$line"
+					}, {
+						label : "선택된 행 삭제",
+						callback : contextItemHandler
+					} ],
+				}
 
-		function cellEditEndHandler(event) {
-			const dataField = event.dataField;
-			const item = event.item;
-			const rowIndex = event.rowIndex;
+				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+				readyHandler();
+				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+			}
 
-			if (dataField === "spec") {
-				const url = getCallUrl("/part/bundleValidatorSpec?spec=" + item.spec);
-				call(url, null, function(data) {
-					// 서버 없으면 OK
-					const obj = {
-						dwg_check : data.dwg_check
+			function save(erp) {
+				const addRows = AUIGrid.getAddedRowItems(myGridID);
+				const secondarys = toArray("secondarys");
+
+				for (let i = 0; i < addRows.length; i++) {
+					const item = addRows[i];
+					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
+
+					if (isNull(item.name)) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 3, "품명 값은 공백을 입력 할 수 없습니다.");
+						return false;
 					}
-					AUIGrid.updateRow(myGridID, obj, rowIndex);
-				}, "GET");
-			}
 
-			if (dataField === "number") {
-				const url = getCallUrl("/part/bundleValidatorNumber?number=" + item.number);
-				call(url, null, function(data) {
-					// 서버 없으면 OK
-					const obj = {
-						ycode_check : data.ycode_check
+					if (isNull(item.spec)) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 4, "규격 값은 공백을 입력 할 수 없습니다.");
+						return false;
 					}
-					AUIGrid.updateRow(myGridID, obj, rowIndex);
-				}, "GET");
+					item.rowIndex = rowIndex;
+				}
 
-				const ycode_check = AUIGrid.getCellValue(myGridID, event.rowIndex, "ycode_check");
-				alert(ycode_check);
+				if (addRows.length !== secondarys.length) {
+					alert("등록하려는 데이터와 첨부파일의 개수가 일치하지 않습니다.\n데이터 개수 : " + addRows.length + ", 첨부파일 개수 : " + secondarys.length);
+					return false;
+				}
+
+				addRows.sort(function(a, b) {
+					return a.rowIndex - b.rowIndex;
+				});
+
+				if (!confirm("등록 하시겠습니까?")) {
+					return false;
+				}
+				const params = new Object();
+				const url = getCallUrl("/part/bundle");
+				params.addRows = addRows;
+				params.secondarys = secondarys;
+				params.erp = Boolean(erp);
+				console.log(params);
+				parent.openLayer();
+				call(url, params, function(data) {
+					alert(data.msg);
+					document.location.reload();
+					parent.closeLayer();
+				})
 			}
-		}
 
-		function readyHandler() {
-			AUIGrid.addRow(myGridID, new Object(), "first");
-		}
+			function auiCellEditEndHandler(event) {
+				const item = event.item;
+				const dataField = event.dataField;
+				const spec = item.spec;
+				const number = item.number;
+				const rowIndex = event.rowIndex;
+				const check = item.ycode_check;
+				if (dataField === "spec") {
+					const url = getCallUrl("/part/bundleValidatorSpec?spec=" + spec);
+					call(url, null, function(data) {
+						const dwg_check = data.dwg_check;
+						item.dwg_check = dwg_check;
+						item.dwg = data.dwg;
+						AUIGrid.updateRow(myGridID, item, rowIndex);
+					}, "GET");
+				}
 
-		$(function() {
-			createAUIGrid(columns);
-			parent.closeLayer();
-		})
+				if (dataField === "number") {
+					const url = getCallUrl("/part/bundleValidatorNumber?number=" + number);
+					call(url, null, function(data) {
+						const ycode_check = data.ycode_check;
+						item.ycode_check = ycode_check;
+						item.ycode = data.ycode;
+						AUIGrid.updateRow(myGridID, item, rowIndex);
+					}, "GET");
+				}
 
-		$(window).resize(function() {
-			AUIGrid.resize(myGridID);
-		})
-	</script>
+				if (dataField === "spec") {
+					// 					if (check !== "OK") {
+					// 						const url = getCallUrl("/erp/bundleGetErpData?spec=" + spec);
+					// 						call(url, null, function(data) {
+
+					// 						}, "GET");
+					// 					}
+				}
+			}
+
+			function contextItemHandler(event) {
+				const item = new Object();
+				switch (event.contextIndex) {
+				case 0:
+					AUIGrid.addRow(myGridID, item, "selectionUp");
+					break;
+				case 1:
+					AUIGrid.addRow(myGridID, item, "selectionDown");
+					break;
+				case 3:
+					const selectedItems = AUIGrid.getSelectedItems(myGridID);
+					for (let i = selectedItems.length - 1; i >= 0; i--) {
+						const rowIndex = selectedItems[i].rowIndex;
+						AUIGrid.removeRow(myGridID, rowIndex);
+					}
+					break;
+				}
+			}
+
+			function readyHandler() {
+				AUIGrid.addRow(myGridID, new Object(), "first");
+			}
+
+			function addBeforeRow() {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				if (checkedItems.length === 0) {
+					alert("추가하려는 행의 기준이 되는 행을 선택하세요.");
+					return false;
+				}
+				if (checkedItems.length > 1) {
+					alert("하나의 행만 선택하세요.");
+					return false;
+				}
+				const item = new Object();
+				const rowIndex = checkedItems[0].rowIndex;
+				item.createdDate = new Date();
+				AUIGrid.addRow(myGridID, item, rowIndex);
+			}
+
+			function addAfterRow() {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				if (checkedItems.length === 0) {
+					alert("추가하려는 행의 기준이 되는 행을 선택하세요.");
+					return false;
+				}
+
+				if (checkedItems.length > 1) {
+					alert("하나의 행만 선택하세요.");
+					return false;
+				}
+				const item = new Object();
+				const rowIndex = checkedItems[0].rowIndex;
+				item.createdDate = new Date();
+				AUIGrid.addRow(myGridID, item, rowIndex + 1);
+			}
+
+			document.addEventListener("DOMContentLoaded", function() {
+				createAUIGrid(columns);
+				AUIGrid.resize(myGridID);
+				load();
+			});
+
+			window.addEventListener("resize", function() {
+				AUIGrid.resize(myGridID);
+			});
+		</script>
+	</form>
 </body>
 </html>

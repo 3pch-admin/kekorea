@@ -1,6 +1,13 @@
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
+ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) request.getAttribute("customers");
+ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.getAttribute("maks");
+ArrayList<Map<String, String>> projectTypes = (ArrayList<Map<String, String>>) request.getAttribute("projectTypes");
+ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) request.getAttribute("list");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
@@ -21,37 +28,148 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
+
 		<table class="search-table">
 			<colgroup>
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
+				<col width="100">
+				<col width="500">
+				<col width="100">
+				<col width="500">
+				<col width="100">
+				<col width="500">
+				<col width="100">
+				<col width="500">
 			</colgroup>
 			<tr>
-				<th>공지사항 제목</th>
+				<th>KEK 작번</th>
 				<td class="indent5">
-					<input type="text" name="fileName">
+					<input type="text" name="kekNumber" id="kekNumber">
 				</td>
-				<th>설명</th>
+				<th>KE 작번</th>
 				<td class="indent5">
-					<input type="text" name="partCode">
+					<input type="text" name="keNumber" id="keNumber">
 				</td>
-				<th>작성자</th>
+				<th>발행일</th>
 				<td class="indent5">
-					<input type="text" name="partName">
+					<input type="text" name="pdateFrom" id="pdateFrom" class="width-100">
+					~
+					<input type="text" name="pdateTo" id="pdateTo" class="width-100">
 				</td>
-				<th>작성일</th>
+				<th>USER ID</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<input type="text" name="userId" id="userId">
+				</td>
+			</tr>
+			<tr>
+				<th>작번 상태</th>
+				<td class="indent5">
+					<select name="kekState" id="kekState" class="width-200">
+						<option value="">선택</option>
+						<option value="준비">준비</option>
+						<option value="설계중">설계중</option>
+						<option value="설계완료">설계완료</option>
+						<option value="작업완료">작업완료</option>
+						<option value="중단됨">중단됨</option>
+						<option value="취소">취소</option>
+					</select>
+				</td>
+				<th>모델</th>
+				<td class="indent5">
+					<input type="text" name="model" id="model">
+				</td>
+				<th>거래처</th>
+				<td class="indent5">
+					<select name="customer_name" id="customer_name" class="width-200">
+						<option value="">선택</option>
+						<%
+						for (Map customer : customers) {
+						%>
+						<option value="<%=customer.get("key")%>"><%=customer.get("value")%></option>
+						<%
+						}
+						%>
+					</select>
+				</td>
+				<th>설치장소</th>
+				<td class="indent5">
+					<select name="install_name" id="install_name" class="width-200">
+						<option value="">선택</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>작번 유형</th>
+				<td class="indent5">
+					<select name="projectType" id="projectType" class="width-200">
+						<option value="">선택</option>
+						<%
+						for (Map projectType : projectTypes) {
+						%>
+						<option value="<%=projectType.get("key")%>"><%=projectType.get("value")%></option>
+						<%
+						}
+						%>
+					</select>
+				</td>
+				<th>기계 담당자</th>
+				<td class="indent5">
+					<input type="text" name="machine" id="machine">
+					<input type="hidden" name="machineOid" id="machineOid">
+				</td>
+				<th>전기 담당자</th>
+				<td class="indent5">
+					<input type="text" name="elec" id="elec">
+					<input type="hidden" name="elecOid" id="elecOid">
+				</td>
+				<th>SW 담당자</th>
+				<td class="indent5">
+					<input type="text" name="soft" id="soft">
+					<input type="hidden" name="softOid" id="softOid">
+				</td>
+			</tr>
+			<tr>
+				<th>막종</th>
+				<td class="indent5">
+					<select name="mak_name" id="mak_name" class="width-200">
+						<option value="">선택</option>
+						<%
+						for (Map<String, String> map : maks) {
+							String oid = map.get("key");
+							String name = map.get("value");
+						%>
+						<option value="<%=oid%>"><%=name%></option>
+						<%
+						}
+						%>
+					</select>
+				</td>
+				<th>막종상세</th>
+				<td class="indent5">
+					<select name="detail_name" id="detail_name" class="width-200">
+						<option value="">선택</option>
+					</select>
+				</td>
+				<th>템플릿</th>
+				<td class="indent5">
+					<select name="template" id="template" class="width-200">
+						<option value="">선택</option>
+						<%
+						for (Map<String, String> map : list) {
+							String oid = map.get("key");
+							String name = map.get("value");
+						%>
+						<option value="<%=oid%>"><%=name%></option>
+						<%
+						}
+						%>
+					</select>
+				</td>
+				<th>작업 내용</th>
+				<td colspan="3" class="indent5">
+					<input type="text" name="description" id="description" class="width-200">
 				</td>
 			</tr>
 		</table>
-
 		<table class="button-table">
 			<tr>
 				<td class="left">
@@ -73,7 +191,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 600px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -83,7 +201,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "도면일람표 제목",
 					dataType : "string",
 					width : 350,
-					style : "aui-left",
+					style : "underline",
 					filter : {
 						showIcon : true,
 						inline : true
@@ -295,6 +413,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					fixedColumnCount : 1,
 					enableCellMerge : true,
+					forceTreeView : true
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
@@ -322,11 +441,46 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/workOrder/list");
+				const kekNumber = document.getElementById("kekNumber").value;
+				const keNumber = document.getElementById("keNumber").value;
+				const pdateFrom = document.getElementById("pdateFrom").value;
+				const pdateTo = document.getElementById("pdateTo").value;
+				const userId = document.getElementById("userId").value;
+				const kekState = document.getElementById("kekState").value;
+				const model = document.getElementById("model").value;
+				const customer_name = document.getElementById("customer_name").value;
+				const install_name = document.getElementById("install_name").value;
+				const projectType = document.getElementById("projectType").value;
+				const machineOid = document.getElementById("machineOid").value;
+				const elecOid = document.getElementById("elecOid").value;
+				const softOid = document.getElementById("softOid").value;
+				const mak_name = document.getElementById("mak_name").value;
+				const detail_name = document.getElementById("detail_name").value;
+				const template = document.getElementById("template").value;
+				const description = document.getElementById("description").value;
 				const psize = document.getElementById("psize").value;
+				params.kekNumber = kekNumber;
+				params.keNumber = keNumber;
+				params.pdateFrom = pdateFrom;
+				params.pdateTo = pdateTo;
+				params.userId = userId;
+				params.kekState = kekState;
+				params.model = model;
+				params.customer_name = customer_name;
+				params.install_name = install_name;
+				params.projectType = projectType;
+				params.machineOid = machineOid;
+				params.elecOid = elecOid;
+				params.softOid = softOid;
+				params.mak_name = mak_name;
+				params.detail_name = detail_name;
+				params.template = template;
+				params.description = description;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
+					console.log(data);
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
@@ -355,6 +509,45 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+				twindate("pdate");
+				selectbox("kekState");
+				$("#customer_name").bindSelect({
+					onchange : function() {
+						const oid = this.optionValue;
+						$("#install_name").bindSelect({
+							ajaxUrl : getCallUrl("/commonCode/getChildrens?parentOid=" + oid),
+							reserveKeys : {
+								options : "list",
+								optionValue : "value",
+								optionText : "name"
+							},
+							setValue : this.optionValue,
+							alwaysOnChange : true,
+						})
+					}
+				})
+				selectbox("install_name");
+				selectbox("projectType");
+				finderUser("machine");
+				finderUser("elec");
+				finderUser("soft");
+				$("#mak_name").bindSelect({
+					onchange : function() {
+						const oid = this.optionValue;
+						$("#detail_name").bindSelect({
+							ajaxUrl : getCallUrl("/commonCode/getChildrens?parentOid=" + oid),
+							reserveKeys : {
+								options : "list",
+								optionValue : "value",
+								optionText : "name"
+							},
+							setValue : this.optionValue,
+							alwaysOnChange : true,
+						})
+					}
+				})
+				selectbox("detail_name");
+				selectbox("template");
 				selectbox("psize");
 			});
 

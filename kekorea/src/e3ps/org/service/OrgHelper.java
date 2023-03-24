@@ -1138,6 +1138,7 @@ public class OrgHelper {
 
 		String userName = (String) params.get("userName");
 		String userId = (String) params.get("userId");
+		boolean resign = (boolean) params.get("resign");
 		String oid = (String) params.get("oid");
 		Department department = null;
 		if (!StringUtils.isNull(oid)) {
@@ -1148,30 +1149,11 @@ public class OrgHelper {
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(People.class, true);
-
-		if (!StringUtils.isNull(userName)) {
-			QuerySpecUtils.toLikeAnd(query, idx, People.class, People.NAME, userName);
-		}
-
-		if (!StringUtils.isNull(userId)) {
-			QuerySpecUtils.toLikeAnd(query, idx, People.class, People.ID, userId);
-		}
-
-		query.appendOpenParen();
+		QuerySpecUtils.toLikeAnd(query, idx, People.class, People.NAME, userName);
+		QuerySpecUtils.toLikeAnd(query, idx, People.class, People.ID, userId);
 		QuerySpecUtils.toEqualsAnd(query, idx, People.class, "departmentReference.key.id",
 				department.getPersistInfo().getObjectIdentifier().getId());
-
-		ArrayList<Department> deptList = OrgHelper.manager.getSubDepartment(department, new ArrayList<Department>());
-		for (int i = 0; i < deptList.size(); i++) {
-			Department sub = (Department) deptList.get(i);
-			query.appendOr();
-			long sfid = sub.getPersistInfo().getObjectIdentifier().getId();
-			query.appendWhere(new SearchCondition(People.class, "departmentReference.key.id", "=", sfid),
-					new int[] { idx });
-		}
-		query.appendCloseParen();
-
-		QuerySpecUtils.toBooleanAnd(query, idx, People.class, People.RESIGN, false);
+		QuerySpecUtils.toBooleanAnd(query, idx, People.class, People.RESIGN, resign);
 		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, false);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);

@@ -23,9 +23,11 @@ public class KePartDTO {
 	private String state;
 	private int version;
 	private String creator;
+	private String creatorId;
 	private Timestamp createdDate;
 	private String createdDate_txt;
 	private String modifier;
+	private String modifierId;
 	private Timestamp modifiedDate;
 	private String modifiedDate_txt;
 	private boolean latest;
@@ -52,9 +54,11 @@ public class KePartDTO {
 		setState(kePart.getState());
 		setVersion(kePart.getVersion());
 		setCreator(master.getOwnership().getOwner().getFullName());
+		setCreatorId(master.getOwnership().getOwner().getName());
 		setCreatedDate(master.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(master.getCreateTimestamp()));
 		setModifier(kePart.getOwnership().getOwner().getFullName());
+		setModifierId(kePart.getOwnership().getOwner().getName());
 		setModifiedDate(kePart.getCreateTimestamp());
 		setModifiedDate_txt(CommonUtils.getPersistableTime(kePart.getCreateTimestamp()));
 		setLatest(kePart.getLatest());

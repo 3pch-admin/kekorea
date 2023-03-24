@@ -57,7 +57,7 @@ ProjectDTO pdto = (ProjectDTO) request.getAttribute("pdto");
 			</tr>
 			<tr>
 				<th class="lb">버전</th>
-				<td class="indent5"><%=dto.getVersion()%></td>
+				<td class="indent5"><%//=dto.getVersion()%></td>
 				<th class="lb">상태</th>
 				<td class="indent5"><%=dto.getState()%></td>
 			</tr>

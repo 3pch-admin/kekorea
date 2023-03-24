@@ -289,6 +289,10 @@
 			alert("추가하려는 행의 기준이 되는 행을 선택하세요.");
 			return false;
 		}
+		if (checkedItems.length > 1) {
+			alert("하나의 행만 선택하세요.");
+			return false;
+		}
 		const item = new Object();
 		const rowIndex = checkedItems[0].rowIndex;
 		item.createdDate = new Date();
@@ -299,6 +303,10 @@
 		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 		if (checkedItems.length === 0) {
 			alert("추가하려는 행의 기준이 되는 행을 선택하세요.");
+			return false;
+		}
+		if (checkedItems.length > 1) {
+			alert("하나의 행만 선택하세요.");
 			return false;
 		}
 		const item = new Object();

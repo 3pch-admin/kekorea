@@ -1,3 +1,6 @@
+<%@page import="java.sql.Timestamp"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="wt.org.WTUser"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="org.json.JSONObject"%>
@@ -9,27 +12,29 @@ JSONArray installs = (JSONArray) request.getAttribute("installs");
 JSONArray customers = (JSONArray) request.getAttribute("customers");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+ArrayList<Map<String, String>> customer_list = (ArrayList<Map<String, String>>) request.getAttribute("customer_list");
+ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) request.getAttribute("mak_list");
+Timestamp time = (Timestamp) request.getAttribute("time");
 %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
 	<form>
-		<!-- 리스트 검색시 반드시 필요한 히든 값 -->
+		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
+		<input type="hidden" name="time" id="time" value="<%=time %>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
-		<!-- 검색 테이블 -->
+
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -44,15 +49,15 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			<tr>
 				<th>항목</th>
 				<td class="indent5">
-					<input type="text" name="fileName" class="width-200">
+					<input type="text" name="item" id="item" class="width-200">
 				</td>
 				<th>개선내용</th>
 				<td class="indent5">
-					<input type="text" name="description" class="width-200">
+					<input type="text" name="improvements" id="improvements" class="width-200">
 				</td>
 				<th>개선책</th>
 				<td class="indent5">
-					<input type="text" name="description" class="width-200">
+					<input type="text" name="improvement" id="improvement" class="width-200">
 				</td>
 				<th>적용/미적용</th>
 				<td class="indent5">
@@ -66,44 +71,52 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			<tr>
 				<th>막종</th>
 				<td class="indent5">
-					<select name="apply" id="apply" class="width-200">
+					<select name="mak" id="mak" class="width-200">
 						<option value="">선택</option>
-						<option value="">적용</option>
-						<option value="">미적용</option>
+						<%
+						for (Map<String, String> map : mak_list) {
+							String oid = map.get("key");
+							String name = map.get("value");
+						%>
+						<option value="<%=oid%>"><%=name%></option>
+						<%
+						}
+						%>
 					</select>
 				</td>
 				<th>막종상세</th>
 				<td class="indent5">
-					<select name="apply" id="apply" class="width-200">
+					<select name="detail" id="detail" class="width-200">
 						<option value="">선택</option>
-						<option value="">적용</option>
-						<option value="">미적용</option>
 					</select>
 				</td>
 				<th>거래처</th>
 				<td class="indent5">
-					<select name="apply" id="apply" class="width-200">
+					<select name="customer" id="customer" class="width-200">
 						<option value="">선택</option>
-						<option value="">적용</option>
-						<option value="">미적용</option>
+						<%
+						for (Map<String, String> map : customer_list) {
+							String oid = map.get("key");
+							String name = map.get("value");
+						%>
+						<option value="<%=oid%>"><%=name%></option>
+						<%
+						}
+						%>
 					</select>
 				</td>
 				<th>설치장소</th>
 				<td class="indent5">
-					<select name="apply" id="apply" class="width-200">
+					<select name="install" id="install" class="width-200">
 						<option value="">선택</option>
-						<option value="">적용</option>
-						<option value="">미적용</option>
 					</select>
 				</td>
 			</tr>
 		</table>
 
-		<!-- 버튼 테이블 -->
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<!-- exportExcel 함수참고 -->
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('cip-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('cip-list');">
@@ -124,18 +137,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			</tr>
 		</table>
 
-		<!-- 그리드 리스트 -->
 		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
-		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
-			const maks =
-		<%=maks%>
-			const installs =
-		<%=installs%>
-			const customers =
-		<%=customers%>
+			const maks = <%=maks%>
+			const installs = <%=installs%>
+			const customers = <%=customers%>
 			let recentGridItem = null;
 			let detailMap = {};
 			let installMap = {};
@@ -213,27 +221,26 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					width : 100,
 					renderer : {
 						type : "IconRenderer",
-						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconWidth : 16,
 						iconHeight : 16,
 						iconPosition : "aisleRight",
-						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 						},
 						onClick : function(event) {
-							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
 					},
 					editRenderer : {
 						type : "ComboBoxRenderer",
-						autoCompleteMode : true, // 자동완성 모드 설정
+						autoCompleteMode : true,
 						autoEasyMode : true,
-						matchFromFirst : false, // 처음부터 매치가 아닌 단순 포함되는 자동완성
-						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
+						matchFromFirst : false,
+						showEditorBtnOver : false,
 						list : list,
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
-							for (let i = 0, len = list.length; i < len; i++) { // keyValueList 있는 값만..
+							for (let i = 0, len = list.length; i < len; i++) {
 								if (list[i] == newValue) {
 									isValid = true;
 									break;
@@ -255,30 +262,29 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					width : 150,
 					renderer : {
 						type : "IconRenderer",
-						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconWidth : 16,
 						iconHeight : 16,
 						iconPosition : "aisleRight",
-						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 						},
 						onClick : function(event) {
-							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
 					},
 					editRenderer : {
 						type : "ComboBoxRenderer",
-						autoCompleteMode : true, // 자동완성 모드 설정
+						autoCompleteMode : true,
 						autoEasyMode : true,
-						matchFromFirst : false, // 처음부터 매치가 아닌 단순 포함되는 자동완성
-						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기						
-						list : maks, //key-value Object 로 구성된 리스트
-						keyField : "key", // key 에 해당되는 필드명
-						valueField : "value", // value 에 해당되는 필드명,
-						descendants : [ "detail_code" ], // 자손 필드들
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						list : maks,
+						keyField : "key",
+						valueField : "value",
+						descendants : [ "detail_code" ],
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
-							for (let i = 0, len = maks.length; i < len; i++) { // keyValueList 있는 값만..
+							for (let i = 0, len = maks.length; i < len; i++) {
 								if (maks[i]["value"] == newValue) {
 									isValid = true;
 									break;
@@ -290,8 +296,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 							};
 						}
 					},
-					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
-						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
 						for (let i = 0, len = maks.length; i < len; i++) {
 							if (maks[i]["key"] == value) {
 								retStr = maks[i]["value"];
@@ -310,30 +316,29 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					width : 150,
 					renderer : {
 						type : "IconRenderer",
-						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconWidth : 16,
 						iconHeight : 16,
 						iconPosition : "aisleRight",
-						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 						},
 						onClick : function(event) {
-							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
 					},
 					editRenderer : {
 						type : "ComboBoxRenderer",
-						autoCompleteMode : true, // 자동완성 모드 설정
+						autoCompleteMode : true,
 						autoEasyMode : true,
-						matchFromFirst : false, // 처음부터 매치가 아닌 단순 포함되는 자동완성
-						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기						
-						keyField : "key", // key 에 해당되는 필드명
-						valueField : "value", // value 에 해당되는 필드명,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						keyField : "key",
+						valueField : "value",
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							const param = item.mak_code;
-							const dd = detailMap[param]; // param으로 보관된 리스트가 있는지 여부
+							const dd = detailMap[param];
 							let isValid = false;
-							for (let i = 0, len = dd.length; i < len; i++) { // keyValueList 있는 값만..
+							for (let i = 0, len = dd.length; i < len; i++) {
 								if (dd[i]["value"] == newValue) {
 									isValid = true;
 									break;
@@ -346,17 +351,17 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						},
 						listFunction : function(rowIndex, columnIndex, item, dataField) {
 							const param = item.mak_code;
-							const dd = detailMap[param]; // param으로 보관된 리스트가 있는지 여부
+							const dd = detailMap[param];
 							if (dd === undefined) {
 								return [];
 							}
 							return dd;
 						},
 					},
-					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
-						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
 						const param = item.mak_code;
-						const dd = detailMap[param]; // param으로 보관된 리스트가 있는지 여부
+						const dd = detailMap[param];
 						if (dd === undefined)
 							return value;
 						for (let i = 0, len = dd.length; i < len; i++) {
@@ -377,30 +382,29 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					width : 150,
 					renderer : {
 						type : "IconRenderer",
-						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconWidth : 16,
 						iconHeight : 16,
 						iconPosition : "aisleRight",
-						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 						},
 						onClick : function(event) {
-							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
 					},
 					editRenderer : {
 						type : "ComboBoxRenderer",
-						autoCompleteMode : true, // 자동완성 모드 설정
+						autoCompleteMode : true,
 						autoEasyMode : true,
-						matchFromFirst : false, // 처음부터 매치가 아닌 단순 포함되는 자동완성
-						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기						
-						list : customers, //key-value Object 로 구성된 리스트
-						keyField : "key", // key 에 해당되는 필드명
-						valueField : "value", // value 에 해당되는 필드명,
-						descendants : [ "install_code" ], // 자손 필드들
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						list : customers,
+						keyField : "key",
+						valueField : "value",
+						descendants : [ "install_code" ],
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
-							for (let i = 0, len = customers.length; i < len; i++) { // keyValueList 있는 값만..
+							for (let i = 0, len = customers.length; i < len; i++) {
 								if (customers[i]["value"] == newValue) {
 									isValid = true;
 									break;
@@ -412,8 +416,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 							};
 						}
 					},
-					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
-						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
 						for (let i = 0, len = customers.length; i < len; i++) {
 							if (customers[i]["key"] == value) {
 								retStr = customers[i]["value"];
@@ -432,30 +436,29 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					width : 150,
 					renderer : {
 						type : "IconRenderer",
-						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconWidth : 16,
 						iconHeight : 16,
 						iconPosition : "aisleRight",
-						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 						},
 						onClick : function(event) {
-							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
 					},
 					editRenderer : {
 						type : "ComboBoxRenderer",
-						autoCompleteMode : true, // 자동완성 모드 설정
+						autoCompleteMode : true,
 						autoEasyMode : true,
-						matchFromFirst : false, // 처음부터 매치가 아닌 단순 포함되는 자동완성
-						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기						
-						keyField : "key", // key 에 해당되는 필드명
-						valueField : "value", // value 에 해당되는 필드명,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						keyField : "key",
+						valueField : "value",
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							const param = item.customer_code;
-							const dd = installMap[param]; // param으로 보관된 리스트가 있는지 여부
+							const dd = installMap[param];
 							let isValid = false;
-							for (let i = 0, len = dd.length; i < len; i++) { // keyValueList 있는 값만..
+							for (let i = 0, len = dd.length; i < len; i++) {
 								if (dd[i]["value"] == newValue) {
 									isValid = true;
 									break;
@@ -468,17 +471,17 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						},
 						listFunction : function(rowIndex, columnIndex, item, dataField) {
 							const param = item.customer_code;
-							const dd = installMap[param]; // param으로 보관된 리스트가 있는지 여부
+							const dd = installMap[param];
 							if (dd === undefined) {
 								return [];
 							}
 							return dd;
 						},
 					},
-					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
-						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
 						const param = item.customer_code;
-						const dd = installMap[param]; // param으로 보관된 리스트가 있는지 여부
+						const dd = installMap[param];
 						if (dd === undefined)
 							return value;
 						for (let i = 0, len = dd.length; i < len; i++) {
@@ -587,14 +590,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						showIcon : true,
 						inline : true,
 						displayFormatValues : true
-					// 포맷팅 형태로 필터링 처리
 					},
 				} ]
 			}
 
 			function createAUIGrid(columns) {
 				const props = {
-					// 그리드 공통속성 시작
 					headerHeight : 30,
 					rowHeight : 30,
 					showRowNumColumn : true,
@@ -610,39 +611,42 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					// 그리드 공통속성 끝
 					editable : true,
 					enterKeyColumnBase : true
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
 				loadGridData();
-
 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
-
-				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
-
-				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
-					vScrollChangeHandler(event); // lazy loading
+					hideContextMenu();
+					vScrollChangeHandler(event);
 				});
-
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					hideContextMenu();
 				});
-
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
+			}
+			
+			function auiCellEditBegin(event) {
+				const item = event.item;
+				const sessionId = document.getElementById("sessionId").value;
+				if (!checker(sessionId, item.creatorId)) {
+					alert("데이터 작성자가 아닙니다.");
+					return false;
+				}
 			}
 
 			function auiCellClickHandler(event) {
 				const dataField = event.dataField;
 				const oid = event.item.oid;
 				const preView = event.item.preView;
-				alert(preView);
 				if (dataField === "preView") {
-					const url = getCallUrl("/aui/thumbnail?oid=" + oid);
-					popup(url);
+					if (preView !== null) {
+						const url = getCallUrl("/aui/thumbnail?oid=" + oid);
+						popup(url);
+					}
 				}
 			}
 
@@ -670,10 +674,27 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/cip/list");
+				const item = document.getElementById("item").value;
+				const improvements = document.getElementById("improvements").value;
+				const improvement = document.getElementById("improvement").value;
+				const apply = document.getElementById("apply").value;
+				const mak = document.getElementById("mak").value;
+				const detail = document.getElementById("detail").value;
+				const customer = document.getElementById("customer").value;
+				const install = document.getElementById("install").value;
 				const psize = document.getElementById("psize").value;
+				params.item = item;
+				params.improvements = improvements;
+				params.improvement = improvement;
+				params.apply = apply;
+				params.mak = mak;
+				params.detail = detail;
+				params.customer = customer;
+				params.install = install;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
+				console.log(params);
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
@@ -708,17 +729,22 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				});
 			}
 
-			// 행 추가
 			function addRow() {
 				const item = new Object();
 				item.latest = true;
+				item.creator = document.getElementById("sessionName").value;
+				item.createdDate = document.getElementById("time").value;
 				AUIGrid.addRow(myGridID, item, "first");
 			}
 
-			// 행 삭제
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
+					const item = checkedItems[i].item;
+					if (!checker(sessionId, item.creatorId)) {
+						alert("데이터 작성자가 아닙니다.");
+						return false;
+					}
 					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
@@ -731,7 +757,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				const removeRows = AUIGrid.getRemovedItems(myGridID);
 				const editRows = AUIGrid.getEditedRowItems(myGridID);
 
-				// 변경 점이 없는거 체크
 				if (addRows.length == 0 && removeRows.length == 0 && editRows.length == 0) {
 					alert("변경된 내용이 없습니다.");
 					return false;
@@ -739,90 +764,90 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
-
+					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
 					if (isNull(item.item)) {
-						AUIGrid.showToastMessage(myGridID, i, 0, "항목 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "항목 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 					if (isNull(item.improvements)) {
-						AUIGrid.showToastMessage(myGridID, i, 1, "개선내용 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "개선내용 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 					if (isNull(item.improvement)) {
-						AUIGrid.showToastMessage(myGridID, i, 2, "개선책 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 2, "개선책 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 					if (isNull(item.apply)) {
-						AUIGrid.showToastMessage(myGridID, i, 3, "적용/미적용 값을 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 3, "적용/미적용 값을 선택하세요.");
 						return false;
 					}
 					if (isNull(item.mak_code)) {
-						AUIGrid.showToastMessage(myGridID, i, 4, "막종을 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 4, "막종을 선택하세요.");
 						return false;
 					}
 					if (isNull(item.detail_code)) {
-						AUIGrid.showToastMessage(myGridID, i, 5, "막종상세를 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 5, "막종상세를 선택하세요.");
 						return false;
 					}
 					if (isNull(item.customer_code)) {
-						AUIGrid.showToastMessage(myGridID, i, 6, "거래처를 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 6, "거래처를 선택하세요.");
 						return false;
 					}
 					if (isNull(item.install_code)) {
-						AUIGrid.showToastMessage(myGridID, i, 7, "설치장소를 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 7, "설치장소를 선택하세요.");
 						return false;
 					}
 					if (isNull(item.preView)) {
-						AUIGrid.showToastMessage(myGridID, i, 9, "미리보기를 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 9, "미리보기를 선택하세요.");
 						return false;
 					}
 					if (isNull(item.icons)) {
-						AUIGrid.showToastMessage(myGridID, i, 11, "첨부파일을 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 11, "첨부파일을 선택하세요.");
 						return false;
 					}
 				}
 
 				for (let i = 0; i < editRows.length; i++) {
 					const item = editRows[i];
-
+					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
 					if (isNull(item.item)) {
-						AUIGrid.showToastMessage(myGridID, i, 0, "항목 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "항목 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 					if (isNull(item.improvements)) {
-						AUIGrid.showToastMessage(myGridID, i, 1, "개선내용 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "개선내용 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 					if (isNull(item.improvement)) {
-						AUIGrid.showToastMessage(myGridID, i, 2, "개선책 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 2, "개선책 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 					if (isNull(item.apply)) {
-						AUIGrid.showToastMessage(myGridID, i, 3, "적용/미적용 값을 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 3, "적용/미적용 값을 선택하세요.");
 						return false;
 					}
 					if (isNull(item.mak_code)) {
-						AUIGrid.showToastMessage(myGridID, i, 4, "막종을 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 4, "막종을 선택하세요.");
 						return false;
 					}
 					if (isNull(item.detail_code)) {
-						AUIGrid.showToastMessage(myGridID, i, 5, "막종상세를 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 5, "막종상세를 선택하세요.");
 						return false;
 					}
 					if (isNull(item.customer_code)) {
-						AUIGrid.showToastMessage(myGridID, i, 6, "거래처를 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 6, "거래처를 선택하세요.");
 						return false;
 					}
 					if (isNull(item.install_code)) {
-						AUIGrid.showToastMessage(myGridID, i, 7, "설치장소를 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 7, "설치장소를 선택하세요.");
 						return false;
 					}
 					if (isNull(item.preView)) {
-						AUIGrid.showToastMessage(myGridID, i, 9, "미리보기를 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 9, "미리보기를 선택하세요.");
 						return false;
 					}
 					if (isNull(item.icons)) {
-						AUIGrid.showToastMessage(myGridID, i, 11, "첨부파일을 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 11, "첨부파일을 선택하세요.");
 						return false;
 					}
 				}
@@ -844,34 +869,62 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function exportExcel() {
 				const exceptColumnFields = [ "preView", "preViewBtn", "icons", "iconsBtn" ];
-				exportToExcel("CIP 리스트", "CIP", "CIP 리스트", exceptColumnFields, "<%=sessionUser.getFullName()%>");
+				const sessionName = document.getElementById("name").value;
+				exportToExcel("CIP 리스트", "CIP", "CIP 리스트", exceptColumnFields, sessionName);
 			}
 
-			// jquery 삭제를 해가는 쪽으로 한다..
 			document.addEventListener("DOMContentLoaded", function() {
-				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("cip-list");
-				// 컨텍스트 메뉴 시작
-				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-
+				selectbox("apply");
+				$("#mak").bindSelect({
+					onchange : function() {
+						const oid = this.optionValue;
+						$("#detail").bindSelect({
+							ajaxUrl : getCallUrl("/commonCode/getChildrens?parentOid=" + oid),
+							reserveKeys : {
+								options : "list",
+								optionValue : "value",
+								optionText : "name"
+							},
+							setValue : this.optionValue,
+							alwaysOnChange : true,
+						})
+					}
+				})
+				selectbox("detail");
+				$("#customer").bindSelect({
+					onchange : function() {
+						const oid = this.optionValue;
+						$("#install").bindSelect({
+							ajaxUrl : getCallUrl("/commonCode/getChildrens?parentOid=" + oid),
+							reserveKeys : {
+								options : "list",
+								optionValue : "value",
+								optionText : "name"
+							},
+							setValue : this.optionValue,
+							alwaysOnChange : true,
+						})
+					}
+				})
+				selectbox("install");
 				selectbox("psize");
 			});
 
 			document.addEventListener("keydown", function(event) {
-				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}
 			})
 
-			// 컨텍스트 메뉴 숨기기
 			document.addEventListener("click", function(event) {
 				hideContextMenu();
 			})

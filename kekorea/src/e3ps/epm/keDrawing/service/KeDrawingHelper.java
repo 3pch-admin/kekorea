@@ -47,14 +47,14 @@ public class KeDrawingHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		ArrayList<KeDrawingDTO> list = new ArrayList<>();
 		Map<String, Object> map = new HashMap<String, Object>();
-		String keNumber = (String) params.get("keNumber");
 		String name = (String) params.get("name");
 		int lotNo = (int) params.get("lotNo");
-		boolean latest = (boolean) params.get("latest");
-		String creator = (String) params.get("creator");
-		String modifier = (String) params.get("modifier");
+		String creatorOid = (String) params.get("creatorOid");
 		String createdFrom = (String) params.get("createdFrom");
 		String createdTo = (String) params.get("createdTo");
+		String keNumber = (String) params.get("keNumber");
+		boolean latest = (boolean) params.get("latest");
+		String modifierOid = (String) params.get("modifierOid");
 		String modifiedFrom = (String) params.get("modifiedFrom");
 		String modifiedTo = (String) params.get("modifiedTo");
 
@@ -64,43 +64,28 @@ public class KeDrawingHelper {
 
 		QuerySpecUtils.toInnerJoin(query, KeDrawing.class, KeDrawingMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
-
-		// dwg no
-		QuerySpecUtils.toLikeAnd(query, idx_m, KeDrawingMaster.class, KeDrawingMaster.KE_NUMBER, keNumber);
-		// drawing title
 		QuerySpecUtils.toLikeAnd(query, idx_m, KeDrawingMaster.class, KeDrawingMaster.NAME, name);
-
-		// lot no
 		if (lotNo != 0) {
 			QuerySpecUtils.toEqualsAnd(query, idx_m, KeDrawingMaster.class, KeDrawingMaster.LOT_NO, lotNo);
 		}
-
-		// 버전
+		QuerySpecUtils.toCreator(query, idx_m, KeDrawingMaster.class, creatorOid);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx_m, KeDrawingMaster.class, KeDrawingMaster.CREATE_TIMESTAMP,
+				createdFrom, createdTo);
+		QuerySpecUtils.toLikeAnd(query, idx_m, KeDrawingMaster.class, KeDrawingMaster.KE_NUMBER, keNumber);
 		if (latest) {
 			QuerySpecUtils.toBooleanAnd(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
 		} else {
-
 			if (query.getConditionCount() > 0) {
 				query.appendAnd();
 			}
-
 			query.appendOpenParen();
 			QuerySpecUtils.toBoolean(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
 			QuerySpecUtils.toBooleanOr(query, idx, KeDrawing.class, KeDrawing.LATEST, false);
 			query.appendCloseParen();
 		}
-
-		// 작성자
-		QuerySpecUtils.toCreator(query, idx_m, KeDrawingMaster.class, creator);
-		// 수정자
-		QuerySpecUtils.toCreator(query, idx, KeDrawing.class, modifier);
-		// 작성일
-		QuerySpecUtils.toTimeGreaterAndLess(query, idx, KeDrawing.class, KeDrawing.CREATE_TIMESTAMP, createdFrom,
-				createdTo);
-		// 작성일
-		QuerySpecUtils.toTimeGreaterAndLess(query, idx, KeDrawing.class, KeDrawing.MODIFY_TIMESTAMP, modifiedFrom,
+		QuerySpecUtils.toCreator(query, idx, KeDrawing.class, modifierOid);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, KeDrawing.class, KeDrawing.CREATE_TIMESTAMP, modifiedFrom,
 				modifiedTo);
-
 		QuerySpecUtils.toOrderBy(query, idx, KeDrawing.class, KeDrawing.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
@@ -267,7 +252,7 @@ public class KeDrawingHelper {
 	public void postAfterAction(String oid, String pdfPath) throws Exception {
 		WTPrincipal principal = SessionHelper.manager.getPrincipal();
 		ProcessingQueue queue = (ProcessingQueue) QueueHelper.manager.getQueue(processQueueName, ProcessingQueue.class);
-		
+
 		Hashtable<String, String> hash = new Hashtable<>();
 		hash.put("oid", oid);
 		hash.put("pdfPath", pdfPath);

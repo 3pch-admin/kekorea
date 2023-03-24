@@ -1,5 +1,8 @@
 package e3ps.epm.workOrder.controller;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,12 +16,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.DateUtils;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
+import e3ps.org.service.OrgHelper;
+import e3ps.project.template.service.TemplateHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -33,6 +40,31 @@ public class WorkOrderController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, -4);
+		Timestamp date = new Timestamp(calendar.getTime().getTime());
+		String before = date.toString().substring(0, 10);
+		String end = DateUtils.getCurrentTimestamp().toString().substring(0, 10);
+
+		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
+		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
+		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
+
+		org.json.JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
+		org.json.JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
+		org.json.JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
+
+		model.addObject("elecs", elecs);
+		model.addObject("softs", softs);
+		model.addObject("machines", machines);
+		model.addObject("list", list);
+		model.addObject("customers", customers);
+		model.addObject("projectTypes", projectTypes);
+		model.addObject("maks", maks);
+		model.addObject("before", before);
+		model.addObject("end", end);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/epm/workOrder/workOrder-list.jsp");

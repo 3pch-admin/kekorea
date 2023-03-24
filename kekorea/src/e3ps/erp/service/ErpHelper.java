@@ -19,7 +19,6 @@ import wt.services.ServiceFactory;
 
 public class ErpHelper {
 
-
 	// ERP 연동 여부 상수
 	public static final boolean isOperation = true;
 
@@ -1279,6 +1278,60 @@ public class ErpHelper {
 			DBCPManager.freeConnection(con, st, rs);
 		}
 		return map;
+	}
+
+	/**
+	 * 부품 일괄 등록시(YCODE NG 시) ERP 조회 해서 데이터 가져오기
+	 */
+	public Map<String, Object> bundleGetErpData(String spec) throws Exception {
+
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+
+		try {
+			con = DBCPManager.getConnection(erpName);
+			st = con.createStatement();
+
+			StringBuffer sql = new StringBuffer();
+
+			sql.append("SELECT ITEMSEQ, ITEMNAME, SPEC, ITEMNO");
+			sql.append(" FROM KEK_VDAITEM");
+			sql.append(" WHERE SPEC='" + spec.trim() + "'");
+
+			rs = st.executeQuery(sql.toString());
+			if (rs.next()) {
+				int itemSeq = (int) rs.getInt(1);
+				String itemName = (String) rs.getString(2);
+				String itemNo = (String) rs.getString(4);
+
+				StringBuffer sb = new StringBuffer();
+				sb.append("EXEC KEK_SPLMBaseGetPrice '" + itemSeq + "', '', '1'");
+
+				ResultSet result = st.executeQuery(sb.toString());
+				String maker = "";
+				String customer = "";
+				String unit = "";
+				String price = "";
+				String currency = "";
+				String rate = "";
+
+				if (result.next()) {
+					maker = (String) result.getString("MakerName");
+					customer = (String) result.getString("CustName");
+					unit = (String) result.getString("UnitName");
+					currency = (String) result.getString("CurrName");
+					price = (String) result.getString("Price");
+					rate = (String) result.getString("ExRate");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+
+		}
+
+		return null;
 	}
 
 }

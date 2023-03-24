@@ -31,56 +31,48 @@ public class CipHelper {
 		String improvements = (String) params.get("improvements");
 		String improvement = (String) params.get("improvement");
 		String apply = (String) params.get("apply");
-		String makCode = (String) params.get("mak");
-		String installCode = (String) params.get("install");
-		String customerCode = (String) params.get("customer");
-		String note = (String) params.get("note");
+		String mak = (String) params.get("mak");
+		String detail = (String) params.get("detail");
+		String install = (String) params.get("install");
+		String customer = (String) params.get("customer");
 
 		List<CipDTO> list = new ArrayList<CipDTO>();
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Cip.class, true);
 
-		if (!StringUtils.isNull(item)) {
-			QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.ITEM, item);
-		}
+		QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.ITEM, item);
+		QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.IMPROVEMENTS, improvements);
+		QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.IMPROVEMENT, improvement);
+		QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, Cip.APPLY, apply);
 
-		if (!StringUtils.isNull(improvements)) {
-			QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.IMPROVEMENTS, improvements);
-		}
-
-		if (!StringUtils.isNull(improvement)) {
-			QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.IMPROVEMENT, improvement);
-		}
-
-		if (!StringUtils.isNull(apply)) {
-			QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, Cip.APPLY, apply);
-		}
-
-		if (!StringUtils.isNull(makCode)) {
-			CommonCode mak = CommonCodeHelper.manager.getCommonCode(makCode, "MAK");
+		if (!StringUtils.isNull(mak)) {
+			CommonCode makCode = (CommonCode) CommonUtils.getObject(mak);
 			QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, "makReference.key.id",
-					mak.getPersistInfo().getObjectIdentifier().getId());
+					makCode.getPersistInfo().getObjectIdentifier().getId());
 		}
 
-		if (!StringUtils.isNull(installCode)) {
-			CommonCode install = CommonCodeHelper.manager.getCommonCode(installCode, "INSTALL");
+		if (!StringUtils.isNull(detail)) {
+			CommonCode detailCode = (CommonCode) CommonUtils.getObject(detail);
 			QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, "installReference.key.id",
-					install.getPersistInfo().getObjectIdentifier().getId());
+					detailCode.getPersistInfo().getObjectIdentifier().getId());
 		}
 
-		if (!StringUtils.isNull(customerCode)) {
-			CommonCode customer = CommonCodeHelper.manager.getCommonCode(customerCode, "CUSTOMER");
+		if (!StringUtils.isNull(customer)) {
+			CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer);
 			QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, "customerReference.key.id",
-					customer.getPersistInfo().getObjectIdentifier().getId());
+					customerCode.getPersistInfo().getObjectIdentifier().getId());
 		}
 
-		if (!StringUtils.isNull(note)) {
-			QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.NOTE, note);
+		if (!StringUtils.isNull(install)) {
+			CommonCode installCode = (CommonCode) CommonUtils.getObject(install);
+			QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, "installReference.key.id",
+					installCode.getPersistInfo().getObjectIdentifier().getId());
 		}
 
 		QuerySpecUtils.toOrderBy(query, idx, Cip.class, Cip.CREATE_TIMESTAMP, true);
 
+		System.out.println(query);
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 

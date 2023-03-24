@@ -41,6 +41,9 @@ import jxl.Sheet;
 import jxl.Workbook;
 import wt.clients.folder.FolderTaskLogic;
 import wt.clients.vc.CheckInOutTaskLogic;
+import wt.content.ApplicationData;
+import wt.content.ContentRoleType;
+import wt.content.ContentServerHelper;
 import wt.doc.WTDocument;
 import wt.enterprise.EnterpriseHelper;
 import wt.epm.EPMApplicationType;
@@ -85,7 +88,7 @@ import wt.vc.wip.CheckoutLink;
 import wt.vc.wip.WorkInProgressHelper;
 import wt.vc.wip.WorkInProgressServerHelper;
 
-public class StandardPartService extends StandardManager implements PartService, MessageHelper {
+public class StandardPartService extends StandardManager implements PartService {
 
 	private static final long serialVersionUID = -1015333872196142557L;
 
@@ -2562,5 +2565,81 @@ public class StandardPartService extends StandardManager implements PartService,
 				trs.rollback();
 		}
 		return map;
+	}
+
+	@Override
+	public void bundle(Map<String, Object> params) throws Exception {
+		ArrayList<Map<String, Object>> addRows = (ArrayList<Map<String, Object>>) params.get("addRows");
+		ArrayList<String> secondarys = (ArrayList<String>) params.get("secondarys");
+		boolean erp = (boolean) params.get("erp");
+		ArrayList<WTPart> list = new ArrayList<>();
+		ArrayList<String> datas = new ArrayList<>();
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			WTPart part = null;
+			for (int i = 0; i < addRows.size(); i++) {
+				Map<String, Object> addRow = addRows.get(i);
+				String path = secondarys.get(i);
+				String number = (String) addRow.get("number");
+				String name = (String) addRow.get("spec");
+				String spec = (String) addRow.get("spec");
+				String maker = (String) addRow.get("maker");
+				String customer = (String) addRow.get("customer");
+				String unit = (String) addRow.get("unit");
+				int price = (int) addRow.get("price");
+				String currency = (String) addRow.get("currency");
+
+				part = WTPart.newWTPart();
+				part.setNumber(spec);
+				part.setName(name);
+
+				View view = ViewHelper.service.getView("Engineering");
+				ViewHelper.assignToView(part, view);
+
+				Folder folder = null;
+				if (erp) {
+					folder = FolderTaskLogic.getFolder(PartHelper.COMMON_PART, CommonUtils.getContainer());
+				} else {
+					folder = FolderTaskLogic.getFolder(PartHelper.NEW_PART, CommonUtils.getContainer());
+				}
+				FolderHelper.assignLocation((FolderEntry) part, folder);
+
+				part = (WTPart) PersistenceHelper.manager.save(part);
+
+				IBAUtils.createIBA(part, "s", "NAME_OF_PARTS", name);
+				IBAUtils.createIBA(part, "s", "MAKER", maker);
+				IBAUtils.createIBA(part, "s", "DWG_NO", spec);
+				IBAUtils.createIBA(part, "s", "PART_CODE", number);
+				IBAUtils.createIBA(part, "s", "STD_UNIT", unit);
+				IBAUtils.createIBA(part, "i", "PRICE", price);
+				IBAUtils.createIBA(part, "s", "CURRNAME", currency);
+				IBAUtils.createIBA(part, "s", "CUSTNAME", customer);
+
+				ApplicationData data = ApplicationData.newApplicationData(part);
+				data.setRole(ContentRoleType.PRIMARY);
+				data = (ApplicationData) ContentServerHelper.service.updateContent(part, data, path);
+				list.add(part);
+			}
+
+			if (erp) {
+				for (WTPart pp : list) {
+//					pp = (WTPart) PersistenceHelper.manager.refresh(pp);
+//					String code = ErpHelper.service.sendPartToERP(pp);
+//					datas.add(code);
+				}
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
 	}
 }
