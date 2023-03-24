@@ -105,6 +105,7 @@ public class MeetingHelper {
 					node.put("model", dto.getModel());
 					node.put("pdate_txt", dto.getPdate_txt());
 					node.put("creator", dto.getCreator());
+					node.put("creatorId", meeting.getOwnership().getOwner().getName());
 					node.put("createdDate_txt", dto.getCreatedDate_txt());
 				} else {
 					JSONObject data = new JSONObject();
@@ -125,6 +126,7 @@ public class MeetingHelper {
 					data.put("model", dto.getModel());
 					data.put("pdate_txt", dto.getPdate_txt());
 					data.put("creator", dto.getCreator());
+					data.put("creatorId", meeting.getOwnership().getOwner().getName());
 					data.put("createdDate_txt", dto.getCreatedDate_txt());
 					children.add(data);
 				}

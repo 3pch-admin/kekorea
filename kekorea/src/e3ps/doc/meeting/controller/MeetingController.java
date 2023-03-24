@@ -1,6 +1,8 @@
 package e3ps.doc.meeting.controller;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,13 +21,17 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.DateUtils;
 import e3ps.doc.meeting.MeetingProjectLink;
 import e3ps.doc.meeting.MeetingTemplate;
 import e3ps.doc.meeting.dto.MeetingDTO;
 import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.doc.meeting.service.MeetingHelper;
+import e3ps.org.service.OrgHelper;
+import e3ps.project.template.service.TemplateHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -39,6 +45,23 @@ public class MeetingController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+
+		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
+		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
+		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
+
+		org.json.JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
+		org.json.JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
+		org.json.JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
+
+		model.addObject("elecs", elecs);
+		model.addObject("softs", softs);
+		model.addObject("machines", machines);
+		model.addObject("list", list);
+		model.addObject("customers", customers);
+		model.addObject("projectTypes", projectTypes);
+		model.addObject("maks", maks);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/document/meeting/meeting-list.jsp");

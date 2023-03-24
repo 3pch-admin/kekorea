@@ -1,8 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!-- 결재선 CSS -->
+<%
+String oid = (String) request.getAttribute("oid");
+%>
 <link rel="stylesheet" href="/Windchill/extcore/css/approval.css?v=1">
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
+<input type="hidden" name="oid" id="oid" value="<%=oid%>">
 <table class="button-table">
 	<tr>
 		<td class="right">
@@ -21,7 +23,6 @@
 		<col width="700">
 	</colgroup>
 	<tr>
-		<!-- 결재선 선택할 부분들 -->
 		<td valign="top">
 			<table>
 				<tr>
@@ -31,7 +32,6 @@
 				</tr>
 				<tr>
 					<td colspan="3" class="pt5">
-						<!-- 폴더 그리드 리스트 -->
 						<div id="_grid_wrap" style="height: 280px; border-top: 1px solid #3180c3;"></div>
 						<script type="text/javascript">
 							let _myGridID;
@@ -48,8 +48,8 @@
 									showRowNumColumn : true,
 									rowNumHeaderText : "번호",
 									fillColumnSizeMode : true,
-									selectionMode : "singleRow",
-									displayTreeOpen : true
+									selectionMode : "multipleCells",
+									displayTreeOpen : true,
 								}
 								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 								loadDepartmentTree();
@@ -63,11 +63,9 @@
 								}
 
 								timerId = setTimeout(function() {
-									// 선택 대표 셀 정보 
 									const primeCell = event.primeCell;
-									// 대표 셀에 대한 전체 행 아이템
 									const rowItem = primeCell.item;
-									const oid = rowItem.oid; // oid로 할지 location 으로 할지...
+									const oid = rowItem.oid; 
 									loadDepartmentUser(oid);
 								}, 500);
 							}
@@ -83,9 +81,6 @@
 							}
 
 							function loadDepartmentUser(oid) {
-								if(oid === undefined) {
-									oid = "";
-								}
 								const url = getCallUrl("/org/loadDepartmentUser?oid=" + oid);
 								AUIGrid.showAjaxLoader(_$myGridID);
 								call(url, null, function(data) {
@@ -95,12 +90,12 @@
 							}
 
 							document.addEventListener("DOMContentLoaded", function() {
-								_createAUIGrid(_columns); // 트리
-								AUIGrid.resize(_myGridID); // 트리
+								_createAUIGrid(_columns); 
+								AUIGrid.resize(_myGridID); 
 							});
 
 							window.addEventListener("resize", function() {
-								AUIGrid.resize(_myGridID); // 트리
+								AUIGrid.resize(_myGridID); 
 							});
 						</script>
 					</td>
@@ -128,37 +123,58 @@
 									showRowNumColumn : true,
 									rowNumHeaderText : "번호",
 									fillColumnSizeMode : true,
-									selectionMode : "singleRow",
+									selectionMode : "multipleCells",
 									noDataMessage : "검색된 사용자가 없습니다",
 									showRowCheckColumn : true,
-									enableRowCheckShiftKey : true
+									enableRowCheckShiftKey : true,
+									showDragKnobColumn : true,
+									enableDrag : true,
+									enableMultipleDrag : true,
+									enableDrop : false,
+									dropToOthers: true,
 								}
 								_$myGridID = AUIGrid.create("#list_wrap", columnLayout, props);
 								AUIGrid.bind(_$myGridID, "cellClick", cellClickHandler);
-								loadDepartmentUser();
+								const oid = document.getElementById("oid").value;
+								loadDepartmentUser(oid);
+								AUIGrid.bind(_$myGridID, "dropEndBefore", function (event) {
+									event.isMoveMode = false;
+
+									const pids = ["#agree_wrap", "#approval_wrap", "#receive_wrap"];
+									const items = event.items;
+									let copy = true;
+									for(let i=0; i<items.length; i++) {
+										const item = event.items[0]; 
+										for(let k=0; k<pids.length; k++) {
+											const notHave = AUIGrid.isUniqueValue(pids[k], "oid", item.oid); 
+											if (!notHave) {
+												copy = false;
+												break;
+											}
+										}
+									}
+									return copy;
+								});
 							}
 
 							function cellClickHandler(event) {
 								const item = event.item;
 								const rowIdField = AUIGrid.getProp(event.pid, "rowIdField");
 								const rowId = item[rowIdField];
-								// 이미 체크 선택되었는지 검사
 								if (AUIGrid.isCheckedRowById(event.pid, rowId)) {
-									// 엑스트라 체크박스 체크해제 추가
 									AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
 								} else {
-									// 엑스트라 체크박스 체크 추가
 									AUIGrid.addCheckedRowsByIds(event.pid, rowId);
 								}
 							};
 
 							document.addEventListener("DOMContentLoaded", function() {
 								_$createAUIGrid(_$columns);
-								AUIGrid.resize(_$myGridID); // 트리
+								AUIGrid.resize(_$myGridID); 
 							});
 
 							window.addEventListener("resize", function() {
-								AUIGrid.resize(_$myGridID); // 트리
+								AUIGrid.resize(_$myGridID); 
 							});
 						</script>
 					</td>
@@ -166,7 +182,6 @@
 			</table>
 		</td>
 		<td>&nbsp;</td>
-		<!-- 결재선 버튼들 -->
 		<td>
 			<table class="select-table">
 				<tr>
@@ -219,14 +234,15 @@
 			</table>
 		</td>
 		<td>&nbsp;</td>
-		<!-- 결재선 지정 되는부분 -->
 		<td valign="top">
 			<table>
 				<tr>
 					<td>
 						<div class="line-title">
-							<i class="axi axi-subtitles" style="font-size: 14px;"></i>
-							<span>검토 라인</span>
+							<div class="header">
+								<img src="/Windchill/extcore/images/header.png">
+								검토 라인
+							</div>
 						</div>
 					</td>
 				</tr>
@@ -265,20 +281,28 @@
 									showRowNumColumn : true,
 									rowNumHeaderText : "번호",
 									fillColumnSizeMode : true,
-									selectionMode : "singleRow",
+									selectionMode : "multipleCells",
 									showRowCheckColumn : true,
-									enableRowCheckShiftKey : true
+									enableRowCheckShiftKey : true,
+									showDragKnobColumn : true,
+									enableDrag : true,
+									enableMultipleDrag : true,
+									enableDrop : true,
+									dropToOthers: true,
 								}
 								_myGridID1 = AUIGrid.create("#agree_wrap", columnLayout, props);
+								AUIGrid.bind(_$myGridID, "dropEndBefore", function (event) {
+									console.log(event.items);
+								});
 							}
 
 							document.addEventListener("DOMContentLoaded", function() {
 								_createAUIGrid1(_columns1);
-								AUIGrid.resize(_myGridID1); // 트리
+								AUIGrid.resize(_myGridID1); 
 							});
 
 							window.addEventListener("resize", function() {
-								AUIGrid.resize(_myGridID1); // 트리
+								AUIGrid.resize(_myGridID1); 
 							});
 						</script>
 					</td>
@@ -287,12 +311,13 @@
 				<tr>
 					<td>
 						<div class="line-title">
-							<i class="axi axi-subtitles" style="font-size: 14px;"></i>
-							<span>결재 라인</span>
+							<div class="header">
+								<img src="/Windchill/extcore/images/header.png">
+								결재 라인
+							</div>
 						</div>
 					</td>
 				</tr>
-
 				<tr>
 					<td>
 						<div id="approval_wrap" style="height: 180px; border-top: 1px solid #3180c3;"></div>
@@ -328,20 +353,44 @@
 									showRowNumColumn : true,
 									rowNumHeaderText : "순서",
 									fillColumnSizeMode : true,
-									selectionMode : "singleRow",
+									selectionMode : "multipleCells",
 									showRowCheckColumn : true,
-									enableRowCheckShiftKey : true
+									enableRowCheckShiftKey : true,
+									showDragKnobColumn : true,
+									enableDrag : true,
+									enableMultipleDrag : true,
+									enableDrop : true,
+									dropToOthers: true,
 								}
 								_myGridID2 = AUIGrid.create("#approval_wrap", columnLayout, props);
+								AUIGrid.bind(_myGridID2, "dropEndBefore", function (event) {
+									if (event.items.length == 0) {
+										return false;
+									}
+									event.isMoveMode = false;
+									
+									const pidToDrop = event.pidToDrop;
+									const items = event.items;
+									let copy = true;
+									for(let i=0; i<items.length; i++) {
+										const item = event.items[0]; 
+										const notHave = AUIGrid.isUniqueValue(pidToDrop, "oid", item.oid); 
+										if (!notHave) {
+											copy = false;
+											break;
+										}
+									}
+									return copy;
+								});
 							}
 
 							document.addEventListener("DOMContentLoaded", function() {
 								_createAUIGrid2(_columns2);
-								AUIGrid.resize(_myGridID2); // 트리
+								AUIGrid.resize(_myGridID2); 
 							});
 
 							window.addEventListener("resize", function() {
-								AUIGrid.resize(_myGridID2); // 트리
+								AUIGrid.resize(_myGridID2); 
 							});
 						</script>
 					</td>
@@ -350,8 +399,10 @@
 				<tr>
 					<td>
 						<div class="line-title">
-							<i class="axi axi-subtitles" style="font-size: 14px;"></i>
-							<span>수신 라인</span>
+							<div class="header">
+								<img src="/Windchill/extcore/images/header.png">
+								수신 라인
+							</div>
 						</div>
 					</td>
 				</tr>
@@ -391,20 +442,44 @@
 									showRowNumColumn : true,
 									rowNumHeaderText : "번호",
 									fillColumnSizeMode : true,
-									selectionMode : "singleRow",
+									selectionMode : "multipleCells",
 									showRowCheckColumn : true,
-									enableRowCheckShiftKey : true
+									enableRowCheckShiftKey : true,		
+									showDragKnobColumn : true,
+									enableDrag : true,
+									enableMultipleDrag : true,
+									enableDrop : true,
+									dropToOthers: true,
 								}
 								_myGridID3 = AUIGrid.create("#receive_wrap", columnLayout, props);
+								AUIGrid.bind(_myGridID3, "dropEndBefore", function (event) {
+									if (event.items.length == 0) {
+										return false;
+									}
+									event.isMoveMode = false;
+									
+									const pidToDrop = event.pidToDrop;
+									const items = event.items;
+									let copy = true;
+									for(let i=0; i<items.length; i++) {
+										const item = event.items[0]; 
+										const notHave = AUIGrid.isUniqueValue(pidToDrop, "oid", item.oid); 
+										if (!notHave) {
+											copy = false;
+											break;
+										}
+									}
+									return copy;
+								});
 							}
 
 							document.addEventListener("DOMContentLoaded", function() {
 								_createAUIGrid3(_columns3);
-								AUIGrid.resize(_myGridID3); // 트리
+								AUIGrid.resize(_myGridID3); 
 							});
 
 							window.addEventListener("resize", function() {
-								AUIGrid.resize(_myGridID3); // 트리
+								AUIGrid.resize(_myGridID3); 
 							});
 						</script>
 					</td>
@@ -414,7 +489,6 @@
 	</tr>
 </table>
 
-<!-- 결재선 지정 하는 스크립트들 -->
 <script type="text/javascript">
 function moveRow() {
 	const radioGroup = document.getElementsByName("lineType");

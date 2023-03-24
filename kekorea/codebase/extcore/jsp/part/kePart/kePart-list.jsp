@@ -579,11 +579,12 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
+					const item = checkedItems[i].item;
+					const rowIndex = checkedItems[i].rowIndex;
 					if (!checker(sessionId, item.creatorId) || !checker(sessionId, item.modifierId)) {
-						alert("데이터 작성자가 아닙니다.");
+						alert(rowIndex + "행 데이터의 작성자 혹은 수정자가 아닙니다.");
 						return false;
 					}
-					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
 			}
