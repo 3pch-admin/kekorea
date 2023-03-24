@@ -151,7 +151,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							const url = getCallUrl("/document/view?oid=" + oid);
+							popup(url);
 						}
 					},
 					filter : {
@@ -167,7 +169,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							const url = getCallUrl("/document/view?oid=" + oid);
+							popup(url);
 						}
 					},
 					filter : {
@@ -304,6 +308,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function loadGridData() {
 				const url = getCallUrl("/document/list");
+// 				const url = getCallUrl("/doc/list");
 				const params = new Object();
 				const psize = document.getElementById("psize").value;
 				params.latest = true;
@@ -321,6 +326,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function create() {
 				const url = getCallUrl("/document/create");
+// 				const url = getCallUrl("/doc/create");
 				popup(url);
 			}
 
