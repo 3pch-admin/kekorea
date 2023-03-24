@@ -93,7 +93,6 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 		AUIGrid.resize(_myGridID);
 		loadTinymce();
 	});
-	
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(_myGridID);

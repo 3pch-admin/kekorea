@@ -1,3 +1,4 @@
+<%@page import="e3ps.project.issue.service.IssueHelper"%>
 <%@page import="e3ps.epm.workOrder.service.WorkOrderHelper"%>
 <%@page import="e3ps.bom.partlist.service.PartlistHelper"%>
 <%@page import="e3ps.doc.meeting.service.MeetingHelper"%>
@@ -16,7 +17,7 @@ String height = StringUtils.getParameter(request.getParameter("height"), "150");
 JSONArray data = null;
 // 객체 마다 다르게 
 if ("meeting".equals(obj)) {
-	// 회의로
+	// 회의록
 	data = MeetingHelper.manager.jsonArrayAui(oid);
 } else if ("partlist".equals(obj)) {
 	// 수배표
@@ -24,6 +25,8 @@ if ("meeting".equals(obj)) {
 } else if ("project".equals(obj)) {
 	// 도면일람표
 	data = WorkOrderHelper.manager.jsonArrayAui(oid);
+} else if ("issue".equals(obj)) {
+	data = IssueHelper.manager.jsonArrayAui(oid);
 }
 %>
 <div class="include">

@@ -52,37 +52,15 @@ IssueDTO dto = (IssueDTO) request.getAttribute("dto");
 				</td>
 			</tr>
 			<tr>
-				<th class="lb">연관된 프로젝트</th>
+				<th class="lb">KEK 작번</th>
 				<td colspan="3" class="indent5">
-					<table class="view-table">
-						<tr>
-							<td>
-								<div>
-									<table>
-										<tr>
-											<th>작번유형</th>
-											<th>KEK 작번</th>
-											<th>KE 작번</th>
-											<th>막종</th>
-											<th>막종상세</th>
-											<th>작업내용</th>
-										</tr>
-										<tr>
-										<td class="center"><%=dto.getPType()%></td>
-										<td class="center"><%=dto.getKekNumber()%></td>
-										<td class="center"><%=dto.getKeNumber()%></td>
-										<td class="center"><%=dto.getMak_name()%></td>
-										<td class="center"><%=dto.getDetail_name()%></td>
-										<td class="center"><%=dto.getDescription()%></td>
-										</tr>
-									</table>
-								</div>
-							</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-
+				<jsp:include page="/extcore/include/project-include.jsp">
+				<jsp:param value="<%=dto.getOid()%>" name="oid" />
+				<jsp:param value="view" name="mode" />
+				<jsp:param value="false" name="multi" />
+				<jsp:param value="issue" name="obj" />
+				<jsp:param value="180" name="height" />
+			</jsp:include>
 		</table>
 	</div>
 </div>

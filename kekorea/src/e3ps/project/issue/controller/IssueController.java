@@ -56,8 +56,8 @@ public class IssueController extends BaseController {
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		IssueProjectLink issue = (IssueProjectLink) CommonUtils.getObject(oid);
-		IssueDTO dto = new IssueDTO(issue);
+		IssueProjectLink link = (IssueProjectLink) CommonUtils.getObject(oid);
+		IssueDTO dto = new IssueDTO(link);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/project/issue/issue-view");
 		return model;
