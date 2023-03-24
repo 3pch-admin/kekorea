@@ -84,16 +84,26 @@ public class QuerySpecUtils {
 		if (value == null) {
 			return;
 		}
-		if (query.getConditionCount() > 0) {
-			query.appendAnd();
-		}
 
 		SearchCondition sc = null;
 		if (value instanceof String) {
-			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (String) value);
+			String param = (String) value;
+			if (StringUtils.isNull(param)) {
+				return;
+			}
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, param);
 		} else if (value instanceof Long) {
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
 			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (long) value);
 		} else if (value instanceof Integer) {
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
 			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (int) value);
 		}
 		query.appendWhere(sc, new int[] { idx });
@@ -112,7 +122,11 @@ public class QuerySpecUtils {
 
 		SearchCondition sc = null;
 		if (value instanceof String) {
-			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (String) value);
+			String param = (String) value;
+			if (StringUtils.isNull(param)) {
+				return;
+			}
+			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, param);
 		} else if (value instanceof Long) {
 			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (long) value);
 		} else if (value instanceof Integer) {

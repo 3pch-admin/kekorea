@@ -18,23 +18,20 @@ JSONArray departments = new JSONArray(list);
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
 	<form>
-		<!-- 리스트 검색시 반드시 필요한 히든 값 -->
+		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
-		<!-- 부서 OID -->
 		<input type="hidden" name="oid" id="oid">
-		<!-- 검색 테이블 -->
+
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -47,30 +44,39 @@ JSONArray departments = new JSONArray(list);
 			<tr>
 				<th>이름</th>
 				<td class="indent5">
-					<input type="text" name="userName" id="userName" class="AXInput">
+					<input type="text" name="userName" id="userName">
 				</td>
 				<th>아이디</th>
 				<td class="indent5">
-					<input type="text" name="userId" id="userId" class="AXInput">
+					<input type="text" name="userId" id="userId">
 				</td>
 				<th>퇴사여부</th>
 				<td>
 					&nbsp;
 					<div class="pretty p-switch">
-						<input type="checkbox" name="resign" value="true">
+						<input type="radio" name="resign" value="true" checked="checked">
 						<div class="state p-success">
-							<label>&nbsp;</label>
+							<label>
+								<b>재직</b>
+							</label>
+						</div>
+					</div>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="resign" value="">
+						<div class="state p-success">
+							<label>
+								<b>퇴사</b>
+							</label>
 						</div>
 					</div>
 				</td>
 			</tr>
 		</table>
 
-		<!-- 버튼 테이블 -->
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<!-- exportExcel 함수참고 -->
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('organization-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('organization-list');">
@@ -89,7 +95,6 @@ JSONArray departments = new JSONArray(list);
 			</tr>
 		</table>
 
-		<!-- 리스트 테이블 -->
 		<table>
 			<colgroup>
 				<col width="230">
@@ -105,18 +110,19 @@ JSONArray departments = new JSONArray(list);
 				</td>
 				<td>&nbsp;</td>
 				<td>
-					<!-- 그리드 리스트 -->
 					<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 				</td>
 			</tr>
 		</table>
-		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
-			const maks = <%=maks%>
-			const installs = <%=installs%>
-			const departments = <%=departments%>
+			const maks =
+		<%=maks%>
+			const installs =
+		<%=installs%>
+			const departments =
+		<%=departments%>
 			const dutys = [ "사장", "부사장", "PL", "TL" ];
 			function _layout() {
 				return [ {
@@ -156,7 +162,7 @@ JSONArray departments = new JSONArray(list);
 				}, {
 					dataField : "duty",
 					headerText : "직급",
-					dataType : "string", // 날짜 및 사람명 컬럼 사이즈 100
+					dataType : "string",
 					width : 130,
 					filter : {
 						showIcon : true,
@@ -164,23 +170,22 @@ JSONArray departments = new JSONArray(list);
 					},
 					renderer : {
 						type : "IconRenderer",
-						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconWidth : 16,
 						iconHeight : 16,
 						iconPosition : "aisleRight",
-						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 						},
 						onClick : function(event) {
-							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
 					},
 					editRenderer : {
 						type : "DropDownListRenderer",
 						showEditorBtn : false,
-						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
-						multipleMode : false, // 다중 선택 모드(기본값 : false)
-						showCheckAll : false, // 다중 선택 모드에서 전체 체크 선택/해제 표시(기본값:false);
+						showEditorBtnOver : false,
+						multipleMode : false,
+						showCheckAll : false,
 						list : dutys,
 					},
 				}, {
@@ -190,29 +195,28 @@ JSONArray departments = new JSONArray(list);
 					width : 150,
 					renderer : {
 						type : "IconRenderer",
-						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconWidth : 16,
 						iconHeight : 16,
 						iconPosition : "aisleRight",
-						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 						},
 						onClick : function(event) {
-							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
 					},
 					editRenderer : {
 						type : "DropDownListRenderer",
 						showEditorBtn : false,
-						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
-						multipleMode : false, // 다중 선택 모드(기본값 : false)
-						showCheckAll : false, // 다중 선택 모드에서 전체 체크 선택/해제 표시(기본값:false);
+						showEditorBtnOver : false,
+						multipleMode : false,
+						showCheckAll : false,
 						list : departments,
-						keyField : "oid", // key 에 해당되는 필드명
-						valueField : "name", // value 에 해당되는 필드명,			
+						keyField : "oid",
+						valueField : "name",
 					},
-					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
-						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
 						for (let i = 0, len = departments.length; i < len; i++) {
 							if (departments[i]["oid"] == value) {
 								retStr = departments[i]["name"];
@@ -232,29 +236,28 @@ JSONArray departments = new JSONArray(list);
 					},
 					renderer : {
 						type : "IconRenderer",
-						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconWidth : 16,
 						iconHeight : 16,
 						iconPosition : "aisleRight",
-						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 						},
 						onClick : function(event) {
-							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
 					},
 					editRenderer : {
 						type : "DropDownListRenderer",
 						showEditorBtn : false,
-						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
-						multipleMode : true, // 다중 선택 모드(기본값 : false)
-						showCheckAll : true, // 다중 선택 모드에서 전체 체크 선택/해제 표시(기본값:false);
+						showEditorBtnOver : false,
+						multipleMode : true,
+						showCheckAll : true,
 						list : maks,
-						keyField : "key", // key 에 해당되는 필드명
-						valueField : "value", // value 에 해당되는 필드명,			
+						keyField : "key",
+						valueField : "value",
 					},
-					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
-						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
 						for (let i = 0, len = maks.length; i < len; i++) {
 							if (maks[i]["key"] == value) {
 								retStr = maks[i]["value"];
@@ -278,29 +281,28 @@ JSONArray departments = new JSONArray(list);
 					},
 					renderer : {
 						type : "IconRenderer",
-						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconWidth : 16,
 						iconHeight : 16,
 						iconPosition : "aisleRight",
-						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 						},
 						onClick : function(event) {
-							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
 					},
 					editRenderer : {
 						type : "DropDownListRenderer",
 						showEditorBtn : false,
-						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
-						multipleMode : true, // 다중 선택 모드(기본값 : false)
-						showCheckAll : true, // 다중 선택 모드에서 전체 체크 선택/해제 표시(기본값:false);
+						showEditorBtnOver : false,
+						multipleMode : true,
+						showCheckAll : true,
 						list : installs,
-						keyField : "key", // key 에 해당되는 필드명
-						valueField : "value", // value 에 해당되는 필드명,			
+						keyField : "key",
+						valueField : "value",
 					},
-					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
-						let retStr = ""; // key 값에 맞는 value 를 찾아 반환함.
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
 						for (let i = 0, len = installs.length; i < len; i++) {
 							if (installs[i]["key"] == value) {
 								retStr = installs[i]["value"];
@@ -350,11 +352,8 @@ JSONArray departments = new JSONArray(list);
 				} ]
 			}
 
-			// AUIGrid 생성 함수
 			function createAUIGrid(columnLayout) {
-				// 그리드 속성
 				const props = {
-					// 그리드 공통속성 시작
 					headerHeight : 30,
 					rowHeight : 30,
 					showRowNumColumn : true,
@@ -370,34 +369,25 @@ JSONArray departments = new JSONArray(list);
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					// 그리드 공통속성 끝
 					editable : true
 				};
-
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
-
-				// 동적 수정여부 체크
 				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
-
-				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
-
-				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					hideContextMenu();
 					vScrollChangeHandler(event);
 				});
-
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					hideContextMenu();
 				});
 			}
 
 			function auiCellEditBegin(event) {
 				const item = event.item;
-				if("<%=sessionUser.getName()%>" !== item.id) {
+				const sessionId = document.getElementById("sessionId").value;
+				if (!checker(sessionId, item.id)) {
 					return false;
 				}
 				return true;
@@ -408,12 +398,15 @@ JSONArray departments = new JSONArray(list);
 				const url = getCallUrl("/org/list");
 				const userName = document.getElementById("userName").value;
 				const userId = document.getElementById("userId").value;
+				const resign = !!document.querySelector("input[name=resign]:checked").value;
 				const oid = document.getElementById("oid").value;
 				const psize = document.getElementById("psize").value;
-				params.psize = psize;
-				params.oid = oid;
 				params.userName = userName;
 				params.userId = userId;
+				params.resign = resign;
+				params.psize = psize;
+				params.oid = oid;
+				console.log(params);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -426,13 +419,19 @@ JSONArray departments = new JSONArray(list);
 			}
 
 			function save() {
+				const url = getCallUrl("/org/save");
+				const params = new Object();
+				const editRows = AUIGrid.getEditedRowItems(myGridID);
+
+				if (editRows.length === 0) {
+					alert("변경된 내용이 없습니다.");
+					return false;
+				}
+
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
 				}
 
-				const url = getCallUrl("/org/save");
-				const params = new Object();
-				const editRows = AUIGrid.getEditedRowItems(myGridID);
 				params.editRows = editRows;
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -446,13 +445,13 @@ JSONArray departments = new JSONArray(list);
 
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("organization-list");
-				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
 				});
-				createAUIGrid(columns); // 리스트
-				AUIGrid.resize(myGridID); // 리스트
+				createAUIGrid(columns);
+				AUIGrid.resize(myGridID);
 				selectbox("psize");
 			});
 
@@ -468,7 +467,7 @@ JSONArray departments = new JSONArray(list);
 			})
 
 			window.addEventListener("resize", function() {
-				AUIGrid.resize(myGridID); // 리스트
+				AUIGrid.resize(myGridID);
 			});
 		</script>
 	</form>

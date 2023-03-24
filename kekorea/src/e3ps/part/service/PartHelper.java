@@ -129,6 +129,7 @@ public class PartHelper {
 	public static final String ELEC_CONTEXT = "ELEC";
 
 	public static final String COMMON_PART = "/Default/도면/부품/일반부품";
+	public static final String NEW_PART = "/Default/도면/부품/신규부품";
 
 	public static final String UNIT_BOM = "/Default/도면/부품/UNIT_BOM";
 
@@ -2145,34 +2146,44 @@ public class PartHelper {
 		return jsonArray;
 	}
 
+	/**
+	 * 부품 일괄 등록시 PART_CODE IBA 값 검증 있으면 NG 리턴
+	 */
 	public Map<String, Object> bundleValidatorNumber(String number) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WTPart.class, true);
+		QuerySpecUtils.toIBAEquals(query, idx, WTPart.class, "PART_CODE", number);
+		QueryResult result = PersistenceHelper.manager.find(query);
 
-		QuerySpec _query = new QuerySpec();
-		int _idx = _query.appendClassList(WTPart.class, true);
-		QuerySpecUtils.toIBAEquals(_query, _idx, WTPart.class, "PART_CODE", number);
-		QueryResult qr = PersistenceHelper.manager.find(_query);
-
-		if (qr.size() > 0) {
-			map.put("ycode_check", false);
+		System.out.println("query=" + query);
+		if (result.hasMoreElements()) {
+			map.put("ycode_check", "NG(YCODE)");
+			map.put("ycode", false);
 		} else {
-			map.put("ycode_check", true);
+			map.put("ycode_check", "OK");
+			map.put("ycode", true);
 		}
 		return map;
 	}
 
+	/**
+	 * 부품 일괄 등록시 규격(WTPart Number 검증 있을 경우 NG 리턴)
+	 */
 	public Map<String, Object> bundleValidatorSpec(String spec) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTPartMaster.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, WTPartMaster.class, WTPartMaster.NUMBER, spec);
-		QueryResult qr = PersistenceHelper.manager.find(query);
+		QueryResult result = PersistenceHelper.manager.find(query);
 
-		if (qr.size() > 0) {
-			map.put("dwg_check", false);
+		if (result.hasMoreElements()) {
+			map.put("dwg_check", "NG(DWG_NO)");
+			map.put("dwg", false);
 		} else {
-			map.put("dwg_check", true);
+			map.put("dwg_check", "OK");
+			map.put("dwg", true);
 		}
 		return map;
 	}

@@ -15,6 +15,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.org.Department;
+import e3ps.org.service.OrgHelper;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.dto.ApprovalLineDTO;
 import e3ps.workspace.service.WorkspaceHelper;
@@ -191,6 +193,8 @@ public class WorkspaceController extends BaseController {
 	@GetMapping(value = "/popup")
 	public ModelAndView popup() throws Exception {
 		ModelAndView model = new ModelAndView();
+		Department department = OrgHelper.manager.getRoot();
+		model.addObject("oid", department.getPersistInfo().getObjectIdentifier().getStringValue());
 		model.setViewName("popup:/workspace/register-popup");
 		return model;
 	}

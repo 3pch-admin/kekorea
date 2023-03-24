@@ -13,3 +13,7 @@
 4. Queue 생성
 	- WorkOrderProcessQueue 큐 생성
 	- PdfProcessQueue 큐 생성
+	
+5. View 이름 변경
+	- Shell -> Windchill wt.vc.views.LoadView
+	- Design View -> Engineering View 로 변경

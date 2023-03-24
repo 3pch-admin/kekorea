@@ -1,9 +1,6 @@
 package e3ps.doc.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.annotation.Description;
@@ -17,15 +14,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.doc.dto.DocumentDTO;
 import e3ps.doc.service.DocumentHelper;
-import e3ps.korea.cip.dto.CipDTO;
-import e3ps.korea.cip.service.CipHelper;
+import e3ps.project.Project;
+import e3ps.project.dto.ProjectDTO;
+import wt.doc.WTDocument;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -118,5 +113,21 @@ public class DocumentController extends BaseController {
 			result.put("result", FAIL);
 		}
 		return result;
+	}
+	
+	@Description(value = "문서 뷰")
+	@GetMapping(value = "/view")
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		WTDocument document = (WTDocument)CommonUtils.getObject(oid);
+//		Project project = (Project) CommonUtils.getObject(oid);
+		DocumentDTO dto = new DocumentDTO(document);
+//		ProjectDTO pdto = new ProjectDTO(project);
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("dto", dto);
+//		model.addObject("pdto", pdto);
+		model.addObject("isAdmin", isAdmin);
+		model.setViewName("popup:/document/document-view");
+		return model;
 	}
 }

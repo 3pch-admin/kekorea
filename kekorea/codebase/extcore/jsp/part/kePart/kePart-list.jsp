@@ -1,3 +1,4 @@
+<%@page import="java.sql.Timestamp"%>
 <%@page import="wt.org.WTUser"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
@@ -7,27 +8,27 @@
 <%
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+Timestamp time = (Timestamp) request.getAttribute("time");
 %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
 	<form>
-		<!-- 리스트 검색시 반드시 필요한 히든 값 -->
+		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
+		<input type="hidden" name="time" id="time" value="<%=time%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
-		<!-- 검색 테이블 -->
+
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -40,30 +41,33 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th>DRAWING TITLE</th>
-				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-200">
-				</td>
-				<th>LOT NO</th>
+				<th>LOT</th>
 				<td class="indent5">
 					<input type="number" name="lotNo" id="lotNo" class="width-200">
 				</td>
-				<th>작성자</th>
+				<th>중간코드</th>
 				<td class="indent5">
-					<input type="text" name="creator" id="creator" class="width-200">
+					<input type="text" name="code" id="code" class="width-200">
 				</td>
-				<th>작성일</th>
-				<td class="indent5">
-					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
-					~
-					<input type="text" name="createdTo" id="createdTo" class="width-100">
-				</td>
-			</tr>
-			<tr>
-				<th>DWG NO</th>
+				<th>부품번호</th>
 				<td class="indent5">
 					<input type="text" name="keNumber" id="keNumber" class="width-200">
 				</td>
+				<th>부품명</th>
+				<td class="indent5">
+					<input type="text" name="name" id="name" class="width-200">
+				</td>
+			</tr>
+			<tr>
+				<th>상태</th>
+				<td class="indent5">
+					<select name="state" id="state" class="width-100">
+						<option value="">선택</option>
+						<option value="작업중">작업중</option>
+						<option value="승인중">승인중</option>
+						<option value="승인됨">승인됨</option>
+						<option value="폐기됨">폐기됨</option>
+					</select>
 				<th>버전</th>
 				<td>
 					&nbsp;
@@ -85,9 +89,27 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						</div>
 					</div>
 				</td>
+				<th>KokusaiModel</th>
+				<td class="indent5" colspan="3">
+					<input type="text" name="model" id="model" class="width-400">
+				</td>
+			</tr>
+			<tr>
+				<th>작성자</th>
+				<td class="indent5">
+					<input type="text" name="creator" id="creator" class="width-200">
+					<input type="hidden" name="creatorOid" id="creatorOid">
+				</td>
+				<th>작성일</th>
+				<td class="indent5">
+					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+					~
+					<input type="text" name="createdTo" id="createdTo" class="width-100">
+				</td>
 				<th>수정자</th>
 				<td class="indent5">
 					<input type="text" name="modifier" id="modifier" class="width-200">
+					<input type="hidden" name="modifierOid" id="modifierOid">
 				</td>
 				<th>수정일</th>
 				<td class="indent5">
@@ -96,13 +118,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<input type="text" name="modifiedTo" id="modifiedTo" class="width-100">
 				</td>
 			</tr>
+
 		</table>
 
-		<!-- 버튼 테이블 -->
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<!-- exportExcel 함수참고 -->
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('kePart-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('kePart-list');">
@@ -130,9 +151,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			</tr>
 		</table>
 
-		<!-- 그리드 리스트 -->
-		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
-		<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+		<div id="grid_wrap" style="height: 635px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -146,18 +165,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					formatString : "###0",
 					editRenderer : {
 						type : "InputEditRenderer",
-						onlyNumeric : true, // 0~9만 입력가능
+						onlyNumeric : true,
 						maxlength : 3,
-					// 						validator : function(oldValue, newValue, item) {
-					// 							var isValid = false;
-					// 							if (newValue && newValue.length == 3) {
-					// 								isValid = true;
-					// 							}
-					// 							return {
-					// 								"validate" : isValid,
-					// 								"message" : "LOT NO 값은 반드시 3자리로 작성이 되어야합니다."
-					// 							};
-					// 						}
 					},
 					filter : {
 						showIcon : true,
@@ -170,21 +179,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					dataType : "string",
 					width : 100,
 					editRenderer : {
-						// 한글 입력 못하도록 정규식
 						type : "InputEditRenderer",
 						regExp : "^[a-zA-Z0-9]+$",
 						autoUpperCase : true,
 						maxlength : 10,
-					// 						validator : function(oldValue, newValue, item) {
-					// 							var isValid = false;
-					// 							if (newValue && newValue.length == 10) {
-					// 								isValid = true;
-					// 							}
-					// 							return {
-					// 								"validate" : isValid,
-					// 								"message" : "중간코드의 값은 반드시 10자리로 작성이 되어야합니다."
-					// 							};
-					// 						}
 					},
 					filter : {
 						showIcon : true,
@@ -195,19 +193,20 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					headerText : "부품번호",
 					dataType : "string",
 					width : 100,
-					style : "underline",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const moid = item.moid;
-							const url = getCallUrl("/kePart/tabper?oid=" + oid + "&moid=" + moid);
-							popup(url, 1400, 700);
+							if (oid !== undefined) {
+								const url = getCallUrl("/kePart/view?oid=" + oid);
+								popup(url, 1400, 700);
+							} else {
+								alert("서버에 저장되지 않은 데이터 입니다.");
+							}
 						}
 					},
 					editRenderer : {
-						// 한글 입력 못하도록 정규식
 						type : "InputEditRenderer",
 						regExp : "^[a-zA-Z0-9]+$",
 						autoUpperCase : true,
@@ -222,18 +221,20 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					headerText : "부품명",
 					dataType : "string",
 					width : 200,
-					style : "underline",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/kePart/view?oid=" + oid);
-							popup(url, 1300, 650);
+							if (oid !== undefined) {
+								const url = getCallUrl("/kePart/view?oid=" + oid);
+								popup(url, 1300, 650);
+							} else {
+								alert("서버에 저장 되지 않은 데이터 입니다.");
+							}
 						}
 					},
 					editRenderer : {
-						// 한글 입력 못하도록 정규식
 						type : "InputEditRenderer",
 						autoUpperCase : true
 					},
@@ -247,7 +248,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					dataType : "string",
 					width : 300,
 					editRenderer : {
-						// 한글 입력 못하도록 정규식
 						type : "InputEditRenderer",
 						autoUpperCase : true
 					},
@@ -286,27 +286,26 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					width : 100,
 					renderer : {
 						type : "IconRenderer",
-						iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+						iconWidth : 16,
 						iconHeight : 16,
 						iconPosition : "aisleRight",
-						iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 						},
 						onClick : function(event) {
-							// 아이콘을 클릭하면 수정으로 진입함.
 							AUIGrid.openInputer(event.pid);
 						}
 					},
 					editRenderer : {
 						type : "ComboBoxRenderer",
-						autoCompleteMode : true, // 자동완성 모드 설정
+						autoCompleteMode : true,
 						autoEasyMode : true,
-						matchFromFirst : false, // 처음부터 매치가 아닌 단순 포함되는 자동완성
-						showEditorBtnOver : false, // 마우스 오버 시 에디터버턴 보이기
+						matchFromFirst : false,
+						showEditorBtnOver : false,
 						list : list,
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
-							for (let i = 0, len = list.length; i < len; i++) { // keyValueList 있는 값만..
+							for (let i = 0, len = list.length; i < len; i++) {
 								if (list[i] == newValue) {
 									isValid = true;
 									break;
@@ -389,7 +388,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 							recentGridItem = item;
 							const _$uid = item._$uid;
 							const url = getCallUrl("/aui/primary?oid=" + _$uid + "&method=attach");
-							popup(url, 1000, 200);
+							popup(url, 1000, 300);
 						}
 					},
 					filter : {
@@ -409,11 +408,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				} ]
 			}
 
-			// AUIGrid 생성 함수
 			function createAUIGrid(columnLayout) {
-				// 그리드 속성
 				const props = {
-					// 그리드 공통속성 시작
 					headerHeight : 30,
 					rowHeight : 30,
 					showRowNumColumn : true,
@@ -429,27 +425,18 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					// 그리드 공통속성 끝
 					editable : true
 				};
-
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
-
-				// 컨텍스트 메뉴 이벤트 바인딩
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
-
-				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
-					vScrollChangeHandler(event); // lazy loading
+					hideContextMenu();
+					vScrollChangeHandler(event);
 				});
-
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
+					hideContextMenu();
 				});
-
-				// 행 추가후
 				AUIGrid.bind(myGridID, "pasteEnd", auiPasteEnd);
 			}
 
@@ -479,7 +466,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				});
 			}
 
-			// 저장
 			function create() {
 				const url = getCallUrl("/kePart/create");
 				const params = new Object();
@@ -492,17 +478,16 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					return false;
 				}
 
-				// 새로 추가한 행 검증
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
-
+					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
 					if (item.lotNo === 0) {
-						AUIGrid.showToastMessage(myGridID, i, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
 						return false;
 					}
 
 					if (isNull(item.code)) {
-						AUIGrid.showToastMessage(myGridID, i, 1, "중간코드의 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "중간코드의 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 
@@ -512,52 +497,51 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					}
 
 					if (isNull(item.name)) {
-						AUIGrid.showToastMessage(myGridID, i, 3, "부품명 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 3, "부품명 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 
 					if (isNull(item.model)) {
-						AUIGrid.showToastMessage(myGridID, i, 4, "KokusaiModel 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 4, "KokusaiModel 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 
 					if (isNull(item.primary)) {
-						AUIGrid.showToastMessage(myGridID, i, 11, "첨부파일을 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 11, "첨부파일을 선택하세요.");
 						return false;
 					}
 				}
 
-				// 수정행
 				for (let i = 0; i < editRows.length; i++) {
 					const item = editRows[i];
-
+					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
 					if (item.lotNo === 0) {
-						AUIGrid.showToastMessage(myGridID, i, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
 						return false;
 					}
 
 					if (isNull(item.code)) {
-						AUIGrid.showToastMessage(myGridID, i, 1, "중간코드의 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "중간코드의 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 
 					if (isNull(item.keNumber)) {
-						AUIGrid.showToastMessage(myGridID, i, 2, "부품번호의 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 2, "부품번호의 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 
 					if (isNull(item.name)) {
-						AUIGrid.showToastMessage(myGridID, i, 3, "부품명 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 3, "부품명 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 
 					if (isNull(item.model)) {
-						AUIGrid.showToastMessage(myGridID, i, 4, "KokusaiModel 값은 공백을 입력 할 수 없습니다.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 4, "KokusaiModel 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 
 					if (isNull(item.primary)) {
-						AUIGrid.showToastMessage(myGridID, i, 11, "첨부파일을 선택하세요.");
+						AUIGrid.showToastMessage(myGridID, rowIndex, 11, "첨부파일을 선택하세요.");
 						return false;
 					}
 				}
@@ -579,19 +563,28 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				});
 			}
 
-			// 행 추가
 			function addRow() {
+				const sessionName = document.getElementById("sessionName").value;
+				const time = document.getElementById("time").value;
 				const item = {
 					latest : true,
+					creator : sessionName,
+					modifier : sessionName,
+					state : "작업중",
+					version : 1
 				};
 				AUIGrid.addRow(myGridID, item, "first");
 			}
 
-			// 행 삭제
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
+					const item = checkedItems[i].item;
 					const rowIndex = checkedItems[i].rowIndex;
+					if (!checker(sessionId, item.creatorId) || !checker(sessionId, item.modifierId)) {
+						alert(rowIndex + "행 데이터의 작성자 혹은 수정자가 아닙니다.");
+						return false;
+					}
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
 			}
@@ -620,8 +613,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					const state = checkedItems[i].state;
 
 					if (state !== "승인됨") {
-						alert("승인되지 않은 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
-						return false;
+						// 						alert("승인되지 않은 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
+						// 						return false;
 					}
 
 					if (!latest) {
@@ -634,7 +627,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						return false;
 					}
 				}
-				console.log(checkedItems);
 				const url = getCallUrl("/kePart/revise");
 				const panel = popup(url, 1600, 550);
 				panel.list = checkedItems;
@@ -642,32 +634,34 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function exportExcel() {
 				const exceptColumnFields = [ "button", "primary" ];
-				exportToExcel("KE 부품 리스트", "KE 부품", "KE 부품 리스트", exceptColumnFields, "<%=sessionUser.getFullName()%>	");
+				const sessionName = document.getElementById("sessionName").value;
+				exportToExcel("KE 부품 리스트", "KE 부품", "KE 부품 리스트", exceptColumnFields, sessionName);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
-				// DOM이 로드된 후 실행할 코드 작성
 				const columns = loadColumnLayout("kePart-list");
-				// 컨텍스트 메뉴 시작
-				const contenxtHeader = genColumnHtml(columns); // see auigrid.js
+				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+				selectbox("state");
+				finderUser("creator");
+				twindate("created");
+				finderUser("modifier");
+				twindate("modified");
 				selectbox("psize");
 			});
 
 			document.addEventListener("keydown", function(event) {
-				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();
 				}
 			})
 
-			// 컨텍스트 메뉴 숨기기
 			document.addEventListener("click", function(event) {
 				hideContextMenu();
 			})

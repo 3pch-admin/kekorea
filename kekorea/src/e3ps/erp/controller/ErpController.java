@@ -25,7 +25,7 @@ import wt.session.SessionHelper;
 public class ErpController extends BaseController {
 
 	@Description(value = "ERP 로그 리스트 페이지")
-	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("/jsp/erp/erp-list.jsp");
@@ -43,6 +43,23 @@ public class ErpController extends BaseController {
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("partNo", partNo);
 				params.put("quantity", quantity);
+			}
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+
+	@Description(value = "부품 일괄 등록시 ERP 조회 해서 데이터 가져오기")
+	@GetMapping(value = "/bundleGetErpData")
+	@ResponseBody
+	public Map<String, Object> bundleGetErpData(@RequestParam String spec) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			if (ErpHelper.isOperation) {
+				result = ErpHelper.manager.bundleGetErpData(spec);
 			}
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

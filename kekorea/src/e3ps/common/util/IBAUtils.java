@@ -220,7 +220,7 @@ public class IBAUtils {
 		return map;
 	}
 
-	public static void createIBA(IBAHolder holder, String type, String attrName, String value) throws Exception {
+	public static void createIBA(IBAHolder holder, String type, String attrName, Object value) throws Exception {
 		if (value == null) {
 			return;
 		}
@@ -231,7 +231,7 @@ public class IBAUtils {
 			if (sd == null) {
 				return;
 			}
-			sv.setValue(value);
+			sv.setValue((String) value);
 			sv.setDefinitionReference((StringDefinitionReference) sd.getAttributeDefinitionReference());
 			sv.setIBAHolderReference(IBAHolderReference.newIBAHolderReference(holder));
 			sv = (StringValue) PersistenceHelper.manager.save(sv);
@@ -241,7 +241,7 @@ public class IBAUtils {
 			if (bd == null) {
 				return;
 			}
-			bv.setValue(Boolean.parseBoolean(value));
+			bv.setValue((boolean) value);
 			bv.setDefinitionReference((BooleanDefinitionReference) bd.getAttributeDefinitionReference());
 			bv.setIBAHolderReference(IBAHolderReference.newIBAHolderReference(holder));
 			bv = (BooleanValue) PersistenceHelper.manager.save(bv);
@@ -251,7 +251,7 @@ public class IBAUtils {
 			if (id == null) {
 				return;
 			}
-			iv.setValue(Integer.parseInt(value));
+			iv.setValue((int) value);
 			iv.setDefinitionReference((IntegerDefinitionReference) id.getAttributeDefinitionReference());
 			iv.setIBAHolderReference(IBAHolderReference.newIBAHolderReference(holder));
 			iv = (IntegerValue) PersistenceHelper.manager.save(iv);

@@ -28,6 +28,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
+
 		<table class="search-table">
 			<colgroup>
 				<col width="100">
@@ -113,24 +114,40 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<th>기계 담당자</th>
 				<td class="indent5">
 					<input type="text" name="machine" id="machine">
+					<input type="hidden" name="machineOid" id="machineOid">
 				</td>
 				<th>전기 담당자</th>
 				<td class="indent5">
 					<input type="text" name="elec" id="elec">
+					<input type="hidden" name="elecOid" id="elecOid">
 				</td>
 				<th>SW 담당자</th>
 				<td class="indent5">
 					<input type="text" name="soft" id="soft">
+					<input type="hidden" name="softOid" id="softOid">
 				</td>
 			</tr>
 			<tr>
 				<th>막종</th>
 				<td class="indent5">
-					<input type="text" name="mak_name" id="mak_name">
+					<select name="mak_name" id="mak_name" class="width-200">
+						<option value="">선택</option>
+						<%
+						for (Map<String, String> map : maks) {
+							String oid = map.get("key");
+							String name = map.get("value");
+						%>
+						<option value="<%=oid%>"><%=name%></option>
+						<%
+						}
+						%>
+					</select>
 				</td>
 				<th>막종상세</th>
 				<td class="indent5">
-					<input type="text" name="detail_name" id="detail_name">
+					<select name="detail_name" id="detail_name" class="width-200">
+						<option value="">선택</option>
+					</select>
 				</td>
 				<th>템플릿</th>
 				<td class="indent5">
@@ -442,11 +459,41 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const params = new Object();
 				const url = getCallUrl("/project/list");
 				const kekNumber = document.getElementById("kekNumber").value;
+				const keNumber = document.getElementById("keNumber").value;
+				const pdateFrom = document.getElementById("pdateFrom").value;
+				const pdateTo = document.getElementById("pdateTo").value;
+				const userId = document.getElementById("userId").value;
+				const kekState = document.getElementById("kekState").value;
+				const model = document.getElementById("model").value;
+				const customer_name = document.getElementById("customer_name").value;
+				const install_name = document.getElementById("install_name").value;
+				const projectType = document.getElementById("projectType").value;
+				const machineOid = document.getElementById("machineOid").value;
+				const elecOid = document.getElementById("elecOid").value;
+				const softOid = document.getElementById("softOid").value;
+				const mak_name = document.getElementById("mak_name").value;
+				const detail_name = document.getElementById("detail_name").value;
+				const template = document.getElementById("template").value;
 				const description = document.getElementById("description").value;
+				const psize = document.getElementById("psize").value;
 				params.kekNumber = kekNumber;
+				params.keNumber = keNumber;
+				params.pdateFrom = pdateFrom;
+				params.pdateTo = pdateTo;
+				params.userId = userId;
+				params.kekState = kekState;
+				params.model = model;
+				params.customer_name = customer_name;
+				params.install_name = install_name;
+				params.projectType = projectType;
+				params.machineOid = machineOid;
+				params.elecOid = elecOid;
+				params.softOid = softOid;
+				params.mak_name = mak_name;
+				params.detail_name = detail_name;
+				params.template = template;
 				params.description = description;
-				params.projectType = document.getElementById("projectType").value;
-				params.psize = document.getElementById("psize").value;
+				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -473,21 +520,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				selectbox("kekState");
-				selectbox("install_name");
-				selectbox("projectType");
-				selectbox("template");
-				selectbox("psize");
-				finderUser("soft");
-				finderUser("elec");
-				finderUser("machine");
 				twindate("pdate");
-
+				selectbox("kekState");
 				$("#customer_name").bindSelect({
 					onchange : function() {
 						const oid = this.optionValue;
 						$("#install_name").bindSelect({
-							ajaxUrl : getCallUrl("/commonCode/getChildrensByOid?parentOid=" + oid),
+							ajaxUrl : getCallUrl("/commonCode/getChildrens?parentOid=" + oid),
 							reserveKeys : {
 								options : "list",
 								optionValue : "value",
@@ -498,6 +537,29 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						})
 					}
 				})
+				selectbox("install_name");
+				selectbox("projectType");
+				finderUser("machine");
+				finderUser("elec");
+				finderUser("soft");
+				$("#mak_name").bindSelect({
+					onchange : function() {
+						const oid = this.optionValue;
+						$("#detail_name").bindSelect({
+							ajaxUrl : getCallUrl("/commonCode/getChildrens?parentOid=" + oid),
+							reserveKeys : {
+								options : "list",
+								optionValue : "value",
+								optionText : "name"
+							},
+							setValue : this.optionValue,
+							alwaysOnChange : true,
+						})
+					}
+				})
+				selectbox("detail_name");
+				selectbox("template");
+				selectbox("psize");
 			});
 
 			function create() {

@@ -15,6 +15,11 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 <%@include file="/extcore/include/script.jsp"%>
 <%@include file="/extcore/include/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
+<style type="text/css">
+.preView {
+	background-color: #caf4fd;
+}
+</style>
 </head>
 <body>
 	<form>
@@ -47,6 +52,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				<th>작성자</th>
 				<td class="indent5">
 					<input type="text" name="creator" id="creator" class="width-200">
+					<input type="hidden" name="creatorOid" id="creatorOid">
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
@@ -84,6 +90,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				<th>수정자</th>
 				<td class="indent5">
 					<input type="text" name="modifier" id="modifier" class="width-200">
+					<input type="text" name="modifierOid" id="modifierOid">
 				</td>
 				<th>수정일</th>
 				<td class="indent5">
@@ -269,6 +276,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					headerText : "미리보기",
 					width : 80,
 					editable : false,
+					style : "preView",
 					renderer : {
 						type : "ImageRenderer",
 						altField : null,
@@ -307,7 +315,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 							recentGridItem = item;
 							const _$uid = item._$uid;
 							const url = getCallUrl("/aui/primary?oid=" + _$uid + "&method=attach");
-							popup(url, 1000, 200);
+							popup(url, 1000, 300);
 						}
 					},
 					filter : {
@@ -397,11 +405,27 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/keDrawing/list");
-				const psize = document.getElementById("psize").value;
+				const name = document.getElementById("name").value;
 				const lotNo = Number(document.getElementById("lotNo").value);
+				const creatorOid = document.getElementById("creatorOid").value;
+				const createdFrom = document.getElementById("createdFrom").value;
+				const createdTo = document.getElementById("createdTo").value;
+				const keNumber = document.getElementById("keNumber").value;
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
-				params.latest = latest;
+				const modifierOid = document.getElementById("modifierOid").value;
+				const modifiedFrom = document.getElementById("modifiedFrom").value;
+				const modifiedTo = document.getElementById("modifiedTo").value;
+				const psize = document.getElementById("psize").value;
+				params.name = name;
 				params.lotNo = lotNo;
+				params.creatorOid = creatorOid;
+				params.createdFrom = createdFrom;
+				params.createdTo = createdTo;
+				params.keNumber = keNumber;
+				params.latest = latest;
+				params.modifierOid = modifierOid;
+				params.modifiedFrom = modifiedFrom;
+				params.modifiedTo = modifiedTo;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -466,7 +490,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					alert("도면파일의 버전 자리수를 확인해주세요. 등록가능한 버전의 자리수는 3자리여야 합니다.");
 					return false;
 				}
-				
+
 				const template = "<img src='" + data.icon + "' style='position: relative; top: 2px;'>";
 				AUIGrid.updateRowsById(myGridID, {
 					_$uid : recentGridItem._$uid,
@@ -489,7 +513,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					alert("변경된 내용이 없습니다.");
 					return false;
 				}
-				
+
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
 					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
@@ -585,8 +609,8 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 				finderUser("creator");
-				finderUser("modifier");
 				twindate("created");
+				finderUser("modifier");
 				twindate("modified");
 				selectbox("psize");
 			});
