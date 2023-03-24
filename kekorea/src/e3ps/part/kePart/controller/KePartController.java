@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import e3ps.part.kePart.beans.KePartDTO;
@@ -177,6 +178,10 @@ public class KePartController extends BaseController {
 		KePart kePart = (KePart) CommonUtils.getObject(oid);
 		KePartDTO dto = new KePartDTO(kePart);
 		String[] primarys = ContentUtils.getPrimary(dto.getOid());
+		JSONArray list = KePartHelper.manager.history(kePart.getMaster());
+		JSONArray data = KePartHelper.manager.jsonArrayAui(oid);
+		model.addObject("data", data);
+		model.addObject("list", list);
 		model.addObject("primarys", primarys);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/part/kePart/kePart-view");
