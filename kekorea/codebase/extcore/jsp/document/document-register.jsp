@@ -81,10 +81,10 @@
 				// 					}
 				// 				})
 			}
-
+			
 			document.addEventListener("DOMContentLoaded", function() {
 				_createAUIGrid(_columns);
-				_createAUIGrid_(_columns_); // 결재
+				_createAUIGrid_(_columns_); 
 			});
 
 			window.addEventListener("resize", function() {

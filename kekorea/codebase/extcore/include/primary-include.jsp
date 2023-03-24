@@ -9,6 +9,7 @@
 <%
 String oid = request.getParameter("oid");
 String mode = StringUtils.getParameter(request.getParameter("mode"), "create");
+String height = StringUtils.getParameter(request.getParameter("height"), "150");
 %>
 
 <%
@@ -16,7 +17,7 @@ String mode = StringUtils.getParameter(request.getParameter("mode"), "create");
 if ("create".equals(mode)) {
 %>
 <div class="AXUpload5" id="primary_layer"></div>
-<div class="AXUpload5QueueBox_list" id="uploadQueueBox"></div>
+<div class="AXUpload5QueueBox_list" id="uploadQueueBox" style="height: <%=height%>px;"></div>
 <script type="text/javascript">
 	let primary = new AXUpload5();
 	function load() {

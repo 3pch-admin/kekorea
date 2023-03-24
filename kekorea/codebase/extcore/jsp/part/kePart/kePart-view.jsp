@@ -475,8 +475,8 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
-					const _isCreated = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated_ && _isCreated) {
+					const _isCreated = AUIGrid.isCreated(_myGridID);
+					if (_isCreated) {
 						AUIGrid.resize(_myGridID);
 					} else {
 						_createAUIGrid(_columns);

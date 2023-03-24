@@ -8,9 +8,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 String oid = request.getParameter("oid");
+String height = StringUtils.replaceToValue(request.getParameter("height"), "150");
 %>
 <div class="AXUpload5" id="secondary_layer"></div>
-<div class="AXUpload5QueueBox_list" id="uploadQueueBox"></div>
+<div class="AXUpload5QueueBox_list" id="uploadQueueBox" style="<%=height%>px;"></div>
 <script type="text/javascript">
 	let secondary = new AXUpload5();
 	function load() {

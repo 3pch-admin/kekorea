@@ -120,12 +120,14 @@ public class RequestDocumentController extends BaseController {
 		JSONArray maks = CommonCodeHelper.manager.parseJson("MAK");
 		JSONArray customers = CommonCodeHelper.manager.parseJson("CUSTOMER");
 		JSONArray installs = CommonCodeHelper.manager.parseJson("INSTALL");
+		JSONArray projectTypes = CommonCodeHelper.manager.parseJson("PROJECT_TYPE");
 		model.addObject("maks", maks);
 		model.addObject("installs", installs);
 		model.addObject("customers", customers);
 		model.addObject("elecs", elecs);
 		model.addObject("softs", softs);
 		model.addObject("machines", machines);
+		model.addObject("projectTypes", projectTypes);
 		model.addObject("list", list);
 		model.setViewName("popup:/document/request/requestDocument-create");
 		return model;

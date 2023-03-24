@@ -50,6 +50,7 @@ String oid = (String) request.getAttribute("oid");
 									fillColumnSizeMode : true,
 									selectionMode : "multipleCells",
 									displayTreeOpen : true,
+									enableDrop : false,
 								}
 								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 								loadDepartmentTree();
@@ -289,10 +290,29 @@ String oid = (String) request.getAttribute("oid");
 									enableMultipleDrag : true,
 									enableDrop : true,
 									dropToOthers: true,
+									useContextMenu : true,
+									showStateColumn : true,
+									contextMenuItems : [ {
+										label : "선택된 행 삭제",
+										callback : contextItemHandler
+									} ],
 								}
 								_myGridID1 = AUIGrid.create("#agree_wrap", columnLayout, props);
-								AUIGrid.bind(_$myGridID, "dropEndBefore", function (event) {
-									console.log(event.items);
+								AUIGrid.bind(_myGridID1, "dropEndBefore", function (event) {
+									const pids = ["#approval_wrap", "#receive_wrap"];
+									const items = event.items;
+									let copy = true;
+									for(let i=0; i<items.length; i++) {
+										const item = event.items[0]; 
+										for(let k=0; k<pids.length; k++) {
+											const notHave = AUIGrid.isUniqueValue(pids[k], "oid", item.oid); 
+											if (!notHave) {
+												copy = false;
+												break;
+											}
+										}
+									}
+									return copy;
 								});
 							}
 
@@ -361,23 +381,26 @@ String oid = (String) request.getAttribute("oid");
 									enableMultipleDrag : true,
 									enableDrop : true,
 									dropToOthers: true,
+									useContextMenu : true,
+									showStateColumn : true,
+									contextMenuItems : [ {
+										label : "선택된 행 삭제",
+										callback : contextItemHandler
+									} ],
 								}
 								_myGridID2 = AUIGrid.create("#approval_wrap", columnLayout, props);
 								AUIGrid.bind(_myGridID2, "dropEndBefore", function (event) {
-									if (event.items.length == 0) {
-										return false;
-									}
-									event.isMoveMode = false;
-									
-									const pidToDrop = event.pidToDrop;
+									const pids = ["#agree_wrap", "#receive_wrap"];
 									const items = event.items;
 									let copy = true;
 									for(let i=0; i<items.length; i++) {
 										const item = event.items[0]; 
-										const notHave = AUIGrid.isUniqueValue(pidToDrop, "oid", item.oid); 
-										if (!notHave) {
-											copy = false;
-											break;
+										for(let k=0; k<pids.length; k++) {
+											const notHave = AUIGrid.isUniqueValue(pids[k], "oid", item.oid); 
+											if (!notHave) {
+												copy = false;
+												break;
+											}
 										}
 									}
 									return copy;
@@ -450,23 +473,26 @@ String oid = (String) request.getAttribute("oid");
 									enableMultipleDrag : true,
 									enableDrop : true,
 									dropToOthers: true,
+									useContextMenu : true,
+									showStateColumn : true,
+									contextMenuItems : [ {
+										label : "선택된 행 삭제",
+										callback : contextItemHandler
+									} ],
 								}
 								_myGridID3 = AUIGrid.create("#receive_wrap", columnLayout, props);
 								AUIGrid.bind(_myGridID3, "dropEndBefore", function (event) {
-									if (event.items.length == 0) {
-										return false;
-									}
-									event.isMoveMode = false;
-									
-									const pidToDrop = event.pidToDrop;
+									const pids = ["#agree_wrap", "#approval_wrap"];
 									const items = event.items;
 									let copy = true;
 									for(let i=0; i<items.length; i++) {
 										const item = event.items[0]; 
-										const notHave = AUIGrid.isUniqueValue(pidToDrop, "oid", item.oid); 
-										if (!notHave) {
-											copy = false;
-											break;
+										for(let k=0; k<pids.length; k++) {
+											const notHave = AUIGrid.isUniqueValue(pids[k], "oid", item.oid); 
+											if (!notHave) {
+												copy = false;
+												break;
+											}
 										}
 									}
 									return copy;
@@ -490,6 +516,20 @@ String oid = (String) request.getAttribute("oid");
 </table>
 
 <script type="text/javascript">
+
+function contextItemHandler(event) {
+	const item = new Object();
+	switch (event.contextIndex) {
+	case 0:
+		const selectedItems = AUIGrid.getSelectedItems(event.pid);
+		for (let i = selectedItems.length - 1; i >= 0; i--) {
+			const rowIndex = selectedItems[i].rowIndex;
+			AUIGrid.removeRow(event.pid, rowIndex);
+		}
+		break;
+	}
+}
+
 function moveRow() {
 	const radioGroup = document.getElementsByName("lineType");
 	let selectedValue;
@@ -511,6 +551,12 @@ function moveRow() {
 		for(let i=0; i<rows.length; i++) {
 			const oid = rows[i].oid;
 			const name = rows[i].name;
+			const isUnique1 = AUIGrid.isUniqueValue(_myGridID1, "oid", oid);
+			if(!isUnique1) {
+				alert("검토라인에 이미 등록된 사용자(" + name + ")입니다.");
+				return false;
+			}
+			
 			const isUnique2 = AUIGrid.isUniqueValue(_myGridID2, "oid", oid);
 			if(!isUnique2) {
 				alert("결재라인에 이미 등록된 사용자(" + name + ")입니다.");
@@ -532,7 +578,13 @@ function moveRow() {
 			const name = rows[i].name;
 			const isUnique1 = AUIGrid.isUniqueValue(_myGridID1, "oid", oid);
 			if(!isUnique1) {
-				alert("검토라인 이미 등록된 사용자(" + name + ")입니다.");
+				alert("검토라인에 이미 등록된 사용자(" + name + ")입니다.");
+				return false;
+			}
+			
+			const isUnique2 = AUIGrid.isUniqueValue(_myGridID2, "oid", oid);
+			if(!isUnique2) {
+				alert("결재라인에 이미 등록된 사용자(" + name + ")입니다.");
 				return false;
 			}
 			
@@ -551,13 +603,19 @@ function moveRow() {
 			const name = rows[i].name;
 			const isUnique1 = AUIGrid.isUniqueValue(_myGridID1, "oid", oid);
 			if(!isUnique1) {
-				alert("검토라인 이미 등록된 사용자(" + name + ")입니다.");
+				alert("검토라인에 이미 등록된 사용자(" + name + ")입니다.");
 				return false;
 			}
 			
 			const isUnique2 = AUIGrid.isUniqueValue(_myGridID2, "oid", oid);
 			if(!isUnique2) {
 				alert("결재라인에 이미 등록된 사용자(" + name + ")입니다.");
+				return false;
+			}
+			
+			const isUnique3 = AUIGrid.isUniqueValue(_myGridID3, "oid", oid);
+			if(!isUnique3) {
+				alert("수신라인에 이미 등록된 사용자(" + name + ")입니다.");
 				return false;
 			}
 		}
@@ -587,10 +645,10 @@ function deleteRow() {
 }
 
 function register() {
-	const rows1 = AUIGrid.getGridData(_myGridID1);
-	const rows2 = AUIGrid.getGridData(_myGridID2);
-	const rows3 = AUIGrid.getGridData(_myGridID3);
-	opener.setLine(rows1, rows2, rows3);
+	const agree = AUIGrid.getGridData(_myGridID1);
+	const approval = AUIGrid.getGridData(_myGridID2);
+	const receive = AUIGrid.getGridData(_myGridID3);
+	opener.setLine(agree, approval, receive);
 	self.close();
 }
 </script>
