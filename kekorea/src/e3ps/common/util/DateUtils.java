@@ -18,9 +18,9 @@ public class DateUtils {
 	private static SimpleDateFormat defaultTimeFormat = null;
 
 	static {
-		dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-		dateEndFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		defaultDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		dateEndFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		defaultDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		defaultTimeFormat = new SimpleDateFormat("HH:mm:ss");
 
 		try {
@@ -67,9 +67,11 @@ public class DateUtils {
 		return time.toString().substring(0, 10);
 	}
 
+	/**
+	 * 날짜 차이로 기간 구하는 함수
+	 */
 	public static int getDuration(Timestamp start, Timestamp end) {
-
-		if (StringUtils.isNull(start) || StringUtils.isNull(end)) {
+		if (start == null || end == null) {
 			return 1;
 		}
 
@@ -100,7 +102,7 @@ public class DateUtils {
 
 	public static String getDateString(Date date, String type) {
 		String param = "";
-		if (StringUtils.isNull(date)) {
+		if (date == null) {
 			return param;
 		}
 
@@ -150,7 +152,6 @@ public class DateUtils {
 		if (StringUtils.isNull(str)) {
 			return null;
 		}
-		str = str.trim().replaceAll("-", "/");
 		Date date = dateFormat.parse(str + " 12:59:59", new ParsePosition(0));
 		Timestamp convertDate = new Timestamp(date.getTime());
 		return convertDate;
@@ -159,7 +160,6 @@ public class DateUtils {
 	public static Timestamp convertStartDate(String str) {
 		if (str == null || str.length() == 0)
 			return null;
-		str = str.trim().replaceAll("-", "/");
 		Date date = dateFormat.parse(str, new ParsePosition(0));
 		Timestamp startDate = new Timestamp(date.getTime());
 		return startDate;
@@ -168,7 +168,6 @@ public class DateUtils {
 	public static Timestamp convertEndDate(String str) {
 		if (str == null || str.length() == 0)
 			return null;
-		str = str.trim().replaceAll("-", "/");
 		Date date = dateEndFormat.parse(str + " 23:59:59", new ParsePosition(0));
 		Timestamp endDate = new Timestamp(date.getTime());
 		return endDate;
@@ -201,8 +200,11 @@ public class DateUtils {
 		return new Timestamp(currentDate.getTime());
 	}
 
+	/**
+	 * 휴일포함 기간구하는 함수
+	 */
 	public static int getPlanDurationHoliday(Timestamp planStart, Timestamp planEnd) {
-		if (StringUtils.isNull(planStart) || StringUtils.isNull(planEnd)) {
+		if (planStart == null || planEnd == null) {
 			return 1;
 		}
 		int duration = DateUtils.getDuration(new Date(planStart.getTime()), new Date(planEnd.getTime()));
@@ -257,7 +259,7 @@ public class DateUtils {
 
 	public static String getTodayString(int index) throws Exception {
 		Timestamp today = new Timestamp(new Date().getTime());
-		String s = today.toString().substring(0, index).replaceAll("-", "");
+		String s = today.toString().substring(0, index);
 		return s;
 	}
 

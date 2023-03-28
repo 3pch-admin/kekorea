@@ -1,333 +1,340 @@
-<%@page import="e3ps.bom.partlist.dto.PartListDTO"%>
 <%@page import="org.json.JSONArray"%>
+<%@page import="e3ps.bom.partlist.dto.PartListDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 JSONArray data = (JSONArray) request.getAttribute("data");
-PartListDTO dto = (PartListDTO) request.getAttribute("dto");
+String oid = (String) request.getAttribute("oid");
+String _oid = (String) request.getAttribute("_oid");
 %>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<style>
-.my-row-style {
-background-color: #e1ffe1;}
+<style type="text/css">
+.compare {
+	background-color: yellow;
+	color: red;
+	font-weight: bold;
+}
 </style>
-<!-- hidden -->
-<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
-<input type="hidden" name="compare" id="compare">
-<!-- 검색 테이블 -->
-<table class="search-table">
-	<colgroup>
-		<col width="130">
-		<col width="800">
-		<col width="130">
-		<col width="800">
-	</colgroup>
-	<tr>
-		<th>기준수배표</th>
-		<td>
-			<input type="text" class="AXInput width-500" readonly="readonly" value="<%=dto.getName()%>">
-		</td>
-		<th>비교수배표</th>
-		<td>
-			<input type="text" name="comp" id="comp" class="AXInput width-500" readonly="readonly" onclick="opener();">
-		</td>
-	</tr>
-</table>
-
+<input type="hidden" name="oid" id="oid" value="<%=oid%>">
+<input type="hidden" name="_oid" id="_oid" value="<%=_oid%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<input type="button" value="수량비교" title="수량비교" onclick="_compare('quantity');">
-			<input type="button" value="비교" title="비교" class="red" onclick="_compare('');">
+			<div class="pretty p-default p-curve">
+				<input type="radio" name="compareKey" value="lotNo+partNo" checked="checked">
+				<div class="state p-danger-o">
+					<label>LOT+부품번호</label>
+				</div>
+			</div>
+			<div class="pretty p-default p-curve">
+				<input type="radio" name="compareKey" value="lotNo+partNo+quantity">
+				<div class="state p-danger-o">
+					<label>LOT+부품번호+수량</label>
+				</div>
+			</div>
 		</td>
 		<td class="right">
+			<select name="sort" id="sort" class="width-100">
+				<option value="">선택</option>
+				<option value="sort">생성순</option>
+				<option value="partNo">부품번호</option>
+				<option value="lotNo">LOT</option>
+			</select>
+			<input type="button" value="비교" title="비교" class="red" onclick="_compare('');">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
 </table>
 
-<!-- 그리드 리스트 -->
-<table class="tb-none">
-	<colgroup>
-		<col width="50%">
-		<col width="50%">
-	</colgroup>
-	<tr>
-		<td>
-			<div id="grid_wrap" style="height: 500px; border-top: 1px solid #3180c3;"></div>
-		</td>
-		<td>
-			<div id="_grid_wrap" style="height: 500px; border-top: 1px solid #3180c3;"></div>
-		</td>
-</table>
+
+<div id="grid_wrap" style="height: 800px; border-top: 1px solid #3180c3;"></div>
 <script type="text/javascript">
 	let myGridID;
-	let _myGridID;
 	const data =
 <%=data%>
 	const columns = [ {
-		dataField : "lotNo",
-		headerText : "LOT_NO",
+		dataField : "lotNo1",
+		headerText : "LOT1",
 		dataType : "string",
 		width : 80,
-		filter : {
-			showIcon : true,
-			inline : true
-		},
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const lotNo2 = item.lotNo2;
+			if (value !== lotNo2) {
+				return "compare";
+			}
+			return "";
+		}
+	}, {
+		dataField : "lotNo2",
+		headerText : "LOT2",
+		dataType : "string",
+		width : 80,
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const lotNo1 = item.lotNo1;
+			if (value !== lotNo1) {
+				return "compare";
+			}
+			return "";
+		}
 	}, {
 		dataField : "unitName",
 		headerText : "UNIT NAME",
 		dataType : "string",
 		width : 120,
-		filter : {
-			showIcon : true,
-			inline : true
-		},
 	}, {
-		dataField : "partNo",
-		headerText : "부품번호",
+		dataField : "partNo1",
+		headerText : "부품번호1",
 		dataType : "string",
-		style : "underline",
-		width : 130,
-		filter : {
-			showIcon : true,
-			inline : true
-		},
+		width : 100,
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const partNo2 = item.partNo2;
+			if (value !== partNo2) {
+				return "compare";
+			}
+			return "";
+		}
+	}, {
+		dataField : "partNo2",
+		headerText : "부품번호2",
+		dataType : "string",
+		width : 100,
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const partNo1 = item.partNo1;
+			if (value !== partNo1) {
+				return "compare";
+			}
+			return "";
+		}
 	}, {
 		dataField : "partName",
 		headerText : "부품명",
 		dataType : "string",
 		width : 200,
-		filter : {
-			showIcon : true,
-			inline : true
-		},
-	}, {
-		dataField : "quantity",
-		headerText : "수량",
-		dataType : "numeric",
-		width : 60,
-		postfix : "개",
-		filter : {
-			showIcon : true,
-			inline : true
-		},
 	}, {
 		dataField : "standard",
 		headerText : "규격",
 		dataType : "string",
 		width : 250,
-		filter : {
-			showIcon : true,
-			inline : true
-		},
 	}, {
 		dataField : "maker",
 		headerText : "MAKER",
 		dataType : "string",
 		width : 130,
-		filter : {
-			showIcon : true,
-			inline : true
-		},
 	}, {
 		dataField : "customer",
 		headerText : "거래처",
 		dataType : "string",
 		width : 130,
-		filter : {
-			showIcon : true,
-			inline : true
-		},
+	}, {
+		dataField : "quantity1",
+		headerText : "수량1",
+		dataType : "numeric",
+		width : 60,
+		postfix : "개",
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const quantity2 = item.quantity2;
+			if (value !== quantity2) {
+				return "compare";
+			}
+			return "";
+		}
+	}, {
+		dataField : "quantity2",
+		headerText : "수량2",
+		dataType : "numeric",
+		width : 60,
+		postfix : "개",
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const quantity1 = item.quantity1;
+			if (value !== quantity1) {
+				return "compare";
+			}
+			return "";
+		}
 	}, {
 		dataField : "unit",
 		headerText : "단위",
 		dataType : "string",
 		width : 80,
-		filter : {
-			showIcon : true,
-			inline : true
-		},
 	}, {
 		dataField : "price",
 		headerText : "단가",
 		dataType : "numeric",
 		width : 120,
-		filter : {
-			showIcon : false,
-			inline : false
-		},
+		postfix : "원"
 	}, {
 		dataField : "currency",
 		headerText : "화폐",
 		dataType : "string",
 		width : 60,
-		filter : {
-			showIcon : true,
-			inline : true
-		},
 	}, {
-		dataField : "won",
-		headerText : "원화금액",
+		dataField : "won1",
+		headerText : "원화금액1",
 		dataType : "numeric",
 		width : 120,
-		filter : {
-			showIcon : false,
-			inline : false
-		},
+		postfix : "원",
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const won2 = item.won2;
+			if (value !== won2) {
+				return "compare";
+			}
+			return "";
+		}
 	}, {
-		dataField : "partListDate",
+		dataField : "won2",
+		headerText : "원화금액2",
+		dataType : "numeric",
+		width : 120,
+		postfix : "원",
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const won1 = item.won1;
+			if (value !== won1) {
+				return "compare";
+			}
+			return "";
+		}
+	}, {
+		dataField : "partListDate_txt",
 		headerText : "수배일자",
 		dataType : "date",
 		formatString : "yyyy-mm-dd",
 		width : 100,
-		filter : {
-			showIcon : true,
-			inline : true
-		},
 	}, {
 		dataField : "exchangeRate",
 		headerText : "환율",
 		dataType : "numeric",
 		width : 80,
-		formatString : "#,##0.0000",
-		filter : {
-			showIcon : false,
-			inline : false
-		},
+		formatString : "#,##0.0000"
 	}, {
 		dataField : "referDrawing",
 		headerText : "참고도면",
 		dataType : "string",
 		width : 120,
-		filter : {
-			showIcon : true,
-			inline : true
-		},
 	}, {
 		dataField : "classification",
 		headerText : "조달구분",
 		dataType : "string",
 		width : 120,
-		filter : {
-			showIcon : true,
-			inline : true
-		},
 	}, {
 		dataField : "note",
 		headerText : "비고",
 		dataType : "string",
-		width : 250,
-		filter : {
-			showIcon : true,
-			inline : true
+	} ]
+
+	const footerLayout = [ {
+		labelText : "∑",
+		positionField : "#base",
+	}, {
+		dataField : "lotNo1",
+		positionField : "lotNo1",
+		style : "right",
+		colSpan : 9,
+		labelFunction : function(value, columnValues, footerValues) {
+			return "수배표 수량 합계";
+		}
+	}, {
+		dataField : "quantity1",
+		positionField : "quantity1",
+		operation : "SUM",
+		dataType : "numeric",
+		postfix : "개"
+	}, {
+		dataField : "quantity2",
+		positionField : "quantity2",
+		operation : "SUM",
+		dataType : "numeric",
+		postfix : "개"
+	}, {
+		dataField : "unit",
+		positionField : "unit",
+		dataType : "numeric",
+		postfix : "개",
+		labelFunction : function(value, columnValues, footerValues) {
+			return footerValues[2] - footerValues[3];
 		},
-	} ];
+	}, {
+		dataField : "price",
+		positionField : "price",
+		style : "right",
+		colSpan : 2,
+		labelFunction : function(value, columnValues, footerValues) {
+			return "수배표 수량 합계 금액";
+		}
+	}, {
+		dataField : "won1",
+		positionField : "won1",
+		operation : "SUM",
+		dataType : "numeric",
+		formatString : "#,##0",
+		postfix : "원"
+	}, {
+		dataField : "won2",
+		positionField : "won2",
+		operation : "SUM",
+		dataType : "numeric",
+		formatString : "#,##0",
+		postfix : "원"
+	}, {
+		dataField : "partListDate_txt",
+		positionField : "partListDate_txt",
+		dataType : "numeric",
+		formatString : "#,##0",
+		labelFunction : function(value, columnValues, footerValues) {
+			console.log(footerValues);
+			return footerValues[6] - footerValues[7];
+		},
+	}, ];
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-			// 그리드 공통속성 시작
-			headerHeight : 30, // 헤더높이
-			rowHeight : 30, // 행 높이
-			showRowNumColumn : true, // 번호 행 출력 여부
-			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-			enableFilter : true, // 필터 사용 여부
-			showInlineFilter : true,
-			// 그리드 공통속성 끝
-			rowStyleFunction : function(rowIndex, item) {
-			}
-		};
-
-		const _props = {
-			// 그리드 공통속성 시작
-			headerHeight : 30, // 헤더높이
-			rowHeight : 30, // 행 높이
-			showRowNumColumn : true, // 번호 행 출력 여부
-			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-			enableFilter : true, // 필터 사용 여부
-			showInlineFilter : true,
-			// 그리드 공통속성 끝
-			rowStyleFunction : function(rowIndex, item) {
-				// 다른쪽 그리드의 동일한 행 아이템 얻기
-// 				var _item = AUIGrid.getItemByRowIndex(myGridID, rowIndex); // 왼쪽
-// 				if (!_item) {
-// 					return;
-// 				}
-
-// 				// 그리드1의 country 와 그리드2의 country 값이 다르면 my-row-style CSS 클래스 적용
-// 				if (_item.quantity != item.quantity) {
-// 					return "my-row-style";
-// 				}
-			}
-		};
+			headerHeight : 30,
+			rowHeight : 30,
+			showRowNumColumn : true,
+			rowNumHeaderText : "번호",
+			displayTreeOpen : true,
+			enableSorting : false,
+			showFooter : true,
+			footerPosition : "top",
+		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-		_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, _props);
-
-		// H스크롤 체인지 핸들러.
-		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-			AUIGrid.setHScrollPositionByPx(_myGridID, event.position); // 수평 스크롤 이동 시킴..
-		});
-
-		// V스크롤 체인지 핸들러.
-		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-			AUIGrid.setRowPosition(_myGridID, event.position); // 수평 스크롤 이동 시킴..
-		});
-
-		// H스크롤 체인지 핸들러.
-		AUIGrid.bind(_myGridID, "hScrollChange", function(event) {
-			AUIGrid.setHScrollPositionByPx(myGridID, event.position); // 수평 스크롤 이동 시킴...
-		});
-
-		// V스크롤 체인지 핸들러.
-		AUIGrid.bind(_myGridID, "vScrollChange", function(event) {
-			AUIGrid.setRowPosition(myGridID, event.position); // 수평 스크롤 이동 시킴..
-		});
-
-	}
-	// jquery 삭제를 해가는 쪽으로 한다..
-	document.addEventListener("DOMContentLoaded", function() {
-		// DOM이 로드된 후 실행할 코드 작성
-		createAUIGrid(columns);
+		AUIGrid.setFooter(myGridID, footerLayout);
 		AUIGrid.setGridData(myGridID, data);
-		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID);
-		AUIGrid.setGridData(myGridID,
-<%=data%>
-	);
-	});
-
-	function opener() {
-		const url = getCallUrl("/partlist/popup?method=attach&multi=false");
-		popup(url);
 	}
+</script>
 
-	function attach(data) {
-		const item = data[0].item;
-		const oid = item.oid;
-		document.getElementById("compare").value = oid;
-		document.getElementById("comp").value = item.name;
-	}
+<script type="text/javascript">
+	function _compare() {
+		if (!confirm("선택한 기준으로 데이터를 다시 비교합니다.")) {
+			return false;
+		}
+		
 
-	// 비교
-	function _compare(compareType) {
 		const oid = document.getElementById("oid").value;
-		const _oid = document.getElementById("compare").value;
+		const _oid = document.getElementById("_oid").value;
+		const compareKey = document.querySelector("input[name=compareKey]:checked").value;
+		const sort = document.getElementById("sort").value;
 		const url = getCallUrl("/partlist/compare");
 		const params = new Object();
 		params.oid = oid;
 		params._oid = _oid;
-		params.compareType = compareType;
-		console.log(params);
-		AUIGrid.clearGridData(myGridID);
-		AUIGrid.clearGridData(_myGridID);
+		params.compareKey = compareKey;
+		params.sort = sort;
+		AUIGrid.showAjaxLoader(myGridID);
+		openLayer();
 		call(url, params, function(data) {
-			AUIGrid.setGridData(myGridID, data.dataList);
-			AUIGrid.setGridData(_myGridID, data._dataList);
+			if (data.result) {
+				AUIGrid.removeAjaxLoader(myGridID);
+				AUIGrid.setGridData(myGridID, data.list);
+				closeLayer();
+			}
 		})
 	}
 
+	document.addEventListener("DOMContentLoaded", function() {
+		createAUIGrid(columns);
+		selectbox("sort");
+	})
+
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID);
 	});
 </script>

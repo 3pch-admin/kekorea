@@ -126,8 +126,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "name",
 					headerText : "수배표 제목",
 					dataType : "string",
-					width : 300,
-					style : "aui-left",
+					width : 450,
+					style : "underline",
 					filter : {
 						showIcon : true,
 						inline : true
@@ -329,8 +329,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const dataField = event.dataField;
 				const item = event.item;
 				if (dataField === "name") {
-					const url = getCallUrl("/partlist/view?oid=" + item.oid);
-					popup(url);
+					const url = getCallUrl("/partlist/view?oid=" + item.loid);
+					popup(url, 1700, 800);
 				}
 			}
 
@@ -340,13 +340,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					alert("비교할 수배표를 선택하세요.");
 					return;
 				}
-				if (checkedItems.length > 1) {
-					alert("비교할 수배표를 하나만 선택하세요.");
+				if (checkedItems.length !== 2) {
+					alert("비교할 수배표를 2개 선택하세요.");
 					return;
 				}
-				const loid = checkedItems[0].item.loid;
 				const oid = checkedItems[0].item.oid;
-				const url = getCallUrl("/partlist/compare?loid=" + loid + "&oid=" + oid);
+				const _oid = checkedItems[1].item.oid;
+				const url = getCallUrl("/partlist/compare?oid=" + oid + "&_oid=" + _oid);
 				popup(url);
 			}
 

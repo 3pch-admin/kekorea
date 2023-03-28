@@ -3,6 +3,7 @@ package e3ps.workspace.service;
 import java.util.ArrayList;
 import java.util.Map;
 
+import e3ps.bom.partlist.PartListMaster;
 import e3ps.workspace.ApprovalMaster;
 import wt.fc.Persistable;
 import wt.method.RemoteInterface;
@@ -10,7 +11,7 @@ import wt.util.WTException;
 
 @RemoteInterface
 public interface WorkspaceService {
-	
+
 	/**
 	 * 결재라인 초기화
 	 * 
@@ -28,6 +29,7 @@ public interface WorkspaceService {
 	 * @throws WTException
 	 */
 	public abstract Map<String, Object> initApprovalAction(Map<String, Object> param) throws WTException;
+
 	/**
 	 * 자가 결재
 	 * 
@@ -159,8 +161,7 @@ public interface WorkspaceService {
 	 * @throws WTException
 	 */
 	public abstract Map<String, Object> reassignApproval(Map<String, Object> param) throws WTException;
-	
-	
+
 	/**
 	 * 반려함에서 반려 삭제 처리
 	 * 
@@ -170,5 +171,6 @@ public interface WorkspaceService {
 	 */
 	public abstract Map<String, Object> deleteReturnAction(Map<String, Object> param) throws WTException;
 
-	public abstract void register(Persistable persistable, ArrayList<Map<String, String>> _addRows_) throws Exception;
+	public abstract void register(Persistable persistable, ArrayList<Map<String, String>> agreeRows,
+			ArrayList<Map<String, String>> approvalRows, ArrayList<Map<String, String>> receiveRows) throws Exception;
 }

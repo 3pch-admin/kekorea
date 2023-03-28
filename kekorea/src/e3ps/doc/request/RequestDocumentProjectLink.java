@@ -9,7 +9,7 @@ import wt.util.WTException;
 
 @GenAsBinaryLink(superClass = ObjectToObjectLink.class,
 
-		roleA = @GeneratedRole(name = "request", type = RequestDocument.class),
+		roleA = @GeneratedRole(name = "requestDocument", type = RequestDocument.class),
 
 		roleB = @GeneratedRole(name = "project", type = Project.class)
 
@@ -19,10 +19,10 @@ public class RequestDocumentProjectLink extends _RequestDocumentProjectLink {
 
 	static final long serialVersionUID = 1;
 
-	public static RequestDocumentProjectLink newRequestDocumentProjectLink(RequestDocument request, Project project)
-			throws WTException {
+	public static RequestDocumentProjectLink newRequestDocumentProjectLink(RequestDocument requestDocument,
+			Project project) throws WTException {
 		RequestDocumentProjectLink instance = new RequestDocumentProjectLink();
-		instance.initialize(request, project);
+		instance.initialize(requestDocument, project);
 		return instance;
 	}
 }

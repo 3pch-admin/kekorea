@@ -41,13 +41,140 @@
 			<tr>
 				<th class="req lb">KEK 작번</th>
 				<td>
-					<jsp:include page="/extcore/include/project-include.jsp">
-						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
-						<jsp:param value="true" name="multi" />
-						<jsp:param value="" name="obj" />
-						<jsp:param value="250" name="height" />
-					</jsp:include>
+					<div class="include">
+						<input type="button" value="작번 추가" title="작번 추가" class="blue" onclick="_insert();">
+						<input type="button" value="작번 삭제" title="작번 삭제" class="red" onclick="_deleteRow();">
+						<div id="_grid_wrap" style="height: 150px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+						<script type="text/javascript">
+							let _myGridID;
+							const _columns = [ {
+								dataField : "projectType_name",
+								headerText : "작번유형",
+								dataType : "string",
+								width : 80,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "customer_name",
+								headerText : "거래처",
+								dataType : "string",
+								width : 120,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "mak_name",
+								headerText : "막종",
+								dataType : "string",
+								width : 120,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "detail_name",
+								headerText : "막종상세",
+								dataType : "string",
+								width : 120,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "kekNumber",
+								headerText : "KEK 작번",
+								dataType : "string",
+								width : 130,
+								renderer : {
+									type : "LinkRenderer",
+									baseUrl : "javascript",
+									jsCallback : function(rowIndex, columnIndex, value, item) {
+										const oid = item.oid;
+										alert(oid);
+									}
+								},
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "keNumber",
+								headerText : "KE 작번",
+								dataType : "string",
+								width : 130,
+								renderer : {
+									type : "LinkRenderer",
+									baseUrl : "javascript",
+									jsCallback : function(rowIndex, columnIndex, value, item) {
+										const oid = item.oid;
+										alert(oid);
+									}
+								},
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "description",
+								headerText : "작업 내용",
+								dataType : "string",
+								style : "left indent10",
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "oid",
+								headerText : "",
+								visible : false
+							} ]
+							function _createAUIGrid(columnLayout) {
+								const props = {
+									headerHeight : 30,
+									rowHeight : 30,
+									showRowNumColumn : true,
+									showRowCheckColumn : true,
+									showStateColumn : true,
+									rowNumHeaderText : "번호",
+									showAutoNoDataMessage : false,
+									selectionMode : "multipleCells",
+								}
+								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
+							}
+
+							function _insert() {
+								const url = getCallUrl("/project/popup?method=append&multi=true");
+								popup(url, 1500, 700);
+							}
+
+							function append(data, callBack) {
+								for (let i = 0; i < data.length; i++) {
+									const item = data[i].item;
+									const isUnique = AUIGrid.isUniqueValue(_myGridID, "oid", item.oid);
+									if (isUnique) {
+										AUIGrid.addRow(_myGridID, item, "first");
+									}
+								}
+								callBack(true);
+							}
+
+							function _deleteRow() {
+								const checked = AUIGrid.getCheckedRowItems(_myGridID);
+								if (checked.length === 0) {
+									alert("삭제할 행을 선택하세요.");
+									return false;
+								}
+
+								for (let i = checked.length - 1; i >= 0; i--) {
+									const rowIndex = checked[i].rowIndex;
+									AUIGrid.removeRow(_myGridID, rowIndex);
+								}
+							}
+						</script>
+					</div>
 				</td>
 			</tr>
 			<tr>
@@ -227,6 +354,11 @@
 			break;
 		case 3:
 			const selectedItems = AUIGrid.getSelectedItems(myGridID);
+			const rows = AUIGrid.getRowCount(myGridID);
+			if (rows === 1) {
+				alert("최 소 하나의 행이 존재해야합니다.");
+				return false;
+			}
 			for (let i = selectedItems.length - 1; i >= 0; i--) {
 				const rowIndex = selectedItems[i].rowIndex;
 				AUIGrid.removeRow(myGridID, rowIndex);
@@ -237,6 +369,11 @@
 
 	function deleteRow() {
 		const checked = AUIGrid.getCheckedRowItems(myGridID);
+		const rows = AUIGrid.getRowCount(myGridID);
+		if (rows === 1) {
+			alert("최 소 하나의 행이 존재해야합니다.");
+			return false;
+		}
 		if (checked.length === 0) {
 			alert("삭제할 행을 선택하세요.");
 			return false;
@@ -316,13 +453,11 @@
 
 	function create() {
 
-		if (!confirm("등록 하시겠습니까?")) {
-			return false;
-		}
 		const params = new Object();
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
 		const _addRows = AUIGrid.getAddedRowItems(_myGridID);
-
+		const url = getCallUrl("/workOrder/create");
+		
 		_addRows.sort(function(a, b) {
 			return a.sort - b.sort;
 		});
@@ -331,11 +466,15 @@
 			return a.sort - b.sort;
 		});
 
+		if (!confirm("등록 하시겠습니까?")) {
+			return false;
+		}
+
 		params.name = document.getElementById("name").value;
 		params.addRows = addRows;
 		params._addRows = _addRows;
 		params.secondarys = toArray("secondarys");
-		const url = getCallUrl("/workOrder/create");
+		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
@@ -353,9 +492,11 @@
 				switch (tabId) {
 				case "tabs-1":
 					_createAUIGrid(_columns);
+					AUIGrid.resize(_myGridID);
 					break;
 				case "tabs-2":
 					createAUIGrid(columns);
+					AUIGrid.resize(myGridID);
 					break;
 				}
 			},

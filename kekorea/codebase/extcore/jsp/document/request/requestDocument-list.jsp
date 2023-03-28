@@ -399,13 +399,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function create() {
-				const url = getCallUrl("/request/create");
+				const url = getCallUrl("/requestDocument/create");
 				popup(url, 1400, 800);
 			}
 
 			function loadGridData() {
 				const params = new Object();
-				const url = getCallUrl("/request/list");
+				const url = getCallUrl("/requestDocument/list");
 				const psize = document.getElementById("psize").value;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);

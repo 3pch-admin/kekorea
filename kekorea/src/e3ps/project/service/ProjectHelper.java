@@ -3313,7 +3313,9 @@ public class ProjectHelper {
 		node.put("name", project.getKekNumber());
 		node.put("description", project.getDescription());
 		node.put("duration", project.getDuration());
+		node.put("allocate", 0);
 		node.put("taskType", project.getProjectType().getName());
+		node.put("type", "project");
 		node.put("isNew", false);
 
 		JSONArray childrens = new JSONArray();
@@ -3324,8 +3326,10 @@ public class ProjectHelper {
 			children.put("name", task.getName());
 			children.put("description", task.getDescription());
 			children.put("duration", task.getDuration());
-			children.put("isNew", false);
+			children.put("allocate", task.getAllocate() != null ? task.getAllocate() : 0);
 			children.put("taskType", task.getTaskType().getCode());
+			children.put("type", "task");
+			children.put("isNew", false);
 			load(children, project, task);
 			childrens.add(children);
 		}
@@ -3343,8 +3347,10 @@ public class ProjectHelper {
 			children.put("name", task.getName());
 			children.put("description", task.getDescription());
 			children.put("duration", task.getDuration());
-			children.put("isNew", false);
+			children.put("allocate", task.getAllocate() != null ? task.getAllocate() : 0);
 			children.put("taskType", task.getTaskType().getCode());
+			children.put("type", "task");
+			children.put("isNew", false);
 			load(children, project, task);
 			childrens.add(children);
 		}

@@ -11,7 +11,7 @@ import wt.util.WTException;
 
 		roleA = @GeneratedRole(name = "master", type = PartListMaster.class),
 
-		roleB = @GeneratedRole(name = "data", type = PartListData.class),
+		roleB = @GeneratedRole(name = "data", type = PartListData.class, cascade = true),
 
 		properties = {
 

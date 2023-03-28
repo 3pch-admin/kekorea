@@ -54,7 +54,7 @@ JSONArray departments = new JSONArray(list);
 				<td>
 					&nbsp;
 					<div class="pretty p-switch">
-						<input type="radio" name="resign" value="true" checked="checked">
+						<input type="radio" name="resign" value="" checked="checked">
 						<div class="state p-success">
 							<label>
 								<b>재직</b>
@@ -63,7 +63,7 @@ JSONArray departments = new JSONArray(list);
 					</div>
 					&nbsp;
 					<div class="pretty p-switch">
-						<input type="radio" name="resign" value="">
+						<input type="radio" name="resign" value="true">
 						<div class="state p-success">
 							<label>
 								<b>퇴사</b>
@@ -387,7 +387,8 @@ JSONArray departments = new JSONArray(list);
 			function auiCellEditBegin(event) {
 				const item = event.item;
 				const sessionId = document.getElementById("sessionId").value;
-				if (!checker(sessionId, item.id)) {
+				const isAdmin = document.getElementById("isAdmin").value;
+				if (!checker(sessionId, item.id) && !isAdmin) {
 					return false;
 				}
 				return true;

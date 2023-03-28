@@ -2,7 +2,8 @@ package e3ps.project.dto;
 
 import java.sql.Timestamp;
 
-import e3ps.common.util.StringUtils;
+import e3ps.common.util.CommonUtils;
+import e3ps.common.util.DateUtils;
 import e3ps.project.Project;
 import e3ps.project.service.ProjectHelper;
 import lombok.Getter;
@@ -18,6 +19,7 @@ public class ProjectDTO {
 	private String projectType_code;
 	private String projectType_name;
 	private String projectType_oid;
+	private boolean estimate = false;
 	private String customer_code;
 	private String customer_name;
 	private String customer_oid;
@@ -35,14 +37,34 @@ public class ProjectDTO {
 	private String userId;
 	private String description;
 	private Timestamp pdate;
-	private Timestamp completeDate;
+	private String pdate_txt;
+	private Timestamp endDate;
+	private String endDate_txt = "";
 	private Timestamp customDate;
+	private String customDate_txt;
 	private String model;
-	private String machine;
-	private String elec;
-	private String soft;
+	private String machine = "지정안됨";
+	private String elec = "지정안됨";
+	private String soft = "지정안됨";
 	private int kekProgress;
 	private String kekState;
+
+	private String planStartDate_txt;
+	private String planEndDate_txt;
+	private String startDate_txt = "";
+	private int duration;
+	private int holiday;
+
+	private String pm = "지정안됨";
+	private String subPm = "지정안됨";
+
+	private double machinePrice = 0D;
+	private double elecPrice = 0D;
+	private double totalPrice = 0D;
+
+	private double outputMachinePrice = 0D;
+	private double outputElecPrice = 0D;
+	private double outputTotalPrice = 0D;
 
 	public ProjectDTO() {
 
@@ -63,6 +85,7 @@ public class ProjectDTO {
 			setProjectType_code(project.getProjectType().getCode());
 			setProjectType_name(project.getProjectType().getName());
 			setProjectType_oid(project.getProjectType().getPersistInfo().getObjectIdentifier().getStringValue());
+			setEstimate(project.getProjectType().getCode().equals("견적"));
 		}
 
 		if (project.getCustomer() != null) {
@@ -93,9 +116,19 @@ public class ProjectDTO {
 		setKeNumber(project.getKeNumber());
 		setUserId(project.getUserId());
 		setDescription(project.getDescription());
-		setPdate(project.getPDate());
-		setCompleteDate(project.getEndDate());
-		setCustomDate(project.getCustomDate());
+		if (project.getPDate() != null) {
+			setPdate(project.getPDate());
+			setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
+		}
+
+		if (project.getEndDate() != null) {
+			setEndDate(project.getEndDate());
+			setEndDate_txt(CommonUtils.getPersistableTime(project.getEndDate()));
+		}
+		if (project.getCustomDate() != null) {
+			setCustomDate(project.getCustomDate());
+			setCustomDate_txt(CommonUtils.getPersistableTime(project.getCustomDate()));
+		}
 		setModel(project.getModel());
 
 		WTUser machineUser = ProjectHelper.manager.getUserType(project, "MACHINE");
@@ -116,5 +149,36 @@ public class ProjectDTO {
 
 		setKekProgress(project.getProgress());
 		setKekState(project.getKekState());
+
+		setPlanStartDate_txt(CommonUtils.getPersistableTime(project.getPlanStartDate()));
+		setPlanEndDate_txt(CommonUtils.getPersistableTime(project.getPlanEndDate()));
+		if (project.getStartDate() != null) {
+			setStartDate_txt(CommonUtils.getPersistableTime(project.getStartDate()));
+		}
+		setDuration(DateUtils.getDuration(project.getPlanStartDate(), project.getPlanEndDate()));
+		setHoliday(DateUtils.getPlanDurationHoliday(project.getPlanStartDate(), project.getPlanEndDate()));
+
+		WTUser pmUser = ProjectHelper.manager.getUserType(project, "PM");
+		if (pmUser != null) {
+			setPm(pmUser.getFullName());
+		}
+
+		WTUser subPmUser = ProjectHelper.manager.getUserType(project, "SUB_PM");
+		if (subPmUser != null) {
+			setSubPm(subPmUser.getFullName());
+		}
+
+		setMachinePrice(project.getMachinePrice() != null ? project.getMachinePrice() : 0D);
+		setElecPrice(project.getElecPrice() != null ? project.getElecPrice() : 0D);
+
+		if (project.getMachinePrice() != null || project.getElecPrice() != null) {
+			setTotalPrice(getMachinePrice() + getElecPrice());
+		}
+
+		setOutputMachinePrice(project.getOutputMachinePrice() != null ? project.getOutputMachinePrice() : 0D);
+		setOutputElecPrice(project.getOutputElecPrice() != null ? project.getOutputElecPrice() : 0D);
+		if (project.getOutputMachinePrice() != null || project.getOutputElecPrice() != null) {
+			setOutputTotalPrice(getOutputMachinePrice() + getOutputElecPrice());
+		}
 	}
 }

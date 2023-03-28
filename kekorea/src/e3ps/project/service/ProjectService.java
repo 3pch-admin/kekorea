@@ -312,5 +312,5 @@ public interface ProjectService {
 
 	public abstract void create(Map<String, Object> params) throws Exception;
 
-	public abstract void save(Map<String, Object> params) throws Exception;
+	public abstract void treeSave(Map<String, Object> params) throws Exception;
 }

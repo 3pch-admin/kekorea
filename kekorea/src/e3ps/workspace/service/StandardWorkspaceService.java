@@ -1444,8 +1444,85 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 	}
 
 	@Override
-	public void register(Persistable persistable, ArrayList<Map<String, String>> _addRows_) throws Exception {
-		// TODO Auto-generated method stub
-		
+	public void register(Persistable persistable, ArrayList<Map<String, String>> agreeRows,
+			ArrayList<Map<String, String>> approvalRows, ArrayList<Map<String, String>> receiveRows) throws Exception {
+		boolean isAgree = agreeRows.size() > 0;
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			WTUser sessionUser = CommonUtils.sessionUser();
+			Timestamp startTime = new Timestamp(new Date().getTime());
+			Ownership ownership = CommonUtils.sessionOwner();
+			String name = WorkspaceHelper.manager.getName(persistable);
+			String description = WorkspaceHelper.manager.getDescription(persistable);
+
+			// 마스터 생성..
+			ApprovalMaster master = ApprovalMaster.newApprovalMaster();
+			master.setName(name);
+			master.setCompleteTime(null);
+			master.setOwnership(ownership);
+			master.setPersist(persistable);
+			master.setStartTime(startTime);
+			if (isAgree) {
+				master.setState(WorkspaceHelper.AGREE_READY);
+			} else {
+				master.setState(WorkspaceHelper.APPROVAL_APPROVING);
+			}
+			master.setCompleteUserID(sessionUser.getName());
+			master = (ApprovalMaster) PersistenceHelper.manager.save(master);
+
+			// 기안 라인
+			ApprovalLine submitLine = ApprovalLine.newApprovalLine();
+			submitLine.setName(name);
+			submitLine.setOwnership(ownership);
+			submitLine.setMaster(master);
+			submitLine.setReads(true);
+			submitLine.setSort(-50);
+			submitLine.setStartTime(startTime);
+			submitLine.setType(WorkspaceHelper.SUBMIT_LINE);
+			submitLine.setRole(WorkspaceHelper.WORKING_SUBMIT);
+			submitLine.setDescription(description);
+			submitLine.setCompleteUserID(sessionUser.getName());
+			submitLine.setCompleteTime(startTime);
+			submitLine.setState(WorkspaceHelper.STATE_LINE_SUBMIT_COMPLETE);
+			PersistenceHelper.manager.save(submitLine);
+
+			int sort = 0;
+			if (isAgree) {
+				sort = 1;
+				for (Map<String, String> agree : agreeRows) {
+					String woid = agree.get("woid");
+					WTUser wtuser = (WTUser) CommonUtils.getObject(woid);
+					// 검토 라인 생성
+					ApprovalLine agreeLine = ApprovalLine.newApprovalLine();
+					agreeLine.setName(name);
+					agreeLine.setOwnership(Ownership.newOwnership(wtuser));
+					agreeLine.setMaster(master);
+					agreeLine.setReads(true);
+					agreeLine.setSort(0);
+					agreeLine.setStartTime(startTime);
+					agreeLine.setType(WorkspaceHelper.AGREE_LINE);
+					agreeLine.setRole(WorkspaceHelper.WORKING_AGREE);
+					agreeLine.setDescription(null);
+					agreeLine.setCompleteUserID(null);
+					agreeLine.setCompleteTime(null);
+					agreeLine.setState(WorkspaceHelper.STATE_AGREE_READY);
+					PersistenceHelper.manager.save(agreeLine);
+				}
+
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+
 	}
 }

@@ -13,7 +13,7 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "lotNo", type = String.class, javaDoc = "LOT NO", constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "lotNo", type = Integer.class, javaDoc = "LOT NO", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "unitName", type = String.class, javaDoc = "UNIT NAME"),
 
@@ -33,8 +33,8 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "price", type = Integer.class, javaDoc = "단가"),
 
-				@GeneratedProperty(name = "currency", type = String.class, javaDoc = "화폐"),
 
+				@GeneratedProperty(name = "currency", type = String.class, javaDoc = "화폐"),
 				@GeneratedProperty(name = "won", type = Integer.class, javaDoc = "원화금액"),
 
 				@GeneratedProperty(name = "partListDate", type = Timestamp.class, javaDoc = "수배일자"),

@@ -238,3 +238,24 @@ function inputUser(openerId, data) {
 	input.value = item.name;
 	el.value = item.woid;
 }
+
+// 결재 라인 세팅
+function toRegister(params, rows) {
+	const agrees = new Array();
+	const approvals = new Array();
+	const receives = new Array();
+
+	for (let i = 0; i < rows.length; i++) {
+		const type = rows[i].type;
+		if (type === "검토") {
+			agrees.push(rows[i]);
+		} else if (type === "결재") {
+			approvals.push(rows[i]);
+		} else if (type === "수신") {
+			receives.push(rows[i]);
+		}
+	}
+	params.agreeRows = agrees;
+	params.approvalRows = approvals;
+	params.receiveRows = receives;
+}

@@ -8,20 +8,16 @@
 CommonCode makCode = (CommonCode) request.getAttribute("makCode");
 ArrayList<String> data = (ArrayList<String>) request.getAttribute("data");
 Map<String, ArrayList<String>> drillDown = (Map<String, ArrayList<String>>) request.getAttribute("drillDown");
-System.out.println(drillDown);
 %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/highchart.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
 </head>
 <body>
-	<div id="container" style="height: 380px;"></div>
+	<div id="container" style="height: 300px;"></div>
 
 	<script type="text/javascript">
 //Create the chart

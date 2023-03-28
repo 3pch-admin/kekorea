@@ -31,7 +31,7 @@ import wt.org.WTUser;
 import wt.session.SessionHelper;
 
 @Controller
-@RequestMapping(value = "/request/**")
+@RequestMapping(value = "/requestDocument/**")
 public class RequestDocumentController extends BaseController {
 
 	@Description(value = "의뢰서 리스트 페이지")
@@ -131,5 +131,22 @@ public class RequestDocumentController extends BaseController {
 		model.addObject("list", list);
 		model.setViewName("popup:/document/request/requestDocument-create");
 		return model;
+	}
+	
+
+	@Description(value = "의뢰서 등록 검증")
+	@ResponseBody
+	@PostMapping(value = "/validate")
+	public Map<String, Object> validate(@RequestBody Map<String, String> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = RequestDocumentHelper.manager.validate(params);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
 	}
 }

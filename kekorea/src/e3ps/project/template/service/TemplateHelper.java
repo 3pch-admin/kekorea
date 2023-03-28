@@ -11,6 +11,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.project.task.TargetTaskSourceTaskLink;
 import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.template.Template;
@@ -84,6 +85,9 @@ public class TemplateHelper {
 		return list;
 	}
 
+	/**
+	 * 템플릿 트리 가져오기
+	 */
 	public JSONArray load(String oid) throws Exception {
 		Template template = (Template) CommonUtils.getObject(oid);
 		JSONArray list = new JSONArray();
@@ -93,6 +97,9 @@ public class TemplateHelper {
 		node.put("description", template.getDescription());
 		node.put("duration", template.getDuration());
 		node.put("isNew", false);
+		node.put("allocate", 0);
+		node.put("taskType", "");
+		node.put("type", "template");
 
 		JSONArray childrens = new JSONArray();
 		ArrayList<Task> taskList = TaskHelper.manager.getTemplateTasks(template);
@@ -103,7 +110,9 @@ public class TemplateHelper {
 			children.put("description", task.getDescription());
 			children.put("duration", task.getDuration());
 			children.put("isNew", false);
-			children.put("taskType", task.getTaskType().getCode());
+			children.put("allocate", task.getAllocate() != null ? task.getAllocate() : 0);
+			children.put("taskType", task.getTaskType() != null ? task.getTaskType().getCode() : "NORMAL");
+			children.put("type", "task");
 			load(children, template, task);
 			childrens.add(children);
 		}
@@ -112,6 +121,9 @@ public class TemplateHelper {
 		return list;
 	}
 
+	/**
+	 * 템플릿 관련 태스트 가져오기
+	 */
 	private void load(JSONObject node, Template template, Task parentTask) throws Exception {
 		JSONArray childrens = new JSONArray();
 		ArrayList<Task> taskList = TaskHelper.manager.getTemplateTasks(template, parentTask);
@@ -122,7 +134,9 @@ public class TemplateHelper {
 			children.put("description", task.getDescription());
 			children.put("duration", task.getDuration());
 			children.put("isNew", false);
-			children.put("taskType", task.getTaskType().getCode());
+			children.put("allocate", task.getAllocate() != null ? task.getAllocate() : 0);
+			children.put("taskType", task.getTaskType() != null ? task.getTaskType().getCode() : "NORMAL");
+			children.put("type", "task");
 			load(children, template, task);
 			childrens.add(children);
 		}
@@ -144,5 +158,92 @@ public class TemplateHelper {
 			return link.getUser();
 		}
 		return null;
+	}
+
+	/**
+	 * 템플릿 유저 가져오기
+	 */
+	public WTUser getUserType(Template template, String userType) throws Exception {
+		CommonCode userTypeCode = CommonCodeHelper.manager.getCommonCode("USER_TYPE", userType);
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(TemplateUserLink.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, TemplateUserLink.class, "roleAObjectRef.key.id", template);
+		QuerySpecUtils.toEqualsAnd(query, idx, TemplateUserLink.class, "userTypeReference.key.id", userTypeCode);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			TemplateUserLink link = (TemplateUserLink) obj[0];
+			return link.getUser();
+		}
+		return null;
+	}
+
+	public ArrayList<Task> getSourceOrTarget(Task task, String reference) throws Exception {
+		Template template = task.getTemplate();
+		ArrayList<Task> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(TargetTaskSourceTaskLink.class, true);
+
+		if ("source".equals(reference)) {
+			QuerySpecUtils.toEqualsAnd(query, idx, TargetTaskSourceTaskLink.class, "roleBObjectRef.key.id", task);
+		} else if ("target".equals(reference)) {
+			QuerySpecUtils.toEqualsAnd(query, idx, TargetTaskSourceTaskLink.class, "roleAObjectRef.key.id", task);
+		}
+		QuerySpecUtils.toEqualsAnd(query, idx, TargetTaskSourceTaskLink.class, "templateReference.key.id", template);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			TargetTaskSourceTaskLink link = (TargetTaskSourceTaskLink) obj[0];
+			if ("source".equals(reference)) {
+				list.add(link.getSourceTask());
+			} else if ("target".equals(reference)) {
+				list.add(link.getTargetTask());
+			}
+		}
+		return list;
+	}
+
+	/**
+	 * 모든 템플릿 태스크 가져오기
+	 */
+	public ArrayList<Task> recurciveTask(Template template) throws Exception {
+		ArrayList<Task> list = new ArrayList<Task>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Task.class, true);
+
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "templateReference.key.id",
+				template.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id", 0L);
+		QuerySpecUtils.toOrderBy(query, idx, Task.class, Task.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Task task = (Task) obj[0];
+			list.add(task);
+			recurciveTask(template, task, list);
+		}
+		return list;
+	}
+
+	/**
+	 * 모든 템플릿 태스크 재귀함수
+	 */
+	private void recurciveTask(Template template, Task parentTask, ArrayList<Task> list) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Task.class, true);
+
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "templateReference.key.id",
+				template.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id", parentTask);
+		QuerySpecUtils.toOrderBy(query, idx, Task.class, Task.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Task task = (Task) obj[0];
+			list.add(task);
+			recurciveTask(template, task, list);
+		}
 	}
 }

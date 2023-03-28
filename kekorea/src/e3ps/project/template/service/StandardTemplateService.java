@@ -18,6 +18,7 @@ import e3ps.common.util.DateUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.org.People;
+import e3ps.project.task.ParentTaskChildTaskLink;
 import e3ps.project.task.Task;
 import e3ps.project.task.dto.TaskTreeNode;
 import e3ps.project.task.service.TaskHelper;
@@ -46,7 +47,7 @@ public class StandardTemplateService extends StandardManager implements Template
 	public void create(Map<String, Object> params) throws Exception {
 		String name = (String) params.get("name");
 		String description = (String) params.get("description");
-		boolean enable = (boolean) params.get("enable");
+		String reference = (String) params.get("reference");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
@@ -56,7 +57,7 @@ public class StandardTemplateService extends StandardManager implements Template
 
 			Template template = Template.newTemplate();
 			template.setName(name);
-			template.setEnable(enable);
+			template.setEnable(true);
 			template.setOwnership(ownership);
 			template.setDescription(description);
 			Timestamp start = DateUtils.getPlanStartDate();
@@ -71,15 +72,13 @@ public class StandardTemplateService extends StandardManager implements Template
 
 			PersistenceHelper.manager.save(template);
 
-//			if (!StringUtils.isNull(templateOid)) {
-//				// 템플릿 복사...
-//				copy = (Template) rf.getReference(templateOid).getObject();
+			if (!StringUtils.isNull(reference)) {
+				Template copy = (Template) CommonUtils.getObject(reference);
 //				copyTasksInfo(template, copy);
-//
 //				copyTemplateInfo(template, copy);
-//			}
-//
-//			commit(template);
+			}
+
+			commit(template);
 
 			trs.commit();
 			trs = null;
@@ -93,8 +92,60 @@ public class StandardTemplateService extends StandardManager implements Template
 		}
 	}
 
+	private void commit(Template template) throws Exception {
+
+		ArrayList<Task> list = TemplateHelper.manager.recurciveTask(template);
+		sortedTask(list);
+		finalSet(template);
+	}
+
+	private void finalSet(Template template) throws Exception {
+
+		System.out.println("최종 작업시작....");
+
+	}
+
+	private void sortedTask(ArrayList<Task> list) throws Exception {
+
+		for (int i = list.size() - 1; i >= 0; i--) {
+			Task task = (Task) list.get(i);
+
+			Timestamp start = null;
+			Timestamp end = null;
+
+			boolean edit = false;
+
+			QueryResult result = PersistenceHelper.manager.navigate(task, "childTask", ParentTaskChildTaskLink.class);
+			while (result.hasMoreElements()) {
+				Task child = (Task) result.nextElement();
+
+				Timestamp cstart = child.getPlanStartDate();
+				Timestamp cend = child.getPlanEndDate();
+
+				if (start == null || (start.getTime() > cstart.getTime())) {
+					start = cstart;
+					edit = true;
+				}
+
+				if (end == null || (end.getTime() < cend.getTime())) {
+					end = cend;
+					edit = true;
+				}
+			}
+
+			if (edit) {
+				task.setPlanStartDate(start);
+				task.setPlanEndDate(end);
+
+				int duration = DateUtils.getDuration(start, end);
+				task.setDuration(duration);
+				task = (Task) PersistenceHelper.manager.modify(task);
+			}
+		}
+	}
+
 	@Override
-	public void save(Map<String, Object> params) throws Exception {
+	public void treeSave(Map<String, Object> params) throws Exception {
 		String json = (String) params.get("json");
 		ArrayList<Map<String, Object>> removeRows = (ArrayList<Map<String, Object>>) params.get("removeRows");
 		Transaction trs = new Transaction();
@@ -121,14 +172,12 @@ public class StandardTemplateService extends StandardManager implements Template
 				String d = node.getDescription();
 				template = (Template) CommonUtils.getObject(oid);
 				template.setName(name);
-				template.setDescription(d);
+				template.setDescription(StringUtils.replaceToValue(d, name));
 				PersistenceHelper.manager.modify(template);
 				template = (Template) PersistenceHelper.manager.refresh(template);
-				save(template, null, childrens);
+				treeSave(template, null, childrens);
+				commit(template);
 			}
-
-//			template = (Template) PersistenceHelper.manager.refresh(template);
-//			calculation(template);
 
 			trs.commit();
 			trs = null;
@@ -142,7 +191,7 @@ public class StandardTemplateService extends StandardManager implements Template
 		}
 	}
 
-	private void save(Template template, Task parentTask, ArrayList<TaskTreeNode> childrens) throws Exception {
+	private void treeSave(Template template, Task parentTask, ArrayList<TaskTreeNode> childrens) throws Exception {
 		Ownership ownership = CommonUtils.sessionOwner();
 		Transaction trs = new Transaction();
 		try {
@@ -152,8 +201,9 @@ public class StandardTemplateService extends StandardManager implements Template
 				int depth = node.get_$depth();
 				String oid = node.getOid();
 				String name = node.getName();
-				String description = node.getDescription();
+				String description = StringUtils.replaceToValue(node.getDescription(), name);
 				int duration = node.getDuration();
+				int allocate = node.getAllocate();
 				boolean isNew = node.isNew();
 				ArrayList<TaskTreeNode> n = node.getChildren();
 				int sort = TaskHelper.manager.getSort(template, parentTask);
@@ -165,13 +215,13 @@ public class StandardTemplateService extends StandardManager implements Template
 					t.setDepth(depth);
 					t.setDescription(description);
 					t.setDuration(duration);
+					t.setAllocate(allocate);
+					t.setState(TaskStateVariable.READY);
 					t.setOwnership(ownership);
 					t.setParentTask(parentTask);
 					t.setTemplate(template);
-					t.setState(TaskStateVariable.READY);
 					t.setPlanStartDate(template.getPlanStartDate());
 					t.setPlanEndDate(template.getPlanEndDate());
-					t.setDuration(DateUtils.getDuration(template.getPlanStartDate(), template.getPlanEndDate()));
 					t.setSort(sort);
 					t.setTaskType(CommonCodeHelper.manager.getCommonCode(taskType, "TASK_TYPE"));
 					PersistenceHelper.manager.save(t);
@@ -179,20 +229,20 @@ public class StandardTemplateService extends StandardManager implements Template
 					t = (Task) CommonUtils.getObject(oid);
 					t.setName(name);
 					t.setDepth(depth);
-					t.setState(TaskStateVariable.READY);
 					t.setDescription(description);
 					t.setDuration(duration);
+					t.setAllocate(allocate);
+					t.setState(TaskStateVariable.READY);
 					t.setOwnership(ownership);
 					t.setParentTask(parentTask);
 					t.setTemplate(template);
 					t.setPlanStartDate(template.getPlanStartDate());
 					t.setPlanEndDate(template.getPlanEndDate());
-					t.setDuration(DateUtils.getDuration(template.getPlanStartDate(), template.getPlanEndDate()));
 					t.setSort(sort);
 					t.setTaskType(CommonCodeHelper.manager.getCommonCode(taskType, "TASK_TYPE"));
 					PersistenceHelper.manager.modify(t);
 				}
-				save(template, t, n);
+				treeSave(template, t, n);
 			}
 
 			trs.commit();

@@ -52,11 +52,22 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			<tr>
 				<th class="req lb">의뢰서 제목</th>
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-200">
+					<input type="text" name="name" id="name" class="width-300">
 				</td>
 				<th class="req">작번 템플릿</th>
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-200">
+					<select name="template" id="template" class="width-300">
+						<option value="">선택</option>
+						<%
+						for (Map<String, String> map : list) {
+							String oid = map.get("key");
+							String name = map.get("value");
+						%>
+						<option value="<%=oid%>"><%=name%></option>
+						<%
+						}
+						%>
+					</select>
 				</td>
 			</tr>
 			<tr>
@@ -82,7 +93,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 						<jsp:param value="250" name="height" />
 					</jsp:include>
 				</td>
-			</tr>			
+			</tr>
 		</table>
 	</div>
 	<div id="tabs-2">
@@ -100,7 +111,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 		let detailMap = {};
 		let installMap = {};
 		const columns = [ {
-			dataField : "projectType_name",
+			dataField : "projectType_code",
 			headerText : "작번유형",
 			dataType : "string",
 			width : 80,
@@ -148,7 +159,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 					}
 				}
 				return retStr == "" ? value : retStr;
-			},			
+			},
 		}, {
 			dataField : "customer_code",
 			headerText : "거래처",
@@ -386,60 +397,17 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			headerText : "KE 작번",
 			dataType : "string",
 			width : 130,
-			style : "underline"
 		}, {
 			dataField : "userId",
 			headerText : "USER ID",
 			dataType : "string",
 			width : 100,
-			style : "underline"
 		}, {
 			dataField : "customDate",
 			headerText : "요구 납기일",
-			dataType: "date",
-			dateInputFormat: "yyyy-mm-dd",
-			formatString: "yyyy년 mm월 dd일",
-			width: 130,
-			renderer : {
-				type : "IconRenderer",
-				iconWidth : 16,
-				iconHeight : 16,
-				iconPosition : "aisleRight",
-				iconTableRef : {
-					"default" : "/Windchill/extcore/component/AUIGrid/images/calendar-icon.png"
-				},
-				onClick : function(event) {
-					AUIGrid.openInputer(event.pid);
-				}
-			},			
-			editRenderer: {
-				type: "CalendarRenderer",
-				defaultFormat: "yyyy-mm-dd",
-				showEditorBtnOver: false,
-				onlyCalendar: true,
-				showExtraDays: true,
-				showTodayBtn: true,
-				showUncheckDateBtn: true,
-				todayText: "오늘 선택", 
-				uncheckDateText: "날짜 선택 해제",
-				uncheckDateValue: "",
-			}
-		}, {
-			dataField : "description",
-			headerText : "작업 내용",
-			dataType : "string",
-			width : 450,
-			style : "left indent10"
-		}, {
-			dataField : "model",
-			headerText : "모델",
-			dataType : "string",
-			width : 130,
-		}, {
-			dataField : "pdate",
-			headerText : "발행일",
 			dataType : "date",
-			formatString : "yyyy-mm-dd",
+			dateInputFormat : "yyyy-mm-dd",
+			formatString : "yyyy년 mm월 dd일",
 			width : 130,
 			renderer : {
 				type : "IconRenderer",
@@ -453,18 +421,60 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 					AUIGrid.openInputer(event.pid);
 				}
 			},
-			editRenderer: {
-				type: "CalendarRenderer",
-				defaultFormat: "yyyy-mm-dd",
-				showEditorBtnOver: false,
-				onlyCalendar: true,
-				showExtraDays: true,
-				showTodayBtn: true,
-				showUncheckDateBtn: true,
-				todayText: "오늘 선택", 
-				uncheckDateText: "날짜 선택 해제",
-				uncheckDateValue: "",
-			}			
+			editRenderer : {
+				type : "CalendarRenderer",
+				defaultFormat : "yyyy-mm-dd",
+				showEditorBtnOver : false,
+				onlyCalendar : true,
+				showExtraDays : true,
+				showTodayBtn : true,
+				showUncheckDateBtn : true,
+				todayText : "오늘 선택",
+				uncheckDateText : "날짜 선택 해제",
+				uncheckDateValue : "",
+			}
+		}, {
+			dataField : "description",
+			headerText : "작업 내용",
+			dataType : "string",
+			width : 250,
+			style : "aui-left",
+		}, {
+			dataField : "model",
+			headerText : "모델",
+			dataType : "string",
+			width : 130,
+		}, {
+			dataField : "pdate",
+			headerText : "발행일",
+			dataType : "date",
+			dateInputFormat : "yyyy-mm-dd",
+			formatString : "yyyy년 mm월 dd일",
+			width : 130,
+			renderer : {
+				type : "IconRenderer",
+				iconWidth : 16,
+				iconHeight : 16,
+				iconPosition : "aisleRight",
+				iconTableRef : {
+					"default" : "/Windchill/extcore/component/AUIGrid/images/calendar-icon.png"
+				},
+				onClick : function(event) {
+					AUIGrid.openInputer(event.pid);
+				}
+			},
+			editRenderer : {
+				type : "CalendarRenderer",
+				defaultFormat : "yyyy-mm-dd",
+				showEditorBtnOver : false,
+				onlyCalendar : true,
+				showExtraDays : true,
+				showTodayBtn : true,
+				showUncheckDateBtn : true,
+				todayText : "오늘 선택",
+				uncheckDateText : "날짜 선택 해제",
+				uncheckDateValue : "",
+			}
 		}, {
 			dataField : "machine",
 			headerText : "기계 담당자",
@@ -487,14 +497,14 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				autoCompleteMode : true,
 				autoEasyMode : true,
 				matchFromFirst : false,
-				showEditorBtnOver : false,						
-				list : machines, 
-				keyField : "oid", 
+				showEditorBtnOver : false,
+				list : machines,
+				keyField : "oid",
 				valueField : "name",
 				validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 					let isValid = false;
-					for (let i = 0, len = list.length; i < len; i++) {
-						if (list[i] == newValue) {
+					for (let i = 0, len = machine.length; i < len; i++) {
+						if (machine[i] == newValue) {
 							isValid = true;
 							break;
 						}
@@ -503,10 +513,10 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 						"validate" : isValid,
 						"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
 					};
-				}				
+				}
 			},
-			labelFunction : function(rowIndex, columnIndex, value, headerText, item) { 
-				let retStr = ""; 
+			labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+				let retStr = "";
 				for (let i = 0, len = machines.length; i < len; i++) {
 					if (machines[i]["oid"] == value) {
 						retStr = machines[i]["name"];
@@ -522,11 +532,11 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			width : 100,
 			renderer : {
 				type : "IconRenderer",
-				iconWidth : 16, 
+				iconWidth : 16,
 				iconHeight : 16,
 				iconPosition : "aisleRight",
-				iconTableRef : { 
-					"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" 
+				iconTableRef : {
+					"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 				},
 				onClick : function(event) {
 					AUIGrid.openInputer(event.pid);
@@ -537,14 +547,14 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				autoCompleteMode : true,
 				autoEasyMode : true,
 				matchFromFirst : false,
-				showEditorBtnOver : false,					
-				list : elecs, 
-				keyField : "oid", 
-				valueField : "name", 
+				showEditorBtnOver : false,
+				list : elecs,
+				keyField : "oid",
+				valueField : "name",
 				validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 					let isValid = false;
-					for (let i = 0, len = list.length; i < len; i++) {
-						if (list[i] == newValue) {
+					for (let i = 0, len = elecs.length; i < len; i++) {
+						if (elecs[i] == newValue) {
 							isValid = true;
 							break;
 						}
@@ -555,8 +565,8 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 					};
 				}
 			},
-			labelFunction : function(rowIndex, columnIndex, value, headerText, item) { 
-				let retStr = ""; 
+			labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+				let retStr = "";
 				for (let i = 0, len = elecs.length; i < len; i++) {
 					if (elecs[i]["oid"] == value) {
 						retStr = elecs[i]["name"];
@@ -572,11 +582,11 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			width : 100,
 			renderer : {
 				type : "IconRenderer",
-				iconWidth : 16, 
+				iconWidth : 16,
 				iconHeight : 16,
 				iconPosition : "aisleRight",
-				iconTableRef : { 
-					"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" 
+				iconTableRef : {
+					"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 				},
 				onClick : function(event) {
 					AUIGrid.openInputer(event.pid);
@@ -587,14 +597,14 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				autoCompleteMode : true,
 				autoEasyMode : true,
 				matchFromFirst : false,
-				showEditorBtnOver : false,				
-				list : softs, 
-				keyField : "oid", 
-				valueField : "value", 
+				showEditorBtnOver : false,
+				list : softs,
+				keyField : "oid",
+				valueField : "name",
 				validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 					let isValid = false;
-					for (let i = 0, len = list.length; i < len; i++) {
-						if (list[i] == newValue) {
+					for (let i = 0, len = softs.length; i < len; i++) {
+						if (softs[i] == newValue) {
 							isValid = true;
 							break;
 						}
@@ -603,10 +613,10 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 						"validate" : isValid,
 						"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
 					};
-				}				
+				}
 			},
-			labelFunction : function(rowIndex, columnIndex, value, headerText, item) { 
-				let retStr = ""; 
+			labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+				let retStr = "";
 				for (let i = 0, len = softs.length; i < len; i++) {
 					if (softs[i]["oid"] == value) {
 						retStr = softs[i]["name"];
@@ -619,17 +629,18 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 
 		function createAUIGrid(columnLayout) {
 			const props = {
-				headerHeight : 30, 
-				rowHeight : 30, 
+				headerHeight : 30,
+				rowHeight : 30,
 				showRowNumColumn : true,
 				showRowCheckColumn : true,
-				showStateColumn : true, 
-				rowNumHeaderText : "번호", 
+				showStateColumn : true,
+				rowNumHeaderText : "번호",
 				noDataMessage : "작성된 작번내용이 없습니다.",
 				selectionMode : "multipleCells",
 				editable : true,
 				useContextMenu : true,
 				enableRightDownFocus : true,
+				$compaEventOnPaste : true,
 				contextMenuItems : [ {
 					label : "선택된 행 이전 추가",
 					callback : contextItemHandler
@@ -641,13 +652,13 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				}, {
 					label : "선택된 행 삭제",
 					callback : contextItemHandler
-				} ],				
+				} ],
 			};
 			myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 			readyHandler();
 			AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 		}
-		
+
 		function contextItemHandler(event) {
 			const item = new Object();
 			switch (event.contextIndex) {
@@ -688,13 +699,29 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 					installMap[customer] = data.list;
 				}, "GET");
 			}
+
+			if (dataField === "kekNumber" || dataField === "projectType_code") {
+				if (!isNull(item.kekNumber) && !isNull(item.projectType_code)) {
+					const params = new Object();
+					const url = getCallUrl("/requestDocument/validate");
+					params.kekNumber = item.kekNumber;
+					params.projectType_code = item.projectType_code;
+					call(url, params, function(data) {
+						if (data.validate) {
+							alert(rowIndex + "행에 입력한 작번은 이미 등록되어있습니다.");
+							item.kekNumber = "";
+							item.projectType_code = "";
+							AUIGrid.updateRow(myGridID, item, rowIndex);
+							return false;
+						}
+					})
+				}
+			}
 		}
 
 		function readyHandler() {
 			const item = new Object();
-			for(let i=0; i<5; i++) {
-				AUIGrid.addRow(myGridID, item, "first");
-			}
+			AUIGrid.addRow(myGridID, item, "first");
 		}
 
 		function create() {
@@ -704,10 +731,16 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			}
 
 			const params = new Object();
-			const url = getCallUrl("/request/create");
-			const addRows = AUIGrid.getAddedRowItems(myGridID); // 프로젝트
-			params.addRows = addRows
+			const url = getCallUrl("/requestDocument/create");
+			const name = document.getElementById("name").value;
+			const addRows = AUIGrid.getAddedRowItems(myGridID);
+			const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
+			params.name = name;
+			params.addRows = addRows;
+			params._addRows_ = _addRows_;
 			params.secondarys = toArray("secondarys");
+			console.log(params);
+			openLayer();
 			call(url, params, function(data) {
 				alert(data.msg);
 				if (data.result) {
@@ -757,6 +790,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				}
 			}
 		});
+		selectbox("template");
 	})
 
 	window.addEventListener("resize", function() {

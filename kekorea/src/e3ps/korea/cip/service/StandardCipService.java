@@ -99,7 +99,7 @@ public class StandardCipService extends StandardManager implements CipService {
 				PersistenceHelper.manager.modify(cip);
 
 				if (!StringUtils.isNull(preViewPath)) {
-					ContentUtils.savePrimary(cip, preViewPath);
+					ContentUtils.saveThumbnail(cip, preViewPath);
 				}
 
 				// 기존꺼 삭제하고 만드는거가...??

@@ -149,6 +149,7 @@ public class StandardOrgService extends StandardManager implements OrgService {
 
 			QuerySpec qs = new QuerySpec();
 			int _idx = qs.appendClassList(People.class, true);
+			QuerySpecUtils.toOrderBy(qs, _idx, People.class, People.NAME, true);
 			QueryResult qr = PersistenceHelper.manager.find(qs);
 			while (qr.hasMoreElements()) {
 				Object[] obj = (Object[]) qr.nextElement();
@@ -171,18 +172,17 @@ public class StandardOrgService extends StandardManager implements OrgService {
 				WTUser wtuser = (WTUser) obj[0];
 
 				QueryResult _qr = PersistenceHelper.manager.navigate(wtuser, "people", PeopleWTUserLink.class);
-				// not value...
-				People user = null;
 
+				System.out.println("name=" + wtuser.getName());
+				System.out.println("q=" + _qr.size());
+
+				People user = null;
 				if (!_qr.hasMoreElements()) {
 					user = People.newPeople();
-					// set foreignKey
 					user.setDepartment(department);
 					user.setWtUser(wtuser);
-
-					String a = wtuser.getName();
 					user.setName(wtuser.getFullName());
-					user.setId(a);
+					user.setId(wtuser.getName());
 					user.setEmail(wtuser.getEMail() != null ? wtuser.getEMail() : "");
 					user = (People) PersistenceHelper.manager.save(user);
 				}

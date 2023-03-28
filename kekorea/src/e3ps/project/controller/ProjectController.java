@@ -22,12 +22,16 @@ import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
-import e3ps.doc.meeting.service.MeetingHelper;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
+import e3ps.korea.cip.dto.CipDTO;
+import e3ps.korea.cip.service.CipHelper;
 import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
 import e3ps.project.dto.ProjectDTO;
-import e3ps.project.dto.ProjectViewData;
+import e3ps.project.issue.service.IssueHelper;
 import e3ps.project.service.ProjectHelper;
+import e3ps.project.task.Task;
+import e3ps.project.task.dto.TaskDTO;
 import e3ps.project.template.service.TemplateHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
@@ -157,12 +161,12 @@ public class ProjectController extends BaseController {
 	}
 
 	@Description(value = "프로젝트 트리 저장")
-	@PostMapping(value = "/save")
+	@PostMapping(value = "/treeSave")
 	@ResponseBody
-	public Map<String, Object> save(@RequestBody Map<String, Object> params) {
+	public Map<String, Object> treeSave(@RequestBody Map<String, Object> params) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			ProjectHelper.service.save(params);
+			ProjectHelper.service.treeSave(params);
 			result.put("msg", SAVE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
@@ -177,30 +181,37 @@ public class ProjectController extends BaseController {
 	@GetMapping(value = "/popup")
 	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MONTH, -4);
 		Timestamp date = new Timestamp(calendar.getTime().getTime());
 		String before = date.toString().substring(0, 10);
 		String end = DateUtils.getCurrentTimestamp().toString().substring(0, 10);
 
-		ArrayList<CommonCode> customers = CommonCodeHelper.manager.getArrayCodeList("CUSTOMER");
-		ArrayList<CommonCode> projectTypes = CommonCodeHelper.manager.getArrayCodeList("PROJECT_TYPE");
-		ArrayList<CommonCode> maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
+		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
+		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
 		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
 
-		boolean isAdmin = CommonUtils.isAdmin();
-		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		model.addObject("sessionUser", sessionUser);
-		model.addObject("isAdmin", isAdmin);
+		org.json.JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
+		org.json.JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
+		org.json.JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
+
+		model.addObject("elecs", elecs);
+		model.addObject("softs", softs);
+		model.addObject("machines", machines);
 		model.addObject("list", list);
 		model.addObject("customers", customers);
 		model.addObject("projectTypes", projectTypes);
 		model.addObject("maks", maks);
 		model.addObject("before", before);
 		model.addObject("end", end);
-		model.addObject("multi", Boolean.parseBoolean(multi));
-		model.addObject("method", method);
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("method", method);
+		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.setViewName("popup:/project/project-popup");
 		return model;
 	}
@@ -209,6 +220,12 @@ public class ProjectController extends BaseController {
 	@GetMapping(value = "/info")
 	public ModelAndView info(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
+		org.json.JSONArray list = CommonCodeHelper.manager.parseJson("TASK_TYPE");
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("list", list);
 		model.addObject("oid", oid);
 		model.setViewName("popup:/project/project-info");
 		return model;
@@ -229,9 +246,64 @@ public class ProjectController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		Project project = (Project) CommonUtils.getObject(oid);
 		ProjectDTO dto = new ProjectDTO(project);
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("dto", dto);
 		model.setViewName("/extcore/jsp/project/project-view.jsp");
 		return model;
 	}
 
+	@Description(value = "프로젝트 태스크 페이지")
+	@GetMapping(value = "/task")
+	public ModelAndView task(@RequestParam String oid, @RequestParam String toid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Project project = (Project) CommonUtils.getObject(oid);
+		Task task = (Task) CommonUtils.getObject(toid);
+		ProjectDTO data = new ProjectDTO(project);
+		TaskDTO dto = new TaskDTO(task);
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		ArrayList<Task> list = TemplateHelper.manager.getSourceOrTarget(task, "source");
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("project", project);
+		model.addObject("data", data);
+		model.addObject("dto", dto);
+		model.addObject("list", list);
+		model.setViewName("/extcore/jsp/project/project-task-view.jsp");
+		return model;
+	}
+
+	@Description(value = "막종상세, 거래처, 설치라인 관련 CIP 프로젝트 상세에서 보기")
+	@GetMapping(value = "/cip")
+	public ModelAndView cip(@RequestParam String mak_oid, @RequestParam String detail_oid,
+			@RequestParam String customer_oid, @RequestParam String install_oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		ArrayList<CipDTO> list = CipHelper.manager.cip(mak_oid, detail_oid, customer_oid, install_oid);
+		model.addObject("list", list);
+		model.setViewName("/extcore/jsp/project/project-cip.jsp");
+		return model;
+	}
+
+	@Description(value = "도면 일람표 프로젝트 상세에서 보기")
+	@GetMapping(value = "/workOrder")
+	public ModelAndView workOrder(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		JSONArray list = KeDrawingHelper.manager.workOrder(oid);
+		model.addObject("list", list);
+		model.setViewName("/extcore/jsp/project/project-workOrder.jsp");
+		return model;
+	}
+	
+	@Description(value = "특이사항 프로젝트 상세에서 보기")
+	@GetMapping(value = "/issue")
+	public ModelAndView issue(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		JSONArray list = IssueHelper.manager.issue(oid);
+		model.addObject("list", list);
+		model.setViewName("/extcore/jsp/project/project-issue.jsp");
+		return model;
+	}
 }

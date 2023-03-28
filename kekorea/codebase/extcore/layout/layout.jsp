@@ -34,7 +34,7 @@
 	<script src="/Windchill/jsp/js/plugins/gritter/jquery.gritter.min.js"></script>
 	<script type="text/javascript">
 		const cover = new ax5.ui.mask();
-		let iframe = document.getElementById("content");
+		const iframe = document.getElementById("content");
 		function moveToPage(obj, url, loc) {
 			let menu = document.getElementsByClassName("menu");
 			for (let i = 0; i < menu.length; i++) {

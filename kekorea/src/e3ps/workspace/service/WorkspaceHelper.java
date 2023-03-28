@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +31,7 @@ import e3ps.workspace.PersistableLineMasterLink;
 import e3ps.workspace.dto.ApprovalLineDTO;
 import e3ps.workspace.notice.Notice;
 import wt.doc.WTDocument;
+import wt.enterprise.Managed;
 import wt.epm.EPMDocument;
 import wt.fc.PagingQueryResult;
 import wt.fc.PagingSessionHelper;
@@ -59,41 +61,41 @@ public class WorkspaceHelper {
 	public static final String RECEIVE_LINE = "수신";
 	public static final String SUBMIT_LINE = "기안";
 
-	public static final String MASTER_APPROVING = "승인중";
-	public static final String MASTER_APPROVAL_COMPLETE = "결재완료";
-	public static final String MASTER_RETURN = "반려됨";
-	public static final String MASTER_REJECT = "검토반려";
+	public static final String STATE_MASTER_APPROVING = "승인중";
+	public static final String STATE_MASTER_APPROVAL_COMPLETE = "결재완료";
+	public static final String STATE_MASTER_REJECT = "반려됨";
+	public static final String STATE_MASTER_AGREE_REJECT = "검토반려";
 
 	/**
 	 * 기안 라인 상태값 상수
 	 */
-	public static final String LINE_SUBMIT_COMPLETE = "제출됨";
+	public static final String SATATE_LINE_SUBMIT_COMPLETE = "제출됨";
 
 	/**
 	 * 결재 라인 상태값 상수
 	 */
-	public static final String APPROVAL_READY = "대기중";
-	public static final String APPROVAL_APPROVING = "승인중";
-	public static final String APPROVAL_COMPLETE = "결재완료";
-	public static final String APPROVAL_RETURN = "반려됨";
+	public static final String STATE_APPROVAL_READY = "대기중";
+	public static final String STATE_APPROVAL_APPROVING = "승인중";
+	public static final String STATE_APPROVAL_COMPLETE = "결재완료";
+	public static final String STATE_APPROVAL_RETURN = "반려됨";
 
 	/**
 	 * 검토 라인 상태값 상수
 	 */
-	public static final String AGREE_READY = "검토중";
-	public static final String AGREE_COMPLETE = "검토완료";
-	public static final String AGREE_REJECT = "검토반려";
+	public static final String STATE_AGREE_READY = "검토중";
+	public static final String STATE_AGREE_COMPLETE = "검토완료";
+	public static final String STATE_AGREE_REJECT = "검토반려";
 
 	/**
 	 * 수신 라인 상태값 상수
 	 */
-	public static final String RECEIVE_READY = "수신확인중";
-	public static final String RECEIVE_COMPLETE = "수신완료";
+	public static final String STATE_RECEIVE_READY = "수신확인중";
+	public static final String STATE_RECEIVE_COMPLETE = "수신완료";
 
 	/**
 	 * 부재중 처리 상태값 상수
 	 */
-	public static final String LINE_ABSENCE = "부재중";
+	public static final String STATE_LINE_ABSENCE = "부재중";
 
 	/**
 	 * 결재자 타입 상수 값
@@ -120,20 +122,6 @@ public class WorkspaceHelper {
 		int appObjType = 0;
 
 		return appObjType;
-	}
-
-	public ApprovalMaster getMaster(Persistable per) {
-		ApprovalMaster master = null;
-		QueryResult result = null;
-		try {
-			result = PersistenceHelper.manager.navigate(per, "lineMaster", PersistableLineMasterLink.class);
-			if (result.hasMoreElements()) {
-				master = (ApprovalMaster) result.nextElement();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return master;
 	}
 
 	public ArrayList<ApprovalLine> getAllLines(ApprovalMaster master) {
@@ -170,37 +158,6 @@ public class WorkspaceHelper {
 		return list;
 	}
 
-	public ArrayList<ApprovalLine> getAppLines(ApprovalMaster master) {
-		ArrayList<ApprovalLine> list = new ArrayList<ApprovalLine>();
-		QueryResult result = null;
-		ApprovalLine appLine = null;
-		try {
-			QuerySpec query = new QuerySpec();
-			int idx = query.appendClassList(ApprovalLine.class, true);
-			SearchCondition sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=",
-					WorkspaceHelper.APP_LINE);
-			query.appendWhere(sc, new int[] { idx });
-			query.appendAnd();
-
-			long ids = master.getPersistInfo().getObjectIdentifier().getId();
-			sc = new SearchCondition(ApprovalLine.class, "masterReference.key.id", "=", ids);
-			query.appendWhere(sc, new int[] { idx });
-
-			ClassAttribute ca = new ClassAttribute(ApprovalLine.class, ApprovalLine.SORT);
-			OrderBy orderBy = new OrderBy(ca, false);
-			query.appendOrderBy(orderBy, new int[] { idx });
-
-			result = PersistenceHelper.manager.find(query);
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				appLine = (ApprovalLine) obj[0];
-				list.add(appLine);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return list;
-	}
 
 	public String[] getContractEpmData(Persistable per) throws Exception {
 		String oid = "";
@@ -488,24 +445,6 @@ public class WorkspaceHelper {
 		PersistenceHelper.manager.modify(line);
 	}
 
-	public int[] getLineCount() throws Exception {
-		Map<String, Object> param = new HashMap<String, Object>();
-
-		// 검토함
-		int agreeSize = (int) findAgreeList(param).get("size");
-
-		// 결재함
-		int appSize = (int) findApprovalList(param).get("size");
-
-		int receiveSize = (int) findReceiveList(param).get("size");
-		int returnSize = (int) findReturnList(param).get("size");
-		int completeSize = (int) findCompleteList(param).get("size");
-		int ingSize = (int) findIng(param).get("size");
-
-		int[] count = new int[] { agreeSize, appSize, receiveSize, ingSize, completeSize, returnSize };
-		return count;
-	}
-
 	public ArrayList<Persistable> getMasterByPersistable(ApprovalMaster master) throws Exception {
 		ArrayList<Persistable> list = new ArrayList<Persistable>();
 		Persistable per = master.getPersist();
@@ -545,32 +484,27 @@ public class WorkspaceHelper {
 		return isAppLine;
 	}
 
-	public String getLineName(Persistable per) {
-		String name = "";
+	/**
+	 * 객체에 따른 결재제목 가져오기
+	 */
+	public String getName(Persistable per) {
 		if (per instanceof WTDocument) {
-			if (per instanceof RequestDocument) {
-				RequestDocument req = (RequestDocument) per;
-				// name = "의뢰서_" + req.getName();
-				name = req.getName();
-			} else {
-				WTDocument document = (WTDocument) per;
-				// name = "문서_" + document.getName();
-				name = document.getName();
-			}
+			WTDocument document = (WTDocument) per;
+			return document.getName();
 		} else if (per instanceof WTPart) {
 			WTPart part = (WTPart) per;
-			name = part.getName();
+			return part.getName();
 		} else if (per instanceof EPMDocument) {
 			EPMDocument epm = (EPMDocument) per;
-			name = epm.getName();
+			return epm.getName();
 		} else if (per instanceof ApprovalContract) {
 			ApprovalContract contract = (ApprovalContract) per;
-			name = contract.getName();
-		} else if (per instanceof PartListMaster) {
-			PartListMaster mm = (PartListMaster) per;
-			name = mm.getName();
+			return contract.getName();
+		} else if (per instanceof Managed) {
+			PartListMaster master = (PartListMaster) per;
+			return master.getName();
 		}
-		return name;
+		return "";
 	}
 
 	public boolean isEndAgree(ApprovalMaster master) throws Exception {
@@ -630,7 +564,7 @@ public class WorkspaceHelper {
 		String submiterOid = (String) params.get("submiterOid"); // 작성자
 		String receiveFrom = (String) params.get("receiveFrom");
 		String receiveTo = (String) params.get("receiveTo");
-		
+
 		// 쿼리문 작성
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ApprovalLine.class, true);
@@ -638,13 +572,14 @@ public class WorkspaceHelper {
 
 		QuerySpecUtils.toInnerJoin(query, ApprovalLine.class, ApprovalMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_master);
-		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, AGREE_READY);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, STATE_AGREE_READY);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, AGREE_LINE);
-		QuerySpecUtils.toTimeGreaterEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveFrom);
+		QuerySpecUtils.toTimeGreaterEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP,
+				receiveFrom);
 		QuerySpecUtils.toTimeLessEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveTo);
 		QuerySpecUtils.toCreator(query, idx, ApprovalLine.class, submiterOid);
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, true);
-		
+
 		WTUser sessionUser = CommonUtils.sessionUser();
 		if (!CommonUtils.isAdmin()) {
 			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, "ownership.owner.key.id",
@@ -691,13 +626,13 @@ public class WorkspaceHelper {
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
 
 		// 쿼리 수정할 예정
-		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, APPROVAL_APPROVING);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, STATE_APPROVAL_APPROVING);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, APPROVAL_LINE);
-		QuerySpecUtils.toTimeGreaterEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveFrom);
+		QuerySpecUtils.toTimeGreaterEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP,
+				receiveFrom);
 		QuerySpecUtils.toTimeLessEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveTo);
 		QuerySpecUtils.toCreator(query, idx, ApprovalLine.class, submiterOid);
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, true);
-		
 
 		if (!isAdmin) {
 			WTUser sessionUser = CommonUtils.sessionUser();
@@ -743,7 +678,7 @@ public class WorkspaceHelper {
 
 		QuerySpecUtils.toInnerJoin(query, ApprovalLine.class, ApprovalMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_master);
-		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, RECEIVE_READY);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, STATE_RECEIVE_READY);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, RECEIVE_LINE);
 
 		WTUser sessionUser = CommonUtils.sessionUser();
@@ -788,8 +723,8 @@ public class WorkspaceHelper {
 					sessionUser.getPersistInfo().getObjectIdentifier().getId());
 		}
 		query.appendOpenParen();
-		QuerySpecUtils.toEqualsOr(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, APPROVAL_APPROVING);
-		QuerySpecUtils.toEqualsOr(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, AGREE_READY);
+		QuerySpecUtils.toEqualsOr(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, STATE_APPROVAL_APPROVING);
+		QuerySpecUtils.toEqualsOr(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, STATE_AGREE_READY);
 		query.appendCloseParen();
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.MODIFY_TIMESTAMP, false);
 
@@ -828,7 +763,8 @@ public class WorkspaceHelper {
 					sessionUser.getPersistInfo().getObjectIdentifier().getId());
 		}
 
-		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, MASTER_APPROVAL_COMPLETE);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.STATE,
+				STATE_MASTER_APPROVAL_COMPLETE);
 
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.MODIFY_TIMESTAMP, false);
 
@@ -867,8 +803,8 @@ public class WorkspaceHelper {
 		}
 
 		query.appendOpenParen();
-		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, MASTER_REJECT);
-		QuerySpecUtils.toEqualsOr(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, MASTER_RETURN);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, STATE_MASTER_AGREE_REJECT);
+		QuerySpecUtils.toEqualsOr(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, STATE_MASTER_REJECT);
 		query.appendCloseParen();
 
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.MODIFY_TIMESTAMP, false);
@@ -987,5 +923,90 @@ public class WorkspaceHelper {
 			list.add(line);
 		}
 		return list;
+	}
+
+	/**
+	 * 결재 마스터 객체 가져오기
+	 */
+	public ApprovalMaster getMaster(Persistable per) throws Exception {
+		QueryResult result = PersistenceHelper.manager.navigate(per, "lineMaster", PersistableLineMasterLink.class);
+		if (result.hasMoreElements()) {
+			return (ApprovalMaster) result.nextElement();
+		}
+		return null;
+	}
+
+	/**
+	 * 결재 이력 그리드용
+	 */
+	public JSONArray jsonArrayHistory(Persistable per) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+
+		ApprovalMaster master = getMaster(per);
+
+		if (master != null) {
+			ApprovalLine submit = getSubmitLine(master);
+			Map<String, String> data = new HashMap<>();
+			data.put("type", submit.getType());
+			data.put("role", submit.getRole());
+			data.put("name", submit.getName());
+			data.put("state", submit.getState());
+			data.put("owner", submit.getOwnership().getOwner().getFullName());
+			data.put("receiveDate_txt", submit.getStartTime().toString().substring(0, 16));
+			data.put("completeDate_txt", submit.getCompleteTime().toString().substring(0, 16));
+			data.put("description", submit.getDescription());
+			list.add(data);
+
+			ArrayList<ApprovalLine> agreeLines = getAgreeLines(master);
+			for (ApprovalLine agreeLine : agreeLines) {
+				Map<String, String> map = new HashMap<>();
+				map.put("type", agreeLine.getType());
+				map.put("role", agreeLine.getRole());
+				map.put("name", agreeLine.getName());
+				map.put("state", agreeLine.getState());
+				map.put("owner", agreeLine.getOwnership().getOwner().getFullName());
+				map.put("receiveDate_txt", agreeLine.getStartTime().toString().substring(0, 16));
+				map.put("completeDate_txt", agreeLine.getCompleteTime().toString().substring(0, 16));
+				map.put("description", agreeLine.getDescription());
+				list.add(map);
+			}
+
+			ArrayList<ApprovalLine> approvalLines = getApprovalLines(master);
+			for (ApprovalLine approvalLine : approvalLines) {
+				Map<String, String> map = new HashMap<>();
+				map.put("type", approvalLine.getType());
+				map.put("role", approvalLine.getRole());
+				map.put("name", approvalLine.getName());
+				map.put("state", approvalLine.getState());
+				map.put("owner", approvalLine.getOwnership().getOwner().getFullName());
+				map.put("receiveDate_txt", approvalLine.getStartTime().toString().substring(0, 16));
+				map.put("completeDate_txt", approvalLine.getCompleteTime().toString().substring(0, 16));
+				map.put("description", approvalLine.getDescription());
+				list.add(map);
+			}
+
+			ArrayList<ApprovalLine> receiveLines = getReceiveLines(master);
+			for (ApprovalLine receiveLine : receiveLines) {
+				Map<String, String> map = new HashMap<>();
+				map.put("type", receiveLine.getType());
+				map.put("role", receiveLine.getRole());
+				map.put("name", receiveLine.getName());
+				map.put("state", receiveLine.getState());
+				map.put("owner", receiveLine.getOwnership().getOwner().getFullName());
+				map.put("receiveDate_txt", receiveLine.getStartTime().toString().substring(0, 16));
+				map.put("completeDate_txt", receiveLine.getCompleteTime().toString().substring(0, 16));
+				map.put("description", receiveLine.getDescription());
+				list.add(map);
+			}
+		}
+		return new JSONArray(list);
+	}
+
+	/**
+	 * 객체에 따른 결재 의견 입력
+	 */
+	public String getDescription(Persistable persistable) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

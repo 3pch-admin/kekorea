@@ -46,13 +46,94 @@
 			<tr>
 				<th class="req lb">결재 문서</th>
 				<td>
-					<jsp:include page="/extcore/include/document-include.jsp">
-						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
-						<jsp:param value="true" name="multi" />
-						<jsp:param value="" name="obj" />
-						<jsp:param value="250" name="height" />
-					</jsp:include>
+					<div class="include">
+						<input type="button" value="문서 추가" title="문서 추가" class="blue" onclick="_insert();">
+						<input type="button" value="문서 삭제" title="문서 삭제" class="red" onclick="_deleteRow();">
+						<div id="_grid_wrap" style="height: 250px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+						<script type="text/javascript">
+							let _myGridID;
+							const _columns = [ {
+								dataField : "number",
+								headerText : "문서번호",
+								dataType : "string",
+								width : 100
+							}, {
+								dataField : "name",
+								headerText : "문서제목",
+								dataType : "string",
+								renderer : {
+									type : "LinkRenderer",
+									baseUrl : "javascript",
+									jsCallback : function(rowIndex, columnIndex, value, item) {
+										const oid = item.oid;
+										alert(oid);
+									}
+								},
+							}, {
+								dataField : "version",
+								headerText : "버전",
+								dataType : "string",
+								width : 80
+							}, {
+								dataField : "state",
+								headerText : "상태",
+								dataType : "string",
+								width : 100,
+							}, {
+								dataField : "creator",
+								headerText : "작성자",
+								dataType : "string",
+								width : 100
+							}, {
+								dataField : "createdDate",
+								headerText : "작성일",
+								dataType : "date",
+								formatString : "yyyy-mm-dd",
+								width : 100
+							}, {
+								dataField : "modifier",
+								headerText : "수정자",
+								dataType : "string",
+								width : 100
+							}, {
+								dataField : "modifiedDate",
+								headerText : "수정일",
+								dataType : "date",
+								formatString : "yyyy-mm-dd",
+								width : 100
+							}, {
+								dataField : "oid",
+								visible : false,
+								dataType : "string"
+							} ]
+
+							function _insert() {
+								const url = getCallUrl("/document/popup?method=append&multi=true");
+								popup(url, 1400, 600);
+							}
+
+							function _createAUIGrid(columnLayout) {
+								const props = {
+									headerHeight : 30,
+									rowHeight : 30,
+									showRowNumColumn : true,
+									rowNumHeaderText : "번호",
+									showStateColumn : true,
+									softRemoveRowMode : false,
+									showRowCheckColumn : true,
+								}
+								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
+							}
+
+							function _deleteRow() {
+								const checked = AUIGrid.getCheckedRowItems(_myGridID);
+								for (let i = checked.length - 1; i >= 0; i--) {
+									const rowIndex = checked[i].rowIndex;
+									AUIGrid.removeRow(_myGridID, rowIndex);
+								}
+							}
+						</script>
+					</div>
 				</td>
 			</tr>
 			<tr>
@@ -68,8 +149,8 @@
 			function registerLine() {
 				const url = getCallUrl("/document/register");
 				const params = new Object();
-				const _addRows = AUIGrid.getAddedRowItems(_myGridID); // 문사
-				const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_); // 결재
+				const _addRows = AUIGrid.getAddedRowItems(_myGridID);
+				const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
 				params.name = document.getElementById("name").value;
 				params._addRows = _addRows;
 				params._addRows_ = _addRows_;
@@ -81,10 +162,10 @@
 				// 					}
 				// 				})
 			}
-			
+
 			document.addEventListener("DOMContentLoaded", function() {
 				_createAUIGrid(_columns);
-				_createAUIGrid_(_columns_); 
+				_createAUIGrid_(_columns_);
 			});
 
 			window.addEventListener("resize", function() {

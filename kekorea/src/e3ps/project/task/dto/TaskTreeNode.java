@@ -13,6 +13,7 @@ public class TaskTreeNode {
 	private String startDate;
 	private String endDate;
 	private String taskType;
+	private int allocate;
 	private boolean isNew;
 	private int _$depth;
 	private ArrayList<TaskTreeNode> children = new ArrayList<>();
@@ -87,6 +88,14 @@ public class TaskTreeNode {
 
 	public void setTaskType(String taskType) {
 		this.taskType = taskType;
+	}
+
+	public int getAllocate() {
+		return allocate;
+	}
+
+	public void setAllocate(int allocate) {
+		this.allocate = allocate;
 	}
 
 	public boolean isNew() {

@@ -211,7 +211,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "회의록 제목",
 					dataType : "string",
 					width : 350,
-					style : "aui-left",
+					style : "underline",
 					filter : {
 						showIcon : true,
 						inline : true

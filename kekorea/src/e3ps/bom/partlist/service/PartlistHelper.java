@@ -21,6 +21,7 @@ import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.dto.PartListDTO;
+import e3ps.bom.partlist.dto.PartListDataDTO;
 import e3ps.bom.partlist.dto.PartListDataViewData;
 import e3ps.bom.tbom.dto.TBOMMasterDTO;
 import e3ps.common.util.CommonUtils;
@@ -422,134 +423,6 @@ public class PartlistHelper {
 		return part;
 	}
 
-	public File installExcel(Map<String, Object> param) throws Exception {
-//		Map<String, Object> map = new HashMap<String, Object>();
-		String oid = (String) param.get("oid");
-
-		ReferenceFactory rf = new ReferenceFactory();
-
-		PartListMaster master = (PartListMaster) rf.getReference(oid).getObject();
-
-		/* Excel Download */
-		// Workbook 생성
-		File file = null;
-
-		String today = DateUtils.getCurrentTimestamp().toString().substring(0, 10);
-
-		String excelName = "수배표_" + master.getName() + "_" + today + ".xlsx";// new
-																				// String("수배표.xlsx".getBytes("ISO-8859-1"),
-																				// "EUC-KR");
-		Map<String, String> headerList = new HashMap<String, String>();
-		Map<String, String> list = new HashMap<String, String>();
-		ArrayList<PartListData> data = PartlistHelper.manager.getPartListData(master);
-		// headerList를 세팅할 만큼 세팅합니다.
-		headerList.put("0", "NO");
-		headerList.put("1", "LOT_NO");
-		headerList.put("2", "UNIT_NAME");
-		headerList.put("3", "부품번호");
-		headerList.put("4", "부품명");
-		headerList.put("5", "규격");
-		headerList.put("6", "MAKER");
-		headerList.put("7", "거래처");
-		headerList.put("8", "수량");
-		headerList.put("9", "단위");
-		headerList.put("10", "단가");
-		headerList.put("11", "화폐");
-		headerList.put("12", "원화금액");
-		headerList.put("13", "수배일자");
-		headerList.put("14", "환율");
-		headerList.put("15", "참고도면");
-		headerList.put("16", "조달구분");
-		headerList.put("17", "비고");
-		// XSSFWorkbook 세팅
-		XSSFWorkbook workbook = new XSSFWorkbook();
-		XSSFSheet sheet = workbook.createSheet(master.getName());
-		XSSFRow row = null;
-		XSSFCell cell = null;
-		for (int i = 0; i <= data.size(); i++) {
-			// data의 크기만큼 로우를 생성합니다.
-			row = sheet.createRow((short) i);
-			for (int k = 0; k < headerList.size(); k++) {
-				// headerList의 크기만큼 i번째 row에 cell을 생성합니다.
-				cell = row.createCell(k);
-				// 맨윗줄에 headerList를 세팅합니다.
-				if (i == 0) {
-					// CellStyle은 필요에따라서 세팅합니다.
-					CellStyle style = workbook.createCellStyle();
-					style.setFillForegroundColor(HSSFColor.AQUA.index);
-					// style.setFillPattern("셀의 패턴을 세팅");
-					// style.setAlignment("셀데이터의 정렬조건 세팅");
-					cell.setCellStyle(style);
-					sheet.setColumnWidth(0, 1000);
-					sheet.setColumnWidth(1, 2100);
-					sheet.setColumnWidth(2, 5000);
-					sheet.setColumnWidth(3, 5000);
-					sheet.setColumnWidth(4, 8800);
-					sheet.setColumnWidth(5, 8800);
-					sheet.setColumnWidth(6, 4000);
-					sheet.setColumnWidth(7, 4000);
-					sheet.setColumnWidth(8, 1200);
-					sheet.setColumnWidth(9, 1200);
-					sheet.setColumnWidth(10, 4000);
-					sheet.setColumnWidth(11, 2200);
-					sheet.setColumnWidth(12, 4000);
-					sheet.setColumnWidth(13, 3200);
-					sheet.setColumnWidth(14, 3000);
-					sheet.setColumnWidth(15, 4000);
-					sheet.setColumnWidth(16, 4000);
-					sheet.setColumnWidth(17, 6000);
-					// headerList의 데이터를 세팅
-					cell.setCellValue(headerList.get(Integer.toString(k)));
-				}
-				// 엑셀파일에 넣을 데이터를 세팅합니다.
-				else {
-					// i-1을하는이유는 headerList가 i번쨰 row이기 때문.
-					PartListDataViewData vdata = new PartListDataViewData(data.get(i - 1));
-					// <dataType> excelData = data.get(i-1);
-					// 리스트의 크기만큼 세팅합니다.
-					list.put("0", i + "");
-					list.put("1", vdata.lotNo);
-					list.put("2", vdata.unitName);
-					list.put("3", vdata.partNo);
-					list.put("4", vdata.partName);
-					list.put("5", vdata.standard);
-					list.put("6", vdata.maker);
-					list.put("7", vdata.customer);
-					list.put("8", vdata.quantity);
-					list.put("9", vdata.unit);
-					list.put("10", vdata.price);
-					list.put("11", vdata.currency);
-					list.put("12", String.format("%,f", vdata.won).substring(0,
-							String.format("%,f", vdata.won).lastIndexOf(".")));
-					list.put("13", vdata.partListDate);
-					list.put("14", vdata.exchangeRate);
-					list.put("15", vdata.referDrawing);
-					list.put("16", vdata.classification);
-					list.put("17", vdata.note);
-					cell.setCellValue(list.get(Integer.toString(k)));
-				}
-			}
-		}
-		// 엑셀파일 세팅 후 파일 생성
-		try {
-			System.out.println(excelName);
-			file = new File(excelFormLoc + File.separator + excelName);
-			// file을 생성할 폴더가 없으면 생성합니다.
-			// file.mkdirs();
-			FileOutputStream fileOutputStream = new FileOutputStream(file);
-			// 생성한 엑셀파일을 outputStream 해줍니다.
-			workbook.write(fileOutputStream);
-			fileOutputStream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (workbook != null)
-				workbook.close();
-		}
-
-		return file;
-	}
-
 	/**
 	 * 수배표 가져오는 함수
 	 */
@@ -592,6 +465,7 @@ public class PartlistHelper {
 				PartListDTO dto = new PartListDTO(link);
 				if (isNode == 1) {
 					node.put("poid", dto.getPoid());
+					node.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
 					node.put("projectType_name", dto.getProjectType_name());
 					node.put("customer_name", dto.getCustomer_name());
 					node.put("install_name", dto.getInstall_name());
@@ -612,6 +486,7 @@ public class PartlistHelper {
 					data.put("name", dto.getName());
 					data.put("oid", dto.getOid());
 					data.put("poid", dto.getPoid());
+					data.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
 					data.put("projectType_name", dto.getProjectType_name());
 					data.put("customer_name", dto.getCustomer_name());
 					data.put("install_name", dto.getInstall_name());
@@ -682,10 +557,6 @@ public class PartlistHelper {
 
 	/**
 	 * 수배표된 데이터들을 ArrayList<Map<String, Object>> 형태로 가져오는 함수
-	 * 
-	 * @param oid : 수배표마스터 객체 OID
-	 * @return ArrayList<Map<String, Object>>
-	 * @throws Exception
 	 */
 	public ArrayList<Map<String, Object>> getArrayMap(String oid) throws Exception {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
@@ -724,122 +595,10 @@ public class PartlistHelper {
 		return list;
 	}
 
-	public Map<String, Object> compare(Map<String, Object> params) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-
-		String oid = (String) params.get("oid");
-		String _oid = (String) params.get("_oid");
-		String compareType = (String) params.get("compareType");
-
-		ArrayList<Map<String, Object>> result = getArrayMap(oid); // 기준
-		ArrayList<Map<String, Object>> _result = getArrayMap(_oid); // 비교
-
-		// 더 큰 배열
-		int maxSize = Math.max(result.size(), _result.size());
-		// 크기가 작은 ArrayList를 찾아 null 값을 추가
-		int diff = Math.abs(result.size() - _result.size());
-		if (result.size() < _result.size()) {
-			for (int i = 0; i < diff; i++) {
-				Map<String, Object> empty = new HashMap<String, Object>();
-				result.add(empty);
-			}
-		} else if (result.size() > _result.size()) {
-			for (int i = 0; i < diff; i++) {
-				Map<String, Object> empty = new HashMap<String, Object>();
-				_result.add(empty);
-			}
-		}
-
-		ArrayList<Map<String, Object>> dataList = new ArrayList<>(maxSize); // 신규 기준
-		ArrayList<Map<String, Object>> _dataList = new ArrayList<>(maxSize); // 신규 비교
-
-		for (int i = 0; i < result.size(); i++) {
-			boolean isEquals = true;
-			Map<String, Object> data = result.get(i); // 기준
-			for (int j = 0; j < _result.size(); j++) {
-				Map<String, Object> _data = _result.get(j); // 비교
-
-				if (compareType.equals("quantity")) { // LOT NO 비교
-					String value = (String) data.get("partNo") + "-" + (String) data.get("lotNo") + "-"
-							+ (data.get("quantity") == null ? "" : (int) data.get("quantity"));
-					String _value = (String) _data.get("partNo") + "-" + (String) _data.get("lotNo") + "-"
-							+ (_data.get("quantity") == null ? "" : (int) _data.get("quantity"));
-
-					System.out.println("va=" + value);
-					System.out.println("v2a=" + _value);
-
-					if (value.equals(_value)) {
-						dataList.add(data);
-						_dataList.add(_data);
-//						result.remove(i);
-						_result.remove(j);
-						isEquals = true;
-						break;
-					}
-					isEquals = false;
-				} else {
-					// 비교 조건부..
-					String value = (String) data.get("partNo") + "-" + (String) data.get("lotNo");
-					String _value = (String) _data.get("partNo") + "-" + (String) _data.get("lotNo");
-
-					if (value.equals(_value)) {
-						dataList.add(data);
-						_dataList.add(_data);
-//						result.remove(i);
-						_result.remove(j);
-						isEquals = true;
-						break;
-					}
-					isEquals = false;
-				}
-			}
-			System.out.println("isEquals=" + isEquals);
-			if (!isEquals) {
-				Map<String, Object> empty = new HashMap<String, Object>();
-				dataList.add(data);
-				_dataList.add(empty);
-//				dataList.add(empty);
-//				_dataList.add(_data);
-			}
-		}
-
-		// 합치기
-		_dataList.addAll(_result); // 비교 데이터 합치기..
-
-		int _diff = Math.abs(dataList.size() - _dataList.size());
-		if (dataList.size() < _dataList.size()) {
-			for (int i = 0; i < _diff; i++) {
-				Map<String, Object> empty = new HashMap<String, Object>();
-				dataList.add(empty);
-			}
-		} else if (dataList.size() > _dataList.size()) {
-			for (int i = 0; i < _diff; i++) {
-				Map<String, Object> empty = new HashMap<String, Object>();
-				_dataList.add(empty);
-			}
-		}
-
-		// 싸이즈가 같으니깐??
-		for (int i = dataList.size() - 1; i >= 0; i--) {
-//		for (int i = 0; i < dataList.size(); i++) {
-			Map<String, Object> m = dataList.get(i);
-			Map<String, Object> _m = _dataList.get(i);
-			// 둘다 비어 있으면 빼버린다..
-			if (m.size() == 0 && _m.size() == 0) {
-				dataList.remove(i);
-				_dataList.remove(i);
-			}
-		}
-
-		map.put("dataList", dataList);
-		map.put("_dataList", _dataList);
-		return map;
-	}
-
 	/**
-	 * AUI 그리드 작번 리스트 INCLUDE 페이지
+	 * 수배표 관련 작번 리스트
 	 */
-	public net.sf.json.JSONArray jsonArrayAui(String oid) throws Exception {
+	public JSONArray jsonArrayAui(String oid) throws Exception {
 		ArrayList<Map<String, String>> list = new ArrayList<>();
 		PartListMaster partListMaster = (PartListMaster) CommonUtils.getObject(oid);
 
@@ -866,6 +625,149 @@ public class PartlistHelper {
 			map.put("description", project.getDescription());
 			list.add(map);
 		}
-		return net.sf.json.JSONArray.fromObject(list);
+		return new JSONArray(list);
+	}
+
+	/**
+	 * 수배표 비교
+	 */
+	public ArrayList<Map<String, Object>> compare(String oid, String _oid, String compareKey, String sort) throws Exception {
+		if (StringUtils.isNull(sort)) {
+			sort = MasterDataLink.SORT;
+		}
+
+		if (StringUtils.isNull(compareKey)) {
+			compareKey = "lotNo+partNo";
+		}
+		ArrayList<Map<String, Object>> list = compareData(oid, sort);
+		ArrayList<Map<String, Object>> _list = compareData(_oid, sort);
+
+		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
+
+		// list1의 데이터를 먼저 추가
+		for (Map<String, Object> data : list) {
+			Map<String, Object> mergedData = new HashMap<>();
+			mergedData.put("lotNo1", data.get("lotNo"));
+			mergedData.put("unitName", data.get("unitName"));
+			mergedData.put("partNo1", data.get("partNo"));
+			mergedData.put("partName", data.get("partName"));
+			mergedData.put("standard", data.get("standard"));
+			mergedData.put("maker", data.get("maker"));
+			mergedData.put("customer", data.get("customer"));
+			mergedData.put("quantity1", data.get("quantity"));
+			mergedData.put("unit", data.get("unit"));
+			mergedData.put("price", data.get("price"));
+			mergedData.put("currency", data.get("currency"));
+			mergedData.put("won1", data.get("won"));
+			mergedData.put("partListDate_txt", data.get("partListDate_txt"));
+			mergedData.put("exchangeRate", data.get("exchangeRate"));
+			mergedData.put("referDrawing", data.get("referDrawing"));
+			mergedData.put("classification", data.get("classification"));
+			mergedData.put("note", data.get("note"));
+			mergedList.add(mergedData);
+		}
+
+		for (Map<String, Object> data : _list) {
+			String partNo = (String) data.get("partNo");
+			String lotNo = (String) data.get("lotNo");
+			String key = partNo + "-" + lotNo;
+//			String key = partNo;
+			boolean isExist = false;
+
+			// mergedList에 partNo가 동일한 데이터가 있는지 확인
+			for (Map<String, Object> mergedData : mergedList) {
+				String mergedPartNo = (String) mergedData.get("partNo1");
+				String mergedLotNo = (String) mergedData.get("lotNo1");
+				String _key = mergedPartNo + "-" + mergedLotNo;
+
+				if (key.equals(_key)) {
+					// partNo가 동일한 데이터가 있으면 데이터를 업데이트하고 isExist를 true로 변경
+					mergedData.put("lotNo2", data.get("lotNo"));
+					mergedData.put("unitName", data.get("unitName"));
+					mergedData.put("partNo2", data.get("partNo"));
+					mergedData.put("partName", data.get("partName"));
+					mergedData.put("standard", data.get("standard"));
+					mergedData.put("maker", data.get("maker"));
+					mergedData.put("customer", data.get("customer"));
+					mergedData.put("quantity2", data.get("quantity"));
+					mergedData.put("unit", data.get("unit"));
+					mergedData.put("price", data.get("price"));
+					mergedData.put("currency", data.get("currency"));
+					mergedData.put("won2", data.get("won"));
+					mergedData.put("partListDate_txt", data.get("partListDate_txt"));
+					mergedData.put("exchangeRate", data.get("exchangeRate"));
+					mergedData.put("referDrawing", data.get("referDrawing"));
+					mergedData.put("classification", data.get("classification"));
+					mergedData.put("note", data.get("note"));
+					isExist = true;
+					break;
+				}
+			}
+
+			if (!isExist) {
+				// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
+				Map<String, Object> mergedData = new HashMap<>();
+				mergedData.put("partNo1", "");
+				mergedData.put("lotNo1", "");
+				mergedData.put("partNo2", data.get("partNo"));
+				mergedData.put("lotNo2", data.get("lotNo"));
+				mergedData.put("quantity2", data.get("quantity"));
+				mergedData.put("won2", data.get("won"));
+				mergedList.add(mergedData);
+			}
+		}
+		return mergedList;
+	}
+
+	/**
+	 * 비교할 데이터 가져오기
+	 */
+	private ArrayList<Map<String, Object>> compareData(String oid, String sort) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(PartListMaster.class, false);
+		int idx_link = query.appendClassList(MasterDataLink.class, true);
+		int idx_data = query.appendClassList(PartListData.class, false);
+		QuerySpecUtils.toInnerJoin(query, PartListMaster.class, MasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toInnerJoin(query, PartListData.class, MasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleBObjectRef.key.id", idx_data, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, MasterDataLink.class, "roleAObjectRef.key.id",
+				master.getPersistInfo().getObjectIdentifier().getId());
+//		if("sort".equals(sort)) {
+//			QuerySpecUtils.toOrderBy(query, idx_link, MasterDataLink.class, sort, false);
+//		} else {
+		QuerySpecUtils.toOrderBy(query, idx_data, PartListData.class, sort, false);
+//		}
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			MasterDataLink link = (MasterDataLink) obj[0];
+			PartListData data = link.getData();
+			Map<String, Object> map = new HashMap<>();
+			map.put("lotNo", String.valueOf(data.getLotNo()));
+			map.put("unitName", data.getUnitName());
+			map.put("partNo", data.getPartNo());
+			map.put("partName", data.getPartName());
+			map.put("standard", data.getStandard());
+			map.put("maker", data.getMaker());
+			map.put("customer", data.getCustomer());
+			map.put("quantity", data.getQuantity());
+			map.put("unit", data.getUnit());
+			map.put("price", data.getPrice());
+			map.put("currency", data.getCurrency());
+			map.put("won", data.getWon());
+			map.put("partListDate_txt", CommonUtils.getPersistableTime(data.getPartListDate()));
+			map.put("exchangeRate", data.getExchangeRate());
+			map.put("referDrawing", data.getReferDrawing());
+			map.put("classification", data.getClassification());
+			map.put("note", data.getNote());
+			list.add(map);
+		}
+
+		return list;
 	}
 }

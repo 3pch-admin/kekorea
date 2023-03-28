@@ -1151,10 +1151,29 @@ public class OrgHelper {
 		int idx = query.appendClassList(People.class, true);
 		QuerySpecUtils.toLikeAnd(query, idx, People.class, People.NAME, userName);
 		QuerySpecUtils.toLikeAnd(query, idx, People.class, People.ID, userId);
-		QuerySpecUtils.toEqualsAnd(query, idx, People.class, "departmentReference.key.id",
+
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+
+		query.appendOpenParen();
+		SearchCondition sc = new SearchCondition(People.class, "departmentReference.key.id", "=",
 				department.getPersistInfo().getObjectIdentifier().getId());
+		query.appendWhere(sc, new int[] { idx });
+
+		ArrayList<Department> departments = OrgHelper.manager.getSubDepartment(department, new ArrayList<Department>());
+		for (int i = 0; i < departments.size(); i++) {
+			Department sub = (Department) departments.get(i);
+			query.appendOr();
+			long sfid = sub.getPersistInfo().getObjectIdentifier().getId();
+			query.appendWhere(new SearchCondition(People.class, "departmentReference.key.id", "=", sfid),
+					new int[] { idx });
+		}
+		query.appendCloseParen();
+
 		QuerySpecUtils.toBooleanAnd(query, idx, People.class, People.RESIGN, resign);
 		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, false);
+		System.out.println(query);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -1197,10 +1216,6 @@ public class OrgHelper {
 
 	/**
 	 * 부서별 사용자를 가져온다 AUIGrid 에서 편집 용도
-	 * 
-	 * @param code : 부서코드
-	 * @return org.json.JSONArray
-	 * @throws Exception
 	 */
 	public org.json.JSONArray getDepartmentUser(String code) throws Exception {
 		ArrayList<HashMap<String, String>> list = new ArrayList<>();
