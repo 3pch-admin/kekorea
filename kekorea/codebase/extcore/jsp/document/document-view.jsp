@@ -152,15 +152,6 @@ String oid = request.getParameter("oid");
 				dataType : "string",
 				width : 600,
 				style : "aui-left",
-// 				renderer : {
-// 					type : "LinkRenderer",
-// 					baseUrl : "javascript",
-// 					jsCallback : function(rowIndex, columnIndex, value, item) {
-// 						const oid = item.oid;
-// 						const url = getCallUrl("/document/view?oid=" + oid);
-// 						popup(url);
-// 					}
-// 				},
 				filter : {
 					showIcon : true,
 					inline : true
