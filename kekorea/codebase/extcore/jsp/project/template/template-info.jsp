@@ -128,6 +128,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						rowNumHeaderText : "번호",
 						editable : true,
 						enableSorting : false,
+						selectionMode : "singleRow",
 						displayTreeOpen : true,
 						forceTreeView : true,
 						showStateColumn : true,

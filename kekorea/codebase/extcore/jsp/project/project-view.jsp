@@ -32,25 +32,28 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<a href="#tabs-1">기본정보</a>
 				</li>
 				<li>
-					<a href="#tabs-2">특이사항</a>
+					<a href="#tabs-2">참조작번</a>
 				</li>
 				<li>
-					<a href="#tabs-3">기계 수배표</a>
+					<a href="#tabs-3">특이사항</a>
+				</li>				
+				<li>
+					<a href="#tabs-4">기계 수배표</a>
 				</li>
 				<li>
-					<a href="#tabs-4">전기 수배표</a>
+					<a href="#tabs-5">전기 수배표</a>
 				</li>
 				<li>
-					<a href="#tabs-5">T-BOM</a>
+					<a href="#tabs-6">T-BOM</a>
 				</li>
 				<li>
-					<a href="#tabs-6">수배표 통합</a>
+					<a href="#tabs-7">수배표 통합</a>
 				</li>
 				<li>
-					<a href="#tabs-7">CIP</a>
+					<a href="#tabs-8">CIP</a>
 				</li>
 				<li>
-					<a href="#tabs-8">도면 일람표</a>
+					<a href="#tabs-9">도면 일람표</a>
 				</li>
 			</ul>
 			<div id="tabs-1">
@@ -305,17 +308,18 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				});
 				</script>
 			</div>
-			<div id="tabs-2">
+			<div id="tabs-2"></div>
+			<div id="tabs-3">
 				<iframe style="height: 800px;" src="/Windchill/plm/project/issue?oid=<%=dto.getOid() %>"></iframe>
 			</div>
-			<div id="tabs-3"></div>
 			<div id="tabs-4"></div>
 			<div id="tabs-5"></div>
 			<div id="tabs-6"></div>
-			<div id="tabs-7">
+			<div id="tabs-7"></div>
+			<div id="tabs-8">
 				<iframe style="height: 800px;" src="/Windchill/plm/project/cip?mak_oid=<%=dto.getMak_oid()%>&detail_oid=<%=dto.getDetail_oid()%>&customer_oid=<%=dto.getCustomer_oid()%>&install_oid=<%=dto.getInstall_oid()%>"></iframe>
 			</div>
-			<div id="tabs-8">
+			<div id="tabs-9">
 				<iframe style="height: 800px;" src="/Windchill/plm/project/workOrder?oid=<%=dto.getOid() %>"></iframe>
 			</div>			
 		</div>

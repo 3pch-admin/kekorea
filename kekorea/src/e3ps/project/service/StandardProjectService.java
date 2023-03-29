@@ -2766,6 +2766,7 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				boolean isNew = node.isNew();
 				ArrayList<TaskTreeNode> n = node.getChildren();
 				int sort = TaskHelper.manager.getSort(project, parentTask);
+				int allocate = node.getAllocate();
 				String taskType = node.getTaskType();
 				Task t = null;
 				if (isNew) {
@@ -2774,6 +2775,7 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 					t.setDepth(depth);
 					t.setDescription(description);
 					t.setDuration(duration);
+					t.setAllocate(allocate);
 					t.setOwnership(ownership);
 					t.setParentTask(parentTask);
 					t.setProject(project);
@@ -2790,6 +2792,7 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 					t.setDepth(depth);
 					t.setDescription(description);
 					t.setDuration(duration);
+					t.setAllocate(allocate);
 					t.setOwnership(ownership);
 					t.setParentTask(parentTask);
 					t.setProject(project);

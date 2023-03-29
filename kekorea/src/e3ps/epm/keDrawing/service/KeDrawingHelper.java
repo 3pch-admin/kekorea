@@ -401,7 +401,6 @@ public class KeDrawingHelper {
 			WorkOrderDataLink link = (WorkOrderDataLink) oo[1];
 			Map<String, Object> map = new HashMap();
 
-			map.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("dataType", link.getDataType());
 			map.put("lotNo", link.getLotNo());
 			map.put("current", link.getCurrent());
@@ -410,6 +409,7 @@ public class KeDrawingHelper {
 			Persistable per = link.getData();
 			if (per instanceof KeDrawing) {
 				KeDrawing keDrawing = (KeDrawing) per;
+				map.put("oid", keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("name", keDrawing.getMaster().getName());
 				map.put("number", keDrawing.getMaster().getKeNumber());
 				map.put("rev", keDrawing.getVersion());

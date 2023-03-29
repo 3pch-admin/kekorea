@@ -296,7 +296,7 @@ public class ProjectController extends BaseController {
 		model.setViewName("/extcore/jsp/project/project-workOrder.jsp");
 		return model;
 	}
-	
+
 	@Description(value = "특이사항 프로젝트 상세에서 보기")
 	@GetMapping(value = "/issue")
 	public ModelAndView issue(@RequestParam String oid) throws Exception {
@@ -304,6 +304,16 @@ public class ProjectController extends BaseController {
 		JSONArray list = IssueHelper.manager.issue(oid);
 		model.addObject("list", list);
 		model.setViewName("/extcore/jsp/project/project-issue.jsp");
+		return model;
+	}
+
+	@Description(value = "관련작번 프로젝트 상세에서 보기")
+	@GetMapping(value = "/reference")
+	public ModelAndView reference(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		JSONArray list = ProjectHelper.manager.reference(oid);
+		model.addObject("list", list);
+		model.setViewName("/extcore/jsp/project/project-reference.jsp");
 		return model;
 	}
 }

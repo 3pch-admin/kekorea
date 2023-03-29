@@ -8,6 +8,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<style type="text/css">
+/* .aui-grid-tree-plus-icon { */
+/* 	background: url("/Windchill/extcore/images/task_ready.gif") no-repeat; */
+/* } */
+</style>
 <input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 <input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 <input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
@@ -128,6 +133,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						rowNumHeaderText : "번호",
 						editable : true,
 						enableSorting : false,
+						selectionMode : "singleRow",
 						displayTreeOpen : true,
 						forceTreeView : true,
 						showStateColumn : true,
@@ -151,6 +157,21 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 							label : "저장",
 							callback : contextItemHandler
 						} ],
+
+						rowStyleFunction : function(rowIndex, item) {
+							switch (item.stateKey) {
+							case 0:
+								return "ready";
+							case 1:
+								return "yellow";
+							case 2:
+								return "orange";
+							case 3:
+								return "complete";
+							case 4:
+								return "delay";
+							}
+						}
 					}
 					myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 					readyHandler();

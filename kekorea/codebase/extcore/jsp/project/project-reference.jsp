@@ -17,89 +17,39 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 </head>
 <body>
 	<form>
-		<div id="grid_wrap2" style="height: 780px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap4" style="height: 780px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
-			let myGridID2;
-			const columns2 = [ {
-				dataField : "preView",
-				headerText : "미리보기",
-				width : 80,
-				renderer : {
-					type : "ImageRenderer",
-					altField : null,
-					imgHeight : 34,
-				},
+			let myGridID4;
+			const columns4 = [ {
+				dataField : "kekNumber",
+				headerText : "KEK 작번",
+				dataType : "string",
 				filter : {
-					showIcon : false,
-					inline : false,
+					showIcon : true,
+					inline : true
 				},
 			}, {
-				dataField : "name",
-				headerText : "DRAWING TITLE",
+				dataField : "projectType_name",
+				headerText : "작번 유형",
 				dataType : "string",
+				width : 450,
 				style : "aui-left",
 				filter : {
 					showIcon : true,
-					inline : true,
+					inline : true
 				},
 			}, {
-				dataField : "number",
-				headerText : "DWG. NO",
+				dataField : "mak_name",
+				headerText : "막종",
 				dataType : "string",
 				width : 100,
-				renderer : {
-					type : "LinkRenderer",
-					baseUrl : "javascript",
-					jsCallback : function(rowIndex, columnIndex, value, item) {
-						const oid = item.oid;
-						const url = getCallUrl("/keDrawing/view?oid=" + oid);
-						popup(url);
-					}
-				},
 				filter : {
 					showIcon : true,
-					inline : true,
+					inline : true
 				},
 			}, {
-				dataField : "current",
-				headerText : "CURRENT VER",
-				dataType : "string",
-				width : 110,
-				filter : {
-					showIcon : true,
-					inline : true,
-				},
-			}, {
-				dataField : "rev",
-				headerText : "REV",
-				dataType : "string",
-				width : 80,
-				filter : {
-					showIcon : true,
-					inline : true,
-				},
-			}, {
-				dataField : "latest",
-				headerText : "REV (최신)",
-				dataType : "string",
-				width : 110,
-				filter : {
-					showIcon : true,
-					inline : true,
-				},
-			}, {
-				dataField : "lotNo",
-				headerText : "LOT",
-				dataType : "numeric",
-				width : 100,
-				formatString : "###0",
-				filter : {
-					showIcon : true,
-					inline : true,
-				},
-			}, {
-				dataField : "createdData_txt",
-				headerText : "등록일",
+				dataField : "detail_name",
+				headerText : "막종상세",
 				dataType : "string",
 				width : 100,
 				filter : {
@@ -107,29 +57,53 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					inline : true,
 				},
 			}, {
-				dataField : "note",
-				headerText : "NOTE",
+				dataField : "customer_name",
+				headerText : "고객사",
 				dataType : "string",
-				width : 350,
+				width : 100,
 				filter : {
 					showIcon : true,
 					inline : true,
 				},
 			}, {
-				dataField : "primary",
-				headerText : "도면파일",
+				dataField : "install_name",
+				headerText : "설치장소",
 				dataType : "string",
-				width : 80,
-				renderer : {
-					type : "TemplateRenderer",
-				},
+				width : 100,
 				filter : {
-					showIcon : false,
-					inline : false,
+					showIcon : true,
+					inline : true,
+				},
+			}, {
+				dataField : "description",
+				headerText : "작업내용",
+				dataType : "string",
+				width : 100,
+				filter : {
+					showIcon : true,
+					inline : true,
+				},
+			}, {
+				dataField : "pdate_txt",
+				headerText : "발행일",
+				dataType : "string",
+				width : 100,
+				filter : {
+					showIcon : true,
+					inline : true,
+				},
+			}, {
+				dataField : "customDate_txt",
+				headerText : "요청납기일",
+				dataType : "string",
+				width : 100,
+				filter : {
+					showIcon : true,
+					inline : true,
 				},
 			} ]
 
-			function createAUIGrid2(columnLayout) {
+			function createAUIGrid4(columnLayout) {
 				const props = {
 					headerHeight : 30,
 					rowHeight : 30,
@@ -143,19 +117,19 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
-				myGridID2 = AUIGrid.create("#grid_wrap2", columnLayout, props);
-				AUIGrid.setGridData(myGridID2,
+				myGridID4 = AUIGrid.create("#grid_wrap4", columnLayout, props);
+				AUIGrid.setGridData(myGridID4,
 		<%=list%>
 			);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
-				createAUIGrid2(columns2);
-				AUIGrid.resize(myGridID2);
+				createAUIGrid4(columns4);
+				AUIGrid.resize(myGridID4);
 			})
 
 			window.addEventListener("resize", function() {
-				AUIGrid.resize(myGridID2);
+				AUIGrid.resize(myGridID4);
 			});
 		</script>
 	</form>
