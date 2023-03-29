@@ -18,12 +18,15 @@ public class DocumentDTO {
 	private String description;
 	private String location;
 	private String state;
-//	private String version;
+	private String version;
 	private String docType;
 	private String creator;
 	private Timestamp createdDate;
+	private String createdDate_txt;
 	private String modifier;
 	private Timestamp modifiedDate;
+	private String modifiedDate_txt;
+//	private String revise;
 
 	public DocumentDTO() {
 
@@ -34,13 +37,16 @@ public class DocumentDTO {
 		setName(document.getName());
 		setNumber(document.getNumber());
 		setDescription(StringUtils.replaceToValue(document.getDescription()));
-//		setLocation(document.getLocation());
+		setLocation(document.getLocation());
 		setState(document.getLifeCycleState().getDisplay());
-//		setVersion(CommonUtils.getFullVersion(document));
+		setVersion(CommonUtils.getFullVersion(document));
 		setCreator(document.getCreatorFullName());
 		setCreatedDate(document.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(document.getCreateTimestamp()));
 		setModifier(document.getModifierFullName());
 		setModifiedDate(document.getModifyTimestamp());
+		setModifiedDate_txt(CommonUtils.getPersistableTime(document.getModifyTimestamp()));
 		setDocType(document.getDocType().getDisplay());
+//		setRevise(CommonUtils.getFullVersion(document));
 	}
 }
