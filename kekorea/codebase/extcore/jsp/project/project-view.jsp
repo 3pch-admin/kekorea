@@ -269,9 +269,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				    },		
 				    xAxis: {
 				        categories: [
-				            '작번 견적 금액',
-				            '기계 견적 금액',
-				            '전기 견적 금액',
+				            '작번(수배) 견적 금액',
+				            '작번(입력??) 견적 금액',
 				        ],
 				        crosshair: true
 				    },				    

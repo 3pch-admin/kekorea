@@ -24,6 +24,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				dataField : "preView",
 				headerText : "미리보기",
 				width : 80,
+				style : "cursor",
 				renderer : {
 					type : "ImageRenderer",
 					altField : null,
@@ -147,6 +148,16 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				AUIGrid.setGridData(myGridID2,
 		<%=list%>
 			);
+				AUIGrid.bind(myGridID2, "cellClick", auiCellClickHandler);
+			}
+
+			function auiCellClickHandler(event) {
+				const dataField = event.dataField;
+				const oid = event.item.oid;
+				if (dataField === "preView") {
+					const url = getCallUrl("/aui/thumbnail?oid=" + oid);
+					popup(url);
+				}
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {

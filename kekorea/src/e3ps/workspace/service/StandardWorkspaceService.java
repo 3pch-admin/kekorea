@@ -37,6 +37,7 @@ import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
+import e3ps.workspace.notification.service.NotificationHelper;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.epm.structure.EPMReferenceLink;
@@ -1465,9 +1466,9 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			master.setPersist(persistable);
 			master.setStartTime(startTime);
 			if (isAgree) {
-				master.setState(WorkspaceHelper.AGREE_READY);
+				master.setState(WorkspaceHelper.STATE_AGREE_READY);
 			} else {
-				master.setState(WorkspaceHelper.APPROVAL_APPROVING);
+				master.setState(WorkspaceHelper.STATE_APPROVAL_APPROVING);
 			}
 			master.setCompleteUserID(sessionUser.getName());
 			master = (ApprovalMaster) PersistenceHelper.manager.save(master);
@@ -1485,7 +1486,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			submitLine.setDescription(description);
 			submitLine.setCompleteUserID(sessionUser.getName());
 			submitLine.setCompleteTime(startTime);
-			submitLine.setState(WorkspaceHelper.STATE_LINE_SUBMIT_COMPLETE);
+			submitLine.setState(WorkspaceHelper.STATE_SUBMIT_COMPLETE);
 			PersistenceHelper.manager.save(submitLine);
 
 			int sort = 0;
@@ -1509,6 +1510,8 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 					agreeLine.setCompleteTime(null);
 					agreeLine.setState(WorkspaceHelper.STATE_AGREE_READY);
 					PersistenceHelper.manager.save(agreeLine);
+					
+					NotificationHelper.service.sendTo("", "", wtuser);
 				}
 
 			}

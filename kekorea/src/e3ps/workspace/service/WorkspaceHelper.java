@@ -69,7 +69,7 @@ public class WorkspaceHelper {
 	/**
 	 * 기안 라인 상태값 상수
 	 */
-	public static final String SATATE_LINE_SUBMIT_COMPLETE = "제출됨";
+	public static final String STATE_SUBMIT_COMPLETE = "제출됨";
 
 	/**
 	 * 결재 라인 상태값 상수

@@ -108,7 +108,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('keDrawing-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('keDrawing-list');">
 					<input type="button" value="저장" title="저장" onclick="create();">
-					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
+					<input type="button" value="개정" title="개정" class="red" onclick="_revise();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<%
 					if (isAdmin) {
@@ -564,7 +564,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				});
 			}
 
-			function revise() {
+			function _revise() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 
 				if (checkedItems.length == 0) {
