@@ -21,9 +21,11 @@ public class ApprovalLineDTO {
 	private String creator;
 	private String state;
 	private String submiter;
+	private String description;
+	private Timestamp completeTime;
 	private Timestamp createdDate;
 	private Timestamp receiveTime;
-	private Timestamp completeTime;
+	
 
 	private String point; // 표시..
 
@@ -51,8 +53,11 @@ public class ApprovalLineDTO {
 			setType(line.getType());
 			setRole(line.getRole());
 			setName(line.getName());
+			setCreator(line.getMaster().getOwnership().getOwner().getFullName());
 			setSubmiter(master.getOwnership().getOwner().getFullName());
+			setDescription(line.getDescription() != null ? line.getDescription() : "");
 			setReceiveTime(line.getCreateTimestamp());
+			setCompleteTime(line.getCompleteTime() != null ? line.getDescription() : "");
 			setState(line.getState());
 			point(master);
 		} else if ("COLUMN_RECEIVE".equals(columnType)) {

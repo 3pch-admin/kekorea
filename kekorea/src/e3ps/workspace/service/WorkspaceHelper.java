@@ -178,7 +178,7 @@ public class WorkspaceHelper {
 			QuerySpec query = new QuerySpec();
 			int idx = query.appendClassList(ApprovalLine.class, true);
 			SearchCondition sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=",
-					WorkspaceHelper.APP_LINE);
+					WorkspaceHelper.APPROVAL_LINE);
 			query.appendWhere(sc, new int[] { idx });
 			query.appendAnd();
 

@@ -6,14 +6,10 @@ boolean multi = (boolean) request.getAttribute("multi");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
-<!-- 리스트 검색시 반드시 필요한 히든 값 -->
 <input type="hidden" name="sessionid" id="sessionid">
 <input type="hidden" name="curPage" id="curPage">
-<!-- 검색 테이블 -->
 <table class="search-table">
 	<colgroup>
 		<col width="130">
@@ -45,7 +41,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 	</tr>
 </table>
 
-<!-- 버튼 테이블 -->
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -67,9 +62,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 	</tr>
 </table>
 
-<!-- 그리드 리스트 -->
 <div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
-<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
 <%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
 	let myGridID;
@@ -188,11 +181,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		} ]
 	}
 
-	// AUIGrid 생성 함수
 	function createAUIGrid(columnLayout) {
-		// 그리드 속성
 		const props = {
-			// 그리드 공통속성 시작
 			headerHeight : 30,
 			rowHeight : 30,
 			showRowNumColumn : true,
@@ -207,20 +197,18 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			enableRightDownFocus : true,
 			filterLayerWidth : 320,
 			filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-			// 그리드 공통속성 끝
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-		//화면 첫 진입시 리스트 호출 함수
 		loadGridData();
 
 		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-			hideContextMenu(); // 컨텍스트 메뉴 감추기
-			vScrollChangeHandler(event); // lazy loading
+			hideContextMenu(); 
+			vScrollChangeHandler(event);
 		});
 	
 		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-			hideContextMenu(); // 컨텍스트 메뉴 감추기
+			hideContextMenu(); 
 		});
 				
 		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
@@ -229,15 +217,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 	
 	function auiCellClickHandler(event) {
 		const item = event.item;
-		rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); // rowIdField 얻기
+		rowIdField = AUIGrid.getProp(event.pid, "rowIdField");
 		rowId = item[rowIdField];
 		
-		// 이미 체크 선택되었는지 검사
 		if(AUIGrid.isCheckedRowById(event.pid, rowId)) {
-			// 엑스트라 체크박스 체크해제 추가
 			AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
 		} else {
-			// 엑스트라 체크박스 체크 추가
 			AUIGrid.addCheckedRowsByIds(event.pid, rowId);
 		}
 	}
@@ -267,10 +252,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 	
 	
 	document.addEventListener("DOMContentLoaded", function() {
-		// DOM이 로드된 후 실행할 코드 작성
 		const columns = loadColumnLayout("project-popup");
-		// 컨텍스트 메뉴 시작
-		const contenxtHeader = genColumnHtml(columns); // see auigrid.js
+		const contenxtHeader = genColumnHtml(columns); 
 		$("#h_item_ul").append(contenxtHeader);
 		$("#headerMenu").menu({
 			select : headerMenuSelectHandler
@@ -282,14 +265,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 	});
 
 	document.addEventListener("keydown", function(event) {
-		// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 		const keyCode = event.keyCode || event.which;
 		if (keyCode === 13) {
 			loadGridData();
 		}
 	})
 
-	// 컨텍스트 메뉴 숨기기
 	document.addEventListener("click", function(event) {
 		hideContextMenu();
 	})

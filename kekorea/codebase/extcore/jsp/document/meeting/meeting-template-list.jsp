@@ -4,21 +4,15 @@
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
 </head>
 <body>
 	<form>
-		<!-- 리스트 검색시 반드시 필요한 히든 값 -->
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
-		<!-- 검색 테이블 -->
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -77,8 +71,7 @@
 				style : "left indent10 underline",
 				renderer : {
 					type : "LinkRenderer",
-					baseUrl : "javascript", // 자바스크립 함수 호출로 사용하고자 하는 경우에 baseUrl 에 "javascript" 로 설정
-					// baseUrl 에 javascript 로 설정한 경우, 링크 클릭 시 callback 호출됨.
+					baseUrl : "javascript",
 					jsCallback : function(rowIndex, columnIndex, value, item) {
 						const oid = item.oid;
 						const url = getCallUrl("/meeting/info?oid=" + oid);
@@ -92,7 +85,7 @@
 			}, {
 				dataField : "creator",
 				headerText : "작성자",
-				dataType : "string", // 날짜 및 사람명 컬럼 사이즈 100
+				dataType : "string",
 				width : 100,
 				filter : {
 					showIcon : true,
@@ -108,15 +101,11 @@
 					showIcon : true,
 					inline : true,
 					displayFormatValues : true
-				// 포맷팅 형태로 필터링 처리
 				},
 			} ]
 
-			// AUIGrid 생성 함수
 			function createAUIGrid(columnLayout) {
-				// 그리드 속성
 				const props = {
-					// 그리드 공통속성 시작
 					headerHeight : 30,
 					rowHeight : 30,
 					showRowNumColumn : true,
@@ -131,16 +120,13 @@
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-				// 그리드 공통속성 끝
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				//화면 첫 진입시 리스트 호출 함수
 				loadGridData();
 
-				// 스크롤 체인지 핸들러.
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					vScrollChangeHandler(event); // lazy loading
+					vScrollChangeHandler(event);
 				});
 			}
 
@@ -158,7 +144,6 @@
 				});
 			}
 
-			// 등록
 			function create() {
 				const url = getCallUrl("/meeting/format");
 				popup(url);
@@ -203,15 +188,12 @@
 			document.addEventListener("DOMContentLoaded", function() {
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				// 사용자 검색 바인딩 see base.js finderUser function 
 				finderUser("creator");
 
-				// 날짜 검색용 바인딩 see base.js twindate funtion
 				twindate("created");
 			});
 
 			document.addEventListener("keydown", function(event) {
-				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {
 					loadGridData();

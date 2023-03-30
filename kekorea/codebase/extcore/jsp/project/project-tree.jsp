@@ -7,11 +7,8 @@ String oid = (String) request.getAttribute("oid");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 </head>
 <body>
@@ -38,7 +35,7 @@ String oid = (String) request.getAttribute("oid");
 					rowNumHeaderText : "번호",
 					fillColumnSizeMode : true,
 					selectionMode : "singleRow",
-					enableFilter : true, // 필터 사용 여부
+					enableFilter : true, 
 					showInlineFilter : true,
 					displayTreeOpen : true
 				}
@@ -49,17 +46,14 @@ String oid = (String) request.getAttribute("oid");
 
 			let timerId = null;
 			function auiGridSelectionChangeHandler(event) {
-				// 500ms 보다 빠르게 그리드 선택자가 변경된다면 데이터 요청 안함
 				if (timerId) {
 					clearTimeout(timerId);
 				}
 
 				timerId = setTimeout(function() {
-					// 선택 대표 셀 정보 
 					const primeCell = event.primeCell;
-					// 대표 셀에 대한 전체 행 아이템
 					const rowItem = primeCell.item;
-					const oid = rowItem.oid; // oid로 할지 location 으로 할지...
+					const oid = rowItem.oid; 
 				}, 500);
 			}
 
@@ -76,7 +70,7 @@ String oid = (String) request.getAttribute("oid");
 			});
 
 			window.addEventListener("resize", function() {
-				AUIGrid.resize(myGridID); // 특이사항
+				AUIGrid.resize(myGridID); 
 			});
 		</script>
 	</form>

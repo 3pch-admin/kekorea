@@ -8,7 +8,6 @@ String[] primarys = (String[]) request.getAttribute("primarys");
 JSONArray list = (JSONArray) request.getAttribute("list");
 JSONArray data = (JSONArray) request.getAttribute("data");
 %>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
@@ -278,7 +277,6 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 
 						function _createAUIGrid(columnLayout) {
 							const props = {
-								// 그리드 공통속성 시작
 								headerHeight : 30,
 								rowHeight : 30,
 								showRowNumColumn : true,
@@ -290,7 +288,6 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 								showInlineFilter : true,
 								filterLayerWidth : 320,
 								filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-								// 그리드 공통속성 끝
 								fixedColumnCount : 1,
 								cellMergePolicy : "withNull",
 								enableCellMerge : true,

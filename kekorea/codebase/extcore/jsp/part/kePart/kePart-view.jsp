@@ -97,17 +97,16 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 								inline : true
 							},
 							cellMerge : true
-						// 구분1 칼럼 셀 세로 병합 실행
 						}, {
 							dataField : "info",
 							headerText : "",
 							width : 40,
 							renderer : {
 								type : "IconRenderer",
-								iconWidth : 16, // icon 사이즈, 지정하지 않으면 rowHeight에 맞게 기본값 적용됨
+								iconWidth : 16, 
 								iconHeight : 16,
-								iconTableRef : { // icon 값 참조할 테이블 레퍼런스
-									"default" : "/Windchill/extcore/images/details.gif" // default
+								iconTableRef : { 
+									"default" : "/Windchill/extcore/images/details.gif" 
 								},
 								onClick : function(event) {
 									const oid = event.item.loid;
@@ -282,7 +281,6 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 
 						function _createAUIGrid(columnLayout) {
 							const props = {
-								// 그리드 공통속성 시작
 								headerHeight : 30,
 								rowHeight : 30,
 								showRowNumColumn : true,
@@ -294,7 +292,6 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 								showInlineFilter : true,
 								filterLayerWidth : 320,
 								filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-								// 그리드 공통속성 끝
 								fixedColumnCount : 1,
 								cellMergePolicy : "withNull",
 								enableCellMerge : true,

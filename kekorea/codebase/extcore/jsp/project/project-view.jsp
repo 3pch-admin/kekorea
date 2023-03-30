@@ -8,17 +8,13 @@ ProjectDTO dto = (ProjectDTO) request.getAttribute("dto");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 </head>
 <body>
 	<form>
 
-		<!-- 참조작번 그리드 -->
 		<table class="view-table">
 			<colgroup>
 				<col width="130">
@@ -38,10 +34,8 @@ ProjectDTO dto = (ProjectDTO) request.getAttribute("dto");
 			</tr>
 		</table>
 
-		<!-- 여백 -->
 		<br>
 
-		<!-- 특이사항 그리드 -->
 		<table class="view-table">
 			<colgroup>
 				<col width="130">
@@ -62,17 +56,15 @@ ProjectDTO dto = (ProjectDTO) request.getAttribute("dto");
 		</table>
 		<script type="text/javascript">
 			document.addEventListener("DOMContentLoaded", function() {
-				// 참조 작번
 				_createAUIGrid_(_columns_);
 				AUIGrid.resize(_myGridID_);
-				// 특이사항 추가 그리드
 				_createAUIGrid(_columns);
 				AUIGrid.resize(_myGridID);
 			});
 
 			window.addEventListener("resize", function() {
-				AUIGrid.resize(_myGridID_); // 참조 작번
-				AUIGrid.resize(_myGridID); // 특이사항
+				AUIGrid.resize(_myGridID_); 
+				AUIGrid.resize(_myGridID); 
 			});
 		</script>
 	</form>

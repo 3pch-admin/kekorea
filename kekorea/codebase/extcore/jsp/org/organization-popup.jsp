@@ -127,7 +127,7 @@ JSONArray departments = new JSONArray(list);
 			iconHeight : 16,
 			iconPosition : "aisleRight",
 			iconTableRef : {
-				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 			},
 		},
 		editRenderer : {
@@ -149,7 +149,7 @@ JSONArray departments = new JSONArray(list);
 			iconHeight : 16,
 			iconPosition : "aisleRight",
 			iconTableRef : {
-				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 			},
 		},
 		editRenderer : {
@@ -162,7 +162,7 @@ JSONArray departments = new JSONArray(list);
 			keyField : "oid",
 			valueField : "name",
 		},
-		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
+		labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
 			let retStr = "";
 			for (let i = 0, len = departments.length; i < len; i++) {
 				if (departments[i]["oid"] == value) {
@@ -187,7 +187,7 @@ JSONArray departments = new JSONArray(list);
 			iconHeight : 16,
 			iconPosition : "aisleRight",
 			iconTableRef : {
-				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" 
 			}
 		},
 		editRenderer : {
@@ -200,7 +200,7 @@ JSONArray departments = new JSONArray(list);
 			keyField : "key",
 			valueField : "value",
 		},
-		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
+		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { 
 			let retStr = "";
 			for (let i = 0, len = maks.length; i < len; i++) {
 				if (maks[i]["key"] == value) {
@@ -229,7 +229,7 @@ JSONArray departments = new JSONArray(list);
 			iconHeight : 16,
 			iconPosition : "aisleRight",
 			iconTableRef : {
-				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" // default
+				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
 			},
 		},
 		editRenderer : {
@@ -242,7 +242,7 @@ JSONArray departments = new JSONArray(list);
 			keyField : "key",
 			valueField : "value",
 		},
-		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { // key-value 에서 엑셀 내보내기 할 때 value 로 내보내기 위한 정의
+		labelFunction : function(rowIndex, columnIndex, value, headerText, item) { 
 			let retStr = "";
 			for (let i = 0, len = installs.length; i < len; i++) {
 				if (installs[i]["key"] == value) {
@@ -323,7 +323,7 @@ JSONArray departments = new JSONArray(list);
 	
 	function auiCellClickHandler(event) {
 		const item = event.item;
-		rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); // rowIdField 얻기
+		rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); 
 		rowId = item[rowIdField];
 		if(AUIGrid.isCheckedRowById(event.pid, rowId)) {
 			AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
@@ -365,8 +365,8 @@ JSONArray departments = new JSONArray(list);
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
-		createAUIGrid(columns); // 리스트
-		AUIGrid.resize(myGridID); // 리스트
+		createAUIGrid(columns); 
+		AUIGrid.resize(myGridID);
 		selectbox("psize");
 	});
 
@@ -378,6 +378,6 @@ JSONArray departments = new JSONArray(list);
 	})
 
 	window.addEventListener("resize", function() {
-		AUIGrid.resize(myGridID); // 리스트
+		AUIGrid.resize(myGridID); 
 	});
 </script>

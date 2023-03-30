@@ -31,7 +31,6 @@
 	</tr>
 </table>
 <script type="text/javascript">
-	// 등록
 	function create() {
 
 		if (!confirm("등록 하시겠습니까?")) {
@@ -48,7 +47,6 @@
 				opener.loadGridData();
 				self.close();
 			} else {
-				// 실패시 처리할 부분..
 			}
 		})
 	}
@@ -65,7 +63,6 @@
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
-		// DOM이 로드된 후 실행할 코드 작성
 		loadTinymce();
 	});
 </script>

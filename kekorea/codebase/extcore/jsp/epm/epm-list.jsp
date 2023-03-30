@@ -11,6 +11,7 @@
 <%@page import="wt.fc.PagingQueryResult"%>
 <%@page import="e3ps.common.util.PageQueryUtils"%>
 <%@page import="wt.org.WTUser"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
@@ -44,14 +45,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th>부품 분류</th>
+				<th>부품분류</th>
 				<td colspan="7" class="indent5">
 					<input type="hidden" name="location" value="">
 					<span id="location">defaultttttttt</span>
 				</td>
 			</tr>
 			<tr>
-				<th>파일 이름</th>
+				<th>파일이름</th>
 				<td class="indent5">
 					<input type="text" name="partCode">
 				</td>
@@ -93,7 +94,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					~
 					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
-				<th>수정자</th>
+				<th>수정자</th>
 				<td class="indent5">
 					<input type="text" name="modifier" id="modifier">
 				</td>
@@ -117,7 +118,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<input type="radio" name="latest" value="true" checked="checked">
 						<div class="state p-success">
 							<label>
-								<b>죄신버전</b>
+								<b>최신버전</b>
 							</label>
 						</div>
 					</div>
@@ -183,7 +184,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link í´ë¦­\r\nìë°ì¤í¬ë¦½í¸ í¨ì í¸ì¶íê³ ì íë ê²½ì°ë¡ ì¬ì©íì¸ì!");
 						}
 					},
 					filter : {
@@ -217,7 +218,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link í´ë¦­\r\nìë°ì¤í¬ë¦½í¸ í¨ì í¸ì¶íê³ ì íë ê²½ì°ë¡ ì¬ì©íì¸ì!");
 						}
 					},
 					filter : {

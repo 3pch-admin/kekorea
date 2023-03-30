@@ -16,12 +16,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 </head>
 <body>
 	<form>
-<<<<<<< HEAD
-=======
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
-		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
->>>>>>> f0e2ccc19de4fb61640104974eff4eb418644025
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
@@ -203,13 +199,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
-<<<<<<< HEAD
 
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
-
-=======
-				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
->>>>>>> f0e2ccc19de4fb61640104974eff4eb418644025
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
 					vScrollChangeHandler(event);
@@ -224,12 +215,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const params = new Object();
 				const approvalTitle = document.getElementById("approvalTitle").value;
 				const psize = document.getElementById("psize").value;
-<<<<<<< HEAD
 				const submiterOid = document.getElementById("submiterOid").value;
 				const receiveFrom = document.getElementById("receiveFrom").value;
 				const receiveTo = document.getElementById("receiveTo").value;
-=======
->>>>>>> f0e2ccc19de4fb61640104974eff4eb418644025
 				params.approvalTitle = approvalTitle;
 				params.psize = psize;
 				params.submiterOid = submiterOid;
@@ -255,11 +243,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("approval-list");
-<<<<<<< HEAD
 				const contenxtHeader = genColumnHtml(columns);
-=======
-				const contenxtHeader = genColumnHtml(columns); 
->>>>>>> f0e2ccc19de4fb61640104974eff4eb418644025
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
