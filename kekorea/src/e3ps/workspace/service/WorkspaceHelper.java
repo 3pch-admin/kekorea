@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +29,7 @@ import e3ps.workspace.ApprovalMaster;
 import e3ps.workspace.PersistableLineMasterLink;
 import e3ps.workspace.dto.ApprovalLineDTO;
 import e3ps.workspace.notice.Notice;
+import net.sf.json.JSONArray;
 import wt.doc.WTDocument;
 import wt.enterprise.Managed;
 import wt.epm.EPMDocument;
@@ -990,7 +990,7 @@ public class WorkspaceHelper {
 				list.add(map);
 			}
 		}
-		return new JSONArray(list);
+		return JSONArray.fromObject(list);
 	}
 
 	/**

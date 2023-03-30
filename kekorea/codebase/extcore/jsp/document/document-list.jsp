@@ -74,7 +74,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
 				<th>버전</th>
-				<td colspan="3" class="indent5">
+				<td colspan="3">
+					&nbsp;
 					<div class="pretty p-switch">
 						<input type="radio" name="latest" value="true" checked="checked">
 						<div class="state p-success">
@@ -83,6 +84,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 							</label>
 						</div>
 					</div>
+					&nbsp;
 					<div class="pretty p-switch">
 						<input type="radio" name="latest" value="">
 						<div class="state p-success">
@@ -128,12 +130,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<jsp:param value="<%=DocumentHelper.ROOT%>" name="location" />
 						<jsp:param value="product" name="container" />
 						<jsp:param value="list" name="mode" />
-						<jsp:param value="635" name="height" />
+						<jsp:param value="670" name="height" />
 					</jsp:include>
 				</td>
 				<td>&nbsp;</td>
 				<td>
-					<div id="grid_wrap" style="height: 635px; border-top: 1px solid #3180c3;"></div>
+					<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
 					<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 				</td>
 			</tr>
@@ -279,14 +281,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
-					showRowCheckColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
+					enableFilter : true,
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
