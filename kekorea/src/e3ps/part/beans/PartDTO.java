@@ -10,8 +10,6 @@ import e3ps.common.util.ThumnailUtils;
 import e3ps.part.service.PartHelper;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Getter;
-import lombok.Setter;
 import wt.epm.EPMDocument;
 import wt.part.WTPart;
 import wt.session.SessionHelper;
@@ -33,10 +31,13 @@ public class PartDTO {
 	private String version;
 	private String creator;
 	private Timestamp createdDate;
+	private String createdDate_txt;
 	private String modifier;
 	private Timestamp modifiedDate;
+	private String modifiedDate_txt;
 	private String state;
 	private String location;
+	private String preView;
 
 	public PartDTO() {
 
@@ -72,9 +73,12 @@ public class PartDTO {
 		setVersion(CommonUtils.getFullVersion(part));
 		setCreator(part.getCreatorFullName());
 		setCreatedDate(part.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(part.getCreateTimestamp()));
 		setModifier(part.getModifierFullName());
 		setModifiedDate(part.getModifyTimestamp());
+		setModifiedDate_txt(CommonUtils.getPersistableTime(part.getModifyTimestamp()));
 		setState(part.getLifeCycleState().getDisplay());
 		setLocation(part.getLocation());
+		setPreView(ContentUtils.getPreViewBase64(part));
 	}
 }

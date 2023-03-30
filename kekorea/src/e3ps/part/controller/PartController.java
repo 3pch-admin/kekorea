@@ -116,11 +116,11 @@ public class PartController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		WTPart part = (WTPart)CommonUtils.getObject(oid);
 		PartDTO dto = new PartDTO(part);
-		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(part.getMaster());
+//		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(part.getMaster());
 		JSONArray data = PartHelper.manager.jsonArrayAui(dto.getOid());
 		JSONArray list = PartHelper.manager.list(part.getMaster());
 		model.addObject("dto", dto);
-		model.addObject("history", history);
+//		model.addObject("history", history);
 		model.addObject("data", data);
 		model.addObject("list", list);
 		model.setViewName("popup:/part/part-view");
