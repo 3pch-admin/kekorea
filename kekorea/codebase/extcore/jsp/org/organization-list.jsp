@@ -54,7 +54,7 @@ JSONArray departments = new JSONArray(list);
 				<td>
 					&nbsp;
 					<div class="pretty p-switch">
-						<input type="radio" name="resign" value="true" checked="checked">
+						<input type="radio" name="resign" value="" checked="checked">
 						<div class="state p-success">
 							<label>
 								<b>재직</b>
@@ -63,7 +63,7 @@ JSONArray departments = new JSONArray(list);
 					</div>
 					&nbsp;
 					<div class="pretty p-switch">
-						<input type="radio" name="resign" value="">
+						<input type="radio" name="resign" value="true">
 						<div class="state p-success">
 							<label>
 								<b>퇴사</b>
@@ -102,15 +102,15 @@ JSONArray departments = new JSONArray(list);
 				<col width="*">
 			</colgroup>
 			<tr>
-				<td>
+				<td valign="top">
 					<jsp:include page="/extcore/include/department-include.jsp">
 						<jsp:param value="list" name="mode" />
-						<jsp:param value="705" name="height" />
+						<jsp:param value="740" name="height" />
 					</jsp:include>
 				</td>
 				<td>&nbsp;</td>
 				<td>
-					<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
+					<div id="grid_wrap" style="height: 740px; border-top: 1px solid #3180c3;"></div>
 				</td>
 			</tr>
 		</table>
@@ -355,7 +355,6 @@ JSONArray departments = new JSONArray(list);
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					showRowCheckColumn : true,
 					showStateColumn : true,
@@ -387,7 +386,8 @@ JSONArray departments = new JSONArray(list);
 			function auiCellEditBegin(event) {
 				const item = event.item;
 				const sessionId = document.getElementById("sessionId").value;
-				if (!checker(sessionId, item.id)) {
+				const isAdmin = document.getElementById("isAdmin").value;
+				if (!checker(sessionId, item.id) && !isAdmin) {
 					return false;
 				}
 				return true;

@@ -1,5 +1,6 @@
 package e3ps.bom.partlist.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.dto.PartListDTO;
 import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.workspace.service.WorkspaceHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -58,23 +61,57 @@ public class PartlistController extends BaseController {
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		JSONArray data = PartlistHelper.manager.getData(oid);
+		boolean isAdmin = CommonUtils.isAdmin();
+		PartListMasterProjectLink link = (PartListMasterProjectLink) CommonUtils.getObject(oid);
+		PartListDTO dto = new PartListDTO(link);
+		JSONArray list = PartlistHelper.manager.getData(dto.getOid());
+		JSONArray data = PartlistHelper.manager.jsonArrayAui(dto.getOid());
+		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(link.getPartListMaster());
+		model.addObject("history", history);
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
+		model.addObject("dto", dto);
+		model.addObject("list", list);
 		model.setViewName("popup:/bom/partlist/partlist-view");
 		return model;
 	}
 
 	@Description(value = "수배된 비교 페이지")
 	@GetMapping(value = "/compare")
-	public ModelAndView compare(@RequestParam String loid, @RequestParam String oid) throws Exception {
+	public ModelAndView compare(@RequestParam String oid, @RequestParam String _oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		PartListMasterProjectLink link = (PartListMasterProjectLink) CommonUtils.getObject(loid);
-		PartListDTO dto = new PartListDTO(link);
-		JSONArray data = PartlistHelper.manager.getData(oid);
-		model.addObject("data", data);
-		model.addObject("dto", dto);
+		PartListMaster m1 = (PartListMaster) CommonUtils.getObject(oid);
+		PartListMaster m2 = (PartListMaster) CommonUtils.getObject(_oid);
+		ArrayList<Map<String, Object>> data = PartlistHelper.manager.compare(oid, _oid, null, null);
+		model.addObject("m1", m1);
+		model.addObject("m2", m2);
+		model.addObject("oid", oid);
+		model.addObject("_oid", _oid);
+		model.addObject("data", new JSONArray(data));
 		model.setViewName("popup:/bom/partlist/partlist-compare");
 		return model;
+	}
+
+	@Description(value = "수배표 비교")
+	@ResponseBody
+	@PostMapping(value = "/compare")
+	public Map<String, Object> compare(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<>();
+		try {
+			String oid = (String) params.get("oid");
+			String _oid = (String) params.get("_oid");
+			String compareKey = (String) params.get("compareKey");
+			String sort = (String) params.get("sort");
+			ArrayList<Map<String, Object>> data = PartlistHelper.manager.compare(oid, _oid, compareKey, sort);
+			System.out.println("data=" + data);
+			result.put("list", data);
+			result.put("result", SUCCESS);
+			System.out.println(result);
+		} catch (Exception e) {
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
 	}
 
 	@Description(value = "수배표 팝업 조회 페이지")
@@ -85,22 +122,6 @@ public class PartlistController extends BaseController {
 		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.setViewName("popup:/bom/partlist/partlist-popup");
 		return model;
-	}
-
-	@Description(value = "수배표 비교")
-	@ResponseBody
-	@PostMapping(value = "/compare")
-	public Map<String, Object> compare(@RequestBody Map<String, Object> params) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			result = PartlistHelper.manager.compare(params);
-			result.put("result", SUCCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("result", false);
-			result.put("msg", e.toString());
-		}
-		return result;
 	}
 
 	@Description(value = "수배표 등록 페이지")
@@ -128,18 +149,54 @@ public class PartlistController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "수배표 정보 페이지")
-	@GetMapping(value = "/info")
-	public ModelAndView info(@RequestParam String oid) throws Exception {
+	@Description(value = "수배표 수정 페이지")
+	@GetMapping(value = "/modify")
+	public ModelAndView modify(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
 		PartListMasterProjectLink link = (PartListMasterProjectLink) CommonUtils.getObject(oid);
 		PartListDTO dto = new PartListDTO(link);
-		JSONArray data = PartlistHelper.manager.getData(dto.getOid());
-		boolean isAdmin = CommonUtils.isAdmin();
+		JSONArray list = PartlistHelper.manager.getData(dto.getOid());
+		JSONArray data = PartlistHelper.manager.jsonArrayAui(dto.getOid());
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
-		model.setViewName("popup:/bom/partlist/partlist-info");
+		model.addObject("list", list);
+		model.setViewName("popup:/bom/partlist/partlist-modify");
 		return model;
+	}
+
+	@Description(value = "수배표 수정")
+	@ResponseBody
+	@PostMapping(value = "/modify")
+	public Map<String, Object> modify(@RequestBody PartListDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			PartlistHelper.service.modify(dto);
+			result.put("msg", MODIFY_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "수배표 삭제")
+	@ResponseBody
+	@GetMapping(value = "/delete")
+	public Map<String, Object> delete(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			PartlistHelper.service.delete(oid);
+			result.put("msg", DELETE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
 	}
 }

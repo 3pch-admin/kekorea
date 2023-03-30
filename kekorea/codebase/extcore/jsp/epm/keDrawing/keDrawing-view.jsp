@@ -1,3 +1,4 @@
+<%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.common.util.ContentUtils"%>
 <%@page import="e3ps.epm.keDrawing.dto.KeDrawingDTO"%>
@@ -47,7 +48,13 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				<th>DWG NO</th>
 				<td class="indent5"><%=dto.getKeNumber()%></td>
 				<td class="center" rowspan="5">
+					<%
+					if (!StringUtils.isNull(dto.getPreView())) {
+					%>
 					<img src="<%=dto.getPreView()%>" style="height: 140px; cursor: pointer;" onclick="preView();" title="클릭시 원본크기로 볼 수 있습니다.">
+					<%
+					}
+					%>
 				</td>
 			</tr>
 			<tr>
@@ -80,7 +87,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			<tr>
 				<th class="lb">도면일람표</th>
 				<td class="indent5" colspan="4">
-					<div id="_grid_wrap" style="height: 350px; border-top: 1px solid #3180c3; margin: 5px 5px 5px 5px;"></div>
+					<div id="_grid_wrap" style="height: 350px; border-top: 1px solid #3180c3; margin: 5px;"></div>
 					<script type="text/javascript">
 						let _myGridID;
 						const _columns = [ {
@@ -88,7 +95,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 							headerText : "도면일람표 제목",
 							dataType : "string",
 							width : 350,
-							style : "left indent10 underline",
+							style : "aui-left",
 							renderer : {
 								type : "LinkRenderer",
 								baseUrl : "javascript",
@@ -278,24 +285,23 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 						function _createAUIGrid(columnLayout) {
 							const props = {
 								headerHeight : 30,
-								rowHeight : 30,
 								showRowNumColumn : true,
-								showStateColumn : true,
 								rowNumHeaderText : "번호",
-								noDataMessage : "관련된 도면일람표가 없습니다.",
+								showAutoNoDataMessage : false,
 								enableFilter : true,
-								selectionMode : "multipleCells",
+								selectionMode : "singleRow",
 								showInlineFilter : true,
 								filterLayerWidth : 320,
 								filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+<<<<<<< HEAD
 								fixedColumnCount : 1,
+=======
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 								cellMergePolicy : "withNull",
 								enableCellMerge : true,
 							}
 							_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-							AUIGrid.setGridData(_myGridID,
-					<%=data%>
-						);
+							AUIGrid.setGridData(_myGridID, <%=data%>);
 						}
 					</script>
 				</td>
@@ -325,7 +331,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				dataField : "name",
 				headerText : "DRAWING TITLE",
 				dataType : "string",
-				style : "left indent10",
+				style : "aui-left",
 				renderer : {
 					type : "LinkRenderer",
 					baseUrl : "javascript",
@@ -428,12 +434,11 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					showAutoNoDataMessage : false,
+					selectionMode : "singleRow",
 					showInlineFilter : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",

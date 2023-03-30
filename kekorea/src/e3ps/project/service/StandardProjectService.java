@@ -421,7 +421,8 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 						PersistenceHelper.manager.save(links);
 					}
 
-					RequestDocumentProjectLink link = RequestDocumentProjectLink.newReqDocumentProjectLink(reqDoc, project);
+					RequestDocumentProjectLink link = RequestDocumentProjectLink.newReqDocumentProjectLink(reqDoc,
+							project);
 					PersistenceHelper.manager.save(link);
 				}
 
@@ -2709,7 +2710,7 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 	}
 
 	@Override
-	public void save(Map<String, Object> params) throws Exception {
+	public void treeSave(Map<String, Object> params) throws Exception {
 		String json = (String) params.get("json");
 		ArrayList<Map<String, Object>> removeRows = (ArrayList<Map<String, Object>>) params.get("removeRows");
 		Transaction trs = new Transaction();
@@ -2735,7 +2736,7 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				String name = node.getName();
 				String d = node.getDescription();
 				project = (Project) CommonUtils.getObject(oid);
-				save(project, null, childrens);
+				treeSave(project, null, childrens);
 			}
 
 			trs.commit();
@@ -2749,8 +2750,8 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				trs.rollback();
 		}
 	}
-	
-	private void save(Project project, Task parentTask, ArrayList<TaskTreeNode> childrens) throws Exception {
+
+	private void treeSave(Project project, Task parentTask, ArrayList<TaskTreeNode> childrens) throws Exception {
 		Ownership ownership = CommonUtils.sessionOwner();
 		Transaction trs = new Transaction();
 		try {
@@ -2760,11 +2761,12 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				int depth = node.get_$depth();
 				String oid = node.getOid();
 				String name = node.getName();
-				String description = node.getDescription();
+				String description = StringUtils.replaceToValue(node.getDescription(), name);
 				int duration = node.getDuration();
 				boolean isNew = node.isNew();
 				ArrayList<TaskTreeNode> n = node.getChildren();
 				int sort = TaskHelper.manager.getSort(project, parentTask);
+				int allocate = node.getAllocate();
 				String taskType = node.getTaskType();
 				Task t = null;
 				if (isNew) {
@@ -2773,6 +2775,7 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 					t.setDepth(depth);
 					t.setDescription(description);
 					t.setDuration(duration);
+					t.setAllocate(allocate);
 					t.setOwnership(ownership);
 					t.setParentTask(parentTask);
 					t.setProject(project);
@@ -2787,12 +2790,13 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 					t = (Task) CommonUtils.getObject(oid);
 					t.setName(name);
 					t.setDepth(depth);
-					t.setState(TaskStateVariable.READY);
 					t.setDescription(description);
 					t.setDuration(duration);
+					t.setAllocate(allocate);
 					t.setOwnership(ownership);
 					t.setParentTask(parentTask);
 					t.setProject(project);
+					t.setState(TaskStateVariable.READY);
 					t.setPlanStartDate(project.getPlanStartDate());
 					t.setPlanEndDate(project.getPlanEndDate());
 					t.setDuration(DateUtils.getDuration(project.getPlanStartDate(), project.getPlanEndDate()));
@@ -2800,7 +2804,7 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 					t.setTaskType(CommonCodeHelper.manager.getCommonCode(taskType, "TASK_TYPE"));
 					PersistenceHelper.manager.modify(t);
 				}
-				save(project, t, n);
+				treeSave(project, t, n);
 			}
 
 			trs.commit();

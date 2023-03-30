@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
@@ -138,6 +140,21 @@ public class WorkOrderController extends BaseController {
 		model.addObject("list", list);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/epm/workOrder/workOrder-view");
+		return model;
+	}
+
+	@Description(value = "수배된 비교 페이지")
+	@GetMapping(value = "/compare")
+	public ModelAndView compare(@RequestParam String oid, @RequestParam String _oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Map<String, Object> data = WorkOrderHelper.manager.compare(oid, _oid);
+		ArrayList<Map<String, Object>> dataList = (ArrayList<Map<String, Object>>) data.get("dataList");
+		ArrayList<Map<String, Object>> _dataList = (ArrayList<Map<String, Object>>) data.get("_dataList");
+		model.addObject("oid", oid);
+		model.addObject("_oid", _oid);
+		model.addObject("dataList", new org.json.JSONArray(dataList));
+		model.addObject("_dataList", new org.json.JSONArray(_dataList));
+		model.setViewName("popup:/epm/workOrder/workOrder-compare");
 		return model;
 	}
 }

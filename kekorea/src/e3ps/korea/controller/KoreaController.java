@@ -85,13 +85,13 @@ public class KoreaController extends BaseController {
 	}
 
 	@Description(value = "한국생산 탭 페이지")
-	@GetMapping(value = "/vtabper")
-	public ModelAndView vtabper() throws Exception {
+	@GetMapping(value = "/tab")
+	public ModelAndView tab() throws Exception {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = CommonUtils.sessionUser();
 		ArrayList<CommonCode> maks = OrgHelper.manager.getUserMaks(sessionUser);
 		model.addObject("maks", maks);
-		model.setViewName("/extcore/jsp/korea/korea-vtabper.jsp");
+		model.setViewName("/extcore/jsp/korea/korea-tab.jsp");
 		return model;
 	}
 }

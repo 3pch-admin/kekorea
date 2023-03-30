@@ -21,6 +21,7 @@ public class KeDrawingDTO {
 	private int version;
 	private int lotNo;
 	private String creator;
+	private String creatorId;
 	private Timestamp createdDate;
 	private String createdDate_txt;
 	private String modifier;
@@ -49,6 +50,7 @@ public class KeDrawingDTO {
 		setLotNo(master.getLotNo());
 		setLatest(keDrawing.getLatest());
 		setCreator(master.getOwnership().getOwner().getFullName());
+		setCreatorId(keDrawing.getOwnership().getOwner().getName());
 		setCreatedDate(master.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(master.getCreateTimestamp()));
 		setModifier(keDrawing.getOwnership().getOwner().getFullName());

@@ -24,11 +24,18 @@ String code = (String) request.getAttribute("code");
 		<table class="button-table">
 			<tr>
 				<td class="right">
+					<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
 		</table>
-		<div id="grid_wrap" style="height: 270px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 390px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			const columns = [ {
@@ -155,16 +162,52 @@ String code = (String) request.getAttribute("code");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+					useContextMenu : true,
+					contextMenuItems : [ {
+						label : "수배표 비교",
+						callback : contextItemHandler
+					}, {
+						label : "도면 일람표 비교",
+						callback : contextItemHandler
+					}, {
+						label : "CONFIG SHEET 비교",
+						callback : contextItemHandler
+					} ]
 				}
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
-				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+			}
+
+			function contextItemHandler(event) {
+				switch (event.contextIndex) {
+				case 0:
+					break;
+				case 1:
+					const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+					if (checkedItems.length <= 0) {
+						alert("도면 일람표 비교할 작번을 선택하세요.");
+						return;
+					}
+					if (checkedItems.length !== 2) {
+						alert("도면 일람표 비교할 작번을 2개 선택하세요.");
+						return;
+					}
+					const oid = checkedItems[0].item.oid;
+					const _oid = checkedItems[1].item.oid;
+					const url = getCallUrl("/workOrder/compare?oid=" + oid + "&_oid=" + _oid);
+					popup(url);
+					break;
+				case 2:
+					break;
+				}
 			}
 
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/korea/list");
+				const psize = document.getElementById("psize").value;
 				params.code = "<%=code%>";
+				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.parent.openLayer();
 				call(url, params, function(data) {
@@ -179,6 +222,7 @@ String code = (String) request.getAttribute("code");
 			document.addEventListener("DOMContentLoaded", function() {
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+				selectbox("psize");
 			});
 
 			document.addEventListener("keydown", function(event) {

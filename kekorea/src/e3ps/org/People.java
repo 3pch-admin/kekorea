@@ -24,7 +24,7 @@ import wt.util.WTException;
 				@GeneratedProperty(name = "email", type = String.class, javaDoc = "이메일"),
 
 				@GeneratedProperty(name = "duty", type = String.class, javaDoc = "직급"),
-
+				
 				@GeneratedProperty(name = "resign", type = Boolean.class, javaDoc = "퇴사 처리", initialValue = "false"), },
 
 		foreignKeys = {

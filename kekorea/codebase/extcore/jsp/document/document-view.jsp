@@ -2,11 +2,15 @@
 <%@page import="wt.org.WTUser"%>
 <%@page import="e3ps.doc.dto.DocumentDTO"%>
 <%@page import="e3ps.project.dto.ProjectDTO"%>
+<%@page import="e3ps.common.util.ContentUtils"%>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<%@page import="net.sf.json.JSONArray"%>
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 DocumentDTO dto = (DocumentDTO) request.getAttribute("dto");
 ProjectDTO pdto = (ProjectDTO) request.getAttribute("pdto");
+JSONArray list = (JSONArray) request.getAttribute("list");
+String oid = request.getParameter("oid");
 %>
 <input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 <input type="hidden" name="oid" id="oid">
@@ -28,10 +32,7 @@ ProjectDTO pdto = (ProjectDTO) request.getAttribute("pdto");
 			<%
 			}
 			%>
-			<input type="button" value="결재이력" data-oid="" class="infoApprovalHistory" id="infoApprovalHistory" title="결재이력">
-			<input type="button" value="버전정보" id="infoVersionBtn" title="버전정보">
-			<input type="button" value="닫기" id="closeDocBtn" title="닫기" class="red" onclick="self.close();">
-			<input type="button" value="뒤로" id="b" title="뒤로" class="blue">
+			<input type="button" value="닫기" id="close" title="닫기" class="red" onclick="self.close();">
 		</td>
 	</tr>
 </table>
@@ -40,14 +41,20 @@ ProjectDTO pdto = (ProjectDTO) request.getAttribute("pdto");
 		<li>
 			<a href="#tabs-1">기본정보</a>
 		</li>
+		<li>
+			<a href="#tabs-2">결재이력</a>
+		</li>
+		<li>
+			<a href="#tabs-3">버전정보</a>
+		</li>
 	</ul>
 	<div id="tabs-1">
 		<table class="view-table">
 			<colgroup>
-				<col width="130">
-				<col width="800">
-				<col width="130">
-				<col width="800">
+				<col width="150">
+				<col width="700">
+				<col width="100">
+				<col width="300">
 			</colgroup>
 			<tr>
 				<th class="lb">문서제목</th>
@@ -57,7 +64,7 @@ ProjectDTO pdto = (ProjectDTO) request.getAttribute("pdto");
 			</tr>
 			<tr>
 				<th class="lb">버전</th>
-				<td class="indent5"><%//=dto.getVersion()%></td>
+				<td class="indent5"><%=dto.getVersion()%></td>
 				<th class="lb">상태</th>
 				<td class="indent5"><%=dto.getState()%></td>
 			</tr>
@@ -65,13 +72,15 @@ ProjectDTO pdto = (ProjectDTO) request.getAttribute("pdto");
 				<th class="lb">작성자</th>
 				<td class="indent5"><%=dto.getCreator()%></td>
 				<th class="lb">작성일</th>
-				<td class="indent5"><%=dto.getCreatedDate()%></td>
+<%-- 				<td class="indent5"><%=dto.getCreatedDate().toString().substring(0, 10)%></td> --%>
+								<td class="indent5"><%=dto.getCreatedDate_txt()%></td>
 			</tr>
 			<tr>
 				<th class="lb">수정자</th>
 				<td class="indent5"><%=dto.getModifier()%></td>
 				<th class="lb">수정일</th>
-				<td class="indent5"><%=dto.getModifiedDate()%></td>
+<%-- 				<td class="indent5"><%=dto.getModifiedDate().toString().substring(0, 10)%></td> --%>
+				<td class="indent5"><%=dto.getModifiedDate_txt()%></td>
 			</tr>
 			<tr>
 				<th class="lb">저장위치</th>
@@ -79,7 +88,9 @@ ProjectDTO pdto = (ProjectDTO) request.getAttribute("pdto");
 			</tr>
 			<tr>
 				<th class="lb">설명</th>
-				<td class="indent5" colspan="3"><%=dto.getDescription()%></td>
+				<td colspan="3" class="indent5">
+					<textarea name="descriptionNotice" id="descriptionNotice" rows="12" cols="" readonly="readonly"><%=dto.getDescription()%></textarea>
+				</td>
 			</tr>
 			<tr>
 				<th class="lb">관련부품</th>
@@ -126,9 +137,128 @@ ProjectDTO pdto = (ProjectDTO) request.getAttribute("pdto");
 			</tr>
 		</table>
 	</div>
+	<div id="tabs-2">
+		<table class="view-table">
+		</table>
+	</div>
+	<div id="tabs-3">
+		<%-- 					<td class="indent5"><%=dto.getVersion()%></td> --%>
+		<div id="grid_wrap" style="height: 550px; border-top: 1px solid #3180c3;"></div>
+		<script type="text/javascript">
+			let myGridID;
+			const columns = [ {
+				dataField : "name",
+				headerText : "이름",
+				dataType : "string",
+				width : 600,
+				style : "aui-left",
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			},{
+				dataField : "version",
+				headerText : "버전",
+				dataType : "string",
+				width : 100,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			},{
+				dataField : "creator",
+				headerText : "작성자",
+				dataType : "string",
+				width : 130,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			}, {
+				dataField : "createdDate_txt",
+				headerText : "작성일",
+				dataType : "date",
+				width : 130,
+				formatString : "yyyy-mm-dd",
+				filter : {
+					showIcon : true,
+					inline : true,
+					displayFormatValues : true
+				},
+			}, {
+				dataField : "modifier",
+				headerText : "수정자",
+				dataType : "string",
+				width : 130,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			}, {
+				dataField : "modifiedDate_txt",
+				headerText : "수정일",
+				dataType : "date",
+				width : 130,
+				formatString : "yyyy-mm-dd",
+				filter : {
+					showIcon : true,
+					inline : true,
+					displayFormatValues : true
+				}
+			} ]
+			
+			function createAUIGrid(columnLayout) {
+				const props = {
+						headerHeight : 30,
+						rowHeight : 30,
+						showRowNumColumn : true,
+						showStateColumn : true,
+						rowNumHeaderText : "번호",
+						noDataMessage : "검색 결과가 없습니다.",
+						enableFilter : true,
+						selectionMode : "multipleCells",
+						enableMovingColumn : true,
+						showInlineFilter : true,
+						enableRightDownFocus : true,
+						filterLayerWidth : 320,
+						filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+				}
+				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+				AUIGrid.setGridData(myGridID,<%=list%>);
+			}
+		</script>
+	</div>
 </div>
 <script type="text/javascript">
-document.addEventListener("DOMContentLoaded", function() {
-	$("#tabs").tabs();
-});
+	document.addEventListener("DOMContentLoaded", function() {
+		$("#tabs").tabs({
+			active : 0,
+			create : function(event, ui) {
+				const tabId = ui.panel.prop("id");
+				switch (tabId) {
+				case "tabs-3":
+					createAUIGrid(columns);
+					AUIGrid.resize(myGridID);
+					break;
+				}
+			},
+			activate : function(event, ui) {
+				var tabId = ui.newPanel.prop("id");
+				switch (tabId) {
+				case "tabs-3":
+					const isCreated = AUIGrid.isCreated(myGridID);
+					if (isCreated) {
+						AUIGrid.resize(myGridID);
+					} else {
+						createAUIGrid(columns);
+					}
+					break;
+				}
+			}
+		});
+	});
+	
+	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID);
+	});
 </script>

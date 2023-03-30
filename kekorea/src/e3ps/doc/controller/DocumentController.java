@@ -20,6 +20,7 @@ import e3ps.doc.dto.DocumentDTO;
 import e3ps.doc.service.DocumentHelper;
 import e3ps.project.Project;
 import e3ps.project.dto.ProjectDTO;
+import net.sf.json.JSONArray;
 import wt.doc.WTDocument;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -120,12 +121,11 @@ public class DocumentController extends BaseController {
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		WTDocument document = (WTDocument)CommonUtils.getObject(oid);
-//		Project project = (Project) CommonUtils.getObject(oid);
 		DocumentDTO dto = new DocumentDTO(document);
-//		ProjectDTO pdto = new ProjectDTO(project);
 		boolean isAdmin = CommonUtils.isAdmin();
+		JSONArray list = DocumentHelper.manager.history(document.getMaster());
 		model.addObject("dto", dto);
-//		model.addObject("pdto", pdto);
+		model.addObject("list", list);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("popup:/document/document-view");
 		return model;

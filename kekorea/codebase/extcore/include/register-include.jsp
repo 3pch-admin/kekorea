@@ -1,13 +1,10 @@
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%
-String height = StringUtils.getParameter(request.getParameter("height"), "200");
-%>
 <div class="include">
 	<input type="button" value="결재선 추가" title="결재선 추가" class="blue" onclick="_register();">
 	<input type="button" value="결재선 삭제" title="결재선 삭제" class="red" onclick="_deleteRow_();">
-	<div id="_grid_wrap_" style="height: <%=height%>px; border-top: 1px solid #3180c3; margin: 5px 5px 5px 5px;"></div>
+	<div id="_grid_wrap_" style="height: 200px; border-top: 1px solid #3180c3; margin: 5px;"></div>
 	<script type="text/javascript">
 		let _myGridID_;
 		const _columns_ = [ {
@@ -57,13 +54,14 @@ String height = StringUtils.getParameter(request.getParameter("height"), "200");
 				showStateColumn : true,
 				softRemoveRowMode : false,
 				showRowCheckColumn : true,
-				noDataMessage : "지정된 결재선이 없습니다.",
+				showAutoNoDataMessage : false,
 				enableRowCheckShiftKey : true,
 				showDragKnobColumn : true,
 				enableDrag : true,
 				enableMultipleDrag : true,
 				enableDrop : true,
 				useContextMenu : true,
+				enableSorting : false,
 				contextMenuItems : [ {
 					label : "선택된 행 삭제",
 					callback : contextItemHandler
@@ -75,15 +73,15 @@ String height = StringUtils.getParameter(request.getParameter("height"), "200");
 
 		function auiRemoveRow(event) {
 			const data = AUIGrid.getGridData(_myGridID_);
-// 			const removeRows = AUIGrid.getRemovedItems(_myGridID_);
-// 			for (let i = 0; i < data.length; i++) {
-// 				const rowIndex = AUIGrid.rowIdToIndex(_myGridID_, data[i]._$uid);
-// 				const sort = data[i].sort;
-// 				const item = {
-// 					sort : (sort - removeRows.length)
-// 				}
-// 				AUIGrid.updateRow(_myGridID_, item, rowIndex);
-// 			}
+			// 			const removeRows = AUIGrid.getRemovedItems(_myGridID_);
+			// 			for (let i = 0; i < data.length; i++) {
+			// 				const rowIndex = AUIGrid.rowIdToIndex(_myGridID_, data[i]._$uid);
+			// 				const sort = data[i].sort;
+			// 				const item = {
+			// 					sort : (sort - removeRows.length)
+			// 				}
+			// 				AUIGrid.updateRow(_myGridID_, item, rowIndex);
+			// 			}
 		}
 
 		function _register() {
@@ -120,7 +118,7 @@ String height = StringUtils.getParameter(request.getParameter("height"), "200");
 				item.type = "수신";
 				AUIGrid.addRow(_myGridID_, item, "first");
 			}
-			
+
 			let sort = approval.length;
 			for (let i = approval.length - 1; i >= 0; i--) {
 				const item = approval[i];
@@ -129,7 +127,7 @@ String height = StringUtils.getParameter(request.getParameter("height"), "200");
 				AUIGrid.addRow(_myGridID_, item, "first");
 				sort--;
 			}
-			
+
 			for (let i = agree.length - 1; i >= 0; i--) {
 				const item = agree[i];
 				item.type = "검토";

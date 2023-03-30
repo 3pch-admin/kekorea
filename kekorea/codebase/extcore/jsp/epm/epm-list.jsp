@@ -45,26 +45,34 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<col width="*">
 			</colgroup>
 			<tr>
+<<<<<<< HEAD
 				<th>부품분류</th>
+=======
+				<th>ë¶í ë¶ë¥</th>
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 				<td colspan="7" class="indent5">
 					<input type="hidden" name="location" value="">
 					<span id="location">defaultttttttt</span>
 				</td>
 			</tr>
 			<tr>
+<<<<<<< HEAD
 				<th>파일이름</th>
+=======
+				<th>íì¼ ì´ë¦</th>
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 				<td class="indent5">
 					<input type="text" name="partCode">
 				</td>
-				<th>품번</th>
+				<th>íë²</th>
 				<td class="indent5">
 					<input type="text" name="partName">
 				</td>
-				<th>품명</th>
+				<th>íëª</th>
 				<td class="indent5">
 					<input type="text" name="number">
 				</td>
-				<th>규격</th>
+				<th>ê·ê²©</th>
 				<td class="indent5">
 					<input type="text" name="number">
 				</td>
@@ -78,27 +86,31 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<td class="indent5">
 					<input type="text" name="number">
 				</td>
-				<th>REFERENCE 도면</th>
+				<th>REFERENCE ëë©´</th>
 				<td colspan="3" class="indent5">
 					<input type="text" name="number">
 				</td>
 			</tr>
 			<tr>
-				<th>작성자</th>
+				<th>ìì±ì</th>
 				<td class="indent5">
 					<input type="text" name="creator" id="creator">
 				</td>
-				<th>작성일</th>
+				<th>ìì±ì¼</th>
 				<td class="indent5">
 					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
 					~
 					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
+<<<<<<< HEAD
 				<th>수정자</th>
+=======
+				<th>ìì ì</th>
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 				<td class="indent5">
 					<input type="text" name="modifier" id="modifier">
 				</td>
-				<th>수정일</th>
+				<th>ìì ì¼</th>
 				<td class="indent5">
 					<input type="text" name="modifiedFrom" id="modifiedFrom" class="width-100">
 					~
@@ -106,14 +118,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				</td>
 			</tr>
 			<tr>
-				<th>상태</th>
+				<th>ìí</th>
 				<td class="indent5">
 					<select name="template" id="template" class="width-200">
-						<option value="">선택</option>
+						<option value="">ì í</option>
 					</select>
 				</td>
-				<th>버전</th>
-				<td colspan="5" class="indent5">
+				<th>ë²ì </th>
+				<td colspan="5">
+					&nbsp;
 					<div class="pretty p-switch">
 						<input type="radio" name="latest" value="true" checked="checked">
 						<div class="state p-success">
@@ -122,11 +135,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 							</label>
 						</div>
 					</div>
+					&nbsp;
 					<div class="pretty p-switch">
 						<input type="radio" name="latest" value="">
 						<div class="state p-success">
 							<label>
-								<b>모든버전</b>
+								<b>모든버전</b>
 							</label>
 						</div>
 					</div>
@@ -137,9 +151,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
-					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('epm-list');">
-					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('epm-list');">
+					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="ìì ë¤ì´ë¡ë" onclick="exportExcel();">
+					<img src="/Windchill/extcore/images/save.gif" title="íì´ë¸ ì ì¥" onclick="saveColumnLayout('epm-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="íì´ë¸ ì´ê¸°í" onclick="resetColumnLayout('epm-list');">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -149,12 +163,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<option value="200">200</option>
 						<option value="300">300</option>
 					</select>
-					<input type="button" value="조회" title="조회" onclick="loadGridData();">
+					<input type="button" value="ì¡°í" title="ì¡°í" onclick="loadGridData();">
 				</td>
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 565px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 600px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -176,7 +190,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 				}, {
 					dataField : "name",
-					headerText : "파일이름",
+					headerText : "íì¼ì´ë¦",
 					dataType : "string",
 					width : 350,
 					style : "aui-left",
@@ -184,7 +198,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
+<<<<<<< HEAD
 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link í´ë¦­\r\nìë°ì¤í¬ë¦½í¸ í¨ì í¸ì¶íê³ ì íë ê²½ì°ë¡ ì¬ì©íì¸ì!");
+=======
+							const oid = item.oid;
+							const url = getCallUrl("/epm/view?oid=" + oid);
+							popup(url, 1400, 600);
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 						}
 					},
 					filter : {
@@ -193,7 +213,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 				}, {
 					dataField : "part_code",
-					headerText : "품번",
+					headerText : "íë²",
 					dataType : "string",
 					width : 130,
 					filter : {
@@ -202,7 +222,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 				}, {
 					dataField : "name_of_parts",
-					headerText : "품명",
+					headerText : "íëª",
 					dataType : "string",
 					width : 350,
 					filter : {
@@ -211,14 +231,20 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 				}, {
 					dataField : "dwg_no",
-					headerText : "규격",
+					headerText : "ê·ê²©",
 					dataType : "string",
 					width : 130,
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
+<<<<<<< HEAD
 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link í´ë¦­\r\nìë°ì¤í¬ë¦½í¸ í¨ì í¸ì¶íê³ ì íë ê²½ì°ë¡ ì¬ì©íì¸ì!");
+=======
+							const oid = item.oid;
+							const url = getCallUrl("/epm/view?oid=" + oid);
+							popup(url, 1400, 600);
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 						}
 					},
 					filter : {
@@ -245,7 +271,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 				}, {
 					dataField : "reference",
-					headerText : "REFERENCE 도면",
+					headerText : "REFERENCE ëë©´",
 					dataType : "string",
 					width : 150,
 					filter : {
@@ -254,7 +280,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 				}, {
 					dataField : "version",
-					headerText : "버전",
+					headerText : "ë²ì ",
 					dataType : "string",
 					width : 80,
 					filter : {
@@ -263,7 +289,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 				}, {
 					dataField : "modifier",
-					headerText : "수정자",
+					headerText : "ìì ì",
 					dataType : "string",
 					width : 100,
 					filter : {
@@ -272,7 +298,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 				}, {
 					dataField : "modifiedDate",
-					headerText : "수정일",
+					headerText : "ìì ì¼",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
 					width : 100,
@@ -283,7 +309,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 				}, {
 					dataField : "creator",
-					headerText : "작성자",
+					headerText : "ìì±ì",
 					dataType : "string",
 					width : 100,
 					filter : {
@@ -292,7 +318,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 				}, {
 					dataField : "createdDate",
-					headerText : "작성일",
+					headerText : "ìì±ì¼",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
 					width : 100,
@@ -303,7 +329,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 				}, {
 					dataField : "state",
-					headerText : "상태",
+					headerText : "ìí",
 					dataType : "string",
 					width : 100,
 					filter : {
@@ -325,20 +351,19 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function createAUIGrid(columns) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					showRowCheckColumn : true,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
-					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+					filterItemMoreMessage : "íí°ë§ ê²ìì´ ëë¬´ ë§ìµëë¤. ê²ìì ì´ì©í´ì£¼ì¸ì.",
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
 				loadGridData();
@@ -371,7 +396,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function exportExcel() {
 				const exceptColumnFields = [ "primary" ];
 				const sessionName = document.getElementById("sessionName").value;
-				exportToExcel("공지사항 리스트", "공지사항", "공지사항 리스트", exceptColumnFields, sessionName);
+				exportToExcel("ê³µì§ì¬í­ ë¦¬ì¤í¸", "ê³µì§ì¬í­", "ê³µì§ì¬í­ ë¦¬ì¤í¸", exceptColumnFields, sessionName);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {

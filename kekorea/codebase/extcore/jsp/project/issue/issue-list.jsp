@@ -112,7 +112,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -242,14 +242,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function createAUIGrid(columns) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
-					showRowNumColumn : true,
-					showRowCheckColumn : true,
 					showStateColumn : true,
+					showRowCheckColumn : true,
+					showRowNumColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -291,7 +290,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const sessionId = document.getElementById("sessionId").value;
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
+					const item = checkedItems[i].item;
+					if (!checker(sessionId, item.creatorId)) {
+						alert("데이터 작성자가 아닙니다.");
+						return false;
+					}
 					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}

@@ -250,24 +250,21 @@ public class CommonUtils {
 
 	/**
 	 * 작성일, 수정일 등 시간에 대한 값을 String 형태로 변경하는 함수
-	 * 
-	 * @param time : java.sql.Timestamp 객체
-	 * @return String
-	 * @throws Exception
 	 */
 	public static String getPersistableTime(Timestamp time) throws Exception {
+		if (time == null) {
+			return "";
+		}
 		return getPersistableTime(time, 10);
 	}
 
 	/**
 	 * 작성일, 수정일 등 시간에 대한 값을 String 형태로 변경하는 함수
-	 * 
-	 * @param time  : java.sql.Timestamp 객체
-	 * @param index : String 자르기 위한 위치
-	 * @return String
-	 * @throws Exception
 	 */
 	public static String getPersistableTime(Timestamp time, int index) throws Exception {
+		if (time == null) {
+			return "";
+		}
 		return time.toString().substring(0, index);
 	}
 

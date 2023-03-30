@@ -337,6 +337,8 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							const param = item.mak_code;
 							const dd = detailMap[param];
+							if (dd === undefined)
+								return;
 							let isValid = false;
 							for (let i = 0, len = dd.length; i < len; i++) {
 								if (dd[i]["value"] == newValue) {
@@ -363,7 +365,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						const param = item.mak_code;
 						const dd = detailMap[param];
 						if (dd === undefined)
-							return value;
+							return "";
 						for (let i = 0, len = dd.length; i < len; i++) {
 							if (dd[i]["key"] == value) {
 								retStr = dd[i]["value"];
@@ -457,6 +459,8 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							const param = item.customer_code;
 							const dd = installMap[param];
+							if (dd === undefined)
+								return;
 							let isValid = false;
 							for (let i = 0, len = dd.length; i < len; i++) {
 								if (dd[i]["value"] == newValue) {
@@ -483,7 +487,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						const param = item.customer_code;
 						const dd = installMap[param];
 						if (dd === undefined)
-							return value;
+							return "";
 						for (let i = 0, len = dd.length; i < len; i++) {
 							if (dd[i]["key"] == value) {
 								retStr = dd[i]["value"];
@@ -530,8 +534,8 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						onclick : function(rowIndex, columnIndex, value, item) {
 							recentGridItem = item;
 							const oid = item._$uid;
-							const url = getCallUrl("/aui/preview?oid=" + oid + "&method=preView");
-							popup(url, 1000, 200);
+							const url = getCallUrl("/aui/primary?oid=" + oid + "&method=preView");
+							popup(url, 1000, 300);
 						}
 					},
 					filter : {
@@ -607,8 +611,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
-					useContextMenu : true,
-					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					editable : true,
@@ -617,7 +619,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
 				loadGridData();
 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
-				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
 					vScrollChangeHandler(event);
@@ -733,7 +734,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				const item = new Object();
 				item.latest = true;
 				item.creator = document.getElementById("sessionName").value;
-				item.createdDate = document.getElementById("time").value;
+				item.creatorId = document.getElementById("sessionId").value;
 				AUIGrid.addRow(myGridID, item, "first");
 			}
 

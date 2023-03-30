@@ -20,11 +20,7 @@ import wt.util.WTException;
 
 		roleB = @GeneratedRole(name = "user", type = WTUser.class),
 
-		properties = {
-
-				@GeneratedProperty(name = "userType", type = String.class)
-
-		}, foreignKeys = { @GeneratedForeignKey(name = "ProjectUserTypeLink",
+		foreignKeys = { @GeneratedForeignKey(name = "ProjectUserTypeLink",
 
 				foreignKeyRole = @ForeignKeyRole(name = "projectUserType", type = CommonCode.class,
 

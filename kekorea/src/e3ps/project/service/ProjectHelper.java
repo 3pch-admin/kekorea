@@ -1,5 +1,6 @@
 package e3ps.project.service;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import e3ps.project.ProjectUserLink;
 import e3ps.project.dto.ProjectDTO;
 import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
+import e3ps.project.task.variable.TaskStateVariable;
 import e3ps.project.template.Template;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -2596,15 +2598,15 @@ public class ProjectHelper {
 //
 	public String getStateIcon(int type) throws Exception {
 		if (type == 0) {
-			return "<img title='태스크 시작전 입니다.' style='position: relative; top: 2px;' src='/Windchill/extcore/images/project/state_blank_bar.png'>";
+			return "<img title='태스크 시작전 입니다.' style='position: relative; top: 3px;' src='/Windchill/extcore/images/project/state_blank_bar.png'>";
 		} else if (type == 1) {
-			return "<img title='태스크가 계획 종료일 보다 초과 되서 진행 중 입니다.' style='position: relative; top: 2px;' class='' src='/Windchill/extcore/images/project/state_red_bar.png'>";
+			return "<img title='태스크가 계획 종료일 보다 초과 되서 진행 중 입니다.' style='position: relative; top: 3px;' class='' src='/Windchill/extcore/images/project/state_red_bar.png'>";
 		} else if (type == 2) {
-			return "<img title='태스크가 진행 중 입니다.' style='position: relative; top: 2px;' src='/Windchill/extcore/images/project/state_yellow_bar.png'>";
+			return "<img title='태스크가 진행 중 입니다.' style='position: relative; top: 3px;' src='/Windchill/extcore/images/project/state_yellow_bar.png'>";
 		} else if (type == 3) {
-			return "<img title='태스크 지연 입니다.' style='position: relative; top: 2px;' src='/Windchill/extcore/images/project/state_orange_bar.png'>";
+			return "<img title='태스크 지연 입니다.' style='position: relative; top: 3px;' src='/Windchill/extcore/images/project/state_orange_bar.png'>";
 		} else if (type == 4) {
-			return "<img title='태스크 완료 입니다.' style='position: relative; top: 2px;' src='/Windchill/extcore/images/project/state_green_bar.png'>";
+			return "<img title='태스크 완료 입니다.' style='position: relative; top: 3px;' src='/Windchill/extcore/images/project/state_green_bar.png'>";
 		}
 		return "";
 	}
@@ -3313,7 +3315,9 @@ public class ProjectHelper {
 		node.put("name", project.getKekNumber());
 		node.put("description", project.getDescription());
 		node.put("duration", project.getDuration());
+		node.put("allocate", 0);
 		node.put("taskType", project.getProjectType().getName());
+		node.put("type", "project");
 		node.put("isNew", false);
 
 		JSONArray childrens = new JSONArray();
@@ -3324,8 +3328,11 @@ public class ProjectHelper {
 			children.put("name", task.getName());
 			children.put("description", task.getDescription());
 			children.put("duration", task.getDuration());
-			children.put("isNew", false);
+			children.put("allocate", task.getAllocate() != null ? task.getAllocate() : 0);
 			children.put("taskType", task.getTaskType().getCode());
+			children.put("type", "task");
+			children.put("isNew", false);
+			children.put("stateKey", stateKey(task));
 			load(children, project, task);
 			childrens.add(children);
 		}
@@ -3343,11 +3350,88 @@ public class ProjectHelper {
 			children.put("name", task.getName());
 			children.put("description", task.getDescription());
 			children.put("duration", task.getDuration());
-			children.put("isNew", false);
+			children.put("allocate", task.getAllocate() != null ? task.getAllocate() : 0);
 			children.put("taskType", task.getTaskType().getCode());
+			children.put("type", "task");
+			children.put("isNew", false);
+			children.put("stateKey", stateKey(task));
 			load(children, project, task);
 			childrens.add(children);
 		}
 		node.put("children", childrens);
+	}
+
+	protected int stateKey(Task task) throws Exception {
+
+		// 준비 0
+		// 약간 위험 1
+		// 위험도 좀 있음 2
+		// 완료 3
+		// 딜레이 4
+		String state = task.getState();
+		if (TaskStateVariable.COMPLETE.equals(state)) {
+			return 3;
+		} else if (TaskStateVariable.READY.equals(state)) {
+			return 0;
+		} else {
+
+			Timestamp today = DateUtils.getCurrentTimestamp();
+
+			int du = DateUtils.getDuration(task.getPlanStartDate(), task.getPlanEndDate());
+			BigDecimal counting = new BigDecimal(du);
+			BigDecimal multi = new BigDecimal(0.2);
+
+			BigDecimal result = counting.multiply(multi);
+			int perDay = Math.round(result.floatValue()); // 2??
+
+			int tdu = DateUtils.getDuration(task.getPlanEndDate(), DateUtils.getCurrentTimestamp()); // 1...
+
+			if (task.getPlanEndDate() != null && today.getTime() > task.getPlanEndDate().getTime()) {
+				return 4;
+			} else {
+				if (tdu <= perDay) {
+					if (task.getProgress() < 50) {
+						return 2;
+					} else if (task.getProgress() >= 51 && task.getProgress() < 100) {
+						return 1;
+					} else if (task.getProgress() == 100) {
+						return 3;
+					}
+				} else {
+					return 1;
+				}
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * 프로젝트 참조 작번
+	 */
+	public JSONArray reference(String oid) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		Project project = (Project) CommonUtils.getObject(oid);
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Project.class, true);
+		QuerySpecUtils.toLikeRightAnd(query, idx, Project.class, Project.KEK_NUMBER, project.getKekNumber() + "%");
+		QuerySpecUtils.toNotEqualsAnd(query, idx, Project.class, "projectTypeReference.key.id",
+				project.getProjectType());
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Project p = (Project) obj[0];
+			Map<String, Object> map = new HashMap<>();
+			map.put("kekNumber", p.getKekNumber());
+			map.put("projectType_name", p.getProjectType().getName());
+			map.put("mak_name", p.getMak().getName());
+			map.put("detail_name", p.getDetail().getName());
+			map.put("customer_name", p.getCustomer().getName());
+			map.put("install_name", p.getInstall().getName());
+			map.put("description", p.getDescription());
+			map.put("pdate_txt", CommonUtils.getPersistableTime(p.getPDate()));
+			map.put("customDate_txt", CommonUtils.getPersistableTime(p.getCustomDate()));
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
 	}
 }

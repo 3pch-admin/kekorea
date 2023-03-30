@@ -195,7 +195,7 @@ ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks"
 						<a onclick="moveToPage(this, '/output/list', '문서 관리 > 산출물 조회');">산출물 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/request/list', '문서 관리 > 의뢰서 조회');">의뢰서 조회</a>
+						<a onclick="moveToPage(this, '/requestDocument/list', '문서 관리 > 의뢰서 조회');">의뢰서 조회</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/meeting/list', '문서 관리 > 회의록 조회');">회의록 조회</a>
@@ -230,17 +230,8 @@ ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks"
 					<span class="fa arrow"></span>
 				</a>
 				<ul class="nav nav-second-level collapse">
-					<%
-					// 					for (CommonCode mak : maks) {
-					%>
-					<!-- 					<li> -->
-					<%-- 						<a onclick="moveToPage(this, '/korea/list?code=<%=mak.getCode() %>', '한국 생산 > 한국 생산(<%=mak.getName()%>)');"><%=mak.getName() %></a> --%>
-					<!-- 					</li> -->
-					<%
-					// 					}
-					%>
 					<li>
-						<a onclick="moveToPage(this, '/korea/vtabper', '한국 생산 > 한국 생상');">한국 생산</a>
+						<a onclick="moveToPage(this, '/korea/tab', '한국 생산 > 한국 생상');">한국 생산</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/configSheet/list', '한국 생산 > CONFIG SHEET 조회');">CONFIG SHEET 조회</a>

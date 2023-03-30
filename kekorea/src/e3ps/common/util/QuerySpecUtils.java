@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import wt.enterprise.RevisionControlled;
+import wt.fc.Persistable;
 import wt.iba.definition.litedefinition.AttributeDefDefaultView;
 import wt.iba.definition.service.IBADefinitionHelper;
 import wt.iba.value.StringValue;
@@ -105,6 +106,13 @@ public class QuerySpecUtils {
 				query.appendAnd();
 			}
 			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (int) value);
+		} else if (value instanceof Persistable) {
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+			Persistable per = (Persistable) value;
+			long id = per.getPersistInfo().getObjectIdentifier().getId();
+			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, id);
 		}
 		query.appendWhere(sc, new int[] { idx });
 	}
@@ -116,9 +124,6 @@ public class QuerySpecUtils {
 		if (value == null) {
 			return;
 		}
-		if (query.getConditionCount() > 0) {
-			query.appendOr();
-		}
 
 		SearchCondition sc = null;
 		if (value instanceof String) {
@@ -126,11 +131,27 @@ public class QuerySpecUtils {
 			if (StringUtils.isNull(param)) {
 				return;
 			}
+			if (query.getConditionCount() > 0) {
+				query.appendOr();
+			}
 			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, param);
 		} else if (value instanceof Long) {
+			if (query.getConditionCount() > 0) {
+				query.appendOr();
+			}
 			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (long) value);
 		} else if (value instanceof Integer) {
+			if (query.getConditionCount() > 0) {
+				query.appendOr();
+			}
 			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (int) value);
+		} else if (value instanceof Persistable) {
+			if (query.getConditionCount() > 0) {
+				query.appendOr();
+			}
+			Persistable per = (Persistable) value;
+			long id = per.getPersistInfo().getObjectIdentifier().getId();
+			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, id);
 		}
 		query.appendWhere(sc, new int[] { idx });
 	}
@@ -429,15 +450,40 @@ public class QuerySpecUtils {
 	/**
 	 * 쿼리문에 not equals (and) 조건 추가
 	 */
-	public static void toNotEqualsAnd(QuerySpec query, int idx, Class clazz, String column, String value)
+	public static void toNotEqualsAnd(QuerySpec query, int idx, Class clazz, String column, Object value)
 			throws Exception {
-		if (StringUtils.isNull(value)) {
+		if (value == null) {
 			return;
 		}
-		if (query.getConditionCount() > 0) {
-			query.appendAnd();
+
+		SearchCondition sc = null;
+		if (value instanceof String) {
+			String param = (String) value;
+			if (StringUtils.isNull(param)) {
+				return;
+			}
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+			sc = new SearchCondition(clazz, column, SearchCondition.NOT_EQUAL, param);
+		} else if (value instanceof Long) {
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+			sc = new SearchCondition(clazz, column, SearchCondition.NOT_EQUAL, (long) value);
+		} else if (value instanceof Integer) {
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+			sc = new SearchCondition(clazz, column, SearchCondition.NOT_EQUAL, (int) value);
+		} else if (value instanceof Persistable) {
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+			Persistable per = (Persistable) value;
+			long id = per.getPersistInfo().getObjectIdentifier().getId();
+			sc = new SearchCondition(clazz, column, SearchCondition.NOT_EQUAL, id);
 		}
-		SearchCondition sc = new SearchCondition(clazz, column, SearchCondition.NOT_EQUAL, value);
 		query.appendWhere(sc, new int[] { idx });
 	}
 

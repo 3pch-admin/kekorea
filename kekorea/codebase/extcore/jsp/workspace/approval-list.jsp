@@ -18,6 +18,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	<form>
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+<<<<<<< HEAD
+=======
+		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
@@ -70,7 +74,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -140,6 +144,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "진행단계",
 					dataType : "string",
 					width : 350,
+					style : "right",
 					filter : {
 						showIcon : false,
 						inline : false
@@ -182,14 +187,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
-					showRowCheckColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -199,7 +201,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
@@ -214,16 +219,22 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const url = getCallUrl("/workspace/approval");
 				const params = new Object();
 				const approvalTitle = document.getElementById("approvalTitle").value;
+<<<<<<< HEAD
 				const psize = document.getElementById("psize").value;
 				const submiterOid = document.getElementById("submiterOid").value;
 				const receiveFrom = document.getElementById("receiveFrom").value;
 				const receiveTo = document.getElementById("receiveTo").value;
+=======
+				const submiterOid = document.getElementById("submiterOid").value;
+				const receiveFrom = document.getElementById("receiveFrom").value;
+				const receiveTo = document.getElementById("receiveTo").value;
+				const psize = document.getElementById("psize").value;
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 				params.approvalTitle = approvalTitle;
-				params.psize = psize;
 				params.submiterOid = submiterOid;
 				params.receiveFrom = receiveFrom;
 				params.receiveTo = receiveTo;
-				
+				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

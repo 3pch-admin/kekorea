@@ -31,10 +31,10 @@ public class IssueHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<IssueDTO> list = new ArrayList<>();
-		
+
 		String issueName = (String) params.get("issueName");
 		String description = (String) params.get("description");
-		
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Issue.class, true);
 		int idx_link = query.appendClassList(IssueProjectLink.class, true);
@@ -46,7 +46,7 @@ public class IssueHelper {
 				"roleBObjectRef.key.id", idx_p, idx_link);
 
 		QuerySpecUtils.toOrderBy(query, idx, Issue.class, Issue.CREATE_TIMESTAMP, true);
-		
+
 		if (!StringUtils.isNull(issueName)) {
 			QuerySpecUtils.toLikeAnd(query, idx, Issue.class, Issue.NAME, issueName);
 		}
@@ -66,11 +66,11 @@ public class IssueHelper {
 		map.put("curPage", pager.getCpage());
 		return map;
 	}
-	
+
 	public JSONArray jsonArrayAui(String oid) throws Exception {
 		ArrayList<Map<String, String>> list = new ArrayList<>();
-		IssueProjectLink issueProjectLink = (IssueProjectLink) CommonUtils.getObject(oid); 
-		
+		IssueProjectLink issueProjectLink = (IssueProjectLink) CommonUtils.getObject(oid);
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Issue.class, true);
 		int idx_link = query.appendClassList(IssueProjectLink.class, true);
@@ -92,6 +92,41 @@ public class IssueHelper {
 			map.put("kekNumber", project.getKekNumber());
 			map.put("keNumber", project.getKeNumber());
 			map.put("description", project.getDescription());
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 프로젝트 상세보기서 특이사항 목록
+	 */
+	public JSONArray issue(String oid) throws Exception {
+		Project project = (Project) CommonUtils.getObject(oid);
+
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Issue.class, true);
+		int idx_link = query.appendClassList(IssueProjectLink.class, true);
+		int idx_p = query.appendClassList(Project.class, true);
+
+		QuerySpecUtils.toInnerJoin(query, Issue.class, IssueProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toInnerJoin(query, Project.class, IssueProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleBObjectRef.key.id", idx_p, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, IssueProjectLink.class, "roleBObjectRef.key.id", project);
+
+		QuerySpecUtils.toOrderBy(query, idx, Issue.class, Issue.CREATE_TIMESTAMP, true);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			IssueProjectLink link = (IssueProjectLink) obj[1];
+			Issue issue = link.getIssue();
+			Map<String, String> map = new HashMap();
+			map.put("name", issue.getName());
+			map.put("description", issue.getDescription());
+			map.put("creator", issue.getOwnership().getOwner().getFullName());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(issue.getCreateTimestamp()));
 			list.add(map);
 		}
 		return JSONArray.fromObject(list);

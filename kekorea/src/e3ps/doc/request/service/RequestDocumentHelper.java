@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import e3ps.admin.commonCode.CommonCode;
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.doc.request.RequestDocument;
@@ -75,5 +77,24 @@ public class RequestDocumentHelper {
 			list.add(link);
 		}
 		return list;
+	}
+
+	/**
+	 * 의뢰시 작번 내용 입력시 검증
+	 */
+	public Map<String, Object> validate(Map<String, String> params) throws Exception {
+		Map<String, Object> result = new HashMap<>();
+		String kekNumber = params.get("kekNumber");
+		String projectType_code = params.get("projectType_code");
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Project.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, Project.KEK_NUMBER, kekNumber);
+		CommonCode projectTypeCode = CommonCodeHelper.manager.getCommonCode(projectType_code, "PROJECT_TYPE");
+		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "projectTypeReference.key.id",
+				projectTypeCode.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult qr = PersistenceHelper.manager.find(query);
+		result.put("validate", qr.size() > 0 ? true : false);
+		return result;
 	}
 }

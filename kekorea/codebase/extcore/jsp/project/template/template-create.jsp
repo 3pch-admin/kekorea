@@ -21,15 +21,15 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 		<col width="*">
 	</colgroup>
 	<tr>
-		<th class="req lb">템플릿 제목</th>
+		<th class="req lb">템플릿 명</th>
 		<td class="indent5">
-			<input type="text" name="name" id="name" class="AXInput width-500">
+			<input type="text" name="name" id="name" class="width-500">
 		</td>
 	</tr>
 	<tr>
 		<th class="lb">참조 템플릿</th>
 		<td class="indent5">
-			<select name="template" id="template" class="AXSelect">
+			<select name="reference" id="reference" class="width-400">
 				<option value="">선택</option>
 				<%
 				for (HashMap<String, String> map : list) {
@@ -49,30 +49,38 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 	</tr>
 </table>
 <script type="text/javascript">
-	// 등록
 	function create() {
+
+		const params = new Object();
+		const description = document.getElementById("description").value;
+		const name = document.getElementById("name");
+		const template = document.getElementById("template").value;
+		const url = getCallUrl("/meeting/create");
+
+		if (isNull(name)) {
+			alert("템플릿 명을 입력하세요.");
+			return false;
+		}
 
 		if (!confirm("등록 하시겠습니까?")) {
 			return false;
 		}
 
-		const params = new Object();
-		const content = tinymce.activeEditor.getContent();
-		const _addRows = AUIGrid.getAddedRowItems(_myGridID); // 프로젝트
-		const url = getCallUrl("/meeting/create");
-		params.name = document.getElementById("name").value;
-		params.content = content;
-		params.tiny = document.getElementById("tiny").value;
-		params._addRows = _addRows
-		params.secondarys = toArray("secondarys");
+		params.name = name.value;
+		params.description = description;
+		params.template = template;
+		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
-			} else {
-				// 실패시 처리할 부분..
 			}
 		})
 	}
+
+	document.addEventListener("DOMContentLoaded", function() {
+		selectbox("reference");
+		document.getElementById("name").focus();
+	})
 </script>

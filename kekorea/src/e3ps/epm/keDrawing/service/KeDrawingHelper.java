@@ -368,4 +368,59 @@ public class KeDrawingHelper {
 		result.put("workOrder", false);
 		return result;
 	}
+
+	/**
+	 * 작번서 도면 일람표 보는 화면
+	 */
+	public JSONArray workOrder(String oid) throws Exception {
+
+		Project project = (Project) CommonUtils.getObject(oid);
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WorkOrderProjectLink.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, WorkOrderProjectLink.class, "roleBObjectRef.key.id", project);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		WorkOrder workOrder = null;
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WorkOrderProjectLink link = (WorkOrderProjectLink) obj[0];
+			workOrder = link.getWorkOrder();
+		}
+
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		QuerySpec _query = new QuerySpec();
+		int _idx = _query.appendClassList(WorkOrder.class, true);
+		int _idx_l = _query.appendClassList(WorkOrderDataLink.class, true);
+
+		QuerySpecUtils.toInnerJoin(_query, WorkOrder.class, WorkOrderDataLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", _idx, _idx_l);
+		QuerySpecUtils.toEqualsAnd(_query, _idx_l, WorkOrderDataLink.class, "roleAObjectRef.key.id", workOrder);
+		QuerySpecUtils.toOrderBy(_query, _idx_l, WorkOrderDataLink.class, WorkOrderDataLink.SORT, true);
+		QueryResult qr = PersistenceHelper.manager.find(_query);
+		while (qr.hasMoreElements()) {
+			Object[] oo = (Object[]) qr.nextElement();
+			WorkOrderDataLink link = (WorkOrderDataLink) oo[1];
+			Map<String, Object> map = new HashMap();
+
+			map.put("dataType", link.getDataType());
+			map.put("lotNo", link.getLotNo());
+			map.put("current", link.getCurrent());
+			map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
+			map.put("note", link.getNote());
+			Persistable per = link.getData();
+			if (per instanceof KeDrawing) {
+				KeDrawing keDrawing = (KeDrawing) per;
+				map.put("oid", keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("name", keDrawing.getMaster().getName());
+				map.put("number", keDrawing.getMaster().getKeNumber());
+				map.put("rev", keDrawing.getVersion());
+				map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
+				map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
+				KeDrawing latest = getLatest(keDrawing);
+				map.put("latest", latest.getVersion());
+			}
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
+
 }

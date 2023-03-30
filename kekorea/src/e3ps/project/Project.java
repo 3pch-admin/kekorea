@@ -57,7 +57,8 @@ import wt.util.WTException;
 
 		},
 
-		tableProperties = @TableProperties(compositeIndex1 = "kekNumber + keNumber + projectTypeReference.key.id"),
+		
+		tableProperties = @TableProperties(compositeIndex1 = "kekNumber + projectTypeReference.key.id"),
 
 		foreignKeys = {
 

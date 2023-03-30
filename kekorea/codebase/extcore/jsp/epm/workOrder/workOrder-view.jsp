@@ -5,7 +5,6 @@
 WorkOrderDTO dto = (WorkOrderDTO) request.getAttribute("dto");
 JSONArray list = (JSONArray) request.getAttribute("list");
 %>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid() %>">
 <table class="button-table">
@@ -39,7 +38,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				<col style="width: 40%;">
 			</colgroup>
 			<tr>
-				<th class="lb" style="min-width: 140px; max-width: 140px;">도면 일람표 제목</th>
+				<th class="lb">도면 일람표 제목</th>
 				<td class="indent5"><%=dto.getName()%></td>
 				<th>상태</th>
 				<td class="indent5"><%=dto.getState()%></td>
@@ -96,22 +95,16 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				dataField : "preView",
 				headerText : "미리보기",
 				width : 80,
-				editable : false,
 				renderer : {
 					type : "ImageRenderer",
 					altField : null,
 					imgHeight : 34,
 				},
 			}, {
-				dataField : "dataType",
-				headerText : "파일유형",
-				dataType : "string",
-				width : 100,
-			}, {
 				dataField : "name",
 				headerText : "DRAWING TITLE",
 				dataType : "string",
-				style : "left indent10"
+				style : "aui-left",
 			}, {
 				dataField : "number",
 				headerText : "DWG. NO",
@@ -153,7 +146,6 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				headerText : "도면파일",
 				dataType : "string",
 				width : 80,
-				editable : false,
 				renderer : {
 					type : "TemplateRenderer",
 				},
@@ -201,9 +193,11 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				switch (tabId) {
 				case "tabs-1":
 					_createAUIGrid(_columns);
+					AUIGrid.resize(_myGridID);
 					break;
 				case "tabs-2":
 					createAUIGrid(columns);
+					AUIGrid.resize(myGridID);
 					break;
 				}
 			},

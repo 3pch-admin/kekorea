@@ -7,10 +7,19 @@ import wt.method.RemoteInterface;
 @RemoteInterface
 public interface TemplateService {
 
+	/**
+	 * 템플릿 생성
+	 */
 	public abstract void create(Map<String, Object> params) throws Exception;
 
-	public abstract void save(Map<String, Object> params) throws Exception;
+	/**
+	 * 템플릿 트리 저장
+	 */
+	public abstract void treeSave(Map<String, Object> params) throws Exception;
 
+	/**
+	 * 템플릿 유저 지정
+	 */
 	public abstract void saveUserLink(Map<String, Object> params) throws Exception;
 
 }

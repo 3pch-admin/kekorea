@@ -6,7 +6,6 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import e3ps.common.util.CommonUtils;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.project.Project;
@@ -46,14 +45,16 @@ public class RequestDocumentDTO {
 
 	// 변수 담기 용도
 	private ArrayList<Map<String, String>> addRows = new ArrayList<>();
-	private ArrayList<String> secondarys = new ArrayList<>();
+	private ArrayList<Map<String, String>> _addRows_ = new ArrayList<>();
+	private ArrayList<String> primarys = new ArrayList<>();
+	private String template;
 
 	public RequestDocumentDTO() {
 
 	}
 
 	public RequestDocumentDTO(RequestDocumentProjectLink link) throws Exception {
-		RequestDocument request = link.getRequest();
+		RequestDocument request = link.getRequestDocument();
 		Project project = link.getProject();
 		setOid(request.getPersistInfo().getObjectIdentifier().getStringValue());
 

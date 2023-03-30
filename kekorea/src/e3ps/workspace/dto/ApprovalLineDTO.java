@@ -109,51 +109,45 @@ public class ApprovalLineDTO {
 
 		point += "<img src='/Windchill/extcore/images/process-line.gif' class='line dot'>";
 
+		ArrayList<ApprovalLine> agreeLines = WorkspaceHelper.manager.getAgreeLines(master);
+		for (int i = 0; i < agreeLines.size(); i++) {
+			ApprovalLine agreeLine = (ApprovalLine) agreeLines.get(i);
+			if (agreeLine.getState().equals(WorkspaceHelper.STATE_AGREE_READY)) {
+				point += "<img src='/Windchill/extcore/images/process-sleft.gif' class='line'><span class='active'><span class='text'>"
+						+ agreeLine.getOwnership().getOwner().getFullName() + "</span></span>"
+						+ "<img src='/Windchill/extcore/images/process-sright.gif' class='line'>";
+			} else {
+				point += "<img src='/Windchill/extcore/images/process-nleft.gif' class='line'><span class='inactive'><span class='text'>"
+						+ agreeLine.getOwnership().getOwner().getFullName() + "</span></span>"
+						+ "<img src='/Windchill/extcore/images/process-nright.gif' class='line'>";
+			}
+
+			if (i != agreeLines.size() - 1) {
+				point += "<img src='/Windchill/extcore/images/process-line.gif' class='line dot'>";
+			}
+		}
+
+		if (agreeLines.size() > 0) {
+			point += "<img src='/Windchill/extcore/images/process-line.gif' class='line dot'>";
+		}
+
 		ArrayList<ApprovalLine> approvalLines = WorkspaceHelper.manager.getApprovalLines(master);
 		for (int i = 0; i < approvalLines.size(); i++) {
 			ApprovalLine approvalLine = (ApprovalLine) approvalLines.get(i);
-			point += "<img src='/Windchill/extcore/images/process-nleft.gif' class='line'><span class='inactive'><span class='text'>"
-					+ approvalLine.getOwnership().getOwner().getFullName() + "</span></span>"
-					+ "<img src='/Windchill/extcore/images/process-nright.gif' class='line'>";
+			if (approvalLine.getState().equals(WorkspaceHelper.STATE_APPROVAL_APPROVING)) {
+				point += "<img src='/Windchill/extcore/images/process-sleft.gif' class='line'><span class='active'><span class='text'>"
+						+ approvalLine.getOwnership().getOwner().getFullName() + "</span></span>"
+						+ "<img src='/Windchill/extcore/images/process-sright.gif' class='line'>";
+			} else {
+				point += "<img src='/Windchill/extcore/images/process-nleft.gif' class='line'><span class='inactive'><span class='text'>"
+						+ approvalLine.getOwnership().getOwner().getFullName() + "</span></span>"
+						+ "<img src='/Windchill/extcore/images/process-nright.gif' class='line'>";
+			}
 
 			if (i != approvalLines.size() - 1) {
 				point += "<img src='/Windchill/extcore/images/process-line.gif' class='line dot'>";
 			}
 		}
-
 		setPoint(point);
-//		
-//		if (value != "") {
-//			var s = value.substring(0, value.length - 1);
-//			var t = s.split(",");
-//
-//			for (var i = 0; i < t.length; i++) {
-//				var text = t[i].split("&")[0];
-//				var bool = t[i].split("&")[1];
-//
-//				if (bool == "true") {
-//					ingPoint += "<img style=\"height: 23px; width: 11px; position: relative; left: 0px;\" class=\"ingLeft\" src=\"/Windchill/jsp/images/process-sleft.gif\">";
-//				} else {
-//					ingPoint += "<img style=\"height: 23px; width: 11px; position: relative; left: 0px;\" class=\"ingLeft\" src=\"/Windchill/jsp/images/process-nleft.gif\">";
-//				}
-//
-//				if (bool == "true") {
-//					ingPoint += "<span class=\"ingTextIng\">" + text + "</span>";
-//				} else {
-//					ingPoint += "<span class=\"ingText\">" + text + "</span>";
-//				}
-//
-//				if (bool == "true") {
-//					ingPoint += "<img style=\"height: 23px; width: 11px; position: relative; left: 0px;\" class=\"ingRight\" src=\"/Windchill/jsp/images/process-sright.gif\">";
-//				} else {
-//					ingPoint += "<img style=\"height: 23px; width: 11px; position: relative; left: 0px;\" class=\"ingRight\" src=\"/Windchill/jsp/images/process-nright.gif\">";
-//				}
-//
-//				if (i != t.length - 1) {
-//					ingPoint += "<img style=\"height: 23px; width: 11px; position: relative; left: 0px;\" class=\"ingRight\" src=\"/Windchill/jsp/images/process-line.gif\">";
-//				}
-//			}
-//		}
-//		return ingPoint;
 	}
 }

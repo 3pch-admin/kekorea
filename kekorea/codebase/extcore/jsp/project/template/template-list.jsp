@@ -31,13 +31,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th>템플릿 제목</th>
+				<th>템플릿 명</th>
 				<td class="indent5">
 					<input type="text" name="templateName" id="templateName">
 				</td>
 				<th>작성자</th>
 				<td class="indent5">
 					<input type="text" name="creator" id="creator">
+					<input type="hidden" name="creatorOid" id="creatorOid">
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
@@ -54,6 +55,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<th>수정자</th>
 				<td class="indent5">
 					<input type="text" name="modifier" id="modifier">
+					<input type="hidden" name="modifierOid" id="modifierOid">
 				</td>
 				<th>수정일</th>
 				<td class="indent5">
@@ -93,14 +95,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
 				return [ {
 					dataField : "name",
-					headerText : "템플릿 제목",
+					headerText : "템플릿 명",
 					dataType : "string",
 					width : 350,
 					style : "aui-left",
@@ -110,7 +112,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/template/info?oid=" + oid);
-							popup(url);
+							popup(url, 1200, 630);
 						}
 					},
 					filter : {
@@ -194,14 +196,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					showRowCheckColumn : true,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -227,10 +228,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const templateName = document.getElementById("templateName").value;
 				const duration = document.getElementById("duration").value;
 				const psize = document.getElementById("psize").value;
-				
 				params.templateName = templateName;
 				params.duration = duration;
-				const psize = document.getElementById("psize").value;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -250,7 +249,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const sessionId = document.getElementById("sessionId").value;
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
+					const item = checkedItems[i].item;
+					if (!checker(sessionId, item.creatorId) || !checker(sessionId, item.modifierId)) {
+						alert("데이터 작성자 또는 수정자가 아닙니다.");
+						return false;
+					}
 					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
@@ -289,14 +294,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				finderUser("modifier");
 				finderUser("creator");
 				twindate("created");
+				finderUser("modifier");
 				twindate("modified");
-				
-				selectbox("psize");
-			});
-
 				selectbox("psize");
 			});
 
@@ -311,10 +312,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				if (keyCode === 13) {
 					loadGridData();
 				}
-			})
-
-			document.addEventListener("click", function(event) {
-				hideContextMenu();
 			})
 
 			document.addEventListener("click", function(event) {

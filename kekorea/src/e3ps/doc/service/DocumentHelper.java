@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.common.content.Contents;
 import e3ps.common.content.ContentsPersistablesLink;
 import e3ps.common.content.column.ContentsColumnData;
@@ -33,6 +34,7 @@ import e3ps.project.Project;
 import e3ps.project.output.DocumentOutputLink;
 import e3ps.project.output.Output;
 import e3ps.project.output.ProjectOutputLink;
+import net.sf.json.JSONArray;
 import wt.clients.folder.FolderTaskLogic;
 import wt.doc.WTDocument;
 import wt.doc.WTDocumentMaster;
@@ -51,6 +53,7 @@ import wt.query.SQLFunction;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
+import wt.vc.Mastered;
 import wt.vc.VersionControlHelper;
 import wt.vc.wip.WorkInProgressHelper;
 
@@ -2492,4 +2495,52 @@ public class DocumentHelper {
 		}
 		return number;
 	}
+
+	public JSONArray history(Mastered master) throws Exception {
+
+		ArrayList<DocumentDTO> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WTDocument.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, WTDocument.class, "masterReference.key.id",
+				master.getPersistInfo().getObjectIdentifier().getId());
+//		QuerySpecUtils.toOrderBy(query, idx, WTDocument.class, CommonUtils.getFullVersion(null), true);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while(result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WTDocument document = (WTDocument) obj[0];
+			DocumentDTO dto = new DocumentDTO(document);
+			list.add(dto);
+		}
+		return JSONArray.fromObject(list);
+	}
+	
+//	public JSONArray jsonArrayAui(String oid) throws Exception {
+//		ArrayList<Map<String, String>> list = new ArrayList<>();
+//		WTDocument document = (WTDocument) CommonUtils.getObject(oid);
+//
+//		QuerySpec query = new QuerySpec();
+//		int idx = query.appendClassList(WTDocument.class, true);
+//		int idx_link = query.appendClassList(WTDocumentWTPartLink.class, true);
+//		QuerySpecUtils.toInnerJoin(query, WTDocument.class, WTDocumentWTPartLink.class,
+//				WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx, idx_link);
+//		QuerySpecUtils.toEqualsAnd(query, idx_link, WTDocumentWTPartLink.class, "roleAObjectRef.key.id",
+//				document.getPersistInfo().getObjectIdentifier().getId());
+//		QueryResult result = PersistenceHelper.manager.find(query);
+//		while (result.hasMoreElements()) {
+//			Object[] obj = (Object[]) result.nextElement();
+//			WTDocumentWTPartLink link = (WTDocumentWTPartLink) obj[1];
+//			Project project = link.getProject();
+//			Map<String, String> map = new HashMap<>();
+//			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+//			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
+//			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+//			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
+//			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
+//			map.put("kekNumber", project.getKekNumber());
+//			map.put("keNumber", project.getKeNumber());
+//			map.put("description", project.getDescription());
+//			list.add(map);
+//		}
+//		return JSONArray.fromObject(list);
+//	}
 }

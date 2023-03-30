@@ -59,19 +59,19 @@ div.include {
 
 /** border 공통 CSS **/
 .tb-none {
-	border-top: none;
+	border-top: none !important;
 }
 
 .rb-none {
-	border-right: none;
+	border-right: none !important;
 }
 
 .lb-none {
-	border-left: none;
+	border-left: none !important;
 }
 
 .bb-none {
-	border-bottom: none;
+	border-bottom: none !important;
 }
 
 /** border 공통 CSS **/
@@ -440,7 +440,7 @@ a:hover {
 }
 
 /** INPUT CSS **/
-.create-table td input[type='text'], .search-table td input[type='text'], .button-table td input[type='text'] {
+.create-table td input[type='text'], .search-table td input[type='text'], .button-table td input[type='text'], .view-table td input[type='text'] {
 	border: 1px solid #a6a6a6;
 	background: #fff;
 	color: #333;
@@ -541,10 +541,19 @@ div.header {
 	font-size: 12px;
 }
 
+div.info-header {
+	margin: 5px 0px 5px 0px;
+	font-size: 12px;
+}
+
+div.info-header img {
+	position: relative;
+	top: 3px;
+}
+
 /** 결재 진행상태 **/
 img.line {
 	position: relative;
-	top: 3px;
 }
 
 img.dot {
@@ -555,7 +564,7 @@ img.dot {
 span.text {
 	position: relative;
 	display: inline-block;
-	top: 2px;
+	top: 1px;
 }
 
 span.inactive {
@@ -564,7 +573,7 @@ span.inactive {
 	text-align: center !important;
 	height: 23px;
 	display: inline-block;
-	bottom: 7px;
+	bottom: 9px;
 	font-size: 12px;
 	background-image: url("/Windchill/extcore/images/process-nbg.gif");
 }
@@ -575,7 +584,7 @@ span.active {
 	text-align: center !important;
 	height: 23px;
 	display: inline-block;
-	bottom: 7px;
+	bottom: 9px;
 	font-size: 12px;
 	background-image: url("/Windchill/extcore/images/process-sbg.gif");
 }
@@ -594,7 +603,7 @@ div#loading_layer {
 .aui-left {
 	text-align: left !important;
 	text-indent: 10px !important;
-/* 	color: blue !important; */
+	/* 	color: blue !important; */
 }
 
 .aui-grid-renderer-base>a {

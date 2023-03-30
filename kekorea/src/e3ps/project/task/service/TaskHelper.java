@@ -25,6 +25,9 @@ public class TaskHelper {
 		return getSort(template, null);
 	}
 
+	/**
+	 * 같은 레벨의 태스크 정렬 순거 가져오기
+	 */
 	public int getSort(Template template, Task task) throws Exception {
 		int sort = 1;
 		QuerySpec query = new QuerySpec();
@@ -38,8 +41,7 @@ public class TaskHelper {
 
 		QuerySpecUtils.toInnerJoin(query, Task.class, Template.class, "templateReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_t);
-		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "templateReference.key.id",
-				template.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "templateReference.key.id", template);
 		if (task != null) {
 			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, Task.DEPTH, task.getDepth());
 		}
@@ -55,10 +57,16 @@ public class TaskHelper {
 		return sort;
 	}
 
+	/**
+	 * 템플릿 관련 태스크 가져오기 부모X
+	 */
 	public ArrayList<Task> getTemplateTasks(Template template) throws Exception {
 		return getTemplateTasks(template, null);
 	}
 
+	/**
+	 * 템플릿 관련 태스크 가져오기 부모 O
+	 */
 	public ArrayList<Task> getTemplateTasks(Template template, Task parentTask) throws Exception {
 		ArrayList<Task> list = new ArrayList<>();
 
@@ -152,8 +160,7 @@ public class TaskHelper {
 
 		QuerySpecUtils.toInnerJoin(query, Task.class, Project.class, "projectReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_t);
-		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "projectReference.key.id",
-				project.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "projectReference.key.id", project);
 		if (task != null) {
 			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, Task.DEPTH, task.getDepth());
 		}

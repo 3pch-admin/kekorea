@@ -18,9 +18,6 @@ public class StringUtils {
 
 	/**
 	 * String 값이 null 인지 체크하는 함수
-	 * 
-	 * @param value : null 체크를 하려는 값
-	 * @return boolean
 	 */
 	public static boolean isNull(String value) {
 		if (value == null || value.length() == 0) {
@@ -28,7 +25,7 @@ public class StringUtils {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * String 변수의 값이 null 인지 체크 후 null 일 경우 공백, 값이 있을 경우 기존의 변수 값을 그대로 리턴하는 함수
 	 * 

@@ -23,6 +23,7 @@ import com.ptc.wpcfg.deliverables.library.EPMDocumentMaker;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
@@ -31,6 +32,7 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
@@ -480,5 +482,145 @@ public class WorkOrderHelper {
 			cell.setCellStyle(style);
 		}
 		cell.setCellValue(StringUtils.replaceToValue(data));
+	}
+
+	/**
+	 * 도면 일람표 비교
+	 */
+	public Map<String, Object> compare(String oid, String _oid) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		ArrayList<Map<String, Object>> result = compareData(oid); // 기준
+		ArrayList<Map<String, Object>> _result = compareData(_oid); // 비교
+
+		// 더 큰 배열
+		int maxSize = Math.max(result.size(), _result.size());
+		// 크기가 작은 ArrayList를 찾아 null 값을 추가
+		int diff = Math.abs(result.size() - _result.size());
+		if (result.size() < _result.size()) {
+			for (int i = 0; i < diff; i++) {
+				Map<String, Object> empty = new HashMap<String, Object>();
+				result.add(empty);
+			}
+		} else if (result.size() > _result.size()) {
+			for (int i = 0; i < diff; i++) {
+				Map<String, Object> empty = new HashMap<String, Object>();
+				_result.add(empty);
+			}
+		}
+
+		ArrayList<Map<String, Object>> dataList = new ArrayList<>(maxSize); // 신규 기준
+		ArrayList<Map<String, Object>> _dataList = new ArrayList<>(maxSize); // 신규 비교
+
+		for (int i = 0; i < result.size(); i++) {
+			boolean isEquals = true;
+			Map<String, Object> data = result.get(i); // 기준
+			for (int j = 0; j < _result.size(); j++) {
+				Map<String, Object> _data = _result.get(j); // 비교
+
+				// 비교 조건부..
+				String value = (String) data.get("number") + "-" + data.get("rev") + "-" + data.get("lotNo");
+				String _value = (String) _data.get("number") + "-" + _data.get("rev") + "-" + _data.get("lotNo");
+
+				if (value.equals(_value)) {
+					dataList.add(data);
+					_dataList.add(_data);
+//						result.remove(i);
+					_result.remove(j);
+					isEquals = true;
+					break;
+				}
+				isEquals = false;
+			}
+			System.out.println("isEquals=" + isEquals);
+			if (!isEquals) {
+				Map<String, Object> empty = new HashMap<String, Object>();
+				dataList.add(data);
+				_dataList.add(empty);
+//				dataList.add(empty);
+//				_dataList.add(_data);
+			}
+		}
+
+		// 합치기
+		_dataList.addAll(_result); // 비교 데이터 합치기..
+
+		int _diff = Math.abs(dataList.size() - _dataList.size());
+		if (dataList.size() < _dataList.size()) {
+			for (int i = 0; i < _diff; i++) {
+				Map<String, Object> empty = new HashMap<String, Object>();
+				dataList.add(empty);
+			}
+		} else if (dataList.size() > _dataList.size()) {
+			for (int i = 0; i < _diff; i++) {
+				Map<String, Object> empty = new HashMap<String, Object>();
+				_dataList.add(empty);
+			}
+		}
+
+		// 싸이즈가 같으니깐??
+		for (int i = dataList.size() - 1; i >= 0; i--) {
+//		for (int i = 0; i < dataList.size(); i++) {
+			Map<String, Object> m = dataList.get(i);
+			Map<String, Object> _m = _dataList.get(i);
+			// 둘다 비어 있으면 빼버린다..
+			if (m.size() == 0 && _m.size() == 0) {
+				dataList.remove(i);
+				_dataList.remove(i);
+			}
+		}
+
+		map.put("dataList", dataList);
+		map.put("_dataList", _dataList);
+		return map;
+	}
+
+	private ArrayList<Map<String, Object>> compareData(String oid) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+
+		Project project = (Project) CommonUtils.getObject(oid);
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WorkOrderProjectLink.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, WorkOrderProjectLink.class, "roleBObjectRef.key.id", project);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		WorkOrder workOrder = null;
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WorkOrderProjectLink link = (WorkOrderProjectLink) obj[0];
+			workOrder = link.getWorkOrder();
+		}
+
+		QuerySpec _query = new QuerySpec();
+		int _idx = _query.appendClassList(WorkOrder.class, true);
+		int _idx_l = _query.appendClassList(WorkOrderDataLink.class, true);
+
+		QuerySpecUtils.toInnerJoin(_query, WorkOrder.class, WorkOrderDataLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", _idx, _idx_l);
+		QuerySpecUtils.toEqualsAnd(_query, _idx_l, WorkOrderDataLink.class, "roleAObjectRef.key.id", workOrder);
+		QuerySpecUtils.toOrderBy(_query, _idx_l, WorkOrderDataLink.class, WorkOrderDataLink.SORT, true);
+		QueryResult qr = PersistenceHelper.manager.find(_query);
+		while (qr.hasMoreElements()) {
+			Object[] oo = (Object[]) qr.nextElement();
+			WorkOrderDataLink link = (WorkOrderDataLink) oo[1];
+			Map<String, Object> map = new HashMap();
+
+			map.put("lotNo", link.getLotNo());
+			map.put("current", link.getCurrent());
+			map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
+			map.put("note", link.getNote());
+			Persistable per = link.getData();
+			if (per instanceof KeDrawing) {
+				KeDrawing keDrawing = (KeDrawing) per;
+				map.put("name", keDrawing.getMaster().getName());
+				map.put("number", keDrawing.getMaster().getKeNumber());
+				map.put("rev", keDrawing.getVersion());
+				map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
+				map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
+				KeDrawing latest = KeDrawingHelper.manager.getLatest(keDrawing);
+				map.put("latest", latest.getVersion());
+			}
+			list.add(map);
+		}
+		return list;
 	}
 }

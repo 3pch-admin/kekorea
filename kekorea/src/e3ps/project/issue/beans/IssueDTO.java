@@ -3,6 +3,7 @@ package e3ps.project.issue.beans;
 import java.sql.Timestamp;
 
 import e3ps.admin.commonCode.CommonCode;
+import e3ps.common.util.CommonUtils;
 import e3ps.project.Project;
 import e3ps.project.issue.Issue;
 import e3ps.project.issue.IssueProjectLink;
@@ -22,8 +23,10 @@ public class IssueDTO {
 	private String mak_name;
 	private String detail_name;
 	private String creator;
+	private String creatorId;
 	private String pType;
 	private Timestamp createdDate;
+	private String createdDate_txt;
 
 	public IssueDTO() {
 
@@ -45,7 +48,9 @@ public class IssueDTO {
 			setDetail_name(project.getDetail().getName());
 		}
 		setCreator(issue.getOwnership().getOwner().getFullName());
+		setCreatorId(issue.getOwnership().getOwner().getName());
 		setCreatedDate(issue.getCreateTimestamp());
 		setPType(project.getPType());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(issue.getCreateTimestamp()));
 	}
 }
