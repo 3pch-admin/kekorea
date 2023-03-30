@@ -1,9 +1,6 @@
 package e3ps.part.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.annotation.Description;
@@ -16,15 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.korea.cip.dto.CipDTO;
-import e3ps.korea.cip.service.CipHelper;
+import e3ps.part.beans.PartDTO;
 import e3ps.part.service.PartHelper;
+import e3ps.workspace.service.WorkspaceHelper;
+import net.sf.json.JSONArray;
 import wt.org.WTUser;
+import wt.part.WTPart;
 import wt.session.SessionHelper;
 
 @Controller
@@ -112,5 +108,22 @@ public class PartController extends BaseController {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	@Description(value = "도면 정보 페이지")
+	@GetMapping(value = "/view")
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		WTPart part = (WTPart)CommonUtils.getObject(oid);
+		PartDTO dto = new PartDTO(part);
+		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(part.getMaster());
+		JSONArray data = PartHelper.manager.jsonArrayAui(dto.getOid());
+		JSONArray list = PartHelper.manager.list(part.getMaster());
+		model.addObject("dto", dto);
+		model.addObject("history", history);
+		model.addObject("data", data);
+		model.addObject("list", list);
+		model.setViewName("popup:/part/part-view");
+		return model;
 	}
 }
