@@ -102,15 +102,15 @@ JSONArray departments = new JSONArray(list);
 				<col width="*">
 			</colgroup>
 			<tr>
-				<td>
+				<td valign="top">
 					<jsp:include page="/extcore/include/department-include.jsp">
 						<jsp:param value="list" name="mode" />
-						<jsp:param value="705" name="height" />
+						<jsp:param value="740" name="height" />
 					</jsp:include>
 				</td>
 				<td>&nbsp;</td>
 				<td>
-					<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
+					<div id="grid_wrap" style="height: 740px; border-top: 1px solid #3180c3;"></div>
 				</td>
 			</tr>
 		</table>

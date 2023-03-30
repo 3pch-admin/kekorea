@@ -213,7 +213,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const submiterOid = document.getElementById("submiterOid").value;
 				const receiveFrom = document.getElementById("receiveFrom").value;
 				const receiveTo = document.getElementById("receiveTo").value;
-
 				params.approvalTitle = approvalTitle;
 				params.submiterOid = submiterOid;
 				params.receiveFrom = receiveFrom;
@@ -237,6 +236,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("approvalTitle").focus();
 				const columns = loadColumnLayout("agree-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

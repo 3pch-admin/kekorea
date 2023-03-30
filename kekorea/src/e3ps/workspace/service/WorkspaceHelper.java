@@ -573,22 +573,15 @@ public class WorkspaceHelper {
 				WTAttributeNameIfc.ID_NAME, idx, idx_master);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, STATE_AGREE_READY);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, AGREE_LINE);
-		QuerySpecUtils.toTimeGreaterEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP,
-				receiveFrom);
-		QuerySpecUtils.toTimeLessEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveTo);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveFrom,
+				receiveTo);
 		QuerySpecUtils.toCreator(query, idx, ApprovalLine.class, submiterOid);
-		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, true);
-
+		QuerySpecUtils.toLikeAnd(query, idx, ApprovalLine.class, ApprovalLine.NAME, approvalTitle);
 		WTUser sessionUser = CommonUtils.sessionUser();
 		if (!CommonUtils.isAdmin()) {
-			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, "ownership.owner.key.id",
-					sessionUser.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, "ownership.owner.key.id", sessionUser);
 		}
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.MODIFY_TIMESTAMP, false);
-
-		if (!StringUtils.isNull(approvalTitle)) {
-			QuerySpecUtils.toLikeAnd(query, idx, ApprovalLine.class, ApprovalLine.NAME, approvalTitle);
-		}
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();

@@ -192,7 +192,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 600px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 635px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;

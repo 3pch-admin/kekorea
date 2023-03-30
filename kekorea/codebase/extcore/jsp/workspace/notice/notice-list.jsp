@@ -265,6 +265,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("name").focus();
 				const columns = loadColumnLayout("notice-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
