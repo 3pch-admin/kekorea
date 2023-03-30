@@ -21,6 +21,7 @@ import e3ps.epm.column.EpmProductColumnData;
 import e3ps.epm.column.ViewerColumnData;
 import e3ps.epm.dto.EpmDTO;
 import e3ps.org.People;
+import net.sf.json.JSONArray;
 import wt.clients.folder.FolderTaskLogic;
 import wt.epm.EPMDocument;
 import wt.epm.EPMDocumentMaster;
@@ -42,6 +43,7 @@ import wt.query.SQLFunction;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
+import wt.vc.Mastered;
 import wt.vc.VersionControlHelper;
 import wt.vc.wip.WorkInProgressHelper;
 
@@ -684,5 +686,27 @@ public class EpmHelper {
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
 		return map;
+	}
+
+	//버전이력
+	public JSONArray history(Mastered master) throws Exception {
+		ArrayList<EpmDTO> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(EPMDocument.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, EPMDocument.class, "masterReference.key.id", master.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while(result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			EPMDocument epm = (EPMDocument) obj[0];
+			EpmDTO dto = new EpmDTO(epm);
+			list.add(dto);
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	//작번
+	public JSONArray jsonArrayAui(String oid) throws Exception {
+		
+		return null;
 	}
 }

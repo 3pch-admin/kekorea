@@ -19,6 +19,8 @@ import e3ps.epm.dto.EpmDTO;
 import e3ps.epm.service.EpmHelper;
 import e3ps.project.Project;
 import e3ps.project.dto.ProjectDTO;
+import e3ps.workspace.service.WorkspaceHelper;
+import net.sf.json.JSONArray;
 import wt.epm.EPMDocument;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -84,8 +86,13 @@ public class EpmController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		EPMDocument epm = (EPMDocument) CommonUtils.getObject(oid);
 		EpmDTO dto = new EpmDTO(epm);
+		JSONArray list = EpmHelper.manager.history(epm.getMaster());
+		JSONArray data = EpmHelper.manager.jsonArrayAui(dto.getOid());
+//		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(epm.get());
+		model.addObject("data", data);
 		model.addObject("dto", dto);
-		model.setViewName("/extcore/jsp/epm/epm-view.jsp");
+		model.addObject("list", list);
+		model.setViewName("popup:/epm/epm-view");
 		return model;
 	}
 }

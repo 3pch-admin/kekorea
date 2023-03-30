@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.ContentUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.ThumnailUtils;
 import lombok.Getter;
@@ -27,12 +28,16 @@ public class EpmDTO {
 	private String version;
 	private String modifier;
 	private Timestamp modifiedDate;
+	private String modifiedDate_txt;
 	private String creator;
 	private Timestamp createdDate;
+	private String createdDate_txt;
 	private String state;
 	private String location;
 	private String[] primary;
 //	private String creoView;
+	private String description;
+	private String preView;
 
 	public EpmDTO() {
 
@@ -60,10 +65,14 @@ public class EpmDTO {
 		setVersion(CommonUtils.getFullVersion(epm));
 		setModifier(epm.getModifierFullName());
 		setModifiedDate(epm.getModifyTimestamp());
+		setModifiedDate_txt(CommonUtils.getPersistableTime(epm.getModifyTimestamp()));
 		setCreator(epm.getCreatorFullName());
 		setCreatedDate(epm.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(epm.getCreateTimestamp()));
 		setState(epm.getLifeCycleState().getDisplay());
 		setLocation(epm.getLocation());
 //		setCreoView(ThumnailUtils.creoViewURL(this.oid));
+		setDescription(epm.getDescription());
+		setPreView(ContentUtils.getPreViewBase64(epm));
 	}
 }
