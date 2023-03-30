@@ -15,12 +15,15 @@ Map<String, ArrayList<String>> drillDown = (Map<String, ArrayList<String>>) requ
 <meta charset="UTF-8">
 <title></title>
 <%@include file="/extcore/include/highchart.jsp"%>
+<<<<<<< HEAD
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
+=======
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 </head>
 <body>
 	<div id="container" style="height: 300px;"></div>
 
 	<script type="text/javascript">
-//Create the chart
 Highcharts.chart('container', {
     chart: {
         type: 'column'

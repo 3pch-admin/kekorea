@@ -7,9 +7,7 @@
 <%
 MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 %>
-<!-- tinymce -->
 <%@include file="/extcore/include/tinymce.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <table class="button-table">
 	<tr>
@@ -77,9 +75,7 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 			toolbar : false,
 			readonly : true,
 			setup : function(editor) {
-				// 에디터가 초기화되면 실행되는 콜백 함수
 				editor.on('init', function() {
-					// 에디터의 내용 가져오기
 					const content = editor.getContent();
 					editor.setContent(content);
 				});
@@ -88,7 +84,6 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 	}
 	
 	document.addEventListener("DOMContentLoaded", function() {
-		// DOM이 로드된 후 실행할 코드 작성
 		_createAUIGrid(_columns);
 		AUIGrid.resize(_myGridID);
 		loadTinymce();

@@ -267,11 +267,6 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				renderer : {
 					type : "LinkRenderer",
 					baseUrl : "javascript",
-					jsCallback : function(rowIndex, columnIndex, value, item) {
-						const oid = item.oid;
-						const url = getCallUrl("/epm/view?oid=" + oid);
-						popup(url, 1400, 600);
-					}
 				},
 				filter : {
 					showIcon : true,
@@ -490,15 +485,9 @@ function preView() {
 								_createAUIGrid(_columns);
 							}
 							break;
-						case "tabs-5":
-							const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-							if (_isCreated_) {
-								AUIGrid.resize(_myGridID_);
-							} else {
-								_createAUIGrid_(_columns_);
-							}
-							break;
-						}
+							activate : function(event, ui) {
+								var tabId = ui.newPanel.prop("id");
+								switch (tabId) {
 					}
 		});
 	});

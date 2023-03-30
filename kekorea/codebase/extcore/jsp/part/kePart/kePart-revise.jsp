@@ -2,7 +2,6 @@
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <table class="button-table">
 	<tr>
@@ -64,7 +63,7 @@
 		width : 80,
 		editRenderer : {
 			type : "InputEditRenderer",
-			onlyNumeric : true, // 0~9만 입력가능		
+			onlyNumeric : true, 		
 		}
 	}, {
 		dataField : "state",
@@ -101,11 +100,11 @@
 	} ]
 	function createAUIGrid(columnLayout) {
 		const props = {
-			headerHeight : 30, // 헤더높이
-			rowHeight : 30, // 행 높이
-			showRowNumColumn : true, // 번호 행 출력 여부
-			showStateColumn : true, // 상태표시 행 출력 여부
-			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
+			headerHeight : 30, 
+			rowHeight : 30, 
+			showRowNumColumn : true, 
+			showStateColumn : true, 
+			rowNumHeaderText : "번호", 
 			selectionMode : "multipleCells",
 			showRowCheckColumn : true,
 			editable : true
@@ -115,7 +114,6 @@
 	}
 
 	function readyHandler() {
-		// 화면에서 받아온 데이터 그리드로 추가
 		for (let i = 0; i < data.length; i++) {
 			data[i].item = {
 				primary : "",
@@ -134,7 +132,6 @@
 		});
 	}
 
-	// 그리드 행 삭제
 	function remove() {
 		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 		for (let i = checkedItems.length - 1; i >= 0; i--) {
@@ -143,7 +140,6 @@
 		}
 	}
 
-	// 개정
 	function revise() {
 
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
@@ -186,7 +182,7 @@
 				opener.loadGridData();
 				self.close();
 			}
-		}); // POST 메소드 생략한다
+		}); 
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {

@@ -2208,4 +2208,26 @@ public class PartHelper {
 		map.put("curPage", pager.getCpage());
 		return map;
 	}
+
+	//부품 정보 관련문서
+	public JSONArray jsonArrayAui(String oid) throws Exception {
+		
+		return null;
+	}
+
+	//버전 이력
+	public JSONArray list(WTPartMaster master) throws Exception {
+		ArrayList<PartDTO> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WTPart.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, WTPart.class, "masterReference.key.id", master.getPersistInfo().getObjectIdentifier().getId());
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while(result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WTPart part = (WTPart) obj[0];
+			PartDTO dto = new PartDTO(part);
+			list.add(dto);
+		}
+		return JSONArray.fromObject(list);
+	}
 }

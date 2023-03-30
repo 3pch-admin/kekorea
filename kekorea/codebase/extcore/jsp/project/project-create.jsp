@@ -194,8 +194,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 			}
 		})
 
-		// select box bind
-		selectBox("detail"); // 기본 바인딩만..
+		selectBox("detail");
 		selectBox("install");
 		selectBox("projectType");
 

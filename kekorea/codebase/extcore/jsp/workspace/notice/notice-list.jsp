@@ -117,7 +117,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/issue/view?oid=" + oid);
+							const url = getCallUrl("/notice/view?oid=" + oid);
 							popup(url, 1400, 600);
 						}
 					},

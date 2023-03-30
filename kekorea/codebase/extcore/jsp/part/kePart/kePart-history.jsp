@@ -4,7 +4,6 @@
 <%
 JSONArray list = (JSONArray) request.getAttribute("list");
 %>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <div id="grid_wrap" style="height: 550px; border-top: 1px solid #3180c3;"></div>
 
@@ -156,7 +155,6 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-			// 그리드 공통속성 시작
 			headerHeight : 30,
 			rowHeight : 30,
 			showRowNumColumn : true,
@@ -168,7 +166,6 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			enableRightDownFocus : true,
 			filterLayerWidth : 320,
 			filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-		// 그리드 공통속성 끝
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		AUIGrid.setGridData(myGridID, <%=list%>);

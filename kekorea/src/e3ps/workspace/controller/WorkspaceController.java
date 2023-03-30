@@ -19,6 +19,8 @@ import e3ps.org.Department;
 import e3ps.org.service.OrgHelper;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.dto.ApprovalLineDTO;
+import e3ps.workspace.notice.Notice;
+import e3ps.workspace.notice.dto.NoticeDTO;
 import e3ps.workspace.service.WorkspaceHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -199,6 +201,16 @@ public class WorkspaceController extends BaseController {
 		return model;
 	}
 
+	@Description(value = "검토함 뷰 페이지")
+	@GetMapping(value = "/agreeView")
+	public ModelAndView agreeView(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		ApprovalLine approvalLine = (ApprovalLine) CommonUtils.getObject(oid);
+		ApprovalLineDTO dto = new ApprovalLineDTO(approvalLine, "COLUMN_AGREE");
+		model.addObject("dto", dto);
+		model.setViewName("popup:/workspace/agree-view");
+		return model;
+	}
 	@Description(value = "결재 정보 보기")
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {

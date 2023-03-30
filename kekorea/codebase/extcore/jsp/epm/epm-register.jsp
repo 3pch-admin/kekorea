@@ -7,16 +7,12 @@
 <head>
 <meta charset="UTF-8">
 <title></title>
-<!-- CSS 공통 모듈 -->
 <%@include file="/extcore/include/css.jsp"%>
-<!-- 스크립트 공통 모듈 -->
 <%@include file="/extcore/include/script.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 </head>
 <body>
 	<form>
-		<!-- 버튼 테이블 -->
 		<table class="button-table">
 			<tr>
 				<td class="right">
@@ -64,7 +60,6 @@
 			</tr>
 		</table>
 		<script type="text/javascript">
-			// 등록
 			function registerLine() {
 				const url = getCallUrl("/document/register");
 				const params = new Object();
@@ -84,7 +79,7 @@
 
 			document.addEventListener("DOMContentLoaded", function() {
 				_createAUIGrid(_columns);
-				_createAUIGrid_(_columns_); // 결재
+				_createAUIGrid_(_columns_);
 			});
 
 			window.addEventListener("resize", function() {
