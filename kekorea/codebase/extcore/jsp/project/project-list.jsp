@@ -210,32 +210,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						inline : false
 					},
 				}, {
-					dataField : "cip",
-					headerText : "CIP",
-					dataType : "string",
-					width : 60,
-					renderer : {
-						type : "IconRenderer",
-						iconWidth : 16,
-						iconHeight : 16,
-						iconTableRef : {
-							"default" : "/Windchill/extcore/images/icon/search.gif"
-						},
-						onClick : function(event) {
-							const item = event.item;
-							const mak_oid = item.mak_oid;
-							const detail_oid = item.detail_oid;
-							const customer_oid = item.customer_oid;
-							const install_oid = item.install_oid;
-							const url = getCallUrl("/cip/view?mak_oid=" + mak_oid + "&detail_oid=" + detail_oid + "&customer_oid=" + customer_oid + "&install_oid=" + install_oid);
-							popup(url);
-						}
-					},
-					filter : {
-						showIcon : false,
-						inline : false
-					},
-				}, {
 					dataField : "projectType_name",
 					headerText : "작번유형",
 					dataType : "string",
@@ -428,14 +402,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
-					showRowCheckColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,

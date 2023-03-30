@@ -207,7 +207,10 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				sort++;
 			}
 
-			WorkspaceHelper.service.register(partListMaster, agreeRows, approvalRows, receiveRows);
+			// 결재시작
+			if (approvalRows.size() > 0) {
+				WorkspaceHelper.service.register(partListMaster, agreeRows, approvalRows, receiveRows);
+			}
 
 			trs.commit();
 			trs = null;

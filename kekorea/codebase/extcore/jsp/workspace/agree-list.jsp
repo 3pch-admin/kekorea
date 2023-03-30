@@ -138,6 +138,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "진행단계",
 					dataType : "string",
 					width : 350,
+					style : "right",
 					renderer : {
 						type : "TemplateRenderer"
 					},
@@ -180,14 +181,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
-					showRowCheckColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -197,7 +195,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
-				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
@@ -216,7 +213,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const submiterOid = document.getElementById("submiterOid").value;
 				const receiveFrom = document.getElementById("receiveFrom").value;
 				const receiveTo = document.getElementById("receiveTo").value;
-				
+
 				params.approvalTitle = approvalTitle;
 				params.submiterOid = submiterOid;
 				params.receiveFrom = receiveFrom;

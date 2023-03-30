@@ -141,6 +141,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "진행단계",
 					dataType : "string",
 					width : 350,
+					style : "right",
 					filter : {
 						showIcon : false,
 						inline : false
@@ -183,14 +184,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
-					showRowCheckColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -222,7 +220,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				params.submiterOid = submiterOid;
 				params.receiveFrom = receiveFrom;
 				params.receiveTo = receiveTo;
-				params.psize = psize;				
+				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

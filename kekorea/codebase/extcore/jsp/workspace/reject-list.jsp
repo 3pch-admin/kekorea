@@ -82,6 +82,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "반려단계",
 					dataType : "string",
 					width : 350,
+					style : "right",
 					renderer : {
 						type : "TemplateRenderer"
 					},
@@ -117,14 +118,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
-					showRowCheckColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,

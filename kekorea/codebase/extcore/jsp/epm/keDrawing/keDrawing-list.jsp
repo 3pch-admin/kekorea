@@ -18,6 +18,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 <style type="text/css">
 .preView {
 	background-color: #caf4fd;
+	cursor: pointer;
 }
 </style>
 </head>
@@ -90,7 +91,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				<th>수정자</th>
 				<td class="indent5">
 					<input type="text" name="modifier" id="modifier" class="width-200">
-					<input type="text" name="modifierOid" id="modifierOid">
+					<input type="hidden" name="modifierOid" id="modifierOid">
 				</td>
 				<th>수정일</th>
 				<td class="indent5">
@@ -221,10 +222,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					dataType : "string",
 					width : 100,
 					editable : false,
-					headerTooltip : {
-						show : true,
-						tooltipHtml : "데이터 저장시 접속한 사용자의 이름이 입력되어집니다."
-					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -235,10 +232,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					dataType : "string",
 					width : 100,
 					editable : false,
-					headerTooltip : {
-						show : true,
-						tooltipHtml : "데이터 저장하는 날짜가 입력되어집니다."
-					},
 					filter : {
 						showIcon : true,
 						inline : true,
@@ -249,10 +242,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					dataType : "string",
 					width : 100,
 					editable : false,
-					headerTooltip : {
-						show : true,
-						tooltipHtml : "데이터 저장시 접속한 사용자의 이름이 입력되어집니다."
-					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -263,10 +252,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					dataType : "string",
 					width : 100,
 					editable : false,
-					headerTooltip : {
-						show : true,
-						tooltipHtml : "데이터 저장하는 날짜가 입력되어집니다."
-					},
 					filter : {
 						showIcon : true,
 						inline : true,
@@ -292,10 +277,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					dataType : "string",
 					width : 80,
 					editable : false,
-					headerTooltip : {
-						show : true,
-						tooltipHtml : "도면파일명의 양식을 정확하게 해주세요. EX) DCB000000-001 (DWG NO : 9자리, 버전 : 3자리)"
-					},
 					renderer : {
 						type : "TemplateRenderer",
 					},
@@ -327,6 +308,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					headerText : "개정사유",
 					dateType : "string",
 					width : 250,
+					style : "aui-left",
 					editable : false,
 					filter : {
 						showIcon : true,
@@ -338,14 +320,13 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
-					showRowNumColumn : true,
-					showRowCheckColumn : true,
 					showStateColumn : true,
+					showRowCheckColumn : true,
+					showRowNumColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -372,7 +353,12 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 			function auiCellClickHandler(event) {
 				const dataField = event.dataField;
 				const oid = event.item.oid;
+				const preView = event.item.preView;
 				if (dataField === "preView") {
+					if (preView === null) {
+						alert("미리보기 파일이 생성되어있지 않습니다.");
+						return false;
+					}
 					const url = getCallUrl("/aui/thumbnail?oid=" + oid);
 					popup(url);
 				}
@@ -444,16 +430,21 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				const item = {
 					creator : sessionName,
 					modifier : sessionName,
-					createdDate_txt : time,
-					modifiedDate_txt : time,
 					latest : true,
+					preView : null
 				};
 				AUIGrid.addRow(myGridID, item, "first");
 			}
 
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const sessionId = document.getElementById("sessionId").value;
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
+					const item = checkedItems[i].item;
+					if (!checker(sessionId, item.creatorId)) {
+						alert("데이터 작성자가 아닙니다.");
+						return false;
+					}
 					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
