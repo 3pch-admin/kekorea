@@ -45,14 +45,22 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<col width="*">
 			</colgroup>
 			<tr>
+<<<<<<< HEAD
+				<th>부품분류</th>
+=======
 				<th>ë¶í ë¶ë¥</th>
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 				<td colspan="7" class="indent5">
 					<input type="hidden" name="location" value="">
 					<span id="location">defaultttttttt</span>
 				</td>
 			</tr>
 			<tr>
+<<<<<<< HEAD
+				<th>파일이름</th>
+=======
 				<th>íì¼ ì´ë¦</th>
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 				<td class="indent5">
 					<input type="text" name="partCode">
 				</td>
@@ -94,7 +102,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					~
 					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
+<<<<<<< HEAD
+				<th>수정자</th>
+=======
 				<th>ìì ì</th>
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 				<td class="indent5">
 					<input type="text" name="modifier" id="modifier">
 				</td>
@@ -186,9 +198,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
+<<<<<<< HEAD
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link í´ë¦­\r\nìë°ì¤í¬ë¦½í¸ í¨ì í¸ì¶íê³ ì íë ê²½ì°ë¡ ì¬ì©íì¸ì!");
+=======
 							const oid = item.oid;
 							const url = getCallUrl("/epm/view?oid=" + oid);
 							popup(url, 1400, 600);
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 						}
 					},
 					filter : {
@@ -222,9 +238,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
+<<<<<<< HEAD
+							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link í´ë¦­\r\nìë°ì¤í¬ë¦½í¸ í¨ì í¸ì¶íê³ ì íë ê²½ì°ë¡ ì¬ì©íì¸ì!");
+=======
 							const oid = item.oid;
 							const url = getCallUrl("/epm/view?oid=" + oid);
 							popup(url, 1400, 600);
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 						}
 					},
 					filter : {

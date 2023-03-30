@@ -90,7 +90,7 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 
 		const params = new Object();
 		const content = tinymce.activeEditor.getContent();
-		const _addRows = AUIGrid.getAddedRowItems(_myGridID); // 프로젝트
+		const _addRows = AUIGrid.getAddedRowItems(_myGridID);
 		const url = getCallUrl("/meeting/create");
 		params.name = document.getElementById("name").value;
 		params.content = content;
@@ -103,7 +103,6 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 				opener.loadGridData();
 				self.close();
 			} else {
-				// 실패시 처리할 부분..
 			}
 		})
 	}
@@ -120,7 +119,6 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
-		// DOM이 로드된 후 실행할 코드 작성
 		loadTinymce();
 		const tinyBox = document.getElementById("tiny");
 		tinyBox.addEventListener("change", function() {
@@ -134,7 +132,6 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 				}
 			}, "GET");
 		})
-		// 작번 추가 그리드
 		_createAUIGrid(_columns);
 		AUIGrid.resize(_myGridID);
 	});

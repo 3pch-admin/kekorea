@@ -6,7 +6,6 @@
 <%
 MeetingTemplateDTO dto = (MeetingTemplateDTO) request.getAttribute("dto");
 %>
-<!-- tinymce -->
 <%@include file="/extcore/include/tinymce.jsp"%>
 <table class="button-table">
 	<tr>
@@ -43,9 +42,7 @@ MeetingTemplateDTO dto = (MeetingTemplateDTO) request.getAttribute("dto");
 			toolbar : false,
 			readonly : true,
 			setup : function(editor) {
-				// 에디터가 초기화되면 실행되는 콜백 함수
 				editor.on('init', function() {
-					// 에디터의 내용 가져오기
 					const content = editor.getContent();
 					editor.setContent(content);
 				});
@@ -54,16 +51,12 @@ MeetingTemplateDTO dto = (MeetingTemplateDTO) request.getAttribute("dto");
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
-		// DOM이 로드된 후 실행할 코드 작성
 		loadTinymce();
 	});
 
 	document.addEventListener("keydown", function(event) {
-		// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
 		const keyCode = event.keyCode || event.which;
-		// esc 키(코드 27)를 눌렀을 때
 		if (keyCode === 27) {
-			// 현재 창 닫기
 			self.close();
 		}
 	})

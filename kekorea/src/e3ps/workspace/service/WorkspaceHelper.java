@@ -158,6 +158,41 @@ public class WorkspaceHelper {
 		return list;
 	}
 
+<<<<<<< HEAD
+	public ArrayList<ApprovalLine> getAppLines(ApprovalMaster master) {
+		ArrayList<ApprovalLine> list = new ArrayList<ApprovalLine>();
+		QueryResult result = null;
+		ApprovalLine appLine = null;
+		try {
+			QuerySpec query = new QuerySpec();
+			int idx = query.appendClassList(ApprovalLine.class, true);
+			SearchCondition sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=",
+					WorkspaceHelper.APPROVAL_LINE);
+			query.appendWhere(sc, new int[] { idx });
+			query.appendAnd();
+
+			long ids = master.getPersistInfo().getObjectIdentifier().getId();
+			sc = new SearchCondition(ApprovalLine.class, "masterReference.key.id", "=", ids);
+			query.appendWhere(sc, new int[] { idx });
+
+			ClassAttribute ca = new ClassAttribute(ApprovalLine.class, ApprovalLine.SORT);
+			OrderBy orderBy = new OrderBy(ca, false);
+			query.appendOrderBy(orderBy, new int[] { idx });
+
+			result = PersistenceHelper.manager.find(query);
+			while (result.hasMoreElements()) {
+				Object[] obj = (Object[]) result.nextElement();
+				appLine = (ApprovalLine) obj[0];
+				list.add(appLine);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+=======
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 	public String[] getContractEpmData(Persistable per) throws Exception {
 		String oid = "";
 		String name = "";

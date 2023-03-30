@@ -98,12 +98,11 @@ public class KePartController extends BaseController {
 				removeRow.add(dto);
 			}
 			HashMap<String, List<KePartDTO>> dataMap = new HashMap<>();
-			dataMap.put("addRows", addRow); // 추가행
-			dataMap.put("editRows", editRow); // 수정행
-			dataMap.put("removeRows", removeRow); // 삭제행
+			dataMap.put("addRows", addRow); 
+			dataMap.put("editRows", editRow); 
+			dataMap.put("removeRows", removeRow); 
 
 			result = KePartHelper.manager.isValid(addRow, editRow);
-			// true 중복있음
 			if ((boolean) result.get("isExist")) {
 				result.put("result", FAIL);
 				return result;
@@ -147,12 +146,11 @@ public class KePartController extends BaseController {
 			}
 
 			HashMap<String, List<KePartDTO>> dataMap = new HashMap<>();
-			dataMap.put("addRows", addRow); // 추가행
+			dataMap.put("addRows", addRow); 
 
-			// 수정을 못하게 한다???
 			for (KePartDTO dto : addRow) {
-				KePart kePart = (KePart) CommonUtils.getObject(dto.getOid()); // 원본
-				String keNumber = dto.getKeNumber(); // 변경 되는 값
+				KePart kePart = (KePart) CommonUtils.getObject(dto.getOid()); 
+				String keNumber = dto.getKeNumber();
 				if (!keNumber.equals(kePart.getMaster().getKeNumber())) {
 					result.put("result", FAIL);
 					result.put("msg", "개정전 후의 품번이 일치 하지 않습니다.\n데이터를 확인 해주세요.");

@@ -18,7 +18,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	<form>
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+<<<<<<< HEAD
+=======
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
@@ -94,7 +97,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
 						}
 					},
 					filter : {
@@ -126,7 +128,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							const url = getCallUrl("/workspace/agreeView?oid=" + oid);
+							popup(url, 1400, 1000);
 						}
 					},
 					filter : {
@@ -195,6 +199,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
+<<<<<<< HEAD
+
+=======
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
@@ -217,7 +225,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				params.submiterOid = submiterOid;
 				params.receiveFrom = receiveFrom;
 				params.receiveTo = receiveTo;
+<<<<<<< HEAD
+
+=======
 				params.psize = psize;
+>>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

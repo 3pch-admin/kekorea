@@ -50,7 +50,6 @@ public class KePartHelper {
 		QuerySpecUtils.toInnerJoin(query, KePart.class, KePartMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
 
-		// 버전
 		if (latest) {
 			QuerySpecUtils.toBooleanAnd(query, idx, KePart.class, KePart.LATEST, true);
 		} else {
@@ -122,7 +121,7 @@ public class KePartHelper {
 			int lotNo = dto.getLotNo();
 			boolean isExist = exist(keNumber, lotNo);
 			if (isExist) {
-				result.put("isExist", true); // 존재하는거 true
+				result.put("isExist", true); 
 				result.put("msg", "LOT NO가 = " + lotNo + "이고 품번이 = " + keNumber + "가 이미 존재합니다.");
 				return result;
 			}
@@ -136,17 +135,15 @@ public class KePartHelper {
 			String keNumber = dto.getKeNumber();
 			int lotNo = dto.getLotNo();
 
-			// 원본 도면의 번호 혹은 LON NO 가 변경 될시 체크만한다...
 			if (!orgKeNumber.equals(keNumber) || orgLotNo != lotNo) {
 				boolean isExist = exist(keNumber, lotNo);
 				if (isExist) {
-					result.put("isExist", true); // 존재하는거 true
+					result.put("isExist", true); 
 					result.put("msg", "LOT NO가 = " + lotNo + "이고 도번이 = " + keNumber + "가 이미 존재합니다.");
 					return result;
 				}
 			}
 		}
-		// 아무것도 없다면 false
 		result.put("isExist", false);
 		return result;
 	}
@@ -215,9 +212,6 @@ public class KePartHelper {
 				"kePartReference.key.id", idx_k, idx_data);
 		QuerySpecUtils.toEqualsAnd(query, idx_data, TBOMData.class, "kePartReference.key.id",
 				kePart.getPersistInfo().getObjectIdentifier().getId());
-		;
-
-		System.out.println(query);
 
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
