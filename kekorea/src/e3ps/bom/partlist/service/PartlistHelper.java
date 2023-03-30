@@ -14,7 +14,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.json.JSONArray;
 
 import e3ps.bom.partlist.MasterDataLink;
 import e3ps.bom.partlist.PartListData;
@@ -36,6 +35,7 @@ import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.org.People;
 import e3ps.project.Project;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
@@ -552,7 +552,7 @@ public class PartlistHelper {
 			map.put("note", data.getNote());
 			list.add(map);
 		}
-		return new JSONArray(list);
+		return JSONArray.fromObject(list);
 	}
 
 	/**
@@ -625,13 +625,14 @@ public class PartlistHelper {
 			map.put("description", project.getDescription());
 			list.add(map);
 		}
-		return new JSONArray(list);
+		return JSONArray.fromObject(list);
 	}
 
 	/**
 	 * 수배표 비교
 	 */
-	public ArrayList<Map<String, Object>> compare(String oid, String _oid, String compareKey, String sort) throws Exception {
+	public ArrayList<Map<String, Object>> compare(String oid, String _oid, String compareKey, String sort)
+			throws Exception {
 		if (StringUtils.isNull(sort)) {
 			sort = MasterDataLink.SORT;
 		}

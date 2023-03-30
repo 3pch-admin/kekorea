@@ -957,7 +957,9 @@ public class WorkspaceHelper {
 				map.put("state", agreeLine.getState());
 				map.put("owner", agreeLine.getOwnership().getOwner().getFullName());
 				map.put("receiveDate_txt", agreeLine.getStartTime().toString().substring(0, 16));
-				map.put("completeDate_txt", agreeLine.getCompleteTime().toString().substring(0, 16));
+				map.put("completeDate_txt",
+						agreeLine.getCompleteTime() != null ? agreeLine.getCompleteTime().toString().substring(0, 16)
+								: "");
 				map.put("description", agreeLine.getDescription());
 				list.add(map);
 			}
@@ -971,7 +973,9 @@ public class WorkspaceHelper {
 				map.put("state", approvalLine.getState());
 				map.put("owner", approvalLine.getOwnership().getOwner().getFullName());
 				map.put("receiveDate_txt", approvalLine.getStartTime().toString().substring(0, 16));
-				map.put("completeDate_txt", approvalLine.getCompleteTime().toString().substring(0, 16));
+				map.put("completeDate_txt",
+						approvalLine.getCompleteTime() != null ? agreeLine.getCompleteTime().toString().substring(0, 16)
+								: "");
 				map.put("description", approvalLine.getDescription());
 				list.add(map);
 			}
@@ -985,7 +989,9 @@ public class WorkspaceHelper {
 				map.put("state", receiveLine.getState());
 				map.put("owner", receiveLine.getOwnership().getOwner().getFullName());
 				map.put("receiveDate_txt", receiveLine.getStartTime().toString().substring(0, 16));
-				map.put("completeDate_txt", receiveLine.getCompleteTime().toString().substring(0, 16));
+				map.put("completeDate_txt",
+						receiveLine.getCompleteTime() != null ? agreeLine.getCompleteTime().toString().substring(0, 16)
+								: "");
 				map.put("description", receiveLine.getDescription());
 				list.add(map);
 			}
