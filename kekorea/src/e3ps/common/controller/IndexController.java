@@ -31,7 +31,7 @@ public class IndexController extends BaseController {
 	@GetMapping(value = "/index")
 	public ModelAndView index() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("content:/index");
+		model.setViewName("/extcore/layout/index.jsp");
 		return model;
 	}
 
