@@ -554,7 +554,6 @@ div.info-header img {
 /** 결재 진행상태 **/
 img.line {
 	position: relative;
-	top: 3px;
 }
 
 img.dot {
@@ -565,7 +564,7 @@ img.dot {
 span.text {
 	position: relative;
 	display: inline-block;
-	top: 2px;
+	top: 1px;
 }
 
 span.inactive {
@@ -574,7 +573,7 @@ span.inactive {
 	text-align: center !important;
 	height: 23px;
 	display: inline-block;
-	bottom: 7px;
+	bottom: 9px;
 	font-size: 12px;
 	background-image: url("/Windchill/extcore/images/process-nbg.gif");
 }
@@ -585,7 +584,7 @@ span.active {
 	text-align: center !important;
 	height: 23px;
 	display: inline-block;
-	bottom: 7px;
+	bottom: 9px;
 	font-size: 12px;
 	background-image: url("/Windchill/extcore/images/process-sbg.gif");
 }

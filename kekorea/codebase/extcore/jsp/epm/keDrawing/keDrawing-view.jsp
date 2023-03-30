@@ -440,7 +440,9 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				}
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				AUIGrid.setGridData(myGridID, <%=list%>);
+				AUIGrid.setGridData(myGridID,
+		<%=list%>
+			);
 			}
 		</script>
 	</div>

@@ -108,7 +108,7 @@ public class ApprovalLineDTO {
 		for (int i = 0; i < agreeLines.size(); i++) {
 			ApprovalLine agreeLine = (ApprovalLine) agreeLines.get(i);
 			if (agreeLine.getState().equals(WorkspaceHelper.STATE_AGREE_READY)) {
-				point += "<img src='/Windchill/extcore/images/process-sleft.gif' class='line'><span class='inactive'><span class='text'>"
+				point += "<img src='/Windchill/extcore/images/process-sleft.gif' class='line'><span class='active'><span class='text'>"
 						+ agreeLine.getOwnership().getOwner().getFullName() + "</span></span>"
 						+ "<img src='/Windchill/extcore/images/process-sright.gif' class='line'>";
 			} else {
@@ -130,7 +130,7 @@ public class ApprovalLineDTO {
 		for (int i = 0; i < approvalLines.size(); i++) {
 			ApprovalLine approvalLine = (ApprovalLine) approvalLines.get(i);
 			if (approvalLine.getState().equals(WorkspaceHelper.STATE_APPROVAL_APPROVING)) {
-				point += "<img src='/Windchill/extcore/images/process-sleft.gif' class='line'><span class='inactive'><span class='text'>"
+				point += "<img src='/Windchill/extcore/images/process-sleft.gif' class='line'><span class='active'><span class='text'>"
 						+ approvalLine.getOwnership().getOwner().getFullName() + "</span></span>"
 						+ "<img src='/Windchill/extcore/images/process-sright.gif' class='line'>";
 			} else {
