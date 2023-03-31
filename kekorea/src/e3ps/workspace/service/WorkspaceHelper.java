@@ -566,11 +566,8 @@ public class WorkspaceHelper {
 	public Map<String, Object> approval(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
-<<<<<<< HEAD
 		boolean isAdmin = CommonUtils.isAdmin();
-=======
 		String name = (String) params.get("name");
->>>>>>> 2b1d8067d6c347643e570d3e4af6886b40c0d6db
 		String submiterOid = (String) params.get("submiterOid");
 		String receiveFrom = (String) params.get("receiveFrom");
 		String receiveTo = (String) params.get("receiveTo");
@@ -586,13 +583,10 @@ public class WorkspaceHelper {
 		// 쿼리 수정할 예정
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, STATE_APPROVAL_APPROVING);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, APPROVAL_LINE);
-<<<<<<< HEAD
 		QuerySpecUtils.toTimeGreaterAndLess(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveFrom,
 				receiveTo);
 		QuerySpecUtils.toCreator(query, idx, ApprovalLine.class, submiterOid);
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, true);
-=======
->>>>>>> 2b1d8067d6c347643e570d3e4af6886b40c0d6db
 
 		if (!CommonUtils.isAdmin()) {
 			WTUser sessionUser = CommonUtils.sessionUser();
