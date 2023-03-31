@@ -30,10 +30,13 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			<a href="#tabs-1">기본정보</a>
 		</li>
 		<li>
-			<a href="#tabs-2">결재이력</a>
+			<a href="#tabs-2">PROE 속성</a>
 		</li>
 		<li>
-			<a href="#tabs-3">버전정보</a>
+			<a href="#tabs-3">결재이력</a>
+		</li>
+		<li>
+			<a href="#tabs-4">버전정보</a>
 		</li>
 	</ul>
 	<div id="tabs-1">
@@ -90,57 +93,10 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				</td>
 			</tr>
 			<tr>
-				<th class="lb">PROE 속성</th>
-				<td class="indent5" colspan="4">
-					<table class="view-table">
-						<colgroup>
-							<col width="150">
-							<col width="*">
-							<col width="150">
-							<col width="*">
-						</colgroup>
-						<tr>
-							<th class="lb">NAME_OF_PARTS</th>
-							<td class="indent5"><%=dto.getName_of_parts()%></td>
-							<th class="lb">DWG_NO</th>
-							<td class="indent5"><%=dto.getNumber()%></td>
-						</tr>
-						<tr>
-							<th class="lb">MATERIAL</th>
-							<td class="indent5"><%=dto.getMaterial()%></td>
-							<th class="lb">REMARKS</th>
-							<td class="indent5"><%=dto.getRemark()%></td>
-						</tr>
-						<tr>
-							<th class="lb">PART_CODE</th>
-							<td class="indent5"><%=dto.getPart_code()%></td>
-							<th class="lb">STD_UNIT</th>
-							<td class="indent5"></td>
-						</tr>
-						<tr>
-							<th class="lb">MAKER</th>
-							<td class="indent5"><%=dto.getMaker()%></td>
-							<th class="lb">CUSNAME</th>
-							<td class="indent5"></td>
-						</tr>
-						<tr>
-							<th class="lb">PRICE</th>
-							<td class="indent5"></td>
-							<th class="lb">CURRNAME</th>
-							<td class="indent5"></td>
-						</tr>
-						<tr>
-							<th class="lb">REF_NO</th>
-							<td class="indent5" colspan="3"></td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-			<tr>
 				<th class="lb">관련문서</th>
 				<td colspan="4">
 					<div class="include">
-						<div id="grid_wrap" style="height: 200px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+						<div id="grid_wrap" style="height: 150px; border-top: 1px solid #3180c3; margin: 5px;"></div>
 						<script type="text/javascript">
 							let myGridID;
 							const data =
@@ -222,8 +178,52 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		</table>
 	</div>
 	<div id="tabs-2">
+		<table class="view-table">
+			<colgroup>
+				<col style="width: 10%;">
+				<col style="width: 40%;">
+				<col style="width: 10%;">
+				<col style="width: 40%;">
+			</colgroup>
+			<tr>
+				<th class="lb">NAME_OF_PARTS</th>
+				<td class="indent5"><%=dto.getName_of_parts()%></td>
+				<th class="lb">DWG_NO</th>
+				<td class="indent5"><%=dto.getNumber()%></td>
+			</tr>
+			<tr>
+				<th class="lb">MATERIAL</th>
+				<td class="indent5"><%=dto.getMaterial()%></td>
+				<th class="lb">REMARKS</th>
+				<td class="indent5"><%=dto.getRemark()%></td>
+			</tr>
+			<tr>
+				<th class="lb">PART_CODE</th>
+				<td class="indent5"><%=dto.getPart_code()%></td>
+				<th class="lb">STD_UNIT</th>
+				<td class="indent5"></td>
+			</tr>
+			<tr>
+				<th class="lb">MAKER</th>
+				<td class="indent5"><%=dto.getMaker()%></td>
+				<th class="lb">CUSNAME</th>
+				<td class="indent5"></td>
+			</tr>
+			<tr>
+				<th class="lb">PRICE</th>
+				<td class="indent5"></td>
+				<th class="lb">CURRNAME</th>
+				<td class="indent5"></td>
+			</tr>
+			<tr>
+				<th class="lb">REF_NO</th>
+				<td class="indent5" colspan="3"></td>
+			</tr>
+		</table>
+	</div>
+	<div id="tabs-3">
 		<div class="include">
-			<div id="_grid_wrap_" style="height: 565px; border-top: 1px solid #3180c3;"></div>
+			<div id="_grid_wrap_" style="height: 460px; border-top: 1px solid #3180c3;"></div>
 			<script type="text/javascript">
 				let _myGridID_;
 				const history =
@@ -318,8 +318,8 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			</script>
 		</div>
 	</div>
-	<div id="tabs-3">
-		<div id="_grid_wrap" style="height: 565px; border-top: 1px solid #3180c3;"></div>
+	<div id="tabs-4">
+		<div id="_grid_wrap" style="height: 460px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let _myGridID;
 			const list =
@@ -423,11 +423,11 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 					createAUIGrid(columns);
 					AUIGrid.resize(myGridID);
 					break;
-				case "tabs-2":
+				case "tabs-3":
 					_createAUIGrid_(_columns_);
 					AUIGrid.resize(_myGridID_);
 					break;
-				case "tabs-3":
+				case "tabs-4":
 					_createAUIGrid(_columns);
 					AUIGrid.resize(_myGridID);
 					break;
@@ -444,7 +444,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 						createAUIGrid(columns);
 					}
 					break;
-				case "tabs-2":
+				case "tabs-3":
 					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
 					if (_isCreated_) {
 						AUIGrid.resize(_myGridID_);
@@ -452,7 +452,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 						_createAUIGrid_(_columns_);
 					}
 					break;
-				case "tabs-3":
+				case "tabs-4":
 					const _isCreated = AUIGrid.isCreated(_myGridID);
 					if (_isCreated) {
 						AUIGrid.resize(_myGridID);

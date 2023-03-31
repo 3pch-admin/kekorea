@@ -105,7 +105,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			<tr>
 				<th class="lb">설명</th>
 				<td colspan="3" class="indent5">
-					<textarea name="descriptionNotice" id="descriptionNotice" rows="12" cols="" readonly="readonly"><%=dto.getDescription()%></textarea>
+					<textarea name="descriptionNotice" id="descriptionNotice" rows="7" cols="" readonly="readonly"><%=dto.getDescription()%></textarea>
 				</td>
 			</tr>
 		</table>
@@ -155,7 +155,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 		</table>
 	</div>
 	<div id="tabs-3">
-		<div id="grid_wrap" style="height: 200px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+		<div id="grid_wrap" style="height: 300px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			const data =
@@ -256,7 +256,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 		</script>
 	</div>
 	<div id="tabs-4">
-		<div id="_grid_wrap" style="height: 565px; border-top: 1px solid #3180c3;"></div>
+		<div id="_grid_wrap" style="height: 460px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let _myGridID;
 			const _columns = [ {
@@ -347,7 +347,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 		</script>
 	</div>
 	<div id="tabs-5">
-		<div id="_grid_wrap_" style="height: 565px; border-top: 1px solid #3180c3;"></div>
+		<div id="_grid_wrap_" style="height: 460px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let _myGridID_;
 			const history =
