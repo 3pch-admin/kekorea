@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -211,12 +212,14 @@ public class WorkspaceController extends BaseController {
 		model.setViewName("popup:/workspace/agree-view");
 		return model;
 	}
+
 	@Description(value = "결재 정보 보기")
 	@GetMapping(value = "/view")
-	public ModelAndView view(@RequestParam String oid) throws Exception {
+	public ModelAndView view(@RequestParam String oid, @RequestParam String columnType) throws Exception {
 		ModelAndView model = new ModelAndView();
 		ApprovalLine approvalLine = (ApprovalLine) CommonUtils.getObject(oid);
-		ApprovalLineDTO dto = new ApprovalLineDTO(approvalLine, "");
+		ApprovalLineDTO dto = new ApprovalLineDTO(approvalLine, columnType);
+		model.addObject("dto", dto);
 		model.addObject("oid", oid);
 		model.setViewName("popup:/workspace/approval-view");
 		return model;

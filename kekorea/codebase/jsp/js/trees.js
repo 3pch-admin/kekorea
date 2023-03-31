@@ -1,7 +1,0 @@
-/**
- * Tree javascript
- */
-
-var trees = {
-
-}

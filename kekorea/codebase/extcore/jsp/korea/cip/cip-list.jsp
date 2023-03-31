@@ -137,7 +137,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -601,14 +601,13 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 			function createAUIGrid(columns) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					showRowCheckColumn : true,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					filterLayerWidth : 320,
@@ -740,6 +739,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const sessionId = document.getElementById("sessionId").value;
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
 					const item = checkedItems[i].item;
 					if (!checker(sessionId, item.creatorId)) {

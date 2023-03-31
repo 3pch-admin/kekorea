@@ -80,7 +80,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "reads",
 					headerText : "확인",
 					dataType : "boolean",
-					width : 80,
+					width : 60,
 					filter : {
 						showIcon : false,
 						inline : false
@@ -198,7 +198,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2b1d8067d6c347643e570d3e4af6886b40c0d6db
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
@@ -213,10 +216,17 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const url = getCallUrl("/workspace/approval");
 				const params = new Object();
 				const approvalTitle = document.getElementById("approvalTitle").value;
+<<<<<<< HEAD
 				const psize = document.getElementById("psize").value;
 				const submiterOid = document.getElementById("submiterOid").value;
 				const receiveFrom = document.getElementById("receiveFrom").value;
 				const receiveTo = document.getElementById("receiveTo").value;
+=======
+				const submiterOid = document.getElementById("submiterOid").value;
+				const receiveFrom = document.getElementById("receiveFrom").value;
+				const receiveTo = document.getElementById("receiveTo").value;
+				const psize = document.getElementById("psize").value;
+>>>>>>> 2b1d8067d6c347643e570d3e4af6886b40c0d6db
 				params.approvalTitle = approvalTitle;
 				params.submiterOid = submiterOid;
 				params.receiveFrom = receiveFrom;

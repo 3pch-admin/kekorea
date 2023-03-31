@@ -1,5 +1,5 @@
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.bom.partlist.dto.PartListDTO"%>
-<%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 PartListDTO dto = (PartListDTO) request.getAttribute("dto");

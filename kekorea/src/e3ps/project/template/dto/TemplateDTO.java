@@ -2,6 +2,8 @@ package e3ps.project.template.dto;
 
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.project.template.Template;
@@ -29,7 +31,9 @@ public class TemplateDTO {
 	private Timestamp modifiedDate;
 	private String modifiedDate_txt;
 	
+	@JsonIgnore
 	private WTUser pm;
+	@JsonIgnore
 	private WTUser subPm;
 
 	public TemplateDTO() {

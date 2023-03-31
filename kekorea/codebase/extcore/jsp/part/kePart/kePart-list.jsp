@@ -151,7 +151,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 635px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -411,14 +411,13 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					showRowCheckColumn : true,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -578,6 +577,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const sessionId = document.getElementById("sessionId").value;
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
 					const item = checkedItems[i].item;
 					const rowIndex = checkedItems[i].rowIndex;
@@ -606,30 +606,34 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				}
 
 				console.log(checkedItems);
-				for (let i = 0; i < checkedItems.length; i++) {
-					const oid = checkedItems[i].item.oid;
-					const latest = checkedItems[i].item.latest;
-					const rowIndex = checkedItems[i].rowIndex;
-					const state = checkedItems[i].state;
+// 				for (let i = 0; i < checkedItems.length; i++) {
+// 					const oid = checkedItems[i].item.oid;
+// 					const latest = checkedItems[i].item.latest;
+// 					const rowIndex = checkedItems[i].rowIndex;
+// 					const state = checkedItems[i].state;
 
-					if (state !== "승인됨") {
-						// 						alert("승인되지 않은 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
-						// 						return false;
-					}
+// 					if (state !== "승인됨") {
+// 						// 						alert("승인되지 않은 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
+// 						// 						return false;
+// 					}
 
-					if (!latest) {
-						alert("최신버전이 아닌 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
-						return false;
-					}
+// 					if (!latest) {
+// 						alert("최신버전이 아닌 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
+// 						return false;
+// 					}
 
-					if (oid === undefined) {
-						alert("신규로 작성한 데이터가 존재합니다.\n" + rowIndex + "행 데이터");
-						return false;
-					}
-				}
-				const url = getCallUrl("/kePart/revise");
-				const panel = popup(url, 1600, 550);
+// 					if (oid === undefined) {
+// 						alert("신규로 작성한 데이터가 존재합니다.\n" + rowIndex + "행 데이터");
+// 						return false;
+// 					}
+// 				}
+// 				const url = getCallUrl("/kePart/revise");
+				console.log(checkedItems)
+				const panel = popup("/Windchill/plm/kePart/revise", 1600, 550);
 				panel.list = checkedItems;
+// 				console.log(checkedItems);
+// 				console.log(panel.list);
+				
 			}
 
 			function exportExcel() {

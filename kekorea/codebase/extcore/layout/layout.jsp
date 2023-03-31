@@ -4,12 +4,12 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/Windchill/jsp/css/bootstrap.css">
-<link rel="stylesheet" href="/Windchill/jsp/css/font-awesome.css">
-<link rel="stylesheet" href="/Windchill/jsp/js/plugins/gritter/jquery.gritter.css">
-<link rel="stylesheet" href="/Windchill/jsp/css/animate.css">
-<link rel="stylesheet" href="/Windchill/jsp/css/layout.css">
-<link rel="stylesheet" href="/Windchill/jsp/asset/ax5ui-mask/dist/ax5mask.css">
+<link rel="stylesheet" href="/Windchill/extcore/css/bootstrap.css">
+<link rel="stylesheet" href="/Windchill/extcore/css/fonts/font-awesome.css">
+<link rel="stylesheet" href="/Windchill/extcore/css/jquery.gritter.css">
+<link rel="stylesheet" href="/Windchill/extcore/css/animate.css">
+<link rel="stylesheet" href="/Windchill/extcore/css/layout.css">
+<link rel="stylesheet" href="/Windchill/extcore/component/ax5ui-mask/dist/ax5mask.css">
 <title><tiles:insertAttribute name="title" ignore="false"></tiles:insertAttribute></title>
 </head>
 <body class="fixed-sidebar">
@@ -21,17 +21,17 @@
 		</div>
 	</div>
 	<div id="loading_layer">
-		<img src="/Windchill/jsp/images/loading.gif">
+		<img src="/Windchill/extcore/images/loading.gif">
 	</div>
-	<script type="text/javascript" src="/Windchill/jsp/asset/axisj/jquery/jquery-1.12.3.min.js"></script>
-	<script type="text/javascript" src="/Windchill/jsp/asset/ax5core/dist/ax5core.min.js"></script>
-	<script type="text/javascript" src="/Windchill/jsp/asset/ax5ui-mask/dist/ax5mask.min.js"></script>
-	<script src="/Windchill/jsp/js/plugins/popper.min.js"></script>
-	<script src="/Windchill/jsp/js/plugins/bootstrap.js"></script>
-	<script src="/Windchill/jsp/js/plugins/metisMenu/jquery.metisMenu.js"></script>
-	<script src="/Windchill/jsp/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
-	<script src="/Windchill/jsp/js/plugins/inspinia.js"></script>
-	<script src="/Windchill/jsp/js/plugins/gritter/jquery.gritter.min.js"></script>
+	<script type="text/javascript" src="/Windchill/extcore/component/axisj/jquery/jquery-1.12.3.min.js"></script>
+	<script type="text/javascript" src="/Windchill/extcore/component/ax5core/dist/ax5core.min.js"></script>
+	<script type="text/javascript" src="/Windchill/extcore/component/ax5ui-mask/dist/ax5mask.min.js"></script>
+	<script src="/Windchill/extcore/js/plugins/popper.min.js"></script>
+	<script src="/Windchill/extcore/js/plugins/bootstrap.js"></script>
+	<script src="/Windchill/extcore/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+	<script src="/Windchill/extcore/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="/Windchill/extcore/js/plugins/inspinia.js"></script>
+	<script src="/Windchill/extcore/js/plugins/gritter/jquery.gritter.min.js"></script>
 	<script type="text/javascript">
 		const cover = new ax5.ui.mask();
 		const iframe = document.getElementById("content");

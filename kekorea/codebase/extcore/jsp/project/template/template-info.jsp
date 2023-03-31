@@ -14,11 +14,17 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
 <table class="button-table">
 	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				템플릿 정보
+			</div>
+		</td>
 		<td class="right">
 			<%
 			if (isAdmin) {
 			%>
-			<input type="button" value="수정" title="수정" onclick="create();">
+			<input type="button" value="수정" title="수정" onclick="modify();">
 			<input type="button" value="삭제" title="삭제" class="red" onclick="create();">
 			<%
 			}
@@ -44,7 +50,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "name",
 					headerText : "태스크명",
 					dataType : "string",
-					width : 200,
+					width : 150,
 				}, {
 					dataField : "duration",
 					headerText : "기간",
@@ -117,13 +123,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					editRenderer : {
 						type : "InputEditRenderer",
 						onlyNumeric : true,
+						maxlength : 3
 					},
 				} ]
 
 				function createAUIGrid(columnLayout) {
 					const props = {
 						headerHeight : 30,
-						rowHeight : 30,
 						showRowNumColumn : true,
 						rowNumHeaderText : "번호",
 						editable : true,
@@ -131,9 +137,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						selectionMode : "singleRow",
 						displayTreeOpen : true,
 						forceTreeView : true,
-						showStateColumn : true,
 						useContextMenu : true,
 						enableRightDownFocus : true,
+						fixedColumnCount : 1,
+						editableOnFixedCell : true,
 						contextMenuItems : [ {
 							label : "선택된 행 이전 추가",
 							callback : contextItemHandler
@@ -161,6 +168,17 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				}
 
 				function auiBeforeInsertRow(event) {
+					const newRow = {};
+					const cols = event.columnInfoList;
+					for (let i = 0, len = cols.length; i < len; i++) {
+						const dataField = cols[i]["dataField"];
+						newRow["name"] = "새 태스크";
+						newRow["duration"] = 1;
+						newRow["taskType"] = "NORMAL";
+						newRow["allocate"] = 0;
+						newRow["isNew"] = true;
+					}
+					return newRow;
 				}
 
 				function auiCellEditBegin(event) {
@@ -220,11 +238,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					const removeRows = AUIGrid.getRemovedItems(myGridID);
 					const params = new Object();
 					const url = getCallUrl("/template/treeSave");
-					console.log(data);
 					params.json = json;
 					params.removeRows = removeRows;
 					openLayer();
-					console.log(params);
 					call(url, params, function(data) {
 						alert(data.msg);
 						if (data.result) {
@@ -241,6 +257,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					newItem.name = "새 태스크";
 					newItem.isNew = true;
 					newItem.allocate = 0;
+					newItem.duration = 1;
 					newItem.taskType = "NORMAL";
 					AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "last");
 				}
@@ -264,6 +281,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					newItem.name = "새 태스크";
 					newItem.isNew = true;
 					newItem.allocate = 0;
+					newItem.duration = 1;
 					newItem.taskType = "NORMAL";
 					AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "selectionDown");
 				}
@@ -286,6 +304,31 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			iframe.src = "/Windchill/plm/template/task?oid=" + oid + "&toid=" + item.oid;
 		}
 	}
+
+	function modify() {
+
+		if (!confirm("수정 하시겠습니까?")) {
+			return false;
+		}
+
+		const iframe = document.getElementById("view");
+		const oid = document.getElementById("oid").value;
+		const pmOid = iframe.contentWindow.document.getElementById("pmOid").value;
+		const subPmOid = iframe.contentWindow.document.getElementById("subPmOid").value;
+		const params = new Object();
+		const url = getCallUrl("/template/modify");
+		params.oid = oid;
+		params.pmOid = pmOid;
+		params.subPmOid = subPmOid;
+		openLayer();
+		call(url, params, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				document.location.reload();
+			}
+		})
+	}
+
 	document.addEventListener("DOMContentLoaded", function() {
 		createAUIGrid(columns);
 	})

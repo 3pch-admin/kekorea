@@ -77,7 +77,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "reads",
 					headerText : "확인",
 					dataType : "boolean",
-					width : 80,
+					width : 60,
 					filter : {
 						showIcon : false,
 						inline : false
@@ -218,8 +218,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				params.submiterOid = submiterOid;
 				params.receiveFrom = receiveFrom;
 				params.receiveTo = receiveTo;
+<<<<<<< HEAD
 				params.psize = psize;
 				
+=======
+>>>>>>> 2b1d8067d6c347643e570d3e4af6886b40c0d6db
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

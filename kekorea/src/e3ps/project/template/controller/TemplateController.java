@@ -171,4 +171,21 @@ public class TemplateController extends BaseController {
 		model.setViewName("/extcore/jsp/project/template/template-task-view.jsp");
 		return model;
 	}
+	
+	@Description(value = "템플릿 수정 함수")
+	@ResponseBody
+	@PostMapping(value = "/modify")
+	public Map<String, Object> modify(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			TemplateHelper.service.modify(params);
+			result.put("msg", MODIFY_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
 }
