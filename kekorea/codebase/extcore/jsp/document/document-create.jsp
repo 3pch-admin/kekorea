@@ -81,6 +81,7 @@
 
 	function setNumber(item) {
 		const url = getCallUrl("/document/setNumber");
+// 		const url = getCallUrl("/doc/setNumber");
 		const params = new Object();
 		params.oid = item.oid;
 		call(url, params, function(data) {
@@ -97,6 +98,7 @@
 		
 		const params = new Object();
 		const url = getCallUrl("/document/create");
+// 		const url = getCallUrl("/doc/create");
 		call(url, params, function(data) {
 			alert(data.msg);
 			if(data.result) {

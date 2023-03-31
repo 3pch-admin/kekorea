@@ -1,16 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="wt.org.WTUser"%>
 <%@page import="e3ps.doc.dto.DocumentDTO"%>
-<%@page import="e3ps.project.dto.ProjectDTO"%>
+<%-- <%@page import="e3ps.project.dto.ProjectDTO"%> --%>
 <%@page import="e3ps.common.util.ContentUtils"%>
 <%@include file="/extcore/include/auigrid.jsp"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 DocumentDTO dto = (DocumentDTO) request.getAttribute("dto");
-ProjectDTO pdto = (ProjectDTO) request.getAttribute("pdto");
+// ProjectDTO pdto = (ProjectDTO) request.getAttribute("pdto");
 JSONArray list = (JSONArray) request.getAttribute("list");
 String oid = request.getParameter("oid");
+JSONArray history = (JSONArray) request.getAttribute("history");
 %>
 <input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 <input type="hidden" name="oid" id="oid">
@@ -72,14 +73,14 @@ String oid = request.getParameter("oid");
 				<th class="lb">작성자</th>
 				<td class="indent5"><%=dto.getCreator()%></td>
 				<th class="lb">작성일</th>
-<%-- 				<td class="indent5"><%=dto.getCreatedDate().toString().substring(0, 10)%></td> --%>
-								<td class="indent5"><%=dto.getCreatedDate_txt()%></td>
+				<%-- 				<td class="indent5"><%=dto.getCreatedDate().toString().substring(0, 10)%></td> --%>
+				<td class="indent5"><%=dto.getCreatedDate_txt()%></td>
 			</tr>
 			<tr>
 				<th class="lb">수정자</th>
 				<td class="indent5"><%=dto.getModifier()%></td>
 				<th class="lb">수정일</th>
-<%-- 				<td class="indent5"><%=dto.getModifiedDate().toString().substring(0, 10)%></td> --%>
+				<%-- 				<td class="indent5"><%=dto.getModifiedDate().toString().substring(0, 10)%></td> --%>
 				<td class="indent5"><%=dto.getModifiedDate_txt()%></td>
 			</tr>
 			<tr>
@@ -138,8 +139,99 @@ String oid = request.getParameter("oid");
 		</table>
 	</div>
 	<div id="tabs-2">
-		<table class="view-table">
-		</table>
+		<div id="_grid_wrap_" style="height: 565px; border-top: 1px solid #3180c3;"></div>
+		<script type="text/javascript">
+			let _myGridID_;
+			const history =
+		<%=history%>
+			const _columns_ = [ {
+				dataField : "type",
+				headerText : "구분",
+				dataType : "string",
+				width : 80,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			}, {
+				dataField : "role",
+				headerText : "역할",
+				dataType : "string",
+				width : 80,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			}, {
+				dataField : "name",
+				headerText : "결재제목",
+				dataType : "string",
+				style : "aui-left",
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			}, {
+				dataField : "state",
+				headerText : "상태",
+				dataType : "string",
+				width : 80,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			}, {
+				dataField : "owner",
+				headerText : "담당자",
+				dataType : "string",
+				width : 80
+			}, {
+				dataField : "receiveTime",
+				headerText : "수신일",
+				dataType : "date",
+				formatString : "yyyy-mm-dd HH:MM:ss",
+				width : 130,
+				filter : {
+					showIcon : true,
+					inline : true,
+					displayFormatValues : true
+				},
+			}, {
+				dataField : "completeDate_txt",
+				headerText : "완료일",
+				dataType : "date",
+				formatString : "yyyy-mm-dd HH:MM:ss",
+				width : 130,
+				filter : {
+					showIcon : true,
+					inline : true,
+					displayFormatValues : true
+				},
+			}, {
+				dataField : "",
+				headerText : "결재의견",
+				dataType : "string",
+				width : 130,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			} ]
+
+			function _createAUIGrid_(columnLayout) {
+				const props = {
+					headerHeight : 30,
+					rowHeight : 30,
+					showRowNumColumn : true,
+					showStateColumn : true,
+					rowNumHeaderText : "번호",
+					selectionMode : "multipleCells",
+					noDataMessage : "결재이력이 없습니다."
+				};
+				_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
+				AUIGrid.setGridData(_myGridID_, history);
+			}
+		</script>
 	</div>
 	<div id="tabs-3">
 		<%-- 					<td class="indent5"><%=dto.getVersion()%></td> --%>
@@ -156,7 +248,7 @@ String oid = request.getParameter("oid");
 					showIcon : true,
 					inline : true
 				},
-			},{
+			}, {
 				dataField : "version",
 				headerText : "버전",
 				dataType : "string",
@@ -165,7 +257,7 @@ String oid = request.getParameter("oid");
 					showIcon : true,
 					inline : true
 				},
-			},{
+			}, {
 				dataField : "creator",
 				headerText : "작성자",
 				dataType : "string",
@@ -206,25 +298,27 @@ String oid = request.getParameter("oid");
 					displayFormatValues : true
 				}
 			} ]
-			
+
 			function createAUIGrid(columnLayout) {
 				const props = {
-						headerHeight : 30,
-						rowHeight : 30,
-						showRowNumColumn : true,
-						showStateColumn : true,
-						rowNumHeaderText : "번호",
-						noDataMessage : "검색 결과가 없습니다.",
-						enableFilter : true,
-						selectionMode : "multipleCells",
-						enableMovingColumn : true,
-						showInlineFilter : true,
-						enableRightDownFocus : true,
-						filterLayerWidth : 320,
-						filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+					headerHeight : 30,
+					rowHeight : 30,
+					showRowNumColumn : true,
+					showStateColumn : true,
+					rowNumHeaderText : "번호",
+					noDataMessage : "검색 결과가 없습니다.",
+					enableFilter : true,
+					selectionMode : "multipleCells",
+					enableMovingColumn : true,
+					showInlineFilter : true,
+					enableRightDownFocus : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				}
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				AUIGrid.setGridData(myGridID,<%=list%>);
+				AUIGrid.setGridData(myGridID,
+		<%=list%>
+			);
 			}
 		</script>
 	</div>
@@ -236,6 +330,10 @@ String oid = request.getParameter("oid");
 			create : function(event, ui) {
 				const tabId = ui.panel.prop("id");
 				switch (tabId) {
+				case "tabs-2":
+					_createAUIGrid_(_columns_);
+					AUIGrid.resize(_myGridID_);
+					break;
 				case "tabs-3":
 					createAUIGrid(columns);
 					AUIGrid.resize(myGridID);
@@ -245,6 +343,14 @@ String oid = request.getParameter("oid");
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
+				case "tabs-2":
+					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
+					if (_isCreated_) {
+						AUIGrid.resize(_myGridID_);
+					} else {
+						_createAUIGrid_(_columns_);
+					}
+					break;
 				case "tabs-3":
 					const isCreated = AUIGrid.isCreated(myGridID);
 					if (isCreated) {
@@ -254,11 +360,12 @@ String oid = request.getParameter("oid");
 					}
 					break;
 				}
-			}
+			},
 		});
 	});
-	
+
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID_);
 	});
 </script>

@@ -138,7 +138,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			</tr>
 			<tr>
 				<th class="lb">관련문서</th>
-				<td class="indent5" colspan="4">
+				<td colspan="4">
 					<div class="include">
 						<div id="grid_wrap" style="height: 200px; border-top: 1px solid #3180c3; margin: 5px;"></div>
 						<script type="text/javascript">
@@ -210,6 +210,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 									showStateColumn : true,
 									rowNumHeaderText : "번호",
 									selectionMode : "multipleCells",
+									noDataMessage : "관련문서가 없습니다."
 								}
 								myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 								AUIGrid.setGridData(myGridID, data);
@@ -221,99 +222,101 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		</table>
 	</div>
 	<div id="tabs-2">
-		<div id="_grid_wrap_" style="height: 565px; border-top: 1px solid #3180c3;"></div>
-		<script type="text/javascript">
-			let _myGridID_;
-			const history =
-		<%=history%>
-			const _columns_ = [ {
-				dataField : "type",
-				headerText : "구분",
-				dataType : "string",
-				width : 80,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			}, {
-				dataField : "role",
-				headerText : "역할",
-				dataType : "string",
-				width : 80,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			}, {
-				dataField : "name",
-				headerText : "결재제목",
-				dataType : "string",
-				style : "aui-left",
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			}, {
-				dataField : "state",
-				headerText : "상태",
-				dataType : "string",
-				width : 80,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			}, {
-				dataField : "owner",
-				headerText : "담당자",
-				dataType : "string",
-				width : 80
-			}, {
-				dataField : "receiveTime",
-				headerText : "수신일",
-				dataType : "date",
-				formatString : "yyyy-mm-dd HH:MM:ss",
-				width : 130,
-				filter : {
-					showIcon : true,
-					inline : true,
-					displayFormatValues : true
-				},
-			}, {
-				dataField : "completeDate_txt",
-				headerText : "완료일",
-				dataType : "date",
-				formatString : "yyyy-mm-dd HH:MM:ss",
-				width : 130,
-				filter : {
-					showIcon : true,
-					inline : true,
-					displayFormatValues : true
-				},
-			}, {
-				dataField : "",
-				headerText : "결재의견",
-				dataType : "string",
-				width : 130,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			} ]
+		<div class="include">
+			<div id="_grid_wrap_" style="height: 565px; border-top: 1px solid #3180c3;"></div>
+			<script type="text/javascript">
+				let _myGridID_;
+				const history =
+			<%=history%>
+				const _columns_ = [ {
+					dataField : "type",
+					headerText : "구분",
+					dataType : "string",
+					width : 80,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "role",
+					headerText : "역할",
+					dataType : "string",
+					width : 80,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "name",
+					headerText : "결재제목",
+					dataType : "string",
+					style : "aui-left",
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "state",
+					headerText : "상태",
+					dataType : "string",
+					width : 80,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "owner",
+					headerText : "담당자",
+					dataType : "string",
+					width : 80
+				}, {
+					dataField : "receiveTime",
+					headerText : "수신일",
+					dataType : "date",
+					formatString : "yyyy-mm-dd HH:MM:ss",
+					width : 130,
+					filter : {
+						showIcon : true,
+						inline : true,
+						displayFormatValues : true
+					},
+				}, {
+					dataField : "completeDate_txt",
+					headerText : "완료일",
+					dataType : "date",
+					formatString : "yyyy-mm-dd HH:MM:ss",
+					width : 130,
+					filter : {
+						showIcon : true,
+						inline : true,
+						displayFormatValues : true
+					},
+				}, {
+					dataField : "",
+					headerText : "결재의견",
+					dataType : "string",
+					width : 130,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				} ]
 
-			function _createAUIGrid_(columnLayout) {
-				const props = {
-					headerHeight : 30,
-					rowHeight : 30,
-					showRowNumColumn : true,
-					showStateColumn : true,
-					rowNumHeaderText : "번호",
-					selectionMode : "multipleCells",
-					noDataMessage : "결재이력이 없습니다."
-				};
-				_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
-				AUIGrid.setGridData(_myGridID_, history);
-			}
-		</script>
+				function _createAUIGrid_(columnLayout) {
+					const props = {
+						headerHeight : 30,
+						rowHeight : 30,
+						showRowNumColumn : true,
+						showStateColumn : true,
+						rowNumHeaderText : "번호",
+						selectionMode : "multipleCells",
+						noDataMessage : "결재이력이 없습니다."
+					};
+					_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
+					AUIGrid.setGridData(_myGridID_, history);
+				}
+			</script>
+		</div>
 	</div>
 	<div id="tabs-3">
 		<div id="_grid_wrap" style="height: 565px; border-top: 1px solid #3180c3;"></div>
@@ -406,7 +409,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		const url = getCallUrl("/aui/thumbnail?oid=" + oid);
 		popup(url, 1400, 600);
 	}
-	
+
 	function modify() {
 
 	}

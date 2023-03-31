@@ -65,6 +65,7 @@ import wt.folder.Folder;
 import wt.folder.IteratedFolderMemberLink;
 import wt.lifecycle.State;
 import wt.part.WTPart;
+import wt.part.WTPartDocumentLink;
 import wt.part.WTPartHelper;
 import wt.part.WTPartMaster;
 import wt.part.WTPartStandardConfigSpec;
@@ -2211,8 +2212,26 @@ public class PartHelper {
 
 	//부품 정보 관련문서
 	public JSONArray jsonArrayAui(String oid) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+//		WTPart part = (WTPart) CommonUtils.getObject(oid);
+		QuerySpec query = new QuerySpec();
 		
-		return null;
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WTDocumentWTPartLink link = (WTDocumentWTPartLink) obj[1];
+			WTDocument document = link.getDocument();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", document.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("number", document.getNumber());
+			map.put("name", document.getName());
+			map.put("version", CommonUtils.getFullVersion(document));
+			map.put("state", document.getLifeCycleState().getDisplay());
+			map.put("modifier", document.getModifierFullName());
+			map.put("modifiedDate_txt", CommonUtils.getPersistableTime(document.getModifyTimestamp()));
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
 	}
 
 	//버전 이력

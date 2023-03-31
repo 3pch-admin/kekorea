@@ -20,6 +20,7 @@ import e3ps.doc.dto.DocumentDTO;
 import e3ps.doc.service.DocumentHelper;
 import e3ps.project.Project;
 import e3ps.project.dto.ProjectDTO;
+import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.doc.WTDocument;
 import wt.org.WTUser;
@@ -124,9 +125,11 @@ public class DocumentController extends BaseController {
 		DocumentDTO dto = new DocumentDTO(document);
 		boolean isAdmin = CommonUtils.isAdmin();
 		JSONArray list = DocumentHelper.manager.history(document.getMaster());
+		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(document.getMaster());
 		model.addObject("dto", dto);
 		model.addObject("list", list);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("history", history);
 		model.setViewName("popup:/document/document-view");
 		return model;
 	}
