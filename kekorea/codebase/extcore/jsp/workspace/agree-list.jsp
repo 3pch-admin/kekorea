@@ -94,6 +94,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.oid;
+							const url = getCallUrl("/workspace/agreeView?oid=" + oid);
+							popup(url, 1400, 700);
 						}
 					},
 					filter : {
@@ -109,7 +112,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							const url = getCallUrl("/workspace/agreeView?oid=" + oid);
+							popup(url, 1400, 700);
 						}
 					},
 					filter : {
@@ -127,7 +132,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/workspace/agreeView?oid=" + oid);
-							popup(url, 1400, 1000);
+							popup(url, 1400, 700);
 						}
 					},
 					filter : {
@@ -218,6 +223,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				params.submiterOid = submiterOid;
 				params.receiveFrom = receiveFrom;
 				params.receiveTo = receiveTo;
+<<<<<<< HEAD
+				params.psize = psize;
+				
+=======
+>>>>>>> 2b1d8067d6c347643e570d3e4af6886b40c0d6db
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

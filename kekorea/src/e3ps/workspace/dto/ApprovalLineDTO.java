@@ -56,7 +56,11 @@ public class ApprovalLineDTO {
 			setSubmiter(master.getOwnership().getOwner().getFullName());
 			setDescription(line.getDescription() != null ? line.getDescription() : "");
 			setReceiveTime(line.getCreateTimestamp());
+<<<<<<< HEAD
+//			setCompleteTime(line.getCompleteTime() != null ? line.getDescription() : "");
+=======
 			setCompleteTime(line.getCompleteTime());
+>>>>>>> 2b1d8067d6c347643e570d3e4af6886b40c0d6db
 			setState(line.getState());
 			point(master);
 		} else if ("COLUMN_RECEIVE".equals(columnType)) {

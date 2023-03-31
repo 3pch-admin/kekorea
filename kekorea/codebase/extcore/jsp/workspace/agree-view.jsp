@@ -68,7 +68,7 @@ ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
 					<input type="button" title="위임" value="위임" id="reassignApprovalBtn" data-oid="<%=dto.getOid()%>">
 					<input type="hidden" name="reassignUserOid" id="reassignUserOid">
 				</td>
-			<tr>
+				<tr>
 				<th class="lb">결재의견</th>
 				<td class="indent5" colspan="3">
 					<textarea name="descriptionAgree" id="descriptionAgree" rows="6" cols="" readonly="readonly"><%=dto.getDescription()%></textarea>
@@ -112,7 +112,7 @@ ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
 				<td class="indent5"><%=dto.getState()%></td>
 				<td class="indent5"><%=dto.getCreator()%></td>
 				<td class="indent5"><%=dto.getReceiveTime().toString().substring(0, 10)%></td>
-				<%-- 				<td class="indent5"><%=dto.getCompleteTime().toString().substring(0, 10) %></td> --%>
+<%-- 				<td class="indent5"><%=dto.getCompleteTime().toString().substring(0, 10) %></td> --%>
 				<td class="indent5"></td>
 				<td class="indent5"><%=dto.getDescription()%></td>
 			</tr>
@@ -162,14 +162,14 @@ ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
 					selectbox("reassignUser");
 					_createAUIGrid(_columns);
 					AUIGrid.resize(_myGridID);
-					
+
 					break;
 				case "tabs-2":
 					createAUIGrid(columns);
 					AUIGrid.resize(myGridID);
 					break;
 				}
-				
+
 			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");

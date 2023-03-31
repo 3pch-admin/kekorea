@@ -39,6 +39,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<td class="indent5">
 					<select name="type" id="type" class="width-200">
 						<option value="">선택</option>
+						<option value="검토">검토</option>
+						<option value="결재">결재</option>
+						<option value="수신">수신</option>
 					</select>
 				</td>
 				<th>수신일</th>
@@ -169,9 +172,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const params = new Object();
 				const url = getCallUrl("/workspace/complete");
 				const approvalTitle = document.getElementById("approvalTitle").value;
+				const receiveFrom = document.getElementById("receiveFrom").value;
+				const receiveTo = document.getElementById("receiveTo").value;
+				const type = document.getElementById("type").value;
 				const psize = document.getElementById("psize").value;
 				params.approvalTitle = approvalTitle;
+				params.receiveFrom = receiveFrom;
+				params.receiveTo = receiveTo;
+				params.psize = type;
 				params.psize = psize;
+				
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
