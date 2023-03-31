@@ -42,7 +42,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 		</td>
 	</tr>
 	<tr>
-		<th class="req lb">설명</th>
+		<th class="lb">설명</th>
 		<td class="indent5">
 			<textarea name="description" id="description" rows="8"></textarea>
 		</td>
@@ -54,8 +54,8 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 		const params = new Object();
 		const description = document.getElementById("description").value;
 		const name = document.getElementById("name");
-		const template = document.getElementById("template").value;
-		const url = getCallUrl("/meeting/create");
+		const reference = document.getElementById("reference").value;
+		const url = getCallUrl("/template/create");
 
 		if (isNull(name)) {
 			alert("템플릿 명을 입력하세요.");
@@ -68,7 +68,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 
 		params.name = name.value;
 		params.description = description;
-		params.template = template;
+		params.reference = reference;
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);

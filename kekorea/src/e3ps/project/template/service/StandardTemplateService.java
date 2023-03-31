@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,6 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.org.People;
 import e3ps.project.task.ParentTaskChildTaskLink;
 import e3ps.project.task.Task;
 import e3ps.project.task.dto.TaskTreeNode;
@@ -72,10 +72,11 @@ public class StandardTemplateService extends StandardManager implements Template
 
 			PersistenceHelper.manager.save(template);
 
+			System.out.println("reference=" + reference);
 			if (!StringUtils.isNull(reference)) {
 				Template copy = (Template) CommonUtils.getObject(reference);
-//				copyTasksInfo(template, copy);
-//				copyTemplateInfo(template, copy);
+				copyTask(template, copy);
+				saveUserLink(template, copy);
 			}
 
 			commit(template);
@@ -92,8 +93,57 @@ public class StandardTemplateService extends StandardManager implements Template
 		}
 	}
 
-	private void commit(Template template) throws Exception {
+	private void saveUserLink(Template template, Template copy) throws Exception {
 
+		WTUser pm = TemplateHelper.manager.getUserType(template, "PM");
+		if (pm != null) {
+			TemplateUserLink link = TemplateUserLink.newTemplateUserLink(copy, pm);
+			link.setUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
+			PersistenceHelper.manager.save(link);
+		}
+
+		WTUser subPm = TemplateHelper.manager.getUserType(template, "SUB_PM");
+		if (subPm != null) {
+			TemplateUserLink link = TemplateUserLink.newTemplateUserLink(copy, subPm);
+			link.setUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
+			PersistenceHelper.manager.save(link);
+		}
+	}
+
+	private void copyTask(Template template, Template copy) throws Exception {
+
+		HashMap<Task, Task> parentMap = new HashMap<Task, Task>();
+		ArrayList<Task> list = TemplateHelper.manager.recurciveTask(copy);
+		for (int i = 0; i < list.size(); i++) {
+			Task orgTask = (Task) list.get(i);
+			Task newTask = Task.newTask();
+
+			// 원본 카피
+			newTask.setName(orgTask.getName());
+			newTask.setDescription(orgTask.getDescription());
+			newTask.setAllocate(orgTask.getAllocate());
+			newTask.setSort(orgTask.getSort());
+			newTask.setDepth(orgTask.getDepth());
+			newTask.setDuration(orgTask.getDuration());
+			newTask.setState(orgTask.getState());
+			newTask.setTaskType(orgTask.getTaskType());
+			newTask.setOwnership(orgTask.getOwnership());
+			newTask.setUpdateUser(orgTask.getUpdateUser());
+			newTask.setPlanStartDate(orgTask.getPlanStartDate());
+			newTask.setPlanEndDate(orgTask.getPlanEndDate());
+			newTask.setProgress(0);
+			newTask.setProject(null);
+			newTask.setTemplate(template);
+
+			Task parent = (Task) parentMap.get(orgTask.getParentTask());
+			newTask.setParentTask(parent);
+			newTask = (Task) PersistenceHelper.manager.save(newTask);
+			parentMap.put(orgTask, newTask);
+		}
+
+	}
+
+	private void commit(Template template) throws Exception {
 		ArrayList<Task> list = TemplateHelper.manager.recurciveTask(template);
 		sortedTask(list);
 		finalSet(template);
@@ -152,12 +202,6 @@ public class StandardTemplateService extends StandardManager implements Template
 		try {
 			trs.start();
 
-			for (Map<String, Object> removeRow : removeRows) {
-				String oid = (String) removeRow.get("oid");
-				Task task = (Task) CommonUtils.getObject(oid);
-				PersistenceHelper.manager.delete(task);
-			}
-
 			String parse = new String(DatatypeConverter.parseBase64Binary(json), "UTF-8");
 			Type listType = new TypeToken<ArrayList<TaskTreeNode>>() {
 			}.getType();
@@ -176,8 +220,14 @@ public class StandardTemplateService extends StandardManager implements Template
 				PersistenceHelper.manager.modify(template);
 				template = (Template) PersistenceHelper.manager.refresh(template);
 				treeSave(template, null, childrens);
-				commit(template);
 			}
+
+			for (Map<String, Object> removeRow : removeRows) {
+				String oid = (String) removeRow.get("oid");
+				Task task = (Task) CommonUtils.getObject(oid);
+				PersistenceHelper.manager.delete(task);
+			}
+			commit(template);
 
 			trs.commit();
 			trs = null;
@@ -258,10 +308,10 @@ public class StandardTemplateService extends StandardManager implements Template
 	}
 
 	@Override
-	public void saveUserLink(Map<String, Object> params) throws Exception {
+	public void modify(Map<String, Object> params) throws Exception {
 		String oid = (String) params.get("oid");
 		String pmOid = (String) params.get("pmOid");
-		String sub_pmOid = (String) params.get("sub_pmOid");
+		String subPmOid = (String) params.get("subPmOid");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
@@ -286,8 +336,8 @@ public class StandardTemplateService extends StandardManager implements Template
 				PersistenceHelper.manager.save(link);
 			}
 
-			if (!StringUtils.isNull(sub_pmOid)) {
-				WTUser user = (WTUser) CommonUtils.getObject(pmOid);
+			if (!StringUtils.isNull(subPmOid)) {
+				WTUser user = (WTUser) CommonUtils.getObject(subPmOid);
 				TemplateUserLink link = TemplateUserLink.newTemplateUserLink(template, user);
 				link.setUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
 				PersistenceHelper.manager.save(link);

@@ -10,18 +10,14 @@ import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.common.util.StringUtils;
 import e3ps.project.task.TargetTaskSourceTaskLink;
 import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.template.Template;
 import e3ps.project.template.TemplateUserLink;
 import e3ps.project.template.dto.TemplateDTO;
-import e3ps.workspace.ApprovalLine;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import wt.epm.EPMDocumentHelper;
-import wt.epm.util.EPMHelper;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -43,13 +39,8 @@ public class TemplateHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Template.class, true);
 
-		if (!StringUtils.isNull(templateName)) {
-			QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.NAME, templateName);
-		}
-		if (!StringUtils.isNull(duration)) {
-			QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.DURATION, duration);
-		}
-
+		QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.NAME, templateName);
+		QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.DURATION, duration);
 		QuerySpecUtils.toBooleanAnd(query, idx, Template.class, Template.ENABLE, true);
 		QuerySpecUtils.toOrderBy(query, idx, Template.class, Template.CREATE_TIMESTAMP, true);
 
@@ -164,8 +155,7 @@ public class TemplateHelper {
 	 * 템플릿 유저 가져오기
 	 */
 	public WTUser getUserType(Template template, String userType) throws Exception {
-		CommonCode userTypeCode = CommonCodeHelper.manager.getCommonCode("USER_TYPE", userType);
-
+		CommonCode userTypeCode = CommonCodeHelper.manager.getCommonCode(userType, "USER_TYPE");
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(TemplateUserLink.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, TemplateUserLink.class, "roleAObjectRef.key.id", template);

@@ -18,8 +18,8 @@ public interface TemplateService {
 	public abstract void treeSave(Map<String, Object> params) throws Exception;
 
 	/**
-	 * 템플릿 유저 지정
+	 * 템플릿 수정
 	 */
-	public abstract void saveUserLink(Map<String, Object> params) throws Exception;
+	public abstract void modify(Map<String, Object> params) throws Exception;
 
 }

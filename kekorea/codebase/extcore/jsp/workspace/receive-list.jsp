@@ -79,7 +79,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "reads",
 					headerText : "확인",
 					dataType : "boolean",
-					width : 80,
+					width : 60,
 					filter : {
 						showIcon : false,
 						inline : false

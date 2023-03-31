@@ -258,7 +258,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "kekNumber",
 					headerText : "KEK 작번",
 					dataType : "string",
-					width : 130,
+					width : 100,
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
@@ -276,7 +276,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "keNumber",
 					headerText : "KE 작번",
 					dataType : "string",
-					width : 130,
+					width : 100,
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",

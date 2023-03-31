@@ -18,15 +18,15 @@
 
 	<!-- default layout patter -->
 	<definition name="content:/*" extends="layout">
-		<put-attribute name="body" value="/jsp/{1}.jsp"></put-attribute>
+		<put-attribute name="body" value="/extcore/jsp/{1}.jsp"></put-attribute>
 	</definition>
 
 	<definition name="content:/*/*" extends="layout">
-		<put-attribute name="body" value="/jsp/{1}/{2}.jsp"></put-attribute>
+		<put-attribute name="body" value="/extcore/jsp/{1}/{2}.jsp"></put-attribute>
 	</definition>
 
 	<definition name="content:/*/*/*" extends="layout">
-		<put-attribute name="body" value="/jsp/{1}/{2}/{3}.jsp"></put-attribute>
+		<put-attribute name="body" value="/extcore/jsp/{1}/{2}/{3}.jsp"></put-attribute>
 	</definition>
 
 	<definition name="popup:/*" extends="popup">

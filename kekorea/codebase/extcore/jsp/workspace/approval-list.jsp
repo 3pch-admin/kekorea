@@ -18,10 +18,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	<form>
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
-<<<<<<< HEAD
-=======
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
->>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
@@ -83,7 +80,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "reads",
 					headerText : "확인",
 					dataType : "boolean",
-					width : 80,
+					width : 60,
 					filter : {
 						showIcon : false,
 						inline : false
@@ -201,10 +198,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
-<<<<<<< HEAD
-
-=======
->>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
@@ -219,17 +212,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const url = getCallUrl("/workspace/approval");
 				const params = new Object();
 				const approvalTitle = document.getElementById("approvalTitle").value;
-<<<<<<< HEAD
-				const psize = document.getElementById("psize").value;
-				const submiterOid = document.getElementById("submiterOid").value;
-				const receiveFrom = document.getElementById("receiveFrom").value;
-				const receiveTo = document.getElementById("receiveTo").value;
-=======
 				const submiterOid = document.getElementById("submiterOid").value;
 				const receiveFrom = document.getElementById("receiveFrom").value;
 				const receiveTo = document.getElementById("receiveTo").value;
 				const psize = document.getElementById("psize").value;
->>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 				params.approvalTitle = approvalTitle;
 				params.submiterOid = submiterOid;
 				params.receiveFrom = receiveFrom;

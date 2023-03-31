@@ -31,7 +31,7 @@ public class CommonCodeController extends BaseController {
 		JSONArray jsonList = CommonCodeHelper.manager.parseJson();
 		model.addObject("jsonList", jsonList);
 		model.addObject("codeTypes", codeTypes);
-		model.setViewName("/jsp/admin/commonCode/commonCode-list.jsp");
+		model.setViewName("/extcore/jsp/admin/commonCode/commonCode-list.jsp");
 		return model;
 	}
 

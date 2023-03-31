@@ -8,7 +8,6 @@ import e3ps.bom.partlist.PartListMaster;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.common.util.StringUtils;
 import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
@@ -24,9 +23,7 @@ import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.WTUser;
 import wt.part.WTPart;
-import wt.query.ClassAttribute;
 import wt.query.QuerySpec;
-import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
 
