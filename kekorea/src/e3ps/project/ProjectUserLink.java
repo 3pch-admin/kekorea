@@ -22,7 +22,7 @@ import wt.util.WTException;
 
 		foreignKeys = { @GeneratedForeignKey(name = "ProjectUserTypeLink",
 
-				foreignKeyRole = @ForeignKeyRole(name = "projectUserType", type = CommonCode.class,
+				foreignKeyRole = @ForeignKeyRole(name = "userType", type = CommonCode.class,
 
 						constraints = @PropertyConstraints(required = true)),
 

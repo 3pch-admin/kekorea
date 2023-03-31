@@ -30,6 +30,11 @@ public class TaskDTO {
 	private String modifiedDate_txt;
 	private int allocate;
 	private String taskType;
+	private String planStartDate_txt;
+	private String planEndDate_txt;
+	private String startDate_txt;
+	private String endDate_txt;
+	private int progress;
 
 	public TaskDTO() {
 
@@ -49,5 +54,10 @@ public class TaskDTO {
 		setModifiedDate_txt(CommonUtils.getPersistableTime(task.getModifyTimestamp()));
 		setAllocate(task.getAllocate() != null ? task.getAllocate() : 0);
 		setTaskType(task.getTaskType() != null ? task.getTaskType().getName() : "일반");
+		setPlanStartDate_txt(CommonUtils.getPersistableTime(task.getPlanStartDate()));
+		setPlanEndDate_txt(CommonUtils.getPersistableTime(task.getPlanEndDate()));
+		setStartDate_txt(CommonUtils.getPersistableTime(task.getStartDate()));
+		setEndDate_txt(CommonUtils.getPersistableTime(task.getEndDate()));
+		setProgress(task.getProgress());
 	}
 }

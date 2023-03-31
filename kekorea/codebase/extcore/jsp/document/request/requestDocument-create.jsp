@@ -71,7 +71,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				</td>
 			</tr>
 			<tr>
-				<th class="req lb">내용</th>
+				<th class="lb">내용</th>
 				<td class="indent5" colspan="3">
 					<textarea name="description" id="description" rows="6"></textarea>
 				</td>
@@ -101,13 +101,20 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 	</div>
 	<script type="text/javascript">
 		let myGridID;
-		const maks = <%=maks%>
-		const installs = <%=installs%>
-		const customers = <%=customers%>
-		const elecs = <%=elecs%>
-		const machines = <%=machines%>
-		const softs = <%=softs%>
-		const projectTypes = <%=projectTypes%>
+		const maks =
+	<%=maks%>
+		const installs =
+	<%=installs%>
+		const customers =
+	<%=customers%>
+		const elecs =
+	<%=elecs%>
+		const machines =
+	<%=machines%>
+		const softs =
+	<%=softs%>
+		const projectTypes =
+	<%=projectTypes%>
 		let detailMap = {};
 		let installMap = {};
 		const columns = [ {
@@ -503,8 +510,8 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				valueField : "name",
 				validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 					let isValid = false;
-					for (let i = 0, len = machine.length; i < len; i++) {
-						if (machine[i] == newValue) {
+					for (let i = 0, len = machines.length; i < len; i++) {
+						if (machines[i] == newValue) {
 							isValid = true;
 							break;
 						}
@@ -726,20 +733,40 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 
 		function create() {
 
+			const params = new Object();
+			const url = getCallUrl("/requestDocument/create");
+			const name = document.getElementById("name");
+			const template = document.getElementById("template");
+			const addRows = AUIGrid.getAddedRowItems(myGridID);
+			const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
+
+			if (isNull(name.value)) {
+				alert("의뢰서 제목을 입력하세요.");
+				name.focus();
+				return false;
+			}
+
+			if (isNull(template.value)) {
+				alert("작번 템프릿을 선택하세요.");
+				return false;
+			}
+
+			if (_addRows_.length === 0) {
+				alert("결재선을 지정하세요.");
+				_register();
+				return false;
+			}
+
 			if (!confirm("등록 하시겠습니까?")) {
 				return false;
 			}
 
-			const params = new Object();
-			const url = getCallUrl("/requestDocument/create");
-			const name = document.getElementById("name").value;
-			const addRows = AUIGrid.getAddedRowItems(myGridID);
-			const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
-			params.name = name;
+			params.name = name.value;
 			params.addRows = addRows;
 			params._addRows_ = _addRows_;
 			params.secondarys = toArray("secondarys");
-			console.log(params);
+			params.template = template.value;
+			toRegister(params, _addRows_);
 			openLayer();
 			call(url, params, function(data) {
 				alert(data.msg);
@@ -790,6 +817,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				}
 			}
 		});
+		document.getElementById("name").focus();
 		selectbox("template");
 	})
 

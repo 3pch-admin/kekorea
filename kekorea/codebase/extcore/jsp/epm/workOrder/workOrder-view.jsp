@@ -6,7 +6,7 @@ WorkOrderDTO dto = (WorkOrderDTO) request.getAttribute("dto");
 JSONArray list = (JSONArray) request.getAttribute("list");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
-<input type="hidden" name="oid" id="oid" value="<%=dto.getOid() %>">
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -162,27 +162,28 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					showRowCheckColumn : true,
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				AUIGrid.setGridData(myGridID, <%=list%>);
+				AUIGrid.setGridData(myGridID,
+		<%=list%>
+			);
 			}
 		</script>
 	</div>
 </div>
 <script type="text/javascript">
-
 	function zip() {
 		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-		if(checkedItems.length === 0) {
+		if (checkedItems.length === 0) {
 			alert("ZIP파일로 다운로드 받을 도면을 하나 이상 선택하세요.");
 			return false;
 		}
 	}
-	
+
 	function cover() {
-		
+
 	}
-	
+
 	function merge() {
-		
+
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
@@ -205,8 +206,8 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
-					const _isCreated = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated_ && _isCreated) {
+					const _isCreated = AUIGrid.isCreated(_myGridID);
+					if (_isCreated) {
 						AUIGrid.resize(_myGridID);
 					} else {
 						_createAUIGrid(_columns);

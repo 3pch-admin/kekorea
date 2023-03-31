@@ -154,8 +154,8 @@ public class TemplateHelper {
 	/**
 	 * 템플릿 유저 가져오기
 	 */
-	public WTUser getUserType(Template template, String userType) throws Exception {
-		CommonCode userTypeCode = CommonCodeHelper.manager.getCommonCode(userType, "USER_TYPE");
+	public WTUser getUserType(Template template, String code) throws Exception {
+		CommonCode userTypeCode = CommonCodeHelper.manager.getCommonCode(code, "USER_TYPE");
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(TemplateUserLink.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, TemplateUserLink.class, "roleAObjectRef.key.id", template);

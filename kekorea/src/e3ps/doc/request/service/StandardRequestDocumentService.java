@@ -22,6 +22,10 @@ import e3ps.project.ProjectUserLink;
 import e3ps.project.output.Output;
 import e3ps.project.service.ProjectHelper;
 import e3ps.project.task.Task;
+import e3ps.project.task.variable.TaskStateVariable;
+import e3ps.project.template.Template;
+import e3ps.project.template.service.TemplateHelper;
+import e3ps.workspace.service.WorkspaceHelper;
 import wt.clients.folder.FolderTaskLogic;
 import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
@@ -84,8 +88,11 @@ public class StandardRequestDocumentService extends StandardManager implements R
 		String template = dto.getTemplate();
 		String description = dto.getDescription();
 		ArrayList<Map<String, String>> addRows = dto.getAddRows();
-		ArrayList<Map<String, String>> _addRows_ = dto.get_addRows_();
+		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
+		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
+		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
 		ArrayList<String> primarys = dto.getPrimarys();
+		// 태스크에서 바로 연결 시킬떄 생각..
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
@@ -119,6 +126,11 @@ public class StandardRequestDocumentService extends StandardManager implements R
 				auiGridDataSave(requestDocument, template, addRows);
 			}
 
+			// 결재시작
+			if (approvalRows.size() > 0) {
+				WorkspaceHelper.service.register(requestDocument, agreeRows, approvalRows, receiveRows);
+			}
+
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
@@ -140,9 +152,7 @@ public class StandardRequestDocumentService extends StandardManager implements R
 		ca.setTime(start);
 		ca.add(Calendar.DATE, 1);
 		Timestamp end = new Timestamp(ca.getTime().getTime());
-		Transaction trs = new Transaction();
 		try {
-			trs.start();
 
 			for (Map<String, String> addRow : addRows) {
 				String projectType_code = addRow.get("projectType_code");
@@ -193,7 +203,7 @@ public class StandardRequestDocumentService extends StandardManager implements R
 					detailCode = CommonCodeHelper.manager.getCommonCode(detail_code, "MAK_DETAIL");
 				}
 				project.setDetail(detailCode);
-				
+
 				project.setKekNumber(kekNumber);
 				project.setKeNumber(keNumber);
 				project.setUserId(userId);
@@ -215,26 +225,52 @@ public class StandardRequestDocumentService extends StandardManager implements R
 				if (!StringUtils.isNull(machine)) {
 					machineUser = (WTUser) CommonUtils.getObject(machine);
 					ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, machineUser);
-					userLink.setProjectUserType(CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE"));
+					userLink.setUserType(CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE"));
 					PersistenceHelper.manager.save(userLink);
 				}
 
 				if (!StringUtils.isNull(elec)) {
 					elecUser = (WTUser) CommonUtils.getObject(elec);
 					ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, elecUser);
-					userLink.setProjectUserType(CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE"));
+					userLink.setUserType(CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE"));
 					PersistenceHelper.manager.save(userLink);
 				}
 
 				if (!StringUtils.isNull(soft)) {
 					softUser = (WTUser) CommonUtils.getObject(soft);
 					ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, softUser);
-					userLink.setProjectUserType(CommonCodeHelper.manager.getCommonCode("SOFT", "USER_TYPE"));
+					userLink.setUserType(CommonCodeHelper.manager.getCommonCode("SOFT", "USER_TYPE"));
 					PersistenceHelper.manager.save(userLink);
 				}
 
 				// 템플릿 선택여부
 				if (!StringUtils.isNull(template)) {
+					Template copy = (Template) CommonUtils.getObject(template);
+					copyTasks(project, copy, requestDocument);
+
+					WTUser pm = TemplateHelper.manager.getUserType(copy, "PM");
+					if (pm != null) {
+						ProjectUserLink link = ProjectUserLink.newProjectUserLink(project, pm);
+						link.setUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
+						PersistenceHelper.manager.save(link);
+					} else {
+						pm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectHelper.PM_ID);
+						ProjectUserLink link = ProjectUserLink.newProjectUserLink(project, pm);
+						link.setUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
+						PersistenceHelper.manager.save(link);
+					}
+
+					WTUser subPm = TemplateHelper.manager.getUserType(copy, "SUB_PM");
+					if (subPm != null) {
+						ProjectUserLink link = ProjectUserLink.newProjectUserLink(project, subPm);
+						link.setUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
+						PersistenceHelper.manager.save(link);
+					} else {
+						subPm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectHelper.SUB_PM_ID);
+						ProjectUserLink link = ProjectUserLink.newProjectUserLink(project, subPm);
+						link.setUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
+						PersistenceHelper.manager.save(link);
+					}
 
 				} else {
 
@@ -270,12 +306,12 @@ public class StandardRequestDocumentService extends StandardManager implements R
 
 					WTUser pm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectHelper.PM_ID);
 					ProjectUserLink pmLink = ProjectUserLink.newProjectUserLink(project, pm);
-					pmLink.setProjectUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
+					pmLink.setUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
 					PersistenceHelper.manager.save(pmLink);
 
 					WTUser subPm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectHelper.SUB_PM_ID);
 					ProjectUserLink subPmLink = ProjectUserLink.newProjectUserLink(project, subPm);
-					subPmLink.setProjectUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
+					subPmLink.setUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
 					PersistenceHelper.manager.save(subPmLink);
 				}
 
@@ -284,16 +320,71 @@ public class StandardRequestDocumentService extends StandardManager implements R
 				PersistenceHelper.manager.save(link);
 			}
 
-			trs.commit();
-			trs = null;
 		} catch (Exception e) {
 			e.printStackTrace();
-			trs.rollback();
 			throw e;
-		} finally {
-			if (trs != null)
-				trs.rollback();
 		}
+	}
 
+	private void copyTasks(Project project, Template copy, RequestDocument requestDocument) throws Exception {
+		try {
+			ArrayList<Task> list = TemplateHelper.manager.recurciveTask(copy);
+
+			HashMap<Task, Task> parentMap = new HashMap<Task, Task>();
+
+			for (int i = 0; i < list.size(); i++) {
+				Task task = (Task) list.get(i);
+
+				Task newTask = Task.newTask();
+				newTask.setName(task.getName());
+				newTask.setDescription(task.getDescription());
+				newTask.setAllocate(task.getAllocate());
+				newTask.setSort(task.getSort());
+				newTask.setDepth(task.getDepth());
+				newTask.setDuration(task.getDuration());
+
+				if (task.getName().equals("의뢰서")) {
+					newTask.setState(TaskStateVariable.INWORK);
+					newTask.setStartDate(DateUtils.getCurrentTimestamp());
+				} else {
+					newTask.setState(TaskStateVariable.READY);
+				}
+
+				newTask.setTaskType(task.getTaskType());
+				newTask.setOwnership(task.getOwnership());
+				newTask.setUpdateUser(task.getUpdateUser());
+				newTask.setProgress(0);
+				newTask.setProject(project);
+				newTask.setTemplate(null);
+
+				// 프로젝트의 계획 시작일..
+				Calendar ca = Calendar.getInstance();
+				newTask.setPlanStartDate(project.getPlanStartDate());
+				ca.add(Calendar.DATE, task.getDuration()); // 기간을추가..
+				Timestamp end = new Timestamp(ca.getTime().getTime());
+				newTask.setPlanEndDate(end);
+
+				Task parent = (Task) parentMap.get(task.getParentTask());
+				newTask.setParentTask(parent);
+				newTask = (Task) PersistenceHelper.manager.save(newTask);
+
+				parentMap.put(task, newTask);
+
+				if (requestDocument != null && newTask.getName().equals("의뢰서")) {
+					Output output = Output.newOutput();
+					output.setName(requestDocument.getName());
+					output.setLocation(requestDocument.getLocation());
+					output.setTask(newTask);
+					output.setProject(project);
+					output.setDocument(requestDocument);
+					output.setOwnership(CommonUtils.sessionOwner());
+					output = (Output) PersistenceHelper.manager.save(output);
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 }

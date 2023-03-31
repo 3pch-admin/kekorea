@@ -95,16 +95,16 @@ public class StandardTemplateService extends StandardManager implements Template
 
 	private void saveUserLink(Template template, Template copy) throws Exception {
 
-		WTUser pm = TemplateHelper.manager.getUserType(template, "PM");
+		WTUser pm = TemplateHelper.manager.getUserType(copy, "PM");
 		if (pm != null) {
-			TemplateUserLink link = TemplateUserLink.newTemplateUserLink(copy, pm);
+			TemplateUserLink link = TemplateUserLink.newTemplateUserLink(template, pm);
 			link.setUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
 			PersistenceHelper.manager.save(link);
 		}
 
-		WTUser subPm = TemplateHelper.manager.getUserType(template, "SUB_PM");
+		WTUser subPm = TemplateHelper.manager.getUserType(copy, "SUB_PM");
 		if (subPm != null) {
-			TemplateUserLink link = TemplateUserLink.newTemplateUserLink(copy, subPm);
+			TemplateUserLink link = TemplateUserLink.newTemplateUserLink(template, subPm);
 			link.setUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
 			PersistenceHelper.manager.save(link);
 		}

@@ -61,11 +61,22 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<%
 					if (!dto.isEstimate()) {
 					%>
+					<colgroup>
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="30">
+						<col width="140">
+						<col width="140">
+					</colgroup>
 					<tr>
 						<th class="lb rb">KEK 작번</th>
 						<th class="rb">거래처</th>
 						<th class="rb">설치장소</th>
-						<th class="rb">막종</th>
+						<th class="rb">모델</th>
 						<th class="rb">발행일</th>
 						<th class="rb">요구 납기일</th>
 						<td rowspan="4" class="tb-none bb-none" style="width: 30px;">&nbsp;</td>
@@ -77,7 +88,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<td class="center"><%=dto.getKekNumber()%></td>
 						<td class="center"><%=dto.getCustomer_name()%></td>
 						<td class="center"><%=dto.getInstall_name()%></td>
-						<td class="center"><%=dto.getMak_name()%></td>
+						<td class="center"><%=dto.getModel()%></td>
 						<td class="center"><%=dto.getPdate_txt()%></td>
 						<td class="center"><%=dto.getCustomDate_txt()%></td>
 					</tr>
@@ -85,7 +96,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<th class="lb rb">KE 작번</th>
 						<th class="rb">USER ID</th>
 						<th class="rb">작번 유형</th>
-						<th class="rb">모델</th>
+						<th class="rb">막종 / 막종상세</th>
 						<th class="rb" colspan="2">작업 내용</th>
 						<th>기계</th>
 						<td class="center">%</td>
@@ -94,7 +105,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<td class="center"><%=dto.getKeNumber()%></td>
 						<td class="center"><%=dto.getUserId()%></td>
 						<td class="center"><%=dto.getProjectType_name()%></td>
-						<td class="center"><%=dto.getModel()%></td>
+						<td class="center"><%=dto.getMak_name()%> / <%=dto.getDetail_name()%></td>
 						<td class="indent5" colspan="2"><%=dto.getDescription()%></td>
 						<th>전기</th>
 						<td class="center">%</td>
@@ -103,59 +114,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					} else {
 					%>
 
-<<<<<<< HEAD
-		<table class="view-table">
-			<colgroup>
-				<col width="130">
-				<col width="*">
-			</colgroup>
-			<tr>
-				<th class="lb">참조작번</th>
-				<td colspan="3">
-					<jsp:include page="/extcore/include/reference-project-include.jsp">
-						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
-						<jsp:param value="true" name="multi" />
-						<jsp:param value="" name="obj" />
-						<jsp:param value="150" name="height" />
-					</jsp:include>
-				</td>
-			</tr>
-		</table>
-
-		<br>
-
-		<table class="view-table">
-			<colgroup>
-				<col width="130">
-				<col width="*">
-			</colgroup>
-			<tr>
-				<th class="lb">특이사항</th>
-				<td colspan="3">
-					<jsp:include page="/extcore/include/issue-include.jsp">
-						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
-						<jsp:param value="true" name="multi" />
-						<jsp:param value="" name="obj" />
-						<jsp:param value="150" name="height" />
-					</jsp:include>
-				</td>
-			</tr>
-		</table>
-		<script type="text/javascript">
-			document.addEventListener("DOMContentLoaded", function() {
-				_createAUIGrid_(_columns_);
-				AUIGrid.resize(_myGridID_);
-				_createAUIGrid(_columns);
-				AUIGrid.resize(_myGridID);
-			});
-
-			window.addEventListener("resize", function() {
-				AUIGrid.resize(_myGridID_); 
-				AUIGrid.resize(_myGridID); 
-			});
-=======
 					<%
 					}
 					%>
@@ -303,7 +261,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					</tr>
 				</table>
 				<br>
-				<div id="_chart" style="height: 400px;"></div>
+				<div id="_chart" style="height: 410px;"></div>
 				<script type="text/javascript">
 				Highcharts.chart('_chart', {
 				    chart: {
@@ -322,8 +280,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				    },		
 				    xAxis: {
 				        categories: [
-				            '작번(수배) 견적 금액',
-				            '작번(입력??) 견적 금액',
+				            '작번 견적 금액',
+				            '기계 견적 금액',
+				            '전기 견적 금액',
 				        ],
 				        crosshair: true
 				    },				    
@@ -376,14 +335,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</div>			
 		</div>
 
-
 		<script type="text/javascript">
 			document.addEventListener("DOMContentLoaded", function() {
 				$("#tabs").tabs({
 					heightStyle : "content"
 				});
 			})
->>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 		</script>
 	</form>
 </body>

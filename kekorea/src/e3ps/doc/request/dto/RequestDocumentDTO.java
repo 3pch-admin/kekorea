@@ -45,7 +45,9 @@ public class RequestDocumentDTO {
 
 	// 변수 담기 용도
 	private ArrayList<Map<String, String>> addRows = new ArrayList<>();
-	private ArrayList<Map<String, String>> _addRows_ = new ArrayList<>();
+	private ArrayList<Map<String, String>> agreeRows = new ArrayList<>(); // 검토
+	private ArrayList<Map<String, String>> approvalRows = new ArrayList<>(); // 결재
+	private ArrayList<Map<String, String>> receiveRows = new ArrayList<>(); // 수신
 	private ArrayList<String> primarys = new ArrayList<>();
 	private String template;
 

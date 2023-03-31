@@ -9,11 +9,14 @@ import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.doc.request.RequestDocument;
+import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.dto.ProjectDTO;
@@ -1698,7 +1701,7 @@ public class ProjectHelper {
 		int idx = query.appendClassList(ProjectUserLink.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, "roleAObjectRef.key.id",
 				project.getPersistInfo().getObjectIdentifier().getId());
-		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, "projectUserTypeReference.key.id",
+		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, "userTypeReference.key.id",
 				userTypeCode.getPersistInfo().getObjectIdentifier().getId());
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {
@@ -3211,7 +3214,7 @@ public class ProjectHelper {
 					"roleBObjectRef.key.id", idx_u, idx_plink);
 			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
 					machine.getPersistInfo().getObjectIdentifier().getId());
-			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id",
 					machineCode.getPersistInfo().getObjectIdentifier().getId());
 		}
 
@@ -3227,7 +3230,7 @@ public class ProjectHelper {
 					"roleBObjectRef.key.id", idx_u, idx_plink);
 			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
 					elec.getPersistInfo().getObjectIdentifier().getId());
-			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id",
 					elecCode.getPersistInfo().getObjectIdentifier().getId());
 		}
 
@@ -3243,7 +3246,7 @@ public class ProjectHelper {
 					"roleBObjectRef.key.id", idx_u, idx_plink);
 			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
 					soft.getPersistInfo().getObjectIdentifier().getId());
-			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id",
 					softCode.getPersistInfo().getObjectIdentifier().getId());
 		}
 
@@ -3430,6 +3433,33 @@ public class ProjectHelper {
 			map.put("description", p.getDescription());
 			map.put("pdate_txt", CommonUtils.getPersistableTime(p.getPDate()));
 			map.put("customDate_txt", CommonUtils.getPersistableTime(p.getCustomDate()));
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 태스크 정보 의뢰서 데이터 가져오기
+	 */
+	public JSONArray jsonAuiRequest(Project project) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(RequestDocumentProjectLink.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, RequestDocumentProjectLink.class, "roleBObjectRef.key.id", project);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			RequestDocumentProjectLink link = (RequestDocumentProjectLink) obj[0];
+			RequestDocument requestDocument = link.getRequestDocument();
+			Map<String, String> map = new HashMap<>();
+			map.put("name", requestDocument.getName());
+			map.put("version", requestDocument.getVersionIdentifier().getSeries().getValue() + "."
+					+ requestDocument.getIterationIdentifier().getSeries().getValue());
+			map.put("state", requestDocument.getLifeCycleState().getDisplay());
+			map.put("creator", requestDocument.getCreatorFullName());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(requestDocument.getCreateTimestamp()));
+			map.put("primary", AUIGridUtils.primaryTemplate(requestDocument));
 			list.add(map);
 		}
 		return JSONArray.fromObject(list);

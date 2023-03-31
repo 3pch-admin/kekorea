@@ -43,7 +43,7 @@ public class RequestDocumentHelper {
 
 		QuerySpecUtils.toEqualsAnd(query, idx, RequestDocument.class, RequestDocument.DOC_TYPE, "$$Request");
 
-		QuerySpecUtils.toOrderBy(query, idx, RequestDocument.class, RequestDocument.CREATE_TIMESTAMP, true);
+		QuerySpecUtils.toOrderBy(query, idx, RequestDocument.class, RequestDocument.CREATE_TIMESTAMP, false);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();

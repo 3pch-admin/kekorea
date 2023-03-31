@@ -19,6 +19,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
 <table class="button-table">
 	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				프로젝트 정보
+			</div>
+		</td>
 		<td class="right">
 			<%
 			if (isAdmin) {
@@ -49,7 +55,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "name",
 					headerText : "태스크명",
 					dataType : "string",
-					width : 200,
+					width : 150,
 				}, {
 					dataField : "duration",
 					headerText : "기간",
@@ -128,7 +134,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				function createAUIGrid(columnLayout) {
 					const props = {
 						headerHeight : 30,
-						rowHeight : 30,
 						showRowNumColumn : true,
 						rowNumHeaderText : "번호",
 						editable : true,
@@ -136,9 +141,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						selectionMode : "singleRow",
 						displayTreeOpen : true,
 						forceTreeView : true,
-						showStateColumn : true,
 						useContextMenu : true,
 						enableRightDownFocus : true,
+						fixedColumnCount : 1,
+						editableOnFixedCell : true,
 						contextMenuItems : [ {
 							label : "선택된 행 이전 추가",
 							callback : contextItemHandler
@@ -298,12 +304,20 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <script type="text/javascript">
 	function auiGridSelectionChangeHandler(event) {
 		const item = event.selectedItems[0].item;
+		const name = item.name;
 		const oid = document.getElementById("oid").value;
 		const iframe = document.getElementById("view");
+		const taskType = item.taskType;
 		if (item.type == "project") {
 			iframe.src = "/Windchill/plm/project/view?oid=" + oid;
 		} else if (item.type == "task" && !item.isNew) {
-			iframe.src = "/Windchill/plm/project/task?oid=" + oid + "&toid=" + item.oid;
+			if (name === "의뢰서") {
+				iframe.src = "/Windchill/plm/project/request?oid=" + oid + "&toid=" + item.oid;
+			} else if (name === "") {
+
+			} else {
+				iframe.src = "/Windchill/plm/project/normal?oid=" + oid + "&toid=" + item.oid;
+			}
 		}
 	}
 	document.addEventListener("DOMContentLoaded", function() {
