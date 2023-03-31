@@ -158,7 +158,6 @@ public class WorkspaceHelper {
 		return list;
 	}
 
-<<<<<<< HEAD
 	public ArrayList<ApprovalLine> getAppLines(ApprovalMaster master) {
 		ArrayList<ApprovalLine> list = new ArrayList<ApprovalLine>();
 		QueryResult result = null;
@@ -191,8 +190,6 @@ public class WorkspaceHelper {
 		return list;
 	}
 
-=======
->>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 	public String[] getContractEpmData(Persistable per) throws Exception {
 		String oid = "";
 		String name = "";
@@ -639,7 +636,6 @@ public class WorkspaceHelper {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
 		boolean isAdmin = CommonUtils.isAdmin();
-		String name = (String) params.get("name");
 		String submiterOid = (String) params.get("submiterOid");
 		String receiveFrom = (String) params.get("receiveFrom");
 		String receiveTo = (String) params.get("receiveTo");
@@ -655,9 +651,8 @@ public class WorkspaceHelper {
 		// 쿼리 수정할 예정
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, STATE_APPROVAL_APPROVING);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, APPROVAL_LINE);
-		QuerySpecUtils.toTimeGreaterEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP,
-				receiveFrom);
-		QuerySpecUtils.toTimeLessEqualsThan(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveTo);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveFrom,
+				receiveTo);
 		QuerySpecUtils.toCreator(query, idx, ApprovalLine.class, submiterOid);
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, true);
 
@@ -698,6 +693,8 @@ public class WorkspaceHelper {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
 		String approvalTitle = (String) params.get("approvalTitle");
+		String receiveFrom = (String) params.get("receiveFrom");
+		String receiveTo = (String) params.get("receiveTo");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ApprovalLine.class, true);
@@ -707,6 +704,8 @@ public class WorkspaceHelper {
 				WTAttributeNameIfc.ID_NAME, idx, idx_master);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, STATE_RECEIVE_READY);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, RECEIVE_LINE);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveFrom,
+				receiveTo);
 
 		WTUser sessionUser = CommonUtils.sessionUser();
 		if (!CommonUtils.isAdmin()) {
@@ -780,6 +779,9 @@ public class WorkspaceHelper {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
 		String approvalTitle = (String) params.get("approvalTitle");
+		String receiveFrom = (String) params.get("receiveFrom");
+		String receiveTo = (String) params.get("receiveTo");
+		String type = (String) params.get("type");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ApprovalMaster.class, true);
@@ -792,6 +794,13 @@ public class WorkspaceHelper {
 
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.STATE,
 				STATE_MASTER_APPROVAL_COMPLETE);
+
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.TYPE, type);
+
+		QuerySpecUtils.toTimeGreaterEqualsThan(query, idx, ApprovalMaster.class, ApprovalMaster.CREATE_TIMESTAMP,
+				receiveFrom);
+		QuerySpecUtils.toTimeLessEqualsThan(query, idx, ApprovalMaster.class, ApprovalMaster.CREATE_TIMESTAMP,
+				receiveTo);
 
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.MODIFY_TIMESTAMP, false);
 

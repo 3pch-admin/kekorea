@@ -211,9 +211,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const params = new Object();
 				const url = getCallUrl("/workspace/receive");
 				const approvalTitle = document.getElementById("approvalTitle").value;
+				const receiveFrom = document.getElementById("receiveFrom").value;
+				const receiveTo = document.getElementById("receiveTo").value;
 				const psize = document.getElementById("psize").value;
-				params.psize = psize;
 				params.approvalTitle = approvalTitle;
+				params.receiveFrom = receiveFrom;
+				params.receiveTo = receiveTo;
+				params.psize = psize;
+				
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

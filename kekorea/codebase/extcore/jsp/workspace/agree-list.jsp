@@ -18,10 +18,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	<form>
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
-<<<<<<< HEAD
-=======
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
->>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
@@ -199,10 +196,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
-<<<<<<< HEAD
-
-=======
->>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
@@ -225,11 +218,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				params.submiterOid = submiterOid;
 				params.receiveFrom = receiveFrom;
 				params.receiveTo = receiveTo;
-<<<<<<< HEAD
-
-=======
 				params.psize = psize;
->>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
+				
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
