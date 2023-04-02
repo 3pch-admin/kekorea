@@ -23,6 +23,7 @@ import e3ps.workspace.dto.ApprovalLineDTO;
 import e3ps.workspace.notice.Notice;
 import e3ps.workspace.notice.dto.NoticeDTO;
 import e3ps.workspace.service.WorkspaceHelper;
+import wt.fc.Persistable;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -202,23 +203,15 @@ public class WorkspaceController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "검토함 뷰 페이지")
-	@GetMapping(value = "/agreeView")
-	public ModelAndView agreeView(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		ApprovalLine approvalLine = (ApprovalLine) CommonUtils.getObject(oid);
-		ApprovalLineDTO dto = new ApprovalLineDTO(approvalLine, "COLUMN_AGREE");
-		model.addObject("dto", dto);
-		model.setViewName("popup:/workspace/agree-view");
-		return model;
-	}
-
 	@Description(value = "결재 정보 보기")
 	@GetMapping(value = "/view")
-	public ModelAndView view(@RequestParam String oid, @RequestParam String columnType) throws Exception {
+	public ModelAndView view(@RequestParam String oid, @RequestParam String columnType, @RequestParam String poid)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
 		ApprovalLine approvalLine = (ApprovalLine) CommonUtils.getObject(oid);
 		ApprovalLineDTO dto = new ApprovalLineDTO(approvalLine, columnType);
+		Persistable per = (Persistable) CommonUtils.getObject(poid);
+		model.addObject("per", per);
 		model.addObject("dto", dto);
 		model.addObject("oid", oid);
 		model.setViewName("popup:/workspace/approval-view");

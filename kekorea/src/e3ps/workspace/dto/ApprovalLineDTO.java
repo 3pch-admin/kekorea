@@ -25,8 +25,13 @@ public class ApprovalLineDTO {
 	private Timestamp completeTime;
 	private Timestamp createdDate;
 	private Timestamp receiveTime;
-
+	private String poid;
+	private String moid;
 	private String point; // 표시..
+
+	private boolean isAgreeLine = false;
+	private boolean isApprovalLine = false;
+	private boolean isReceiveLine = false;
 
 	public ApprovalLineDTO() {
 
@@ -44,6 +49,11 @@ public class ApprovalLineDTO {
 			setCreator(line.getMaster().getOwnership().getOwner().getFullName());
 			setState(line.getState());
 			setCreatedDate(line.getCreateTimestamp());
+			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
+//			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
+			setAgreeLine(line.getType().equals(WorkspaceHelper.AGREE_LINE));
+			setApprovalLine(line.getType().equals(WorkspaceHelper.APPROVAL_LINE));
+			setReceiveLine(line.getType().equals(WorkspaceHelper.RECEIVE_LINE));
 			point(master);
 		} else if ("COLUMN_AGREE".equals(columnType)) {
 			// 검토함
@@ -58,6 +68,11 @@ public class ApprovalLineDTO {
 			setReceiveTime(line.getCreateTimestamp());
 			setCompleteTime(line.getCompleteTime() != null ? line.getCompleteTime() : null);
 			setState(line.getState());
+			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
+//			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
+			setAgreeLine(line.getType().equals(WorkspaceHelper.AGREE_LINE));
+			setApprovalLine(line.getType().equals(WorkspaceHelper.APPROVAL_LINE));
+			setReceiveLine(line.getType().equals(WorkspaceHelper.RECEIVE_LINE));
 			point(master);
 		} else if ("COLUMN_RECEIVE".equals(columnType)) {
 			// 수신함
@@ -69,6 +84,11 @@ public class ApprovalLineDTO {
 			setSubmiter(master.getOwnership().getOwner().getFullName());
 			setState(line.getState());
 			setReceiveTime(line.getCreateTimestamp());
+			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
+//			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
+			setAgreeLine(line.getType().equals(WorkspaceHelper.AGREE_LINE));
+			setApprovalLine(line.getType().equals(WorkspaceHelper.APPROVAL_LINE));
+			setReceiveLine(line.getType().equals(WorkspaceHelper.RECEIVE_LINE));
 			point(master);
 		}
 	}
@@ -83,12 +103,16 @@ public class ApprovalLineDTO {
 			setReceiveTime(master.getCreateTimestamp());
 			setCompleteTime(master.getCompleteTime()); // 반드시 완료날짜 잇음
 			setSubmiter(master.getOwnership().getOwner().getFullName());
+			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
+			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
 			point(master);
 		} else if ("COLUMN_PROGRESS".equals(columnType)) {
 			// 진행함
 			setOid(master.getPersistInfo().getObjectIdentifier().getStringValue());
 			setName(master.getName());
 			setCreatedDate(master.getCreateTimestamp());
+			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
+//			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
 			point(master);
 		} else if ("COLUMN_REJECT".equals(columnType)) {
 			// 반려함
@@ -96,6 +120,8 @@ public class ApprovalLineDTO {
 			setName(master.getName());
 			setCreatedDate(master.getCreateTimestamp());
 			setCompleteTime(master.getCompleteTime());
+			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
+//			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
 			point(master);
 		}
 	}
