@@ -319,7 +319,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 
 			function createAUIGrid(columnLayout) {
 				const props = {
-					rowIdField : "oid",
 					headerHeight : 30,
 					showStateColumn : true,
 					showRowCheckColumn : true,

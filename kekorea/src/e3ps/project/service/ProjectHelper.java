@@ -1669,10 +1669,8 @@ public class ProjectHelper {
 		CommonCode userTypeCode = CommonCodeHelper.manager.getCommonCode(userType, "USER_TYPE");
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ProjectUserLink.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, "roleAObjectRef.key.id",
-				project.getPersistInfo().getObjectIdentifier().getId());
-		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, "userTypeReference.key.id",
-				userTypeCode.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, "roleAObjectRef.key.id", project);
+		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, "userTypeReference.key.id", userTypeCode);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -3156,8 +3154,7 @@ public class ProjectHelper {
 
 		if (!StringUtils.isNull(customer_name)) {
 			CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer_name);
-			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "customerReference.key.id",
-					customerCode);
+			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "customerReference.key.id", customerCode);
 		}
 
 		if (!StringUtils.isNull(install_name)) {
