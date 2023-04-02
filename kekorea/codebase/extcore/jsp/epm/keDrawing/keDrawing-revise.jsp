@@ -79,7 +79,7 @@
 				recentGridItem = item
 				const _$uid = item._$uid;
 				const url = getCallUrl("/aui/primary?oid=" + _$uid + "&method=attach");
-				popup(url, 1000, 200);
+				popup(url, 1000, 300);
 			}
 		}
 	}, ]
@@ -101,10 +101,6 @@
 
 	function readyHandler() {
 		for (let i = 0; i < data.length; i++) {
-			data[i].item = {
-				primary : "",
-				note : ""
-			}
 			AUIGrid.addRow(myGridID, data[i].item, "last");
 		}
 	}

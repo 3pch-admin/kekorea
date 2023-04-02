@@ -563,7 +563,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					return false;
 				}
 
-				const arr = new Array();
 				for (let i = 0; i < checkedItems.length; i++) {
 					const oid = checkedItems[i].item.oid;
 					const latest = checkedItems[i].item.latest;

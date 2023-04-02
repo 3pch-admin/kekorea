@@ -230,10 +230,6 @@ JSONArray departments = new JSONArray(list);
 					headerText : "막종",
 					dataType : "string",
 					style : "aui-left",
-					headerTooltip : {
-						show : true,
-						tooltipHtml : "한국 생산의 차트에서 사용자가 원하는 막종만 볼 수 있도록 설정 하는 컬럼입니다."
-					},
 					renderer : {
 						type : "IconRenderer",
 						iconWidth : 16,
@@ -261,51 +257,6 @@ JSONArray departments = new JSONArray(list);
 						for (let i = 0, len = maks.length; i < len; i++) {
 							if (maks[i]["key"] == value) {
 								retStr = maks[i]["value"];
-								break;
-							}
-						}
-						return retStr == "" ? value : retStr;
-					},
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "install",
-					headerText : "설치장소",
-					dataType : "string",
-					style : "aui-left",
-					headerTooltip : {
-						show : true,
-						tooltipHtml : "한국 생산의 차트에서 사용자가 원하는 설치장소만 볼 수 있도록 설정 하는 컬럼입니다."
-					},
-					renderer : {
-						type : "IconRenderer",
-						iconWidth : 16,
-						iconHeight : 16,
-						iconPosition : "aisleRight",
-						iconTableRef : {
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
-						},
-						onClick : function(event) {
-							AUIGrid.openInputer(event.pid);
-						}
-					},
-					editRenderer : {
-						type : "DropDownListRenderer",
-						showEditorBtn : false,
-						showEditorBtnOver : false,
-						multipleMode : true,
-						showCheckAll : true,
-						list : installs,
-						keyField : "key",
-						valueField : "value",
-					},
-					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
-						let retStr = "";
-						for (let i = 0, len = installs.length; i < len; i++) {
-							if (installs[i]["key"] == value) {
-								retStr = installs[i]["value"];
 								break;
 							}
 						}

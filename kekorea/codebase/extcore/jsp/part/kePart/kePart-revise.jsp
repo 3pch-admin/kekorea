@@ -115,10 +115,6 @@
 
 	function readyHandler() {
 		for (let i = 0; i < data.length; i++) {
-			data[i].item = {
-				primary : "",
-				note : ""
-			}
 			AUIGrid.addRow(myGridID, data[i].item, "last");
 		}
 	}

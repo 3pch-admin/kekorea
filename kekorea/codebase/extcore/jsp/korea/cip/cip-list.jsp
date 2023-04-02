@@ -643,7 +643,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				const oid = event.item.oid;
 				const preView = event.item.preView;
 				if (dataField === "preView") {
-					if (preView !== null) {
+					if (preView !== null && preView !== undefined) {
 						const url = getCallUrl("/aui/thumbnail?oid=" + oid);
 						popup(url);
 					}
