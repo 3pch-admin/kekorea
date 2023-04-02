@@ -399,7 +399,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function create() {
 				const url = getCallUrl("/requestDocument/create");
-				popup(url, 1400, 800);
+				popup(url, 1400, 750);
 			}
 
 			function loadGridData() {

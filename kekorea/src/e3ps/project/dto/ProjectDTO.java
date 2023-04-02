@@ -6,6 +6,8 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.project.Project;
 import e3ps.project.service.ProjectHelper;
+import e3ps.project.task.variable.TaskTypeVariable;
+import e3ps.project.variable.ProjectUserTypeVariable;
 import lombok.Getter;
 import lombok.Setter;
 import wt.org.WTUser;
@@ -47,6 +49,8 @@ public class ProjectDTO {
 	private String elec = "지정안됨";
 	private String soft = "지정안됨";
 	private int kekProgress;
+	private int machineProgress;
+	private int elecProgress;
 	private String kekState;
 
 	private String planStartDate_txt;
@@ -131,23 +135,25 @@ public class ProjectDTO {
 		}
 		setModel(project.getModel());
 
-		WTUser machineUser = ProjectHelper.manager.getUserType(project, "MACHINE");
+		WTUser machineUser = ProjectHelper.manager.getUserType(project, TaskTypeVariable.MACHINE);
 
 		if (machineUser != null) {
 			setMachine(machineUser.getFullName());
 		}
 
-		WTUser elecUser = ProjectHelper.manager.getUserType(project, "ELEC");
+		WTUser elecUser = ProjectHelper.manager.getUserType(project, TaskTypeVariable.ELEC);
 		if (elecUser != null) {
 			setElec(elecUser.getFullName());
 		}
 
-		WTUser softUser = ProjectHelper.manager.getUserType(project, "SOFT");
+		WTUser softUser = ProjectHelper.manager.getUserType(project, TaskTypeVariable.SOFT);
 		if (softUser != null) {
 			setSoft(softUser.getFullName());
 		}
 
-		setKekProgress(project.getProgress());
+		setKekProgress(ProjectHelper.manager.getKekProgress(project));
+		setMachineProgress(ProjectHelper.manager.getTaskProgress(project, TaskTypeVariable.MACHINE));
+		setElecProgress(ProjectHelper.manager.getTaskProgress(project, TaskTypeVariable.ELEC));
 		setKekState(project.getKekState());
 
 		setPlanStartDate_txt(CommonUtils.getPersistableTime(project.getPlanStartDate()));
@@ -158,12 +164,12 @@ public class ProjectDTO {
 		setDuration(DateUtils.getDuration(project.getPlanStartDate(), project.getPlanEndDate()));
 		setHoliday(DateUtils.getPlanDurationHoliday(project.getPlanStartDate(), project.getPlanEndDate()));
 
-		WTUser pmUser = ProjectHelper.manager.getUserType(project, "PM");
+		WTUser pmUser = ProjectHelper.manager.getUserType(project, ProjectUserTypeVariable.PM);
 		if (pmUser != null) {
 			setPm(pmUser.getFullName());
 		}
 
-		WTUser subPmUser = ProjectHelper.manager.getUserType(project, "SUB_PM");
+		WTUser subPmUser = ProjectHelper.manager.getUserType(project, ProjectUserTypeVariable.SUB_PM);
 		if (subPmUser != null) {
 			setSubPm(subPmUser.getFullName());
 		}

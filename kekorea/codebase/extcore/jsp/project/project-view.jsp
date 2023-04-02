@@ -36,7 +36,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				</li>
 				<li>
 					<a href="#tabs-3">특이사항</a>
-				</li>				
+				</li>
 				<li>
 					<a href="#tabs-4">기계 수배표</a>
 				</li>
@@ -99,16 +99,18 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<th class="rb">막종 / 막종상세</th>
 						<th class="rb" colspan="2">작업 내용</th>
 						<th>기계</th>
-						<td class="center">%</td>
+						<td class="center"><%=dto.getMachineProgress()%>%</td>
 					</tr>
 					<tr>
 						<td class="center"><%=dto.getKeNumber()%></td>
 						<td class="center"><%=dto.getUserId()%></td>
 						<td class="center"><%=dto.getProjectType_name()%></td>
-						<td class="center"><%=dto.getMak_name()%> / <%=dto.getDetail_name()%></td>
+						<td class="center"><%=dto.getMak_name()%>
+							/
+							<%=dto.getDetail_name()%></td>
 						<td class="indent5" colspan="2"><%=dto.getDescription()%></td>
 						<th>전기</th>
-						<td class="center">%</td>
+						<td class="center"><%=dto.getElecProgress()%>%</td>
 					</tr>
 					<%
 					} else {
@@ -225,7 +227,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 								<b><%=inputTotal%>원
 								</b>
 							</font>
-							/ <%=tPgoress%>%
+							/
+							<%=tPgoress%>%
 						</td>
 						<td class="rb center">
 							<font color="blue">
@@ -237,7 +240,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 								<b><%=inputOutputMachine%>원
 								</b>
 							</font>
-							/ <%=mProgress%>%
+							/
+							<%=mProgress%>%
 						</td>
 						<td class="rb center">
 							<font color="blue">
@@ -249,7 +253,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 								<b><%=inputOutputElec%>원
 								</b>
 							</font>
-							/ <%=eProgress%>%
+							/
+							<%=eProgress%>%
 						</td>
 						<%
 						} else {
@@ -263,65 +268,71 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<br>
 				<div id="_chart" style="height: 410px;"></div>
 				<script type="text/javascript">
-				Highcharts.chart('_chart', {
-				    chart: {
-				        type: 'column'
-				    },
-				    title: {
-				        text: '작번 견적 금액 차트',
-				    },
-				    tooltip: {
-				        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-				        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-				            '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
-				        footerFormat: '</table>',
-				        shared: true,
-				        useHTML: true
-				    },		
-				    xAxis: {
-				        categories: [
-				            '작번 견적 금액',
-				            '기계 견적 금액',
-				            '전기 견적 금액',
-				        ],
-				        crosshair: true
-				    },				    
-				    yAxis: {
-				        min: 0,
-				        title: {
-				            text: '원'
-				        }
-				    },
-				    plotOptions: {
-				        column: {
-				            pointPadding: 0.2,
-				            borderWidth: 0
-				        }
-				    },
-				    tooltip: {
-				        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-				        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-				            '<td style="padding:0"><b>{point.y:%,.0f} 원</b></td></tr>',
-				        footerFormat: '</table>',
-				        shared: true,
-				        useHTML: true
-				    },				    
-				    series: [{
-				        name: '작번 견적 금액',
-				        data: [<%=dto.getOutputTotalPrice()%>, <%=dto.getTotalPrice()%>]
-				    },{
-				        name: '기계 견적 금액',
-				        data: [<%=dto.getOutputMachinePrice()%>, <%=dto.getMachinePrice()%>]
-				    },{
-				        name: '전기 견적 금액',
-				        data: [<%=dto.getOutputElecPrice()%>, <%=dto.getElecPrice()%>]
-				    }]
-				});
+					Highcharts.chart('_chart', {
+						chart : {
+							type : 'column'
+						},
+						title : {
+							text : '작번 견적 금액 차트',
+						},
+						tooltip : {
+							headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
+							pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' + '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+							footerFormat : '</table>',
+							shared : true,
+							useHTML : true
+						},
+						xAxis : {
+							categories : [ '작번 견적 금액', '기계 견적 금액', '전기 견적 금액', ],
+							crosshair : true
+						},
+						yAxis : {
+							min : 0,
+							title : {
+								text : '원'
+							}
+						},
+						plotOptions : {
+							column : {
+								pointPadding : 0.2,
+								borderWidth : 0
+							}
+						},
+						tooltip : {
+							headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
+							pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' + '<td style="padding:0"><b>{point.y:%,.0f} 원</b></td></tr>',
+							footerFormat : '</table>',
+							shared : true,
+							useHTML : true
+						},
+						series : [ {
+							name : '작번 견적 금액',
+							data : [
+				<%=dto.getOutputTotalPrice()%>
+					,
+				<%=dto.getTotalPrice()%>
+					]
+						}, {
+							name : '기계 견적 금액',
+							data : [
+				<%=dto.getOutputMachinePrice()%>
+					,
+				<%=dto.getMachinePrice()%>
+					]
+						}, {
+							name : '전기 견적 금액',
+							data : [
+				<%=dto.getOutputElecPrice()%>
+					,
+				<%=dto.getElecPrice()%>
+					]
+						} ]
+					});
 				</script>
 			</div>
 			<div id="tabs-2"></div>
 			<div id="tabs-3">
-				<iframe style="height: 800px;" src="/Windchill/plm/project/issue?oid=<%=dto.getOid() %>"></iframe>
+				<iframe style="height: 800px;" src="/Windchill/plm/project/issue?oid=<%=dto.getOid()%>"></iframe>
 			</div>
 			<div id="tabs-4"></div>
 			<div id="tabs-5"></div>
@@ -331,8 +342,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<iframe style="height: 800px;" src="/Windchill/plm/project/cip?mak_oid=<%=dto.getMak_oid()%>&detail_oid=<%=dto.getDetail_oid()%>&customer_oid=<%=dto.getCustomer_oid()%>&install_oid=<%=dto.getInstall_oid()%>"></iframe>
 			</div>
 			<div id="tabs-9">
-				<iframe style="height: 800px;" src="/Windchill/plm/project/workOrder?oid=<%=dto.getOid() %>"></iframe>
-			</div>			
+				<iframe style="height: 800px;" src="/Windchill/plm/project/workOrder?oid=<%=dto.getOid()%>"></iframe>
+			</div>
 		</div>
 
 		<script type="text/javascript">
@@ -340,6 +351,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				$("#tabs").tabs({
 					heightStyle : "content"
 				});
+				parent.parent.closeLayer();
 			})
 		</script>
 	</form>

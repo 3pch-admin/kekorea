@@ -38,6 +38,7 @@ import e3ps.project.task.dto.TaskTreeNode;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.task.variable.TaskStateVariable;
 import e3ps.project.template.Template;
+import e3ps.project.variable.ProjectStateVariable;
 import wt.doc.WTDocument;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
@@ -59,385 +60,6 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 		StandardProjectService instance = new StandardProjectService();
 		instance.initialize();
 		return instance;
-	}
-
-	@Override
-	public Map<String, Object> createProjectAction(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-		String kekNumber = (String) param.get("kekNumber");
-		String pDate = (String) param.get("postdate");
-		String keNumber = (String) param.get("keNumber");
-		String userId = (String) param.get("userId");
-
-		String mak = (String) param.get("mak");
-		String model = (String) param.get("model");
-		String customer = (String) param.get("customer");
-		String install = (String) param.get("install");
-		String detail = (String) param.get("detail");
-		String projectType = (String) param.get("projectType");
-		String pTemplate = (String) param.get("pTemplate");
-		String description = (String) param.get("description");
-
-		String customDate = (String) param.get("postdate_m");
-		String systemInfo = (String) param.get("systemInfo");
-
-		Ownership ownership = Ownership.newOwnership(SessionHelper.manager.getPrincipal());
-		Project project = null;
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			project = Project.newProject();
-
-			project.setOwnership(ownership);
-			project.setKekNumber(kekNumber);
-			project.setKeNumber(keNumber);
-			project.setPDate(DateUtils.convertDate(pDate));
-			project.setUserId(userId);
-			project.setMak((CommonCode) CommonUtils.getObject(mak));
-			project.setDetail((CommonCode) CommonUtils.getObject(detail));
-			project.setModel(model);
-			project.setInstall((CommonCode) CommonUtils.getObject(install));
-			project.setProjectType((CommonCode) CommonUtils.getObject(projectType));
-			project.setKekState("준비");
-			project.setCustomer((CommonCode) CommonUtils.getObject(customer));
-			project.setDescription(description);
-			project.setCustomDate(DateUtils.convertDate(customDate));
-			project.setMachinePrice(0D);
-			project.setElecPrice(0D);
-
-			PersistenceHelper.manager.save(project);
-
-			if (!StringUtils.isNull(pTemplate)) {
-				Template template = TemplateHelper.manager.getTemplateByName(pTemplate);
-
-				if (!StringUtils.isNull(template)) {
-
-					Timestamp start = DateUtils.getPlanStartDate();
-					// 계획 시작일, 계획 종료일은 등록일로 세팅 한다. 템플릿의 경우 태스크 생성시 일정을 다시 조절한다.
-					project.setPlanStartDate(start);
-
-					Calendar eCa = Calendar.getInstance();
-					eCa.setTimeInMillis(start.getTime());
-					eCa.add(Calendar.DATE, template.getDuration());
-
-					Timestamp end = new Timestamp(eCa.getTime().getTime());
-					project.setPlanEndDate(end);
-
-					project.setTemplate(template);
-
-					project = (Project) PersistenceHelper.manager.modify(project);
-
-					copyTasks(project, template, null);
-					// 없을경우
-
-					WTUser pm = TemplateHelper.manager.getPMByTemplate(template);
-					if (pm != null) {
-						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, pm);
-						userLink.setUserType(ProjectUserType.PM.name());
-						PersistenceHelper.manager.save(userLink);
-					} else {
-						pm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectUserType.PM_ID);
-						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, pm);
-						userLink.setUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
-						PersistenceHelper.manager.save(userLink);
-					}
-
-					WTUser subPm = TemplateHelper.manager.getSubPMByTemplate(template);
-					if (subPm != null) {
-						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, subPm);
-						userLink.setUserType(ProjectUserType.SUB_PM.name());
-						PersistenceHelper.manager.save(userLink);
-					} else {
-						subPm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectUserType.SUB_PM_ID);
-						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, subPm);
-						userLink.setUserType(ProjectUserType.SUB_PM.name());
-						PersistenceHelper.manager.save(userLink);
-					}
-				}
-			} else {
-				Timestamp start = DateUtils.getPlanStartDate();
-				// 계획 시작일, 계획 종료일은 등록일로 세팅 한다. 템플릿의 경우 태스크 생성시 일정을 다시 조절한다.
-				project.setPlanStartDate(start);
-
-				Calendar eCa = Calendar.getInstance();
-				eCa.setTimeInMillis(start.getTime());
-				eCa.add(Calendar.DATE, 1);
-
-				Timestamp end = new Timestamp(eCa.getTime().getTime());
-				project.setPlanEndDate(end);
-
-				PersistenceHelper.manager.modify(project);
-			}
-
-			map.put("reload", true);
-			map.put("result", SUCCESS);
-			map.put("msg", "작번 " + CREATE_OK);
-			map.put("url", "/Windchill/plm/project/listProject");
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			map.put("reload", false);
-			map.put("result", FAIL);
-			map.put("msg", "작번 " + CREATE_FAIL);
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-		return map;
-	}
-
-	@Override
-	public void createProjectByJExcels(RequestDocument reqDoc, Map<String, Object> param) throws WTException {
-		List<ArrayList<String>> jexcels = (List<ArrayList<String>>) param.get("jexcels");
-		Project project = null;
-		Transaction trs = new Transaction();
-		String pTemplate = (String) param.get("pTemplate");
-		ReferenceFactory rf = new ReferenceFactory();
-		try {
-			trs.start();
-
-			Ownership ownership = Ownership.newOwnership(SessionHelper.manager.getPrincipal());
-
-			Timestamp planStartDate = new Timestamp(new Date().getTime());
-			Timestamp planEndDate = new Timestamp(new Date().getTime());
-
-			for (int i = 0; i < jexcels.size(); i++) {
-				project = Project.newProject();
-
-				boolean isCreate = true;
-				ArrayList<String> cells = (ArrayList<String>) jexcels.get(i);
-				// for (int k = 0; k < cells.size(); k++) {
-				String pType = cells.get(1);
-				String customer = cells.get(2);
-				String ins_location = cells.get(3);
-				String mak = cells.get(4);
-				String kekNumber = cells.get(5);
-				String keNumber = cells.get(6);
-				String userId = cells.get(7);
-				String customDate = cells.get(8);
-				String description = cells.get(9);
-				String model = cells.get(10);
-				// String systemInfo = cells.get(11);
-				String pDate = cells.get(11);
-				String elec = cells.get(12);
-				String machine = cells.get(13);
-				String sw = cells.get(14);
-				// 전기담당자
-				// 기계담당자
-				// sw담당자
-				// 템플릿
-
-				if (StringUtils.isNull(kekNumber)) {
-					isCreate = false;
-					continue;
-				}
-
-				project.setOwnership(ownership);
-				project.setKekNumber(kekNumber);
-
-				if (StringUtils.isNull(pDate)) {
-					project.setPDate(new Timestamp(new Date().getTime()));
-				} else {
-					project.setPDate(DateUtils.convertDate(pDate));
-				}
-				project.setKeNumber(keNumber);
-				project.setUserId(userId);
-				project.setMak(mak);
-				project.setModel(model);
-				project.setCustomer(customer);
-				project.setIns_location(ins_location);
-				project.setPType(pType);
-				project.setDescription(description);
-				project.setCustomDate(DateUtils.convertDate(customDate));
-				project.setProgress(0);
-				project.setState(ProjectStateType.STAND.getDisplay());
-				project.setKekState("준비");
-				project.setMachinePrice(0D);
-				project.setElecPrice(0D);
-
-				if (isCreate) {
-
-					// 일단 일정 기본 설정
-					Timestamp start = new Timestamp(new Date().getTime());
-					//
-					Calendar ca = Calendar.getInstance();
-					ca.setTime(start);
-					ca.add(Calendar.DATE, 1);
-					Timestamp end = new Timestamp(ca.getTime().getTime());
-
-					project.setPlanStartDate(start);
-					project.setPlanEndDate(end);
-
-					project = (Project) PersistenceHelper.manager.save(project);
-
-					// task..name의뢰서
-
-					if (!StringUtils.isNull(elec)) {
-						WTUser elecUser = OrganizationServicesHelper.manager.getAuthenticatedUser(elec.trim());
-						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, elecUser);
-						userLink.setUserType(ProjectUserType.ELEC.name());
-						PersistenceHelper.manager.save(userLink);
-					}
-
-					if (!StringUtils.isNull(machine)) {
-						WTUser machineUser = OrganizationServicesHelper.manager.getAuthenticatedUser(machine.trim());
-						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, machineUser);
-						userLink.setUserType(ProjectUserType.MACHINE.name());
-						PersistenceHelper.manager.save(userLink);
-					}
-
-					if (!StringUtils.isNull(sw)) {
-						WTUser swUser = OrganizationServicesHelper.manager.getAuthenticatedUser(sw.trim());
-						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, swUser);
-						userLink.setUserType(ProjectUserType.SOFT.name());
-						PersistenceHelper.manager.save(userLink);
-					}
-
-					// 템플릿이 있을경우
-
-					if (!StringUtils.isNull(pTemplate)) {
-						// Template template = TemplateHelper.manager.getTemplateByName(pTemplate);
-						Template template = (Template) rf.getReference(pTemplate).getObject();
-
-						if (!StringUtils.isNull(template)) {
-							copyTasks(project, template, reqDoc);
-							// 없을경우
-
-							WTUser pm = TemplateHelper.manager.getPMByTemplate(template);
-							if (pm != null) {
-								ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, pm);
-								userLink.setUserType(ProjectUserType.PM.name());
-								PersistenceHelper.manager.save(userLink);
-							} else {
-								pm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectUserType.PM_ID);
-								ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, pm);
-								userLink.setUserType(ProjectUserType.PM.name());
-								PersistenceHelper.manager.save(userLink);
-							}
-
-							WTUser subPm = TemplateHelper.manager.getSubPMByTemplate(template);
-							if (subPm != null) {
-								ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, subPm);
-								userLink.setUserType(ProjectUserType.SUB_PM.name());
-								PersistenceHelper.manager.save(userLink);
-							} else {
-								subPm = OrganizationServicesHelper.manager
-										.getAuthenticatedUser(ProjectUserType.SUB_PM_ID);
-								ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, subPm);
-								userLink.setUserType(ProjectUserType.SUB_PM.name());
-								PersistenceHelper.manager.save(userLink);
-							}
-						} else {
-
-							Task task = Task.newTask();
-
-							task.setName("의뢰서");
-							task.setDepth(1);
-							task.setDescription("의뢰서 태스크");
-							task.setSort(0);
-							task.setProject(project);
-							task.setTemplate(null);
-							task.setPlanStartDate(planStartDate);
-							task.setPlanEndDate(planEndDate);
-							task.setStartDate(planStartDate);
-							task.setEndDate(null);
-							task.setDuration(1);
-							task.setTaskType("일반");
-							task.setOwnership(ownership);
-							task.setProgress(0);
-							// task.setState("작업 중");
-							task.setState(TaskStateType.INWORK.getDisplay());
-							task.setAllocate(0);
-
-							task = (Task) PersistenceHelper.manager.save(task);
-
-							Output output = Output.newOutput();
-							output.setName(reqDoc.getName());
-							output.setLocation(reqDoc.getLocation());
-							output.setTask(task);
-							output.setProject(project);
-							output.setDocument(reqDoc);
-							output.setOwnership(ownership);
-							output = (Output) PersistenceHelper.manager.save(output);
-
-							// pm 연결
-							WTUser pm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectUserType.PM_ID);
-							ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, pm);
-							userLink.setUserType(ProjectUserType.PM.name());
-							PersistenceHelper.manager.save(userLink);
-
-							WTUser subPm = OrganizationServicesHelper.manager
-									.getAuthenticatedUser(ProjectUserType.SUB_PM_ID);
-							ProjectUserLink links = ProjectUserLink.newProjectUserLink(project, subPm);
-							links.setUserType(ProjectUserType.SUB_PM.name());
-							PersistenceHelper.manager.save(links);
-						}
-					} else {
-
-						Task task = Task.newTask();
-
-						task.setName("의뢰서");
-						task.setDepth(1);
-						task.setDescription("의뢰서 태스크");
-						task.setSort(0);
-						task.setProject(project);
-						task.setTemplate(null);
-						task.setPlanStartDate(planStartDate);
-						task.setPlanEndDate(planEndDate);
-						task.setStartDate(planStartDate);
-						task.setEndDate(null);
-						task.setDuration(1);
-						task.setTaskType("일반");
-						task.setOwnership(ownership);
-						task.setProgress(0);
-						// task.setState("작업 중");
-						task.setState(TaskStateType.INWORK.getDisplay());
-						task.setAllocate(0);
-
-						task = (Task) PersistenceHelper.manager.save(task);
-
-						Output output = Output.newOutput();
-						output.setName(reqDoc.getName());
-						output.setLocation(reqDoc.getLocation());
-						output.setTask(task);
-						output.setProject(project);
-						output.setDocument(reqDoc);
-						output.setOwnership(ownership);
-						output = (Output) PersistenceHelper.manager.save(output);
-
-						// pm 연결
-						WTUser pm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectUserType.PM_ID);
-						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, pm);
-						userLink.setUserType(ProjectUserType.PM.name());
-						PersistenceHelper.manager.save(userLink);
-
-						WTUser subPm = OrganizationServicesHelper.manager
-								.getAuthenticatedUser(ProjectUserType.SUB_PM_ID);
-						ProjectUserLink links = ProjectUserLink.newProjectUserLink(project, subPm);
-						links.setUserType(ProjectUserType.SUB_PM.name());
-						PersistenceHelper.manager.save(links);
-					}
-
-					RequestDocumentProjectLink link = RequestDocumentProjectLink.newReqDocumentProjectLink(reqDoc,
-							project);
-					PersistenceHelper.manager.save(link);
-				}
-
-				commit(project);
-			}
-
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
 	}
 
 	@Override
@@ -890,66 +512,6 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				trs.rollback();
 		}
 		return map;
-	}
-
-	@Override
-	public synchronized void commit(Project project) throws WTException {
-		ArrayList<Task> list = new ArrayList<Task>();
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			ProjectHelper.manager.setProgress(project);
-
-			// 모든 태스크 수집
-			// list = ProjectHelper.manager.getterProjectTask(project, list);
-
-			// list = ProjectHelper.manager.getterProjectNonSchduleTask(project, list);
-
-			list = ProjectHelper.manager.getterProjectTask(project, list);
-
-			// initAllProjectPlanDate(project.getPlanStartDate(), list);
-
-			// setDependencyTask(list);
-
-			setParentProgressSet(list);
-
-			setProjectParentDate(list);
-
-			setProjectDuration(project);
-
-			if ("견적".equals(project.getPType())) {
-				setQState(project);
-			} else {
-				int gate1 = ProjectHelper.manager.gate1StateIcon(project);
-				int gate2 = ProjectHelper.manager.gate2StateIcon(project);
-				int gate3 = ProjectHelper.manager.gate3StateIcon(project);
-				int gate4 = ProjectHelper.manager.gate4StateIcon(project);
-				int gate5 = ProjectHelper.manager.gate5StateIcon(project);
-
-				project.setGate1(gate1);
-				project.setGate2(gate2);
-				project.setGate3(gate3);
-				project.setGate4(gate4);
-				project.setGate5(gate5);
-			}
-
-			int pro = ProjectHelper.manager.getKekProgress(project);
-
-			project.setProgress(pro);
-			PersistenceHelper.manager.modify(project);
-
-			setProgressCheck(project);
-
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
 	}
 
 	@Override
@@ -2818,5 +2380,116 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				trs.rollback();
 		}
 	}
+
+	@Override
+	public void calculation(Project project) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			int kekProgress = ProjectHelper.manager.getKekProgress(project);
+			// 완료 되었을 경우...
+			if (kekProgress == 100) {
+				project.setState(ProjectStateVariable.COMPLETE);
+				// 종료일이 없을 경우만 입력해서 중복으로 갱신안되게 처리
+				if (project.getEndDate() == null) {
+					project.setEndDate(new Timestamp(new Date().getTime()));
+				}
+				project.setKekState(ProjectStateVariable.KEK_COMPLETE);
+
+				project = (Project) PersistenceHelper.manager.modify(project);
+				project = (Project) PersistenceHelper.manager.refresh(project);
+
+				ArrayList<Task> list = ProjectHelper.manager.recurciveTask(project);
+				for (Task task : list) {
+					task.setState(TaskStateVariable.COMPLETE);
+					if (task.getEndDate() == null) {
+						task.setEndDate(new Timestamp(new Date().getTime()));
+					}
+					if (task.getStartDate() == null) {
+						task.setStartDate(new Timestamp(new Date().getTime()));
+					}
+					task.setProgress(100);
+					PersistenceHelper.manager.modify(task);
+				}
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public synchronized void commit(Project project) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			ProjectHelper.manager.calculation(project);
+			ArrayList<Task> list = ProjectHelper.manager.recurciveTask(project);
+
+			// 자식 태스크 계산하여 날짜 변경
+			TaskHelper.service.calculation(list);
+
+			// 기간 계산
+			Timestamp start = null;
+			Timestamp end = null;
+			boolean edit = false;
+			int duration = 1;
+			// 태스크 모두 삭제 될 경우
+			if (list.size() == 0) {
+				// 계획 시작일 계획 종료일 동일
+				start = DateUtils.getPlanStartDate();
+				end = DateUtils.getPlanEndDate();
+				project.setPlanStartDate(start);
+				project.setPlanEndDate(end);
+				project.setDuration(1);
+			}
+
+			for (int i = list.size() - 1; i >= 0; i--) {
+				Task child = (Task) list.get(i);
+
+				Timestamp cstart = child.getPlanStartDate();
+				Timestamp cend = child.getPlanEndDate();
+
+				if (start == null || (start.getTime() > cstart.getTime())) {
+					start = cstart;
+					edit = true;
+				}
+
+				if (end == null || (end.getTime() < cend.getTime())) {
+					end = cend;
+					edit = true;
+				}
+			}
+
+			if (edit) {
+				project.setPlanStartDate(start);
+				project.setPlanEndDate(end);
+				duration = DateUtils.getDuration(start, end);
+				project.setDuration(duration);
+			}
+
+			int kekProgress = ProjectHelper.manager.getKekProgress(project);
+			project.setProgress(kekProgress);
+			PersistenceHelper.manager.modify(project);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
 }
-// end class

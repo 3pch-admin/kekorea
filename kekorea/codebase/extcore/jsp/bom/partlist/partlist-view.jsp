@@ -71,7 +71,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						<div id="_grid_wrap" style="height: 200px; border-top: 1px solid #3180c3; margin: 5px;"></div>
 						<script type="text/javascript">
 							let _myGridID;
-							const data = <%=data%>
+							const data =
+						<%=data%>
 							const _columns = [ {
 								dataField : "projectType_name",
 								headerText : "작번유형",
@@ -157,9 +158,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 									headerHeight : 30,
 									rowHeight : 30,
 									showRowNumColumn : true,
-									showStateColumn : true,
 									rowNumHeaderText : "번호",
-									selectionMode : "multipleCells",
+									selectionMode : "singleRow",
 								}
 								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 								AUIGrid.setGridData(_myGridID, data);
@@ -231,7 +231,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				headerText : "수량",
 				dataType : "numeric",
 				width : 60,
-				postfix : "개"
 			}, {
 				dataField : "unit",
 				headerText : "단위",
@@ -242,7 +241,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				headerText : "단가",
 				dataType : "numeric",
 				width : 120,
-				postfix : "원"
 			}, {
 				dataField : "currency",
 				headerText : "화폐",
@@ -253,12 +251,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				headerText : "원화금액",
 				dataType : "numeric",
 				width : 120,
-				postfix : "원"
 			}, {
-				dataField : "partListDate",
+				dataField : "partListDate_txt",
 				headerText : "수배일자",
-				dataType : "date",
-				formatString : "yyyy-mm-dd",
+				dataType : "string",
 				width : 100,
 			}, {
 				dataField : "exchangeRate",
@@ -299,7 +295,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				positionField : "quantity",
 				operation : "SUM",
 				dataType : "numeric",
-				postfix : "개"
 			}, {
 				dataField : "unit",
 				positionField : "unit",
@@ -314,7 +309,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				operation : "SUM",
 				dataType : "numeric",
 				formatString : "#,##0",
-				postfix : "원"
 			}, {
 				dataField : "partListDate",
 				positionField : "partListDate",
@@ -324,13 +318,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					rowNumHeaderText : "번호",
 					selectionMode : "multipleCells",
 					showFooter : true,
 					footerPosition : "top",
-					showStateColumn : true,
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				AUIGrid.setFooter(myGridID, footerLayout);
@@ -339,68 +331,66 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		</script>
 	</div>
 	<div id="tabs-3">
-		<div class="include">
-			<div id="_grid_wrap_" style="height: 550px; border-top: 1px solid #3180c3; margin: 5px;"></div>
-			<script type="text/javascript">
-				let _myGridID_;
-				const history = <%=history%>
-				const _columns_ = [ {
-					dataField : "type",
-					headerText : "타입",
-					dataType : "string",
-					width : 80
-				}, {
-					dataField : "role",
-					headerText : "역할",
-					dataType : "string",
-					width : 80
-				}, {
-					dataField : "name",
-					headerText : "제목",
-					dataType : "string",
-					style : "aui-left"
-				}, {
-					dataField : "state",
-					headerText : "상태",
-					dataType : "string",
-					width : 100
-				}, {
-					dataField : "owner",
-					headerText : "담당자",
-					dataType : "string",
-					width : 100
-				}, {
-					dataField : "receiveDate_txt",
-					headerText : "수신일",
-					dataType : "string",
-					width : 130
-				}, {
-					dataField : "completeDate_txt",
-					headerText : "완료일",
-					dataType : "string",
-					width : 130
-				}, {
-					dataField : "description",
-					headerText : "결재의견",
-					dataType : "string",
-					style : "aui-left",
-					width : 450,
-				}, ]
-				function _createAUIGrid_(columnLayout) {
-					const props = {
-						headerHeight : 30,
-						rowHeight : 30,
-						showRowNumColumn : true,
-						showStateColumn : true,
-						rowNumHeaderText : "번호",
-						selectionMode : "multipleCells",
-						noDataMessage : "결재이력이 없습니다."
-					}
-					_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
-					AUIGrid.setGridData(_myGridID_, history);
+		<div id="_grid_wrap_" style="height: 550px; border-top: 1px solid #3180c3;"></div>
+		<script type="text/javascript">
+			let _myGridID_;
+			const history =
+		<%=history%>
+			const _columns_ = [ {
+				dataField : "type",
+				headerText : "타입",
+				dataType : "string",
+				width : 80
+			}, {
+				dataField : "role",
+				headerText : "역할",
+				dataType : "string",
+				width : 80
+			}, {
+				dataField : "name",
+				headerText : "제목",
+				dataType : "string",
+				style : "aui-left"
+			}, {
+				dataField : "state",
+				headerText : "상태",
+				dataType : "string",
+				width : 100
+			}, {
+				dataField : "owner",
+				headerText : "담당자",
+				dataType : "string",
+				width : 100
+			}, {
+				dataField : "receiveDate_txt",
+				headerText : "수신일",
+				dataType : "string",
+				width : 130
+			}, {
+				dataField : "completeDate_txt",
+				headerText : "완료일",
+				dataType : "string",
+				width : 130
+			}, {
+				dataField : "description",
+				headerText : "결재의견",
+				dataType : "string",
+				style : "aui-left",
+				width : 450,
+			}, ]
+			function _createAUIGrid_(columnLayout) {
+				const props = {
+					headerHeight : 30,
+					showRowNumColumn : true,
+					rowNumHeaderText : "번호",
+					selectionMode : "singleRow",
+					noDataMessage : "결재이력이 없습니다.",
+					enableSorting : false
 				}
-			</script>
-		</div>
+				_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
+				AUIGrid.setGridData(_myGridID_, history);
+			}
+		</script>
 	</div>
 </div>
 <script type="text/javascript">
@@ -444,7 +434,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				case "tabs-2":
 					createAUIGrid(_columns_);
 					AUIGrid.resize(_myGridID_);
-					break;					
+					break;
 				}
 			},
 			activate : function(event, ui) {

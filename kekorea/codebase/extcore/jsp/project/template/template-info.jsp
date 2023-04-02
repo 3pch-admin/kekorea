@@ -295,13 +295,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 <script type="text/javascript">
 	function auiGridSelectionChangeHandler(event) {
+		const dataField = event.primeCell.dataField;
 		const item = event.selectedItems[0].item;
 		const oid = document.getElementById("oid").value;
 		const iframe = document.getElementById("view");
-		if (item.type == "template") {
-			iframe.src = "/Windchill/plm/template/view?oid=" + oid;
-		} else if (item.type == "task" && !item.isNew) {
-			iframe.src = "/Windchill/plm/template/task?oid=" + oid + "&toid=" + item.oid;
+		if (dataField === "name") {
+			if (item.type == "template") {
+				iframe.src = "/Windchill/plm/template/view?oid=" + oid;
+			} else if (item.type == "task" && !item.isNew) {
+				iframe.src = "/Windchill/plm/template/task?oid=" + oid + "&toid=" + item.oid;
+			}
 		}
 	}
 

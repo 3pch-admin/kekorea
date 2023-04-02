@@ -20,6 +20,7 @@ import e3ps.doc.service.DocumentHelper;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.output.Output;
+import e3ps.project.output.OutputDocumentLink;
 import e3ps.project.service.ProjectHelper;
 import e3ps.project.task.Task;
 import e3ps.project.task.variable.TaskStateVariable;
@@ -31,6 +32,7 @@ import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.folder.Folder;
 import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
@@ -83,7 +85,6 @@ public class StandardRequestDocumentService extends StandardManager implements R
 
 	@Override
 	public void create(RequestDocumentDTO dto) throws Exception {
-		String oid = dto.getOid();
 		String name = dto.getName();
 		String template = dto.getTemplate();
 		String description = dto.getDescription();
@@ -92,6 +93,9 @@ public class StandardRequestDocumentService extends StandardManager implements R
 		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
 		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
 		ArrayList<String> primarys = dto.getPrimarys();
+		String toid = dto.getToid();
+		String poid = dto.getPoid();
+		boolean connect = dto.isConnect();
 		// 태스크에서 바로 연결 시킬떄 생각..
 		Transaction trs = new Transaction();
 		try {
@@ -122,8 +126,29 @@ public class StandardRequestDocumentService extends StandardManager implements R
 				ContentServerHelper.service.updateContent(requestDocument, applicationData, primary);
 			}
 
-			if (StringUtils.isNull(oid)) {
+			if (!connect) {
+				// 연결 안함
 				auiGridDataSave(requestDocument, template, addRows);
+			} else {
+				// 연결
+				Project project = (Project) CommonUtils.getObject(poid);
+				Task task = (Task) CommonUtils.getObject(toid);
+				task.setState(TaskStateVariable.INWORK);
+				task.setStartDate(new Timestamp(new Date().getTime()));
+				task = (Task) PersistenceHelper.manager.modify(task);
+
+				Output output = Output.newOutput();
+				output.setName(requestDocument.getName());
+				output.setLocation(requestDocument.getLocation());
+				output.setTask(task);
+				output.setProject(project);
+				output.setDocument(requestDocument);
+				output.setOwnership(CommonUtils.sessionOwner());
+				output = (Output) PersistenceHelper.manager.save(output);
+
+				RequestDocumentProjectLink link = RequestDocumentProjectLink
+						.newRequestDocumentProjectLink(requestDocument, project);
+				PersistenceHelper.manager.save(link);
 			}
 
 			// 결재시작
@@ -246,6 +271,8 @@ public class StandardRequestDocumentService extends StandardManager implements R
 				// 템플릿 선택여부
 				if (!StringUtils.isNull(template)) {
 					Template copy = (Template) CommonUtils.getObject(template);
+					project.setTemplate(copy);
+					project = (Project) PersistenceHelper.manager.modify(project);
 					copyTasks(project, copy, requestDocument);
 
 					WTUser pm = TemplateHelper.manager.getUserType(copy, "PM");
@@ -385,6 +412,79 @@ public class StandardRequestDocumentService extends StandardManager implements R
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
+		}
+	}
+
+	@Override
+	public void delete(String oid) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			RequestDocument requestDocument = (RequestDocument) CommonUtils.getObject(oid);
+			QueryResult qr = PersistenceHelper.manager.navigate(requestDocument, "project",
+					RequestDocumentProjectLink.class, false);
+			while (qr.hasMoreElements()) {
+				RequestDocumentProjectLink link = (RequestDocumentProjectLink) qr.nextElement();
+				PersistenceHelper.manager.delete(link);
+			}
+
+			QueryResult result = PersistenceHelper.manager.navigate(requestDocument, "output", OutputDocumentLink.class,
+					false);
+			while (result.hasMoreElements()) {
+				OutputDocumentLink link = (OutputDocumentLink) result.nextElement();
+				Output output = link.getOutput();
+				PersistenceHelper.manager.delete(output);
+				PersistenceHelper.manager.delete(link);
+			}
+
+			PersistenceHelper.manager.delete(requestDocument);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+
+	}
+
+	@Override
+	public void disconnect(String oid) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			RequestDocument requestDocument = (RequestDocument) CommonUtils.getObject(oid);
+			QueryResult qr = PersistenceHelper.manager.navigate(requestDocument, "project",
+					RequestDocumentProjectLink.class, false);
+			while (qr.hasMoreElements()) {
+				RequestDocumentProjectLink link = (RequestDocumentProjectLink) qr.nextElement();
+				PersistenceHelper.manager.delete(link);
+			}
+
+			QueryResult result = PersistenceHelper.manager.navigate(requestDocument, "output", OutputDocumentLink.class,
+					false);
+			while (result.hasMoreElements()) {
+				OutputDocumentLink link = (OutputDocumentLink) result.nextElement();
+				Output output = link.getOutput();
+				PersistenceHelper.manager.delete(output);
+				PersistenceHelper.manager.delete(link);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
 		}
 	}
 }

@@ -55,8 +55,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('approval-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('approval-list');">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('approval-list');">
-					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('approval-list');">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -198,10 +196,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
-<<<<<<< HEAD
-
-=======
->>>>>>> 2b1d8067d6c347643e570d3e4af6886b40c0d6db
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
@@ -216,17 +210,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const url = getCallUrl("/workspace/approval");
 				const params = new Object();
 				const approvalTitle = document.getElementById("approvalTitle").value;
-<<<<<<< HEAD
-				const psize = document.getElementById("psize").value;
-				const submiterOid = document.getElementById("submiterOid").value;
-				const receiveFrom = document.getElementById("receiveFrom").value;
-				const receiveTo = document.getElementById("receiveTo").value;
-=======
 				const submiterOid = document.getElementById("submiterOid").value;
 				const receiveFrom = document.getElementById("receiveFrom").value;
 				const receiveTo = document.getElementById("receiveTo").value;
 				const psize = document.getElementById("psize").value;
->>>>>>> 2b1d8067d6c347643e570d3e4af6886b40c0d6db
 				params.approvalTitle = approvalTitle;
 				params.submiterOid = submiterOid;
 				params.receiveFrom = receiveFrom;
@@ -250,6 +237,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("approvalTitle").focus();
 				const columns = loadColumnLayout("approval-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

@@ -50,6 +50,9 @@ public class RequestDocumentDTO {
 	private ArrayList<Map<String, String>> receiveRows = new ArrayList<>(); // 수신
 	private ArrayList<String> primarys = new ArrayList<>();
 	private String template;
+	private String poid;
+	private String toid;
+	private boolean connect;
 
 	public RequestDocumentDTO() {
 

@@ -4,8 +4,6 @@ package e3ps.bom.partlist.service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import e3ps.bom.partlist.MasterDataLink;
@@ -13,20 +11,17 @@ import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.dto.PartListDTO;
-import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.common.util.StringUtils;
 import e3ps.doc.service.DocumentHelper;
 import e3ps.project.Project;
-import e3ps.project.output.DocumentOutputLink;
 import e3ps.project.output.Output;
-import e3ps.project.output.ProjectOutputLink;
-import e3ps.project.output.TaskOutputLink;
+import e3ps.project.output.OutputDocumentLink;
 import e3ps.project.service.ProjectHelper;
 import e3ps.project.task.Task;
+import e3ps.project.task.variable.TaskStateVariable;
+import e3ps.project.variable.ProjectStateVariable;
 import e3ps.workspace.service.WorkspaceHelper;
 import wt.clients.folder.FolderTaskLogic;
 import wt.content.ApplicationData;
@@ -34,17 +29,12 @@ import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
-import wt.fc.ReferenceFactory;
 import wt.folder.Folder;
 import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
-import wt.lifecycle.LifeCycleManaged;
-import wt.org.WTUser;
-import wt.ownership.Ownership;
 import wt.pom.Transaction;
 import wt.query.QuerySpec;
 import wt.services.StandardManager;
-import wt.session.SessionHelper;
 import wt.util.WTAttributeNameIfc;
 import wt.util.WTException;
 
@@ -117,6 +107,8 @@ public class StandardPartlistService extends StandardManager implements Partlist
 		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
 		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
 		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
+		String toid = dto.getToid();
+		int progress = dto.getProgress();
 
 		String location = "/Default/프로젝트/" + engType + "_수배표";
 
@@ -124,32 +116,28 @@ public class StandardPartlistService extends StandardManager implements Partlist
 		try {
 			trs.start();
 
+			// 선택해서 온 태스크
+			Task task = (Task) CommonUtils.getObject(toid);
+
 			String number = DocumentHelper.manager.getNextNumber("PP-");
-			PartListMaster partListMaster = PartListMaster.newPartListMaster();
-			partListMaster.setNumber(number);
-			partListMaster.setName(name);
-			partListMaster.setDescription(description);
-			partListMaster.setOwnership(CommonUtils.sessionOwner());
+			PartListMaster master = PartListMaster.newPartListMaster();
+			master.setNumber(number);
+			master.setName(name);
+			master.setDescription(description);
+			master.setOwnership(CommonUtils.sessionOwner());
 
 			// 위치는 기계 수배표 전기 수배표로 몰빵..
 			Folder folder = FolderTaskLogic.getFolder(location, CommonUtils.getContainer());
-			FolderHelper.assignLocation((FolderEntry) partListMaster, folder);
+			FolderHelper.assignLocation((FolderEntry) master, folder);
 
-			partListMaster = (PartListMaster) PersistenceHelper.manager.save(partListMaster);
+			master = (PartListMaster) PersistenceHelper.manager.save(master);
 
-			for (String secondary : secondarys) {
-				ApplicationData applicationData = ApplicationData.newApplicationData(partListMaster);
+			for (int i = 0; i < secondarys.size(); i++) {
+				String secondary = (String) secondarys.get(i);
+				ApplicationData applicationData = ApplicationData.newApplicationData(master);
 				applicationData.setRole(ContentRoleType.SECONDARY);
 				PersistenceHelper.manager.save(applicationData);
-				ContentServerHelper.service.updateContent(partListMaster, applicationData, secondary);
-			}
-
-			for (Map<String, Object> _addRow : _addRows) {
-				String oid = (String) _addRow.get("oid");
-				Project project = (Project) CommonUtils.getObject(oid);
-				PartListMasterProjectLink link = PartListMasterProjectLink.newPartListMasterProjectLink(partListMaster,
-						project);
-				PersistenceHelper.manager.save(link);
+				ContentServerHelper.service.updateContent(master, applicationData, secondary);
 			}
 
 			int sort = 0;
@@ -201,15 +189,94 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				data.setSort(sort);
 				PersistenceHelper.manager.save(data);
 
-				MasterDataLink link = MasterDataLink.newMasterDataLink(partListMaster, data);
+				MasterDataLink link = MasterDataLink.newMasterDataLink(master, data);
 				link.setSort(sort);
 				PersistenceHelper.manager.save(link);
 				sort++;
 			}
 
+			double totalPrice = 0D;
+			for (Map<String, Object> _addRow : _addRows) {
+				String oid = (String) _addRow.get("oid");
+				Project project = (Project) CommonUtils.getObject(oid);
+
+				if ("기계".equals(engType)) {
+					double outputMachinePrice = project.getOutputMachinePrice() != null
+							? project.getOutputMachinePrice()
+							: 0D;
+					outputMachinePrice += totalPrice;
+					project.setOutputMachinePrice(outputMachinePrice);
+				} else if ("전기".equals(engType)) {
+					double outputElecPrice = project.getOutputElecPrice() != null ? project.getOutputElecPrice() : 0D;
+					outputElecPrice += totalPrice;
+					project.setOutputElecPrice(outputElecPrice);
+				}
+				PersistenceHelper.manager.modify(project);
+
+				// 기계_수배표 전기_수배표
+				Task parentTask = ProjectHelper.manager.getTaskByName(project, task.getName());
+				// 1차수배 2차수배
+				Task t = ProjectHelper.manager.getTaskByParent(project, parentTask);
+				if (t == null) {
+					throw new Exception(project.getKekNumber() + "작번에 태스크(1차_수배, 2차_수배)가 존재하지 않습니다.");
+				}
+				master.setEngType(engType + "_" + t.getName());
+				PartListMasterProjectLink link = PartListMasterProjectLink.newPartListMasterProjectLink(master,
+						project);
+				PersistenceHelper.manager.save(link);
+
+				// 산출물
+				Output output = Output.newOutput();
+				output.setName(master.getName());
+				output.setLocation(master.getLocation());
+				output.setTask(t);
+				output.setProject(project);
+				output.setDocument(master);
+				output.setOwnership(CommonUtils.sessionOwner());
+				output = (Output) PersistenceHelper.manager.save(output);
+
+				// 태스크
+				if (t.getStartDate() == null) {
+					// 중복적으로 실제 시작일이 변경 되지 않게
+					t.setStartDate(DateUtils.getCurrentTimestamp());
+				}
+
+				if (progress >= 100) {
+					t.setEndDate(DateUtils.getCurrentTimestamp());
+					t.setState(TaskStateVariable.COMPLETE);
+					t.setProgress(100);
+				} else {
+					t.setState(TaskStateVariable.INWORK);
+					t.setProgress(progress);
+				}
+				t = (Task) PersistenceHelper.manager.modify(t);
+
+				// 무조건 부모는 존재 한다
+				Task pTask = t.getParentTask();
+				if (pTask.getStartDate() == null) {
+					pTask.setStartDate(DateUtils.getCurrentTimestamp());
+					pTask.setState(TaskStateVariable.INWORK);
+				}
+				PersistenceHelper.manager.modify(pTask);
+
+				// 시작이 된 흔적이 없을 경우
+				if (project.getStartDate() == null) {
+					project.setStartDate(DateUtils.getCurrentTimestamp());
+					project.setKekState(ProjectStateVariable.KEK_INWORK);
+					project.setState(ProjectStateVariable.INWORK);
+					project = (Project) PersistenceHelper.manager.modify(project);
+				}
+
+				ProjectHelper.service.calculation(project);
+				ProjectHelper.service.commit(project);
+			}
+
+			master.setTotalPrice(totalPrice);
+			PersistenceHelper.manager.modify(master);
+
 			// 결재시작
 			if (approvalRows.size() > 0) {
-				WorkspaceHelper.service.register(partListMaster, agreeRows, approvalRows, receiveRows);
+				WorkspaceHelper.service.register(master, agreeRows, approvalRows, receiveRows);
 			}
 
 			trs.commit();
@@ -229,6 +296,46 @@ public class StandardPartlistService extends StandardManager implements Partlist
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void disconnect(String oid) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
+
+			QuerySpec query = new QuerySpec();
+			int idx = query.appendClassList(PartListMaster.class, true);
+			int idx_link = query.appendClassList(PartListMasterProjectLink.class, true);
+			QuerySpecUtils.toInnerJoin(query, PartListMaster.class, PartListMasterProjectLink.class,
+					WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx, idx_link);
+			QuerySpecUtils.toEqualsAnd(query, idx_link, PartListMasterProjectLink.class, "roleAObjectRef.key.id",
+					master);
+			QueryResult qr = PersistenceHelper.manager.find(query);
+			while (qr.hasMoreElements()) {
+				Object[] obj = (Object[]) qr.nextElement();
+				PartListMasterProjectLink link = (PartListMasterProjectLink) obj[1];
+				PersistenceHelper.manager.delete(link);
+			}
+
+			QueryResult result = PersistenceHelper.manager.navigate(master, "output", OutputDocumentLink.class);
+			while (result.hasMoreElements()) {
+				Output output = (Output) result.nextElement();
+				PersistenceHelper.manager.delete(output);
+			}
 
 			trs.commit();
 			trs = null;

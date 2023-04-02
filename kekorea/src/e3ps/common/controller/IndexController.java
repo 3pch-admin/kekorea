@@ -20,6 +20,8 @@ import e3ps.doc.meeting.service.MeetingHelper;
 import e3ps.korea.cip.service.CipHelper;
 import e3ps.org.dto.UserDTO;
 import e3ps.org.service.OrgHelper;
+import e3ps.workspace.notice.service.NoticeHelper;
+import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -32,6 +34,23 @@ public class IndexController extends BaseController {
 	public ModelAndView index() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("content:/index");
+		return model;
+	}
+
+	@Description(value = "메인 첫 화면 페이지")
+	@GetMapping(value = "/firstPage")
+	public ModelAndView firstPage() throws Exception {
+		ModelAndView model = new ModelAndView();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		UserDTO data = new UserDTO(sessionUser);
+		boolean isAdmin = CommonUtils.isAdmin();
+		JSONArray nList = NoticeHelper.manager.firstPageData();
+		JSONArray aList = WorkspaceHelper.manager.firstPageData(sessionUser);
+		model.addObject("aList", aList);
+		model.addObject("nList", nList);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("data", data);
+		model.setViewName("/extcore/layout/firstPage.jsp");
 		return model;
 	}
 

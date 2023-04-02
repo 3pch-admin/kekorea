@@ -9,6 +9,8 @@ import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
@@ -20,12 +22,16 @@ import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.dto.ProjectDTO;
+import e3ps.project.output.Output;
+import e3ps.project.output.OutputTaskLink;
+import e3ps.project.task.ParentTaskChildTaskLink;
 import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.task.variable.TaskStateVariable;
 import e3ps.project.template.Template;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import wt.doc.WTDocument;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -138,42 +144,6 @@ public class ProjectHelper {
 //		}
 //	}
 //
-	public int getKekProgress(Project project) throws Exception {
-		int progress = 0;
-
-		ArrayList<Task> list = new ArrayList<Task>();
-		list = getterProjectTask(project, list);
-
-		int sumAllocate = 0;
-		int sumProgress = 0;
-		// 모든 태스크 수집
-
-		for (Task task : list) {
-
-			if (task.getTaskType().getName().equals("일반")) {
-				continue;
-			}
-
-			int allocate = task.getAllocate() != null ? task.getAllocate() : 0;
-			int tprogress = task.getProgress() != null ? task.getProgress() : 0;
-
-			sumProgress += (allocate * tprogress);
-
-			sumAllocate += allocate;
-
-			// 기계 진행율 = SUM(기계Task 각각의 할당률xTask 진행률)/SUM(기계Task 각각의 할당률)
-
-			// 전기 진행율 = SUM(전기Task 각각의 할당률xTask 진행률)/SUM(전기Task 각각의 할당률)
-			// 기계 진행율 = SUM(기계Task 각각의 할당률xTask 진행률)/SUM(기계Task 각각의 할당률)
-			// 작번 진행율 = SUM(Task 각각의 할당률xTask 진행률)/SUM(Task 각각의 할당률)
-
-		}
-
-		if (sumAllocate != 0) {
-			progress = sumProgress / sumAllocate;
-		}
-		return progress;
-	}
 
 	public int getElecAllocateProgress(Project project) throws Exception {
 		int progress = 0;
@@ -3187,19 +3157,17 @@ public class ProjectHelper {
 		if (!StringUtils.isNull(customer_name)) {
 			CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer_name);
 			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "customerReference.key.id",
-					customerCode.getPersistInfo().getObjectIdentifier().getId());
+					customerCode);
 		}
 
 		if (!StringUtils.isNull(install_name)) {
 			CommonCode installCode = (CommonCode) CommonUtils.getObject(install_name);
-			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "installReference.key.id",
-					installCode.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "installReference.key.id", installCode);
 		}
 
 		if (!StringUtils.isNull(projectType)) {
 			CommonCode projectTypeCode = (CommonCode) CommonUtils.getObject(projectType);
-			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "projectTypeReference.key.id",
-					projectTypeCode.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "projectTypeReference.key.id", projectTypeCode);
 		}
 
 		if (!StringUtils.isNull(machineOid)) {
@@ -3212,10 +3180,9 @@ public class ProjectHelper {
 					"roleAObjectRef.key.id", idx, idx_plink);
 			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 					"roleBObjectRef.key.id", idx_u, idx_plink);
-			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
-					machine.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", machine);
 			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id",
-					machineCode.getPersistInfo().getObjectIdentifier().getId());
+					machineCode);
 		}
 
 		if (!StringUtils.isNull(elecOid)) {
@@ -3228,10 +3195,8 @@ public class ProjectHelper {
 					"roleAObjectRef.key.id", idx, idx_plink);
 			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 					"roleBObjectRef.key.id", idx_u, idx_plink);
-			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
-					elec.getPersistInfo().getObjectIdentifier().getId());
-			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id",
-					elecCode.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", elec);
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id", elecCode);
 		}
 
 		if (!StringUtils.isNull(softOid)) {
@@ -3244,28 +3209,23 @@ public class ProjectHelper {
 					"roleAObjectRef.key.id", idx, idx_plink);
 			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 					"roleBObjectRef.key.id", idx_u, idx_plink);
-			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
-					soft.getPersistInfo().getObjectIdentifier().getId());
-			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id",
-					softCode.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", soft);
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id", softCode);
 		}
 
 		if (!StringUtils.isNull(mak_name)) {
 			CommonCode makCode = (CommonCode) CommonUtils.getObject(mak_name);
-			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "makReference.key.id",
-					makCode.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "makReference.key.id", makCode);
 		}
 
 		if (!StringUtils.isNull(detail_name)) {
 			CommonCode detailCode = (CommonCode) CommonUtils.getObject(detail_name);
-			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "detailReference.key.id",
-					detailCode.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "detailReference.key.id", detailCode);
 		}
 
 		if (!StringUtils.isNull(template)) {
 			Template t = (Template) CommonUtils.getObject(template);
-			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "templateReference.key.id",
-					t.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "templateReference.key.id", t);
 		}
 
 		QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.DESCRIPTION, description);
@@ -3447,12 +3407,15 @@ public class ProjectHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(RequestDocumentProjectLink.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, RequestDocumentProjectLink.class, "roleBObjectRef.key.id", project);
+		QuerySpecUtils.toOrderBy(query, idx, RequestDocumentProjectLink.class,
+				RequestDocumentProjectLink.CREATE_TIMESTAMP, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			RequestDocumentProjectLink link = (RequestDocumentProjectLink) obj[0];
 			RequestDocument requestDocument = link.getRequestDocument();
 			Map<String, String> map = new HashMap<>();
+			map.put("oid", requestDocument.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("name", requestDocument.getName());
 			map.put("version", requestDocument.getVersionIdentifier().getSeries().getValue() + "."
 					+ requestDocument.getIterationIdentifier().getSeries().getValue());
@@ -3463,5 +3426,295 @@ public class ProjectHelper {
 			list.add(map);
 		}
 		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 작번 기본 산출물
+	 */
+	public JSONArray jsonAuiNormal(Project project, Task task) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Output.class, true); // ... inner join 필요 없을..
+		QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "taskReference.key.id", task);
+		QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "projectReference.key.id", project);
+		QuerySpecUtils.toOrderBy(query, idx, Output.class, Output.CREATE_TIMESTAMP, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Output output = (Output) obj[0];
+			WTDocument document = (WTDocument) output.getDocument();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", output.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", document.getName());
+			map.put("version", document.getVersionIdentifier().getSeries().getValue() + "."
+					+ document.getIterationIdentifier().getSeries().getValue());
+			map.put("state", document.getLifeCycleState().getDisplay());
+			map.put("creator", document.getCreatorFullName());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(document.getCreateTimestamp()));
+			map.put("primary", AUIGridUtils.primaryTemplate(document));
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 태스크 이름이 일치하는 태스크가 있는지 검색 프로젝트 내에서
+	 */
+	public Task getTaskByName(Project project, String name) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Task.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "projectReference.key.id", project);
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, Task.NAME, name);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			return (Task) obj[0];
+		}
+		return null;
+	}
+
+	/**
+	 * 국제에 맞는 KEK 진행율 가져오기 계산식 들어감
+	 */
+	public int getKekProgress(Project project) throws Exception {
+		int kekProgress = 0;
+		String[] taskTypes = new String[] { "COMMON", "MACHINE", "ELEC", "SOFT" };
+		ArrayList<Task> list = recurciveTask(project, taskTypes);
+
+		int sumAllocate = 0;
+		int sumProgress = 0;
+		for (Task task : list) {
+
+			int allocate = task.getAllocate() != null ? task.getAllocate() : 0;
+			int tprogress = task.getProgress() != null ? task.getProgress() : 0;
+
+			sumProgress += (allocate * tprogress);
+			sumAllocate += allocate;
+		}
+
+		if (sumAllocate != 0) {
+			kekProgress = sumProgress / sumAllocate;
+		}
+		return kekProgress;
+	}
+
+	public ArrayList<Task> recurciveTask(Project project) throws Exception {
+		return recurciveTask(project, null);
+	}
+
+	/**
+	 * 모든 프로젝트 태스크 재귀함수 태스크 타입 조건 추가
+	 */
+	public ArrayList<Task> recurciveTask(Project project, String[] taskTypes) throws Exception {
+		ArrayList<Task> list = new ArrayList<Task>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Task.class, true);
+
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "projectReference.key.id",
+				project.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id", 0L);
+
+		if (taskTypes != null) {
+			long[] ids = new long[taskTypes.length];
+			for (int i = 0; i < taskTypes.length; i++) {
+				String taskType = taskTypes[i];
+				CommonCode taskTypeCode = CommonCodeHelper.manager.getCommonCode(taskType, "TASK_TYPE");
+				ids[i] = taskTypeCode.getPersistInfo().getObjectIdentifier().getId();
+			}
+			QuerySpecUtils.toIn(query, idx, Task.class, "taskTypeReference.key.id", ids);
+		}
+
+		QuerySpecUtils.toOrderBy(query, idx, Task.class, Task.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Task task = (Task) obj[0];
+			list.add(task);
+			recurciveTask(project, task, list, taskTypes);
+		}
+		return list;
+	}
+
+	/**
+	 * 모든 프로젝트 태스크 재귀함수 태스크 타입 조건 추가
+	 */
+	private void recurciveTask(Project project, Task parentTask, ArrayList<Task> list, String[] taskTypes)
+			throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Task.class, true);
+
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "projectReference.key.id",
+				project.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id", parentTask);
+		if (taskTypes != null) {
+			long[] ids = new long[taskTypes.length];
+			for (int i = 0; i < taskTypes.length; i++) {
+				String taskType = taskTypes[i];
+				CommonCode taskTypeCode = CommonCodeHelper.manager.getCommonCode(taskType, "TASK_TYPE");
+				ids[i] = taskTypeCode.getPersistInfo().getObjectIdentifier().getId();
+			}
+			QuerySpecUtils.toIn(query, idx, Task.class, "taskTypeReference.key.id", ids);
+		}
+
+		QuerySpecUtils.toOrderBy(query, idx, Task.class, Task.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Task task = (Task) obj[0];
+			list.add(task);
+			recurciveTask(project, task, list, taskTypes);
+		}
+	}
+
+	/**
+	 * 프로젝트 수배표 통합목록
+	 */
+	public JSONArray jsonAuiPartlist(Project project, Task task) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+
+		QueryResult qr = PersistenceHelper.manager.navigate(task, "childTask", ParentTaskChildTaskLink.class);
+		while (qr.hasMoreElements()) {
+			Task child = (Task) qr.nextElement();
+			QuerySpec query = new QuerySpec();
+			int idx = query.appendClassList(Output.class, true);
+			QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "projectReference.key.id", project);
+			QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "taskReference.key.id", child);
+			QuerySpecUtils.toOrderBy(query, idx, Output.class, Output.CREATE_TIMESTAMP, true);
+			QueryResult result = PersistenceHelper.manager.find(query);
+			while (result.hasMoreElements()) {
+				Object[] obj = (Object[]) result.nextElement();
+				Output output = (Output) obj[0];
+				PartListMaster master = (PartListMaster) output.getDocument();
+				Map<String, String> map = new HashMap<>();
+				map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("name", master.getName());
+				map.put("engType", master.getEngType());
+				map.put("state", master.getLifeCycleState().getDisplay());
+				map.put("creator", master.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+				map.put("primary", AUIGridUtils.primaryTemplate(master));
+				list.add(map);
+			}
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 부모 태스크와 연관된 자식 태스크 가져오기.. 수배표에서만 사용용도
+	 */
+	public Task getTaskByParent(Project project, Task parentTask) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Task.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "projectReference.key.id", project);
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id", parentTask);
+		QuerySpecUtils.toOrderBy(query, idx, Task.class, Task.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		Task task = null;
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			task = (Task) obj[0];
+			// 기존 태스크랑 연결된 수배표가 있다면 패스 시킨다. // 0개 1차수배 2차수배 1개이후 쿼리대로 2차 수배만 계속 리턴
+			QueryResult qr = PersistenceHelper.manager.navigate(task, "output", OutputTaskLink.class);
+			if (qr.size() == 0) {
+				break;
+			}
+		}
+		return task;
+	}
+
+	/**
+	 * 프로젝트 태스크 전체 진행율 계산
+	 */
+	public void calculation(Project project) throws Exception {
+		ArrayList<Task> list = recurciveTask(project);
+
+		for (Task tt : list) {
+			QuerySpec query = new QuerySpec();
+			int idx = query.appendClassList(Task.class, true);
+			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id", tt);
+			QuerySpecUtils.toOrderBy(query, idx, Task.class, Task.SORT, false);
+			QueryResult result = PersistenceHelper.manager.find(query);
+			int sum = 0;
+			while (result.hasMoreElements()) {
+				Object[] obj = (Object[]) result.nextElement();
+				Task task = (Task) obj[0];
+				sum += task.getProgress();
+			}
+
+			if (result.size() != 0) {
+				int comp = sum / result.size();
+				tt.setProgress(comp);
+
+				if (tt.getStartDate() == null) {
+					tt.setStartDate(DateUtils.getCurrentTimestamp());
+				}
+
+				tt.setState(TaskStateVariable.INWORK);
+
+				if (comp == 100) {
+					// 실제 완료일이 매번 변경안되도록
+					if (tt.getEndDate() == null) {
+						tt.setEndDate(DateUtils.getCurrentTimestamp());
+					}
+					// 어차피 100일 경우 무조건 완료
+					tt.setState(TaskStateVariable.COMPLETE);
+				}
+				PersistenceHelper.manager.modify(tt);
+			}
+		}
+
+	}
+
+	/**
+	 * 각 태스크와 관련된 수배표 리스트
+	 */
+	public JSONArray jsonAuiStepPartlist(Project project, Task task) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Output.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "projectReference.key.id", project);
+		QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "taskReference.key.id", task);
+		QuerySpecUtils.toOrderBy(query, idx, Output.class, Output.CREATE_TIMESTAMP, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Output output = (Output) obj[0];
+			PartListMaster master = (PartListMaster) output.getDocument();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", master.getName());
+			map.put("engType", master.getEngType());
+			map.put("state", master.getLifeCycleState().getDisplay());
+			map.put("creator", master.getCreatorFullName());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+			map.put("primary", AUIGridUtils.primaryTemplate(master));
+			list.add(map);
+		}
+
+		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 기계 전기 진행율
+	 */
+	public int getTaskProgress(Project project, String taskType) throws Exception {
+		int progress = 0;
+		ArrayList<Task> list = recurciveTask(project, new String[] { taskType });
+		int sumAllocate = 0;
+		int sumProgress = 0;
+		// 모든 태스크 수집
+		for (Task task : list) {
+			int allocate = task.getAllocate() != null ? task.getAllocate() : 0;
+			int tprogress = task.getProgress() != null ? task.getProgress() : 0;
+			sumProgress += (allocate * tprogress);
+			sumAllocate += allocate;
+			// 기계 진행율 = SUM(기계Task 각각의 할당률xTask 진행률)/SUM(기계Task 각각의 할당률)
+		}
+		if (sumAllocate != 0) {
+			progress = sumProgress / sumAllocate;
+		}
+		return progress;
 	}
 }

@@ -10,7 +10,7 @@ import wt.util.WTException;
 
 @GenAsBinaryLink(superClass = ObjectToObjectLink.class,
 
-		roleA = @GeneratedRole(name = "partListMaster", type = PartListMaster.class),
+		roleA = @GeneratedRole(name = "master", type = PartListMaster.class),
 
 		roleB = @GeneratedRole(name = "project", type = Project.class),
 

@@ -29,10 +29,13 @@ import e3ps.common.util.ContentUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.project.output.DocumentOutputLink;
 import e3ps.project.output.Output;
+import e3ps.project.output.OutputDocumentLink;
+import e3ps.project.output.OutputTaskLink;
 import e3ps.project.output.TaskOutputLink;
 import e3ps.project.service.ProjectHelper;
 import e3ps.project.service.Schedulers;
 import e3ps.project.task.Task;
+import e3ps.project.task.variable.TaskStateVariable;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
 import wt.content.ContentRoleType;
@@ -51,6 +54,7 @@ import wt.lifecycle.LifeCycleTemplate;
 import wt.lifecycle.State;
 import wt.part.WTPartUsageLink;
 import wt.pom.Transaction;
+import wt.query.QuerySpec;
 import wt.representation.Representation;
 import wt.services.ManagerException;
 import wt.services.StandardManager;
@@ -368,28 +372,24 @@ public class StandardEventService extends StandardManager implements EventServic
 		try {
 			trs.start();
 
-			QueryResult result = PersistenceHelper.manager.navigate(document, "output", DocumentOutputLink.class);
+			QueryResult result = PersistenceHelper.manager.navigate(document, "output", OutputDocumentLink.class,
+					false);
 			while (result.hasMoreElements()) {
-				Output output = (Output) result.nextElement();
+				OutputDocumentLink link = (OutputDocumentLink) result.nextElement();
+				Output output = link.getOutput();
+				LifeCycleManaged dd = link.getDocument();
 
-				QueryResult qr = PersistenceHelper.manager.navigate(output, "task", TaskOutputLink.class);
+				if (!dd.getLifeCycleState().toString().equals("APPROVED")
+						&& !dd.getLifeCycleState().toString().equals("RELEASED")) {
+					isChange = false;
+					break;
+				}
 
-				if (qr.hasMoreElements()) {
-					Task task = (Task) qr.nextElement();
-
-					ArrayList<DocumentOutputLink> list = ProjectHelper.manager.getProjectOutputLink(task);
-					for (DocumentOutputLink link : list) {
-						LifeCycleManaged dd = link.getDocument();
-
-						if (!dd.getLifeCycleState().toString().equals("APPROVED")
-								&& !dd.getLifeCycleState().toString().equals("RELEASED")) {
-							isChange = false;
-							break;
-						}
-					}
-
-					if (isChange) {
-						task.setState(TaskStateType.COMPLETE.getDisplay());
+				if (isChange) {
+					QueryResult qr = PersistenceHelper.manager.navigate(output, "task", OutputTaskLink.class);
+					if (qr.hasMoreElements()) {
+						Task task = (Task) qr.nextElement();
+						task.setState(TaskStateVariable.COMPLETE);
 						PersistenceHelper.manager.modify(task);
 					}
 				}

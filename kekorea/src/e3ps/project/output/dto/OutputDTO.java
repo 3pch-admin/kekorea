@@ -1,6 +1,8 @@
 package e3ps.project.output.dto;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Map;
 
 import e3ps.common.util.StringUtils;
 import lombok.Getter;
@@ -24,6 +26,17 @@ public class OutputDTO {
 	private String modifier;
 	private Timestamp modifiedDate;
 
+	// 변수담기용
+	private ArrayList<Map<String, String>> _addRows = new ArrayList<>(); // 작번
+	private ArrayList<Map<String, String>> agreeRows = new ArrayList<>(); // 검토
+	private ArrayList<Map<String, String>> approvalRows = new ArrayList<>(); // 결재
+	private ArrayList<Map<String, String>> receiveRows = new ArrayList<>(); // 수신
+	private ArrayList<String> primarys = new ArrayList<>();
+	private String poid;
+	private String toid;
+	private boolean connect;
+	private int progress =0;
+	
 	public OutputDTO() {
 
 	}

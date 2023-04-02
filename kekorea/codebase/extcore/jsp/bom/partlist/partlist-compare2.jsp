@@ -1,11 +1,8 @@
-<%@page import="e3ps.project.Project"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.bom.partlist.dto.PartListDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 JSONArray data = (JSONArray) request.getAttribute("data");
-Project p1 = (Project) request.getAttribute("p1");
-Project p2 = (Project) request.getAttribute("p2");
 String oid = (String) request.getAttribute("oid");
 String _oid = (String) request.getAttribute("_oid");
 %>
@@ -22,39 +19,16 @@ String _oid = (String) request.getAttribute("_oid");
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('partlist-compare');">
-			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('partlist-compare');">
-			&nbsp;
-			<div class="pretty p-switch">
-				<input type="checkbox" name="mak" value="partName" onclick="checkboxHandler(event);">
-				<div class="state p-success">
-					<label>
-						<b>품명</b>
-					</label>
+			<div class="pretty p-default p-curve">
+				<input type="radio" name="compareKey" value="lotNo+partNo" checked="checked">
+				<div class="state p-danger-o">
+					<label>LOT+부품번호</label>
 				</div>
 			</div>
-			<div class="pretty p-switch">
-				<input type="checkbox" name="mak" value="standard" onclick="checkboxHandler(event);">
-				<div class="state p-success">
-					<label>
-						<b>규격</b>
-					</label>
-				</div>
-			</div>
-			<div class="pretty p-switch">
-				<input type="checkbox" name="mak" value="maker" onclick="checkboxHandler(event);">
-				<div class="state p-success">
-					<label>
-						<b>MAKER</b>
-					</label>
-				</div>
-			</div>
-			<div class="pretty p-switch">
-				<input type="checkbox" name="mak" value="customer" onclick="checkboxHandler(event);">
-				<div class="state p-success">
-					<label>
-						<b>거래처</b>
-					</label>
+			<div class="pretty p-default p-curve">
+				<input type="radio" name="compareKey" value="lotNo+partNo+quantity">
+				<div class="state p-danger-o">
+					<label>LOT+부품번호+수량</label>
 				</div>
 			</div>
 		</td>
@@ -78,89 +52,172 @@ String _oid = (String) request.getAttribute("_oid");
 	const data =
 <%=data%>
 	const columns = [ {
-		headerText : "<%=p1.getKekNumber()%>",
-		children : [ {
-			dataField : "partNo1",
-			headerText : "부품번호",
-			dataType : "string",
-			width : 120,
-			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-				const partNo2 = item.partNo2;
-				if (value !== partNo2) {
-					return "compare";
-				}
-				return "";
+		dataField : "lotNo1",
+		headerText : "LOT1",
+		dataType : "string",
+		width : 80,
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const lotNo2 = item.lotNo2;
+			if (value !== lotNo2) {
+				return "compare";
 			}
-		} ]
+			return "";
+		}
 	}, {
-		headerText : "<%=p2.getKekNumber()%>",
-		children : [ {
-			dataField : "partNo2",
-			headerText : "부품번호",
-			dataType : "string",
-			width : 120,
-			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-				const partNo1 = item.partNo1;
-				if (value !== partNo1) {
-					return "compare";
-				}
-				return "";
+		dataField : "lotNo2",
+		headerText : "LOT2",
+		dataType : "string",
+		width : 80,
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const lotNo1 = item.lotNo1;
+			if (value !== lotNo1) {
+				return "compare";
 			}
-		} ]
+			return "";
+		}
 	}, {
-		headerText : "<%=p1.getKekNumber()%>",
-		children : [ {
-			dataField : "quantity1",
-			headerText : "수량",
-			dataType : "numeric",
-			width : 120,
-			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-				const quantity2 = item.quantity2;
-				if (value !== quantity2) {
-					return "compare";
-				}
-				return "";
-			}
-		} ]
+		dataField : "unitName",
+		headerText : "UNIT NAME",
+		dataType : "string",
+		width : 120,
 	}, {
-		headerText : "<%=p1.getKekNumber()%>",
-		children : [ {
-			dataField : "quantity2",
-			headerText : "수량",
-			dataType : "numeric",
-			width : 120,
-			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-				const quantity1 = item.quantity1;
-				if (value !== quantity1) {
-					return "compare";
-				}
-				return "";
+		dataField : "partNo1",
+		headerText : "부품번호1",
+		dataType : "string",
+		width : 100,
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const partNo2 = item.partNo2;
+			if (value !== partNo2) {
+				return "compare";
 			}
-		} ]
+			return "";
+		}
+	}, {
+		dataField : "partNo2",
+		headerText : "부품번호2",
+		dataType : "string",
+		width : 100,
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const partNo1 = item.partNo1;
+			if (value !== partNo1) {
+				return "compare";
+			}
+			return "";
+		}
 	}, {
 		dataField : "partName",
 		headerText : "부품명",
 		dataType : "string",
 		width : 200,
-		visible : false
 	}, {
 		dataField : "standard",
 		headerText : "규격",
 		dataType : "string",
 		width : 250,
-		visible : false
 	}, {
 		dataField : "maker",
 		headerText : "MAKER",
 		dataType : "string",
 		width : 130,
-		visible : false
 	}, {
 		dataField : "customer",
 		headerText : "거래처",
 		dataType : "string",
 		width : 130,
-		visible : false
+	}, {
+		dataField : "quantity1",
+		headerText : "수량1",
+		dataType : "numeric",
+		width : 60,
+		postfix : "개",
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const quantity2 = item.quantity2;
+			if (value !== quantity2) {
+				return "compare";
+			}
+			return "";
+		}
+	}, {
+		dataField : "quantity2",
+		headerText : "수량2",
+		dataType : "numeric",
+		width : 60,
+		postfix : "개",
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const quantity1 = item.quantity1;
+			if (value !== quantity1) {
+				return "compare";
+			}
+			return "";
+		}
+	}, {
+		dataField : "unit",
+		headerText : "단위",
+		dataType : "string",
+		width : 80,
+	}, {
+		dataField : "price",
+		headerText : "단가",
+		dataType : "numeric",
+		width : 120,
+		postfix : "원"
+	}, {
+		dataField : "currency",
+		headerText : "화폐",
+		dataType : "string",
+		width : 60,
+	}, {
+		dataField : "won1",
+		headerText : "원화금액1",
+		dataType : "numeric",
+		width : 120,
+		postfix : "원",
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const won2 = item.won2;
+			if (value !== won2) {
+				return "compare";
+			}
+			return "";
+		}
+	}, {
+		dataField : "won2",
+		headerText : "원화금액2",
+		dataType : "numeric",
+		width : 120,
+		postfix : "원",
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const won1 = item.won1;
+			if (value !== won1) {
+				return "compare";
+			}
+			return "";
+		}
+	}, {
+		dataField : "partListDate_txt",
+		headerText : "수배일자",
+		dataType : "date",
+		formatString : "yyyy-mm-dd",
+		width : 100,
+	}, {
+		dataField : "exchangeRate",
+		headerText : "환율",
+		dataType : "numeric",
+		width : 80,
+		formatString : "#,##0.0000"
+	}, {
+		dataField : "referDrawing",
+		headerText : "참고도면",
+		dataType : "string",
+		width : 120,
+	}, {
+		dataField : "classification",
+		headerText : "조달구분",
+		dataType : "string",
+		width : 120,
+	}, {
+		dataField : "note",
+		headerText : "비고",
+		dataType : "string",
 	} ]
 
 	const footerLayout = [ {
@@ -249,16 +306,17 @@ String _oid = (String) request.getAttribute("_oid");
 		if (!confirm("선택한 기준으로 데이터를 다시 비교합니다.")) {
 			return false;
 		}
+		
 
 		const oid = document.getElementById("oid").value;
 		const _oid = document.getElementById("_oid").value;
-// 		const compareKey = document.querySelector("input[name=compareKey]:checked").value;
+		const compareKey = document.querySelector("input[name=compareKey]:checked").value;
 		const sort = document.getElementById("sort").value;
 		const url = getCallUrl("/partlist/compare");
 		const params = new Object();
 		params.oid = oid;
 		params._oid = _oid;
-// 		params.compareKey = compareKey;
+		params.compareKey = compareKey;
 		params.sort = sort;
 		AUIGrid.showAjaxLoader(myGridID);
 		openLayer();
@@ -269,21 +327,6 @@ String _oid = (String) request.getAttribute("_oid");
 				closeLayer();
 			}
 		})
-	}
-
-	function checkboxHandler(event) {
-		const target = event.target || event.srcElement;
-		if (!target) {
-			return;
-		}
-		const dataField = target.value;
-		const checked = target.checked;
-
-		if (checked) {
-			AUIGrid.showColumnByDataField(myGridID, dataField);
-		} else {
-			AUIGrid.hideColumnByDataField(myGridID, dataField);
-		}
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {

@@ -101,7 +101,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('partlist-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('partlist-list');">
-					<input type="button" value="비교" title="비교" class="red" onclick="compare();">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
@@ -117,7 +116,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 635px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -295,14 +294,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					showRowCheckColumn : true,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -311,6 +309,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					enableCellMerge : true,
 					fixedColumnCount : 1,
+					forceTreeView : true
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
@@ -332,22 +331,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					const url = getCallUrl("/partlist/view?oid=" + item.loid);
 					popup(url, 1700, 800);
 				}
-			}
-
-			function compare() {
-				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				if (checkedItems.length <= 0) {
-					alert("비교할 수배표를 선택하세요.");
-					return;
-				}
-				if (checkedItems.length !== 2) {
-					alert("비교할 수배표를 2개 선택하세요.");
-					return;
-				}
-				const oid = checkedItems[0].item.oid;
-				const _oid = checkedItems[1].item.oid;
-				const url = getCallUrl("/partlist/compare?oid=" + oid + "&_oid=" + _oid);
-				popup(url);
 			}
 
 			function loadGridData() {

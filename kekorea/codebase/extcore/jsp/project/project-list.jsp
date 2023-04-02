@@ -10,6 +10,8 @@ ArrayList<Map<String, String>> projectTypes = (ArrayList<Map<String, String>>) r
 ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) request.getAttribute("list");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+String before = (String) request.getAttribute("before");
+String end = (String) request.getAttribute("end");
 %>
 <!DOCTYPE html>
 <html>
@@ -51,9 +53,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				</td>
 				<th>발행일</th>
 				<td class="indent5">
-					<input type="text" name="pdateFrom" id="pdateFrom" class="width-100">
+					<input type="text" name="pdateFrom" id="pdateFrom" class="width-100" value="<%=before%>">
 					~
-					<input type="text" name="pdateTo" id="pdateTo" class="width-100">
+					<input type="text" name="pdateTo" id="pdateTo" class="width-100" value="<%=end%>">
 				</td>
 				<th>USER ID</th>
 				<td class="indent5">
@@ -483,6 +485,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("kekNumber").focus();
 				const columns = loadColumnLayout("project-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

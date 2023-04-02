@@ -30,7 +30,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			if (isAdmin) {
 			%>
 			<input type="button" value="수정" title="수정" onclick="create();">
-			<input type="button" value="삭제" title="삭제" class="red" onclick="create();">
 			<%
 			}
 			%>
@@ -246,7 +245,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					const removeRows = AUIGrid.getRemovedItems(myGridID);
 					const params = new Object();
 					const url = getCallUrl("/project/treeSave");
-					console.log(data);
 					params.json = json;
 					params.removeRows = removeRows;
 					openLayer();
@@ -303,20 +301,26 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 <script type="text/javascript">
 	function auiGridSelectionChangeHandler(event) {
+		const dataField = event.primeCell.dataField;
 		const item = event.selectedItems[0].item;
 		const name = item.name;
 		const oid = document.getElementById("oid").value;
 		const iframe = document.getElementById("view");
 		const taskType = item.taskType;
-		if (item.type == "project") {
-			iframe.src = "/Windchill/plm/project/view?oid=" + oid;
-		} else if (item.type == "task" && !item.isNew) {
-			if (name === "의뢰서") {
-				iframe.src = "/Windchill/plm/project/request?oid=" + oid + "&toid=" + item.oid;
-			} else if (name === "") {
-
-			} else {
-				iframe.src = "/Windchill/plm/project/normal?oid=" + oid + "&toid=" + item.oid;
+		if (dataField === "name") {
+			openLayer();
+			if (item.type == "project") {
+				iframe.src = "/Windchill/plm/project/view?oid=" + oid;
+			} else if (item.type == "task" && !item.isNew) {
+				if (name === "의뢰서") {
+					iframe.src = "/Windchill/plm/project/request?oid=" + oid + "&toid=" + item.oid;
+				} else if (name === "1차_수배" || name === "2차_수배") {
+					iframe.src = "/Windchill/plm/project/step?oid=" + oid + "&toid=" + item.oid;
+				} else if (name === "전기_수배표" || name === "기계_수배표") {
+					iframe.src = "/Windchill/plm/project/partlist?oid=" + oid + "&toid=" + item.oid;
+				} else {
+					iframe.src = "/Windchill/plm/project/normal?oid=" + oid + "&toid=" + item.oid;
+				}
 			}
 		}
 	}

@@ -3,6 +3,8 @@ package e3ps.common.util;
 import java.sql.Timestamp;
 import java.util.Enumeration;
 
+import e3ps.org.People;
+import e3ps.org.PeopleWTUserLink;
 import wt.enterprise.RevisionControlled;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
@@ -280,20 +282,26 @@ public class CommonUtils {
 
 	/**
 	 * 접속한 사용자의 WTUser 객체를 가져오는 함수
-	 * 
-	 * @return WTUser
-	 * @throws Exception
 	 */
 	public static WTUser sessionUser() throws Exception {
 		return (WTUser) SessionHelper.manager.getPrincipal();
 	}
+	
+	/**
+	 * 접속한 사용자의 PEOPEL 객체 리턴
+	 */
+	public static People sessionPeople() throws Exception {
+		WTUser sessionUser = sessionUser();
+		QueryResult result = PersistenceHelper.manager.navigate(sessionUser, "people", PeopleWTUserLink.class);
+		if(result.hasMoreElements()) {
+			People people = (People)result.nextElement();
+			return people;
+		}
+		return null;
+	}
 
 	/**
 	 * 접속한 사용자가 RevisionControlled 객체의 작성자인지 확인 하는 함수
-	 * 
-	 * @param rc : RevisionControlled 상속 받은 객체들
-	 * @return boolean
-	 * @throws Exception
 	 */
 	public static boolean isCreator(RevisionControlled rc) throws Exception {
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();

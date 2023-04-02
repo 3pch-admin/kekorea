@@ -43,7 +43,8 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			Timestamp startTime = new Timestamp(new Date().getTime());
 			Ownership ownership = CommonUtils.sessionOwner();
 			String name = WorkspaceHelper.manager.getName(persistable);
-			String description = WorkspaceHelper.manager.getDescription(persistable);
+//			String description = WorkspaceHelper.manager.getDescription(persistable);
+			String description = "";
 
 			// 마스터 생성..
 			ApprovalMaster master = ApprovalMaster.newApprovalMaster();

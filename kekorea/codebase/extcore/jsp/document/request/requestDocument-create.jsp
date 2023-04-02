@@ -1,3 +1,4 @@
+<%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="org.json.JSONArray"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.Map"%>
@@ -97,24 +98,17 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 		</table>
 	</div>
 	<div id="tabs-2">
-		<div id="grid_wrap" style="height: 660px; border-top: 1px solid #3180c3; margin-top: 5px;"></div>
+		<div id="grid_wrap" style="height: 610px; border-top: 1px solid #3180c3; margin-top: 5px;"></div>
 	</div>
 	<script type="text/javascript">
 		let myGridID;
-		const maks =
-	<%=maks%>
-		const installs =
-	<%=installs%>
-		const customers =
-	<%=customers%>
-		const elecs =
-	<%=elecs%>
-		const machines =
-	<%=machines%>
-		const softs =
-	<%=softs%>
-		const projectTypes =
-	<%=projectTypes%>
+		const maks = <%=maks%>
+		const installs = <%=installs%>
+		const customers = <%=customers%>
+		const elecs = <%=elecs%>
+		const machines = <%=machines%>
+		const softs = <%=softs%>
+		const projectTypes = <%=projectTypes%>
 		let detailMap = {};
 		let installMap = {};
 		const columns = [ {
@@ -637,14 +631,13 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 		function createAUIGrid(columnLayout) {
 			const props = {
 				headerHeight : 30,
-				rowHeight : 30,
 				showRowNumColumn : true,
 				showRowCheckColumn : true,
-				showStateColumn : true,
 				rowNumHeaderText : "번호",
 				noDataMessage : "작성된 작번내용이 없습니다.",
 				selectionMode : "multipleCells",
 				editable : true,
+				enableSorting : false,
 				useContextMenu : true,
 				enableRightDownFocus : true,
 				$compaEventOnPaste : true,
@@ -739,7 +732,6 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			const template = document.getElementById("template");
 			const addRows = AUIGrid.getAddedRowItems(myGridID);
 			const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
-
 			if (isNull(name.value)) {
 				alert("의뢰서 제목을 입력하세요.");
 				name.focus();
@@ -747,7 +739,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			}
 
 			if (isNull(template.value)) {
-				alert("작번 템프릿을 선택하세요.");
+				alert("작번 템플릿을 선택하세요.");
 				return false;
 			}
 
@@ -764,7 +756,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			params.name = name.value;
 			params.addRows = addRows;
 			params._addRows_ = _addRows_;
-			params.secondarys = toArray("secondarys");
+			params.primarys = toArray("primarys");
 			params.template = template.value;
 			toRegister(params, _addRows_);
 			openLayer();

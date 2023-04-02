@@ -32,7 +32,7 @@ import wt.util.WTException;
 
 				// front target object, before source user
 
-				@GeneratedForeignKey(name = "DocumentMasterOutputLink",
+				@GeneratedForeignKey(name = "OutputDocumentMasterLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "master", type = E3PSDocumentMaster.class,
 
@@ -40,7 +40,7 @@ import wt.util.WTException;
 
 						myRole = @MyRole(name = "output", cardinality = Cardinality.ONE)),
 
-				@GeneratedForeignKey(name = "DocumentOutputLink",
+				@GeneratedForeignKey(name = "OutputDocumentLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "document", type = LifeCycleManaged.class,
 
@@ -48,7 +48,7 @@ import wt.util.WTException;
 
 						myRole = @MyRole(name = "output", cardinality = Cardinality.ONE)),
 
-				@GeneratedForeignKey(name = "ProjectOutputLink",
+				@GeneratedForeignKey(name = "OutputProjectLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "project", type = Project.class,
 
@@ -56,7 +56,7 @@ import wt.util.WTException;
 
 						myRole = @MyRole(name = "output", cardinality = Cardinality.ONE)),
 
-				@GeneratedForeignKey(name = "TemplateOutputLink",
+				@GeneratedForeignKey(name = "OutputTemplateLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "template", type = Template.class,
 
@@ -64,7 +64,7 @@ import wt.util.WTException;
 
 						myRole = @MyRole(name = "output", cardinality = Cardinality.ONE)),
 
-				@GeneratedForeignKey(name = "TaskOutputLink",
+				@GeneratedForeignKey(name = "OutputTaskLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "task", type = Task.class,
 

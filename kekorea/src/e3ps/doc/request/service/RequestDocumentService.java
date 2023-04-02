@@ -9,8 +9,24 @@ import wt.method.RemoteInterface;
 @RemoteInterface
 public interface RequestDocumentService {
 
+	/**
+	 * 의뢰서 그리드 저장
+	 */
 	public abstract void save(HashMap<String, List<RequestDocumentDTO>> dataMap) throws Exception;
 
+	/**
+	 * 의뢰서 등록
+	 */
 	public abstract void create(RequestDocumentDTO dto) throws Exception;
+
+	/**
+	 * 의뢰서 삭제
+	 */
+	public abstract void delete(String oid) throws Exception;
+
+	/**
+	 * 태스크 의뢰서 연결 제거
+	 */
+	public abstract void disconnect(String oid)throws Exception;
 
 }

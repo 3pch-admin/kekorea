@@ -27,6 +27,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 		<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
+		<input type="hidden" name="poid" id="poid" value="<%=data.getOid()%>">
 		<div id="tabs">
 			<ul>
 				<li>
@@ -100,7 +101,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 						<th class="rb">막종 / 막종상세</th>
 						<th class="rb" colspan="2">작업 내용</th>
 						<th>기계</th>
-						<td class="center">%</td>
+						<td class="center"><%=data.getMachineProgress()%>%</td>
 					</tr>
 					<tr>
 						<td class="center"><%=data.getKeNumber()%></td>
@@ -111,7 +112,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 							<%=data.getDetail_name()%></td>
 						<td class="indent5" colspan="2"><%=dto.getDescription()%></td>
 						<th>전기</th>
-						<td class="center">%</td>
+						<td class="center"><%=data.getElecProgress()%>%</td>
 					</tr>
 					<%
 					} else {
@@ -174,9 +175,9 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				<table class="button-table">
 					<tr>
 						<td class="left">
-							<input type="button" value="의뢰서 등록" title="의뢰서 등록" class="blue" onclick="addBeforeRow();">
+							<input type="button" value="의뢰서 등록" title="의뢰서 등록" class="blue" onclick="create();">
 							<input type="button" value="링크 등록" title="링크 등록" class="orange" onclick="addAfterRow();">
-							<input type="button" value="삭제" title="삭제" class="red" onclick="deleteRow();">
+							<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
 						</td>
 					</tr>
 				</table>
@@ -227,11 +228,40 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 							rowNumHeaderText : "번호",
 							showAutoNoDataMessage : false,
 							selectionMode : "singleRow",
+							rowCheckToRadio : true,
 						};
 						myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 						AUIGrid.setGridData(myGridID,
 				<%=list%>
 					);
+					}
+
+					function create() {
+						const toid = document.getElementById("oid").value;
+						const poid = document.getElementById("poid").value;
+						const url = getCallUrl("/requestDocument/connect?toid=" + toid + "&poid=" + poid);
+						popup(url, 1400, 800);
+					}
+
+					function _delete() {
+						const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+						if (checkedItems.length <= 0) {
+							alert("삭제할 의뢰서를 선택하세요.");
+							return false;
+						}
+						const item = checkedItems[0].item;
+						const oid = item.oid;
+						const url = getCallUrl("/requestDocument/disconnect?oid=" + oid);
+						if (!confirm("삭제 하시겠습니까?\태스크와 의뢰서의 연결관계만 삭제 되어집니다.")) {
+							return false;
+						}
+						parent.parent.openLayer();
+						call(url, null, function(data) {
+							alert(data.msg);
+							if (data.result) {
+								document.location.reload();
+							}
+						}, "GET");
 					}
 				</script>
 			</div>
@@ -265,6 +295,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 						}
 					}
 				});
+				parent.parent.closeLayer();
 			})
 
 			window.addEventListener("resize", function() {

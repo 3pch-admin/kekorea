@@ -140,13 +140,6 @@ public interface ProjectService {
 	 */
 	public abstract void setProjectParentDate(ArrayList<Task> list) throws WTException;
 
-	/**
-	 * 프로젝트 일정 계산
-	 * 
-	 * @param project
-	 * @throws WTException
-	 */
-	public void commit(Project project) throws WTException;
 
 	/**
 	 * 작번 수정
@@ -227,23 +220,6 @@ public interface ProjectService {
 	 */
 	public abstract Map<String, Object> addProjectAction(Map<String, Object> param) throws WTException;
 
-	/**
-	 * 작번 등록
-	 * 
-	 * @param param
-	 * @return Map<String, Object>
-	 * @throws WTException
-	 */
-	public abstract Map<String, Object> createProjectAction(Map<String, Object> param) throws WTException;
-
-	/**
-	 * 의뢰서 등록 시 프로젝트 생성
-	 * 
-	 * @param reqDoc
-	 * @param param
-	 * @throws WTException
-	 */
-	public void createProjectByJExcels(RequestDocument reqDoc, Map<String, Object> param) throws WTException;
 
 	/**
 	 * 템플릿 태스크 복사
@@ -310,7 +286,23 @@ public interface ProjectService {
 
 	public abstract Map<String, Object> completeStepAction(Map<String, Object> param) throws WTException;
 
+	/**
+	 * 작번 생성
+	 */
 	public abstract void create(Map<String, Object> params) throws Exception;
 
+	/**
+	 * 프로젝트 태스크 트리 저장
+	 */
 	public abstract void treeSave(Map<String, Object> params) throws Exception;
+
+	/**
+	 * 프로젝트 진행율 계산
+	 */
+	public abstract void calculation(Project project) throws Exception;
+	
+	/**
+	 * 프로젝트 진행율 및 일정 전체 조정
+	 */
+	public abstract void commit(Project project) throws Exception;
 }

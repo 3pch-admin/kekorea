@@ -14,14 +14,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
-<<<<<<< HEAD
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
-=======
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 <input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 <input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 <input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
->>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 <input type="hidden" name="sessionid" id="sessionid">
 <input type="hidden" name="curPage" id="curPage">
 <table class="search-table">
@@ -187,11 +183,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	</tr>
 </table>
 
-<<<<<<< HEAD
-<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
-=======
 <div id="grid_wrap" style="height: 480px; border-top: 1px solid #3180c3;"></div>
->>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 <%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
 	let myGridID;
@@ -383,13 +375,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	function createAUIGrid(columnLayout) {
 		const props = {
 			headerHeight : 30,
-			rowHeight : 30,
 			showRowNumColumn : true,
 			showRowCheckColumn : true,
-			showStateColumn : true,
 			rowNumHeaderText : "번호",
-			noDataMessage : "검색 결과가 없습니다.",
-			selectionMode : "multipleCells",
+			showAutoNoDataMessage : false,
+			enableFilter : true,
+			selectionMode : "singleRow",
 			enableMovingColumn : true,
 			showInlineFilter : true,
 			useContextMenu : true,
@@ -402,11 +393,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		loadGridData();
 		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 			hideContextMenu(); 
-<<<<<<< HEAD
-			vScrollChangeHandler(event);
-=======
 			vScrollChangeHandler(event); 
->>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 		});
 		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 			hideContextMenu(); 
@@ -416,14 +403,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	
 	function auiCellClickHandler(event) {
 		const item = event.item;
-<<<<<<< HEAD
 		rowIdField = AUIGrid.getProp(event.pid, "rowIdField");
 		rowId = item[rowIdField];
-		
-=======
 		rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); 
 		rowId = item[rowIdField];
->>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 		if(AUIGrid.isCheckedRowById(event.pid, rowId)) {
 			AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
 		} else {

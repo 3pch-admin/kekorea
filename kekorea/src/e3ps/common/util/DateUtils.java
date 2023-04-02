@@ -195,6 +195,10 @@ public class DateUtils {
 		return end;
 	}
 
+	/**
+	 * 현재 시간을 받아오는 함수
+	 * @return
+	 */
 	public static Timestamp getCurrentTimestamp() {
 		Date currentDate = new Date();
 		return new Timestamp(currentDate.getTime());

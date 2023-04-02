@@ -631,7 +631,7 @@ public class PartlistHelper {
 	/**
 	 * 수배표 비교
 	 */
-	public ArrayList<Map<String, Object>> compare(String oid, String _oid, String compareKey, String sort)
+	public ArrayList<Map<String, Object>> compare(Project p1, Project p2, String compareKey, String sort)
 			throws Exception {
 		if (StringUtils.isNull(sort)) {
 			sort = MasterDataLink.SORT;
@@ -640,8 +640,8 @@ public class PartlistHelper {
 		if (StringUtils.isNull(compareKey)) {
 			compareKey = "lotNo+partNo";
 		}
-		ArrayList<Map<String, Object>> list = compareData(oid, sort);
-		ArrayList<Map<String, Object>> _list = compareData(_oid, sort);
+		ArrayList<Map<String, Object>> list = integratedData(p1);
+		ArrayList<Map<String, Object>> _list = integratedData(p2);
 
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
 
@@ -714,6 +714,19 @@ public class PartlistHelper {
 				mergedData.put("lotNo2", data.get("lotNo"));
 				mergedData.put("quantity2", data.get("quantity"));
 				mergedData.put("won2", data.get("won"));
+				mergedData.put("partName", data.get("partName"));
+				mergedData.put("standard", data.get("standard"));
+				mergedData.put("maker", data.get("maker"));
+				mergedData.put("customer", data.get("customer"));
+				mergedData.put("unit", data.get("unit"));
+				mergedData.put("price", data.get("price"));
+				mergedData.put("currency", data.get("currency"));
+				mergedData.put("won2", data.get("won"));
+				mergedData.put("partListDate_txt", data.get("partListDate_txt"));
+				mergedData.put("exchangeRate", data.get("exchangeRate"));
+				mergedData.put("referDrawing", data.get("referDrawing"));
+				mergedData.put("classification", data.get("classification"));
+				mergedData.put("note", data.get("note"));
 				mergedList.add(mergedData);
 			}
 		}
@@ -735,8 +748,7 @@ public class PartlistHelper {
 				"roleAObjectRef.key.id", idx, idx_link);
 		QuerySpecUtils.toInnerJoin(query, PartListData.class, MasterDataLink.class, WTAttributeNameIfc.ID_NAME,
 				"roleBObjectRef.key.id", idx_data, idx_link);
-		QuerySpecUtils.toEqualsAnd(query, idx_link, MasterDataLink.class, "roleAObjectRef.key.id",
-				master.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx_link, MasterDataLink.class, "roleAObjectRef.key.id", master);
 //		if("sort".equals(sort)) {
 //			QuerySpecUtils.toOrderBy(query, idx_link, MasterDataLink.class, sort, false);
 //		} else {
@@ -769,6 +781,68 @@ public class PartlistHelper {
 			list.add(map);
 		}
 
+		return list;
+	}
+
+	/**
+	 * 수배표 통합 보기
+	 */
+	public ArrayList<Map<String, Object>> integratedData(Project project) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(PartListMaster.class, true);
+		int idx_link = query.appendClassList(PartListMasterProjectLink.class, false);
+		int idx_p = query.appendClassList(Project.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, PartListMaster.class, PartListMasterProjectLink.class,
+				WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toInnerJoin(query, Project.class, PartListMasterProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleBObjectRef.key.id", idx_p, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, PartListMasterProjectLink.class, "roleBObjectRef.key.id", project);
+
+		QuerySpecUtils.toOrderBy(query, idx, PartListMaster.class, PartListMaster.CREATE_TIMESTAMP, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			PartListMaster master = (PartListMaster) obj[0];
+
+			QuerySpec _query = new QuerySpec();
+			int _idx = _query.appendClassList(PartListMaster.class, false);
+			int _idx_link = _query.appendClassList(MasterDataLink.class, true);
+			int idx_data = _query.appendClassList(PartListData.class, false);
+			QuerySpecUtils.toInnerJoin(_query, PartListMaster.class, MasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleAObjectRef.key.id", _idx, _idx_link);
+			QuerySpecUtils.toInnerJoin(_query, PartListData.class, MasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleBObjectRef.key.id", idx_data, _idx_link);
+			QuerySpecUtils.toEqualsAnd(_query, _idx_link, MasterDataLink.class, "roleAObjectRef.key.id", master);
+			QuerySpecUtils.toOrderBy(_query, idx_data, PartListData.class, PartListData.SORT, false);
+			QueryResult qr = PersistenceHelper.manager.find(_query);
+			while (qr.hasMoreElements()) {
+				Object[] oo = (Object[]) qr.nextElement();
+				MasterDataLink link = (MasterDataLink) oo[0];
+				PartListData data = link.getData();
+				Map<String, Object> map = new HashMap<>();
+				map.put("lotNo", String.valueOf(data.getLotNo()));
+				map.put("unitName", data.getUnitName());
+				map.put("partNo", data.getPartNo());
+				map.put("partName", data.getPartName());
+				map.put("standard", data.getStandard());
+				map.put("maker", data.getMaker());
+				map.put("customer", data.getCustomer());
+				map.put("quantity", data.getQuantity());
+				map.put("unit", data.getUnit());
+				map.put("price", data.getPrice());
+				map.put("currency", data.getCurrency());
+				map.put("won", data.getWon());
+				map.put("partListDate_txt", CommonUtils.getPersistableTime(data.getPartListDate()));
+				map.put("exchangeRate", data.getExchangeRate());
+				map.put("referDrawing", data.getReferDrawing());
+				map.put("classification", data.getClassification());
+				map.put("note", data.getNote());
+				list.add(map);
+			}
+		}
 		return list;
 	}
 }

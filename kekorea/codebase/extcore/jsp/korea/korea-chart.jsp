@@ -1,3 +1,4 @@
+<%@page import="e3ps.admin.commonCode.service.CommonCodeHelper"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Enumeration"%>
 <%@page import="java.util.ArrayList"%>
@@ -5,9 +6,9 @@
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-CommonCode makCode = (CommonCode) request.getAttribute("makCode");
-ArrayList<String> data = (ArrayList<String>) request.getAttribute("data");
-Map<String, ArrayList<String>> drillDown = (Map<String, ArrayList<String>>) request.getAttribute("drillDown");
+ArrayList<CommonCode> customers = (ArrayList<CommonCode>) request.getAttribute("customers");
+Map<String, ArrayList<Integer>> data = (Map<String, ArrayList<Integer>>) request.getAttribute("data");
+ArrayList<String> list = (ArrayList<String>) request.getAttribute("list");
 %>
 <!DOCTYPE html>
 <html>
@@ -15,113 +16,63 @@ Map<String, ArrayList<String>> drillDown = (Map<String, ArrayList<String>>) requ
 <meta charset="UTF-8">
 <title></title>
 <%@include file="/extcore/include/highchart.jsp"%>
-<<<<<<< HEAD
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
-=======
->>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 </head>
 <body>
 	<div id="container" style="height: 300px;"></div>
-
 	<script type="text/javascript">
-Highcharts.chart('container', {
-    chart: {
-        type: 'column'
-    },
-    title: {
-        align: 'left',
-        text: '<%=makCode.getName()%> 막종 작번 개수'
-    },
-    accessibility: {
-        announceNewData: {
-            enabled: true
-        }
-    },
-    xAxis: {
-        type: 'category'
-    },
-    yAxis: {
-        title: {
-            text: '작번 개수'
-        }
-    },
-    plotOptions: {
-        series: {
-            borderWidth: 0,
-            dataLabels: {
-            	enabled :true,
-                format: '{point.y}개'
-            },
-            pointWidth: 20,
-        }
-    },
-	legend : {
-		enabled : false
-	},
-    series: [
-        {
-        	name : '막종별 프로젝트',
-            colorByPoint: true,
-            events : {
-            	cursor: 'pointer',
-            	drillup : function(e) {
-            		console.log(this);
-            	}
-            },
-            data: [
-            	<%
-            	for (String dataValue : data) {
-            		String name = dataValue.split("&")[0];
-            		String key = dataValue.split("&")[1];
-            		String value = dataValue.split("&")[2];
-            	%>
-                {
-                    name: '<%=name%>',
-                    y: <%=value%>,
-                    drilldown: '<%=key%>'
-                },
-                <%}%>
-            ],
-            dataLabels: {
-                enabled: function() {
-                  return this.y !== 0;
-                }
-              },
-            showInLegend: false
-        }
-    ],
-    drilldown: {
-        breadcrumbs: {
-            position: {
-                align: 'right'
-            }
-        },
-        series: [
-        	<%
-        	for (String dataValue : data) {
-        		String name = dataValue.split("&")[0];
-        		String key = dataValue.split("&")[1];
-        		ArrayList<String> drill = drillDown.get(key);
-        	%>
-            {
-                name: '<%=name%>',
-                id: '<%=key%>',
-                data: [
-                <%
-                	for (String drillValue : drill) {
-                		String drillName = drillValue.split("&")[0];
-                		String value = drillValue.split("&")[2];
-                %>
-                	['<%=drillName%>', <%=value%>],
-                <%
-               	 }
-                %>
-                ]
-            },
-            <%}%>
-        ]
-    }
-});
-</script>
+		Highcharts.chart('container', {
+			chart : {
+				type : 'column'
+			},
+			title : {
+				text : '막종별 차트'
+			},
+		   credits: {
+			   enabled: false
+		   },			
+			xAxis : {
+				categories : [ 
+					<%for (CommonCode customer : customers) {%>
+					'<%=customer.getName()%>',
+					<%}%>
+				],
+				crosshair : true,
+			},
+			yAxis : {
+				min : 0,
+				title : {
+					text : '개'
+				},
+			},
+			tooltip : {
+				headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
+				pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' + '<td style="padding:0"><b>{point.y} 개</b></td></tr>',
+				footerFormat : '</table>',
+				shared : true,
+				useHTML : true
+			},
+			plotOptions : {
+				column : {
+					pointPadding : 0.2,
+					borderWidth : 0
+				}
+			},
+			series : [ 
+			<%for (String mak : list) {
+	CommonCode makCode = CommonCodeHelper.manager.getCommonCode(mak, "MAK");
+	ArrayList<Integer> yAxis = data.get(mak);%>
+			{
+				name : '<%=makCode.getName()%>',
+				data : 
+					[ 
+					<%for (Integer y : yAxis) {%>
+					<%=y%>,
+					<%}%>
+					]
+			},
+			<%}%>
+			 ]
+		});
+	</script>
 </body>
 </html>

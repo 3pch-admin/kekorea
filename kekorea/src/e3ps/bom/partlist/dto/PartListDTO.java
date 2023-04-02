@@ -57,19 +57,34 @@ public class PartListDTO {
 	private ArrayList<Map<String, String>> approvalRows = new ArrayList<>(); // 결재
 	private ArrayList<Map<String, String>> receiveRows = new ArrayList<>(); // 수신
 	private ArrayList<String> secondarys = new ArrayList<>();
+	private String toid;
+	private int progress;
 
 	public PartListDTO() {
 
 	}
 
+	public PartListDTO(PartListMaster master) throws Exception {
+		setOid(master.getPersistInfo().getObjectIdentifier().getStringValue());
+		setName(master.getName());
+		setContent(master.getDescription());
+		setState(master.getLifeCycleState().getDisplay());
+		setCreator(master.getCreatorFullName());
+		setCreatedDate(master.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+		setModifiedDate(master.getModifyTimestamp());
+		setModifiedDate_txt(CommonUtils.getPersistableTime(master.getModifyTimestamp()));
+		setEngType(master.getEngType());
+	}
+
 	public PartListDTO(PartListMasterProjectLink link) throws Exception {
-		PartListMaster partListMaster = link.getPartListMaster();
+		PartListMaster master = link.getMaster();
 		Project project = link.getProject();
-		setOid(partListMaster.getPersistInfo().getObjectIdentifier().getStringValue());
+		setOid(master.getPersistInfo().getObjectIdentifier().getStringValue());
 		setLoid(link.getPersistInfo().getObjectIdentifier().getStringValue());
 		setPoid(project.getPersistInfo().getObjectIdentifier().getStringValue());
-		setName(partListMaster.getName());
-		setContent(partListMaster.getDescription());
+		setName(master.getName());
+		setContent(master.getDescription());
 		if (project.getProjectType() != null) {
 			setProjectType_code(project.getProjectType().getCode());
 			setProjectType_name(project.getProjectType().getName());
@@ -104,12 +119,12 @@ public class PartListDTO {
 			setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
 		}
 		setModel(project.getModel());
-		setState(partListMaster.getLifeCycleState().getDisplay());
-		setCreator(partListMaster.getCreatorFullName());
-		setCreatedDate(partListMaster.getCreateTimestamp());
-		setCreatedDate_txt(CommonUtils.getPersistableTime(partListMaster.getCreateTimestamp()));
-		setModifiedDate(partListMaster.getModifyTimestamp());
-		setModifiedDate_txt(CommonUtils.getPersistableTime(partListMaster.getModifyTimestamp()));
-		setEngType(partListMaster.getEngType());
+		setState(master.getLifeCycleState().getDisplay());
+		setCreator(master.getCreatorFullName());
+		setCreatedDate(master.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+		setModifiedDate(master.getModifyTimestamp());
+		setModifiedDate_txt(CommonUtils.getPersistableTime(master.getModifyTimestamp()));
+		setEngType(master.getEngType());
 	}
 }

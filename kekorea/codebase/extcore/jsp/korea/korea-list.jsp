@@ -1,11 +1,14 @@
-<%@page import="e3ps.korea.service.KoreaHelper"%>
+<%@page import="java.util.Map"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="e3ps.admin.commonCode.CommonCodeType"%>
-<%@page import="org.json.JSONArray"%>
+<%@page import="e3ps.common.util.ContentUtils"%>
+<%@page import="e3ps.epm.keDrawing.dto.KeDrawingDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-String code = (String) request.getAttribute("code");
+ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks");
+ArrayList<Map<String, String>> projectTypes = (ArrayList<Map<String, String>>) request.getAttribute("projectTypes");
+String before = (String) request.getAttribute("before");
+String end = (String) request.getAttribute("end");
 %>
 <!DOCTYPE html>
 <html>
@@ -21,8 +24,71 @@ String code = (String) request.getAttribute("code");
 	<form>
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
+
+		<table class="search-table">
+			<colgroup>
+				<col width="100">
+				<col width="500">
+				<col width="100">
+				<col width="500">
+				<col width="100">
+				<col width="500">
+			</colgroup>
+			<tr>
+				<th>KEK 작번</th>
+				<td class="indent5">
+					<input type="text" name="kekNumber" id="kekNumber" class="width-300">
+				</td>
+				<th>발행일</th>
+				<td class="indent5">
+					<input type="text" name="pdateFrom" id="pdateFrom" class="width-100" value="<%=before%>">
+					~
+					<input type="text" name="pdateTo" id="pdateTo" class="width-100" value="<%=end%>">
+				</td>
+				<th>작번 유형</th>
+				<td class="indent5">
+					<select name="projectType" id="projectType" class="width-200">
+						<option value="">선택</option>
+						<%
+						for (Map projectType : projectTypes) {
+						%>
+						<option value="<%=projectType.get("key")%>"><%=projectType.get("value")%></option>
+						<%
+						}
+						%>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>막종</th>
+				<td colspan="5">
+					&nbsp;
+					<%
+					for (CommonCode mak : maks) {
+					%>
+					<div class="pretty p-switch">
+						<input type="checkbox" name="mak" value="<%=mak.getCode()%>" checked="checked">
+						<div class="state p-success">
+							<label>
+								<b><%=mak.getName()%></b>
+							</label>
+						</div>
+					</div>
+					<%
+					}
+					%>
+				</td>
+			</tr>
+		</table>
+
+		<iframe src="" style="height: 320px;" id="chart"></iframe>
+
 		<table class="button-table">
 			<tr>
+				<td class="left">
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('korea-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('korea-list');">
+				</td>
 				<td class="right">
 					<select name="psize" id="psize">
 						<option value="30">30</option>
@@ -35,7 +101,8 @@ String code = (String) request.getAttribute("code");
 				</td>
 			</tr>
 		</table>
-		<div id="grid_wrap" style="height: 390px; border-top: 1px solid #3180c3;"></div>
+
+		<div id="grid_wrap" style="height: 350px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			const columns = [ {
@@ -75,25 +142,23 @@ String code = (String) request.getAttribute("code");
 				dataField : "kekNumber",
 				headerText : "KEK 작번",
 				dataType : "string",
-				width : 130,
+				width : 100,
 			}, {
 				dataField : "keNumber",
 				headerText : "KE 작번",
 				dataType : "string",
-				width : 130,
-				style : "underline",
+				width : 100,
 			}, {
 				dataField : "userId",
 				headerText : "USER ID",
 				dataType : "string",
 				width : 100,
-				style : "underline",
 			}, {
 				dataField : "description",
 				headerText : "작업 내용",
 				dataType : "string",
 				width : 450,
-				style : "left indent10",
+				style : "aui-left",
 			}, {
 				dataField : "pdate",
 				headerText : "발행일",
@@ -152,13 +217,11 @@ String code = (String) request.getAttribute("code");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					showRowCheckColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
-					selectionMode : "multipleCells",
+					showAutoNoDataMessage : false,
+					selectionMode : "singleRow",
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
@@ -179,11 +242,21 @@ String code = (String) request.getAttribute("code");
 			}
 
 			function contextItemHandler(event) {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				switch (event.contextIndex) {
 				case 0:
+					if (checkedItems.length <= 0) {
+						alert("BOM 비교할 작번을 선택하세요.");
+						return;
+					}
+					if (checkedItems.length !== 2) {
+						alert("BOM 비교할 작번을 2개 선택하세요.");
+						return;
+					}
+					const bUrl = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					popup(bUrl);
 					break;
 				case 1:
-					const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 					if (checkedItems.length <= 0) {
 						alert("도면 일람표 비교할 작번을 선택하세요.");
 						return;
@@ -192,10 +265,8 @@ String code = (String) request.getAttribute("code");
 						alert("도면 일람표 비교할 작번을 2개 선택하세요.");
 						return;
 					}
-					const oid = checkedItems[0].item.oid;
-					const _oid = checkedItems[1].item.oid;
-					const url = getCallUrl("/workOrder/compare?oid=" + oid + "&_oid=" + _oid);
-					popup(url);
+					const kUrl = getCallUrl("/workOrder/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					popup(kUrl);
 					break;
 				case 2:
 					break;
@@ -206,24 +277,58 @@ String code = (String) request.getAttribute("code");
 				const params = new Object();
 				const url = getCallUrl("/korea/list");
 				const psize = document.getElementById("psize").value;
-				params.code = "<%=code%>";
+				const pdateFrom = document.getElementById("pdateFrom").value;
+				const pdateTo = document.getElementById("pdateTo").value;
+				const projectType = document.getElementById("projectType").value;
+				const kekNumbers = [];
+				const kekNumber = document.getElementById("kekNumber").value;
+				const values = kekNumber.split(",");
+				for (let i = 0; i < values.length; i++) {
+					if (values[i] !== "") {
+						kekNumbers.push(values[i]);
+					}
+				}
+
+				const mak = document.querySelectorAll("input[name=mak]:checked");
+				const maks = [];
+				for (let i = 0; i < mak.length; i++) {
+					maks.push(mak[i].value);
+				}
+
+				params.kekNumbers = kekNumbers;
+				params.maks = maks;
 				params.psize = psize;
+				params.pdateFrom = pdateFrom;
+				params.pdateTo = pdateTo;
+				params.projectType = projectType;
 				AUIGrid.showAjaxLoader(myGridID);
-				parent.parent.openLayer();
+				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
-					parent.parent.closeLayer();
+					parent.closeLayer();
 				});
+
+				callChart(kekNumbers, pdateFrom, pdateTo, projectType, maks);
+			}
+
+			function callChart(kekNumbers, pdateFrom, pdateTo, projectType, maks) {
+				let url = getCallUrl("/korea/chart");
+				url += "?kekNumbers=" + kekNumbers.join(",") + "&pdateFrom=" + pdateFrom + "&pdateTo=" + pdateTo + "&projectType=" + projectType + "&maks=" + maks.join(",");
+				const chart = document.getElementById("chart");
+				chart.src = url;
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("kekNumber").focus();
+				twindate("pdate");
+				selectbox("projectType");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 				selectbox("psize");
-			});
+			})
 
 			document.addEventListener("keydown", function(event) {
 				const keyCode = event.keyCode || event.which;

@@ -546,7 +546,7 @@ public class QuerySpecUtils {
 	public static void toTimeGreaterAndLess(QuerySpec query, int idx, Class clazz, String column, String createdFrom,
 			String createdTo) throws Exception {
 		if (!StringUtils.isNull(createdFrom)) {
-			toTimeGreaterEqualsThan(query, idx, clazz, createdFrom, createdFrom);
+			toTimeGreaterEqualsThan(query, idx, clazz, column, createdFrom);
 		}
 
 		if (!StringUtils.isNull(createdTo)) {

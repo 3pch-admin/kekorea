@@ -319,6 +319,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 
 			function createAUIGrid(columnLayout) {
 				const props = {
+					rowIdField : "oid",
 					headerHeight : 30,
 					showStateColumn : true,
 					showRowCheckColumn : true,
@@ -563,6 +564,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					return false;
 				}
 
+				const arr = new Array();
 				for (let i = 0; i < checkedItems.length; i++) {
 					const oid = checkedItems[i].item.oid;
 					const latest = checkedItems[i].item.latest;
@@ -578,10 +580,9 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						return false;
 					}
 				}
-
 				const url = getCallUrl("/keDrawing/revise");
 				const p = popup(url, 1600, 550);
-				p.datas = checkedItems;
+				p.list = checkedItems;
 			}
 
 			function exportExcel() {

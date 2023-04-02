@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -127,22 +126,6 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "그리드상 리모터로 프로젝트 정보 가져오기")
-	@ResponseBody
-	@RequestMapping(value = "/get", method = RequestMethod.GET)
-	public Map<String, Object> get(@RequestParam String kekNumber) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			result = ProjectHelper.manager.get(kekNumber);
-			result.put("result", SUCCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("result", FAIL);
-			result.put("msg", e.toString());
-		}
-		return result;
-	}
-
 	@Description(value = "프로젝트 트리")
 	@GetMapping(value = "/load")
 	@ResponseBody
@@ -231,15 +214,6 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 태스크 트리 페이지")
-	@GetMapping(value = "/tree")
-	public ModelAndView tree(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		model.addObject("oid", oid);
-		model.setViewName("/extcore/jsp/project/project-tree.jsp");
-		return model;
-	}
-
 	@Description(value = "프로젝트 정보 페이지")
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
@@ -265,11 +239,13 @@ public class ProjectController extends BaseController {
 		TaskDTO dto = new TaskDTO(task);
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		JSONArray list = ProjectHelper.manager.jsonAuiNormal(project, task);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("project", project);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
+		model.addObject("list", list);
 		model.setViewName("/extcore/jsp/project/project-task-normal.jsp");
 		return model;
 	}
@@ -333,6 +309,49 @@ public class ProjectController extends BaseController {
 		JSONArray list = ProjectHelper.manager.reference(oid);
 		model.addObject("list", list);
 		model.setViewName("/extcore/jsp/project/project-reference.jsp");
+		return model;
+	}
+	
+
+	@Description(value = "프로젝트 수배표통합 페이지")
+	@GetMapping(value = "/partlist")
+	public ModelAndView partlist(@RequestParam String oid, @RequestParam String toid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Project project = (Project) CommonUtils.getObject(oid);
+		Task task = (Task) CommonUtils.getObject(toid);
+		ProjectDTO data = new ProjectDTO(project);
+		TaskDTO dto = new TaskDTO(task);
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		JSONArray list = ProjectHelper.manager.jsonAuiPartlist(project, task);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("project", project);
+		model.addObject("data", data);
+		model.addObject("dto", dto);
+		model.addObject("list", list);
+		model.setViewName("/extcore/jsp/project/project-task-partlist.jsp");
+		return model;
+	}
+	
+	@Description(value = "프로젝트 수배표(1차, 2차) 페이지")
+	@GetMapping(value = "/step")
+	public ModelAndView step(@RequestParam String oid, @RequestParam String toid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Project project = (Project) CommonUtils.getObject(oid);
+		Task task = (Task) CommonUtils.getObject(toid);
+		ProjectDTO data = new ProjectDTO(project);
+		TaskDTO dto = new TaskDTO(task);
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		JSONArray list = ProjectHelper.manager.jsonAuiStepPartlist(project, task);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("project", project);
+		model.addObject("data", data);
+		model.addObject("dto", dto);
+		model.addObject("list", list);
+		model.setViewName("/extcore/jsp/project/project-task-step.jsp");
 		return model;
 	}
 }

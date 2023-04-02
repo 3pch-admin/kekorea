@@ -231,7 +231,7 @@ ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks"
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/korea/tab', '한국 생산 > 한국 생상');">한국 생산</a>
+						<a onclick="moveToPage(this, '/korea/list', '한국 생산 > 한국 생상');">한국 생산</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/configSheet/list', '한국 생산 > CONFIG SHEET 조회');">CONFIG SHEET 조회</a>

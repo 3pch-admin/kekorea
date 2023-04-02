@@ -1,8 +1,20 @@
+<%@page import="e3ps.org.Department"%>
+<%@page import="e3ps.common.util.CommonUtils"%>
+<%@page import="e3ps.org.People"%>
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="java.util.Map"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+String poid = (String) request.getAttribute("poid");
+String toid = (String) request.getAttribute("toid");
+String engType = (String) request.getAttribute("engType");
+JSONArray list = (JSONArray) request.getAttribute("list");
+%>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<input type="hidden" name="toid" id="toid" value="<%=toid %>">
+<input type="hidden" name="poid" id="poid" value="<%=poid %>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -31,14 +43,16 @@
 		<table class="create-table">
 			<colgroup>
 				<col width="130">
-				<col width="700">
+				<col width="400">
 				<col width="130">
-				<col width="700">
+				<col width="400">
+				<col width="130">
+				<col width="400">
 			</colgroup>
 			<tr>
 				<th class="req lb">수배표 제목</th>
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-500">
+					<input type="text" name="name" id="name" class="width-400">
 				</td>
 				<th>설계구분</th>
 				<td class="indent5">
@@ -48,10 +62,14 @@
 						<option value="전기">전기</option>
 					</select>
 				</td>
+				<th>진행율</th>
+				<td class="indent5">
+					<input type="number" name="progress" id="progress" class="width-300">
+				</td>
 			</tr>
 			<tr>
 				<th class="req lb">KEK 작번</th>
-				<td colspan="3">
+				<td colspan="5">
 					<div class="include">
 						<input type="button" value="작번 추가" title="작번 추가" class="blue" onclick="_insert();">
 						<input type="button" value="작번 삭제" title="작번 삭제" class="red" onclick="_deleteRow();">
@@ -138,6 +156,7 @@
 									enableSorting : false
 								}
 								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
+								AUIGrid.setGridData(_myGridID, <%=list%>);
 							}
 
 							function _insert() {
@@ -174,20 +193,20 @@
 			</tr>
 			<tr>
 				<th class="req lb">내용</th>
-				<td class="indent5" colspan="3">
+				<td class="indent5" colspan="5">
 					<textarea name="description" id="description" rows="8"></textarea>
 				</td>
 			</tr>
 			<tr>
 				<th class="req lb">결재</th>
-				<td colspan="3">
+				<td colspan="5">
 					<jsp:include page="/extcore/include/register-include.jsp"></jsp:include>
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">첨부파일</th>
-				<td class="indent5" colspan="3">
-					<jsp:include page="/extcore/include/secondary-include.jsp">
+				<td class="indent5" colspan="5">
+					<jsp:include page="/extcore/include/primary-include.jsp">
 						<jsp:param value="" name="oid" />
 						<jsp:param value="create" name="mode" />
 					</jsp:include>
@@ -453,11 +472,14 @@
 		const params = new Object();
 		const url = getCallUrl("/partlist/create");
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
-		const _addRows = AUIGrid.getAddedRowItems(_myGridID);
+		const _addRows = AUIGrid.getGridData(_myGridID);
 		const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
 		const name = document.getElementById("name").value;
 		const engType = document.getElementById("engType").value;
 		const description = document.getElementById("description").value;
+		const progress = document.getElementById("progress").value;
+		const toid = document.getElementById("toid").value;
+		const poid = document.getElementById("poid").value;
 		addRows.sort(function(a, b) {
 			return a.sort - b.sort;
 		});
@@ -471,14 +493,17 @@
 		params.name = name;
 		params.engType = engType;
 		params.description = description;
-		params.secondarys = toArray("secondarys");
+		params.primarys = toArray("primarys");
+		params.progress = Number(progress);
+		params.toid = toid;
+		params.poid = poid;
 		toRegister(params, _addRows_);
 		console.log(params);
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
-				opener.loadGridData();
+				opener.document.location.reload();
 				self.close();
 			}
 		})
@@ -520,6 +545,7 @@
 						_createAUIGrid_(_columns_);
 					}
 					selectbox("engType");
+					$("#engType").bindSelectDisabled(true);
 					break;
 				case "tabs-2":
 					const isCreated = AUIGrid.isCreated(myGridID);
@@ -533,6 +559,8 @@
 			}
 		});
 		selectbox("engType");
+		$("#engType").bindSelectSetValue("<%=engType%>");
+		$("#engType").bindSelectDisabled(true);
 	});
 
 	window.addEventListener("resize", function() {

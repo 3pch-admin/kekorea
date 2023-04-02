@@ -16,7 +16,7 @@
 <script type="text/javascript">
 	let myGridID;
 	let recentGridItem = null;
-	const data = window.datas;
+	const data = window.list;
 	console.log(data);
 	const columns = [ {
 		dataField : "lotNo",

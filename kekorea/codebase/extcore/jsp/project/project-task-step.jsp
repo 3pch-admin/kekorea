@@ -169,31 +169,32 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 
 				<div class="info-header">
 					<img src="/Windchill/extcore/images/header.png">
-					태스크 산출물 정보
+					태스크
+					<%=dto.getName()%>
+					정보
 				</div>
 
-				<table class="button-table">
-					<tr>
-						<td class="left">
-							<input type="button" value="산출물 등록" title="산출물 등록" class="blue" onclick="create();">
-							<input type="button" value="링크 등록" title="링크 등록" class="orange" onclick="addAfterRow();">
-							<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
-						</td>
-					</tr>
-				</table>
 				<div id="grid_wrap" style="height: 440px; border-top: 1px solid #3180c3;"></div>
 				<script type="text/javascript">
 					let myGridID;
 					const columns = [ {
 						dataField : "name",
-						headerText : "산출물 제목",
+						headerText : "수배표 제목",
 						dataType : "string",
 						style : "aui-left",
+						renderer : {
+							type : "LinkRenderer",
+							baseUrl : "javascript",
+							jsCallback : function(rowIndex, columnIndex, value, item) {
+								const url = getCallUrl("/partlist/view?oid=" + item.oid);
+								popup(url, 1700, 800);
+							}
+						},
 					}, {
-						dataField : "version",
-						headerText : "버전",
+						dataField : "engType",
+						headerText : "설계구분",
 						dataType : "string",
-						width : 100,
+						width : 130,
 					}, {
 						dataField : "state",
 						headerText : "상태",
@@ -222,9 +223,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					function createAUIGrid(columnLayout) {
 						const props = {
 							headerHeight : 30,
-							showRowCheckColumn : true,
 							showRowNumColumn : true,
-							showStateColumn : true,
 							rowNumHeaderText : "번호",
 							showAutoNoDataMessage : false,
 							selectionMode : "singleRow",
@@ -234,34 +233,6 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 						AUIGrid.setGridData(myGridID,
 				<%=list%>
 					);
-					}
-
-					function create() {
-						const toid = document.getElementById("oid").value;
-						const poid = document.getElementById("poid").value;
-						const url = getCallUrl("/output/connect?toid=" + toid + "&poid=" + poid);
-						popup(url, 1400, 800);
-					}
-
-					function _delete() {
-						const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-						if (checkedItems.length <= 0) {
-							alert("삭제할 산출물을 선택하세요.");
-							return false;
-						}
-						const item = checkedItems[0].item;
-						const oid = item.oid;
-						const url = getCallUrl("/output/disconnect?oid=" + oid);
-						if (!confirm("삭제 하시겠습니까?\n산출물과 태스크의 연결관계만 삭제 되어집니다.")) {
-							return false;
-						}
-						parent.parent.openLayer();
-						call(url, null, function(data) {
-							alert(data.msg);
-							if (data.result) {
-								document.location.reload();
-							}
-						}, "GET");
 					}
 				</script>
 			</div>

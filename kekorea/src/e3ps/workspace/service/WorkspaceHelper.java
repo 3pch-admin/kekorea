@@ -24,6 +24,7 @@ import wt.fc.QueryResult;
 import wt.org.WTUser;
 import wt.part.WTPart;
 import wt.query.QuerySpec;
+import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
 
@@ -44,6 +45,11 @@ public class WorkspaceHelper {
 	public static final String STATE_MASTER_COMPELTE = "결재완료";
 	public static final String STATE_MASTER_AGREE_REJECT = "검토반려";
 	public static final String STATE_MASTER_REJECT = "반려";
+
+	/**
+	 * 기안 라인 상태
+	 */
+	public static final String STATE_SUBMIT_COMPLETE = "제출완료";
 
 	/**
 	 * 결재 라인 상태값 상수
@@ -92,406 +98,12 @@ public class WorkspaceHelper {
 	public static final WorkspaceService service = ServiceFactory.getService(WorkspaceService.class);
 	public static final WorkspaceHelper manager = new WorkspaceHelper();
 
-<<<<<<< HEAD
 	public int getAppObjType(Persistable per) {
 		int appObjType = 0;
 
 		return appObjType;
 	}
 
-	public ArrayList<ApprovalLine> getAllLines(ApprovalMaster master) {
-		ArrayList<ApprovalLine> list = new ArrayList<ApprovalLine>();
-		QueryResult result = null;
-		ApprovalLine appLine = null;
-		try {
-			QuerySpec query = new QuerySpec();
-			int idx = query.appendClassList(ApprovalLine.class, true);
-			SearchCondition sc = null;
-			// SearchCondition sc = new SearchCondition(ApprovalLine.class,
-			// ApprovalLine.TYPE, "=",
-			// ApprovalHelper.APP_LINE);
-			// query.appendWhere(sc, new int[] { idx });
-			// query.appendAnd();
-
-			long ids = master.getPersistInfo().getObjectIdentifier().getId();
-			sc = new SearchCondition(ApprovalLine.class, "masterReference.key.id", "=", ids);
-			query.appendWhere(sc, new int[] { idx });
-
-			ClassAttribute ca = new ClassAttribute(ApprovalLine.class, ApprovalLine.SORT);
-			OrderBy orderBy = new OrderBy(ca, false);
-			query.appendOrderBy(orderBy, new int[] { idx });
-
-			result = PersistenceHelper.manager.find(query);
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				appLine = (ApprovalLine) obj[0];
-				list.add(appLine);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return list;
-	}
-
-	public ArrayList<ApprovalLine> getAppLines(ApprovalMaster master) {
-		ArrayList<ApprovalLine> list = new ArrayList<ApprovalLine>();
-		QueryResult result = null;
-		ApprovalLine appLine = null;
-		try {
-			QuerySpec query = new QuerySpec();
-			int idx = query.appendClassList(ApprovalLine.class, true);
-			SearchCondition sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=",
-					WorkspaceHelper.APPROVAL_LINE);
-			query.appendWhere(sc, new int[] { idx });
-			query.appendAnd();
-
-			long ids = master.getPersistInfo().getObjectIdentifier().getId();
-			sc = new SearchCondition(ApprovalLine.class, "masterReference.key.id", "=", ids);
-			query.appendWhere(sc, new int[] { idx });
-
-			ClassAttribute ca = new ClassAttribute(ApprovalLine.class, ApprovalLine.SORT);
-			OrderBy orderBy = new OrderBy(ca, false);
-			query.appendOrderBy(orderBy, new int[] { idx });
-
-			result = PersistenceHelper.manager.find(query);
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				appLine = (ApprovalLine) obj[0];
-				list.add(appLine);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return list;
-	}
-
-	public String[] getContractEpmData(Persistable per) throws Exception {
-		String oid = "";
-		String name = "";
-		String name_of_part = "";
-		String dwg_no = "";
-		String version = "";
-		String state = "";
-		String modifier = "";
-		String modifyDate = "";
-
-		EPMDocument epm = (EPMDocument) per;
-		oid = epm.getPersistInfo().getObjectIdentifier().getStringValue();
-		name = epm.getName();
-		name_of_part = IBAUtils.getStringValue(epm, "NAME_OF_PARTS");
-		dwg_no = IBAUtils.getStringValue(epm, "DWG_NO");
-		version = epm.getVersionIdentifier().getSeries().getValue() + "."
-				+ epm.getIterationIdentifier().getSeries().getValue();
-		state = epm.getLifeCycleState().getDisplay();
-		modifier = epm.getModifierFullName();
-		modifyDate = epm.getModifyTimestamp().toString().substring(0, 16);
-
-		String[] str = new String[] { oid, name, name_of_part, dwg_no, state, version, modifier, modifyDate };
-
-		return str;
-	}
-
-	public String[] getContractObjData(Persistable per) throws Exception {
-		String oid = "";
-		String name = "";
-		String number = "";
-		String version = "";
-		String state = "";
-		String modifier = "";
-		String modifyDate = "";
-
-		if (per instanceof WTDocument) {
-			WTDocument document = (WTDocument) per;
-			oid = document.getPersistInfo().getObjectIdentifier().getStringValue();
-			name = document.getName();
-			number = document.getNumber();
-			version = document.getVersionIdentifier().getSeries().getValue() + "."
-					+ document.getIterationIdentifier().getSeries().getValue();
-			state = document.getLifeCycleState().getDisplay();
-			modifier = document.getModifierFullName();
-			modifyDate = document.getModifyTimestamp().toString().substring(0, 16);
-		} else if (per instanceof EPMDocument) {
-			EPMDocument epm = (EPMDocument) per;
-			oid = epm.getPersistInfo().getObjectIdentifier().getStringValue();
-			name = epm.getName();
-			number = epm.getNumber();
-			version = epm.getVersionIdentifier().getSeries().getValue() + "."
-					+ epm.getIterationIdentifier().getSeries().getValue();
-			state = epm.getLifeCycleState().getDisplay();
-			modifier = epm.getModifierFullName();
-			modifyDate = epm.getModifyTimestamp().toString().substring(0, 16);
-		} else if (per instanceof WTPart) {
-			WTPart part = (WTPart) per;
-			oid = part.getPersistInfo().getObjectIdentifier().getStringValue();
-			name = part.getName();
-			number = part.getNumber();
-			version = part.getVersionIdentifier().getSeries().getValue() + "."
-					+ part.getIterationIdentifier().getSeries().getValue();
-			state = part.getLifeCycleState().getDisplay();
-			modifier = part.getModifierFullName();
-			modifyDate = part.getModifyTimestamp().toString().substring(0, 16);
-		} else if (per instanceof PartListMaster) {
-			PartListMaster mm = (PartListMaster) per;
-			oid = mm.getPersistInfo().getObjectIdentifier().getStringValue();
-			name = mm.getName();
-			number = mm.getNumber();
-			// version = mm.getVersionIdentifier().getSeries().getValue() + "."
-			// + mm.getIterationIdentifier().getSeries().getValue();
-			state = mm.getLifeCycleState().getDisplay();
-			modifier = mm.getOwnership().getOwner().getFullName();
-			modifyDate = mm.getModifyTimestamp().toString().substring(0, 16);
-		}
-
-		String[] str = new String[] { oid, number, name, state, version, modifier, modifyDate };
-
-		return str;
-	}
-
-	public ApprovalContract getContract(Persistable persist) throws Exception {
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(ApprovalContractPersistableLink.class, true);
-
-		long ids = persist.getPersistInfo().getObjectIdentifier().getId();
-		SearchCondition sc = new SearchCondition(ApprovalContractPersistableLink.class, "roleBObjectRef.key.id", "=",
-				ids);
-		query.appendWhere(sc, new int[] { idx });
-
-		QueryResult result = PersistenceHelper.manager.find(query);
-		ApprovalContract contract = null;
-		if (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			ApprovalContractPersistableLink link = (ApprovalContractPersistableLink) obj[0];
-			contract = link.getContract();
-		}
-		return contract;
-	}
-
-	public Persistable getPersist(ApprovalContract contract) throws Exception {
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(ApprovalContractPersistableLink.class, true);
-
-		long ids = contract.getPersistInfo().getObjectIdentifier().getId();
-		SearchCondition sc = new SearchCondition(ApprovalContractPersistableLink.class, "roleAObjectRef.key.id", "=",
-				ids);
-		query.appendWhere(sc, new int[] { idx });
-
-		QueryResult result = PersistenceHelper.manager.find(query);
-		Persistable persist = null;
-		if (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			ApprovalContractPersistableLink link = (ApprovalContractPersistableLink) obj[0];
-			persist = link.getPersist();
-		}
-		return persist;
-	}
-
-	public String getPrefix(Persistable per) throws Exception {
-		String prefix = "";
-		if (per instanceof ApprovalContract) {
-			ApprovalContract contract = (ApprovalContract) per;
-			Persistable obj = getPersist(contract);
-
-			if (obj instanceof WTDocument) {
-				prefix = "문서";
-				if (obj instanceof RequestDocument) {
-					prefix = "의뢰서";
-				}
-			} else if (obj instanceof EPMDocument) {
-				prefix = "도면";
-			} else if (obj instanceof WTPart) {
-				prefix = "부품";
-			}
-		} else {
-
-			if (per instanceof WTDocument) {
-				prefix = "문서";
-				if (per instanceof RequestDocument) {
-					prefix = "의뢰서";
-				}
-			} else if (per instanceof EPMDocument) {
-				prefix = "도면";
-			} else if (per instanceof WTPart) {
-				prefix = "부품";
-			} else if (per instanceof PartListMaster) {
-				prefix = "수배표";
-			}
-		}
-		return prefix;
-	}
-
-	public boolean isIngPoint(String state) {
-		boolean isCheckPoint = false;
-
-		System.out.println("state=" + state);
-
-		if (state.equals(LINE_APPROVING) || state.equals(LINE_AGREE_STAND)) {
-			isCheckPoint = true;
-		}
-		return isCheckPoint;
-	}
-
-	public boolean isReturnPoint(String state) {
-		boolean isCheckPoint = false;
-		if (state.equals(LINE_RETURN_COMPLETE)) {
-			isCheckPoint = true;
-		}
-		return isCheckPoint;
-	}
-
-	public boolean isNextLine(ApprovalMaster master, int sort) {
-		QuerySpec query = null;
-		boolean isNextLine = false;
-		try {
-			query = new QuerySpec();
-			int idx = query.appendClassList(ApprovalLine.class, true);
-			SearchCondition sc = new SearchCondition(ApprovalLine.class, "masterReference.key.id", "=",
-					master.getPersistInfo().getObjectIdentifier().getId());
-			query.appendWhere(sc, new int[] { idx });
-			query.appendAnd();
-
-			sc = new SearchCondition(ApprovalLine.class, ApprovalLine.SORT, "=", sort + 1);
-			query.appendWhere(sc, new int[] { idx });
-			QueryResult result = PersistenceHelper.manager.find(query);
-			if (result.hasMoreElements()) {
-				isNextLine = true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return isNextLine;
-	}
-
-	public boolean isLastAppLine(ApprovalMaster master, int sort) {
-		boolean isLastAppLine = true;
-
-		ArrayList<ApprovalLine> list = getAppLines(master);
-		for (ApprovalLine appLine : list) {
-			int compare = appLine.getSort();
-			// 0 < -1;-50 -1
-
-			System.out.println("com=" + compare);
-
-			if (sort <= compare) {
-				isLastAppLine = false;
-				break;
-			}
-		}
-		return isLastAppLine;
-	}
-
-	// public boolean isLastLine(ApprovalMaster master) {
-	// boolean isLast = true;
-	// try {
-	// ArrayList<ApprovalLine> list = getAppLines(master);
-	// for (ApprovalLine appLine : list) {
-	// int sort = appLine.getSort();
-	// if (sort == 0) {
-	// appLine.setState(LINE_APPROVING);
-	// appLine.setStartTime(new Timestamp(new Date().getTime()));
-	// PersistenceHelper.manager.modify(appLine);
-	// isLast = false;
-	//
-	// // 메일??
-	// MailUtils.sendNextMail(appLine);
-	//
-	// break;
-	// }
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// return isLast;
-	// }
-
-	public ApprovalLine getFirstLine(ApprovalMaster master) throws Exception {
-		ArrayList<ApprovalLine> lines = getAppLines(master);
-
-		ApprovalLine first = null;
-		for (ApprovalLine line : lines) {
-			if (line.getRole().equals(WORKING_SUBMIT)) {
-				first = line;
-				break;
-			}
-		}
-		return first;
-	}
-
-	public String getObjType(Persistable per) throws Exception {
-		String objType = "";
-		if (per instanceof WTDocument) {
-			objType = "DOCUMENT";
-		} else if (per instanceof WTPart) {
-			objType = "PART";
-			// objType = "구매품";
-		} else if (per instanceof EPMDocument) {
-			objType = "EPM";
-		} else if (per instanceof ApprovalContract) {
-			ApprovalContract contract = (ApprovalContract) per;
-			QueryResult result = PersistenceHelper.manager.navigate(contract, "persist",
-					ApprovalContractPersistableLink.class);
-			if (result.hasMoreElements()) {
-				Persistable p = (Persistable) result.nextElement();
-
-				if (p instanceof WTPart) {
-					objType = "PARTAPP";
-				} else if (p instanceof WTDocument) {
-					objType = "DOCUMENTAPP";
-				} else if (p instanceof EPMDocument) {
-					objType = "EPMAPP";
-				} else {
-					objType = "일괄결재";
-				}
-			}
-		}
-		return objType;
-	}
-
-	public void read(ApprovalLine line) throws Exception {
-		line.setReads(true);
-		PersistenceHelper.manager.modify(line);
-	}
-
-	public ArrayList<Persistable> getMasterByPersistable(ApprovalMaster master) throws Exception {
-		ArrayList<Persistable> list = new ArrayList<Persistable>();
-		Persistable per = master.getPersist();
-		if (per instanceof ApprovalContract) {
-			ApprovalContract contract = (ApprovalContract) per;
-			QueryResult result = PersistenceHelper.manager.navigate(contract, "persist",
-					ApprovalContractPersistableLink.class);
-
-			while (result.hasMoreElements()) {
-				Persistable pp = (Persistable) result.nextElement();
-				list.add(pp);
-			}
-		}
-		return list;
-	}
-
-	public boolean isAppLineCheck(String oid) throws Exception {
-		ReferenceFactory rf = new ReferenceFactory();
-		Persistable per = (Persistable) rf.getReference(oid).getObject();
-		return isAppLineCheck(per);
-	}
-
-	public boolean isAppLineCheck(Persistable per) throws Exception {
-
-		boolean isAppLine = false;
-
-		QueryResult result = PersistenceHelper.manager.navigate(per, "lineMaster", PersistableLineMasterLink.class);
-		if (result.hasMoreElements()) {
-			ApprovalMaster master = (ApprovalMaster) result.nextElement();
-
-			// 승인중이면.. 진행 결재 잇음
-			String state = master.getState();
-			if (state.equals(MASTER_APPROVING)) {
-				isAppLine = true;
-			}
-		}
-		return isAppLine;
-	}
-
-=======
->>>>>>> 2b1d8067d6c347643e570d3e4af6886b40c0d6db
 	/**
 	 * 객체에 따른 결재제목 가져오기
 	 */
@@ -544,7 +156,7 @@ public class WorkspaceHelper {
 		if (!CommonUtils.isAdmin()) {
 			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, "ownership.owner.key.id", sessionUser);
 		}
-		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.MODIFY_TIMESTAMP, false);
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.START_TIME, false);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -566,8 +178,6 @@ public class WorkspaceHelper {
 	public Map<String, Object> approval(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<ApprovalLineDTO> list = new ArrayList<>();
-		boolean isAdmin = CommonUtils.isAdmin();
-		String name = (String) params.get("name");
 		String submiterOid = (String) params.get("submiterOid");
 		String receiveFrom = (String) params.get("receiveFrom");
 		String receiveTo = (String) params.get("receiveTo");
@@ -640,7 +250,6 @@ public class WorkspaceHelper {
 		}
 
 		QuerySpecUtils.toLikeAnd(query, idx, ApprovalLine.class, ApprovalLine.NAME, approvalTitle);
-
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.MODIFY_TIMESTAMP, false);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
@@ -715,18 +324,10 @@ public class WorkspaceHelper {
 		}
 
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, STATE_MASTER_COMPELTE);
-
-<<<<<<< HEAD
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.TYPE, type);
-
-		QuerySpecUtils.toTimeGreaterEqualsThan(query, idx, ApprovalMaster.class, ApprovalMaster.CREATE_TIMESTAMP,
-				receiveFrom);
-		QuerySpecUtils.toTimeLessEqualsThan(query, idx, ApprovalMaster.class, ApprovalMaster.CREATE_TIMESTAMP,
-				receiveTo);
-
-=======
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, ApprovalMaster.class, ApprovalMaster.CREATE_TIMESTAMP,
+				receiveFrom, receiveTo);
 		QuerySpecUtils.toLikeAnd(query, idx, ApprovalMaster.class, ApprovalMaster.NAME, approvalTitle);
->>>>>>> 2b1d8067d6c347643e570d3e4af6886b40c0d6db
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.MODIFY_TIMESTAMP, false);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
@@ -891,7 +492,6 @@ public class WorkspaceHelper {
 	 */
 	public JSONArray jsonArrayHistory(Persistable per) throws Exception {
 		ArrayList<Map<String, String>> list = new ArrayList<>();
-
 		ApprovalMaster master = getMaster(per);
 
 		if (master != null) {
@@ -931,7 +531,9 @@ public class WorkspaceHelper {
 				map.put("name", approvalLine.getName());
 				map.put("state", approvalLine.getState());
 				map.put("owner", approvalLine.getOwnership().getOwner().getFullName());
-				map.put("receiveDate_txt", approvalLine.getStartTime().toString().substring(0, 16));
+				map.put("receiveDate_txt",
+						approvalLine.getStartTime() != null ? approvalLine.getStartTime().toString().substring(0, 16)
+								: "");
 				map.put("completeDate_txt",
 						approvalLine.getCompleteTime() != null
 								? approvalLine.getCompleteTime().toString().substring(0, 16)
@@ -979,6 +581,45 @@ public class WorkspaceHelper {
 		}
 		return list;
 
+	}
+
+	/**
+	 * 메인페이지에서 보여질 결재 리스트
+	 */
+	public JSONArray firstPageData(WTUser sessionUser) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ApprovalLine.class, true);
+		int idx_m = query.appendClassList(ApprovalMaster.class, true);
+
+		QuerySpecUtils.toInnerJoin(query, ApprovalLine.class, ApprovalMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_m);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, "ownership.owner.key.id", sessionUser);
+
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+
+		query.appendOpenParen();
+		SearchCondition sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=", AGREE_LINE);
+		query.appendWhere(sc, new int[] { idx });
+		query.appendOr();
+		sc = new SearchCondition(ApprovalLine.class, ApprovalLine.TYPE, "=", APPROVAL_LINE);
+		query.appendWhere(sc, new int[] { idx });
+		query.appendCloseParen();
+
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, true);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			ApprovalLine approvalLine = (ApprovalLine) obj[0];
+			Map<String, String> map = new HashMap<>();
+			map.put("name", approvalLine.getName());
+			map.put("oid", approvalLine.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(approvalLine.getCreateTimestamp()));
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
 	}
 
 }

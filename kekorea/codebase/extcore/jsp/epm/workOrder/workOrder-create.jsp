@@ -88,14 +88,6 @@
 								headerText : "KEK 작번",
 								dataType : "string",
 								width : 130,
-								renderer : {
-									type : "LinkRenderer",
-									baseUrl : "javascript",
-									jsCallback : function(rowIndex, columnIndex, value, item) {
-										const oid = item.oid;
-										alert(oid);
-									}
-								},
 								filter : {
 									showIcon : true,
 									inline : true
@@ -105,14 +97,6 @@
 								headerText : "KE 작번",
 								dataType : "string",
 								width : 130,
-								renderer : {
-									type : "LinkRenderer",
-									baseUrl : "javascript",
-									jsCallback : function(rowIndex, columnIndex, value, item) {
-										const oid = item.oid;
-										alert(oid);
-									}
-								},
 								filter : {
 									showIcon : true,
 									inline : true

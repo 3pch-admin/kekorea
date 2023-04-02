@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -23,10 +24,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.dto.RequestDocumentDTO;
 import e3ps.doc.request.service.RequestDocumentHelper;
 import e3ps.org.service.OrgHelper;
+import e3ps.project.Project;
 import e3ps.project.template.service.TemplateHelper;
+import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -98,6 +103,17 @@ public class RequestDocumentController extends BaseController {
 	public Map<String, Object> create(@RequestBody RequestDocumentDTO dto) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+
+			if (dto.isConnect()) {
+				Project project = (Project) CommonUtils.getObject(dto.getPoid());
+				QueryResult qr = PersistenceHelper.manager.navigate(project, "requestDocument",
+						RequestDocumentProjectLink.class);
+				if (qr.size() > 0) {
+					result.put("result", FAIL);
+					result.put("msg", "작번(" + project.getKekNumber() + ")과 연결된 의뢰서가 이미 존재합니다.");
+				}
+			}
+
 			RequestDocumentHelper.service.create(dto);
 			result.put("msg", SAVE_MSG);
 			result.put("result", SUCCESS);
@@ -111,7 +127,8 @@ public class RequestDocumentController extends BaseController {
 
 	@Description(value = "의뢰서 등록 페이지")
 	@GetMapping(value = "/create")
-	public ModelAndView create() throws Exception {
+	public ModelAndView create(@RequestParam(required = false) String poid, @RequestParam(required = false) String toid)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
 		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
 		JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
@@ -129,10 +146,37 @@ public class RequestDocumentController extends BaseController {
 		model.addObject("machines", machines);
 		model.addObject("projectTypes", projectTypes);
 		model.addObject("list", list);
+		model.addObject("poid", poid);
+		model.addObject("toid", toid);
 		model.setViewName("popup:/document/request/requestDocument-create");
 		return model;
 	}
-	
+
+	@Description(value = "의뢰서 태스크에서 등록 페이지")
+	@GetMapping(value = "/connect")
+	public ModelAndView connect(@RequestParam String poid, @RequestParam String toid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
+		JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
+		JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
+		JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
+		JSONArray maks = CommonCodeHelper.manager.parseJson("MAK");
+		JSONArray customers = CommonCodeHelper.manager.parseJson("CUSTOMER");
+		JSONArray installs = CommonCodeHelper.manager.parseJson("INSTALL");
+		JSONArray projectTypes = CommonCodeHelper.manager.parseJson("PROJECT_TYPE");
+		model.addObject("maks", maks);
+		model.addObject("installs", installs);
+		model.addObject("customers", customers);
+		model.addObject("elecs", elecs);
+		model.addObject("softs", softs);
+		model.addObject("machines", machines);
+		model.addObject("projectTypes", projectTypes);
+		model.addObject("list", list);
+		model.addObject("poid", poid);
+		model.addObject("toid", toid);
+		model.setViewName("popup:/document/request/requestDocument-connect");
+		return model;
+	}
 
 	@Description(value = "의뢰서 등록 검증")
 	@ResponseBody
@@ -141,6 +185,40 @@ public class RequestDocumentController extends BaseController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			result = RequestDocumentHelper.manager.validate(params);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+	
+	@Description(value = "의뢰서 태스크 연결 제거 함수")
+	@ResponseBody
+	@GetMapping(value = "/disconnect")
+	public Map<String, Object> disconnect(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			RequestDocumentHelper.service.disconnect(oid);
+			result.put("msg", DELETE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "의뢰서 삭제 함수")
+	@ResponseBody
+	@GetMapping(value = "/delete")
+	public Map<String, Object> delete(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			RequestDocumentHelper.service.delete(oid);
+			result.put("msg", DELETE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();

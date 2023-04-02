@@ -1,83 +1,35 @@
-<%@page import="org.json.JSONArray"%>
+<%@page import="e3ps.project.Project"%>
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.bom.partlist.dto.PartListDTO"%>
-<%@page import="e3ps.doc.meeting.dto.MeetingDTO"%>
-<%@page import="com.lowagie.text.Meta"%>
-<%@page import="e3ps.doc.meeting.dto.MeetingTemplateDTO"%>
-<%@page import="e3ps.admin.commonCode.CommonCode"%>
-<%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-PartListDTO dto = (PartListDTO) request.getAttribute("dto");
-JSONArray data = (JSONArray) request.getAttribute("data");
+Project project = (Project) request.getAttribute("project");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+JSONArray integratedData = (JSONArray) request.getAttribute("integratedData");
 %>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <table class="button-table">
 	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				수배표 통합 정보 (<%=project.getKekNumber() %>)
+			</div>
+		</td>
 		<td class="right">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
-			<%
-			if (isAdmin) {
-			%>
-			<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
-			<%
-			}
-			%>
 		</td>
 	</tr>
 </table>
-
-<table class="create-table">
-	<colgroup>
-		<col width="130">
-		<col width="800">
-		<col width="130">
-		<col width="800">
-	</colgroup>
-	<tr>
-		<th>회의록 제목</th>
-		<td class="indent5"><%=dto.getName()%></td>
-		<th>회의록 템플릿</th>
-		<td class="indent5"><%=dto.getName()%></td>
-	</tr>
-	<tr>
-		<th>KEK 작번</th>
-		<td colspan="3">
-			<jsp:include page="/extcore/include/project-include.jsp">
-				<jsp:param value="<%=dto.getOid()%>" name="oid" />
-				<jsp:param value="view" name="mode" />
-				<jsp:param value="" name="multi" />
-				<jsp:param value="partlist" name="obj" />
-				<jsp:param value="250" name="height" />
-			</jsp:include>
-		</td>
-	</tr>
-	<tr>
-		<th>내용</th>
-		<td class="indent5" colspan="3">
-			<textarea name="description" id="description" rows="8" readonly="readonly"><%=dto.getContent()%></textarea>
-		</td>
-	</tr>
-	<tr>
-		<th>첨부파일</th>
-		<td class="indent5" colspan="3">
-			<jsp:include page="/extcore/include/secondary-include.jsp">
-				<jsp:param value="<%=dto.getOid()%>" name="oid" />
-				<jsp:param value="view" name="mode" />
-			</jsp:include>
-		</td>
-	</tr>
-</table>
-<!-- 그리드 리스트 -->
-<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3; margin-top: 5px;"></div>
+<div id="grid_wrap" style="height: 880px; border-top: 1px solid #3180c3;"></div>
 <script type="text/javascript">
 	let myGridID;
-	const data = <%=data%>
+	const list =
+<%=integratedData%>
 	const columns = [ {
 		dataField : "lotNo",
 		headerText : "LOT_NO",
-		dataType : "string",
+		dataType : "numeric",
 		width : 80,
 	}, {
 		dataField : "unitName",
@@ -88,8 +40,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		dataField : "partNo",
 		headerText : "부품번호",
 		dataType : "string",
-		style : "underline",
-		width : 130,
+		width : 100,
 	}, {
 		dataField : "partName",
 		headerText : "부품명",
@@ -136,10 +87,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		dataType : "numeric",
 		width : 120,
 	}, {
-		dataField : "partListDate",
+		dataField : "partListDate_txt",
 		headerText : "수배일자",
-		dataType : "date",
-		formatString : "yyyy-mm-dd",
+		dataType : "string",
 		width : 100,
 	}, {
 		dataField : "exchangeRate",
@@ -171,7 +121,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		dataField : "lotNo",
 		positionField : "lotNo",
 		style : "right",
-		colSpan : 7, // 자신을 포함하여 3개의 푸터를 가로 병합함.
+		colSpan : 7,
 		labelFunction : function(value, columnValues, footerValues) {
 			return "수배표 수량 합계 금액";
 		}
@@ -184,7 +134,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		dataField : "unit",
 		positionField : "unit",
 		style : "right",
-		colSpan : 3, // 자신을 포함하여 3개의 푸터를 가로 병합함.
+		colSpan : 3,
 		labelFunction : function(value, columnValues, footerValues) {
 			return "수배표 수량 합계 금액";
 		}
@@ -202,47 +152,25 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-			// 그리드 공통속성 시작
-			headerHeight : 30, // 헤더높이
-			rowHeight : 30, // 행 높이
-			showRowNumColumn : true, // 번호 행 출력 여부
-			rowNumHeaderText : "번호", // 번호 행 텍스트 설정
+			headerHeight : 30,
+			showRowNumColumn : true,
+			rowNumHeaderText : "번호",
 			selectionMode : "multipleCells",
 			showFooter : true,
+			showAutoNoDataMessage : false,
 			footerPosition : "top",
-		// 그리드 공통속성 끝
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		AUIGrid.setFooter(myGridID, footerLayout);
+		AUIGrid.setGridData(myGridID, list);
 	}
-
-	function _delete() {
-		if (!confirm("삭제 하시겠습니까?")) {
-			return false;
-		}
-		const url = getCallUrl("/partlist/delete?oid=<%=dto.getOid()%>");
-		call(url, null, function(data) {
-			alert(data.msg);
-			if (data.result) {
-				opener.loadGridData();
-				self.close();
-			} else {
-				// 실패시..
-			}
-		}, "GET");
-	}
-
+</script>
+<script type="text/javascript">
 	document.addEventListener("DOMContentLoaded", function() {
 		createAUIGrid(columns);
-		AUIGrid.setGridData(myGridID, data);
-		AUIGrid.resize(myGridID);
-
-		_createAUIGrid(_columns);
-		AUIGrid.resize(_myGridID);
-	});
+	})
 
 	window.addEventListener("resize", function() {
-		AUIGrid.resize(_myGridID);
 		AUIGrid.resize(myGridID);
 	});
 </script>

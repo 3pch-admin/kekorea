@@ -56,11 +56,7 @@ public class ApprovalLineDTO {
 			setSubmiter(master.getOwnership().getOwner().getFullName());
 			setDescription(line.getDescription() != null ? line.getDescription() : "");
 			setReceiveTime(line.getCreateTimestamp());
-<<<<<<< HEAD
-//			setCompleteTime(line.getCompleteTime() != null ? line.getDescription() : "");
-=======
-			setCompleteTime(line.getCompleteTime());
->>>>>>> 2b1d8067d6c347643e570d3e4af6886b40c0d6db
+			setCompleteTime(line.getCompleteTime() != null ? line.getCompleteTime() : null);
 			setState(line.getState());
 			point(master);
 		} else if ("COLUMN_RECEIVE".equals(columnType)) {
@@ -85,7 +81,7 @@ public class ApprovalLineDTO {
 			setName(master.getName());
 			setState(master.getState());
 			setReceiveTime(master.getCreateTimestamp());
-			setCompleteTime(master.getCompleteTime());
+			setCompleteTime(master.getCompleteTime()); // 반드시 완료날짜 잇음
 			setSubmiter(master.getOwnership().getOwner().getFullName());
 			point(master);
 		} else if ("COLUMN_PROGRESS".equals(columnType)) {
