@@ -10,6 +10,7 @@ String oid = (String) request.getAttribute("oid");
 String _oid = (String) request.getAttribute("_oid");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 <style type="text/css">
 .compare {
 	background-color: yellow;
@@ -80,7 +81,7 @@ String _oid = (String) request.getAttribute("_oid");
 						<b>DISCONTINUE</b>
 					</label>
 				</div>
-			</div>			
+			</div>
 		</td>
 		<td class="right">
 			<select name="sort" id="sort" class="width-200">
@@ -97,50 +98,34 @@ String _oid = (String) request.getAttribute("_oid");
 
 
 <div id="grid_wrap" style="height: 730px; border-top: 1px solid #3180c3;"></div>
+<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
 	let myGridID;
-	const data = <%=data%>
-	const columns = [  {
+	const data =
+<%=data%>
+	const columns = [ {
 		dataField : "lotNo",
 		headerText : "LOT",
 		dataType : "numeric",
 		width : 100,
 		formatString : "###0",
-	},{
+	}, {
 		dataField : "code",
 		headerText : "중간코드",
 		dataType : "string",
 		width : 130,
-	},{
-		headerText : "<%=p1.getKekNumber()%>",
-		children : [ {
-			dataField : "keNumber1",
-			headerText : "부품번호",
-			dataType : "string",
-			width : 120,
-			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-				const partNo2 = item.partNo2;
-				if (value !== partNo2) {
-					return "compare";
-				}
-				return "";
-			}
-		} ]
 	}, {
-		headerText : "<%=p2.getKekNumber()%>",
-		children : [ {
-			dataField : "keNumber2",
-			headerText : "부품번호",
-			dataType : "string",
-			width : 120,
-			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-				const partNo1 = item.partNo1;
-				if (value !== partNo1) {
-					return "compare";
-				}
-				return "";
+		dataField : "keNumber1",
+		headerText : "부품번호",
+		dataType : "string",
+		width : 120,
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const partNo2 = item.partNo2;
+			if (value !== partNo2) {
+				return "compare";
 			}
-		} ]
+			return "";
+		}
 	}, {
 		headerText : "<%=p1.getKekNumber()%>",
 		children : [ {
@@ -222,11 +207,24 @@ String _oid = (String) request.getAttribute("_oid");
 			rowNumHeaderText : "번호",
 			showAutoNoDataMessage : false,
 			showFooter : true,
+			enableFilter : true,
+			selectionMode : "multipleCells",
+			enableMovingColumn : true,
+			showInlineFilter : true,
+			useContextMenu : true,
+			enableRightDownFocus : true,
 			footerPosition : "top",
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		AUIGrid.setFooter(myGridID, footerLayout);
 		AUIGrid.setGridData(myGridID, data);
+		AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+			hideContextMenu();
+		});
+		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+			hideContextMenu();
+		});
 	}
 </script>
 

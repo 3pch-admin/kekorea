@@ -246,7 +246,7 @@ public class TBOMHelper {
 			mergedData.put("lotNo", data.get("lotNo"));
 			mergedData.put("code", data.get("code"));
 			mergedData.put("name", data.get("name"));
-			mergedData.put("keNumber1", data.get("keNumber"));
+			mergedData.put("keNumber", data.get("keNumber"));
 			mergedData.put("model", data.get("model"));
 			mergedData.put("qty1", data.get("qty"));
 			mergedData.put("unit", data.get("unit"));
@@ -263,21 +263,21 @@ public class TBOMHelper {
 
 			// mergedList에 partNo가 동일한 데이터가 있는지 확인
 			for (Map<String, Object> mergedData : mergedList) {
-				String mergedPartNo = (String) mergedData.get("keNumber1");
+				String mergedPartNo = (String) mergedData.get("keNumber");
 				String mergedLotNo = (String) mergedData.get("lotNo");
 				String _key = mergedPartNo + "-" + mergedLotNo;
 
 				if (key.equals(_key)) {
 					// partNo가 동일한 데이터가 있으면 데이터를 업데이트하고 isExist를 true로 변경
-					mergedData.put("lotNo", data.get("lotNo"));
-					mergedData.put("code", data.get("code"));
-					mergedData.put("name", data.get("name"));
-					mergedData.put("keNumber2", data.get("keNumber"));
-					mergedData.put("model", data.get("model"));
-					mergedData.put("qty2", data.get("qty"));
-					mergedData.put("unit", data.get("unit"));
-					mergedData.put("provide", data.get("provide"));
-					mergedData.put("discontinue", data.get("discontinue"));
+//					mergedData.put("lotNo", data.get("lotNo"));
+//					mergedData.put("code", data.get("code"));
+//					mergedData.put("name", data.get("name"));
+//					mergedData.put("keNumber", data.get("keNumber"));
+//					mergedData.put("model", data.get("model"));
+//					mergedData.put("qty1", data.get("qty"));
+//					mergedData.put("unit", data.get("unit"));
+//					mergedData.put("provide", data.get("provide"));
+//					mergedData.put("discontinue", data.get("discontinue"));
 					isExist = true;
 					break;
 				}
@@ -286,12 +286,11 @@ public class TBOMHelper {
 			if (!isExist) {
 				// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
 				Map<String, Object> mergedData = new HashMap<>();
-				mergedData.put("keNumber1", "");
-				mergedData.put("qty1", "");
+				mergedData.put("qty1", "0");
 				mergedData.put("lotNo", data.get("lotNo"));
 				mergedData.put("name", data.get("name"));
 				mergedData.put("code", data.get("code"));
-				mergedData.put("keNumber2", data.get("keNumber"));
+				mergedData.put("keNumber", data.get("keNumber"));
 				mergedData.put("model", data.get("model"));
 				mergedData.put("qty2", data.get("qty"));
 				mergedData.put("unit", data.get("unit"));

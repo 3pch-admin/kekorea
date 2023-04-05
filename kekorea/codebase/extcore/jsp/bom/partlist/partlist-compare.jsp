@@ -10,6 +10,7 @@ String oid = (String) request.getAttribute("oid");
 String _oid = (String) request.getAttribute("_oid");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 <style type="text/css">
 .compare {
 	background-color: yellow;
@@ -71,8 +72,8 @@ String _oid = (String) request.getAttribute("_oid");
 	</tr>
 </table>
 
-
 <div id="grid_wrap" style="height: 800px; border-top: 1px solid #3180c3;"></div>
+<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
 	let myGridID;
 	const data =
@@ -123,7 +124,8 @@ String _oid = (String) request.getAttribute("_oid");
 			}
 		} ]
 	}, {
-		headerText : "<%=p1.getKekNumber()%>",
+		headerText : "<%=p1.getKekNumber()%>
+	",
 		children : [ {
 			dataField : "quantity2",
 			headerText : "수량",
@@ -234,11 +236,23 @@ String _oid = (String) request.getAttribute("_oid");
 			rowNumHeaderText : "번호",
 			showAutoNoDataMessage : false,
 			showFooter : true,
+			enableFilter : true,
+			selectionMode : "singleRow",
+			enableMovingColumn : true,
+			showInlineFilter : true,
+			enableRightDownFocus : true,
 			footerPosition : "top",
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		AUIGrid.setFooter(myGridID, footerLayout);
 		AUIGrid.setGridData(myGridID, data);
+		AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+			hideContextMenu();
+		});
+		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+			hideContextMenu();
+		});
 	}
 </script>
 
@@ -250,13 +264,13 @@ String _oid = (String) request.getAttribute("_oid");
 
 		const oid = document.getElementById("oid").value;
 		const _oid = document.getElementById("_oid").value;
-// 		const compareKey = document.querySelector("input[name=compareKey]:checked").value;
+		// 		const compareKey = document.querySelector("input[name=compareKey]:checked").value;
 		const sort = document.getElementById("sort").value;
 		const url = getCallUrl("/partlist/compare");
 		const params = new Object();
 		params.oid = oid;
 		params._oid = _oid;
-// 		params.compareKey = compareKey;
+		// 		params.compareKey = compareKey;
 		params.sort = sort;
 		AUIGrid.showAjaxLoader(myGridID);
 		openLayer();
