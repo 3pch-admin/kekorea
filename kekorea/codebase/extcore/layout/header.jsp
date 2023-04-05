@@ -51,9 +51,6 @@ ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks"
 						<a onclick="moveToPage(this, '/notice/list', '나의 업무 > 공지사항');">공지사항</a>
 					</li>
 					<li>
-						<a href="graph_morris.html">나의 작번</a>
-					</li>
-					<li>
 						<a onclick="moveToPage(this, '/workspace/agree', '나의 업무 > 검토함');">
 							검토함
 							<span class="label label-info float-right">62</span>
@@ -103,6 +100,9 @@ ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks"
 				<ul class="nav nav-second-level collapse">
 					<li>
 						<a onclick="moveToPage(this, '/project/list', '작번 관리 > 작번 조회');">작번 조회</a>
+					</li>
+					<li>
+						<a href="graph_morris.html">나의 작번</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/template/list', '작번 관리 > 템플릿 조회');">템플릿 조회</a>
