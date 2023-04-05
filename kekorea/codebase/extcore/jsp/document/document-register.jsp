@@ -112,6 +112,16 @@
 								popup(url, 1400, 600);
 							}
 
+							function append(data) {
+								for (let i = 0; i < data.length; i++) {
+									let item = data[i].item;
+									let isUnique = AUIGrid.isUniqueValue(_myGridID, "oid", item.oid);
+									if (isUnique) {
+										AUIGrid.addRow(_myGridID, item, "first");
+									}
+								}
+							}
+
 							function _createAUIGrid(columnLayout) {
 								const props = {
 									headerHeight : 30,
@@ -135,6 +145,15 @@
 						</script>
 					</div>
 				</td>
+				<!-- 				<td> -->
+				<%-- 					<jsp:include page="/extcore/include/document-include.jsp"> --%>
+				<%-- 						<jsp:param value="" name="oid" /> --%>
+				<%-- 						<jsp:param value="create" name="mode" /> --%>
+				<%-- 						<jsp:param value="true" name="multi" /> --%>
+				<%-- 						<jsp:param value="" name="obj" /> --%>
+				<%-- 						<jsp:param value="250" name="height" /> --%>
+				<%-- 					</jsp:include> --%>
+				<!-- 				</td> -->
 			</tr>
 			<tr>
 				<th class="req lb">결재</th>
@@ -151,16 +170,21 @@
 				const params = new Object();
 				const _addRows = AUIGrid.getAddedRowItems(_myGridID);
 				const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
-				params.name = document.getElementById("name").value;
-				params._addRows = _addRows;
-				params._addRows_ = _addRows_;
+				const name = document.getElementById("name").value;
+				const description = document.getElementById("description").value;
+				params.name = name;
+				params.description = description;
+				params._addRows = _addRows; //문서
+				params._addRows_ = _addRows_; //결재
+				toRegister(params, _addRows);
+				toRegister(params, _addRows_);
 				console.log(params);
-				// 				call(url, params, function(data) {
-				// 					alert(data.msg);
-				// 					if (data.result) {
-				// 						document.location.href = getCallUrl("/workspace/approval");
-				// 					}
-				// 				})
+				call(url, params, function(data) {
+					alert(data.msg);
+					if (data.result) {
+						document.location.href = getCallUrl("/workspace/approval");
+					}
+				})
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {

@@ -26,21 +26,21 @@ boolean multi = (boolean) request.getAttribute("multi");
 	<tr>
 		<th>공지사항 제목</th>
 		<td class="indent5">
-			<input type="text" name="fileName" class="width-200">
+			<input type="text" name="fileName" class="width-150">
 		</td>
 		<th>설명</th>
 		<td class="indent5">
-			<input type="text" name="description" class="width-200">
+			<input type="text" name="description" class="width-150">
 		</td>
 		<th>작성자</th>
 		<td class="indent5">
-			<input type="text" name="creator" id="creator" class="width-200">
+			<input type="text" name="creator" id="creator" class="width-150">
 		</td>
 		<th>작성일</th>
 		<td class="indent5">
 			<input type="text" name="createdFrom" id="createdFrom" class="width-100">
-					~
-					<input type="text" name="createdTo" id="createdTo" class="width-100">
+			~
+			<input type="text" name="createdTo" id="createdTo" class="width-100">
 		</td>
 	</tr>
 </table>
@@ -55,6 +55,13 @@ boolean multi = (boolean) request.getAttribute("multi");
 			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
 		<td class="right">
+			<select name="psize" id="psize">
+				<option value="30">30</option>
+				<option value="50">50</option>
+				<option value="100">100</option>
+				<option value="200">200</option>
+				<option value="300">300</option>
+			</select>
 			<input type="button" value="조회" title="조회" onclick="loadGridData();">
 		</td>
 	</tr>
@@ -171,7 +178,6 @@ boolean multi = (boolean) request.getAttribute("multi");
 						showIcon : true,
 						inline : true,
 						displayFormatValues : true
-						// 포맷팅 형태로 필터링 처리
 					},
 				}, {
 					dataField : "modifier",
@@ -246,7 +252,9 @@ boolean multi = (boolean) request.getAttribute("multi");
 			function loadGridData() {
 				const url = getCallUrl("/document/list");
 				const params = new Object();
+				const psize = document.getElementById("psize").value;
 				params.latest = true;
+				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
@@ -263,6 +271,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 					return false;
 				}
 				opener.<%=method%>(checkedItems);
+				self.close();
 			}
 			
 			function auiCellClickHandler(event) {
@@ -292,11 +301,9 @@ boolean multi = (boolean) request.getAttribute("multi");
 				createAUIGrid(columns);
 				_createAUIGrid(_columns); // 트리
 				
-				// 사용자 검색 바인딩 see base.js finderUser function 
 				finderUser("creator");
-				
-				// 날짜 검색용 바인딩 see base.js twindate funtion
 				twindate("created");
+				selectbox("psize");
 			});
 
 			document.addEventListener("keydown", function(event) {
