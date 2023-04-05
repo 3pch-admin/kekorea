@@ -94,4 +94,14 @@ public class EpmController extends BaseController {
 		model.setViewName("popup:/epm/epm-view");
 		return model;
 	}
+	
+	@Description(value = "도면 팝업 페이지")
+	@GetMapping(value = "/popup")
+	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("multi", Boolean.parseBoolean(multi));
+		model.addObject("method", method);
+		model.setViewName("popup:/epm/epm-popup");
+		return model;
+	}
 }
