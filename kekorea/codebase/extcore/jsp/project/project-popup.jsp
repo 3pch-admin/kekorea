@@ -380,7 +380,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			rowNumHeaderText : "번호",
 			showAutoNoDataMessage : false,
 			enableFilter : true,
-			selectionMode : "singleRow",
+			selectionMode : "multipleCells",
 			enableMovingColumn : true,
 			showInlineFilter : true,
 			useContextMenu : true,
@@ -482,6 +482,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	
 	
 	document.addEventListener("DOMContentLoaded", function() {
+		document.getElementById("kekNumber").focus();
 		const columns = loadColumnLayout("project-popup");
 		const contenxtHeader = genColumnHtml(columns); 
 		$("#h_item_ul").append(contenxtHeader);

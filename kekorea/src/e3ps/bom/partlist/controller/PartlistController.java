@@ -80,7 +80,7 @@ public class PartlistController extends BaseController {
 		}
 
 		JSONArray list = PartlistHelper.manager.getData(dto.getOid());
-		JSONArray data = PartlistHelper.manager.jsonArrayAui(dto.getOid());
+		JSONArray data = PartlistHelper.manager.jsonAuiProject(dto.getOid());
 		model.addObject("history", history);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
@@ -90,13 +90,14 @@ public class PartlistController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "수배된 비교 페이지")
+	@Description(value = "수배표 비교 페이지 공통 함수")
 	@GetMapping(value = "/compare")
-	public ModelAndView compare(@RequestParam String oid, @RequestParam String _oid) throws Exception {
+	public ModelAndView compare(@RequestParam String oid, @RequestParam String _oid, @RequestParam String invoke)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
 		Project p1 = (Project) CommonUtils.getObject(oid);
 		Project p2 = (Project) CommonUtils.getObject(_oid);
-		ArrayList<Map<String, Object>> data = PartlistHelper.manager.compare(p1, p2, null, null);
+		ArrayList<Map<String, Object>> data = PartlistHelper.manager.compare(p1, p2, invoke, null, null);
 		model.addObject("p1", p1);
 		model.addObject("p2", p2);
 		model.addObject("oid", oid);
@@ -106,32 +107,36 @@ public class PartlistController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "수배표 비교")
-	@ResponseBody
-	@PostMapping(value = "/compare")
-	public Map<String, Object> compare(@RequestBody Map<String, Object> params) throws Exception {
-		Map<String, Object> result = new HashMap<>();
-		try {
-			String oid = (String) params.get("oid");
-			String _oid = (String) params.get("_oid");
-			String compareKey = (String) params.get("compareKey");
-			String sort = (String) params.get("sort");
-			Project p1 = (Project) CommonUtils.getObject(oid);
-			Project p2 = (Project) CommonUtils.getObject(_oid);
-			ArrayList<Map<String, Object>> data = PartlistHelper.manager.compare(p1, p2, compareKey, sort);
-			result.put("list", data);
-			result.put("result", SUCCESS);
-		} catch (Exception e) {
-			result.put("result", FAIL);
-			result.put("msg", e.toString());
-		}
-		return result;
-	}
+//	@Description(value = "수배표 비교")
+//	@ResponseBody
+//	@PostMapping(value = "/compare")
+//	public Map<String, Object> compare(@RequestBody Map<String, Object> params) throws Exception {
+//		Map<String, Object> result = new HashMap<>();
+//		try {
+//			String oid = (String) params.get("oid");
+//			String _oid = (String) params.get("_oid");
+//			String compareKey = (String) params.get("compareKey");
+//			String sort = (String) params.get("sort");
+//			Project p1 = (Project) CommonUtils.getObject(oid);
+//			Project p2 = (Project) CommonUtils.getObject(_oid);
+//			ArrayList<Map<String, Object>> data = PartlistHelper.manager.compare(p1, p2, compareKey, sort);
+//			result.put("list", data);
+//			result.put("result", SUCCESS);
+//		} catch (Exception e) {
+//			result.put("result", FAIL);
+//			result.put("msg", e.toString());
+//		}
+//		return result;
+//	}
 
 	@Description(value = "수배표 팝업 조회 페이지")
 	@GetMapping(value = "/popup")
 	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("method", method);
 		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.setViewName("popup:/bom/partlist/partlist-popup");
@@ -171,7 +176,7 @@ public class PartlistController extends BaseController {
 		PartListMasterProjectLink link = (PartListMasterProjectLink) CommonUtils.getObject(oid);
 		PartListDTO dto = new PartListDTO(link);
 		JSONArray list = PartlistHelper.manager.getData(dto.getOid());
-		JSONArray data = PartlistHelper.manager.jsonArrayAui(dto.getOid());
+		JSONArray data = PartlistHelper.manager.jsonAuiProject(dto.getOid());
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
@@ -279,5 +284,4 @@ public class PartlistController extends BaseController {
 		model.setViewName("popup:/bom/partlist/partlist-integrated");
 		return model;
 	}
-
 }

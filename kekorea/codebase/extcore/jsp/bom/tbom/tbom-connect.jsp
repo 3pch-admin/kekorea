@@ -1,14 +1,25 @@
+<%@page import="e3ps.org.Department"%>
+<%@page import="e3ps.common.util.CommonUtils"%>
+<%@page import="e3ps.org.People"%>
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="java.util.Map"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+String poid = (String) request.getAttribute("poid");
+String toid = (String) request.getAttribute("toid");
+JSONArray list = (JSONArray) request.getAttribute("list");
+%>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<input type="hidden" name="toid" id="toid" value="<%=toid%>">
+<input type="hidden" name="poid" id="poid" value="<%=poid%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
 			<div class="header">
 				<img src="/Windchill/extcore/images/header.png">
-				수배표 등록
+				T-BOM 등록
 			</div>
 		</td>
 		<td class="right">
@@ -24,29 +35,31 @@
 			<a href="#tabs-1">기본정보</a>
 		</li>
 		<li>
-			<a href="#tabs-2">수배표</a>
+			<a href="#tabs-2">T-BOM</a>
 		</li>
 	</ul>
 	<div id="tabs-1">
 		<table class="create-table">
 			<colgroup>
 				<col width="130">
-				<col width="700">
+				<col width="600">
 				<col width="130">
-				<col width="700">
+				<col width="600">
 			</colgroup>
 			<tr>
-				<th class="req lb">수배표 제목</th>
+				<th class="req lb">T-BOM 제목</th>
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-500">
+					<input type="text" name="name" id="name" class="width-400">
 				</td>
-				<th>설계구분</th>
+				<th>진행율</th>
 				<td class="indent5">
-					<select name="engType" id="engType" class="width-200">
-						<option value="">선택</option>
-						<option value="기계">기계</option>
-						<option value="전기">전기</option>
-					</select>
+					<input type="number" name="progress" id="progress" class="width-300">
+				</td>
+			</tr>
+			<tr>
+				<th class="lb">내용</th>
+				<td class="indent5" colspan="3">
+					<textarea name="description" id="description" rows="3"></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -138,6 +151,9 @@
 									enableSorting : false
 								}
 								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
+								AUIGrid.setGridData(_myGridID,
+						<%=list%>
+							);
 							}
 
 							function _insert() {
@@ -173,24 +189,18 @@
 				</td>
 			</tr>
 			<tr>
-				<th class="req lb">내용</th>
-				<td class="indent5" colspan="3">
-					<textarea name="description" id="description" rows="8"></textarea>
-				</td>
-			</tr>
-			<tr>
-				<th class="req lb">결재</th>
-				<td colspan="3">
-					<jsp:include page="/extcore/include/register-include.jsp"></jsp:include>
-				</td>
-			</tr>
-			<tr>
 				<th class="lb">첨부파일</th>
 				<td class="indent5" colspan="3">
 					<jsp:include page="/extcore/include/secondary-include.jsp">
 						<jsp:param value="" name="oid" />
 						<jsp:param value="create" name="mode" />
 					</jsp:include>
+				</td>
+			</tr>
+			<tr>
+				<th class="req lb">결재</th>
+				<td colspan="3">
+					<jsp:include page="/extcore/include/register-include.jsp"></jsp:include>
 				</td>
 			</tr>
 		</table>
@@ -205,54 +215,56 @@
 				</td>
 			</tr>
 		</table>
-		<div id="grid_wrap" style="height: 780px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			const columns = [ {
-				dataField : "lotNo",
-				headerText : "LOT_NO",
-				dataType : "numeric",
+				dataField : "ok",
+				headerText : "검증",
 				width : 80,
+				renderer : {
+					type : "CheckBoxEditRenderer",
+				},
+				editable : false
+			}, {
+				dataField : "lotNo",
+				headerText : "LOT",
+				dataType : "numeric",
+				width : 100,
+				formatString : "###0",
 				editRenderer : {
 					type : "InputEditRenderer",
 					onlyNumeric : true,
 					maxlength : 3,
 				},
 			}, {
-				dataField : "unitName",
-				headerText : "UNIT NAME",
-				dataType : "string",
-				width : 120
-			}, {
-				dataField : "partNo",
-				headerText : "부품번호",
+				dataField : "code",
+				headerText : "중간코드",
 				dataType : "string",
 				width : 130,
+				editable : false
 			}, {
-				dataField : "partName",
+				dataField : "keNumber",
+				headerText : "부품번호",
+				dataType : "string",
+				width : 150,
+			}, {
+				dataField : "name",
 				headerText : "부품명",
 				dataType : "string",
 				width : 200,
+				editable : false
 			}, {
-				dataField : "standard",
-				headerText : "규격",
+				dataField : "model",
+				headerText : "KokusaiModel",
 				dataType : "string",
-				width : 250,
+				width : 200,
+				editable : false
 			}, {
-				dataField : "maker",
-				headerText : "MAKER",
-				dataType : "string",
-				width : 130,
-			}, {
-				dataField : "customer",
-				headerText : "거래처",
-				dataType : "string",
-				width : 130,
-			}, {
-				dataField : "quantity",
-				headerText : "수량",
+				dataField : "qty",
+				headerText : "QTY",
 				dataType : "numeric",
-				width : 60,
+				width : 100,
 				formatString : "###0",
 				editRenderer : {
 					type : "InputEditRenderer",
@@ -260,53 +272,20 @@
 				},
 			}, {
 				dataField : "unit",
-				headerText : "단위",
+				headerText : "UNIT",
 				dataType : "string",
-				width : 80,
+				width : 130
 			}, {
-				dataField : "price",
-				headerText : "단가",
-				dataType : "numeric",
-				width : 120,
-			}, {
-				dataField : "currency",
-				headerText : "화폐",
+				dataField : "provide",
+				headerText : "PROVIDE",
 				dataType : "string",
-				width : 60,
+				width : 130
 			}, {
-				dataField : "won",
-				headerText : "원화금액",
-				dataType : "numeric",
-				width : 120,
-			}, {
-				dataField : "partListDate",
-				headerText : "수배일자",
-				dataType : "date",
-				formatString : "yyyy-mm-dd",
-				width : 100,
-				editable : false
-			}, {
-				dataField : "exchangeRate",
-				headerText : "환율",
-				dataType : "numeric",
-				width : 80,
-				formatString : "#,##0.0000"
-			}, {
-				dataField : "referDrawing",
-				headerText : "참고도면",
+				dataField : "discontinue",
+				headerText : "DISCONTINUE",
 				dataType : "string",
-				width : 120,
-			}, {
-				dataField : "classification",
-				headerText : "조달구분",
-				dataType : "string",
-				width : 120,
-			}, {
-				dataField : "note",
-				headerText : "비고",
-				dataType : "string",
-				width : 250,
-			} ];
+				width : 200
+			} ]
 
 			function createAUIGrid(columnLayout) {
 				const props = {
@@ -320,7 +299,6 @@
 					enableDrag : true,
 					enableMultipleDrag : true,
 					enableDrop : true,
-					enableSorting : false,
 					$compaEventOnPaste : true,
 					editable : true,
 					enableRowCheckShiftKey : true,
@@ -342,17 +320,37 @@
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				readyHandler();
 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
-				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRow);
 			}
 
 			function auiCellEditEndHandler(event) {
-				const rowIndex = event.rowIndex;
-				const item = {
-					sort : event.rowIndex,
+				const dataField = event.dataField;
+				const number = event.item.keNumber;
+				if (dataField === "keNumber") {
+					const url = getCallUrl("/tbom/getData?number=" + number);
+					call(url, null, function(data) {
+						if (data.ok) {
+							const item = {
+								ok : data.ok,
+								name : data.name,
+								keNumber : data.keNumber,
+								lotNo : data.lotNo,
+								oid : data.oid,
+								code : data.code,
+								model : data.model,
+								qty : 1,
+								unit : "EA",
+								createdDate : new Date()
+							}
+							AUIGrid.updateRow(myGridID, item, event.rowIndex);
+						} else {
+							const item = {
+								ok : data.ok,
+							}
+						}
+					}, "GET");
 				}
-				AUIGrid.updateRow(myGridID, item, event.rowIndex);
 			}
-
+			
 			function contextItemHandler(event) {
 				const item = new Object();
 				switch (event.contextIndex) {
@@ -379,15 +377,6 @@
 				}
 			}
 
-			function auiBeforeRemoveRow(event) {
-				const rows = AUIGrid.getRowCount(myGridID);
-				if (rows === 1) {
-					alert("최 소 하나의 행이 존재해야합니다.");
-					return false;
-				}
-				return true;
-			}
-
 			function deleteRow() {
 				const checked = AUIGrid.getCheckedRowItems(myGridID);
 				const rows = AUIGrid.getRowCount(myGridID);
@@ -395,7 +384,6 @@
 					alert("최 소 하나의 행이 존재해야합니다.");
 					return false;
 				}
-
 				if (checked.length === 0) {
 					alert("삭제할 행을 선택하세요.");
 					return false;
@@ -408,7 +396,7 @@
 
 			function readyHandler() {
 				const item = new Object();
-				item.partListDate = new Date();
+				item.createdDate = new Date();
 				AUIGrid.addRow(myGridID, item, "last");
 			}
 
@@ -424,7 +412,7 @@
 				}
 				const item = new Object();
 				const rowIndex = checkedItems[0].rowIndex;
-				item.partListDate = new Date();
+				item.createdDate = new Date();
 				AUIGrid.addRow(myGridID, item, rowIndex);
 			}
 
@@ -440,7 +428,7 @@
 				}
 				const item = new Object();
 				const rowIndex = checkedItems[0].rowIndex;
-				item.partListDate = new Date();
+				item.createdDate = new Date();
 				AUIGrid.addRow(myGridID, item, rowIndex + 1);
 			}
 		</script>
@@ -451,13 +439,15 @@
 	function create() {
 
 		const params = new Object();
-		const url = getCallUrl("/partlist/create");
+		const url = getCallUrl("/tbom/create");
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
-		const _addRows = AUIGrid.getAddedRowItems(_myGridID);
+		const _addRows = AUIGrid.getGridData(_myGridID);
 		const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
 		const name = document.getElementById("name").value;
-		const engType = document.getElementById("engType").value;
 		const description = document.getElementById("description").value;
+		const progress = document.getElementById("progress").value;
+		const toid = document.getElementById("toid").value;
+		const poid = document.getElementById("poid").value;
 		addRows.sort(function(a, b) {
 			return a.sort - b.sort;
 		});
@@ -469,21 +459,25 @@
 		params._addRows = _addRows;
 		params._addRows_ = _addRows_;
 		params.name = name;
-		params.engType = engType;
 		params.description = description;
 		params.secondarys = toArray("secondarys");
+		params.progress = Number(progress);
+		params.toid = toid;
+		params.poid = poid;
 		toRegister(params, _addRows_);
+		console.log(params);
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
-				opener.loadGridData();
+				opener.document.location.reload();
 				self.close();
 			}
 		})
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
+		document.getElementById("name").focus();
 		$("#tabs").tabs({
 			active : 0,
 			create : function(event, ui) {
@@ -518,7 +512,6 @@
 					} else {
 						_createAUIGrid_(_columns_);
 					}
-					selectbox("engType");
 					break;
 				case "tabs-2":
 					const isCreated = AUIGrid.isCreated(myGridID);
@@ -531,7 +524,6 @@
 				}
 			}
 		});
-		selectbox("engType");
 	});
 
 	window.addEventListener("resize", function() {

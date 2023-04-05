@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.bom.partlist.PartListMaster;
-import e3ps.bom.partlist.service.PartlistHelper;
+import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
@@ -27,6 +26,7 @@ import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.org.service.OrgHelper;
+import e3ps.project.Project;
 import e3ps.project.template.service.TemplateHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
@@ -143,18 +143,21 @@ public class WorkOrderController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "수배된 비교 페이지")
+	@Description(value = "도면일람표 비교 페이지")
 	@GetMapping(value = "/compare")
-	public ModelAndView compare(@RequestParam String oid, @RequestParam String _oid) throws Exception {
+	public ModelAndView compare(@RequestParam String oid, @RequestParam String _oid,
+			@RequestParam(required = false) String compareKey, @RequestParam(required = false) String sort)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
-		Map<String, Object> data = WorkOrderHelper.manager.compare(oid, _oid);
-		ArrayList<Map<String, Object>> dataList = (ArrayList<Map<String, Object>>) data.get("dataList");
-		ArrayList<Map<String, Object>> _dataList = (ArrayList<Map<String, Object>>) data.get("_dataList");
+		Project p1 = (Project) CommonUtils.getObject(oid);
+		Project p2 = (Project) CommonUtils.getObject(_oid);
+		ArrayList<Map<String, Object>> data = WorkOrderHelper.manager.compare(p1, p2, compareKey, sort);
+		model.addObject("p1", p1);
+		model.addObject("p2", p2);
 		model.addObject("oid", oid);
 		model.addObject("_oid", _oid);
-		model.addObject("dataList", new org.json.JSONArray(dataList));
-		model.addObject("_dataList", new org.json.JSONArray(_dataList));
-		model.setViewName("popup:/epm/workOrder/workOrder-compare");
+		model.addObject("data", JSONArray.fromObject(data));
+		model.setViewName("popup:/bom/tbom/tbom-compare");
 		return model;
 	}
 }

@@ -83,7 +83,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 				<%
 				for (CommonCode customer : customers) {
 				%>
-				<option value="<%=customer.getName()%>"><%=customer.getName()%></option>
+				<option value="<%=customer.getPersistInfo().getObjectIdentifier().getStringValue()%>"><%=customer.getName()%></option>
 				<%
 				}
 				%>
@@ -104,7 +104,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 				<%
 				for (CommonCode projectType : projectTypes) {
 				%>
-				<option value="<%=projectType.getName()%>"><%=projectType.getName()%></option>
+				<option value="<%=projectType.getPersistInfo().getObjectIdentifier().getStringValue()%>"><%=projectType.getName()%></option>
 				<%
 				}
 				%>
@@ -112,12 +112,12 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 		</td>
 		<th>작번 템플릿</th>
 		<td colspan="3" class="indent5">
-			<select name="pTemplate" id="pTemplate" class="width-300">
+			<select name="reference" id="reference" class="width-300">
 				<option value="">선택</option>
 				<%
 				for (HashMap<String, String> map : list) {
-					String key = (String) map.get("value");
-					String value = (String) map.get(key);
+					String key = (String) map.get("key");
+					String value = (String) map.get("value");
 				%>
 				<option value="<%=key%>"><%=value%></option>
 				<%
@@ -134,16 +134,104 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 	</tr>
 </table>
 <script type="text/javascript">
+	function create() {
 
-	function create(){
-		if(!confirm("등록 하시겠습니까?")) {
+		const kekNumber = document.getElementById("kekNumber");
+		const keNumber = document.getElementById("keNumber");
+		const pdate = document.getElementById("pdate");
+		const customDate = document.getElementById("customDate");
+		const userId = document.getElementById("userId");
+		const model = document.getElementById("model");
+		const mak = document.getElementById("mak");
+		const detail = document.getElementById("detail");
+		const customer = document.getElementById("customer");
+		const install = document.getElementById("install");
+		const projectType = document.getElementById("projectType");
+		const reference = document.getElementById("reference");
+		const description = document.getElementById("description");
+
+		if (isNull(kekNumber.value)) {
+			alert("KEK 작번을 입력하세요.");
+			kekNumber.focus();
 			return false;
 		}
-		
-		
+
+		if (isNull(keNumber.value)) {
+			alert("KE 작번을 입력하세요.");
+			keNumber.focus();
+			return false;
+		}
+		if (isNull(pdate.value)) {
+			alert("작번 발행일을 선택하세요.");
+			pdate.focus();
+			return false;
+		}
+		if (isNull(customDate.value)) {
+			alert("요구납기일을 선택하세요.");
+			customDate.focus();
+			return false;
+		}
+		if (isNull(userId.value)) {
+			alert("USER ID를 입력하세요.");
+			userId.focus();
+			return false;
+		}
+		if (isNull(model.value)) {
+			alert("모델을 입력하세요.");
+			model.focus();
+			return false;
+		}
+		if (isNull(mak.value)) {
+			alert("막종을 선택하세요.");
+			return false;
+		}
+		if (isNull(detail.value)) {
+			alert("막종상세를 선택하세요.");
+			return false;
+		}
+		if (isNull(customer.value)) {
+			alert("고객사를 선택하세요.");
+			return false;
+		}
+		if (isNull(install.value)) {
+			alert("설치장소를 선택하세요.");
+			return false;
+		}
+		if (isNull(projectType.value)) {
+			alert("작번 유형 선택하세요.");
+			return false;
+		}
+		if (!confirm("등록 하시겠습니까?")) {
+			return false;
+		}
+		const params = new Object();
+		const url = getCallUrl("/project/create");
+
+		params.kekNumber = kekNumber.value;
+		params.keNumber = keNumber.value;
+		params.pdate = pdate.value;
+		params.customDate = customDate.value;
+		params.userId = userId.value;
+		params.model = model.value;
+		params.mak = mak.value;
+		params.detail = detail.value;
+		params.customer = customer.value;
+		params.install = install.value;
+		params.projectType = projectType.value;
+		params.reference = reference.value;
+		params.description = description.value;
+		openLayer();
+		call(url, params, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			}
+		})
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
+		document.getElementById("kekNumber").focus();
 		$("#mak").bindSelect({
 			onchange : function() {
 				const oid = this.optionValue;
@@ -178,7 +266,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 
 		selectbox("detail");
 		selectbox("install");
-		selectbox("template");
+		selectbox("reference");
 		selectbox("projectType");
 		date("pdate");
 		date("customDate");

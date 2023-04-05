@@ -15,7 +15,10 @@ import wt.util.WTException;
 @GenAsPersistable(superClass = WTObject.class, interfaces = { ApprovalImpl.class },
 
 		properties = {
-				@GeneratedProperty(name = "viewDisabled", type = boolean.class, javaDoc = "반려함출력여부", initialValue = "false") },
+
+				@GeneratedProperty(name = "viewDisabled", type = boolean.class, javaDoc = "반려함출력여부", initialValue = "false"),
+
+		},
 
 		foreignKeys = {
 

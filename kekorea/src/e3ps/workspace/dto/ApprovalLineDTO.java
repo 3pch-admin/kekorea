@@ -48,7 +48,9 @@ public class ApprovalLineDTO {
 			setName(line.getName());
 			setCreator(line.getMaster().getOwnership().getOwner().getFullName());
 			setState(line.getState());
+			setSubmiter(master.getOwnership().getOwner().getFullName());
 			setCreatedDate(line.getCreateTimestamp());
+			setReceiveTime(line.getStartTime()); // 수신일 = 받은 시간
 			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
 //			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
 			setAgreeLine(line.getType().equals(WorkspaceHelper.AGREE_LINE));
@@ -99,18 +101,21 @@ public class ApprovalLineDTO {
 			setOid(master.getPersistInfo().getObjectIdentifier().getStringValue());
 			setType(master.getType());
 			setName(master.getName());
-			setState(master.getState());
-			setReceiveTime(master.getCreateTimestamp());
-			setCompleteTime(master.getCompleteTime()); // 반드시 완료날짜 잇음
 			setSubmiter(master.getOwnership().getOwner().getFullName());
+			setState(master.getState());
+			setReceiveTime(master.getStartTime());
+			setCompleteTime(master.getCompleteTime()); // 반드시 완료날짜 잇음
 			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
-			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
+//			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
 			point(master);
 		} else if ("COLUMN_PROGRESS".equals(columnType)) {
 			// 진행함
 			setOid(master.getPersistInfo().getObjectIdentifier().getStringValue());
 			setName(master.getName());
 			setCreatedDate(master.getCreateTimestamp());
+			setSubmiter(master.getOwnership().getOwner().getFullName());
+			setState(master.getState());
+			setReceiveTime(master.getStartTime());
 			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
 //			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
 			point(master);
@@ -119,6 +124,9 @@ public class ApprovalLineDTO {
 			setOid(master.getPersistInfo().getObjectIdentifier().getStringValue());
 			setName(master.getName());
 			setCreatedDate(master.getCreateTimestamp());
+			setSubmiter(master.getOwnership().getOwner().getFullName());
+			setState(master.getState());
+			setReceiveTime(master.getStartTime());
 			setCompleteTime(master.getCompleteTime());
 			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
 //			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());

@@ -173,9 +173,6 @@ public class StandardOrgService extends StandardManager implements OrgService {
 
 				QueryResult _qr = PersistenceHelper.manager.navigate(wtuser, "people", PeopleWTUserLink.class);
 
-				System.out.println("name=" + wtuser.getName());
-				System.out.println("q=" + _qr.size());
-
 				People user = null;
 				if (!_qr.hasMoreElements()) {
 					user = People.newPeople();

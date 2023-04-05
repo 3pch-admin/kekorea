@@ -312,11 +312,11 @@ public class StandardDocumentService extends StandardManager implements Document
 				mm = WorkspaceHelper.manager.getMaster(document);
 			}
 
-			// 부품 문서 도면 
+			// 부품 문서 도면
 			// 버전이 관리
 			// A.1 > A.2 > A.3
 			// A.1 체크
-			
+
 			Folder cFolder = CheckInOutTaskLogic.getCheckoutFolder();
 			CheckoutLink clink = WorkInProgressHelper.service.checkout(document, cFolder, "문서 수정 체크 아웃");
 			document = (WTDocument) clink.getWorkingCopy();
@@ -1069,30 +1069,49 @@ public class StandardDocumentService extends StandardManager implements Document
 
 	@Override
 	public void register(Map<String, Object> params) throws Exception {
-		String name = (String)params.get("name");
-		ArrayList<Map<String, String>> _addRows =(ArrayList<Map<String, String>>)params.get("_addRows");
-		ArrayList<Map<String, String>> _addRows_ =(ArrayList<Map<String, String>>)params.get("_addRows_");
+		String name = (String) params.get("name"); // 제목
+		String description = (String) params.get("description"); // 의견
+		ArrayList<Map<String, String>> _addRows = (ArrayList<Map<String, String>>) params.get("_addRows"); // 결재문서
+		ArrayList<Map<String, String>> _addRows_ = (ArrayList<Map<String, String>>) params.get("_addRows_"); // 결재
+		ArrayList<Map<String, String>> agreeRows = (ArrayList<Map<String, String>>) params.get("agreeRows"); // 검토
+		ArrayList<Map<String, String>> approvalRows = (ArrayList<Map<String, String>>) params.get("approvalRows"); // 결재
+		ArrayList<Map<String, String>> receiveRows = (ArrayList<Map<String, String>>) params.get("receiveRows"); // 수신
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
-			
+
 			ApprovalContract contract = ApprovalContract.newApprovalContract();
 			contract.setName(name);
+			contract.setDescription(description);
 			contract.setStartTime(new Timestamp(new Date().getTime()));
-			contract.setState(WorkspaceHelper.APPROVAL_APPROVING);
-			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
+			contract.setState(WorkspaceHelper.STATE_APPROVAL_APPROVING);
 
-			for(Map<String, String> _addRow : _addRows) {
-				String oid = _addRow.get("oid");
-				WTDocument document = (WTDocument)CommonUtils.getObject(oid)
+			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
+			
+			for (Map<String, String> _addRow : _addRows) {
+				String oid = _addRow.get("oid"); //document oid
+				WTDocument document = (WTDocument) CommonUtils.getObject(oid);
 				ApprovalContractPersistableLink aLink = ApprovalContractPersistableLink
 						.newApprovalContractPersistableLink(contract, document);
 				PersistenceHelper.manager.save(aLink);
 			}
-
-
-			WorkspaceHelper.service.register(contract, _addRows_);
 			
+			for(Map<String, String> _addRow_ : _addRows_) {
+				String woid = _addRow_.get("woid");
+				WTUser wtuser = (WTUser) CommonUtils.getObject(woid);
+//				ApprovalLine approvalLine = ApprovalLine.newApprovalLine();
+				ApprovalContractPersistableLink aLinks = ApprovalContractPersistableLink
+						.newApprovalContractPersistableLink(contract, wtuser);
+				System.out.println("############" + _addRow_);
+				PersistenceHelper.manager.save(aLinks);
+			}
+			
+			if (approvalRows.size() > 0) {
+//			WorkspaceHelper.service.register(contract, params);
+				System.out.println("@@@@@@@@@@@" + params);
+				WorkspaceHelper.service.register(contract, approvalRows, agreeRows, receiveRows);
+			}
+
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {

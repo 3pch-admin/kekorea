@@ -21,29 +21,27 @@ import com.ptc.wvs.server.util.PublishUtils;
 import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
-import e3ps.bom.partlist.service.PartListMasterHelper;
-om.partlist.service.PartListMasterHelper;
 import e3ps.common.db.DBCPManager;
-import e3ps.common.db.DBConnectionMan
-import e3ps.common.myBatis.MyBatisQueryDao;
-import e3ps.common.util.IBAUtils;ls;
+import e3ps.common.db.DBConnectionManager;
+import e3ps.common.util.CommonUtils;
+import e3ps.common.util.ContentUtils;
+import e3ps.common.util.IBAUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.epm.service.EpmHelper;
 import e3ps.part.UnitBom;
 import e3ps.part.UnitBomPartLink;
 import e3ps.part.UnitSubPart;
-import e3ps.part.beans.PartViewDa
-import e3ps.project.output.DocumentOutputLink;
+import e3ps.part.beans.PartViewData;
+import e3ps.part.service.PartHelper;
+import e3ps.project.Project;
+import e3ps.project.output.Output;
+import e3ps.project.output.OutputDocumentLink;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
-ent.ContentHelper;
-import wt.cont
-import e3ps.workspace.beans.ApprovalLineViewData;
-import e3ps.workspace.beans.ApprovalMasterViewData;
-import e3
-;workspace.service.ApprovalHelper;
-Helper;ent.ContentItem;
+import wt.content.ApplicationData;
+import wt.content.ContentHelper;
+import wt.content.ContentItem;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.doc.WTDocument;
@@ -63,9 +61,6 @@ import wt.util.WTException;
 
 public class StandardErpService extends StandardManager implements ErpService {
 
-	@Inject
-	private MyBatisQueryDao dao;
-	
 	// private static final String erpOutputDir = "P:\\";
 
 	// 절대 경로..
@@ -87,546 +82,6 @@ public class StandardErpService extends StandardManager implements ErpService {
 	}
 
 	@Override
-	public Map<String, Object> sendERPBOMAction(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-//		List<String> list = (List<String>) param.get("list");
-//		WTPart part = null;
-//		ReferenceFactory rf = new ReferenceFactory();
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-//			for (String oid : list) {
-//				part = (WTPart) rf.getReference(oid).getObject();
-
-			// ERP로 전송할 부품 정보
-			// ERP Connection
-
-//			}
-
-			map.put("result", SUCCESS);
-			map.put("msg", "BOM 정보가 ERP 서버로 전송 되었습니다.");
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			map.put("result", FAIL);
-			map.put("msg", "BOM 정보를 ERP 서버로 전송 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-		return map;
-	}
-
-	@Override
-	public void sendERPPARTAction(PartViewData data) throws WTException {
-		DBConnectionManager instance = null;
-		Transaction trs = new Transaction();
-		Connection con = null;
-		try {
-			trs.start();
-
-			instance = DBConnectionManager.getInstance();
-
-			con = instance.getConnection(erpName);
-
-			Statement st = con.createStatement();
-
-			StringBuffer sql = new StringBuffer();
-
-			int seq = ErpHelper.manager.getMaxSeq("TCW_PART_IF");
-
-			sql.append("INSERT INTO TCW_PART_IF (SEQ, PART_TYPE, PART_NO, PART_NAME,");
-			sql.append("PART_SPEC, DESCRIPTION, UNITNAME, ITEMCLASSNAME, ITEMCLASSSEQ, ");
-			sql.append("MAKER, USERID, AUD, FLAG, CREATE_DATE, INTERFACE_DATE, ");
-			sql.append("ItemSeq, Result, Material)");
-			sql.append(" VALUES ('" + seq + "', ");
-
-			String part_type = "가공품";
-			sql.append("'" + part_type + "', ");
-			sql.append("'" + data.number + "', ");
-			sql.append("'" + data.name + "', ");
-			// sql.append("'" + data.spec + "', ");
-			sql.append("'" + data.number + "', ");
-
-			String description = "";
-			sql.append("'" + description + "', ");
-
-			String unit = data.link != null ? data.link.getQuantity().getUnit().toString() : "EA";
-
-			sql.append("'" + unit + "', ");
-
-			String ITEMCLASSNAME = "";
-			String ITEMCLASSSEQ = "";
-
-			sql.append("'" + ITEMCLASSNAME + "', ");
-			sql.append("'" + ITEMCLASSSEQ + "', ");
-
-			sql.append("'" + data.maker + "', ");
-
-			sql.append("'" + data.part.getCreatorName() + "', ");
-
-			String aud = "A";
-			sql.append("'" + aud + "', ");
-
-			String flag = "";
-			sql.append("'" + flag + "', ");
-
-			sql.append("'" + data.createDate + "', ");
-
-			String INTERFACE_DATE = "";
-			String ItemSeq = "";
-			String Result = "";
-//			String Material = "";
-			sql.append("'" + INTERFACE_DATE + "', ");
-			sql.append("'" + ItemSeq + "', ");
-			sql.append("'" + Result + "', ");
-			sql.append("'" + data.material + "');");
-
-			System.out.println("sql = " + sql.toString());
-			st.executeUpdate(sql.toString());
-
-			// 프로시져
-			// EXEC TCW_SIF_PART_MASTER 1
-			StringBuffer sb = new StringBuffer();
-			sb.append("EXEC TCW_SIF_PART_MASTER 1");
-			st.executeUpdate(sb.toString());
-
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			instance.freeConnection(erpName, con);
-			if (trs != null)
-				trs.rollback();
-		}
-	}
-
-	@Override
-	public Map<String, Object> sendERPDRWAction(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<String> list = (List<String>) param.get("list");
-		EPMDocument epm = null;
-		ReferenceFactory rf = new ReferenceFactory();
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			// if (!ErpHelper.isSendERP) {
-			// map.put("result", SUCCESS);
-			// map.put("msg", "ERP 전송이 지원 되지 않습니다.");
-			// return map;
-			// }
-
-			File rdir = new File(erpOutputDir + File.separator + "erp"); // 루트폴더 생성
-			if (!rdir.exists()) {
-				rdir.mkdir();
-			}
-
-			for (String oid : list) {
-				epm = (EPMDocument) rf.getReference(oid).getObject();
-
-				String number = epm.getNumber();
-
-				String dir = erpOutputDir + File.separator + "erp" + File.separator + number;
-				File directory = new File(dir);
-				if (!directory.exists()) {
-					directory.mkdirs();
-				}
-
-				QueryResult qr = ContentHelper.service.getContentsByRole(epm, ContentRoleType.PRIMARY);
-				while (qr.hasMoreElements()) {
-					ApplicationData adata = (ApplicationData) qr.nextElement();
-
-					String version = epm.getVersionIdentifier().getSeries().getValue() + "."
-							+ epm.getIterationIdentifier().getSeries().getValue();
-					byte[] buffer = new byte[10240];
-					InputStream is = ContentServerHelper.service.findLocalContentStream(adata);
-					File downFile = new File(dir + File.separator + epm.getNumber() + "_" + version + ".drw");
-					FileOutputStream fos = new FileOutputStream(downFile);
-					int j = 0;
-					while ((j = is.read(buffer, 0, 10240)) > 0) {
-						fos.write(buffer, 0, j);
-					}
-					fos.close();
-					is.close();
-				}
-			}
-
-			map.put("result", SUCCESS);
-			map.put("msg", "도면 파일이 ERP 서버로 전송 되었습니다.");
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			map.put("result", FAIL);
-			map.put("msg", "도면 파일 ERP 전송 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-		return map;
-	}
-
-	@Override
-	public Map<String, Object> sendERPPDFAction(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<String> list = (List<String>) param.get("list");
-		EPMDocument epm = null;
-		ReferenceFactory rf = new ReferenceFactory();
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			// if (!ErpHelper.isSendERP) {
-			// map.put("result", SUCCESS);
-			// map.put("msg", "ERP 전송이 지원 되지 않습니다.");
-			// return map;
-			// }
-
-			File rdir = new File(erpOutputDir + File.separator + "erp"); // 루트폴더 생성
-			if (!rdir.exists()) {
-				rdir.mkdir();
-			}
-
-			for (String oid : list) {
-				epm = (EPMDocument) rf.getReference(oid).getObject();
-
-				if (!epm.getDocType().toString().equals("CADDRAWING")) {
-					continue;
-				}
-
-				String number = epm.getNumber();
-				String dir = erpOutputDir + File.separator + "erp" + File.separator + number;
-				File directory = new File(dir);
-				if (!directory.exists()) {
-					directory.mkdirs();
-				}
-
-				Representation representation = PublishUtils.getRepresentation(epm);
-
-				if (representation != null) {
-					QueryResult qr = ContentHelper.service.getContentsByRole(representation,
-							ContentRoleType.ADDITIONAL_FILES);
-					while (qr.hasMoreElements()) {
-						ApplicationData adata = (ApplicationData) qr.nextElement();
-
-						byte[] buffer = new byte[10240];
-						InputStream is = ContentServerHelper.service.findLocalContentStream(adata);
-
-						String version = epm.getVersionIdentifier().getSeries().getValue() + "."
-								+ epm.getIterationIdentifier().getSeries().getValue();
-
-						File downFile = new File(dir + File.separator + epm.getNumber() + "_" + version + ".pdf");
-						FileOutputStream fos = new FileOutputStream(downFile);
-						int j = 0;
-						while ((j = is.read(buffer, 0, 10240)) > 0) {
-							fos.write(buffer, 0, j);
-						}
-						fos.close();
-						is.close();
-					}
-				}
-			}
-
-			map.put("result", SUCCESS);
-			map.put("msg", "PDF 파일이 ERP 서버로 전송 되었습니다.");
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			map.put("result", FAIL);
-			map.put("msg", "PDF 파일 ERP 전송 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-		return map;
-	}
-
-	@Override
-	public Map<String, Object> sendLibraryPart(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-		String oid = (String) param.get("oid");
-		WTPart part = null;
-		ReferenceFactory rf = new ReferenceFactory();
-		DBConnectionManager instance = null;
-		Connection con = null;
-		Transaction trs = new Transaction();
-
-		try {
-			trs.start();
-
-			instance = DBConnectionManager.getInstance();
-
-			con = instance.getConnection(erpName);
-
-			Statement st = con.createStatement();
-
-			part = (WTPart) rf.getReference(oid).getObject();
-
-			StringBuffer sql = new StringBuffer();
-
-			int seq = ErpHelper.manager.getMaxSeq("TCW_PART_IF");
-
-			String part_type = ""; // 조달구분???
-			String part_no = part.getNumber();
-			String part_name = part.getName();
-
-			String part_spec = IBAUtils.getStringValue(part, "SPEC");
-			String description = "";
-			String unit_name = "EA";
-
-			String item_class_name = "";
-			String item_class_seq = "";
-
-			String maker = IBAUtils.getStringValue(part, "MAKER");
-
-			String userid = part.getCreatorName();
-
-			// 최초 A , 수정 U, 삭제 D
-			String aud = "A";
-			String flag = "Y"; // 연동 처리 여부 , Y, N
-
-			String create_date = new Timestamp(new Date().getTime()).toString();
-			String interface_date = "";
-			String item_seq = "";
-			String result = "";
-
-			String material = IBAUtils.getStringValue(part, "MATERIAL");
-			String color = IBAUtils.getStringValue(part, "COLOR");
-			String dimension = IBAUtils.getStringValue(part, "DIMENSION");
-			String texture = "";// ??
-
-			sql.append(
-					"INSERT INTO TCW_PART_IF (SEQ, PART_TYPE, PART_NO, PART_NAME, PART_SPEC, DESCRIPTION, UNITNAME, ITEMCLASSNAME, ITEMCLASSSEQ, MAKER, USERID, AUD, FLAG, ");
-			sql.append("CREATE_DATE, INTERFACE_DATE, ITEMSEQ, RESULT, MATERIAL, COLOR, DIMENSION, TEXTURE)");
-			sql.append(" VALUES ('" + seq + "', ");
-			sql.append("'" + part_type + "', ");
-			sql.append("'" + part_no + "', ");
-			sql.append("'" + part_name + "', ");
-			sql.append("'" + part_spec + "', ");
-			sql.append("'" + description + "', ");
-			sql.append("'" + unit_name + "', ");
-			sql.append("'" + item_class_name + "', ");
-			sql.append("'" + item_class_seq + "', ");
-			sql.append("'" + maker + "', ");
-			sql.append("'" + userid + "', ");
-			sql.append("'" + aud + "', ");
-			sql.append("'" + flag + "', ");
-			sql.append("'" + create_date + "', ");
-			sql.append("'" + interface_date + "', ");
-			sql.append("'" + item_seq + "', ");
-			sql.append("'" + result + "', ");
-			sql.append("'" + material + "', ");
-			sql.append("'" + color + "', ");
-			sql.append("'" + dimension + "', ");
-			sql.append("'" + texture + "');");
-
-			System.out.println("sql=" + sql.toString());
-
-			int exe = st.executeUpdate(sql.toString());
-
-			if (exe == 1) {
-
-			}
-
-			map.put("result", SUCCESS);
-			map.put("msg", "구매품 부품이 ERP 서버로 전송 되었습니다.");
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			map.put("result", FAIL);
-			map.put("msg", "구매품 부품 전송 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-			instance.freeConnection("ero", con);
-		}
-		return map;
-	}
-
-	// @Override
-	// public Map<String, Object> sendSTNData(Map<String, Object> param) throws
-	// WTException {
-	// Map<String, Object> map = new HashMap<String, Object>();
-	// String oid = (String) param.get("oid");
-	// STN stn = null;
-	// ReferenceFactory rf = new ReferenceFactory();
-	// DBConnectionManager instance = null;
-	// Connection con = null;
-	// Transaction trs = new Transaction();
-	//
-	// try {
-	// trs.start();
-	//
-	// instance = DBConnectionManager.getInstance();
-	//
-	// con = instance.getConnection("erp");
-	//
-	// stn = (STN) rf.getReference(oid).getObject();
-	//
-	// map.put("result", SUCCESS);
-	// map.put("msg", "STN 데이터가 ERP 서버로 전송 되었습니다.");
-	// trs.commit();
-	// trs = null;
-	// } catch (Exception e) {
-	// map.put("result", FAIL);
-	// map.put("msg", "STN 데이터 전송 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
-	// e.printStackTrace();
-	// trs.rollback();
-	// } finally {
-	// if (trs != null)
-	// trs.rollback();
-	// instance.freeConnection("ero", con);
-	// }
-	// return map;
-	// }
-	//
-	// @Override
-	// public Map<String, Object> sendECNData(Map<String, Object> param) throws
-	// WTException {
-	// Map<String, Object> map = new HashMap<String, Object>();
-	// String oid = (String) param.get("oid");
-	// ECN ecn = null;
-	// ReferenceFactory rf = new ReferenceFactory();
-	// DBConnectionManager instance = null;
-	// Connection con = null;
-	// Transaction trs = new Transaction();
-	//
-	// try {
-	// trs.start();
-	//
-	// instance = DBConnectionManager.getInstance();
-	//
-	// con = instance.getConnection("erp");
-	//
-	// Statement st = con.createStatement();
-	//
-	// ecn = (ECN) rf.getReference(oid).getObject();
-	//
-	// StringBuffer sql = new StringBuffer();
-	//
-	// int seq = ErpHelper.manager.getMaxSeq("TCW_PART_IF");
-	//
-	// map.put("result", SUCCESS);
-	// map.put("msg", "ECN 데이터가 ERP 서버로 전송 되었습니다.");
-	// trs.commit();
-	// trs = null;
-	// } catch (Exception e) {
-	// map.put("result", FAIL);
-	// map.put("msg", "ECN 데이터 전송 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
-	// e.printStackTrace();
-	// trs.rollback();
-	// } finally {
-	// if (trs != null)
-	// trs.rollback();
-	// instance.freeConnection("ero", con);
-	// }
-	// return map;
-	// }
-
-	@Override
-	public Map<String, Object> sendERPPARTAction(Map<String, Object> param) throws WTException {
-		WTPart part = null;
-		Map<String, Object> map = new HashMap<String, Object>();
-		DBConnectionManager instance = null;
-		ReferenceFactory rf = new ReferenceFactory();
-		List<String> list = (List<String>) param.get("list");
-		Transaction trs = new Transaction();
-		Connection con = null;
-		try {
-			trs.start();
-
-			instance = DBConnectionManager.getInstance();
-
-			con = instance.getConnection(erpName);
-			Statement st = con.createStatement();
-
-			for (String oid : list) {
-				part = (WTPart) rf.getReference(oid).getObject();
-				PartViewData data = new PartViewData(part);
-
-				StringBuffer sql = new StringBuffer();
-
-				int seq = ErpHelper.manager.getMaxSeq("TCW_PART_IF");
-
-				sql.append("INSERT INTO TCW_PART_IF (SEQ, PART_TYPE, PART_NO, PART_NAME,");
-				sql.append("PART_SPEC, DESCRIPTION, UNITNAME, ITEMCLASSNAME, ITEMCLASSSEQ, ");
-				sql.append("MAKER, USERID, AUD, FLAG, CREATE_DATE, INTERFACE_DATE, ");
-				sql.append("ItemSeq, Result, Material)");
-				sql.append(" VALUES ('" + seq + "', ");
-
-				String part_type = "가공품";
-				sql.append("'" + part_type + "', ");
-				sql.append("'" + data.number + "', ");
-				sql.append("'" + data.name + "', ");
-				sql.append("'" + data.spec + "', ");
-
-				String description = "";
-				sql.append("'" + description + "', ");
-
-				String unit = data.link != null ? data.link.getQuantity().getUnit().toString() : "EA";
-
-				sql.append("'" + unit + "', ");
-
-				String ITEMCLASSNAME = IBAUtils.getStringValue(data.part, "ITEMCLASSNAME");
-				String ITEMCLASSSEQ = IBAUtils.getStringValue(data.part, "ITEMCLASSSEQ");
-
-				sql.append("'" + ITEMCLASSNAME + "', ");
-				sql.append("'" + ITEMCLASSSEQ + "', ");
-
-				sql.append("'" + data.maker + "', ");
-
-				sql.append("'" + data.part.getCreatorName() + "', ");
-
-				String aud = "A";
-				sql.append("'" + aud + "', ");
-
-				String flag = "";
-				sql.append("'" + flag + "', ");
-
-				sql.append("'" + data.createDate + "', ");
-
-				String INTERFACE_DATE = "";
-				String ItemSeq = "";
-				String Result = "";
-//				String Material = "";
-				sql.append("'" + INTERFACE_DATE + "', ");
-				sql.append("'" + ItemSeq + "', ");
-				sql.append("'" + Result + "', ");
-				sql.append("'" + data.material + "');");
-
-				System.out.println("sql = " + sql.toString());
-				st.executeUpdate(sql.toString());
-			}
-
-			map.put("result", SUCCESS);
-			map.put("msg", "ERP서버로 전송이 완료 되었습니다.");
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			map.put("result", FAIL);
-			map.put("msg", "ERP서버로 전송 중 에러가 발생하였습니다." + systemMsg);
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			instance.freeConnection(erpName, con);
-			if (trs != null)
-				trs.rollback();
-		}
-		return map;
-	}
-
-	@Override
 	public Map<String, Object> sendOutputToERP(WTDocument document) throws WTException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Transaction trs = new Transaction();
@@ -642,7 +97,7 @@ public class StandardErpService extends StandardManager implements ErpService {
 
 //			WTUser user = (WTUser) SessionHelper.manager.getPrincipal();
 
-			QueryResult result = PersistenceHelper.manager.navigate(document, "output", DocumentOutputLink.class);
+			QueryResult result = PersistenceHelper.manager.navigate(document, "output", OutputDocumentLink.class);
 
 			System.out.println("산출물 전송reuslt=" + result.size());
 
@@ -724,14 +179,11 @@ public class StandardErpService extends StandardManager implements ErpService {
 				st.executeUpdate(sb.toString());
 			}
 
-			map.put("result", SUCCESS);
 			map.put("msg", "ERP서버로 전송이 완료 되었습니다.");
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
 			DBCPManager.freeConnection(con, st, rs);
-			map.put("result", FAIL);
-			map.put("msg", "ERP서버로 전송 중 에러가 발생하였습니다." + systemMsg);
 			e.printStackTrace();
 			trs.rollback();
 		} finally {
@@ -866,13 +318,9 @@ public class StandardErpService extends StandardManager implements ErpService {
 
 			ycode = setYCode(PART_SPEC, part);
 
-			map.put("result", SUCCESS);
-			map.put("msg", "ERP서버로 전송이 완료 되었습니다.");
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
-			map.put("msg", "ERP서버로 전송 중 에러가 발생하였습니다." + systemMsg);
 			e.printStackTrace();
 			DBCPManager.freeConnection(con, st, rs);
 			trs.rollback();
@@ -902,8 +350,6 @@ public class StandardErpService extends StandardManager implements ErpService {
 			QueryResult result = PersistenceHelper.manager.navigate(master, "project", PartListMasterProjectLink.class);
 
 			if (result.size() == 0) {
-				map.put("result", FAIL);
-				map.put("msg", "ERP서버로 전송 중 에러가 발생하였습니다." + systemMsg);
 				DBCPManager.freeConnection(con, st, rs);
 				trs.commit();
 				trs = null;
@@ -1148,13 +594,9 @@ public class StandardErpService extends StandardManager implements ErpService {
 				is.close();
 			}
 
-			map.put("result", SUCCESS);
-			map.put("msg", "ERP서버로 전송이 완료 되었습니다.");
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
-			map.put("msg", "ERP서버로 전송 중 에러가 발생하였습니다." + systemMsg);
 			e.printStackTrace();
 			DBCPManager.freeConnection(con, st, rs);
 			trs.rollback();
@@ -1356,13 +798,9 @@ public class StandardErpService extends StandardManager implements ErpService {
 
 			code = setYCode(PART_SPEC, part);
 
-			map.put("result", SUCCESS);
-			map.put("msg", "ERP서버로 전송이 완료 되었습니다.");
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
-			map.put("msg", "ERP서버로 전송 중 에러가 발생하였습니다." + systemMsg);
 			e.printStackTrace();
 			DBCPManager.freeConnection(con, st, rs);
 			trs.rollback();
@@ -1511,13 +949,9 @@ public class StandardErpService extends StandardManager implements ErpService {
 			}
 			// }
 
-			map.put("result", SUCCESS);
-			map.put("msg", "ERP서버로 전송이 완료 되었습니다.");
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
-			map.put("msg", "ERP서버로 전송 중 에러가 발생하였습니다." + systemMsg);
 			e.printStackTrace();
 			DBCPManager.freeConnection(con, st, rs);
 			trs.rollback();
@@ -1700,13 +1134,9 @@ public class StandardErpService extends StandardManager implements ErpService {
 			sbs.append("EXEC KEK_SPLMItemIF");
 			st.executeUpdate(sbs.toString());
 
-			map.put("result", SUCCESS);
-			map.put("msg", "ERP서버로 전송이 완료 되었습니다.");
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
-			map.put("msg", "ERP서버로 전송 중 에러가 발생하였습니다." + systemMsg);
 			e.printStackTrace();
 			DBCPManager.freeConnection(con, st, rs);
 			trs.rollback();
@@ -1784,12 +1214,12 @@ public class StandardErpService extends StandardManager implements ErpService {
 			if (rs.next()) {
 				int i = Integer.parseInt(rs.getString(1));
 				if (i > 0) {
-					map.put("result", SUCCESS);
+//					map.put("result", SUCCESS);
 					map.put("reload", true);
 					map.put("msg", "규격 " + spec + "의 중복값이 있습니다.");
 					map.put("check", false);
 				} else {
-					map.put("result", SUCCESS);
+//					map.put("result", SUCCESS);
 					map.put("reload", true);
 					map.put("msg", "중복확인 되었습니다.");
 					map.put("check", true);
@@ -1797,10 +1227,8 @@ public class StandardErpService extends StandardManager implements ErpService {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			map.put("result", FAIL);
 			map.put("reload", true);
 			map.put("check", false);
-			map.put("msg", "ERP서버로 전송 중 에러가 발생하였습니다." + systemMsg);
 			DBCPManager.freeConnection(con, st, rs);
 		} finally {
 			DBCPManager.freeConnection(con, st, rs);
@@ -1991,13 +1419,9 @@ public class StandardErpService extends StandardManager implements ErpService {
 			sbs.append("EXEC KEK_SPLMItemIF");
 			st.executeUpdate(sbs.toString());
 
-			map.put("result", SUCCESS);
-			map.put("msg", "ERP서버로 전송이 완료 되었습니다.");
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
-			map.put("result", FAIL);
-			map.put("msg", "ERP서버로 전송 중 에러가 발생하였습니다." + systemMsg);
 			e.printStackTrace();
 			DBCPManager.freeConnection(con, st, rs);
 			trs.rollback();

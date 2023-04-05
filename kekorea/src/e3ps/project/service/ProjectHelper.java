@@ -10,7 +10,7 @@ import java.util.Map;
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.bom.partlist.PartListMaster;
-import e3ps.bom.partlist.PartListMasterProjectLink;
+import e3ps.bom.tbom.TBOMMaster;
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
@@ -3368,7 +3368,7 @@ public class ProjectHelper {
 	/**
 	 * 프로젝트 참조 작번
 	 */
-	public JSONArray reference(String oid) throws Exception {
+	public JSONArray referenceTab(String oid) throws Exception {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		Project project = (Project) CommonUtils.getObject(oid);
 		QuerySpec query = new QuerySpec();
@@ -3591,7 +3591,7 @@ public class ProjectHelper {
 				map.put("state", master.getLifeCycleState().getDisplay());
 				map.put("creator", master.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
-				map.put("primary", AUIGridUtils.primaryTemplate(master));
+				map.put("secondary", AUIGridUtils.secondaryTemplate(master));
 				list.add(map);
 			}
 		}
@@ -3713,5 +3713,33 @@ public class ProjectHelper {
 			progress = sumProgress / sumAllocate;
 		}
 		return progress;
+	}
+
+	/**
+	 * 프로젝트 T-BOM 통합리스트
+	 */
+	public JSONArray jsonAuiTbom(Project project, Task task) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Output.class, true); // ... inner join 필요 없을..
+		QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "taskReference.key.id", task);
+		QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "projectReference.key.id", project);
+		QuerySpecUtils.toOrderBy(query, idx, Output.class, Output.CREATE_TIMESTAMP, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Output output = (Output) obj[0];
+			TBOMMaster master = (TBOMMaster) output.getDocument();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", master.getName());
+			map.put("state", master.getLifeCycleState().getDisplay());
+			map.put("creator", master.getCreatorFullName());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+			map.put("secondary", AUIGridUtils.secondaryTemplate(master));
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
 	}
 }

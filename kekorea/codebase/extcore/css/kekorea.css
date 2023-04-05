@@ -306,7 +306,7 @@ table.create-table th.req {
 table.create-table textarea {
 	width: calc(100% - 15px);
 	border: 1px solid #a6a6a6;
-	margin-top: 3px;
+	margin-top: 2px;
 	font-size: 14px;
 	font-family: inherit;
 }
@@ -391,7 +391,7 @@ table.view-table th {
 	background-color: #f2f2f2;
 	height: 30px;
 	border-bottom: 1px solid #a6a6a6;
-	padding-bottom: 4px;
+/* 	padding-bottom: 4px; */
 }
 
 table.view-table td {

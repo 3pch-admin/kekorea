@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -19,10 +18,10 @@ import e3ps.common.util.CommonUtils;
 import e3ps.org.Department;
 import e3ps.org.service.OrgHelper;
 import e3ps.workspace.ApprovalLine;
+import e3ps.workspace.ApprovalMaster;
 import e3ps.workspace.dto.ApprovalLineDTO;
-import e3ps.workspace.notice.Notice;
-import e3ps.workspace.notice.dto.NoticeDTO;
 import e3ps.workspace.service.WorkspaceHelper;
+import net.sf.json.JSONArray;
 import wt.fc.Persistable;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -52,8 +51,8 @@ public class WorkspaceController extends BaseController {
 			result = WorkspaceHelper.manager.agree(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
-			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}
@@ -81,6 +80,7 @@ public class WorkspaceController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}
@@ -106,8 +106,8 @@ public class WorkspaceController extends BaseController {
 			result = WorkspaceHelper.manager.receive(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
-			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}
@@ -133,8 +133,8 @@ public class WorkspaceController extends BaseController {
 			result = WorkspaceHelper.manager.progress(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
-			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}
@@ -160,8 +160,8 @@ public class WorkspaceController extends BaseController {
 			result = WorkspaceHelper.manager.complete(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
-			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}
@@ -187,8 +187,8 @@ public class WorkspaceController extends BaseController {
 			result = WorkspaceHelper.manager.reject(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
-			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}
@@ -204,17 +204,116 @@ public class WorkspaceController extends BaseController {
 	}
 
 	@Description(value = "결재 정보 보기")
-	@GetMapping(value = "/view")
-	public ModelAndView view(@RequestParam String oid, @RequestParam String columnType, @RequestParam String poid)
+	@GetMapping(value = "/lineView")
+	public ModelAndView lineView(@RequestParam String oid, @RequestParam String columnType, @RequestParam String poid)
 			throws Exception {
 		ModelAndView model = new ModelAndView();
 		ApprovalLine approvalLine = (ApprovalLine) CommonUtils.getObject(oid);
 		ApprovalLineDTO dto = new ApprovalLineDTO(approvalLine, columnType);
 		Persistable per = (Persistable) CommonUtils.getObject(poid);
+		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(per);
+		model.addObject("history", history);
 		model.addObject("per", per);
 		model.addObject("dto", dto);
 		model.addObject("oid", oid);
-		model.setViewName("popup:/workspace/approval-view");
+		model.setViewName("popup:/workspace/line-view");
 		return model;
+	}
+
+	@Description(value = "결재 정보 보기")
+	@GetMapping(value = "/masterView")
+	public ModelAndView masterView(@RequestParam String oid, @RequestParam String columnType, @RequestParam String poid)
+			throws Exception {
+		ModelAndView model = new ModelAndView();
+		ApprovalMaster master = (ApprovalMaster) CommonUtils.getObject(oid);
+		ApprovalLineDTO dto = new ApprovalLineDTO(master, columnType);
+		Persistable per = (Persistable) CommonUtils.getObject(poid);
+		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(per);
+		model.addObject("history", history);
+		model.addObject("per", per);
+		model.addObject("dto", dto);
+		model.addObject("oid", oid);
+		model.setViewName("popup:/workspace/master-view");
+		return model;
+	}
+
+	@Description(value = "검토완료  함수")
+	@ResponseBody
+	@PostMapping(value = "/_agree")
+	public Map<String, Object> _agree(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkspaceHelper.service._agree(params);
+			result.put("msg", AGREE_SUCCESS);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "검토반려 함수")
+	@ResponseBody
+	@PostMapping(value = "/_unagree")
+	public Map<String, Object> _unagree(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkspaceHelper.service._unagree(params);
+			result.put("msg", AGREE_REJECT);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "승인 함수")
+	@ResponseBody
+	@PostMapping(value = "/_approval")
+	public Map<String, Object> _approval(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkspaceHelper.service._approval(params);
+			result.put("msg", APPROVAL_SUCCESS);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "반려  함수")
+	@ResponseBody
+	@PostMapping(value = "/_reject")
+	public Map<String, Object> _reject(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkspaceHelper.service._reject(params);
+			result.put("msg", REJECT_SUCCESS);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "수신확인 함수")
+	@ResponseBody
+	@PostMapping(value = "/_receive")
+	public Map<String, Object> _receive(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkspaceHelper.service._receive(params);
+			result.put("msg", RECEIVE_SUCCESS);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
 	}
 }

@@ -18,7 +18,7 @@ ArrayList<String> list = (ArrayList<String>) request.getAttribute("list");
 <%@include file="/extcore/include/highchart.jsp"%>
 </head>
 <body>
-	<div id="container" style="height: 300px;"></div>
+	<div id="container" style="height: 340px;"></div>
 	<script type="text/javascript">
 		Highcharts.chart('container', {
 			chart : {
@@ -68,10 +68,34 @@ ArrayList<String> list = (ArrayList<String>) request.getAttribute("list");
 					<%for (Integer y : yAxis) {%>
 					<%=y%>,
 					<%}%>
-					]
+					],
+				drilldown: '<%=makCode.getCode()%>',
 			},
 			<%}%>
-			 ]
+			 ],
+		    drilldown: {
+		        breadcrumbs: {
+		            position: {
+		                align: 'right'
+		            }
+		        },
+		        series: [
+		        <%for (String mak : list) {
+		        	CommonCode makCode = CommonCodeHelper.manager.getCommonCode(mak, "MAK");
+		        %>
+		        	{
+		                name: '<%=makCode.getName()%>',
+		                id: '<%=makCode.getCode()%>',
+		                data: [
+		                    [
+		                        'v65.0',
+		                        0.1
+		                    ]
+	                    ]
+		        	},
+		        <%}%>
+		        ]
+		    }
 		});
 	</script>
 </body>

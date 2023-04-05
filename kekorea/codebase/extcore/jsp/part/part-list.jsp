@@ -119,11 +119,12 @@
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('part-list');">
-					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('part-list');">
+					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('part-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('part-list');">
 				</td>
 				<td class="right">
-				<select name="psize" id="psize">
+					<select name="psize" id="psize">
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -135,7 +136,7 @@
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 565px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 600px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -242,7 +243,7 @@
 				}, {
 					dataField : "version",
 					headerText : "버전",
-					dataType : "string", 
+					dataType : "string",
 					width : 80,
 					filter : {
 						showIcon : false,
@@ -251,7 +252,7 @@
 				}, {
 					dataField : "creator",
 					headerText : "작성자",
-					dataType : "string", 
+					dataType : "string",
 					width : 100,
 					filter : {
 						showIcon : true,
@@ -291,7 +292,7 @@
 				}, {
 					dataField : "state",
 					headerText : "상태",
-					dataType : "string", 
+					dataType : "string",
 					width : 100,
 					filter : {
 						showIcon : true,
@@ -335,7 +336,7 @@
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					hideContextMenu(); 
+					hideContextMenu();
 					vScrollChangeHandler(event);
 				});
 
@@ -363,14 +364,14 @@
 
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("part-list");
-				let contenxtHeader = genColumnHtml(columns); 
+				let contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				
+
 				selectbox("state");
 				selectbox("psize");
 				finderUser("creator");

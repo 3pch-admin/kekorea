@@ -598,17 +598,16 @@ public class PartlistHelper {
 	/**
 	 * 수배표 관련 작번 리스트
 	 */
-	public JSONArray jsonArrayAui(String oid) throws Exception {
+	public JSONArray jsonAuiProject(String oid) throws Exception {
 		ArrayList<Map<String, String>> list = new ArrayList<>();
-		PartListMaster partListMaster = (PartListMaster) CommonUtils.getObject(oid);
+		PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(PartListMaster.class, true);
 		int idx_link = query.appendClassList(PartListMasterProjectLink.class, true);
 		QuerySpecUtils.toInnerJoin(query, PartListMaster.class, PartListMasterProjectLink.class,
 				WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx, idx_link);
-		QuerySpecUtils.toEqualsAnd(query, idx_link, PartListMasterProjectLink.class, "roleAObjectRef.key.id",
-				partListMaster.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx_link, PartListMasterProjectLink.class, "roleAObjectRef.key.id", master);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -631,17 +630,32 @@ public class PartlistHelper {
 	/**
 	 * 수배표 비교
 	 */
-	public ArrayList<Map<String, Object>> compare(Project p1, Project p2, String compareKey, String sort)
+	public ArrayList<Map<String, Object>> compare(Project p1, Project p2, String invoke, String compareKey, String sort)
 			throws Exception {
 		if (StringUtils.isNull(sort)) {
-			sort = MasterDataLink.SORT;
+			sort = "sort";
 		}
 
 		if (StringUtils.isNull(compareKey)) {
 			compareKey = "lotNo+partNo";
 		}
-		ArrayList<Map<String, Object>> list = integratedData(p1);
-		ArrayList<Map<String, Object>> _list = integratedData(p2);
+
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		ArrayList<Map<String, Object>> _list = new ArrayList<>();
+
+		if ("a".equals(invoke)) {
+			String[] t = new String[] { "기계_1차_수배", "기계_2차_수배", "전기_1차_수배", "전기_2차_수배" };
+			list = integratedData(p1, t);
+			_list = integratedData(p2, t);
+		} else if ("m".equals(invoke)) {
+			String[] t = new String[] { "기계_1차_수배", "기계_2차_수배" };
+			list = integratedData(p1, t);
+			_list = integratedData(p2, t);
+		} else if ("e".equals(invoke)) {
+			String[] t = new String[] { "전기_1차_수배", "전기_2차_수배" };
+			list = integratedData(p1, t);
+			_list = integratedData(p2, t);
+		}
 
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
 
@@ -785,9 +799,9 @@ public class PartlistHelper {
 	}
 
 	/**
-	 * 수배표 통합 보기
+	 * // * 수배표 비교 데이터
 	 */
-	public ArrayList<Map<String, Object>> integratedData(Project project) throws Exception {
+	public ArrayList<Map<String, Object>> integratedData(Project project, String[] t) throws Exception {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 
 		QuerySpec query = new QuerySpec();
@@ -800,8 +814,11 @@ public class PartlistHelper {
 		QuerySpecUtils.toInnerJoin(query, Project.class, PartListMasterProjectLink.class, WTAttributeNameIfc.ID_NAME,
 				"roleBObjectRef.key.id", idx_p, idx_link);
 		QuerySpecUtils.toEqualsAnd(query, idx_link, PartListMasterProjectLink.class, "roleBObjectRef.key.id", project);
-
+		if (t != null && t.length > 0) {
+			QuerySpecUtils.toIn(query, idx, PartListMaster.class, PartListMaster.ENG_TYPE, t);
+		}
 		QuerySpecUtils.toOrderBy(query, idx, PartListMaster.class, PartListMaster.CREATE_TIMESTAMP, false);
+
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -823,6 +840,108 @@ public class PartlistHelper {
 				MasterDataLink link = (MasterDataLink) oo[0];
 				PartListData data = link.getData();
 				Map<String, Object> map = new HashMap<>();
+				map.put("lotNo", String.valueOf(data.getLotNo()));
+				map.put("unitName", data.getUnitName());
+				map.put("partNo", data.getPartNo());
+				map.put("partName", data.getPartName());
+				map.put("standard", data.getStandard());
+				map.put("maker", data.getMaker());
+				map.put("customer", data.getCustomer());
+				map.put("quantity", data.getQuantity());
+				map.put("unit", data.getUnit());
+				map.put("price", data.getPrice());
+				map.put("currency", data.getCurrency());
+				map.put("won", data.getWon());
+				map.put("partListDate_txt", CommonUtils.getPersistableTime(data.getPartListDate()));
+				map.put("exchangeRate", data.getExchangeRate());
+				map.put("referDrawing", data.getReferDrawing());
+				map.put("classification", data.getClassification());
+				map.put("note", data.getNote());
+				list.add(map);
+			}
+		}
+		return list;
+	}
+
+	public JSONArray jsonAuiWorkSpaceData(String oid) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
+		QueryResult result = PersistenceHelper.manager.navigate(master, "project", PartListMasterProjectLink.class,
+				false);
+		while (result.hasMoreElements()) {
+			PartListMasterProjectLink link = (PartListMasterProjectLink) result.nextElement();
+			Project project = link.getProject();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", master.getName());
+			map.put("state", master.getLifeCycleState().getDisplay());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getModifyTimestamp()));
+			map.put("creator", master.getCreatorFullName());
+			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
+			map.put("description", project.getDescription());
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 프로젝트 수배표 탭
+	 */
+	public ArrayList<Map<String, Object>> partlistTab(String oid, String invoke) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		Project project = (Project) CommonUtils.getObject(oid);
+		String[] t = null;
+
+		if ("a".equals(invoke)) {
+			t = new String[] { "기계_1차_수배", "기계_2차_수배", "전기_1차_수배", "전기_2차_수배" };
+		} else if ("m".equals(invoke)) {
+			t = new String[] { "기계_1차_수배", "기계_2차_수배" };
+		} else if ("e".equals(invoke)) {
+			t = new String[] { "전기_1차_수배", "전기_2차_수배" };
+		}
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(PartListMaster.class, true);
+		int idx_link = query.appendClassList(PartListMasterProjectLink.class, false);
+		int idx_p = query.appendClassList(Project.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, PartListMaster.class, PartListMasterProjectLink.class,
+				WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toInnerJoin(query, Project.class, PartListMasterProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleBObjectRef.key.id", idx_p, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, PartListMasterProjectLink.class, "roleBObjectRef.key.id", project);
+		if (t != null && t.length > 0) {
+			QuerySpecUtils.toIn(query, idx, PartListMaster.class, PartListMaster.ENG_TYPE, t);
+		}
+		QuerySpecUtils.toOrderBy(query, idx, PartListMaster.class, PartListMaster.CREATE_TIMESTAMP, false);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			PartListMaster master = (PartListMaster) obj[0];
+
+			QuerySpec _query = new QuerySpec();
+			int _idx = _query.appendClassList(PartListMaster.class, false);
+			int _idx_link = _query.appendClassList(MasterDataLink.class, true);
+			int idx_data = _query.appendClassList(PartListData.class, false);
+			QuerySpecUtils.toInnerJoin(_query, PartListMaster.class, MasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleAObjectRef.key.id", _idx, _idx_link);
+			QuerySpecUtils.toInnerJoin(_query, PartListData.class, MasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleBObjectRef.key.id", idx_data, _idx_link);
+			QuerySpecUtils.toEqualsAnd(_query, _idx_link, MasterDataLink.class, "roleAObjectRef.key.id", master);
+			QuerySpecUtils.toOrderBy(_query, idx_data, PartListData.class, PartListData.SORT, false);
+			QueryResult qr = PersistenceHelper.manager.find(_query);
+			while (qr.hasMoreElements()) {
+				Object[] oo = (Object[]) qr.nextElement();
+				MasterDataLink link = (MasterDataLink) oo[0];
+				PartListData data = link.getData();
+				Map<String, Object> map = new HashMap<>();
+				map.put("engType", master.getEngType());
 				map.put("lotNo", String.valueOf(data.getLotNo()));
 				map.put("unitName", data.getUnitName());
 				map.put("partNo", data.getPartNo());

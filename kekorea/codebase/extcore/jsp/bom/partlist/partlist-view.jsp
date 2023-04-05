@@ -113,7 +113,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 								dataField : "kekNumber",
 								headerText : "KEK 작번",
 								dataType : "string",
-								width : 130,
+								width : 100,
 								renderer : {
 									type : "LinkRenderer",
 									baseUrl : "javascript",
@@ -130,7 +130,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 								dataField : "keNumber",
 								headerText : "KE 작번",
 								dataType : "string",
-								width : 130,
+								width : 100,
 								renderer : {
 									type : "LinkRenderer",
 									baseUrl : "javascript",
@@ -431,7 +431,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					createAUIGrid(columns);
 					AUIGrid.resize(myGridID);
 					break;
-				case "tabs-2":
+				case "tabs-3":
 					createAUIGrid(_columns_);
 					AUIGrid.resize(_myGridID_);
 					break;

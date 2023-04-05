@@ -39,6 +39,12 @@
 				</td>
 			</tr>
 			<tr>
+				<th class="lb">내용</th>
+				<td class="indent5">
+					<textarea name="description" id="description" rows="3"></textarea>
+				</td>
+			</tr>
+			<tr>
 				<th class="req lb">KEK 작번</th>
 				<td>
 					<div class="include">
@@ -162,18 +168,18 @@
 				</td>
 			</tr>
 			<tr>
-				<th class="req lb">작업 내용</th>
-				<td class="indent5">
-					<textarea name="description" id="description" rows="8"></textarea>
-				</td>
-			</tr>
-			<tr>
 				<th class="lb">첨부파일</th>
 				<td class="indent5">
 					<jsp:include page="/extcore/include/secondary-include.jsp">
 						<jsp:param value="" name="oid" />
 						<jsp:param value="create" name="mode" />
 					</jsp:include>
+				</td>
+			</tr>
+			<tr>
+				<th class="req lb">결재</th>
+				<td>
+					<jsp:include page="/extcore/include/register-include.jsp"></jsp:include>
 				</td>
 			</tr>
 		</table>
@@ -188,7 +194,7 @@
 				</td>
 			</tr>
 		</table>
-		<div id="grid_wrap" style="height: 800px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
 	</div>
 </div>
 
@@ -235,10 +241,6 @@
 			regExp : "^[a-zA-Z0-9]+$",
 			autoUpperCase : true,
 		},
-		headerTooltip : {
-			show : true,
-			tooltipHtml : "품번 입력시 서버의 데이터를 가져와서 정보를 입력합니다.<br>같은 도번이 존재할시 데이터의 우선순위는 KEK의 도면 데이터를 가져옵니다."
-		},
 	}, {
 		dataField : "current",
 		headerText : "CURRENT VER",
@@ -279,7 +281,6 @@
 	function createAUIGrid(columnLayout) {
 		const props = {
 			headerHeight : 30,
-			rowHeight : 30,
 			showRowNumColumn : true,
 			showRowCheckColumn : true,
 			showStateColumn : true,
@@ -438,10 +439,25 @@
 	function create() {
 
 		const params = new Object();
+		const name = document.getElementById("name");
+		const description = document.getElementById("description").value;
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
 		const _addRows = AUIGrid.getAddedRowItems(_myGridID);
+		const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
 		const url = getCallUrl("/workOrder/create");
-		
+
+		if (isNull(name.value)) {
+			alert("도면일람표 제목을 입력하세요.");
+			name.focus();
+			return false;
+		}
+
+		if (_addRows.length === 0) {
+			alert("최소 하나이상의 작번을 추가하세요.");
+			_insert();
+			return false;
+		}
+
 		_addRows.sort(function(a, b) {
 			return a.sort - b.sort;
 		});
@@ -454,10 +470,12 @@
 			return false;
 		}
 
-		params.name = document.getElementById("name").value;
+		params.name = name.value;
+		params.description = description;
 		params.addRows = addRows;
 		params._addRows = _addRows;
 		params.secondarys = toArray("secondarys");
+		toRegister(params, _addRows_);
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
@@ -469,6 +487,7 @@
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
+		document.getElementById("name").focus();
 		$("#tabs").tabs({
 			active : 0,
 			create : function(event, ui) {
@@ -477,6 +496,8 @@
 				case "tabs-1":
 					_createAUIGrid(_columns);
 					AUIGrid.resize(_myGridID);
+					_createAUIGrid_(_columns_);
+					AUIGrid.resize(_myGridID_);
 					break;
 				case "tabs-2":
 					createAUIGrid(columns);
@@ -493,6 +514,12 @@
 						AUIGrid.resize(_myGridID);
 					} else {
 						_createAUIGrid(_columns);
+					}
+					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
+					if (_isCreated_) {
+						AUIGrid.resize(_myGridID_);
+					} else {
+						_createAUIGrid_(_columns_);
 					}
 					break;
 				case "tabs-2":
@@ -511,5 +538,6 @@
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(_myGridID_);
 	});
 </script>

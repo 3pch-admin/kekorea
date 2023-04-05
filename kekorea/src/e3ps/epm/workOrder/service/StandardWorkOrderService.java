@@ -16,6 +16,7 @@ import e3ps.epm.workOrder.WorkOrderDataLink;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.project.Project;
+import e3ps.workspace.service.WorkspaceHelper;
 import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
@@ -39,6 +40,9 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 		String description = dto.getDescription();
 		ArrayList<Map<String, Object>> addRows = dto.getAddRows(); // 도면 일람표
 		ArrayList<Map<String, String>> _addRows = dto.get_addRows(); // 작번
+		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
+		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
+		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
 		ArrayList<String> secondarys = dto.getSecondarys();
 		Transaction trs = new Transaction();
 		try {
@@ -85,7 +89,8 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 				list.add(link);
 			}
 
-			for (String secondary : secondarys) {
+			for (int i = 0; secondarys != null && i < secondarys.size(); i++) {
+				String secondary = secondarys.get(i);
 				ApplicationData dd = ApplicationData.newApplicationData(workOrder);
 				dd.setRole(ContentRoleType.SECONDARY);
 				PersistenceHelper.manager.save(dd);
@@ -103,6 +108,11 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			ContentServerHelper.service.updateContent(workOrder, data, tempFile.getAbsolutePath());
 
 			WorkOrderHelper.manager.postAfterAction(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
+
+			// 결재시작
+			if (approvalRows.size() > 0) {
+				WorkspaceHelper.service.register(workOrder, agreeRows, approvalRows, receiveRows);
+			}
 
 			trs.commit();
 			trs = null;

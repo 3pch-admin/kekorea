@@ -30,18 +30,48 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<col width="*">
 				<col width="130">
 				<col width="*">
-				<col width="130">
-				<col width="*">
 			</colgroup>
 			<tr>
-				<th>공지사항 제목</th>
+				<th>수배표 제목</th>
 				<td class="indent5">
-					<input type="text" name="fileName" class="width-200">
+					<input type="text" name="name" id="name" class="width-200">
 				</td>
+				<th>상태</th>
+				<td class="indent5">
+					<select name="state" id="state" class="width-200">
+						<option value="">선택</option>
+					</select>
+				</td>
+				<th>KEK 작번</th>
+				<td class="indent5">
+					<input type="text" name="partName" class="width-200">
+				</td>
+				<th>KE 작번</th>
+				<td class="indent5">
+					<input type="text" name="number" class="width-200">
+				</td>
+			</tr>
+			<tr>
 				<th>설명</th>
 				<td class="indent5">
-					<input type="text" name="partCode" class="width-200">
+					<input type="text" name="number" class="width-200">
 				</td>
+				<th>설계 구분</th>
+				<td class="indent5">
+					<select name="projectType_name" id="projectType_name" class="width-100">
+						<option value="">선택</option>
+					</select>
+				</td>
+				<th>막종</th>
+				<td class="indent5">
+					<input type="text" name="number" class="width-200">
+				</td>
+				<th>작업내용</th>
+				<td class="indent5">
+					<input type="text" name="number" class="width-200">
+				</td>
+			</tr>
+			<tr>
 				<th>작성자</th>
 				<td class="indent5">
 					<input type="text" name="creator" id="creator" class="width-200">
@@ -52,6 +82,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					~
 					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
+				<th>수정자</th>
+				<td class="indent5">
+					<input type="text" name="modifier" id="modifier" class="width-200">
+				</td>
+				<th>수정일</th>
+				<td class="indent5">
+					<input type="text" name="modifiedFrom" id="modifiedFrom" class="width-100">
+					~
+					<input type="text" name="modifiedTo" id="modifiedTo" class="width-100">
+				</td>
 			</tr>
 		</table>
 
@@ -61,6 +101,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('tbom-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('tbom-list');">
+					<input type="button" value="확장" title="확장" class="red" onclick="expand();">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
@@ -76,7 +117,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -86,36 +127,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "T-BOM 제목",
 					dataType : "string",
 					width : 300,
-					style : "aui-left",
+					style : "underline",
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 					cellMerge : true
-				}, {
-					dataField : "info",
-					headerText : "",
-					width : 40,
-					renderer : {
-						type : "IconRenderer",
-						iconWidth : 16,
-						iconHeight : 16,
-						iconTableRef : {
-							"default" : "/Windchill/extcore/images/details.gif"
-						},
-						onClick : function(event) {
-							const oid = event.item.loid;
-							const url = getCallUrl("/partlist/info?oid=" + oid);
-							popup(url);
-						}
-					},
-					filter : {
-						showIcon : false,
-						inline : false
-					},
-					cellMerge : true,
-					mergeRef : "name",
-					mergePolicy : "restrict"
 				}, {
 					dataField : "projectType_name",
 					headerText : "설계구분",
@@ -163,7 +180,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "keNumber",
 					headerText : "KE 작번",
 					dataType : "string",
-					style : "underline",
 					width : 100,
 					filter : {
 						showIcon : true,
@@ -183,7 +199,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "작업내용",
 					dataType : "string",
 					width : 300,
-					style : "left",
+					style : "aui-left",
 					filter : {
 						showIcon : true,
 						inline : true
@@ -278,14 +294,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
-					showRowCheckColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -294,6 +307,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					enableCellMerge : true,
 					fixedColumnCount : 1,
+					forceTreeView : true
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
@@ -309,7 +323,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function auiCellDoubleClickHandler(event) {
-
+				const dataField = event.dataField;
+				const item = event.item;
+				const oid = item.oid;
+				if (dataField === "name") {
+					const url = getCallUrl("/tbom/view?oid=" + oid);
+					popup(url, 1500, 700);
+				}
 			}
 
 			function loadGridData() {
@@ -330,10 +350,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function create() {
 				const url = getCallUrl("/tbom/create");
-				popup(url);
+				popup(url, 1500, 850);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("name").focus();
 				const columns = loadColumnLayout("tbom-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
@@ -342,8 +363,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+				selectbox("state");
+				selectbox("projectType_name");
 				finderUser("creator");
+				finderUser("modifier");
 				twindate("created");
+				twindate("modified");
 				selectbox("psize");
 			});
 

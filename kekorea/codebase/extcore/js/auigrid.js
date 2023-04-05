@@ -263,3 +263,17 @@ function checker(sessionId, creatorId) {
 	}
 	return false;
 }
+
+/**
+ * 트리 확장 축소 함수
+ */
+let isExpanded = false;
+function expand() {
+	if (!isExpanded) {
+		AUIGrid.expandAll(myGridID);
+		isExpanded = true;
+	} else {
+		AUIGrid.collapseAll(myGridID);
+		isExpanded = false;
+	}
+};

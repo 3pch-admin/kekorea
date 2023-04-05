@@ -330,7 +330,7 @@
 	vertical-align: bottom;
 	margin: 0 2px 0 0;
 	position: relative;
-	bottom: 2px;
+	bottom: 1px;
 }
 
 .aui-grid-tree-minus-icon {
@@ -343,7 +343,7 @@
 	vertical-align: bottom;
 	margin: 0 2px 0 0;
 	position: relative;
-	bottom: 2px;
+/* 	bottom: 2px; */
 }
 
 .aui-grid-tree-branch-icon {
@@ -355,7 +355,7 @@
 	vertical-align: bottom;
 	margin: 0 2px 0 0;
 	position: relative;
-	bottom: 3px;
+	bottom: 2px;
 }
 
 .aui-grid-tree-branch-open-icon {

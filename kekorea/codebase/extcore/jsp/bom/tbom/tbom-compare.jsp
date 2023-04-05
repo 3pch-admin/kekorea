@@ -22,46 +22,70 @@ String _oid = (String) request.getAttribute("_oid");
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('partlist-compare');">
-			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('partlist-compare');">
+			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('tbom-compare');">
+			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('tbom-compare');">
 			&nbsp;
 			<div class="pretty p-switch">
-				<input type="checkbox" name="mak" value="partName" onclick="checkboxHandler(event);">
+				<input type="checkbox" name="dataView" value="lotNo" onclick="checkboxHandler(event);" checked="checked">
 				<div class="state p-success">
 					<label>
-						<b>품명</b>
+						<b>LOT</b>
 					</label>
 				</div>
 			</div>
 			<div class="pretty p-switch">
-				<input type="checkbox" name="mak" value="standard" onclick="checkboxHandler(event);">
+				<input type="checkbox" name="dataView" value="code" onclick="checkboxHandler(event);" checked="checked">
 				<div class="state p-success">
 					<label>
-						<b>규격</b>
+						<b>중간코드</b>
 					</label>
 				</div>
 			</div>
 			<div class="pretty p-switch">
-				<input type="checkbox" name="mak" value="maker" onclick="checkboxHandler(event);">
+				<input type="checkbox" name="dataView" value="name" onclick="checkboxHandler(event);" checked="checked">
 				<div class="state p-success">
 					<label>
-						<b>MAKER</b>
+						<b>부품명</b>
 					</label>
 				</div>
 			</div>
 			<div class="pretty p-switch">
-				<input type="checkbox" name="mak" value="customer" onclick="checkboxHandler(event);">
+				<input type="checkbox" name="dataView" value="model" onclick="checkboxHandler(event);" checked="checked">
 				<div class="state p-success">
 					<label>
-						<b>거래처</b>
+						<b>KokusaiModel</b>
 					</label>
 				</div>
 			</div>
+			<div class="pretty p-switch">
+				<input type="checkbox" name="dataView" value="unit" onclick="checkboxHandler(event);" checked="checked">
+				<div class="state p-success">
+					<label>
+						<b>UNIT</b>
+					</label>
+				</div>
+			</div>
+			<div class="pretty p-switch">
+				<input type="checkbox" name="dataView" value="provide" onclick="checkboxHandler(event);" checked="checked">
+				<div class="state p-success">
+					<label>
+						<b>PROVIDE</b>
+					</label>
+				</div>
+			</div>
+			<div class="pretty p-switch">
+				<input type="checkbox" name="dataView" value="discontinue" onclick="checkboxHandler(event);" checked="checked">
+				<div class="state p-success">
+					<label>
+						<b>DISCONTINUE</b>
+					</label>
+				</div>
+			</div>			
 		</td>
 		<td class="right">
-			<select name="sort" id="sort" class="width-100">
+			<select name="sort" id="sort" class="width-200">
 				<option value="">선택</option>
-				<option value="sort">생성순</option>
+				<option value="sort">등록순</option>
 				<option value="partNo">부품번호</option>
 				<option value="lotNo">LOT</option>
 			</select>
@@ -72,15 +96,25 @@ String _oid = (String) request.getAttribute("_oid");
 </table>
 
 
-<div id="grid_wrap" style="height: 800px; border-top: 1px solid #3180c3;"></div>
+<div id="grid_wrap" style="height: 730px; border-top: 1px solid #3180c3;"></div>
 <script type="text/javascript">
 	let myGridID;
-	const data =
-<%=data%>
-	const columns = [ {
+	const data = <%=data%>
+	const columns = [  {
+		dataField : "lotNo",
+		headerText : "LOT",
+		dataType : "numeric",
+		width : 100,
+		formatString : "###0",
+	},{
+		dataField : "code",
+		headerText : "중간코드",
+		dataType : "string",
+		width : 130,
+	},{
 		headerText : "<%=p1.getKekNumber()%>",
 		children : [ {
-			dataField : "partNo1",
+			dataField : "keNumber1",
 			headerText : "부품번호",
 			dataType : "string",
 			width : 120,
@@ -95,7 +129,7 @@ String _oid = (String) request.getAttribute("_oid");
 	}, {
 		headerText : "<%=p2.getKekNumber()%>",
 		children : [ {
-			dataField : "partNo2",
+			dataField : "keNumber2",
 			headerText : "부품번호",
 			dataType : "string",
 			width : 120,
@@ -110,13 +144,13 @@ String _oid = (String) request.getAttribute("_oid");
 	}, {
 		headerText : "<%=p1.getKekNumber()%>",
 		children : [ {
-			dataField : "quantity1",
+			dataField : "qty1",
 			headerText : "수량",
 			dataType : "numeric",
 			width : 120,
 			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-				const quantity2 = item.quantity2;
-				if (value !== quantity2) {
+				const qty2 = item.qty2;
+				if (value !== qty2) {
 					return "compare";
 				}
 				return "";
@@ -125,106 +159,60 @@ String _oid = (String) request.getAttribute("_oid");
 	}, {
 		headerText : "<%=p1.getKekNumber()%>",
 		children : [ {
-			dataField : "quantity2",
+			dataField : "qty2",
 			headerText : "수량",
 			dataType : "numeric",
 			width : 120,
 			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-				const quantity1 = item.quantity1;
-				if (value !== quantity1) {
+				const qty1 = item.qty1;
+				if (value !== qty1) {
 					return "compare";
 				}
 				return "";
 			}
 		} ]
 	}, {
-		dataField : "partName",
+		dataField : "name",
 		headerText : "부품명",
 		dataType : "string",
 		width : 200,
-		visible : false
 	}, {
-		dataField : "standard",
-		headerText : "규격",
+		dataField : "model",
+		headerText : "KokusaiModel",
 		dataType : "string",
-		width : 250,
-		visible : false
+		width : 200,
 	}, {
-		dataField : "maker",
-		headerText : "MAKER",
+		dataField : "unit",
+		headerText : "UNIT",
 		dataType : "string",
-		width : 130,
-		visible : false
+		width : 130
 	}, {
-		dataField : "customer",
-		headerText : "거래처",
+		dataField : "provide",
+		headerText : "PROVIDE",
 		dataType : "string",
-		width : 130,
-		visible : false
+		width : 130
+	}, {
+		dataField : "discontinue",
+		headerText : "DISCONTINUE",
+		dataType : "string",
+		width : 200
 	} ]
 
 	const footerLayout = [ {
 		labelText : "∑",
 		positionField : "#base",
 	}, {
-		dataField : "lotNo1",
-		positionField : "lotNo1",
-		style : "right",
-		colSpan : 9,
-		labelFunction : function(value, columnValues, footerValues) {
-			return "수배표 수량 합계";
-		}
-	}, {
-		dataField : "quantity1",
-		positionField : "quantity1",
+		dataField : "qty1",
+		positionField : "qty1",
 		operation : "SUM",
 		dataType : "numeric",
 		postfix : "개"
 	}, {
-		dataField : "quantity2",
-		positionField : "quantity2",
+		dataField : "qty2",
+		positionField : "qty2",
 		operation : "SUM",
 		dataType : "numeric",
 		postfix : "개"
-	}, {
-		dataField : "unit",
-		positionField : "unit",
-		dataType : "numeric",
-		postfix : "개",
-		labelFunction : function(value, columnValues, footerValues) {
-			return footerValues[2] - footerValues[3];
-		},
-	}, {
-		dataField : "price",
-		positionField : "price",
-		style : "right",
-		colSpan : 2,
-		labelFunction : function(value, columnValues, footerValues) {
-			return "수배표 수량 합계 금액";
-		}
-	}, {
-		dataField : "won1",
-		positionField : "won1",
-		operation : "SUM",
-		dataType : "numeric",
-		formatString : "#,##0",
-		postfix : "원"
-	}, {
-		dataField : "won2",
-		positionField : "won2",
-		operation : "SUM",
-		dataType : "numeric",
-		formatString : "#,##0",
-		postfix : "원"
-	}, {
-		dataField : "partListDate_txt",
-		positionField : "partListDate_txt",
-		dataType : "numeric",
-		formatString : "#,##0",
-		labelFunction : function(value, columnValues, footerValues) {
-			console.log(footerValues);
-			return footerValues[6] - footerValues[7];
-		},
 	}, ];
 
 	function createAUIGrid(columnLayout) {
@@ -250,13 +238,13 @@ String _oid = (String) request.getAttribute("_oid");
 
 		const oid = document.getElementById("oid").value;
 		const _oid = document.getElementById("_oid").value;
-// 		const compareKey = document.querySelector("input[name=compareKey]:checked").value;
+		// 		const compareKey = document.querySelector("input[name=compareKey]:checked").value;
 		const sort = document.getElementById("sort").value;
-		const url = getCallUrl("/partlist/compare");
+		const url = getCallUrl("/tbom/compare");
 		const params = new Object();
 		params.oid = oid;
 		params._oid = _oid;
-// 		params.compareKey = compareKey;
+		// 		params.compareKey = compareKey;
 		params.sort = sort;
 		AUIGrid.showAjaxLoader(myGridID);
 		openLayer();

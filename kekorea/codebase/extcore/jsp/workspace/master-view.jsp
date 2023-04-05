@@ -1,3 +1,4 @@
+<%@page import="e3ps.bom.partlist.PartListMaster"%>
 <%@page import="wt.fc.Persistable"%>
 <%@page import="e3ps.workspace.ApprovalLine"%>
 <%@page import="wt.fc.ReferenceFactory"%>
@@ -7,9 +8,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
+Persistable per = (Persistable) request.getAttribute("per");
+String poid = (String) request.getAttribute("poid");
+JSONArray history = (JSONArray) request.getAttribute("history");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
+<input type="hidden" name="poid" id="poid" value="<%=poid%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -19,11 +24,27 @@ ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="승인" title="승인" class="blue" onclick="self.close();">
-			<input type="button" value="반려" title="반려" class="blue" onclick="self.close();">
-			<input type="button" value="검토완료" title="검토완료" class="blue" onclick="self.close();">
-			<input type="button" value="검토반려" title="검토반려" class="blue" onclick="self.close();">
-			<input type="button" value="수신확인" title="수신확인" class="blue" onclick="self.close();">
+			<%
+			if (dto.isApprovalLine()) {
+			%>
+			<input type="button" value="승인" title="승인" onclick="_approval();">
+			<input type="button" value="반려" title="반려" class="red" onclick="_reject();">
+			<%
+			}
+			if (dto.isAgreeLine()) {
+			%>
+			<input type="button" value="검토완료" title="검토완료" onclick="_agree();">
+			<input type="button" value="검토반려" title="검토반려" class="red" onclick="_unagree()">
+			<%
+			}
+			%>
+			<%
+			if (dto.isReceiveLine()) {
+			%>
+			<input type="button" value="수신확인" title="수신확인" onclick="_receive();">
+			<%
+			}
+			%>
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -33,35 +54,24 @@ ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
 		<li>
 			<a href="#tabs-1">결재정보</a>
 		</li>
-		<li>
-			<a href="#tabs-2">결재객체</a>
-		</li>
 	</ul>
 	<div id="tabs-1">
 		<table class="view-table">
 			<colgroup>
 				<col width="10%">
-				<col width="400">
+				<col width="300">
 				<col width="130">
-				<col width="400">
+				<col width="300">
+				<col width="130">
+				<col width="300">
 			</colgroup>
 			<tr>
 				<th class="lb">결재 제목</th>
-				<td class="indent5" colspan="3"><%=dto.getName()%></td>
+				<td class="indent5" colspan="5"><%=dto.getName()%></td>
 			</tr>
 			<tr>
-				<th class="lb">담당자</th>
-				<td class="indent5"><%=dto.getCreator()%></td>
 				<th class="lb">수신일</th>
-				<td class="indent5"><%=dto.getReceiveTime().toString().substring(0, 10)%></td>
-			</tr>
-			<tr>
-				<th class="lb">구분</th>
-				<td class="indent5"><%=dto.getType()%></td>
-				<th class="lb">역할</th>
-				<td class="indent5"><%=dto.getRole()%></td>
-			</tr>
-			<tr>
+				<td class="indent5"><%=dto.getReceiveTime()%></td>
 				<th class="lb">기안자</th>
 				<td class="indent5"><%=dto.getSubmiter()%></td>
 				<th class="lb">상태</th>
@@ -72,7 +82,7 @@ ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
 			%>
 			<tr>
 				<th class="lb">위임</th>
-				<td class="indent5" colspan="3">
+				<td class="indent5" colspan="5">
 					<input type="text" name="reassignUser" id="reassignUser" data-multi="false" data-method="setUser">
 					<input type="button" title="위임" value="위임" id="reassignApprovalBtn" data-oid="<%=dto.getOid()%>">
 					<input type="hidden" name="reassignUserOid" id="reassignUserOid">
@@ -83,12 +93,21 @@ ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
 			%>
 			<tr>
 				<th class="lb">결재의견</th>
-				<td class="indent5" colspan="3">
-					<textarea name="description" id="description" rows="6"><%=dto.getDescription()%></textarea>
+				<td class="indent5" colspan="5">
+					<textarea name="description" id="description" rows="6" readonly="readonly"><%=dto.getDescription() != null ? dto.getDescription() : ""%></textarea>
 				</td>
 			</tr>
 		</table>
-
+		<%
+		// 수배표 정보
+		if (per instanceof PartListMaster) {
+		%>
+		<jsp:include page="/extcore/jsp/workspace/partlist.jsp">
+			<jsp:param value="<%=per.getPersistInfo().getObjectIdentifier().getStringValue()%>" name="oid" />
+		</jsp:include>
+		<%
+		}
+		%>
 		<table class="button-table">
 			<tr>
 				<td class="left">
@@ -99,9 +118,11 @@ ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
 				</td>
 			</tr>
 		</table>
-		<div id="_grid_wrap_" style="height: 230px; border-top: 1px solid #3180c3;"></div>
+		<div id="_grid_wrap_" style="height: 200px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let _myGridID_;
+			const history =
+		<%=history%>
 			const _columns_ = [ {
 				dataField : "type",
 				headerText : "타입",
@@ -150,48 +171,96 @@ ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
 					showRowNumColumn : true,
 					rowNumHeaderText : "번호",
 					selectionMode : "singleRow",
-					noDataMessage : "결재이력이 없습니다.",
 					enableSorting : false
 				}
 				_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
-				// 				AUIGrid.setGridData(_myGridID_, history);
+				AUIGrid.setGridData(_myGridID_, history);
 			}
 		</script>
-	</div>
-	<div id="tabs-2">
-		<table class="view-table">
-			<colgroup>
-				<col width="200">
-				<col width="400">
-				<col width="100">
-				<col width="100">
-				<col width="100">
-				<col width="200">
-				<col width="100">
-			</colgroup>
-			<tr>
-				<th class="lb">문서번호</th>
-				<th class="lb">문서제목</th>
-				<th class="lb">상태</th>
-				<th class="lb">버전</th>
-				<th class="lb">수정자</th>
-				<th class="lb">수정일</th>
-				<th class="lb">첨부파일</th>
-			</tr>
-			<tr>
-				<td class="indent5"></td>
-				<td class="indent5"></td>
-				<td class="indent5"></td>
-				<td class="indent5"></td>
-				<td class="indent5"></td>
-				<td class="indent5"></td>
-				<td class="indent5"></td>
-			</tr>
-		</table>
 	</div>
 </div>
 
 <script type="text/javascript">
+	const oid = document.getElementById("oid").value;
+	const poid = document.getElementById("poid").value;
+
+	function _receive() {
+		if (!confirm("수신확인 하시겠습니까?")) {
+			return false;
+		}
+		const url = getCallUrl("/workspace/_receive");
+		const params = new Object();
+		const description = document.getElementById("description").value;
+		params.oid = oid;
+		params.description = description;
+		openLayer();
+		call(url, params, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			}
+		})
+	}
+
+	function _reject() {
+		if (!confirm("반려 하시겠습니까?")) {
+			return false;
+		}
+		const url = getCallUrl("/workspace/_reject");
+		const params = new Object();
+		const description = document.getElementById("description").value;
+		params.oid = oid;
+		params.description = description;
+		openLayer();
+		call(url, params, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			}
+		})
+	}
+
+	function _agree() {
+		if (!confirm("검토완료 하시겠습니까?")) {
+			return false;
+		}
+		const url = getCallUrl("/workspace/_agree");
+		const params = new Object();
+		const description = document.getElementById("description").value;
+		params.oid = oid;
+		params.description = description;
+		openLayer();
+		call(url, params, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			}
+		})
+	}
+
+	function _approval() {
+
+		if (!confirm("승인 하시겠습니까?")) {
+			return false;
+		}
+		const url = getCallUrl("/workspace/_approval");
+		const params = new Object();
+		const description = document.getElementById("description").value;
+		params.oid = oid;
+		params.poid = poid;
+		params.description = description;
+		call(url, params, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			}
+		})
+	}
+
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs({
 			active : 0,
@@ -201,27 +270,22 @@ ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
 				case "tabs-1":
 					_createAUIGrid_(_columns_);
 					AUIGrid.resize(_myGridID_);
-					selectbox("reassignUser");
-					break;
-				case "tabs-2":
 					createAUIGrid(columns);
 					AUIGrid.resize(myGridID);
 					break;
 				}
-
 			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
 					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated) {
+					if (_isCreated_) {
 						AUIGrid.resize(_myGridID_);
 					} else {
-						_createAUIGrid_(_columns);
+						_createAUIGrid_(_columns_);
 					}
-					break;
-				case "tabs-2":
+
 					const isCreated = AUIGrid.isCreated(myGridID);
 					if (isCreated) {
 						AUIGrid.resize(myGridID);
@@ -236,5 +300,6 @@ ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(_myGridID_);
+		AUIGrid.resize(myGridID);
 	});
 </script>

@@ -94,7 +94,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							const url = getCallUrl("/workspace/view?oid=" + oid + "&columnType=COLUMN_APPROVAL&poid=e3ps.bom.partlist.PartListMaster:664344");
+							popup(url, 1400, 700);
 						}
 					},
 					filter : {
@@ -110,7 +112,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							const url = getCallUrl("/workspace/view?oid=" + oid + "&columnType=COLUMN_APPROVAL&poid=e3ps.bom.partlist.PartListMaster:664344");
+							popup(url, 1400, 700);
 						}
 					},
 					filter : {
@@ -126,7 +130,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							const url = getCallUrl("/workspace/view?oid=" + oid + "&columnType=COLUMN_APPROVAL&poid=e3ps.bom.partlist.PartListMaster:664344");
+							popup(url, 1400, 700);
 						}
 					},
 					filter : {
@@ -216,7 +222,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				params.receiveFrom = receiveFrom;
 				params.receiveTo = receiveTo;
 				params.psize = psize;
-				
+
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
