@@ -318,6 +318,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					iframe.src = "/Windchill/plm/project/step?oid=" + oid + "&toid=" + item.oid;
 				} else if (name === "전기_수배표" || name === "기계_수배표") {
 					iframe.src = "/Windchill/plm/project/partlist?oid=" + oid + "&toid=" + item.oid;
+				} else if (name === "T-BOM") {
+					iframe.src = "/Windchill/plm/project/tbom?oid=" + oid + "&toid=" + item.oid;
 				} else {
 					iframe.src = "/Windchill/plm/project/normal?oid=" + oid + "&toid=" + item.oid;
 				}

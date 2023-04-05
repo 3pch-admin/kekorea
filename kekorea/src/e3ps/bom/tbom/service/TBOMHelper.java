@@ -3,25 +3,18 @@ package e3ps.bom.tbom.service;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import e3ps.bom.partlist.PartListMasterProjectLink;
-import e3ps.bom.partlist.dto.PartListDTO;
 import e3ps.bom.tbom.TBOMData;
 import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.TBOMMasterDataLink;
 import e3ps.bom.tbom.TBOMMasterProjectLink;
 import e3ps.bom.tbom.dto.TBOMDTO;
-import e3ps.bom.tbom.dto.TBOMMasterDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.epm.keDrawing.KeDrawing;
-import e3ps.epm.keDrawing.KeDrawingMaster;
+import e3ps.common.util.StringUtils;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import e3ps.project.Project;
@@ -72,6 +65,7 @@ public class TBOMHelper {
 				TBOMMasterProjectLink link = (TBOMMasterProjectLink) group.nextElement();
 				TBOMDTO dto = new TBOMDTO(link);
 				if (isNode == 1) {
+					node.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
 					node.put("poid", dto.getPoid());
 					node.put("projectType_name", dto.getProjectType_name());
 					node.put("customer_name", dto.getCustomer_name());
@@ -90,6 +84,7 @@ public class TBOMHelper {
 					node.put("modifiedDate_txt", dto.getModifiedDate_txt());
 				} else {
 					JSONObject data = new JSONObject();
+					data.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
 					data.put("name", dto.getName());
 					data.put("oid", dto.getOid());
 					data.put("poid", dto.getPoid());
@@ -151,24 +146,6 @@ public class TBOMHelper {
 		return number;
 	}
 
-	public JSONArray auiArray(TBOMMaster master) throws Exception {
-		ArrayList<TBOMDTO> list = new ArrayList<>();
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(TBOMMasterDataLink.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, TBOMMasterDataLink.class, "roleAObjectRef.key.id",
-				master.getPersistInfo().getObjectIdentifier().getId());
-		QuerySpecUtils.toOrderBy(query, idx, TBOMMasterDataLink.class, TBOMMasterDataLink.SORT, false);
-		QueryResult result = PersistenceHelper.manager.find(query);
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			TBOMMasterDataLink link = (TBOMMasterDataLink) obj[0];
-			TBOMData data = link.getData();
-			TBOMDTO column = new TBOMDTO(data);
-			list.add(column);
-		}
-		return JSONArray.fromObject(list);
-	}
-
 	public ArrayList<TBOMMasterDataLink> getLinks(TBOMMaster master) throws Exception {
 		ArrayList<TBOMMasterDataLink> list = new ArrayList<>();
 		QuerySpec query = new QuerySpec();
@@ -199,82 +176,6 @@ public class TBOMHelper {
 		return list;
 	}
 
-	public HashMap<String, ArrayList<TBOMMasterDataLink>> getCompareData(HttpServletRequest request, int count)
-			throws Exception {
-		HashMap<String, ArrayList<TBOMMasterDataLink>> map = new HashMap<>();
-		for (int i = 0; i < count; i++) {
-			String oid = request.getParameter("oid" + i);
-			TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
-			ArrayList<TBOMMasterDataLink> link = getLinks(master);
-			map.put("compareData" + i, link);
-		}
-		return map;
-	}
-
-	public ArrayList<Map<String, Object>> headers(HttpServletRequest request, int count) throws Exception {
-		ArrayList<Map<String, Object>> list = new ArrayList<>();
-		for (int i = 0; i < count; i++) {
-			String poid = request.getParameter("poid" + i);
-			String oid = request.getParameter("oid" + i);
-			Project project = (Project) CommonUtils.getObject(poid);
-			TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("kekNumber" + i, project.getKekNumber());
-			map.put("name" + i, master.getName());
-			list.add(map);
-		}
-		return list;
-	}
-
-	public ArrayList<Map<String, Object>> compare(HttpServletRequest request, int count) throws Exception {
-
-		String oid0 = request.getParameter("oid0");
-		String oid1 = request.getParameter("oid1");
-
-		TBOMMaster m = (TBOMMaster) CommonUtils.getObject(oid0);
-		TBOMMaster m1 = (TBOMMaster) CommonUtils.getObject(oid1);
-
-		ArrayList<TBOMData> link = TBOMHelper.manager.getData(m);
-		ArrayList<TBOMData> link1 = TBOMHelper.manager.getData(m1);
-		ArrayList<Map<String, Object>> compareData = new ArrayList<>();
-		for (TBOMData data : link) {
-			boolean isEquals = false;
-			for (TBOMData data1 : link1) {
-				String num = data.getKePart().getMaster().getKePartNumber();
-				String num1 = data1.getKePart().getMaster().getKePartNumber();
-
-				if (num.equals(num1)) {
-					Map<String, Object> map = new HashMap<>();
-					map.put("lotNo", data.getKePart().getMaster().getLotNo());
-					map.put("kePartNumber0", data.getKePart().getMaster().getKePartNumber());
-					map.put("kePartNumber1", data1.getKePart().getMaster().getKePartNumber());
-					map.put("kePartName0", data.getKePart().getMaster().getKePartName());
-					map.put("kePartName1", data1.getKePart().getMaster().getKePartName());
-					map.put("code", data.getKePart().getMaster().getCode());
-					map.put("qty0", data.getQty());
-					map.put("qty1", data1.getQty());
-					compareData.add(map);
-					link1.remove(data1);
-					isEquals = true;
-					break;
-				}
-			}
-			if (!isEquals) {
-				Map<String, Object> map = new HashMap<>();
-				map.put("lotNo", data.getKePart().getMaster().getLotNo());
-				map.put("kePartNumber0", data.getKePart().getMaster().getKePartNumber());
-				map.put("kePartNumber1", "");
-				map.put("kePartName0", data.getKePart().getMaster().getKePartName());
-				map.put("kePartName1", "");
-				map.put("code", data.getKePart().getMaster().getCode());
-				map.put("qty0", data.getQty());
-				map.put("qty1", "");
-				compareData.add(map);
-			}
-		}
-		return compareData;
-	}
-
 	/**
 	 * T-BOM 등록시 가져올 KE 부품들
 	 */
@@ -301,5 +202,166 @@ public class TBOMHelper {
 			map.put("ok", true);
 		}
 		return map;
+	}
+
+	/**
+	 * T-BOM 관련 작번
+	 */
+	public JSONArray jsonAuiProject(String oid) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(TBOMMaster.class, true);
+		int idx_link = query.appendClassList(TBOMMasterProjectLink.class, true);
+		QuerySpecUtils.toInnerJoin(query, TBOMMaster.class, TBOMMasterProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, TBOMMasterProjectLink.class, "roleAObjectRef.key.id", master);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			TBOMMasterProjectLink link = (TBOMMasterProjectLink) obj[1];
+			Project project = link.getProject();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
+			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("description", project.getDescription());
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * T-BOM 비교
+	 */
+	public ArrayList<Map<String, Object>> compare(Project p1, Project p2, String compareKey, String sort)
+			throws Exception {
+
+		if (StringUtils.isNull(sort)) {
+			sort = "sort";
+		}
+
+		if (StringUtils.isNull(compareKey)) {
+			compareKey = "lotNo+partNo";
+		}
+
+		ArrayList<Map<String, Object>> list = integratedData(p1);
+		ArrayList<Map<String, Object>> _list = integratedData(p2);
+
+		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
+
+		// list1의 데이터를 먼저 추가
+		for (Map<String, Object> data : list) {
+			Map<String, Object> mergedData = new HashMap<>();
+			mergedData.put("lotNo1", data.get("lotNo"));
+			mergedData.put("partName", data.get("partName"));
+			mergedData.put("partNo1", data.get("partNo"));
+			mergedData.put("qty1", data.get("qty"));
+			mergedData.put("unit", data.get("unit"));
+			mergedData.put("provide", data.get("provide"));
+			mergedData.put("discontinue", data.get("discontinue"));
+			mergedList.add(mergedData);
+		}
+
+		for (Map<String, Object> data : _list) {
+			String partNo = (String) data.get("partNo");
+			String lotNo = (String) data.get("lotNo");
+			String key = partNo + "-" + lotNo;
+			boolean isExist = false;
+
+			// mergedList에 partNo가 동일한 데이터가 있는지 확인
+			for (Map<String, Object> mergedData : mergedList) {
+				String mergedPartNo = (String) mergedData.get("partNo1");
+				String mergedLotNo = (String) mergedData.get("lotNo1");
+				String _key = mergedPartNo + "-" + mergedLotNo;
+
+				if (key.equals(_key)) {
+					// partNo가 동일한 데이터가 있으면 데이터를 업데이트하고 isExist를 true로 변경
+					mergedData.put("lotNo2", data.get("lotNo"));
+					mergedData.put("partName", data.get("partName"));
+					mergedData.put("partNo2", data.get("partNo"));
+					mergedData.put("qty2", data.get("qty"));
+					mergedData.put("unit", data.get("unit"));
+					mergedData.put("provide", data.get("provide"));
+					mergedData.put("discontinue", data.get("discontinue"));
+					isExist = true;
+					break;
+				}
+			}
+
+			if (!isExist) {
+				// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
+				Map<String, Object> mergedData = new HashMap<>();
+				mergedData.put("partNo1", "");
+				mergedData.put("lotNo1", "");
+				mergedData.put("qty1", "");
+				mergedData.put("lotNo2", data.get("lotNo"));
+				mergedData.put("partName", data.get("partName"));
+				mergedData.put("partNo2", data.get("partNo"));
+				mergedData.put("qty2", data.get("qty"));
+				mergedData.put("unit", data.get("unit"));
+				mergedData.put("provide", data.get("provide"));
+				mergedData.put("discontinue", data.get("discontinue"));
+				mergedList.add(mergedData);
+			}
+		}
+		return mergedList;
+	}
+
+	/**
+	 * 비교할 데이터 가져오기
+	 */
+	private ArrayList<Map<String, Object>> integratedData(Project project) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(TBOMMaster.class, true);
+		int idx_link = query.appendClassList(TBOMMasterProjectLink.class, false);
+		int idx_p = query.appendClassList(Project.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, TBOMMaster.class, TBOMMasterProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toInnerJoin(query, Project.class, TBOMMasterProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleBObjectRef.key.id", idx_p, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, TBOMMasterProjectLink.class, "roleBObjectRef.key.id", project);
+
+		QuerySpecUtils.toOrderBy(query, idx, TBOMMaster.class, TBOMMaster.CREATE_TIMESTAMP, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			TBOMMaster master = (TBOMMaster) obj[0];
+
+			QuerySpec _query = new QuerySpec();
+			int _idx = _query.appendClassList(TBOMMaster.class, false);
+			int _idx_link = _query.appendClassList(TBOMMasterDataLink.class, true);
+			int idx_data = _query.appendClassList(TBOMData.class, false);
+			QuerySpecUtils.toInnerJoin(_query, TBOMMaster.class, TBOMMasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleAObjectRef.key.id", _idx, _idx_link);
+			QuerySpecUtils.toInnerJoin(_query, TBOMData.class, TBOMMasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleBObjectRef.key.id", idx_data, _idx_link);
+			QuerySpecUtils.toEqualsAnd(_query, _idx_link, TBOMMasterDataLink.class, "roleAObjectRef.key.id", master);
+			QuerySpecUtils.toOrderBy(_query, idx_data, TBOMData.class, TBOMData.SORT, false);
+			QueryResult qr = PersistenceHelper.manager.find(_query);
+			while (qr.hasMoreElements()) {
+				Object[] oo = (Object[]) qr.nextElement();
+				TBOMMasterDataLink link = (TBOMMasterDataLink) oo[0];
+				TBOMData data = link.getData();
+				Map<String, Object> map = new HashMap<>();
+				map.put("lotNo", String.valueOf(data.getLotNo()));
+				map.put("partName", data.getKePart().getMaster().getName());
+				map.put("partNo", data.getKePart().getMaster().getKeNumber());
+				map.put("qty", data.getQty());
+				map.put("unit", data.getUnit());
+				map.put("provide", data.getProvide());
+				map.put("discontinue", data.getDiscontinue());
+				list.add(map);
+			}
+		}
+		return list;
 	}
 }

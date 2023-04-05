@@ -88,7 +88,7 @@ JSONArray aList = (JSONArray) request.getAttribute("aList");
 				</td>
 				<td>&nbsp;</td>
 				<td valign="top" rowspan="3">
-					<div id="_grid_wrap_" style="height: 756px; border-top: 1px solid #3180c3;"></div>
+					<div id="_grid_wrap_" style="height: 786px; border-top: 1px solid #3180c3;"></div>
 					<script type="text/javascript">
 						let _myGridID_;
 						const _columns_ = [ {
@@ -138,7 +138,7 @@ JSONArray aList = (JSONArray) request.getAttribute("aList");
 			</tr>
 			<tr>
 				<td valign="top">
-					<div id="_grid_wrap" style="height: 380px; border-top: 1px solid #3180c3;"></div>
+					<div id="_grid_wrap" style="height: 412px; border-top: 1px solid #3180c3;"></div>
 					<script type="text/javascript">
 						let _myGridID;
 						const _columns = [ {

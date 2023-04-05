@@ -179,8 +179,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				<table class="button-table">
 					<tr>
 						<td class="left">
-							<input type="button" value="통합보기" title="통합보기" onclick="integratedData();">
-							<input type="button" value="수배표 등록" title="수배표 등록" class="blue" onclick="create();">
+							<input type="button" value="T-BOM 등록" title="T-BOM 등록" class="blue" onclick="create();">
 							<input type="button" value="링크 등록" title="링크 등록" class="orange" onclick="addAfterRow();">
 							<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
 						</td>
@@ -191,22 +190,17 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					let myGridID;
 					const columns = [ {
 						dataField : "name",
-						headerText : "수배표 제목",
+						headerText : "T-BOM 제목",
 						dataType : "string",
 						style : "aui-left",
 						renderer : {
 							type : "LinkRenderer",
 							baseUrl : "javascript",
 							jsCallback : function(rowIndex, columnIndex, value, item) {
-								const url = getCallUrl("/partlist/view?oid=" + item.oid);
-								popup(url, 1700, 800);
+								const url = getCallUrl("/tbom/view?oid=" + item.oid);
+								popup(url, 1500, 700);
 							}
 						},
-					}, {
-						dataField : "engType",
-						headerText : "설계구분",
-						dataType : "string",
-						width : 130,
 					}, {
 						dataField : "state",
 						headerText : "상태",
@@ -249,29 +243,23 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					);
 					}
 
-					function integratedData() {
-						const oid = document.getElementById("poid").value;
-						const url = getCallUrl("/partlist/integrated?oid=" + oid);
-						popup(url);
-					}
-
 					function create() {
 						const toid = document.getElementById("oid").value;
 						const poid = document.getElementById("poid").value;
-						const url = getCallUrl("/partlist/connect?toid=" + toid + "&poid=" + poid);
-						popup(url);
+						const url = getCallUrl("/tbom/connect?toid=" + toid + "&poid=" + poid);
+						popup(url, 1500, 850);
 					}
 
 					function _delete() {
 						const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 						if (checkedItems.length <= 0) {
-							alert("삭제할 수배표를 선택하세요.");
+							alert("삭제할 T-BOM을 선택하세요.");
 							return false;
 						}
 						const item = checkedItems[0].item;
 						const oid = item.oid;
-						const url = getCallUrl("/partlist/disconnect?oid=" + oid);
-						if (!confirm("삭제 하시겠습니까?\n수배표와 태스크의 연결관계만 삭제 되어집니다.")) {
+						const url = getCallUrl("/tbom/disconnect?oid=" + oid);
+						if (!confirm("삭제 하시겠습니까?\nT-BOM과 태스크의 연결관계만 삭제 되어집니다.")) {
 							return false;
 						}
 						parent.parent.openLayer();

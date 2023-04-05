@@ -5,13 +5,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
+import e3ps.bom.partlist.PartListMaster;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.StringUtils;
+import e3ps.erp.service.ErpHelper;
 import e3ps.workspace.ApprovalContract;
+import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
 import e3ps.workspace.notification.service.NotificationHelper;
+import wt.doc.WTDocument;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.lifecycle.LifeCycleHelper;
 import wt.lifecycle.LifeCycleManaged;
 import wt.lifecycle.State;
@@ -182,5 +188,262 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 				trs.rollback();
 		}
 
+	}
+
+	@Override
+	public void _agree(Map<String, Object> params) throws Exception {
+		String oid = (String) params.get("oid");
+		String description = (String) params.get("description");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Timestamp completeTime = new Timestamp(new Date().getTime());
+			ApprovalLine line = (ApprovalLine) CommonUtils.getObject(oid);
+			ApprovalMaster master = line.getMaster();
+			line.setDescription(description);
+			line.setCompleteTime(completeTime);
+			line.setState(WorkspaceHelper.STATE_AGREE_COMPLETE);
+			line.setCompleteUserID(CommonUtils.sessionUser().getName());
+			line = (ApprovalLine) PersistenceHelper.manager.modify(line);
+
+			boolean isEndAgree = WorkspaceHelper.manager.isEndAgree(master);
+			if (isEndAgree) {
+				ArrayList<ApprovalLine> approvalLines = WorkspaceHelper.manager.getApprovalLines(master);
+				for (ApprovalLine approvalLine : approvalLines) {
+					int sort = approvalLine.getSort();
+					approvalLine.setSort(sort - 1);
+					approvalLine = (ApprovalLine) PersistenceHelper.manager.modify(approvalLine);
+					approvalLine = (ApprovalLine) PersistenceHelper.manager.refresh(approvalLine);
+
+					if (approvalLine.getSort() == 0) {
+						approvalLine.setStartTime(completeTime);
+						approvalLine.setState(WorkspaceHelper.STATE_APPROVAL_APPROVING);
+						PersistenceHelper.manager.modify(approvalLine);
+
+						// 마스터 상태값도 변경
+						master.setState(WorkspaceHelper.STATE_MASTER_APPROVAL_APPROVING);
+						PersistenceHelper.manager.modify(master);
+					}
+				}
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void _unagree(Map<String, Object> params) throws Exception {
+		String oid = (String) params.get("oid");
+		String description = (String) params.get("description");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Timestamp completeTime = new Timestamp(new Date().getTime());
+			ApprovalLine line = (ApprovalLine) CommonUtils.getObject(oid);
+			line.setDescription(description);
+			line.setCompleteTime(completeTime);
+			line.setCompleteUserID(CommonUtils.sessionUser().getName());
+			line.setState(WorkspaceHelper.STATE_AGREE_REJECT);
+			line = (ApprovalLine) PersistenceHelper.manager.modify(line);
+
+			ApprovalMaster master = line.getMaster();
+			master.setCompleteTime(completeTime);
+			master.setState(WorkspaceHelper.STATE_MASTER_AGREE_REJECT);
+			master = (ApprovalMaster) PersistenceHelper.manager.modify(master);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+
+		}
+	}
+
+	@Override
+	public void _approval(Map<String, Object> params) throws Exception {
+		String oid = (String) params.get("oid");
+		String description = (String) params.get("description");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Timestamp completeTime = new Timestamp(new Date().getTime());
+			ApprovalLine line = (ApprovalLine) CommonUtils.getObject(oid);
+
+			if (StringUtils.isNull(description)) {
+				description = "승인합니다.";
+			}
+
+			line.setDescription(description);
+			line.setCompleteTime(completeTime);
+			line.setCompleteUserID(CommonUtils.sessionUser().getName());
+			line.setState(WorkspaceHelper.STATE_APPROVAL_COMPLETE);
+			line = (ApprovalLine) PersistenceHelper.manager.modify(line);
+
+			ApprovalMaster master = line.getMaster();
+			Persistable per = master.getPersist();
+
+			ArrayList<ApprovalLine> approvalLines = WorkspaceHelper.manager.getApprovalLines(master);
+			for (ApprovalLine approvalLine : approvalLines) {
+				int sort = approvalLine.getSort();
+				if (sort == 1) {
+					approvalLine.setStartTime(completeTime);
+					approvalLine.setState(WorkspaceHelper.STATE_APPROVAL_APPROVING);
+				}
+				approvalLine.setSort(sort - 1);
+				approvalLine = (ApprovalLine) PersistenceHelper.manager.modify(approvalLine);
+			}
+
+			master.setState(WorkspaceHelper.STATE_MASTER_APPROVAL_APPROVING);
+			master = (ApprovalMaster) PersistenceHelper.manager.modify(master);
+
+			boolean isEndApprovalLine = WorkspaceHelper.manager.isEndApprovalLine(master, 0);
+			if (isEndApprovalLine) {
+				master.setCompleteTime(completeTime);
+				master.setState(WorkspaceHelper.STATE_MASTER_APPROVAL_COMPELTE);
+				PersistenceHelper.manager.modify(master);
+
+				if (per instanceof LifeCycleManaged) {
+					State state = State.toState("APPROVED");
+					per = (Persistable) LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) per, state);
+//					if (per instanceof RequestDocument) {
+//						RequestDocument req = (RequestDocument) per;
+//						setProjectRoleUser(req, master);
+//					} else if (per instanceof WTDocument) {
+//						setTaskStateCheck(per);
+//					}
+					sendToERP(per);
+				} else if (per instanceof ApprovalContract) {
+					ApprovalContract contract = (ApprovalContract) per;
+//					approvalContract(contract);
+				}
+
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	/**
+	 * 산출물 전송
+	 */
+	private void sendToERP(Persistable per) throws Exception {
+		if (per instanceof WTDocument) {
+			WTDocument document = (WTDocument) per;
+//			document = (WTDocument) CommonUtils.getLatestVersion(document);
+			// ?? 최신버전
+			ErpHelper.service.sendOutputToERP(document);
+		} else if (per instanceof PartListMaster) {
+			PartListMaster mm = (PartListMaster) per;
+			ErpHelper.service.sendPartListToERP(mm);
+		}
+	}
+
+	@Override
+	public void _reject(Map<String, Object> params) throws Exception {
+		String oid = (String) params.get("oid");
+		String description = (String) params.get("description");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Timestamp completeTime = new Timestamp(new Date().getTime());
+			ApprovalLine line = (ApprovalLine) CommonUtils.getObject(oid);
+
+			if (StringUtils.isNull(description)) {
+				description = "반려합니다.";
+			}
+
+			line.setDescription(description);
+			line.setCompleteTime(completeTime);
+			line.setCompleteUserID(CommonUtils.sessionUser().getName());
+			line.setState(WorkspaceHelper.STATE_APPROVAL_REJECT);
+			line = (ApprovalLine) PersistenceHelper.manager.modify(line);
+
+			ApprovalMaster master = line.getMaster();
+			master.setCompleteTime(completeTime);
+			master.setState(WorkspaceHelper.STATE_MASTER_APPROVAL_REJECT);
+			master = (ApprovalMaster) PersistenceHelper.manager.modify(master);
+
+			Persistable per = master.getPersist();
+			if (per instanceof LifeCycleManaged) {
+				LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) per, State.toState("RETURN"));
+			} else if (per instanceof ApprovalContract) {
+				ApprovalContract contract = (ApprovalContract) per;
+
+				QueryResult result = PersistenceHelper.manager.navigate(contract, "persist",
+						ApprovalContractPersistableLink.class);
+				while (result.hasMoreElements()) {
+					Persistable pp = (Persistable) result.nextElement();
+					if (pp instanceof LifeCycleManaged) {
+						LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) pp, State.toState("RETURN"));
+					} else {
+
+					}
+				}
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+
+	}
+
+	@Override
+	public void _receive(Map<String, Object> params) throws Exception {
+		String oid = (String) params.get("oid");
+		String description = (String) params.get("description");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Timestamp completeTime = new Timestamp(new Date().getTime());
+			ApprovalLine line = (ApprovalLine) CommonUtils.getObject(oid);
+			line.setDescription(description);
+			line.setCompleteTime(completeTime);
+			line.setCompleteUserID(CommonUtils.sessionUser().getName());
+			line.setState(WorkspaceHelper.STATE_RECEIVE_COMPLETE);
+			line = (ApprovalLine) PersistenceHelper.manager.modify(line);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
 	}
 }

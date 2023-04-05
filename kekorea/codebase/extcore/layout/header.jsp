@@ -270,7 +270,7 @@ ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks"
 						<a onclick="moveToPage(this, '/commonCode/list', '관리자 > 코드 관리');">코드 관리</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/spec/list', '관리자 > 이력 관리');">이력 관리</a>
+						<a onclick="moveToPage(this, '/spec/list', '관리자 > 이력 관리 컬럼');">이력 관리 컬럼</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/sheetVariable/list', '관리자 > CONFIG SHEET 카테고리');">CONFIG SHEET 카테고리</a>

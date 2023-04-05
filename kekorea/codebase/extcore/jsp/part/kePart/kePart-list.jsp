@@ -400,6 +400,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					headerText : "개정사유",
 					dateType : "string",
 					width : 250,
+					style : "aui-left",
 					editable : false,
 					filter : {
 						showIcon : true,
@@ -417,7 +418,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "singleRow",
+					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -606,34 +607,34 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				}
 
 				console.log(checkedItems);
-// 				for (let i = 0; i < checkedItems.length; i++) {
-// 					const oid = checkedItems[i].item.oid;
-// 					const latest = checkedItems[i].item.latest;
-// 					const rowIndex = checkedItems[i].rowIndex;
-// 					const state = checkedItems[i].state;
+				// 				for (let i = 0; i < checkedItems.length; i++) {
+				// 					const oid = checkedItems[i].item.oid;
+				// 					const latest = checkedItems[i].item.latest;
+				// 					const rowIndex = checkedItems[i].rowIndex;
+				// 					const state = checkedItems[i].state;
 
-// 					if (state !== "승인됨") {
-// 						// 						alert("승인되지 않은 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
-// 						// 						return false;
-// 					}
+				// 					if (state !== "승인됨") {
+				// 						// 						alert("승인되지 않은 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
+				// 						// 						return false;
+				// 					}
 
-// 					if (!latest) {
-// 						alert("최신버전이 아닌 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
-// 						return false;
-// 					}
+				// 					if (!latest) {
+				// 						alert("최신버전이 아닌 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
+				// 						return false;
+				// 					}
 
-// 					if (oid === undefined) {
-// 						alert("신규로 작성한 데이터가 존재합니다.\n" + rowIndex + "행 데이터");
-// 						return false;
-// 					}
-// 				}
-// 				const url = getCallUrl("/kePart/revise");
+				// 					if (oid === undefined) {
+				// 						alert("신규로 작성한 데이터가 존재합니다.\n" + rowIndex + "행 데이터");
+				// 						return false;
+				// 					}
+				// 				}
+				// 				const url = getCallUrl("/kePart/revise");
 				console.log(checkedItems)
 				const panel = popup("/Windchill/plm/kePart/revise", 1600, 550);
 				panel.list = checkedItems;
-// 				console.log(checkedItems);
-// 				console.log(panel.list);
-				
+				// 				console.log(checkedItems);
+				// 				console.log(panel.list);
+
 			}
 
 			function exportExcel() {

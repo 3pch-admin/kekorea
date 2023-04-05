@@ -24,7 +24,9 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "provide", type = String.class),
 
-				@GeneratedProperty(name = "discontinue", type = String.class)
+				@GeneratedProperty(name = "discontinue", type = String.class),
+
+				@GeneratedProperty(name = "sort", type = Integer.class)
 
 		},
 

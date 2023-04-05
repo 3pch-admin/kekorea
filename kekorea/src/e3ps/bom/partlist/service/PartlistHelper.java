@@ -598,17 +598,16 @@ public class PartlistHelper {
 	/**
 	 * 수배표 관련 작번 리스트
 	 */
-	public JSONArray jsonArrayAui(String oid) throws Exception {
+	public JSONArray jsonAuiProject(String oid) throws Exception {
 		ArrayList<Map<String, String>> list = new ArrayList<>();
-		PartListMaster partListMaster = (PartListMaster) CommonUtils.getObject(oid);
+		PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(PartListMaster.class, true);
 		int idx_link = query.appendClassList(PartListMasterProjectLink.class, true);
 		QuerySpecUtils.toInnerJoin(query, PartListMaster.class, PartListMasterProjectLink.class,
 				WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx, idx_link);
-		QuerySpecUtils.toEqualsAnd(query, idx_link, PartListMasterProjectLink.class, "roleAObjectRef.key.id",
-				partListMaster.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx_link, PartListMasterProjectLink.class, "roleAObjectRef.key.id", master);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -634,12 +633,13 @@ public class PartlistHelper {
 	public ArrayList<Map<String, Object>> compare(Project p1, Project p2, String compareKey, String sort)
 			throws Exception {
 		if (StringUtils.isNull(sort)) {
-			sort = MasterDataLink.SORT;
+			sort = "sort";
 		}
 
 		if (StringUtils.isNull(compareKey)) {
 			compareKey = "lotNo+partNo";
 		}
+		
 		ArrayList<Map<String, Object>> list = integratedData(p1);
 		ArrayList<Map<String, Object>> _list = integratedData(p2);
 
@@ -844,5 +844,31 @@ public class PartlistHelper {
 			}
 		}
 		return list;
+	}
+
+	public JSONArray jsonAuiWorkSpaceData(String oid) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
+		QueryResult result = PersistenceHelper.manager.navigate(master, "project", PartListMasterProjectLink.class,
+				false);
+		while (result.hasMoreElements()) {
+			PartListMasterProjectLink link = (PartListMasterProjectLink) result.nextElement();
+			Project project = link.getProject();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", master.getName());
+			map.put("state", master.getLifeCycleState().getDisplay());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getModifyTimestamp()));
+			map.put("creator", master.getCreatorFullName());
+			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
+			map.put("description", project.getDescription());
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
 	}
 }

@@ -395,6 +395,7 @@ JSONArray departments = new JSONArray(list);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("userName").focus();
 				const columns = loadColumnLayout("organization-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

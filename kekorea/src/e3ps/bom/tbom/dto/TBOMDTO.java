@@ -52,10 +52,27 @@ public class TBOMDTO {
 	// 변수용
 	private ArrayList<Map<String, Object>> addRows = new ArrayList<>(); // 도면 일람표
 	private ArrayList<Map<String, String>> _addRows = new ArrayList<>(); // 작번
+	private ArrayList<Map<String, String>> agreeRows = new ArrayList<>(); // 검토
+	private ArrayList<Map<String, String>> approvalRows = new ArrayList<>(); // 결재
+	private ArrayList<Map<String, String>> receiveRows = new ArrayList<>(); // 수신
 	private ArrayList<String> secondarys = new ArrayList<>();
-	
+	private int progress = 0;
+	private String toid;
+
 	public TBOMDTO() {
 
+	}
+
+	public TBOMDTO(TBOMMaster master) throws Exception {
+		setOid(master.getPersistInfo().getObjectIdentifier().getStringValue());
+		setName(master.getName());
+		setContent(master.getDescription());
+		setState(master.getLifeCycleState().getDisplay());
+		setCreator(master.getCreatorFullName());
+		setCreatedDate(master.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+		setModifiedDate(master.getModifyTimestamp());
+		setModifiedDate_txt(CommonUtils.getPersistableTime(master.getModifyTimestamp()));
 	}
 
 	public TBOMDTO(TBOMMasterProjectLink link) throws Exception {

@@ -334,6 +334,28 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 	
+	@Description(value = "프로젝트 T-BOM 페이지")
+	@GetMapping(value = "/tbom")
+	public ModelAndView tbom(@RequestParam String oid, @RequestParam String toid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Project project = (Project) CommonUtils.getObject(oid);
+		Task task = (Task) CommonUtils.getObject(toid);
+		ProjectDTO data = new ProjectDTO(project);
+		TaskDTO dto = new TaskDTO(task);
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		JSONArray list = ProjectHelper.manager.jsonAuiTbom(project, task);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("project", project);
+		model.addObject("data", data);
+		model.addObject("dto", dto);
+		model.addObject("list", list);
+		model.setViewName("/extcore/jsp/project/project-task-tbom.jsp");
+		return model;
+	}
+	
+	
 	@Description(value = "프로젝트 수배표(1차, 2차) 페이지")
 	@GetMapping(value = "/step")
 	public ModelAndView step(@RequestParam String oid, @RequestParam String toid) throws Exception {

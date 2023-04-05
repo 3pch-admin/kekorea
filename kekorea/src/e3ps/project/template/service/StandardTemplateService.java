@@ -72,7 +72,6 @@ public class StandardTemplateService extends StandardManager implements Template
 
 			PersistenceHelper.manager.save(template);
 
-			System.out.println("reference=" + reference);
 			if (!StringUtils.isNull(reference)) {
 				Template copy = (Template) CommonUtils.getObject(reference);
 				copyTask(template, copy);

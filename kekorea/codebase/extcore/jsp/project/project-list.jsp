@@ -538,7 +538,7 @@ String end = (String) request.getAttribute("end");
 
 			function create() {
 				const url = getCallUrl("/project/create");
-				popup(url, 1200, 500);
+				popup(url, 1200, 460);
 			}
 
 			document.addEventListener("keydown", function(event) {

@@ -81,7 +81,7 @@ String end = (String) request.getAttribute("end");
 			</tr>
 		</table>
 
-		<iframe src="" style="height: 320px;" id="chart"></iframe>
+		<iframe src="" style="height: 360px;" id="chart"></iframe>
 
 		<table class="button-table">
 			<tr>
@@ -102,7 +102,7 @@ String end = (String) request.getAttribute("end");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 350px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 340px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			const columns = [ {
@@ -227,7 +227,16 @@ String end = (String) request.getAttribute("end");
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					useContextMenu : true,
 					contextMenuItems : [ {
-						label : "수배표 비교",
+						label : "통합 수배표 비교",
+						callback : contextItemHandler
+					}, {
+						label : "기계 수배표 비교",
+						callback : contextItemHandler
+					}, {
+						label : "전기 수배표 비교",
+						callback : contextItemHandler
+					}, {
+						label : "T-BOM 비교",
 						callback : contextItemHandler
 					}, {
 						label : "도면 일람표 비교",
@@ -239,6 +248,20 @@ String end = (String) request.getAttribute("end");
 				}
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
+				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+			}
+			
+			function auiCellClickHandler(event) {
+				const item = event.item;
+				rowIdField = AUIGrid.getProp(event.pid, "rowIdField");
+				rowId = item[rowIdField];
+				rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); 
+				rowId = item[rowIdField];
+				if(AUIGrid.isCheckedRowById(event.pid, rowId)) {
+					AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
+				} else {
+					AUIGrid.addCheckedRowsByIds(event.pid, rowId);
+				}
 			}
 
 			function contextItemHandler(event) {
@@ -246,17 +269,53 @@ String end = (String) request.getAttribute("end");
 				switch (event.contextIndex) {
 				case 0:
 					if (checkedItems.length <= 0) {
-						alert("BOM 비교할 작번을 선택하세요.");
+						alert("통합 수배표 비교할 작번을 선택하세요.");
 						return;
 					}
 					if (checkedItems.length !== 2) {
-						alert("BOM 비교할 작번을 2개 선택하세요.");
+						alert("통합 수배표 비교할 작번을 2개 선택하세요.");
 						return;
 					}
-					const bUrl = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
-					popup(bUrl);
+					const url0 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					popup(url0);
 					break;
 				case 1:
+					if (checkedItems.length <= 0) {
+						alert("기계 수배표 비교할 작번을 선택하세요.");
+						return;
+					}
+					if (checkedItems.length !== 2) {
+						alert("기계 수배표 비교할 작번을 2개 선택하세요.");
+						return;
+					}
+					const url1 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					popup(url1);
+					break;
+				case 2:
+					if (checkedItems.length <= 0) {
+						alert("전기 수배표 비교할 작번을 선택하세요.");
+						return;
+					}
+					if (checkedItems.length !== 2) {
+						alert("전기 수배표 비교할 작번을 2개 선택하세요.");
+						return;
+					}
+					const url2 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					popup(url2);
+					break;
+				case 3:
+					if (checkedItems.length <= 0) {
+						alert("T-BOM 비교할 작번을 선택하세요.");
+						return;
+					}
+					if (checkedItems.length !== 2) {
+						alert("T-BOM 비교할 작번을 2개 선택하세요.");
+						return;
+					}
+					const url3 = getCallUrl("/tbom/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					popup(url3);
+					break;
+				case 4:
 					if (checkedItems.length <= 0) {
 						alert("도면 일람표 비교할 작번을 선택하세요.");
 						return;
@@ -265,8 +324,20 @@ String end = (String) request.getAttribute("end");
 						alert("도면 일람표 비교할 작번을 2개 선택하세요.");
 						return;
 					}
-					const kUrl = getCallUrl("/workOrder/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
-					popup(kUrl);
+					const url4 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					popup(url4);
+					break;
+				case 5:
+					if (checkedItems.length <= 0) {
+						alert("CONFIG SHEET 비교할 작번을 선택하세요.");
+						return;
+					}
+					if (checkedItems.length !== 2) {
+						alert("CONFIG SHEET 비교할 작번을 2개 선택하세요.");
+						return;
+					}
+					const url5 = getCallUrl("/workOrder/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					popup(url5);
 					break;
 				case 2:
 					break;

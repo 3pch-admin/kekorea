@@ -14,6 +14,7 @@ import e3ps.bom.partlist.dto.PartListDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.doc.service.DocumentHelper;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
@@ -116,9 +117,6 @@ public class StandardPartlistService extends StandardManager implements Partlist
 		try {
 			trs.start();
 
-			// 선택해서 온 태스크
-			Task task = (Task) CommonUtils.getObject(toid);
-
 			String number = DocumentHelper.manager.getNextNumber("PP-");
 			PartListMaster master = PartListMaster.newPartListMaster();
 			master.setNumber(number);
@@ -213,8 +211,20 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				}
 				PersistenceHelper.manager.modify(project);
 
+				String taskName = "";
+				if (!StringUtils.isNull(toid)) {
+					Task task = (Task) CommonUtils.getObject(toid);
+					taskName = task.getName();
+				} else {
+					if ("기계".equals(engType)) {
+						taskName = "기계_수배표";
+					} else if ("전기".equals(engType)) {
+						taskName = "전기_수배표";
+					}
+				}
+
 				// 기계_수배표 전기_수배표
-				Task parentTask = ProjectHelper.manager.getTaskByName(project, task.getName());
+				Task parentTask = ProjectHelper.manager.getTaskByName(project, taskName);
 				// 1차수배 2차수배
 				Task t = ProjectHelper.manager.getTaskByParent(project, parentTask);
 				if (t == null) {

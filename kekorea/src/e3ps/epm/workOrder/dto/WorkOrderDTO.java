@@ -48,6 +48,9 @@ public class WorkOrderDTO {
 	// 변수용
 	private ArrayList<Map<String, Object>> addRows = new ArrayList<>(); // 도면 일람표
 	private ArrayList<Map<String, String>> _addRows = new ArrayList<>(); // 작번
+	private ArrayList<Map<String, String>> agreeRows = new ArrayList<>(); // 검토
+	private ArrayList<Map<String, String>> approvalRows = new ArrayList<>(); // 결재
+	private ArrayList<Map<String, String>> receiveRows = new ArrayList<>(); // 수신
 	private ArrayList<String> secondarys = new ArrayList<>();
 
 	public WorkOrderDTO() {

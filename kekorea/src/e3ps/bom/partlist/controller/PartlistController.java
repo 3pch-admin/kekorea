@@ -80,7 +80,7 @@ public class PartlistController extends BaseController {
 		}
 
 		JSONArray list = PartlistHelper.manager.getData(dto.getOid());
-		JSONArray data = PartlistHelper.manager.jsonArrayAui(dto.getOid());
+		JSONArray data = PartlistHelper.manager.jsonAuiProject(dto.getOid());
 		model.addObject("history", history);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
@@ -132,6 +132,10 @@ public class PartlistController extends BaseController {
 	@GetMapping(value = "/popup")
 	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("method", method);
 		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.setViewName("popup:/bom/partlist/partlist-popup");
@@ -171,7 +175,7 @@ public class PartlistController extends BaseController {
 		PartListMasterProjectLink link = (PartListMasterProjectLink) CommonUtils.getObject(oid);
 		PartListDTO dto = new PartListDTO(link);
 		JSONArray list = PartlistHelper.manager.getData(dto.getOid());
-		JSONArray data = PartlistHelper.manager.jsonArrayAui(dto.getOid());
+		JSONArray data = PartlistHelper.manager.jsonAuiProject(dto.getOid());
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
@@ -279,5 +283,4 @@ public class PartlistController extends BaseController {
 		model.setViewName("popup:/bom/partlist/partlist-integrated");
 		return model;
 	}
-
 }

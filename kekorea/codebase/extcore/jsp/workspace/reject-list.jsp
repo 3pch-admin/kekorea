@@ -68,7 +68,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							const url = getCallUrl("/workspace/masterView?oid=" + oid + "&columnType=COLUMN_PROGRESS&poid=e3ps.bom.partlist.PartListMaster:664344");
+							popup(url, 1500, 800);
 						}
 					},
 					filter : {

@@ -54,35 +54,24 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 		<li>
 			<a href="#tabs-1">결재정보</a>
 		</li>
-		<li>
-			<a href="#tabs-2">상세정보</a>
-		</li>
 	</ul>
 	<div id="tabs-1">
 		<table class="view-table">
 			<colgroup>
 				<col width="10%">
-				<col width="400">
+				<col width="300">
 				<col width="130">
-				<col width="400">
+				<col width="300">
+				<col width="130">
+				<col width="300">
 			</colgroup>
 			<tr>
 				<th class="lb">결재 제목</th>
-				<td class="indent5" colspan="3"><%=dto.getName()%></td>
+				<td class="indent5" colspan="5"><%=dto.getName()%></td>
 			</tr>
 			<tr>
-				<th class="lb">담당자</th>
-				<td class="indent5"><%=dto.getCreator()%></td>
 				<th class="lb">수신일</th>
 				<td class="indent5"><%=dto.getReceiveTime()%></td>
-			</tr>
-			<tr>
-				<th class="lb">구분</th>
-				<td class="indent5"><%=dto.getType()%></td>
-				<th class="lb">역할</th>
-				<td class="indent5"><%=dto.getRole()%></td>
-			</tr>
-			<tr>
 				<th class="lb">기안자</th>
 				<td class="indent5"><%=dto.getSubmiter()%></td>
 				<th class="lb">상태</th>
@@ -93,7 +82,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			%>
 			<tr>
 				<th class="lb">위임</th>
-				<td class="indent5" colspan="3">
+				<td class="indent5" colspan="5">
 					<input type="text" name="reassignUser" id="reassignUser" data-multi="false" data-method="setUser">
 					<input type="button" title="위임" value="위임" id="reassignApprovalBtn" data-oid="<%=dto.getOid()%>">
 					<input type="hidden" name="reassignUserOid" id="reassignUserOid">
@@ -104,12 +93,21 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			%>
 			<tr>
 				<th class="lb">결재의견</th>
-				<td class="indent5" colspan="3">
-					<textarea name="description" id="description" rows="6"><%=dto.getDescription() != null ? dto.getDescription() : ""%></textarea>
+				<td class="indent5" colspan="5">
+					<textarea name="description" id="description" rows="6" readonly="readonly"><%=dto.getDescription() != null ? dto.getDescription() : ""%></textarea>
 				</td>
 			</tr>
 		</table>
-
+		<%
+		// 수배표 정보
+		if (per instanceof PartListMaster) {
+		%>
+		<jsp:include page="/extcore/jsp/workspace/partlist.jsp">
+			<jsp:param value="<%=per.getPersistInfo().getObjectIdentifier().getStringValue()%>" name="oid" />
+		</jsp:include>
+		<%
+		}
+		%>
 		<table class="button-table">
 			<tr>
 				<td class="left">
@@ -120,7 +118,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				</td>
 			</tr>
 		</table>
-		<div id="_grid_wrap_" style="height: 230px; border-top: 1px solid #3180c3;"></div>
+		<div id="_grid_wrap_" style="height: 200px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let _myGridID_;
 			const history =
@@ -129,18 +127,17 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				dataField : "type",
 				headerText : "타입",
 				dataType : "string",
-				width : 60
+				width : 80
 			}, {
 				dataField : "role",
 				headerText : "역할",
 				dataType : "string",
-				width : 60
+				width : 80
 			}, {
 				dataField : "name",
 				headerText : "제목",
 				dataType : "string",
-				style : "aui-left",
-				width : 350
+				style : "aui-left"
 			}, {
 				dataField : "state",
 				headerText : "상태",
@@ -180,18 +177,6 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				AUIGrid.setGridData(_myGridID_, history);
 			}
 		</script>
-	</div>
-	<div id="tabs-2">
-		<%
-		// 수배표 정보
-		if (per instanceof PartListMaster) {
-		%>
-		<jsp:include page="/extcore/jsp/workspace/partlist.jsp">
-			<jsp:param value="<%=per.getPersistInfo().getObjectIdentifier().getStringValue()%>" name="oid" />
-		</jsp:include>
-		<%
-		}
-		%>
 	</div>
 </div>
 
@@ -267,7 +252,6 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 		params.oid = oid;
 		params.poid = poid;
 		params.description = description;
-		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
@@ -286,26 +270,22 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				case "tabs-1":
 					_createAUIGrid_(_columns_);
 					AUIGrid.resize(_myGridID_);
-					break;
-				case "tabs-2":
 					createAUIGrid(columns);
 					AUIGrid.resize(myGridID);
 					break;
 				}
-
 			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
 					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated) {
+					if (_isCreated_) {
 						AUIGrid.resize(_myGridID_);
 					} else {
-						_createAUIGrid_(_columns);
+						_createAUIGrid_(_columns_);
 					}
-					break;
-				case "tabs-2":
+
 					const isCreated = AUIGrid.isCreated(myGridID);
 					if (isCreated) {
 						AUIGrid.resize(myGridID);
@@ -316,7 +296,6 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				}
 			}
 		});
-		finderUser("reassignUser");
 	})
 
 	window.addEventListener("resize", function() {

@@ -134,23 +134,6 @@ public class TemplateHelper {
 		node.put("children", childrens);
 	}
 
-	public WTUser getUser(Template template, String code) throws Exception {
-		CommonCode userType = CommonCodeHelper.manager.getCommonCode(code, "USER_TYPE");
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(TemplateUserLink.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, TemplateUserLink.class, "roleAObjectRef.key.id",
-				template.getPersistInfo().getObjectIdentifier().getId());
-		QuerySpecUtils.toEqualsAnd(query, idx, TemplateUserLink.class, "userTypeReference.key.id",
-				userType.getPersistInfo().getObjectIdentifier().getId());
-		QueryResult result = PersistenceHelper.manager.find(query);
-		if (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			TemplateUserLink link = (TemplateUserLink) obj[0];
-			return link.getUser();
-		}
-		return null;
-	}
-
 	/**
 	 * 템플릿 유저 가져오기
 	 */

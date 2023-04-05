@@ -431,7 +431,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					createAUIGrid(columns);
 					AUIGrid.resize(myGridID);
 					break;
-				case "tabs-2":
+				case "tabs-3":
 					createAUIGrid(_columns_);
 					AUIGrid.resize(_myGridID_);
 					break;

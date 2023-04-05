@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.tbom.TBOMMaster;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.epm.workOrder.WorkOrder;
 import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
@@ -41,10 +43,10 @@ public class WorkspaceHelper {
 	/**
 	 * 결재마스터 상태값 상수 모음
 	 */
-	public static final String STATE_MASTER_APPROVING = "승인중";
-	public static final String STATE_MASTER_COMPELTE = "결재완료";
+	public static final String STATE_MASTER_APPROVAL_APPROVING = "승인중";
+	public static final String STATE_MASTER_APPROVAL_COMPELTE = "결재완료";
 	public static final String STATE_MASTER_AGREE_REJECT = "검토반려";
-	public static final String STATE_MASTER_REJECT = "반려";
+	public static final String STATE_MASTER_APPROVAL_REJECT = "반려";
 
 	/**
 	 * 기안 라인 상태
@@ -57,7 +59,7 @@ public class WorkspaceHelper {
 	public static final String STATE_APPROVAL_READY = "대기중";
 	public static final String STATE_APPROVAL_APPROVING = "승인중";
 	public static final String STATE_APPROVAL_COMPLETE = "결재완료";
-	public static final String STATE_APPROVAL_RETURN = "반려됨";
+	public static final String STATE_APPROVAL_REJECT = "반려됨";
 
 	/**
 	 * 검토 라인 상태값 상수
@@ -121,8 +123,16 @@ public class WorkspaceHelper {
 			ApprovalContract contract = (ApprovalContract) per;
 			return contract.getName();
 		} else if (per instanceof Managed) {
-			PartListMaster master = (PartListMaster) per;
-			return master.getName();
+			if (per instanceof PartListMaster) {
+				PartListMaster master = (PartListMaster) per;
+				return master.getName();
+			} else if (per instanceof TBOMMaster) {
+				TBOMMaster master = (TBOMMaster) per;
+				return master.getName();
+			}
+		} else if (per instanceof WorkOrder) {
+			WorkOrder workOrder = (WorkOrder) per;
+			return workOrder.getName();
 		}
 		return "";
 	}
@@ -156,7 +166,7 @@ public class WorkspaceHelper {
 		if (!CommonUtils.isAdmin()) {
 			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, "ownership.owner.key.id", sessionUser);
 		}
-		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.START_TIME, false);
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.START_TIME, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -196,7 +206,6 @@ public class WorkspaceHelper {
 		QuerySpecUtils.toTimeGreaterAndLess(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveFrom,
 				receiveTo);
 		QuerySpecUtils.toCreator(query, idx, ApprovalLine.class, submiterOid);
-		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, true);
 
 		if (!CommonUtils.isAdmin()) {
 			WTUser sessionUser = CommonUtils.sessionUser();
@@ -207,7 +216,7 @@ public class WorkspaceHelper {
 				receiveTo);
 		QuerySpecUtils.toCreator(query, idx, ApprovalLine.class, submiterOid);
 		QuerySpecUtils.toLikeAnd(query, idx, ApprovalLine.class, ApprovalLine.NAME, approvalTitle);
-		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, true);
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.START_TIME, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -250,7 +259,7 @@ public class WorkspaceHelper {
 		}
 
 		QuerySpecUtils.toLikeAnd(query, idx, ApprovalLine.class, ApprovalLine.NAME, approvalTitle);
-		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.MODIFY_TIMESTAMP, false);
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.START_TIME, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -288,7 +297,7 @@ public class WorkspaceHelper {
 		query.appendCloseParen();
 
 		QuerySpecUtils.toLikeAnd(query, idx, ApprovalMaster.class, ApprovalMaster.NAME, approvalTitle);
-		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.MODIFY_TIMESTAMP, false);
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.START_TIME, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -323,12 +332,13 @@ public class WorkspaceHelper {
 			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, "ownership.owner.key.id", sessionUser);
 		}
 
-		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, STATE_MASTER_COMPELTE);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.STATE,
+				STATE_MASTER_APPROVAL_COMPELTE);
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.TYPE, type);
 		QuerySpecUtils.toTimeGreaterAndLess(query, idx, ApprovalMaster.class, ApprovalMaster.CREATE_TIMESTAMP,
 				receiveFrom, receiveTo);
 		QuerySpecUtils.toLikeAnd(query, idx, ApprovalMaster.class, ApprovalMaster.NAME, approvalTitle);
-		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.MODIFY_TIMESTAMP, false);
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.START_TIME, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -362,11 +372,11 @@ public class WorkspaceHelper {
 
 		query.appendOpenParen();
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, STATE_MASTER_AGREE_REJECT);
-		QuerySpecUtils.toEqualsOr(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, STATE_MASTER_REJECT);
+		QuerySpecUtils.toEqualsOr(query, idx, ApprovalMaster.class, ApprovalMaster.STATE, STATE_MASTER_APPROVAL_REJECT);
 		query.appendCloseParen();
 
 		QuerySpecUtils.toLikeAnd(query, idx, ApprovalMaster.class, ApprovalMaster.NAME, approvalTitle);
-		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.MODIFY_TIMESTAMP, false);
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalMaster.class, ApprovalMaster.START_TIME, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -622,4 +632,41 @@ public class WorkspaceHelper {
 		return JSONArray.fromObject(list);
 	}
 
+	/**
+	 * 마지막 검토 라인인지 확인
+	 */
+	public boolean isEndAgree(ApprovalMaster master) throws Exception {
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ApprovalLine.class, true);
+		int idx_m = query.appendClassList(ApprovalMaster.class, true);
+
+		QuerySpecUtils.toInnerJoin(query, ApprovalLine.class, ApprovalMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_m);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, "masterReference.key.id", master);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, AGREE_LINE);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, STATE_AGREE_READY);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.size() > 0) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * 마지막 결재 라인인지 체크
+	 */
+	public boolean isEndApprovalLine(ApprovalMaster master, int sort) throws Exception {
+
+		boolean isEndApprovalLine = true;
+		ArrayList<ApprovalLine> list = getApprovalLines(master);
+		for (ApprovalLine appLine : list) {
+			int compare = appLine.getSort();
+			if (sort <= compare) {
+				isEndApprovalLine = false;
+				break;
+			}
+		}
+		return isEndApprovalLine;
+	}
 }
