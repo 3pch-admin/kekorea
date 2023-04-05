@@ -161,21 +161,6 @@ public class TBOMHelper {
 		return list;
 	}
 
-	public ArrayList<TBOMData> getData(TBOMMaster master) throws Exception {
-		ArrayList<TBOMData> list = new ArrayList<>();
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(TBOMMasterDataLink.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, TBOMMasterDataLink.class, "roleAObjectRef.key.id",
-				master.getPersistInfo().getObjectIdentifier().getId());
-		QueryResult result = PersistenceHelper.manager.find(query);
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			TBOMMasterDataLink link = (TBOMMasterDataLink) obj[0];
-			list.add(link.getData());
-		}
-		return list;
-	}
-
 	/**
 	 * T-BOM 등록시 가져올 KE 부품들
 	 */
@@ -258,9 +243,11 @@ public class TBOMHelper {
 		// list1의 데이터를 먼저 추가
 		for (Map<String, Object> data : list) {
 			Map<String, Object> mergedData = new HashMap<>();
-			mergedData.put("lotNo1", data.get("lotNo"));
-			mergedData.put("partName", data.get("partName"));
-			mergedData.put("partNo1", data.get("partNo"));
+			mergedData.put("lotNo", data.get("lotNo"));
+			mergedData.put("code", data.get("code"));
+			mergedData.put("name", data.get("name"));
+			mergedData.put("keNumber1", data.get("keNumber"));
+			mergedData.put("model", data.get("model"));
 			mergedData.put("qty1", data.get("qty"));
 			mergedData.put("unit", data.get("unit"));
 			mergedData.put("provide", data.get("provide"));
@@ -269,22 +256,24 @@ public class TBOMHelper {
 		}
 
 		for (Map<String, Object> data : _list) {
-			String partNo = (String) data.get("partNo");
+			String partNo = (String) data.get("keNumber");
 			String lotNo = (String) data.get("lotNo");
 			String key = partNo + "-" + lotNo;
 			boolean isExist = false;
 
 			// mergedList에 partNo가 동일한 데이터가 있는지 확인
 			for (Map<String, Object> mergedData : mergedList) {
-				String mergedPartNo = (String) mergedData.get("partNo1");
-				String mergedLotNo = (String) mergedData.get("lotNo1");
+				String mergedPartNo = (String) mergedData.get("keNumber1");
+				String mergedLotNo = (String) mergedData.get("lotNo");
 				String _key = mergedPartNo + "-" + mergedLotNo;
 
 				if (key.equals(_key)) {
 					// partNo가 동일한 데이터가 있으면 데이터를 업데이트하고 isExist를 true로 변경
-					mergedData.put("lotNo2", data.get("lotNo"));
-					mergedData.put("partName", data.get("partName"));
-					mergedData.put("partNo2", data.get("partNo"));
+					mergedData.put("lotNo", data.get("lotNo"));
+					mergedData.put("code", data.get("code"));
+					mergedData.put("name", data.get("name"));
+					mergedData.put("keNumber2", data.get("keNumber"));
+					mergedData.put("model", data.get("model"));
 					mergedData.put("qty2", data.get("qty"));
 					mergedData.put("unit", data.get("unit"));
 					mergedData.put("provide", data.get("provide"));
@@ -297,12 +286,13 @@ public class TBOMHelper {
 			if (!isExist) {
 				// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
 				Map<String, Object> mergedData = new HashMap<>();
-				mergedData.put("partNo1", "");
-				mergedData.put("lotNo1", "");
+				mergedData.put("keNumber1", "");
 				mergedData.put("qty1", "");
-				mergedData.put("lotNo2", data.get("lotNo"));
-				mergedData.put("partName", data.get("partName"));
-				mergedData.put("partNo2", data.get("partNo"));
+				mergedData.put("lotNo", data.get("lotNo"));
+				mergedData.put("name", data.get("name"));
+				mergedData.put("code", data.get("code"));
+				mergedData.put("keNumber2", data.get("keNumber"));
+				mergedData.put("model", data.get("model"));
 				mergedData.put("qty2", data.get("qty"));
 				mergedData.put("unit", data.get("unit"));
 				mergedData.put("provide", data.get("provide"));
@@ -353,8 +343,10 @@ public class TBOMHelper {
 				TBOMData data = link.getData();
 				Map<String, Object> map = new HashMap<>();
 				map.put("lotNo", String.valueOf(data.getLotNo()));
-				map.put("partName", data.getKePart().getMaster().getName());
-				map.put("partNo", data.getKePart().getMaster().getKeNumber());
+				map.put("code", data.getKePart().getMaster().getCode());
+				map.put("name", data.getKePart().getMaster().getName());
+				map.put("model", data.getKePart().getMaster().getModel());
+				map.put("keNumber", data.getKePart().getMaster().getKeNumber());
 				map.put("qty", data.getQty());
 				map.put("unit", data.getUnit());
 				map.put("provide", data.getProvide());
@@ -363,5 +355,48 @@ public class TBOMHelper {
 			}
 		}
 		return list;
+	}
+
+	/**
+	 * T-BOM 데이터 가져오기
+	 */
+	public JSONArray getData(TBOMMaster master) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(TBOMMaster.class, false);
+		int idx_link = query.appendClassList(TBOMMasterDataLink.class, true);
+		int idx_data = query.appendClassList(TBOMData.class, false);
+		QuerySpecUtils.toInnerJoin(query, TBOMMaster.class, TBOMMasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toInnerJoin(query, TBOMData.class, TBOMMasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleBObjectRef.key.id", idx_data, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, TBOMMasterDataLink.class, "roleAObjectRef.key.id", master);
+		QuerySpecUtils.toOrderBy(query, idx_data, TBOMData.class, TBOMData.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			TBOMMasterDataLink link = (TBOMMasterDataLink) obj[0];
+			TBOMData data = link.getData();
+			Map<String, Object> map = new HashMap<>();
+			map.put("oid", data.getKePart().getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("lotNo", String.valueOf(data.getLotNo()));
+			map.put("code", data.getKePart().getMaster().getCode());
+			map.put("name", data.getKePart().getMaster().getName());
+			map.put("model", data.getKePart().getMaster().getModel());
+			map.put("keNumber", data.getKePart().getMaster().getKeNumber());
+			map.put("qty", data.getQty());
+			map.put("unit", data.getUnit());
+			map.put("provide", data.getProvide());
+			map.put("discontinue", data.getDiscontinue());
+			list.add(map);
+		}
+
+		return JSONArray.fromObject(list);
+	}
+
+	public ArrayList<Map<String, Object>> tbomTab(String oid) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

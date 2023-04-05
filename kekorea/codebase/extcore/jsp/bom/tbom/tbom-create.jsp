@@ -126,7 +126,6 @@
 							function _createAUIGrid(columnLayout) {
 								const props = {
 									headerHeight : 30,
-									rowHeight : 30,
 									showRowNumColumn : true,
 									showRowCheckColumn : true,
 									showStateColumn : true,
@@ -233,7 +232,6 @@
 				dataField : "name",
 				headerText : "부품명",
 				dataType : "string",
-				width : 200,
 				editable : false
 			}, {
 				dataField : "model",

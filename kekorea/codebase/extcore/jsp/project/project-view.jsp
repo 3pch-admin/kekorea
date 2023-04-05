@@ -99,7 +99,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<th class="rb">막종 / 막종상세</th>
 						<th class="rb" colspan="2">작업 내용</th>
 						<th>기계</th>
-						<td class="center"><%=dto.getMachineProgress()%>%</td>
+						<td class="center"><%=dto.getMachineProgress()%>%
+						</td>
 					</tr>
 					<tr>
 						<td class="center"><%=dto.getKeNumber()%></td>
@@ -110,7 +111,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 							<%=dto.getDetail_name()%></td>
 						<td class="indent5" colspan="2"><%=dto.getDescription()%></td>
 						<th>전기</th>
-						<td class="center"><%=dto.getElecProgress()%>%</td>
+						<td class="center"><%=dto.getElecProgress()%>%
+						</td>
 					</tr>
 					<%
 					} else {
@@ -332,17 +334,25 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</div>
 			<div id="tabs-2"></div>
 			<div id="tabs-3">
-				<iframe style="height: 800px;" src="/Windchill/plm/project/issue?oid=<%=dto.getOid()%>"></iframe>
+				<iframe style="height: 800px;" src="/Windchill/plm/project/issueTab?oid=<%=dto.getOid()%>"></iframe>
 			</div>
-			<div id="tabs-4"></div>
-			<div id="tabs-5"></div>
-			<div id="tabs-6"></div>
-			<div id="tabs-7"></div>
+			<div id="tabs-4">
+				<iframe style="height: 800px;" src="/Windchill/plm/project/partlistTab?oid=<%=dto.getOid()%>&invoke=m"></iframe>
+			</div>
+			<div id="tabs-5">
+				<iframe style="height: 800px;" src="/Windchill/plm/project/partlistTab?oid=<%=dto.getOid()%>&invoke=e"></iframe>
+			</div>
+			<div id="tabs-6">
+				<iframe style="height: 800px;" src="/Windchill/plm/project/tbomTab?oid=<%=dto.getOid()%>"></iframe>
+			</div>
+			<div id="tabs-7">
+				<iframe style="height: 800px;" src="/Windchill/plm/project/partlistTab?oid=<%=dto.getOid()%>&invoke=a"></iframe>
+			</div>
 			<div id="tabs-8">
-				<iframe style="height: 800px;" src="/Windchill/plm/project/cip?mak_oid=<%=dto.getMak_oid()%>&detail_oid=<%=dto.getDetail_oid()%>&customer_oid=<%=dto.getCustomer_oid()%>&install_oid=<%=dto.getInstall_oid()%>"></iframe>
+				<iframe style="height: 800px;" src="/Windchill/plm/project/cipTab?mak_oid=<%=dto.getMak_oid()%>&detail_oid=<%=dto.getDetail_oid()%>&customer_oid=<%=dto.getCustomer_oid()%>&install_oid=<%=dto.getInstall_oid()%>"></iframe>
 			</div>
 			<div id="tabs-9">
-				<iframe style="height: 800px;" src="/Windchill/plm/project/workOrder?oid=<%=dto.getOid()%>"></iframe>
+				<iframe style="height: 800px;" src="/Windchill/plm/project/workOrderTab?oid=<%=dto.getOid()%>"></iframe>
 			</div>
 		</div>
 

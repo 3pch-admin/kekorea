@@ -372,7 +372,7 @@ public class KeDrawingHelper {
 	/**
 	 * 작번서 도면 일람표 보는 화면
 	 */
-	public JSONArray workOrder(String oid) throws Exception {
+	public JSONArray workOrderTab(String oid) throws Exception {
 
 		Project project = (Project) CommonUtils.getObject(oid);
 		QuerySpec query = new QuerySpec();

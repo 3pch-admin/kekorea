@@ -3368,7 +3368,7 @@ public class ProjectHelper {
 	/**
 	 * 프로젝트 참조 작번
 	 */
-	public JSONArray reference(String oid) throws Exception {
+	public JSONArray referenceTab(String oid) throws Exception {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		Project project = (Project) CommonUtils.getObject(oid);
 		QuerySpec query = new QuerySpec();

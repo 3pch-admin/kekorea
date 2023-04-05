@@ -215,6 +215,7 @@ public class TemplateHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			Task task = (Task) obj[0];
+			System.out.println("task=" + task.getName());
 			list.add(task);
 			recurciveTask(template, task, list);
 		}

@@ -185,6 +185,12 @@ JSONArray aList = (JSONArray) request.getAttribute("aList");
 				_createAUIGrid(_columns);
 				_createAUIGrid_(_columns_);
 			});
+
+			window.addEventListener("resize", function() {
+				AUIGrid.resize(myGridID);
+				AUIGrid.resize(_myGridID);
+				AUIGrid.resize(_myGridID_);
+			});
 		</script>
 	</form>
 </body>

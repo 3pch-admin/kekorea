@@ -230,11 +230,9 @@ String _oid = (String) request.getAttribute("_oid");
 	function createAUIGrid(columnLayout) {
 		const props = {
 			headerHeight : 30,
-			rowHeight : 30,
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
-			displayTreeOpen : true,
-			enableSorting : false,
+			showAutoNoDataMessage : false,
 			showFooter : true,
 			footerPosition : "top",
 		}
