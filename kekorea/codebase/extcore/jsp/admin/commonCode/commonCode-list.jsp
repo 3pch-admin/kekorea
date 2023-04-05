@@ -16,19 +16,19 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
-	<table class="search_table">
+	<table class="search-table">
 		<tr>
 			<th>코드 명</th>
-			<td>
-				<input type="text" name="name" id="name" class="wid200 AXInput">
+			<td class="indent5">
+				<input type="text" name="name" id="name" class="width-200">
 			</td>
 			<th>코드</th>
-			<td>
-				<input type="text" name="code" id="code" class="wid200 AXInput">
+			<td class="indent5">
+				<input type="text" name="code" id="code" class="width-200">
 			</td>
 			<th>코드 타입</th>
-			<td>
-				<select name="codeType" id="codeType" class="wid200 AXSelect">
+			<td class="indent5">
+				<select name="codeType" id="codeType" class="width-200">
 					<option value="">선택</option>
 					<%
 					for (CommonCodeType codeType : codeTypes) {
@@ -46,12 +46,12 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		</tr>
 		<tr>
 			<th>설명</th>
-			<td colspan="3">
-				<input type="text" name="description" id="description" class="wid500 AXInput">
+			<td  class="indent5" colspan="3">
+				<input type="text" name="description" id="description" class="width-200">
 			</td>
 			<th>사용여부</th>
-			<td>
-				<select name="enable" id="enable" class="wid200 AXSelect">
+			<td class="indent5">
+				<select name="enable" id="enable" class="width-200">
 					<option value="">선택</option>
 					<option value="true">사용</option>
 					<option value="false">미사용</option>
@@ -61,13 +61,15 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 	</table>
 
 	<!-- button table -->
-	<table class="btn_table">
+	<table class="button-table">
 		<tr>
+			<td class="left">
+				<input type="button" value="저장" class="" id="saveBtn" title="저장" onclick="save()">
+				<input type="button" value="행 추가" class="blue" id="addRowBtn" title="추가" onclick="addRow();">
+				<input type="button" value="행 삭제" class="red" id="deleteRowBtn" title="삭제" onclick="deleteRow()">
+			</td>
 			<td class="right">
-				<input type="button" value="추가" class="redBtn" id="addRowBtn" title="추가">
-				<input type="button" value="삭제" class="orangeBtn" id="deleteRowBtn" title="삭제">
-				<input type="button" value="저장" class="" id="saveBtn" title="저장">
-				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회">
+				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회" onclick="loadGridData();">
 			</td>
 		</tr>
 	</table>
@@ -253,7 +255,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		let params = new Object();
 		let url = getCallUrl("/commonCode/list");
 		AUIGrid.showAjaxLoader(myGridID);
-		params = form(params, "search_table");
+ 		params = form(params, "search_table");
 		parent.openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
@@ -261,64 +263,122 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			$("input[name=curPage]").val(data.curPage);
 			AUIGrid.setGridData(myGridID, data.list);
 			parent.closeLayer();
-		})
+		});
+	}
+	
+	// 그리드 행 추가
+	function addRow(){
+		const item = new Object();
+		item.enable = true;
+		item.createDate = new Date();
+		AUIGrid.addRow(myGridID, item, "first");
+	}
+
+	// 그리드 행 삭제(클릭 순서에 따라 삭제 행이 달라짐 위에서부터 눌러야 문제 없음.. )
+	function deleteRow() {
+		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+		for (let i = checkedItems.length - 1; i >= 0; i--) {
+			const rowIndex = checkedItems[i].rowIndex;
+			AUIGrid.removeRow(myGridID, rowIndex);
+		}
+	}
+	
+	function save(){
+		
+		const url = getCallUrl("/commonCode/create");
+		const params = new Object();
+		const addRows = AUIGrid.getAddedRowItems(myGridID);
+		const removeRows = AUIGrid.getRemovedItems(myGridID);
+		const editRows = AUIGrid.getEditedRowItems(myGridID);
+		
+		if (addRows.length === 0 && removeRows.length === 0 && editRows.length === 0) {
+			alert("변경된 내용이 없습니다.");
+			return false;
+		}
+
+		for (let i = 0; i < addRows.length; i++) {
+			let item = addRows[i];
+			let rowIndex = AUIGrid.rowIdToIndex(myGridID, item.oid);
+
+			if (isNull(item.name)) {
+				AUIGrid.showToastMessage(myGridID,rowIndex, 0, "코드 명의 값은 공백을 입력 할 수 없습니다.");
+				return false;
+			}
+			
+			if (isNull(item.code)) {
+				AUIGrid.showToastMessage(myGridID, rowIndex, 1, "코드의 값은 공백을 입력 할 수 없습니다.");
+					return false;
+			}
+
+			if (isNull(item.codeType)) {
+				AUIGrid.showToastMessage(myGridID, rowIndex, 2, "코드 타입은 리스트에 있는 값을 선택(입력)해야합니다 .");
+				return false;
+			}
+		}
+
+		for (let i = 0; i < editRows.length; i++) {
+			const item = editRows[i];
+			const rowIndex = AUIGrid.rowIdToIndex(myGridID, item.oid);
+
+			if (isNull(item.name)) {
+				AUIGrid.showToastMessage(myGridID, rowIndex, 0, "코드 명의 값은 공백을 입력 할 수 없습니다.");
+				return false;
+			}
+			
+			if (isNull(item.code)) {
+				AUIGrid.showToastMessage(myGridID, rowIndex, 1, "코드의 값은 공백을 입력 할 수 없습니다.");
+				return false;
+			}
+		}
+
+		if (!confirm("저장 하시겠습니까?")) {
+			return false;
+		}
+		
+		params.addRows = addRows;
+		params.removeRows = removeRows;
+		params.editRows = editRows;
+		parent.openLayer();
+		call(url, params, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				loadGridData();
+			}
+		}, "POST");
+		
 	}
 
 	$(function() {
 
 		createAUIGrid(columns);
 
-// 		selectBox("codeType");
-// 		selectBox("enable");
+		selectbox("codeType");
+		selectbox("enable");
 
-		$("#searchBtn").click(function() {
-			loadGridData();
-		})
+	});
+	
+// 	document.addEventListener("DOMContentLoaded", function() {
+// 		const columns = loadColumnLayout("commonCode-list");
+// 		const contenxtHeader = genColumnHtml(columns);
+// 		$("#h_item_ul").append(contenxtHeader);
+// 		$("#headerMenu").menu({
+// 			select : headerMenuSelectHandler
+// 		});
+// 		createAUIGrid(columns);
+// 		AUIGrid.resize(myGridID);
+// 		selectbox("codeType");
+// 		selectbox("enable");
+// 	});
 
-		// 그리드 행 추가
-		$("#addRowBtn").click(function() {
-			let item = new Object();
-			item.enable = true;
-			item.createDate = new Date();
-			AUIGrid.addRow(myGridID, item, "first");
-		})
-
-		$("#saveBtn").click(function() {
-			let addRows = AUIGrid.getAddedRowItems(myGridID);
-			let removeRows = AUIGrid.getRemovedItems(myGridID);
-			let editRows = AUIGrid.getEditedRowItems(myGridID);
-			let params = new Object();
-			let url = getCallUrl("/commonCode/create");
-			params.addRows = addRows;
-			params.removeRows = removeRows;
-			params.editRows = editRows;
-			parent.openLayer();
-			call(url, params, function(data) {
-				alert(data.msg);
-				if (data.result) {
-					loadGridData();
-				}
-			}, "POST");
-		})
-
-		// 그리드 행 삭제
-		$("#deleteRowBtn").click(function() {
-			let checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-			for (let i = checkedItems.length - 1; i >= 0; i--) {
-				let rowIndex = checkedItems[i].rowIndex;
-				AUIGrid.removeRow(myGridID, rowIndex);
-			}
-		})
-
-	}).keypress(function(e) {
-		let keyCode = e.keyCode;
-		if (keyCode == 13) {
+	document.addEventListener("keydown", function(event) {
+		const keyCode = event.keyCode || event.which;
+		if (keyCode === 13) {
 			loadGridData();
 		}
-	})
-
-	$(window).resize(function() {
+	});
+	
+	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
-	})
+	});
 </script>
 </html>
