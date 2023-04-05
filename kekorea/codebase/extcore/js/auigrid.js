@@ -8,9 +8,11 @@
 function saveColumnLayout(storageID) {
 	const columns = AUIGrid.getColumnLayout(myGridID);
 	const columnJson = JSONfn.stringify(columns);
-	const psize = document.getElementById("psize").value;
 	localStorage.setItem(storageID, columnJson);
-	localStorage.setItem(storageID + "_psize", psize);
+	const psize = document.getElementById("psize");
+	if (psize !== null) {
+		localStorage.setItem(storageID + "_psize", psize.value);
+	}
 	alert("현재 그리드의 상태가 보관되었습니다.\r\n브라우저를 종료하거나 F5 로 갱신했을 때 현재 상태로 그리드가 출력됩니다.");
 }
 
@@ -35,7 +37,10 @@ function loadColumnLayout(storageID) {
  */
 function getLocalStorageValue(storageID) {
 	if (typeof (Storage) != "undefined") {
-		document.getElementById("psize").value = localStorage.getItem(storageID + "_psize");
+		const psize = document.getElementById("psize");
+		if (psize !== null) {
+			psize.value = localStorage.getItem(storageID + "_psize");
+		}
 		return localStorage.getItem(storageID);
 	} else {
 		alert("localStorage 를 지원하지 않는 브라우저입니다.");

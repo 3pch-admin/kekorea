@@ -224,19 +224,9 @@ public class TBOMHelper {
 	/**
 	 * T-BOM 비교
 	 */
-	public ArrayList<Map<String, Object>> compare(Project p1, Project p2, String compareKey, String sort)
-			throws Exception {
-
-		if (StringUtils.isNull(sort)) {
-			sort = "sort";
-		}
-
-		if (StringUtils.isNull(compareKey)) {
-			compareKey = "lotNo+partNo";
-		}
+	public ArrayList<Map<String, Object>> compare(Project p1, ArrayList<Project> destList) throws Exception {
 
 		ArrayList<Map<String, Object>> list = integratedData(p1);
-		ArrayList<Map<String, Object>> _list = integratedData(p2);
 
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
 
@@ -252,53 +242,57 @@ public class TBOMHelper {
 			mergedData.put("unit", data.get("unit"));
 			mergedData.put("provide", data.get("provide"));
 			mergedData.put("discontinue", data.get("discontinue"));
+
+			// 작번 개수 만큼 입력..
+//			for (int i = 0; i < destList.size(); i++) {
+//				mergedData.put("qty" + (2 + i), 0);
+//			}
 			mergedList.add(mergedData);
 		}
 
-		for (Map<String, Object> data : _list) {
-			String partNo = (String) data.get("keNumber");
-			String lotNo = (String) data.get("lotNo");
-			String key = partNo + "-" + lotNo;
-			boolean isExist = false;
+		// 전체 작번 START
+		for (int i = 0; i < destList.size(); i++) {
+			Project p2 = (Project) destList.get(i);
 
-			// mergedList에 partNo가 동일한 데이터가 있는지 확인
-			for (Map<String, Object> mergedData : mergedList) {
-				String mergedPartNo = (String) mergedData.get("keNumber");
-				String mergedLotNo = (String) mergedData.get("lotNo");
-				String _key = mergedPartNo + "-" + mergedLotNo;
+			ArrayList<Map<String, Object>> _list = integratedData(p2);
 
-				if (key.equals(_key)) {
-					// partNo가 동일한 데이터가 있으면 데이터를 업데이트하고 isExist를 true로 변경
-//					mergedData.put("lotNo", data.get("lotNo"));
-//					mergedData.put("code", data.get("code"));
-//					mergedData.put("name", data.get("name"));
-//					mergedData.put("keNumber", data.get("keNumber"));
-//					mergedData.put("model", data.get("model"));
-//					mergedData.put("qty1", data.get("qty"));
-//					mergedData.put("unit", data.get("unit"));
-//					mergedData.put("provide", data.get("provide"));
-//					mergedData.put("discontinue", data.get("discontinue"));
-					isExist = true;
-					break;
+			for (Map<String, Object> data : _list) {
+				String partNo = (String) data.get("keNumber");
+				String lotNo = (String) data.get("lotNo");
+				String key = partNo + "-" + lotNo;
+				boolean isExist = false;
+
+				// mergedList에 partNo가 동일한 데이터가 있는지 확인
+				for (Map<String, Object> mergedData : mergedList) {
+					String mergedPartNo = (String) mergedData.get("keNumber");
+					String mergedLotNo = (String) mergedData.get("lotNo");
+					String _key = mergedPartNo + "-" + mergedLotNo;
+
+					if (key.equals(_key)) {
+						// partNo가 동일한 데이터가 있으면 데이터를 업데이트하고 isExist를 true로 변경
+						mergedData.put("qty" + (2 + i), data.get("qty"));
+						isExist = true;
+						break;
+					}
+				}
+
+				if (!isExist) {
+					// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
+					Map<String, Object> mergedData = new HashMap<>();
+					mergedData.put("qty1", 0);
+					mergedData.put("lotNo", data.get("lotNo"));
+					mergedData.put("name", data.get("name"));
+					mergedData.put("code", data.get("code"));
+					mergedData.put("keNumber", data.get("keNumber"));
+					mergedData.put("model", data.get("model"));
+					mergedData.put("qty" + (2 + i), data.get("qty") != null ? data.get("qty") : 0);
+					mergedData.put("unit", data.get("unit"));
+					mergedData.put("provide", data.get("provide"));
+					mergedData.put("discontinue", data.get("discontinue"));
+					mergedList.add(mergedData);
 				}
 			}
-
-			if (!isExist) {
-				// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
-				Map<String, Object> mergedData = new HashMap<>();
-				mergedData.put("qty1", "0");
-				mergedData.put("lotNo", data.get("lotNo"));
-				mergedData.put("name", data.get("name"));
-				mergedData.put("code", data.get("code"));
-				mergedData.put("keNumber", data.get("keNumber"));
-				mergedData.put("model", data.get("model"));
-				mergedData.put("qty2", data.get("qty"));
-				mergedData.put("unit", data.get("unit"));
-				mergedData.put("provide", data.get("provide"));
-				mergedData.put("discontinue", data.get("discontinue"));
-				mergedList.add(mergedData);
-			}
-		}
+		} // 전체 작번 END...
 		return mergedList;
 	}
 

@@ -193,17 +193,22 @@ public class TBOMController extends BaseController {
 
 	@Description(value = "T-BOM 비교 페이지")
 	@GetMapping(value = "/compare")
-	public ModelAndView compare(@RequestParam String oid, @RequestParam String _oid,
-			@RequestParam(required = false) String compareKey, @RequestParam(required = false) String sort)
-			throws Exception {
+	public ModelAndView compare(@RequestParam String oid, @RequestParam String compareArr) throws Exception {
 		ModelAndView model = new ModelAndView();
+		
+		String[] compareOids = compareArr.split(",");
+		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
+		for(String _oid : compareOids) {
+			Project project = (Project)CommonUtils.getObject(_oid);
+			destList.add(project);
+		}
+		
 		Project p1 = (Project) CommonUtils.getObject(oid);
-		Project p2 = (Project) CommonUtils.getObject(_oid);
-		ArrayList<Map<String, Object>> data = TBOMHelper.manager.compare(p1, p2, compareKey, sort);
+		ArrayList<Map<String, Object>> data = TBOMHelper.manager.compare(p1, destList);
 		model.addObject("p1", p1);
-		model.addObject("p2", p2);
+		model.addObject("destList", destList);
 		model.addObject("oid", oid);
-		model.addObject("_oid", _oid);
+		model.addObject("compareArr", compareArr);
 		model.addObject("data", JSONArray.fromObject(data));
 		model.setViewName("popup:/bom/tbom/tbom-compare");
 		return model;

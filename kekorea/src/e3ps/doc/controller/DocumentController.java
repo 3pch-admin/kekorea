@@ -68,7 +68,6 @@ public class DocumentController extends BaseController {
 
 	@Description(value = "문서 결재 페이지")
 	@GetMapping(value = "/register")
-	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public ModelAndView register() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("/extcore/jsp/document/document-register.jsp");
@@ -88,7 +87,7 @@ public class DocumentController extends BaseController {
 	@Description(value = "문서 결재")
 	@PostMapping(value = "/register")
 	@ResponseBody
-	public Map<String, Object> save(@RequestBody Map<String, Object> params) throws Exception {
+	public Map<String, Object> register(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			DocumentHelper.service.register(params);
@@ -116,12 +115,12 @@ public class DocumentController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description(value = "문서 뷰")
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		WTDocument document = (WTDocument)CommonUtils.getObject(oid);
+		WTDocument document = (WTDocument) CommonUtils.getObject(oid);
 		DocumentDTO dto = new DocumentDTO(document);
 		boolean isAdmin = CommonUtils.isAdmin();
 		JSONArray list = DocumentHelper.manager.history(document.getMaster());

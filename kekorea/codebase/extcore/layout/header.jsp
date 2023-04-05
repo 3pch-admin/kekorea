@@ -7,7 +7,6 @@
 <%
 UserDTO data = (UserDTO) request.getAttribute("data");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
-ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks");
 %>
 <nav class="navbar-default navbar-static-side" role="navigation">
 	<div class="sidebar-collapse">
@@ -203,9 +202,6 @@ ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks"
 					<li>
 						<a onclick="moveToPage(this, '/document/register', '문서 관리 > 문서 결재');">문서 결재</a>
 					</li>
-					<!-- 					<li> -->
-					<!-- 						<a onclick="moveToPage(this, '/document/listContents');">첨부파일 조회</a> -->
-					<!-- 					</li> -->
 				</ul>
 			</li>
 			<li>

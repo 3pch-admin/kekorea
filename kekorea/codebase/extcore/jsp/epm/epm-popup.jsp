@@ -19,7 +19,131 @@ boolean multi = (boolean) request.getAttribute("multi");
 	</tr>
 </table>
 
-<table border='1'>
+<table class="search-table">
+	<colgroup>
+		<col width="250">
+		<col width="400">
+		<col width="250">
+		<col width="400">
+	</colgroup>
+	<tr>
+		<th class="lb">부품분류</th>
+		<td class="indent5" colspan="3"><%=EpmHelper.PRODUCT_ROOT%></td>
+	</tr>
+	<tr>
+		<th class="lb">규격</th>
+		<td class="indent5">
+			<input type="text" name="number">
+		</td>
+		<th class="lb">품번</th>
+		<td class="indent5">
+			<input type="text" name="partNumber">
+		</td>
+	</tr>
+	<tr>
+		<th class="lb">품명</th>
+		<td class="indent5">
+			<input type="text" name="partName">
+		</td>
+		<th class="lb">REFERENCE 도면</th>
+		<td class="indent5">
+			<input type="text" name="partName">
+		</td>
+	</tr>
+	<tr>
+		<th class="lb">MATERIAL</th>
+		<td class="indent5">
+			<input type="text" name="partName">
+		</td>
+		<th class="lb">REMARK</th>
+		<td class="indent5">
+			<input type="text" name="partName">
+		</td>
+	</tr>
+	<tr>
+		<th class="lb">파일이름</th>
+		<td class="indent5" colspan="3">
+			<input type="text" name="partName">
+		</td>
+	</tr>
+	<tr>
+		<th class="lb">작성자</th>
+		<td class="indent5">
+			<input type="text" name="creator" id="creator">
+		</td>
+		<th class="lb">작성일</th>
+		<td class="indent5">
+			<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+			~
+			<input type="text" name="createdTo" id="createdTo" class="width-100">
+		</td>
+	</tr>
+	<tr>
+		<th class="lb">수정자</th>
+		<td class="indent5">
+			<input type="text" name="modifier" id="modifier">
+		</td>
+		<th class="lb">수정일</th>
+		<td class="indent5">
+			<input type="text" name="modifiedFrom" id="modifiedFrom" class="width-100">
+			~
+			<input type="text" name="modifiedTo" id="modifiedTo" class="width-100">
+		</td>
+	</tr>
+	<tr>
+		<th class="lb">상태</th>
+		<td class="indent5">
+			<select name="state" id="state" class="width-200">
+				<option value="">선택</option>
+			</select>
+		</td>
+		<th class="lb">버전</th>
+		<td colspan="5">
+			&nbsp;
+			<div class="pretty p-switch">
+				<input type="radio" name="latest" value="true" checked="checked">
+				<div class="state p-success">
+					<label>
+						<b>최신버전</b>
+					</label>
+				</div>
+			</div>
+			&nbsp;
+			<div class="pretty p-switch">
+				<input type="radio" name="latest" value="">
+				<div class="state p-success">
+					<label>
+						<b>모든버전</b>
+					</label>
+				</div>
+			</div>
+		</td>
+	</tr>
+</table>
+
+<table class="button-table">
+	<tr>
+		<td class="left">
+			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('notice-list');">
+			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('notice-list');">
+		</td>
+		<td class="right">
+			<select name="psize" id="psize">
+				<option value="30">30</option>
+				<option value="50">50</option>
+				<option value="100">100</option>
+				<option value="200">200</option>
+				<option value="300">300</option>
+			</select>
+			<input type="button" value="추가" title="추가" class="red" onclick="<%=method%>();">
+			<input type="button" value="조회" title="조회" class="blue" onclick="loadGridData();">
+			<input type="button" value="초기화" title="초기화" class="green">
+			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
+		</td>
+	</tr>
+</table>
+
+<table>
 	<colgroup>
 		<col width="230">
 		<col width="10">
@@ -36,141 +160,12 @@ boolean multi = (boolean) request.getAttribute("multi");
 		</td>
 		<td>&nbsp;</td>
 		<td>
-			<table class="view-table">
-				<colgroup>
-					<col width="250">
-					<col width="400">
-					<col width="250">
-					<col width="400">
-				</colgroup>
-				<tr>
-					<th class="lb">부품분류</th>
-					<td class="indent5" colspan="3"><%=EpmHelper.PRODUCT_ROOT%></td>
-				</tr>
-				<tr>
-					<th class="lb">규격</th>
-					<td class="indent5">
-						<input type="text" name="number">
-					</td>
-					<th class="lb">품번</th>
-					<td class="indent5">
-						<input type="text" name="partNumber">
-					</td>
-				</tr>
-				<tr>
-					<th class="lb">품명</th>
-					<td class="indent5">
-						<input type="text" name="partName">
-					</td>
-					<th class="lb">REFERENCE 도면</th>
-					<td class="indent5">
-						<input type="text" name="partName">
-					</td>
-				</tr>
-				<tr>
-					<th class="lb">MATERIAL</th>
-					<td class="indent5">
-						<input type="text" name="partName">
-					</td>
-					<th class="lb">REMARK</th>
-					<td class="indent5">
-						<input type="text" name="partName">
-					</td>
-				</tr>
-				<tr>
-					<th class="lb">파일이름</th>
-					<td class="indent5" colspan="3">
-						<input type="text" name="partName">
-					</td>
-				</tr>
-				<tr>
-					<th class="lb">작성자</th>
-					<td class="indent5">
-						<input type="text" name="creator" id="creator">
-					</td>
-					<th class="lb">작성일</th>
-					<td class="indent5">
-						<input type="text" name="createdFrom" id="createdFrom" class="width-100">
-						~
-						<input type="text" name="createdTo" id="createdTo" class="width-100">
-					</td>
-				</tr>
-				<tr>
-					<th class="lb">수정자</th>
-					<td class="indent5">
-						<input type="text" name="modifier" id="modifier">
-					</td>
-					<th class="lb">수정일</th>
-					<td class="indent5">
-						<input type="text" name="modifiedFrom" id="modifiedFrom" class="width-100">
-						~
-						<input type="text" name="modifiedTo" id="modifiedTo" class="width-100">
-					</td>
-				</tr>
-				<tr>
-					<th class="lb">상태</th>
-					<td class="indent5">
-						<select name="state" id="state" class="width-200">
-							<option value="">선택</option>
-						</select>
-					</td>
-					<th class="lb">버전</th>
-					<td colspan="5">
-						&nbsp;
-						<div class="pretty p-switch">
-							<input type="radio" name="latest" value="true" checked="checked">
-							<div class="state p-success">
-								<label>
-									<b>최신버전</b>
-								</label>
-							</div>
-						</div>
-						&nbsp;
-						<div class="pretty p-switch">
-							<input type="radio" name="latest" value="">
-							<div class="state p-success">
-								<label>
-									<b>모든버전</b>
-								</label>
-							</div>
-						</div>
-					</td>
-				</tr>
-			</table>
-
-			<table class="button-table">
-				<tr>
-					<td class="right">
-						<select name="psize" id="psize">
-							<option value="30">30</option>
-							<option value="50">50</option>
-							<option value="100">100</option>
-							<option value="200">200</option>
-							<option value="300">300</option>
-						</select>
-						<input type="button" value="추가" title="추가" class="red" onclick="<%=method%>();">
-						<input type="button" value="상세조회" title="상세조회" class="blue">
-						<input type="button" value="조회" title="조회" class="blue" onclick="loadGridData();">
-						<input type="button" value="초기화" title="초기화" class="green">
-						<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
-					</td>
-				</tr>
-			</table>
 			<div id="grid_wrap" style="height: 400px; border-top: 1px solid #3180c3;"></div>
 			<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 			<script type="text/javascript">
 				let myGridID;
 				function _layout() {
 					return [ {
-						dataField : "number",
-						headerText : "NO",
-						dataType : "string",
-						width : 80,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
 						dataField : "part_code",
 						headerText : "품번",
 						dataType : "string",
@@ -237,21 +232,21 @@ boolean multi = (boolean) request.getAttribute("multi");
 
 				function createAUIGrid(columnLayout) {
 					const props = {
-						headerHeight : 30, // 헤더높이
-						rowHeight : 30, // 행 높이
-						showRowNumColumn : true, // 번호 행 출력 여부
-						showStateColumn : true, // 상태표시 행 출력 여부
-						rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-						noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
-						enableFilter : true, // 필터 사용 여부
-						selectionMode : "multipleCells",
-						enableMovingColumn : true,
-						showInlineFilter : true,
-						useContextMenu : true,
-						// 그리드 공통속성 끝
-						showRowCheckColumn : true,
-						rowCheckToRadio : true
-					};
+							headerHeight : 30,
+							showRowNumColumn : true,
+							showRowCheckColumn : true,
+							rowNumHeaderText : "번호",
+							showAutoNoDataMessage : false,
+							enableFilter : true,
+							selectionMode : "multipleCells",
+							enableMovingColumn : true,
+							showInlineFilter : true,
+							useContextMenu : true,
+							enableRowCheckShiftKey : true,
+							enableRightDownFocus : true,
+							filterLayerWidth : 320,
+							filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+						};
 
 					myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 					loadGridData();
@@ -268,21 +263,26 @@ boolean multi = (boolean) request.getAttribute("multi");
 					AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 						hideContextMenu(); // 컨텍스트 메뉴 감추기
 					});
+					AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 				}
 
 				function loadGridData() {
 					const url = getCallUrl("/epm/list");
 					const params = new Object();
 					const psize = document.getElementById("psize").value;
+					params.latest = true;
 					params.psize = psize;
 					AUIGrid.showAjaxLoader(myGridID);
+					openLayer();
 					call(url, params, function(data) {
 						AUIGrid.removeAjaxLoader(myGridID);
 						AUIGrid.setGridData(myGridID, data.list);
 						document.getElementById("sessionid").value = data.sessionid;
 						document.getElementById("curPage").value = data.curPage;
+						closeLayer();
 					});
 				}
+				
 				function <%=method%>() {
 					const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 					if (checkedItems.length == 0) {
@@ -307,6 +307,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 						AUIGrid.addCheckedRowsByIds(event.pid, rowId);
 					}
 				}
+				
 				document.addEventListener("DOMContentLoaded", function() {
 					const columns = loadColumnLayout("epm-popup");
 					const contenxtHeader = genColumnHtml(columns);
@@ -315,7 +316,8 @@ boolean multi = (boolean) request.getAttribute("multi");
 						select : headerMenuSelectHandler
 					});
 					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
+					_createAUIGrid(_columns); // 트리
+					
 					selectbox("state");
 					selectbox("psize");
 					finderUser("creator");
@@ -331,8 +333,13 @@ boolean multi = (boolean) request.getAttribute("multi");
 					}
 				})
 
+							document.addEventListener("click", function(event) {
+				hideContextMenu();
+			})
+
 				window.addEventListener("resize", function() {
 					AUIGrid.resize(myGridID);
+					AUIGrid.resize(_myGridID);
 				});
 			</script>
 		</td>

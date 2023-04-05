@@ -7,16 +7,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import e3ps.approval.service.ApprovalHelper;
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.doc.ReqDocumentProjectLink;
-import e3ps.doc.RequestDocument;
 import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.doc.dto.DocumentViewData;
+import e3ps.doc.request.RequestDocument;
+import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.project.Project;
 import e3ps.project.enums.TaskStateType;
 import e3ps.project.output.DocumentOutputLink;
@@ -1072,7 +1071,6 @@ public class StandardDocumentService extends StandardManager implements Document
 		String name = (String) params.get("name"); // 제목
 		String description = (String) params.get("description"); // 의견
 		ArrayList<Map<String, String>> _addRows = (ArrayList<Map<String, String>>) params.get("_addRows"); // 결재문서
-		ArrayList<Map<String, String>> _addRows_ = (ArrayList<Map<String, String>>) params.get("_addRows_"); // 결재
 		ArrayList<Map<String, String>> agreeRows = (ArrayList<Map<String, String>>) params.get("agreeRows"); // 검토
 		ArrayList<Map<String, String>> approvalRows = (ArrayList<Map<String, String>>) params.get("approvalRows"); // 결재
 		ArrayList<Map<String, String>> receiveRows = (ArrayList<Map<String, String>>) params.get("receiveRows"); // 수신
@@ -1087,28 +1085,16 @@ public class StandardDocumentService extends StandardManager implements Document
 			contract.setState(WorkspaceHelper.STATE_APPROVAL_APPROVING);
 
 			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
-			
+
 			for (Map<String, String> _addRow : _addRows) {
-				String oid = _addRow.get("oid"); //document oid
+				String oid = _addRow.get("oid"); // document oid
 				WTDocument document = (WTDocument) CommonUtils.getObject(oid);
 				ApprovalContractPersistableLink aLink = ApprovalContractPersistableLink
 						.newApprovalContractPersistableLink(contract, document);
 				PersistenceHelper.manager.save(aLink);
 			}
-			
-			for(Map<String, String> _addRow_ : _addRows_) {
-				String woid = _addRow_.get("woid");
-				WTUser wtuser = (WTUser) CommonUtils.getObject(woid);
-//				ApprovalLine approvalLine = ApprovalLine.newApprovalLine();
-				ApprovalContractPersistableLink aLinks = ApprovalContractPersistableLink
-						.newApprovalContractPersistableLink(contract, wtuser);
-				System.out.println("############" + _addRow_);
-				PersistenceHelper.manager.save(aLinks);
-			}
-			
+
 			if (approvalRows.size() > 0) {
-//			WorkspaceHelper.service.register(contract, params);
-				System.out.println("@@@@@@@@@@@" + params);
 				WorkspaceHelper.service.register(contract, approvalRows, agreeRows, receiveRows);
 			}
 
@@ -1122,6 +1108,5 @@ public class StandardDocumentService extends StandardManager implements Document
 			if (trs != null)
 				trs.rollback();
 		}
-
 	}
 }

@@ -4,14 +4,11 @@
 String method = (String) request.getAttribute("method");
 boolean multi = (boolean) request.getAttribute("multi");
 %>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<!-- 리스트 검색시 반드시 필요한 히든 값 -->
 <input type="hidden" name="sessionid" id="sessionid">
 <input type="hidden" name="curPage" id="curPage">
-<!-- AUIGrid 리스트페이지에서만 사용할 js파일 -->
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
-<!-- 검색 테이블 -->
+
 <table class="search-table">
 	<colgroup>
 		<col width="130">

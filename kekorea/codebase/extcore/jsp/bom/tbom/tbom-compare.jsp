@@ -1,3 +1,4 @@
+<%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.project.Project"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.bom.partlist.dto.PartListDTO"%>
@@ -5,12 +6,12 @@
 <%
 JSONArray data = (JSONArray) request.getAttribute("data");
 Project p1 = (Project) request.getAttribute("p1");
-Project p2 = (Project) request.getAttribute("p2");
+ArrayList<Project> destList = (ArrayList<Project>) request.getAttribute("destList");
 String oid = (String) request.getAttribute("oid");
-String _oid = (String) request.getAttribute("_oid");
+String compareArr = (String) request.getAttribute("compareArr");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=11210"></script>
 <style type="text/css">
 .compare {
 	background-color: yellow;
@@ -19,69 +20,12 @@ String _oid = (String) request.getAttribute("_oid");
 }
 </style>
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
-<input type="hidden" name="_oid" id="_oid" value="<%=_oid%>">
+<input type="hidden" name="compareArr" id="compareArr" value="<%=compareArr%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
 			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('tbom-compare');">
 			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('tbom-compare');">
-			&nbsp;
-			<div class="pretty p-switch">
-				<input type="checkbox" name="dataView" value="lotNo" onclick="checkboxHandler(event);" checked="checked">
-				<div class="state p-success">
-					<label>
-						<b>LOT</b>
-					</label>
-				</div>
-			</div>
-			<div class="pretty p-switch">
-				<input type="checkbox" name="dataView" value="code" onclick="checkboxHandler(event);" checked="checked">
-				<div class="state p-success">
-					<label>
-						<b>중간코드</b>
-					</label>
-				</div>
-			</div>
-			<div class="pretty p-switch">
-				<input type="checkbox" name="dataView" value="name" onclick="checkboxHandler(event);" checked="checked">
-				<div class="state p-success">
-					<label>
-						<b>부품명</b>
-					</label>
-				</div>
-			</div>
-			<div class="pretty p-switch">
-				<input type="checkbox" name="dataView" value="model" onclick="checkboxHandler(event);" checked="checked">
-				<div class="state p-success">
-					<label>
-						<b>KokusaiModel</b>
-					</label>
-				</div>
-			</div>
-			<div class="pretty p-switch">
-				<input type="checkbox" name="dataView" value="unit" onclick="checkboxHandler(event);" checked="checked">
-				<div class="state p-success">
-					<label>
-						<b>UNIT</b>
-					</label>
-				</div>
-			</div>
-			<div class="pretty p-switch">
-				<input type="checkbox" name="dataView" value="provide" onclick="checkboxHandler(event);" checked="checked">
-				<div class="state p-success">
-					<label>
-						<b>PROVIDE</b>
-					</label>
-				</div>
-			</div>
-			<div class="pretty p-switch">
-				<input type="checkbox" name="dataView" value="discontinue" onclick="checkboxHandler(event);" checked="checked">
-				<div class="state p-success">
-					<label>
-						<b>DISCONTINUE</b>
-					</label>
-				</div>
-			</div>
 		</td>
 		<td class="right">
 			<select name="sort" id="sort" class="width-200">
@@ -101,104 +45,147 @@ String _oid = (String) request.getAttribute("_oid");
 <%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
 	let myGridID;
-	const data =
-<%=data%>
-	const columns = [ {
-		dataField : "lotNo",
-		headerText : "LOT",
-		dataType : "numeric",
-		width : 100,
-		formatString : "###0",
-	}, {
-		dataField : "code",
-		headerText : "중간코드",
-		dataType : "string",
-		width : 130,
-	}, {
-		dataField : "keNumber1",
-		headerText : "부품번호",
-		dataType : "string",
-		width : 120,
-		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-			const partNo2 = item.partNo2;
-			if (value !== partNo2) {
-				return "compare";
-			}
-			return "";
-		}
-	}, {
-		headerText : "<%=p1.getKekNumber()%>",
-		children : [ {
-			dataField : "qty1",
-			headerText : "수량",
+	const data = <%=data%>
+	function _layout() {
+		return [ {
+			dataField : "lotNo",
+			headerText : "LOT",
 			dataType : "numeric",
+			width : 100,
+			formatString : "###0",
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "code",
+			headerText : "중간코드",
+			dataType : "string",
+			width : 130,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "keNumber",
+			headerText : "부품번호",
+			dataType : "string",
 			width : 120,
-			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-				const qty2 = item.qty2;
-				if (value !== qty2) {
-					return "compare";
-				}
-				return "";
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			headerText : "<%=p1.getKekNumber()%>",
+			children : [ {
+				dataField : "qty1",
+				headerText : "수량",
+				dataType : "numeric",
+				width : 100,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			} ]
+		}, 
+		<%
+			int i = 2;
+			for(Project project : destList) {
+		%>
+		{
+			headerText : "<%=project.getKekNumber()%>",
+			children : [ {
+				dataField : "qty<%=i%>",
+				headerText : "수량",
+				dataType : "numeric",
+				width : 100,
+				labelFunction : function(rowIndex, columnIndex, value, headerText, item, dataField, cItem) {
+					if(item.qty<%=i%> === undefined) {
+						return 0;
+					}
+					return value;
+				},
+				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+					const qty1 = item.qty1;
+					if (value !== qty1) {
+						return "compare";
+					}
+					return "";
+				},
+				filter : {
+					showIcon : true,
+					inline : true
+				},
+			} ]
+		}, 
+		<%
+			i++;
 			}
+		%>
+		{
+			dataField : "name",
+			headerText : "부품명",
+			dataType : "string",
+			width : 200,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "model",
+			headerText : "KokusaiModel",
+			dataType : "string",
+			width : 200,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "unit",
+			headerText : "UNIT",
+			dataType : "string",
+			width : 130,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "provide",
+			headerText : "PROVIDE",
+			dataType : "string",
+			width : 130,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "discontinue",
+			headerText : "DISCONTINUE",
+			dataType : "string",
+			width : 200,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		} ]
-	}, {
-		headerText : "<%=p1.getKekNumber()%>",
-		children : [ {
-			dataField : "qty2",
-			headerText : "수량",
-			dataType : "numeric",
-			width : 120,
-			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-				const qty1 = item.qty1;
-				if (value !== qty1) {
-					return "compare";
-				}
-				return "";
-			}
-		} ]
-	}, {
-		dataField : "name",
-		headerText : "부품명",
-		dataType : "string",
-		width : 200,
-	}, {
-		dataField : "model",
-		headerText : "KokusaiModel",
-		dataType : "string",
-		width : 200,
-	}, {
-		dataField : "unit",
-		headerText : "UNIT",
-		dataType : "string",
-		width : 130
-	}, {
-		dataField : "provide",
-		headerText : "PROVIDE",
-		dataType : "string",
-		width : 130
-	}, {
-		dataField : "discontinue",
-		headerText : "DISCONTINUE",
-		dataType : "string",
-		width : 200
-	} ]
+	}
 
-	const footerLayout = [ {
-		labelText : "∑",
-		positionField : "#base",
-	}, {
-		dataField : "qty1",
-		positionField : "qty1",
-		operation : "SUM",
-		dataType : "numeric",
-		postfix : "개"
-	}, {
-		dataField : "qty2",
-		positionField : "qty2",
-		operation : "SUM",
-		dataType : "numeric",
-		postfix : "개"
-	}, ];
+// 	const footerLayout = [ {
+// 		labelText : "∑",
+// 		positionField : "#base",
+// 	}, {
+// 		dataField : "qty1",
+// 		positionField : "qty1",
+// 		operation : "SUM",
+// 		dataType : "numeric",
+// 		postfix : "개"
+// 	}, {
+// 		dataField : "qty2",
+// 		positionField : "qty2",
+// 		operation : "SUM",
+// 		dataType : "numeric",
+// 		postfix : "개"
+// 	}, ];
 
 	function createAUIGrid(columnLayout) {
 		const props = {
@@ -206,17 +193,17 @@ String _oid = (String) request.getAttribute("_oid");
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
 			showAutoNoDataMessage : false,
-			showFooter : true,
+// 			showFooter : true,
 			enableFilter : true,
 			selectionMode : "multipleCells",
 			enableMovingColumn : true,
 			showInlineFilter : true,
 			useContextMenu : true,
 			enableRightDownFocus : true,
-			footerPosition : "top",
+// 			footerPosition : "top",
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-		AUIGrid.setFooter(myGridID, footerLayout);
+// 		AUIGrid.setFooter(myGridID, footerLayout);
 		AUIGrid.setGridData(myGridID, data);
 		AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
@@ -271,8 +258,19 @@ String _oid = (String) request.getAttribute("_oid");
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
+		const columns = loadColumnLayout("tbom-compare");
+		const contenxtHeader = genColumnHtml(columns);
+		$("#h_item_ul").append(contenxtHeader);
+		$("#headerMenu").menu({
+			select : headerMenuSelectHandler
+		});
 		createAUIGrid(columns);
+		AUIGrid.resize(myGridID);
 		selectbox("sort");
+	})
+
+	document.addEventListener("click", function(event) {
+		hideContextMenu();
 	})
 
 	window.addEventListener("resize", function() {

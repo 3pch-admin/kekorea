@@ -1,6 +1,5 @@
 package e3ps.common.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,13 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.admin.commonCode.CommonCode;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.FolderUtils;
-import e3ps.doc.meeting.service.MeetingHelper;
-import e3ps.korea.cip.service.CipHelper;
 import e3ps.org.dto.UserDTO;
-import e3ps.org.service.OrgHelper;
 import e3ps.workspace.notice.service.NoticeHelper;
 import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
@@ -61,8 +56,6 @@ public class IndexController extends BaseController {
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		UserDTO data = new UserDTO(sessionUser);
 		boolean isAdmin = CommonUtils.isAdmin();
-		ArrayList<CommonCode> maks = OrgHelper.manager.getUserMaks(sessionUser);
-		model.addObject("maks", maks);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
 		model.setViewName("/extcore/layout/header.jsp");

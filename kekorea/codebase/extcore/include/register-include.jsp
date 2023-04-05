@@ -46,13 +46,10 @@
 		function _createAUIGrid_(columnLayout) {
 			const props = {
 				headerHeight : 30,
-				rowHeight : 30,
 				showRowNumColumn : true,
 				rowNumHeaderText : "번호",
 				selectionMode : "multipleCells",
-				fillColumnSizeMode : true,
 				showStateColumn : true,
-				softRemoveRowMode : false,
 				showRowCheckColumn : true,
 				showAutoNoDataMessage : false,
 				enableRowCheckShiftKey : true,
@@ -62,6 +59,7 @@
 				enableDrop : true,
 				useContextMenu : true,
 				enableSorting : false,
+				enableRightDownFocus : true,
 				contextMenuItems : [ {
 					label : "선택된 행 삭제",
 					callback : contextItemHandler

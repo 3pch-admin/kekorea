@@ -36,7 +36,7 @@ String oid = (String) request.getAttribute("oid");
 	<div id="tabs-1">
 		<table class="create-table">
 			<colgroup>
-				<col width="150">
+				<col width="200">
 				<col width="*">
 			</colgroup>
 			<tr>
@@ -48,13 +48,124 @@ String oid = (String) request.getAttribute("oid");
 			<tr>
 				<th class="req lb">KEK 작번</th>
 				<td>
-					<jsp:include page="/extcore/include/project-include.jsp">
-						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
-						<jsp:param value="true" name="multi" />
-						<jsp:param value="" name="obj" />
-						<jsp:param value="150" name="height" />
-					</jsp:include>
+					<div class="include">
+						<input type="button" value="작번 추가" title="작번 추가" class="blue" onclick="_insert();">
+						<input type="button" value="작번 삭제" title="작번 삭제" class="red" onclick="_deleteRow();">
+						<div id="_grid_wrap" style="height: 150px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+						<script type="text/javascript">
+							let _myGridID;
+							const _columns = [ {
+								dataField : "projectType_name",
+								headerText : "작번유형",
+								dataType : "string",
+								width : 80,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "customer_name",
+								headerText : "거래처",
+								dataType : "string",
+								width : 120,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "mak_name",
+								headerText : "막종",
+								dataType : "string",
+								width : 120,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "detail_name",
+								headerText : "막종상세",
+								dataType : "string",
+								width : 120,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "kekNumber",
+								headerText : "KEK 작번",
+								dataType : "string",
+								width : 100,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "keNumber",
+								headerText : "KE 작번",
+								dataType : "string",
+								width : 100,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "description",
+								headerText : "작업 내용",
+								dataType : "string",
+								style : "aui-left",
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "oid",
+								headerText : "",
+								visible : false
+							} ]
+							function _createAUIGrid(columnLayout) {
+								const props = {
+									headerHeight : 30,
+									showRowNumColumn : true,
+									showRowCheckColumn : true,
+									showStateColumn : true,
+									rowNumHeaderText : "번호",
+									showAutoNoDataMessage : false,
+									selectionMode : "singleRow",
+									enableSorting : false
+								}
+								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
+							}
+
+							function _insert() {
+								const url = getCallUrl("/project/popup?method=append&multi=true");
+								popup(url, 1500, 700);
+							}
+
+							function append(data, callBack) {
+								for (let i = 0; i < data.length; i++) {
+									const item = data[i].item;
+									const isUnique = AUIGrid.isUniqueValue(_myGridID, "oid", item.oid);
+									if (isUnique) {
+										AUIGrid.addRow(_myGridID, item, "first");
+									}
+								}
+								callBack(true);
+							}
+
+							function _deleteRow() {
+								const checked = AUIGrid.getCheckedRowItems(_myGridID);
+								if (checked.length === 0) {
+									alert("삭제할 행을 선택하세요.");
+									return false;
+								}
+
+								for (let i = checked.length - 1; i >= 0; i--) {
+									const rowIndex = checked[i].rowIndex;
+									AUIGrid.removeRow(_myGridID, rowIndex);
+								}
+							}
+						</script>
+					</div>
 				</td>
 			</tr>
 			<tr>
@@ -86,7 +197,8 @@ String oid = (String) request.getAttribute("oid");
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
+					<input type="button" value="행 추가(이전)" title="행 추가(이전)" class="blue" onclick="addBeforeRow();">
+					<input type="button" value="행 추가(이후)" title="행 추가(이후)" class="orange" onclick="addAfterRow();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 				</td>
 			</tr>
@@ -97,7 +209,8 @@ String oid = (String) request.getAttribute("oid");
 
 <script type="text/javascript">
 	let myGridID;
-	const categorys = <%=categorys%>
+	const categorys =
+<%=categorys%>
 	let itemListMap = {};
 	let specListMap = {};
 	const columns = [ {
@@ -164,7 +277,7 @@ String oid = (String) request.getAttribute("oid");
 		dataField : "item_code",
 		headerText : "ITEM",
 		dataType : "string",
-		width : 200,
+		width : 350,
 		cellMerge : true,
 		mergeRef : "category_code",
 		mergePolicy : "restrict",
@@ -322,11 +435,11 @@ String oid = (String) request.getAttribute("oid");
 	function createAUIGrid(columnLayout) {
 		const props = {
 			headerHeight : 30,
-			rowHeight : 30,
 			showRowNumColumn : true,
 			showStateColumn : true,
 			rowNumHeaderText : "번호",
 			selectionMode : "multipleCells",
+			enableSorting : false,
 			showRowCheckColumn : true,
 			enableCellMerge : true,
 			enterKeyColumnBase : true,
@@ -336,7 +449,6 @@ String oid = (String) request.getAttribute("oid");
 		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 		readyHandler();
 		auiReadyHandler();
-		// 		AUIGrid.bind(myGridID, "ready", auiReadyHandler);
 	}
 
 	function auiReadyHandler(event) {
@@ -362,8 +474,9 @@ String oid = (String) request.getAttribute("oid");
 	}
 
 	function readyHandler() {
-		const data = <%=baseData%>
-		AUIGrid.addRow(myGridID, data);
+		const data =
+<%=baseData%>
+	AUIGrid.addRow(myGridID, data);
 	}
 
 	function auiCellEditEndHandler(event) {
@@ -387,9 +500,36 @@ String oid = (String) request.getAttribute("oid");
 		}
 	}
 
-	function addRow() {
+	function addBeforeRow() {
+		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+		if (checkedItems.length === 0) {
+			alert("추가하려는 행의 기준이 되는 행을 선택하세요.");
+			return false;
+		}
+		if (checkedItems.length > 1) {
+			alert("하나의 행만 선택하세요.");
+			return false;
+		}
 		const item = new Object();
-		AUIGrid.addRow(myGridID, item, "last");
+		const rowIndex = checkedItems[0].rowIndex;
+		item.createdDate = new Date();
+		AUIGrid.addRow(myGridID, item, rowIndex);
+	}
+
+	function addAfterRow() {
+		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+		if (checkedItems.length === 0) {
+			alert("추가하려는 행의 기준이 되는 행을 선택하세요.");
+			return false;
+		}
+		if (checkedItems.length > 1) {
+			alert("하나의 행만 선택하세요.");
+			return false;
+		}
+		const item = new Object();
+		const rowIndex = checkedItems[0].rowIndex;
+		item.createdDate = new Date();
+		AUIGrid.addRow(myGridID, item, rowIndex + 1);
 	}
 
 	function deleteRow() {
@@ -401,7 +541,7 @@ String oid = (String) request.getAttribute("oid");
 	};
 
 	function create() {
-		if (!confirm("저장 하시겠습니까?")) {
+		if (!confirm("등록 하시겠습니까?")) {
 			return false;
 		}
 
@@ -419,8 +559,8 @@ String oid = (String) request.getAttribute("oid");
 		params.description = document.getElementById("description").value;
 		params.addRows = addRows;
 		params._addRows = _addRows;
-		params._addRows_ = _addRows_;
 		params.secondarys = toArray("secondarys");
+		toRegister(params, _addRows_);
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
@@ -431,6 +571,7 @@ String oid = (String) request.getAttribute("oid");
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
+		document.getElementById("name").focus();
 		$("#tabs").tabs({
 			active : 0,
 			create : function(event, ui) {
@@ -441,12 +582,13 @@ String oid = (String) request.getAttribute("oid");
 					_createAUIGrid_(_columns_);
 					break;
 				case "tabs-2":
+					createAUIGrid(columns);
 					AUIGrid.resize(myGridID);
 					break;
 				}
 			},
 			activate : function(event, ui) {
-				var tabId = ui.newPanel.prop("id");
+				const tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
 					const _isCreated_ = AUIGrid.isCreated(_myGridID);
@@ -465,6 +607,11 @@ String oid = (String) request.getAttribute("oid");
 						AUIGrid.resize(myGridID);
 					} else {
 						createAUIGrid(columns);
+						openLayer();
+						setTimeout(function() {
+							AUIGrid.refresh(myGridID);
+							closeLayer();
+						}, 100);
 					}
 					break;
 				}
