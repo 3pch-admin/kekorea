@@ -179,6 +179,7 @@ String end = (String) request.getAttribute("end");
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('project-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('project-list');">
+					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
@@ -211,6 +212,7 @@ String end = (String) request.getAttribute("end");
 						showIcon : false,
 						inline : false
 					},
+					editable : false
 				}, {
 					dataField : "projectType_name",
 					headerText : "작번유형",
@@ -220,6 +222,7 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "customer_name",
 					headerText : "거래처",
@@ -229,6 +232,7 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "install_name",
 					headerText : "설치장소",
@@ -238,6 +242,7 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "mak_name",
 					headerText : "막종",
@@ -247,6 +252,7 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "detail_name",
 					headerText : "막종상세",
@@ -256,6 +262,7 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "kekNumber",
 					headerText : "KEK 작번",
@@ -274,6 +281,7 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "keNumber",
 					headerText : "KE 작번",
@@ -292,6 +300,7 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "userId",
 					headerText : "USER ID",
@@ -301,6 +310,7 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "description",
 					headerText : "작업 내용",
@@ -311,6 +321,7 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "pdate",
 					headerText : "발행일",
@@ -322,6 +333,7 @@ String end = (String) request.getAttribute("end");
 						inline : true,
 						displayFormatValues : true
 					},
+					editable : false
 				}, {
 					dataField : "completeDate",
 					headerText : "설계 완료일",
@@ -339,6 +351,7 @@ String end = (String) request.getAttribute("end");
 						inline : true,
 						displayFormatValues : true
 					},
+					editable : false
 				}, {
 					dataField : "model",
 					headerText : "모델",
@@ -348,6 +361,7 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "machine",
 					headerText : "기계 담당자",
@@ -376,6 +390,51 @@ String end = (String) request.getAttribute("end");
 						inline : true
 					},
 				}, {
+					dataField : "totalPrice",
+					headerText : "작번 견적 금액",
+					dataType : "numeric",
+					width : 130,
+					formatString : "#,##0",
+					postfix : "원",
+					editRenderer : {
+						type : "InputEditRenderer",
+						onlyNumeric : true,
+					},
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "machinePrice",
+					headerText : "기계 견적 금액",
+					dataType : "numeric",
+					width : 130,
+					formatString : "#,##0",
+					postfix : "원",
+					editRenderer : {
+						type : "InputEditRenderer",
+						onlyNumeric : true,
+					},
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "elecPrice",
+					headerText : "전기 견적 금액",
+					dataType : "numeric",
+					width : 130,
+					formatString : "#,##0",
+					postfix : "원",
+					editRenderer : {
+						type : "InputEditRenderer",
+						onlyNumeric : true,
+					},
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
 					dataField : "kekProgress",
 					headerText : "진행율",
 					postfix : "%",
@@ -389,6 +448,7 @@ String end = (String) request.getAttribute("end");
 						showIcon : false,
 						inline : false
 					},
+					editable : false
 				}, {
 					dataField : "kekState",
 					headerText : "작번상태",
@@ -398,6 +458,7 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				} ]
 			}
 
@@ -415,6 +476,7 @@ String end = (String) request.getAttribute("end");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+					editable : true,
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
@@ -476,6 +538,22 @@ String end = (String) request.getAttribute("end");
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
+			}
+
+			function save() {
+				if (!confirm("저장 하시겠습니까?")) {
+					return false;
+				}
+				const params = new Object();
+				const url = getCallUrl("/project/save");
+				const editRows = AUIGrid.getEditedRowItems(myGridID);
+				params.editRows = editRows;
+				call(url, params, function(data) {
+					alert(data.msg);
+					if (data.result) {
+						loadGridData();
+					}
+				})
 			}
 
 			function exportExcel() {

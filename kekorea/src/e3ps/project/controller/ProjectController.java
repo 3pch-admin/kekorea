@@ -18,6 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.bom.partlist.service.PartlistHelper;
+import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
@@ -272,46 +274,65 @@ public class ProjectController extends BaseController {
 	}
 
 	@Description(value = "막종상세, 거래처, 설치라인 관련 CIP 프로젝트 상세에서 보기")
-	@GetMapping(value = "/cip")
-	public ModelAndView cip(@RequestParam String mak_oid, @RequestParam String detail_oid,
+	@GetMapping(value = "/cipTab")
+	public ModelAndView cipTab(@RequestParam String mak_oid, @RequestParam String detail_oid,
 			@RequestParam String customer_oid, @RequestParam String install_oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		ArrayList<CipDTO> list = CipHelper.manager.cip(mak_oid, detail_oid, customer_oid, install_oid);
+		ArrayList<CipDTO> list = CipHelper.manager.cipTab(mak_oid, detail_oid, customer_oid, install_oid);
 		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-cip.jsp");
+		model.setViewName("/extcore/jsp/project/project-cipTab.jsp");
 		return model;
 	}
 
 	@Description(value = "도면 일람표 프로젝트 상세에서 보기")
-	@GetMapping(value = "/workOrder")
-	public ModelAndView workOrder(@RequestParam String oid) throws Exception {
+	@GetMapping(value = "/workOrderTab")
+	public ModelAndView workOrderTab(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		JSONArray list = KeDrawingHelper.manager.workOrder(oid);
+		JSONArray list = KeDrawingHelper.manager.workOrderTab(oid);
 		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-workOrder.jsp");
+		model.setViewName("/extcore/jsp/project/project-workOrderTab.jsp");
 		return model;
 	}
 
 	@Description(value = "특이사항 프로젝트 상세에서 보기")
-	@GetMapping(value = "/issue")
-	public ModelAndView issue(@RequestParam String oid) throws Exception {
+	@GetMapping(value = "/issueTab")
+	public ModelAndView issueTab(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		JSONArray list = IssueHelper.manager.issue(oid);
+		JSONArray list = IssueHelper.manager.issueTab(oid);
 		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-issue.jsp");
+		model.setViewName("/extcore/jsp/project/project-issueTab.jsp");
+		return model;
+	}
+
+	@Description(value = "프로젝트 수배표 탭")
+	@GetMapping(value = "/partlistTab")
+	public ModelAndView partlistTab(@RequestParam String oid, @RequestParam String invoke) throws Exception {
+		ModelAndView model = new ModelAndView();
+		ArrayList<Map<String, Object>> list = PartlistHelper.manager.partlistTab(oid, invoke);
+		model.addObject("list", list);
+		model.setViewName("/extcore/jsp/project/project-partlistTab.jsp");
+		return model;
+	}
+
+	@Description(value = "프로젝트 T-BOM 탭")
+	@GetMapping(value = "/tbomTab")
+	public ModelAndView tbomTab(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		ArrayList<Map<String, Object>> list = TBOMHelper.manager.tbomTab(oid);
+		model.addObject("list", list);
+		model.setViewName("/extcore/jsp/project/project-tbomTab.jsp");
 		return model;
 	}
 
 	@Description(value = "관련작번 프로젝트 상세에서 보기")
-	@GetMapping(value = "/reference")
-	public ModelAndView reference(@RequestParam String oid) throws Exception {
+	@GetMapping(value = "/referenceTab")
+	public ModelAndView referenceTab(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		JSONArray list = ProjectHelper.manager.reference(oid);
+		JSONArray list = ProjectHelper.manager.referenceTab(oid);
 		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-reference.jsp");
+		model.setViewName("/extcore/jsp/project/project-referenceTab.jsp");
 		return model;
 	}
-	
 
 	@Description(value = "프로젝트 수배표통합 페이지")
 	@GetMapping(value = "/partlist")
@@ -333,7 +354,7 @@ public class ProjectController extends BaseController {
 		model.setViewName("/extcore/jsp/project/project-task-partlist.jsp");
 		return model;
 	}
-	
+
 	@Description(value = "프로젝트 T-BOM 페이지")
 	@GetMapping(value = "/tbom")
 	public ModelAndView tbom(@RequestParam String oid, @RequestParam String toid) throws Exception {
@@ -354,8 +375,7 @@ public class ProjectController extends BaseController {
 		model.setViewName("/extcore/jsp/project/project-task-tbom.jsp");
 		return model;
 	}
-	
-	
+
 	@Description(value = "프로젝트 수배표(1차, 2차) 페이지")
 	@GetMapping(value = "/step")
 	public ModelAndView step(@RequestParam String oid, @RequestParam String toid) throws Exception {

@@ -23,6 +23,7 @@ import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.project.Project;
 import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
@@ -127,7 +128,8 @@ public class TBOMController extends BaseController {
 		TBOMDTO dto = new TBOMDTO(master);
 		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(master);
 		JSONArray list = TBOMHelper.manager.jsonAuiProject(oid);
-//		JSONArray list = KeDrawingHelper.manager.getData(workOrder);
+		JSONArray data = TBOMHelper.manager.getData(master);
+		model.addObject("data", data);
 		model.addObject("list", list);
 		model.addObject("dto", dto);
 		model.addObject("history", history);
@@ -191,11 +193,13 @@ public class TBOMController extends BaseController {
 
 	@Description(value = "T-BOM 비교 페이지")
 	@GetMapping(value = "/compare")
-	public ModelAndView compare(@RequestParam String oid, @RequestParam String _oid) throws Exception {
+	public ModelAndView compare(@RequestParam String oid, @RequestParam String _oid,
+			@RequestParam(required = false) String compareKey, @RequestParam(required = false) String sort)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
 		Project p1 = (Project) CommonUtils.getObject(oid);
 		Project p2 = (Project) CommonUtils.getObject(_oid);
-		ArrayList<Map<String, Object>> data = TBOMHelper.manager.compare(p1, p2, null, null);
+		ArrayList<Map<String, Object>> data = TBOMHelper.manager.compare(p1, p2, compareKey, sort);
 		model.addObject("p1", p1);
 		model.addObject("p2", p2);
 		model.addObject("oid", oid);

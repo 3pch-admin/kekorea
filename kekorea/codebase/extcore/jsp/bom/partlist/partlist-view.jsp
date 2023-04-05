@@ -113,7 +113,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 								dataField : "kekNumber",
 								headerText : "KEK 작번",
 								dataType : "string",
-								width : 130,
+								width : 100,
 								renderer : {
 									type : "LinkRenderer",
 									baseUrl : "javascript",
@@ -130,7 +130,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 								dataField : "keNumber",
 								headerText : "KE 작번",
 								dataType : "string",
-								width : 130,
+								width : 100,
 								renderer : {
 									type : "LinkRenderer",
 									baseUrl : "javascript",

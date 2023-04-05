@@ -88,7 +88,7 @@ public class CipHelper {
 		return map;
 	}
 
-	public ArrayList<CipDTO> cip(String mak_oid, String detail_oid, String customer_oid, String install_oid)
+	public ArrayList<CipDTO> cipTab(String mak_oid, String detail_oid, String customer_oid, String install_oid)
 			throws Exception {
 		ArrayList<CipDTO> list = new ArrayList<>();
 		CommonCode mak = (CommonCode) CommonUtils.getObject(mak_oid);

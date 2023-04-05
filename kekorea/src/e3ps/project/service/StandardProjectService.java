@@ -170,10 +170,10 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 
 		Ownership ownership = CommonUtils.sessionOwner();
 
-		System.out.println("list" + list.size());
-
 		for (int i = 0; i < list.size(); i++) {
 			Task orgTask = (Task) list.get(i);
+
+			System.out.println("탯크 어떤거 나옴?=" + orgTask.getName() + ",=" + orgTask.getSort());
 
 			Calendar ca = Calendar.getInstance();
 

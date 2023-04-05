@@ -100,7 +100,7 @@ public class IssueHelper {
 	/**
 	 * 프로젝트 상세보기서 특이사항 목록
 	 */
-	public JSONArray issue(String oid) throws Exception {
+	public JSONArray issueTab(String oid) throws Exception {
 		Project project = (Project) CommonUtils.getObject(oid);
 
 		ArrayList<Map<String, String>> list = new ArrayList<>();

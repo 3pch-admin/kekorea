@@ -250,14 +250,14 @@ String end = (String) request.getAttribute("end");
 				loadGridData();
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 			}
-			
+
 			function auiCellClickHandler(event) {
 				const item = event.item;
 				rowIdField = AUIGrid.getProp(event.pid, "rowIdField");
 				rowId = item[rowIdField];
-				rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); 
+				rowIdField = AUIGrid.getProp(event.pid, "rowIdField");
 				rowId = item[rowIdField];
-				if(AUIGrid.isCheckedRowById(event.pid, rowId)) {
+				if (AUIGrid.isCheckedRowById(event.pid, rowId)) {
 					AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
 				} else {
 					AUIGrid.addCheckedRowsByIds(event.pid, rowId);
@@ -276,7 +276,7 @@ String end = (String) request.getAttribute("end");
 						alert("통합 수배표 비교할 작번을 2개 선택하세요.");
 						return;
 					}
-					const url0 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					const url0 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid + "&invoke=a");
 					popup(url0);
 					break;
 				case 1:
@@ -288,7 +288,7 @@ String end = (String) request.getAttribute("end");
 						alert("기계 수배표 비교할 작번을 2개 선택하세요.");
 						return;
 					}
-					const url1 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					const url1 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid + "&invoke=m");
 					popup(url1);
 					break;
 				case 2:
@@ -300,7 +300,7 @@ String end = (String) request.getAttribute("end");
 						alert("전기 수배표 비교할 작번을 2개 선택하세요.");
 						return;
 					}
-					const url2 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					const url2 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid + "&invoke=e");
 					popup(url2);
 					break;
 				case 3:
@@ -313,7 +313,7 @@ String end = (String) request.getAttribute("end");
 						return;
 					}
 					const url3 = getCallUrl("/tbom/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
-					popup(url3);
+					popup(url3, 1500, 800);
 					break;
 				case 4:
 					if (checkedItems.length <= 0) {

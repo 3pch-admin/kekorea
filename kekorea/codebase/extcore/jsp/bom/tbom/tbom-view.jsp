@@ -6,6 +6,7 @@
 <%
 TBOMDTO dto = (TBOMDTO) request.getAttribute("dto");
 JSONArray list = (JSONArray) request.getAttribute("list");
+JSONArray data = (JSONArray) request.getAttribute("data");
 JSONArray history = (JSONArray) request.getAttribute("history");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
@@ -62,7 +63,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 						<div id="_grid_wrap" style="height: 200px; border-top: 1px solid #3180c3; margin: 5px;"></div>
 						<script type="text/javascript">
 							let _myGridID;
-							const data =
+							const list =
 						<%=list%>
 							const _columns = [ {
 								dataField : "projectType_name",
@@ -153,7 +154,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 									selectionMode : "singleRow",
 								}
 								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-								AUIGrid.setGridData(_myGridID, data);
+								AUIGrid.setGridData(_myGridID, list);
 							}
 						</script>
 					</div>
@@ -176,7 +177,90 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			</tr>
 		</table>
 	</div>
-	<div id="tabs-2"></div>
+	<div id="tabs-2">
+		<div id="grid_wrap" style="height: 550px; border-top: 1px solid #3180c3;"></div>
+		<script type="text/javascript">
+			let myGridID;
+			const data =
+		<%=data%>
+			const columns = [ {
+				dataField : "lotNo",
+				headerText : "LOT",
+				dataType : "numeric",
+				width : 100,
+				formatString : "###0",
+			}, {
+				dataField : "code",
+				headerText : "중간코드",
+				dataType : "string",
+				width : 130,
+			}, {
+				dataField : "keNumber",
+				headerText : "부품번호",
+				dataType : "string",
+				width : 150,
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const url = getCallUrl("/kePart/view?oid=" + oid);
+						popup(url, 1400, 700);
+					}
+				},
+			}, {
+				dataField : "name",
+				headerText : "부품명",
+				dataType : "string",
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const url = getCallUrl("/kePart/view?oid=" + oid);
+						popup(url, 1400, 700);
+					}
+				},
+			}, {
+				dataField : "model",
+				headerText : "KokusaiModel",
+				dataType : "string",
+				width : 200,
+			}, {
+				dataField : "qty",
+				headerText : "QTY",
+				dataType : "numeric",
+				width : 100,
+				formatString : "###0",
+			}, {
+				dataField : "unit",
+				headerText : "UNIT",
+				dataType : "string",
+				width : 130
+			}, {
+				dataField : "provide",
+				headerText : "PROVIDE",
+				dataType : "string",
+				width : 130
+			}, {
+				dataField : "discontinue",
+				headerText : "DISCONTINUE",
+				dataType : "string",
+				width : 200
+			} ]
+
+			function createAUIGrid(columnLayout) {
+				const props = {
+					headerHeight : 30,
+					showRowNumColumn : true,
+					rowNumHeaderText : "번호",
+					selectionMode : "multipleCells",
+				};
+				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+				AUIGrid.setGridData(myGridID, data);
+			}
+		</script>
+	</div>
 	<div id="tabs-3">
 		<div id="_grid_wrap_" style="height: 550px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
@@ -250,6 +334,10 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				_createAUIGrid(_columns);
 				AUIGrid.resize(_myGridID);
 				break;
+			case "tabs-2":
+				createAUIGrid(columns);
+				AUIGrid.resize(myGridID);
+				break;
 			case "tabs-3":
 				_createAUIGrid_(_columns_);
 				AUIGrid.resize(_myGridID_);
@@ -267,6 +355,14 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 					_createAUIGrid(_columns);
 				}
 				break;
+			case "tabs-2":
+				const isCreated = AUIGrid.isCreated(myGridID);
+				if (isCreated) {
+					AUIGrid.resize(myGridID);
+				} else {
+					createAUIGrid(columns);
+				}
+				break;
 			case "tabs-3":
 				const _isCreated_ = AUIGrid.isCreated(_myGridID_);
 				if (_isCreated_) {
@@ -281,6 +377,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(myGridID);
 		AUIGrid.resize(_myGridID_);
 	});
 </script>
