@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.annotation.Description;
@@ -15,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
@@ -64,6 +69,8 @@ public class ProjectController extends BaseController {
 		org.json.JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
 		org.json.JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
 
+		
+		
 		model.addObject("elecs", elecs);
 		model.addObject("softs", softs);
 		model.addObject("machines", machines);
@@ -395,5 +402,33 @@ public class ProjectController extends BaseController {
 		model.addObject("list", list);
 		model.setViewName("/extcore/jsp/project/project-task-step.jsp");
 		return model;
+	}
+
+	@Description(value = "저장")
+	@PostMapping(value = "/save")
+	@ResponseBody
+	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params) throws Exception {
+		ArrayList<LinkedHashMap<String, Object>> editRows = params.get("editRows");
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			ArrayList<ProjectDTO> editRow = new ArrayList<>();
+			for(LinkedHashMap<String, Object> edit : editRows) {
+				ProjectDTO dto = mapper.convertValue(edit, ProjectDTO.class);
+				editRow.add(dto);
+			}
+			
+			HashMap<String, List<ProjectDTO>> dataMap = new HashMap<>();
+			dataMap.put("editRows", editRow);
+			ProjectHelper.service.save(dataMap);
+			result.put("msg", SAVE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
 	}
 }
