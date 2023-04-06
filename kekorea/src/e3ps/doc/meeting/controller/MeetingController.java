@@ -257,5 +257,32 @@ public class MeetingController extends BaseController {
 		model.setViewName("popup:/document/meeting/meeting-view");
 		return model;
 	}
+	
+	@Description(value = "회의록 템플릿 수정 페이지")
+	@GetMapping(value = "/modify")
+	public ModelAndView modify(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(oid);
+		MeetingTemplateDTO dto = new MeetingTemplateDTO(meetingTemplate);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/document/meeting/meeting-template-modify");
+		return model;
+	}
+	
+	@Description(value = "회의록 템플릿 수정 페이지 등록")
+	@PostMapping(value = "/modify")
+	@ResponseBody
+	public Map<String, Object> modify(@RequestBody MeetingTemplateDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			MeetingHelper.service.modify(dto);
+			result.put("result", SUCCESS);
+			result.put("msg", MODIFY_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
+	}
 
 }

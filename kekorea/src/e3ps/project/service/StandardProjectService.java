@@ -19,8 +19,11 @@ import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.doc.meeting.MeetingTemplate;
+import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
+import e3ps.project.dto.ProjectDTO;
 import e3ps.project.output.Output;
 import e3ps.project.task.Task;
 import e3ps.project.task.dto.TaskTreeNode;
@@ -427,6 +430,38 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 			int kekProgress = ProjectHelper.manager.getKekProgress(project);
 			project.setProgress(kekProgress);
 			PersistenceHelper.manager.modify(project);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+	
+	@Override
+	public void save(HashMap<String, List<ProjectDTO>> dataMap) throws Exception {
+		List<ProjectDTO> editRows = dataMap.get("editRows");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			for (ProjectDTO edit : editRows) {
+				String oid = edit.getOid();
+				Double elecPrice = edit.getElecPrice();
+				Double machinePrice = edit.getMachinePrice();
+//				Double totalPrice = edit.getTotalPrice();
+				Project project = (Project) CommonUtils.getObject(oid);
+				
+				project.setElecPrice(elecPrice);
+				project.setMachinePrice(machinePrice);
+//				project.setTotalPrice()
+				PersistenceHelper.manager.modify(project);
+			}
 
 			trs.commit();
 			trs = null;

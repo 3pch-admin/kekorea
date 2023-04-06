@@ -18,7 +18,7 @@ NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="수정" title="수정" class="green">
+			<input type="button" value="수정" title="수정" class="green" onclick="modify();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -78,4 +78,10 @@ NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs();
 	})
+
+	function modify() {
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/notice/modify?oid=" + oid);
+		document.location.href = url;
+	}
 </script>

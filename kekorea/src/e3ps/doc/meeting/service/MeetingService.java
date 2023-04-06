@@ -43,4 +43,9 @@ public interface MeetingService {
 	 * @throws Exception
 	 */
 	public abstract void delete(HashMap<String, List<MeetingDTO>> dataMap) throws Exception;
+
+	/**
+	 * 회의록 템플릿 수정
+	 */
+	public abstract void modify(MeetingTemplateDTO dto) throws Exception;
 }

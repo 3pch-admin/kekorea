@@ -664,7 +664,7 @@ public class PartlistHelper {
 			mergedData.put("unit", data.get("unit"));
 			mergedData.put("price", data.get("price"));
 			mergedData.put("currency", data.get("currency"));
-			mergedData.put("won1", data.get("won"));
+			mergedData.put("won", data.get("won"));
 			mergedData.put("partListDate_txt", data.get("partListDate_txt"));
 			mergedData.put("exchangeRate", data.get("exchangeRate"));
 			mergedData.put("referDrawing", data.get("referDrawing"));
@@ -686,29 +686,13 @@ public class PartlistHelper {
 
 				// mergedList에 partNo가 동일한 데이터가 있는지 확인
 				for (Map<String, Object> mergedData : mergedList) {
-					String mergedPartNo = (String) mergedData.get("partNo1");
-					String mergedLotNo = (String) mergedData.get("lotNo1");
+					String mergedPartNo = (String) mergedData.get("partNo");
+					String mergedLotNo = (String) mergedData.get("lotNo");
 					String _key = mergedPartNo + "-" + mergedLotNo;
 
 					if (key.equals(_key)) {
 						// partNo가 동일한 데이터가 있으면 데이터를 업데이트하고 isExist를 true로 변경
-						mergedData.put("lotNo2", data.get("lotNo"));
-						mergedData.put("unitName", data.get("unitName"));
-						mergedData.put("partNo2", data.get("partNo"));
-						mergedData.put("partName", data.get("partName"));
-						mergedData.put("standard", data.get("standard"));
-						mergedData.put("maker", data.get("maker"));
-						mergedData.put("customer", data.get("customer"));
-						mergedData.put("quantity2", data.get("quantity"));
-						mergedData.put("unit", data.get("unit"));
-						mergedData.put("price", data.get("price"));
-						mergedData.put("currency", data.get("currency"));
-						mergedData.put("won2", data.get("won"));
-						mergedData.put("partListDate_txt", data.get("partListDate_txt"));
-						mergedData.put("exchangeRate", data.get("exchangeRate"));
-						mergedData.put("referDrawing", data.get("referDrawing"));
-						mergedData.put("classification", data.get("classification"));
-						mergedData.put("note", data.get("note"));
+						mergedData.put("quantity" + (2 + i), data.get("quantity"));
 						isExist = true;
 						break;
 					}
@@ -717,20 +701,19 @@ public class PartlistHelper {
 				if (!isExist) {
 					// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
 					Map<String, Object> mergedData = new HashMap<>();
-					mergedData.put("partNo1", "");
-					mergedData.put("lotNo1", "");
-					mergedData.put("partNo2", data.get("partNo"));
-					mergedData.put("lotNo2", data.get("lotNo"));
-					mergedData.put("quantity2", data.get("quantity"));
-					mergedData.put("won2", data.get("won"));
+					mergedData.put("lotNo", data.get("lotNo"));
+					mergedData.put("unitName", data.get("unitName"));
+					mergedData.put("partNo", data.get("partNo"));
 					mergedData.put("partName", data.get("partName"));
 					mergedData.put("standard", data.get("standard"));
 					mergedData.put("maker", data.get("maker"));
 					mergedData.put("customer", data.get("customer"));
+					mergedData.put("model", data.get("model"));
+					mergedData.put("quantity" + (2 + i), data.get("quantity"));
 					mergedData.put("unit", data.get("unit"));
 					mergedData.put("price", data.get("price"));
 					mergedData.put("currency", data.get("currency"));
-					mergedData.put("won2", data.get("won"));
+					mergedData.put("won", data.get("won"));
 					mergedData.put("partListDate_txt", data.get("partListDate_txt"));
 					mergedData.put("exchangeRate", data.get("exchangeRate"));
 					mergedData.put("referDrawing", data.get("referDrawing"));

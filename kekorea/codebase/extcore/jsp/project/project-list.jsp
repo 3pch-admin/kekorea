@@ -2,6 +2,7 @@
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.ArrayList"%>
+<%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) request.getAttribute("customers");
@@ -12,6 +13,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 String before = (String) request.getAttribute("before");
 String end = (String) request.getAttribute("end");
+JSONArray machines = (JSONArray) request.getAttribute("machines");
+JSONArray elecs = (JSONArray) request.getAttribute("elecs");
+JSONArray softs = (JSONArray) request.getAttribute("softs");
 %>
 <!DOCTYPE html>
 <html>
@@ -200,6 +204,9 @@ String end = (String) request.getAttribute("end");
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
+				const elecs = <%=elecs%>
+				const machines = <%=machines%>
+				const softs = <%=softs%>
 				return [ {
 					dataField : "state",
 					headerText : "진행상태",
@@ -367,27 +374,150 @@ String end = (String) request.getAttribute("end");
 					headerText : "기계 담당자",
 					dataType : "string",
 					width : 100,
-					filter : {
-						showIcon : true,
-						inline : true
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16,
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+						},
+						onClick : function(event) {
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true,
+						autoEasyMode : true,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						list : machines,
+						keyField : "oid",
+						valueField : "name",
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							let isValid = false;
+							for (let i = 0, len = machines.length; i < len; i++) {
+								if (machines[i] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						}
+					},
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
+						for (let i = 0, len = machines.length; i < len; i++) {
+							if (machines[i]["oid"] == value) {
+								retStr = machines[i]["name"];
+								break;
+							}
+						}
+						return retStr == "" ? value : retStr;
 					},
 				}, {
 					dataField : "elec",
 					headerText : "전기 담당자",
 					dataType : "string",
 					width : 100,
-					filter : {
-						showIcon : true,
-						inline : true
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16,
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+						},
+						onClick : function(event) {
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true,
+						autoEasyMode : true,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						list : elecs,
+						keyField : "oid",
+						valueField : "name",
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							let isValid = false;
+							for (let i = 0, len = elecs.length; i < len; i++) {
+								if (elecs[i] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						}
+					},
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
+						for (let i = 0, len = elecs.length; i < len; i++) {
+							if (elecs[i]["oid"] == value) {
+								retStr = elecs[i]["name"];
+								break;
+							}
+						}
+						return retStr == "" ? value : retStr;
 					},
 				}, {
 					dataField : "soft",
 					headerText : "SW 담당자",
 					dataType : "string",
 					width : 100,
-					filter : {
-						showIcon : true,
-						inline : true
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16,
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+						},
+						onClick : function(event) {
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true,
+						autoEasyMode : true,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						list : softs,
+						keyField : "oid",
+						valueField : "name",
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							let isValid = false;
+							for (let i = 0, len = softs.length; i < len; i++) {
+								if (softs[i] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						}
+					},
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
+						for (let i = 0, len = softs.length; i < len; i++) {
+							if (softs[i]["oid"] == value) {
+								retStr = softs[i]["name"];
+								break;
+							}
+						}
+						return retStr == "" ? value : retStr;
 					},
 				}, {
 					dataField : "totalPrice",
@@ -511,6 +641,9 @@ String end = (String) request.getAttribute("end");
 				const template = document.getElementById("template").value;
 				const description = document.getElementById("description").value;
 				const psize = document.getElementById("psize").value;
+				const elecPrice = document.getElementById("elecPrice");
+				const totalPrice = document.getElementById("totalPrice");
+				const machinePrice = document.getElementById("machinePrice");
 				params.kekNumber = kekNumber;
 				params.keNumber = keNumber;
 				params.pdateFrom = pdateFrom;
@@ -529,9 +662,13 @@ String end = (String) request.getAttribute("end");
 				params.template = template;
 				params.description = description;
 				params.psize = psize;
+				params.elecPrice = elecPrice;
+				params.totalPrice = totalPrice;
+				params.machinePrice = machinePrice;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
+				console.log(data);
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
@@ -541,12 +678,23 @@ String end = (String) request.getAttribute("end");
 			}
 
 			function save() {
-				if (!confirm("저장 하시겠습니까?")) {
-					return false;
-				}
 				const params = new Object();
 				const url = getCallUrl("/project/save");
 				const editRows = AUIGrid.getEditedRowItems(myGridID);
+				
+				if (editRows.length == 0) {
+					alert("변경된 내용이 없습니다.");
+					return false;
+				}
+				
+				for (let i = 0; i < editRows.length; i++) {
+					const item = editRows[i];
+					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item, item.oid);
+				}
+				if (!confirm("저장 하시겠습니까?")) {
+					return false;
+				}
+				
 				params.editRows = editRows;
 				call(url, params, function(data) {
 					alert(data.msg);
@@ -555,7 +703,7 @@ String end = (String) request.getAttribute("end");
 					}
 				})
 			}
-
+			
 			function exportExcel() {
 				const exceptColumnFields = [ "primary" ];
 				const sessionName = document.getElementById("sessionName").value;

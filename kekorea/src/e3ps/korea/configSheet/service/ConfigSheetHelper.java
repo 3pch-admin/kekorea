@@ -5,6 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
+import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.PartListMasterProjectLink;
+import e3ps.bom.tbom.TBOMData;
+import e3ps.bom.tbom.TBOMMaster;
+import e3ps.bom.tbom.TBOMMasterDataLink;
+import e3ps.bom.tbom.TBOMMasterProjectLink;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
@@ -187,5 +193,103 @@ public class ConfigSheetHelper {
 			list.add(map);
 		}
 		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * CONFIG SHEET 관련 작번
+	 */
+	public JSONArray jsonAuiProject(ConfigSheet configSheet) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ConfigSheet.class, true);
+		int idx_link = query.appendClassList(ConfigSheetProjectLink.class, true);
+		QuerySpecUtils.toInnerJoin(query, ConfigSheet.class, ConfigSheetProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, ConfigSheetProjectLink.class, "roleAObjectRef.key.id", configSheet);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			ConfigSheetProjectLink link = (ConfigSheetProjectLink) obj[1];
+			Project project = link.getProject();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
+			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("description", project.getDescription());
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * CONFIG SHEET 비교
+	 */
+	public ArrayList<Map<String, Object>> compare(Project p1, ArrayList<Project> destList) throws Exception {
+		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
+
+		// 기준데이터
+		ArrayList<Map<String, Object>> list = integratedData(p1);
+
+		
+		return mergedList;
+	}
+
+	/**
+	 * CONFIG SHEET 기준 데이터
+	 */
+	private ArrayList<Map<String, Object>> integratedData(Project project) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ConfigSheet.class, true);
+		int idx_link = query.appendClassList(ConfigSheetProjectLink.class, false);
+		int idx_p = query.appendClassList(Project.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, ConfigSheet.class, ConfigSheetProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toInnerJoin(query, Project.class, ConfigSheetProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleBObjectRef.key.id", idx_p, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, ConfigSheetProjectLink.class, "roleBObjectRef.key.id", project);
+
+		QuerySpecUtils.toOrderBy(query, idx, ConfigSheet.class, ConfigSheet.CREATE_TIMESTAMP, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			ConfigSheet configSheet = (ConfigSheet) obj[0];
+
+			QuerySpec _query = new QuerySpec();
+			int _idx = _query.appendClassList(ConfigSheet.class, false);
+			int _idx_link = _query.appendClassList(ConfigSheetVariableLink.class, true);
+			int idx_data = _query.appendClassList(ConfigSheetVariable.class, false);
+			QuerySpecUtils.toInnerJoin(_query, ConfigSheet.class, ConfigSheetVariableLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleAObjectRef.key.id", _idx, _idx_link);
+			QuerySpecUtils.toInnerJoin(_query, ConfigSheetVariable.class, ConfigSheetVariableLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleBObjectRef.key.id", idx_data, _idx_link);
+			QuerySpecUtils.toEqualsAnd(_query, _idx_link, ConfigSheetVariableLink.class, "roleAObjectRef.key.id", configSheet);
+			QuerySpecUtils.toOrderBy(_query, idx_data, ConfigSheetVariable.class, ConfigSheetVariable.SORT, false);
+			QueryResult qr = PersistenceHelper.manager.find(_query);
+			while (qr.hasMoreElements()) {
+				Object[] oo = (Object[]) qr.nextElement();
+				TBOMMasterDataLink link = (TBOMMasterDataLink) oo[0];
+				TBOMData data = link.getData();
+				Map<String, Object> map = new HashMap<>();
+				map.put("lotNo", String.valueOf(data.getLotNo()));
+				map.put("code", data.getKePart().getMaster().getCode());
+				map.put("name", data.getKePart().getMaster().getName());
+				map.put("model", data.getKePart().getMaster().getModel());
+				map.put("keNumber", data.getKePart().getMaster().getKeNumber());
+				map.put("qty", data.getQty());
+				map.put("unit", data.getUnit());
+				map.put("provide", data.getProvide());
+				map.put("discontinue", data.getDiscontinue());
+				list.add(map);
+			}
+		}
+		return list;
 	}
 }

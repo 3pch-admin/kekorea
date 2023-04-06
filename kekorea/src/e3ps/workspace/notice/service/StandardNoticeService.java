@@ -120,4 +120,43 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 		}
 
 	}
+
+	@Override
+	public void modify(NoticeDTO dto) throws Exception {
+		String name = dto.getName();
+		String oid = dto.getOid();
+		String description = dto.getDescription();
+		ArrayList<String> primarys = dto.getPrimarys();
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Notice notice = (Notice) CommonUtils.getObject(oid);
+			notice.setName(name);
+			notice.setDescription(description);
+			PersistenceHelper.manager.modify(notice);
+
+//			for (int i = 0; i < primarys.size(); i++) {
+//				String primary = (String) primarys.get(i);
+//				ApplicationData applicationData = ApplicationData.newApplicationData(notice);
+//				if (i == 0) {
+//					applicationData.setRole(ContentRoleType.PRIMARY);
+//				} else {
+//					applicationData.setRole(ContentRoleType.SECONDARY);
+//				}
+//				PersistenceHelper.manager.modify(applicationData);
+//				ContentServerHelper.service.updateContent(notice, applicationData, primary);
+//			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
 }

@@ -1,9 +1,9 @@
 package e3ps.korea.configSheet.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,12 +15,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.bom.partlist.service.PartlistHelper;
+import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.korea.configSheet.beans.ConfigSheetDTO;
 import e3ps.korea.configSheet.service.ConfigSheetHelper;
+import e3ps.project.Project;
+import e3ps.workspace.service.WorkspaceHelper;
+import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -95,12 +100,39 @@ public class ConfigSheetController extends BaseController {
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
-		net.sf.json.JSONArray data = ConfigSheetHelper.manager.loadBaseGridData(oid);
+		JSONArray data = ConfigSheetHelper.manager.loadBaseGridData(oid);
+		JSONArray list = ConfigSheetHelper.manager.jsonAuiProject(configSheet);
+		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(configSheet);
 		ConfigSheetDTO dto = new ConfigSheetDTO(configSheet);
 		model.addObject("oid", oid);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
+		model.addObject("list", list);
+		model.addObject("history", history);
 		model.setViewName("popup:/korea/configSheet/configSheet-view");
+		return model;
+	}
+	
+	@Description(value = "CONFIG SHEET 비교 페이지")
+	@GetMapping(value = "/compare")
+	public ModelAndView compare(@RequestParam String oid, @RequestParam String compareArr) throws Exception {
+		ModelAndView model = new ModelAndView();
+		
+		String[] compareOids = compareArr.split(",");
+		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
+		for(String _oid : compareOids) {
+			Project project = (Project)CommonUtils.getObject(_oid);
+			destList.add(project);
+		}
+		
+		Project p1 = (Project) CommonUtils.getObject(oid);
+		ArrayList<Map<String, Object>> data = ConfigSheetHelper.manager.compare(p1, destList);
+		model.addObject("p1", p1);
+		model.addObject("destList", destList);
+		model.addObject("oid", oid);
+		model.addObject("compareArr", compareArr);
+		model.addObject("data", JSONArray.fromObject(data));
+		model.setViewName("popup:/korea/configSheet/configSheet-compare");
 		return model;
 	}
 }

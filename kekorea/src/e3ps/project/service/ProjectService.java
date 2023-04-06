@@ -1,8 +1,11 @@
 package e3ps.project.service;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import e3ps.project.Project;
+import e3ps.project.dto.ProjectDTO;
 import wt.method.RemoteInterface;
 
 @RemoteInterface
@@ -27,4 +30,6 @@ public interface ProjectService {
 	 * 프로젝트 진행율 및 일정 전체 조정
 	 */
 	public abstract void commit(Project project) throws Exception;
+
+	public abstract void save(HashMap<String, List<ProjectDTO>> dataMap) throws Exception;
 }
