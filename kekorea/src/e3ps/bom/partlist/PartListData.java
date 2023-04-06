@@ -33,8 +33,8 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "price", type = Integer.class, javaDoc = "단가"),
 
-
 				@GeneratedProperty(name = "currency", type = String.class, javaDoc = "화폐"),
+				
 				@GeneratedProperty(name = "won", type = Integer.class, javaDoc = "원화금액"),
 
 				@GeneratedProperty(name = "partListDate", type = Timestamp.class, javaDoc = "수배일자"),

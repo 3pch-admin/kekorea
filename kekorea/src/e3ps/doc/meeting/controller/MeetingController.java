@@ -257,7 +257,7 @@ public class MeetingController extends BaseController {
 		model.setViewName("popup:/document/meeting/meeting-view");
 		return model;
 	}
-	
+
 	@Description(value = "회의록 템플릿 수정 페이지")
 	@GetMapping(value = "/modify")
 	public ModelAndView modify(@RequestParam String oid) throws Exception {
@@ -268,7 +268,7 @@ public class MeetingController extends BaseController {
 		model.setViewName("popup:/document/meeting/meeting-template-modify");
 		return model;
 	}
-	
+
 	@Description(value = "회의록 템플릿 수정 페이지 등록")
 	@PostMapping(value = "/modify")
 	@ResponseBody

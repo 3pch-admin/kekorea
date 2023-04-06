@@ -74,6 +74,43 @@ public class ErpController extends BaseController {
 			}
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("msg", e.toString());
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+
+	@Description(value = "수배표 UNITNAME 가져오기")
+	@GetMapping(value = "/getUnitName")
+	@ResponseBody
+	public Map<String, Object> getUnitName(@RequestParam int lotNo) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			if (ErpHelper.isOperation) {
+				result = ErpHelper.manager.getUnitName(lotNo);
+			}
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("msg", e.toString());
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+	
+	@Description(value = "수배표 부품정보 가져오기")
+	@GetMapping(value = "/getItem")
+	@ResponseBody
+	public Map<String, Object> getItem(@RequestParam String partNo, @RequestParam int quantity) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			if (ErpHelper.isOperation) {
+				result = ErpHelper.manager.getItem(partNo, quantity);
+			}
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}

@@ -8,13 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.dbcp2.BasicDataSource;
 
 import e3ps.common.db.DBCPManager;
-import e3ps.common.myBatis.service.QueryDao;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.service.EpmHelper;
+import e3ps.erp.ErpConnectionPool;
 import wt.services.ServiceFactory;
 
 public class ErpHelper {
@@ -32,6 +32,8 @@ public class ErpHelper {
 
 	public static final ErpService service = ServiceFactory.getService(ErpService.class);
 	public static final ErpHelper manager = new ErpHelper();
+
+	private static final BasicDataSource dataSource = ErpConnectionPool.getDataSource();
 
 	public String[] getKEK_VDAItem(String yCode) throws Exception {
 		String[] values = new String[2];
@@ -1331,6 +1333,9 @@ public class ErpHelper {
 		return null;
 	}
 
+	/**
+	 * YCODE 체크 수배표 등록시
+	 */
 	public Map<String, Object> validate(String partNo) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		Connection con = null;
@@ -1346,16 +1351,141 @@ public class ErpHelper {
 			sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
 			rs = st.executeQuery(sql.toString());
 			if (rs.next()) {
-				result.put("check", true);
+				result.put("check", "OK");
 			} else {
-				result.put("check", false);
+				result.put("check", "NG");
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			DBCPManager.freeConnection(con, st, rs);
 		} finally {
 			DBCPManager.freeConnection(con, st, rs);
+		}
+		return result;
+	}
+
+	/**
+	 * 수배표 UNITNAME 가져오기
+	 */
+	public Map<String, Object> getUnitName(int lotNo) throws Exception {
+		Map<String, Object> result = new HashMap<>();
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+
+			con = DBCPManager.getConnection(erpName);
+			st = con.createStatement();
+
+			StringBuffer sql = new StringBuffer();
+			sql.append("SELECT LOTSEQ, LOTNO, LOTUNITNAME FROM KEK_VDALOTNO WHERE LOTNO='" + lotNo + "'");
+			rs = st.executeQuery(sql.toString());
+			if (rs.next()) {
+//				int LotSeq = (int) rs.getInt(1);
+//				String LotNo = (String) rs.getString(2);
+//				String LotUnitName = (String) rs.getString(3);
+//				values[0] = String.valueOf(LotSeq);
+//				values[1] = LotNo;
+//				values[2] = LotUnitName;
+				result.put("unitName", (String) rs.getString(3));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			DBCPManager.freeConnection(con, st, rs);
+		} finally {
+			DBCPManager.freeConnection(con, st, rs);
+		}
+		return result;
+	}
+
+	/**
+	 * 부품수배표 부품정보 가져오기
+	 */
+	public Map<String, Object> getItem(String partNo, int quantity) throws Exception {
+		Map<String, Object> result = new HashMap<>();
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+		ResultSet _rs = null;
+		try {
+
+			con = dataSource.getConnection();
+//			con = DBCPManager.getConnection(erpName);
+			st = con.createStatement();
+
+			StringBuffer sql = new StringBuffer();
+			sql.append("SELECT ITEMSEQ, ITEMNAME, SPEC");
+			sql.append(" FROM KEK_VDAITEM");
+			sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
+
+			rs = st.executeQuery(sql.toString());
+			if (rs.next()) {
+				int itemSeq = (int) rs.getInt(1);
+				String itemName = (String) rs.getString(2);
+				String spec = (String) rs.getString(3);
+
+				StringBuffer sb = new StringBuffer();
+				sb.append("EXEC KEK_SPLMBASEGETPRICE '" + itemSeq + "', '', '" + quantity + "'");
+				_rs = st.executeQuery(sb.toString());
+
+				String maker = "";
+				String customer = "";
+				String unit = "";
+				String currency = "";
+				int price = 0;
+				Integer exchangeRate = 0;
+				if (_rs.next()) {
+					maker = (String) _rs.getString("MakerName");
+					customer = (String) _rs.getString("CustName");
+					unit = (String) _rs.getString("UnitName");
+					currency = (String) _rs.getString("CurrName");
+					price = (int) _rs.getInt("price");
+					exchangeRate = (int) _rs.getInt("ExRate");
+
+				}
+				result.put("maker", maker);
+				result.put("customer", customer);
+				result.put("unit", unit);
+				result.put("currency", currency);
+				result.put("price", price);
+				result.put("exchangeRate", exchangeRate);
+				result.put("standard", spec);
+				result.put("partName", itemName);
+				result.put("won", quantity * price * exchangeRate);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (con != null) {
+				con.close();
+			}
+
+			if (st != null) {
+				st.close();
+			}
+
+			if (rs != null) {
+				rs.close();
+			}
+
+			if (_rs != null) {
+				_rs.close();
+			}
+		} finally {
+			if (con != null) {
+				con.close();
+			}
+
+			if (st != null) {
+				st.close();
+			}
+
+			if (rs != null) {
+				rs.close();
+			}
+
+			if (_rs != null) {
+				_rs.close();
+			}
 		}
 		return result;
 	}

@@ -20,7 +20,7 @@
 	<tr>
 		<th class="req lb">회의록 템플릿 제목</th>
 		<td class="indent5">
-			<input type="text" name="name" id="name" class="AXInput width-500">
+			<input type="text" name="name" id="name" class="width-500">
 		</td>
 	</tr>
 	<tr>
@@ -32,18 +32,18 @@
 </table>
 <script type="text/javascript">
 	function create() {
-
 		const params = new Object();
 		const url = getCallUrl("/meeting/format");
 		const content = tinymce.activeEditor.getContent();
-		params.name = document.getElementById("name").value;
+		const name = document.getElementById("name");
+		params.name = name.value;
 		params.content = content;
-		if(isNull(params.name)){
+		if (isNull(name.value)) {
 			alert("회의록 템플릿 제목은 공백을 입력할 수 없습니다.");
-			document.getElementById("name").focus();
+			name.focus();
 			return false;
 		}
-		if(isNull(params.content)){
+		if (isNull(content)) {
 			alert("회의록 양식은 공백을 입력할 수 없습니다.");
 			tinymce.activeEditor.focus();
 			return false;
@@ -73,6 +73,7 @@
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
+		document.getElementById("name").focus();
 		loadTinymce();
 	});
 </script>

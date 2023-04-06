@@ -250,7 +250,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					}, "GET");
 				}
 
+				// PDM 에 등록 안된 품목이다..
 				if (dataField === "spec") {
+					if(!item.ycode_check) {
+					}
 					// 					if (check !== "OK") {
 					// 						const url = getCallUrl("/erp/bundleGetErpData?spec=" + spec);
 					// 						call(url, null, function(data) {
