@@ -211,12 +211,9 @@
 			const columns = [ {
 				dataField : "check",
 				headerText : "체크",
-				dataType : "boolean",
+				dataType : "string",
 				width : 80,
 				editable : false,
-				renderer : {
-					type : "CheckboxRenderer"
-				}
 			}, {
 				dataField : "lotNo",
 				headerText : "LOT_NO",
@@ -231,7 +228,8 @@
 				dataField : "unitName",
 				headerText : "UNIT NAME",
 				dataType : "string",
-				width : 120
+				width : 120,
+				editable : false,
 			}, {
 				dataField : "partNo",
 				headerText : "부품번호",
@@ -242,11 +240,13 @@
 				headerText : "부품명",
 				dataType : "string",
 				width : 200,
+				editable : false,
 			}, {
 				dataField : "standard",
 				headerText : "규격",
 				dataType : "string",
 				width : 250,
+				editable : false,
 			}, {
 				dataField : "maker",
 				headerText : "MAKER",
@@ -272,21 +272,25 @@
 				headerText : "단위",
 				dataType : "string",
 				width : 80,
+				editable : false,
 			}, {
 				dataField : "price",
 				headerText : "단가",
 				dataType : "numeric",
 				width : 120,
+				editable : false,
 			}, {
 				dataField : "currency",
 				headerText : "화폐",
 				dataType : "string",
 				width : 60,
+				editable : false,
 			}, {
 				dataField : "won",
 				headerText : "원화금액",
 				dataType : "numeric",
 				width : 120,
+				editable : false,
 			}, {
 				dataField : "partListDate",
 				headerText : "수배일자",
@@ -299,7 +303,8 @@
 				headerText : "환율",
 				dataType : "numeric",
 				width : 80,
-				formatString : "#,##0.0000"
+				formatString : "#,##0.0000",
+				editable : false,
 			}, {
 				dataField : "referDrawing",
 				headerText : "참고도면",
@@ -352,6 +357,27 @@
 				readyHandler();
 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRow);
+				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
+			}
+
+			function auiCellEditBegin(event) {
+				const dataField = event.dataField;
+				const isClipboard = event.isClipboard;
+				const item = event.item;
+				const rowIndex = event.rowIndex;
+				const partNo = item.partNo;
+				if ((dataField !== "partNo" && dataField !== "lotNo" && dataField !== "quantity") && isClipboard) {
+					return false;
+				}
+
+				if (dataField === "quantity") {
+					if (isNull(partNo)) {
+						alert(rowIndex + "행의 부품번호를 입력하세요.");
+						return false;
+					}
+				}
+
+				return true;
 			}
 
 			function auiCellEditEndHandler(event) {
@@ -359,21 +385,63 @@
 				const dataField = event.dataField;
 				const item = event.item;
 				const partNo = item.partNo;
-				const newItem = {
-					sort : rowIndex
-				};
-
-				if (dataField === "partNo") {
-					const url = getCallUrl("/erp/validate?partNo=" + partNo);
+				const lotNo = item.lotNo;
+				let quantity = item.quantity;
+				if (dataField === "lotNo") {
+					const url = getCallUrl("/erp/getUnitName?lotNo=" + lotNo);
 					call(url, null, function(data) {
-						if(data.result) {
-							const check = data.check;
-							AUIGrid.updateRow(myGridID, check, rowIndex);
+						if (data.result) {
+							const newItem = {
+								unitName : data.unitName,
+								partListDate : new Date(),
+								sort : rowIndex
+							};
+							AUIGrid.updateRow(myGridID, newItem, rowIndex);
 						}
 					}, "GET");
 				}
 
-// 				AUIGrid.updateRow(myGridID, newItem, event.rowIndex);
+				if (dataField === "partNo") {
+					const url = getCallUrl("/erp/validate?partNo=" + partNo);
+					call(url, null, function(data) {
+						if (data.result) {
+							const newItem = {
+								check : data.check,
+								partListDate : new Date(),
+								sort : rowIndex
+							};
+							AUIGrid.updateRow(myGridID, newItem, rowIndex);
+						}
+					}, "GET");
+				}
+
+				if (dataField === "partNo" || dataField === "quantity") {
+					// 값이 있을 경우만
+					quantity = 1;
+					if (!isNull(partNo) && !isNull(quantity)) {
+						const url = getCallUrl("/erp/getItem?partNo=" + partNo + "&quantity=" + quantity);
+						call(url, null, function(data) {
+							if (data.result) {
+								const newItem = {
+									unit : data.unit,
+									exchangeRate : data.exchangeRate,
+									price : data.price,
+									maker : data.maker,
+									customer : data.customer,
+									currency : data.currency,
+									won : data.won,
+									partName : data.partName,
+									standard : data.standard,
+									partListDate : new Date(),
+									sort : rowIndex,
+									quantity : quantity
+								};
+								AUIGrid.updateRow(myGridID, newItem, rowIndex);
+							}
+						}, "GET");
+					}
+				}
+				// 				AUIGrid.updateRow(myGridID, newItem, event.rowIndex);
 			}
 
 			function contextItemHandler(event) {
@@ -430,8 +498,13 @@
 			};
 
 			function readyHandler() {
-				const item = new Object();
-				item.partListDate = new Date();
+				const item = {
+					lotNo : 0,
+					won : 0,
+					price : 0,
+					quantity : 0,
+					partListDate : new Date()
+				}
 				AUIGrid.addRow(myGridID, item, "last");
 			}
 
