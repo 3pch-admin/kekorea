@@ -251,7 +251,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 				}, {
 					dataField : "reference",
-					headerText : "REFERENCE 도면",
+						headerText : "REFERENCE 도면",
 					dataType : "string",
 					width : 150,
 					filter : {
@@ -394,7 +394,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				finderUser("modifier");
 				twindate("created");
 				twindate("modified");
-				selectbox("psize");
 			});
 
 			document.addEventListener("keydown", function(event) {

@@ -42,7 +42,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="creator" id="creator" data-multi="false" data-method="setUser">
+					<input type="text" name="creator" id="creator">
 					<input type="hidden" name="creatorOid" id="creatorOid">
 				</td>
 				<th>작성일</th>

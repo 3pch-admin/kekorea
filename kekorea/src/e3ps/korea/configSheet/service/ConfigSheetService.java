@@ -7,6 +7,9 @@ import wt.method.RemoteInterface;
 @RemoteInterface
 public interface ConfigSheetService {
 
-	void create(ConfigSheetDTO dto) throws Exception;
+	/**
+	 * CONFIG SHEET 등록
+	 */
+	public abstract void create(ConfigSheetDTO dto) throws Exception;
 
 }

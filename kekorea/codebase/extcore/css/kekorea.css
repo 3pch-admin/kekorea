@@ -586,3 +586,8 @@ div#loading_layer {
 .aui-grid-renderer-base>a {
 	color: blue !important;
 }
+
+/** 헤더 위치 표시 CSS **/
+span#subLoc {
+	font-weight: 800;
+}

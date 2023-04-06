@@ -1,5 +1,5 @@
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="wt.org.WTUser"%>
-<%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 String oid = (String) request.getAttribute("oid");
