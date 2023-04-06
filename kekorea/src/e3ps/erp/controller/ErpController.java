@@ -1,24 +1,18 @@
 package e3ps.erp.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.erp.service.ErpHelper;
-import wt.org.WTUser;
-import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/erp/**")
@@ -64,6 +58,23 @@ public class ErpController extends BaseController {
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+
+	@Description(value = "수배표 YCODE 체크")
+	@GetMapping(value = "/validate")
+	@ResponseBody
+	public Map<String, Object> validate(@RequestParam String partNo) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			if (ErpHelper.isOperation) {
+				result = ErpHelper.manager.validate(partNo);
+			}
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;

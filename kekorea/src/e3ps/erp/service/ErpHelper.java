@@ -717,7 +717,7 @@ public class ErpHelper {
 
 				StringBuffer sql = new StringBuffer();
 
-				sql.append("SELECT LotSeq, LotNo, LotUnitName from KEK_VDALotNo where LotNo='" + lotNo + "'");
+				sql.append("SELECT LOTSEQ, LOTNO, LOTUNITNAME FROM KEK_VDALOTNO WHERE LOTNO='" + lotNo + "'");
 
 				rs = st.executeQuery(sql.toString());
 				if (rs.next()) {
@@ -728,12 +728,9 @@ public class ErpHelper {
 					map.put("LotUnitName", LotUnitName);
 				}
 			}
-			map.put("result", SUCCESS);
 			map.put("index", index);
 		} catch (Exception e) {
 			e.printStackTrace();
-			map.put("result", FAIL);
-			map.put("msg", FAIL_DATA_LOAD);
 			DBCPManager.freeConnection(con, st, rs);
 		} finally {
 			DBCPManager.freeConnection(con, st, rs);
@@ -1334,4 +1331,32 @@ public class ErpHelper {
 		return null;
 	}
 
+	public Map<String, Object> validate(String partNo) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			con = DBCPManager.getConnection(erpName);
+			st = con.createStatement();
+
+			StringBuffer sql = new StringBuffer();
+			sql.append("SELECT *");
+			sql.append(" FROM KEK_VDAITEM");
+			sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
+			rs = st.executeQuery(sql.toString());
+			if (rs.next()) {
+				result.put("check", true);
+			} else {
+				result.put("check", false);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			DBCPManager.freeConnection(con, st, rs);
+		} finally {
+			DBCPManager.freeConnection(con, st, rs);
+		}
+		return result;
+	}
 }

@@ -1,14 +1,8 @@
+<%@page import="e3ps.workspace.notice.dto.NoticeDTO"%>
 <%@page import="java.util.Map"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
-
-<%@page import="wt.log4j.SystemOutFacade"%>
-<%@page import="java.sql.Timestamp"%>
-<%@page import="net.sf.json.JSONArray"%>
-<%@page import="e3ps.common.util.ContentUtils"%>
-<%@page import="e3ps.workspace.notice.dto.NoticeDTO"%>
 <%
 NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 %>
@@ -23,7 +17,7 @@ NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="등록" title="등록" onclick="update();">
+			<input type="button" value="수정" title="수정" onclick="modify();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -37,7 +31,7 @@ NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 	<tr>
 		<th class="req lb">공지사항 제목</th>
 		<td class="indent5">
-			<input type="text" name="name" id="name" class="width-500"  value="<%=dto.getName()%>">
+			<input type="text" name="name" id="name" class="width-500" value="<%=dto.getName()%>">
 		</td>
 	</tr>
 	<tr>
@@ -49,42 +43,41 @@ NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 	<tr>
 		<th class="lb">첨부파일</th>
 		<td class="indent5">
-			<jsp:include page="/extcore/include/primary-update.jsp">
-				<jsp:param value="<%=dto.getOid()%>" name="oid" />
-				<jsp:param value="update" name="mode" />
-			</jsp:include>
+			<%-- 			<jsp:include page="/extcore/include/primary-update.jsp"> --%>
+			<%-- 				<jsp:param value="<%=dto.getOid()%>" name="oid" /> --%>
+			<%-- 				<jsp:param value="update" name="mode" /> --%>
+			<%-- 			</jsp:include> --%>
 		</td>
 	</tr>
 </table>
 <script type="text/javascript">
-	const oldName = document.getElementById("name").value;
-	const oldDescription = document.getElementById("description").value;
-	function update() {
+	function modify() {
 		const params = new Object();
-		const url = getCallUrl("/notice/updateProcess");
+		const url = getCallUrl("/notice/modify");
+		const oid = document.getElementById("oid").value;
 		const name = document.getElementById("name");
 		const description = document.getElementById("description");
-		params.name = name.value;
-		params.description = description.value;
-		params.primarys = toArray("primarys");
-		if(oldName==params.name && oldDescription==params.description){
-			alert("변경사항이 없습니다.");
-			return false;
-			self.close();
-		}
-		if (isNull(params.name)) {
+
+		if (isNull(name.value)) {
 			alert("공지사항 제목 값은 공백을 입력 할 수 없습니다.");
 			name.focus();
 			return false;
 		}
-		if (isNull(params.description)) {
+
+		if (isNull(description.value)) {
 			alert("내용 값은 공백을 입력 할 수 없습니다.");
 			description.focus();
 			return false;
 		}
-		if (!confirm("등록 하시겠습니까?")) {
+
+		if (!confirm("수정 하시겠습니까?")) {
 			return false;
 		}
+
+		params.name = name.value;
+		params.description = description.value;
+		params.primarys = toArray("primarys");
+		params.oid = oid;
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);

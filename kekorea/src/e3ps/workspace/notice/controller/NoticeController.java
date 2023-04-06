@@ -132,27 +132,27 @@ public class NoticeController extends BaseController {
 		model.setViewName("popup:/workspace/notice/notice-view");
 		return model;
 	}
-	
+
 	@Description(value = "공지사항 수정 페이지")
-	@GetMapping(value = "/updateView")
-	public ModelAndView updateView(@RequestParam String oid) throws Exception {
+	@GetMapping(value = "/modify")
+	public ModelAndView modify(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		Notice notice = (Notice) CommonUtils.getObject(oid);
 		NoticeDTO dto = new NoticeDTO(notice);
 		model.addObject("dto", dto);
-		model.setViewName("popup:/workspace/notice/notice-updateView");;
+		model.setViewName("popup:/workspace/notice/notice-modify");
 		return model;
 	}
-	
+
 	@Description(value = "공지사항 수정 페이지 등록")
-	@PostMapping(value = "/updateProcess")
+	@PostMapping(value = "/modify")
 	@ResponseBody
-	public Map<String, Object> updateProcess(@RequestBody NoticeDTO dto) throws Exception {
+	public Map<String, Object> modify(@RequestBody NoticeDTO dto) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			NoticeHelper.service.updateProcess(dto);
+			NoticeHelper.service.modify(dto);
 			result.put("result", SUCCESS);
-			result.put("msg", SAVE_MSG);
+			result.put("msg", MODIFY_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
