@@ -1,8 +1,8 @@
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.common.util.ContentUtils"%>
 <%@page import="e3ps.epm.keDrawing.dto.KeDrawingDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@page import="org.json.JSONArray"%>
 <%
 JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 net.sf.json.JSONArray baseData = (net.sf.json.JSONArray) request.getAttribute("baseData");
@@ -197,8 +197,6 @@ String oid = (String) request.getAttribute("oid");
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="행 추가(이전)" title="행 추가(이전)" class="blue" onclick="addBeforeRow();">
-					<input type="button" value="행 추가(이후)" title="행 추가(이후)" class="orange" onclick="addAfterRow();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 				</td>
 			</tr>
@@ -353,7 +351,7 @@ String oid = (String) request.getAttribute("oid");
 		dataField : "spec_code",
 		headerText : "사양",
 		dataType : "string",
-		width : 250,
+		width : 350,
 		renderer : {
 			type : "IconRenderer",
 			iconWidth : 16,
@@ -442,13 +440,41 @@ String oid = (String) request.getAttribute("oid");
 			enableSorting : false,
 			showRowCheckColumn : true,
 			enableCellMerge : true,
-			enterKeyColumnBase : true,
+			showDragKnobColumn : true,
+			enableDrag : true,
+			enableMultipleDrag : true,
+			enableDrop : true,
 			editable : true,
+			enableRowCheckShiftKey : true,
+			useContextMenu : true,
+			enableRightDownFocus : true,
+			contextMenuItems : [ {
+				label : "선택된 행 삭제",
+				callback : contextItemHandler
+			} ],
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 		readyHandler();
 		auiReadyHandler();
+	}
+
+	function contextItemHandler(event) {
+		const item = new Object();
+		switch (event.contextIndex) {
+		case 0:
+			const selectedItems = AUIGrid.getSelectedItems(myGridID);
+			const rows = AUIGrid.getRowCount(myGridID);
+			if (rows === 1) {
+				alert("최 소 하나의 행이 존재해야합니다.");
+				return false;
+			}
+			for (let i = selectedItems.length - 1; i >= 0; i--) {
+				const rowIndex = selectedItems[i].rowIndex;
+				AUIGrid.removeRow(myGridID, rowIndex);
+			}
+			break;
+		}
 	}
 
 	function auiReadyHandler(event) {
@@ -500,38 +526,6 @@ String oid = (String) request.getAttribute("oid");
 		}
 	}
 
-	function addBeforeRow() {
-		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-		if (checkedItems.length === 0) {
-			alert("추가하려는 행의 기준이 되는 행을 선택하세요.");
-			return false;
-		}
-		if (checkedItems.length > 1) {
-			alert("하나의 행만 선택하세요.");
-			return false;
-		}
-		const item = new Object();
-		const rowIndex = checkedItems[0].rowIndex;
-		item.createdDate = new Date();
-		AUIGrid.addRow(myGridID, item, rowIndex);
-	}
-
-	function addAfterRow() {
-		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-		if (checkedItems.length === 0) {
-			alert("추가하려는 행의 기준이 되는 행을 선택하세요.");
-			return false;
-		}
-		if (checkedItems.length > 1) {
-			alert("하나의 행만 선택하세요.");
-			return false;
-		}
-		const item = new Object();
-		const rowIndex = checkedItems[0].rowIndex;
-		item.createdDate = new Date();
-		AUIGrid.addRow(myGridID, item, rowIndex + 1);
-	}
-
 	function deleteRow() {
 		const checked = AUIGrid.getCheckedRowItems(myGridID);
 		for (let i = checked.length - 1; i >= 0; i--) {
@@ -561,6 +555,7 @@ String oid = (String) request.getAttribute("oid");
 		params._addRows = _addRows;
 		params.secondarys = toArray("secondarys");
 		toRegister(params, _addRows_);
+		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {

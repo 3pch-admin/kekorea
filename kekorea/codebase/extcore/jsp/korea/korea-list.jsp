@@ -290,20 +290,15 @@ String end = (String) request.getAttribute("end");
 					popup(url2);
 					break;
 				case 3:
-
 					const url3 = getCallUrl("/tbom/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
 					popup(url3, 1500, 800);
 					break;
 				case 4:
-					const url4 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					const url4 = getCallUrl("/configSheet/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
 					popup(url4);
 					break;
 				case 5:
-					if (checkedItems.length <= 0) {
-						alert("CONFIG SHEET 비교할 작번을 선택하세요.");
-						return;
-					}
-					const url5 = getCallUrl("/workOrder/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					const url5 = getCallUrl("/configSheet/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
 					popup(url5);
 					break;
 				case 2:

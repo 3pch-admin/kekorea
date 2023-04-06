@@ -5,14 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
-
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.CommonCodeType;
 import e3ps.admin.commonCode.dto.CommonCodeDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import net.sf.json.JSONArray;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.query.ClassAttribute;
@@ -115,7 +114,7 @@ public class CommonCodeHelper {
 			map.put("value", commonCode.getName());
 			list.add(map);
 		}
-		return new JSONArray(list);
+		return JSONArray.fromObject(list);
 	}
 
 	public JSONArray parseJson() throws Exception {
@@ -127,7 +126,7 @@ public class CommonCodeHelper {
 			map.put("value", codeType.getDisplay());
 			list.add(map);
 		}
-		return new JSONArray(list);
+		return JSONArray.fromObject(list);
 	}
 
 	public ArrayList<CommonCode> getArrayCodeList(String codeType) throws Exception {

@@ -1,5 +1,5 @@
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="wt.org.WTUser"%>
-<%@page import="org.json.JSONArray"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.org.service.OrgHelper"%>
@@ -11,7 +11,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) request.getAttribute("list");
 JSONArray maks = (JSONArray) request.getAttribute("maks");
 JSONArray installs = (JSONArray) request.getAttribute("installs");
-JSONArray departments = new JSONArray(list);
+JSONArray departments = JSONArray.fromObject(list);
 %>
 <!DOCTYPE html>
 <html>

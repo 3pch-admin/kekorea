@@ -279,13 +279,13 @@ public class TBOMHelper {
 				if (!isExist) {
 					// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
 					Map<String, Object> mergedData = new HashMap<>();
-					mergedData.put("qty1", 0);
+//					mergedData.put("qty1", 0);
 					mergedData.put("lotNo", data.get("lotNo"));
 					mergedData.put("name", data.get("name"));
 					mergedData.put("code", data.get("code"));
 					mergedData.put("keNumber", data.get("keNumber"));
 					mergedData.put("model", data.get("model"));
-					mergedData.put("qty" + (2 + i), data.get("qty") != null ? data.get("qty") : 0);
+					mergedData.put("qty" + (2 + i), data.get("qty"));
 					mergedData.put("unit", data.get("unit"));
 					mergedData.put("provide", data.get("provide"));
 					mergedData.put("discontinue", data.get("discontinue"));

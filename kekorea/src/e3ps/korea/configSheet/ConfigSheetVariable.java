@@ -19,7 +19,9 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "note", type = String.class, javaDoc = "NOTE", constraints = @PropertyConstraints(upperLimit = 2000)),
 
-				@GeneratedProperty(name = "apply", type = String.class, javaDoc = "APPLY")
+				@GeneratedProperty(name = "apply", type = String.class, javaDoc = "APPLY"),
+				
+				@GeneratedProperty(name="sort", type=Integer.class)
 
 		},
 
