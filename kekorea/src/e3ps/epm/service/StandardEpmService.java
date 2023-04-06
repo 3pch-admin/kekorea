@@ -36,6 +36,7 @@ import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
+import e3ps.workspace.service.WorkspaceHelper;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
 import wt.content.ContentItem;
@@ -1018,7 +1019,7 @@ public class StandardEpmService extends StandardManager implements EpmService, M
 			contract.setName(name);
 			contract.setDescription(comment);
 			contract.setStartTime(new Timestamp(new Date().getTime()));
-			contract.setState(WorkspaceHelper.LINE_APPROVING);
+			contract.setState(WorkspaceHelper.APPROVAL_LINE);
 			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
 
 			for (int i = 0; i < epmOids.size(); i++) {

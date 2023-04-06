@@ -25,22 +25,24 @@ boolean multi = (boolean) request.getAttribute("multi");
 		<col width="400">
 		<col width="250">
 		<col width="400">
+		<col width="250">
+		<col width="400">
+		<col width="250">
+		<col width="400">
 	</colgroup>
 	<tr>
 		<th class="lb">부품분류</th>
-		<td class="indent5" colspan="3"><%=EpmHelper.PRODUCT_ROOT%></td>
+		<td class="indent5" colspan="7"><%=EpmHelper.PRODUCT_ROOT%></td>
 	</tr>
 	<tr>
 		<th class="lb">규격</th>
 		<td class="indent5">
-			<input type="text" name="number">
+			<input type="text" name="standard" id="standard">
 		</td>
 		<th class="lb">품번</th>
 		<td class="indent5">
 			<input type="text" name="partNumber">
 		</td>
-	</tr>
-	<tr>
 		<th class="lb">품명</th>
 		<td class="indent5">
 			<input type="text" name="partName">
@@ -59,8 +61,6 @@ boolean multi = (boolean) request.getAttribute("multi");
 		<td class="indent5">
 			<input type="text" name="partName">
 		</td>
-	</tr>
-	<tr>
 		<th class="lb">파일이름</th>
 		<td class="indent5" colspan="3">
 			<input type="text" name="partName">
@@ -77,8 +77,6 @@ boolean multi = (boolean) request.getAttribute("multi");
 			~
 			<input type="text" name="createdTo" id="createdTo" class="width-100">
 		</td>
-	</tr>
-	<tr>
 		<th class="lb">수정자</th>
 		<td class="indent5">
 			<input type="text" name="modifier" id="modifier">
@@ -124,8 +122,8 @@ boolean multi = (boolean) request.getAttribute("multi");
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('notice-list');">
-			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('notice-list');">
+			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('epm-popup');">
+			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('epm-popup');">
 		</td>
 		<td class="right">
 			<select name="psize" id="psize">
@@ -155,12 +153,12 @@ boolean multi = (boolean) request.getAttribute("multi");
 				<jsp:param value="<%=EpmHelper.PRODUCT_ROOT%>" name="location" />
 				<jsp:param value="product" name="container" />
 				<jsp:param value="list" name="mode" />
-				<jsp:param value="700px" name="height" />
+				<jsp:param value="600" name="height" />
 			</jsp:include>
 		</td>
 		<td>&nbsp;</td>
 		<td>
-			<div id="grid_wrap" style="height: 400px; border-top: 1px solid #3180c3;"></div>
+			<div id="grid_wrap" style="height: 600px; border-top: 1px solid #3180c3;"></div>
 			<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 			<script type="text/javascript">
 				let myGridID;
@@ -309,6 +307,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 				}
 				
 				document.addEventListener("DOMContentLoaded", function() {
+					document.getElementById("standard").focus();
 					const columns = loadColumnLayout("epm-popup");
 					const contenxtHeader = genColumnHtml(columns);
 					$("#h_item_ul").append(contenxtHeader);

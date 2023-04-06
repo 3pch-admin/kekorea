@@ -19,12 +19,17 @@ JSONArray data = null;
 	<form>
 		<table class="button-table">
 			<tr>
+				<td class="left">
+					<div class="header">
+						<img src="/Windchill/extcore/images/header.png">
+						도면결재 등록
+					</div>
+				</td>
 				<td class="right">
 					<input type="button" value="결재등록" title="결재등록" onclick="registerLine();">
 				</td>
 			</tr>
 		</table>
-
 		<table class="create-table">
 			<colgroup>
 				<col width="130">
@@ -49,32 +54,31 @@ JSONArray data = null;
 								dataField : "sort",
 								headerText : "순서",
 								dataType : "numeric",
-								width : 80
+								width : 100
 							}, {
 								dataField : "type",
 								headerText : "결재타입",
 								dataType : "string",
-								width : 130,
+								width : 150,
 							}, {
 								dataField : "name",
 								headerText : "이름",
 								dataType : "string",
-								width : 130,
+								width : 150,
 							}, {
 								dataField : "id",
 								headerText : "아이디",
 								dataType : "string",
-								width : 130,
+								width : 150,
 							}, {
 								dataField : "duty",
 								headerText : "직급",
 								dataType : "string",
-								width : 130,
+								width : 150,
 							}, {
 								dataField : "department_name",
 								headerText : "부서",
 								dataType : "string",
-								width : 200,
 							} ]
 
 							function _createAUIGrid_(columnLayout) {
@@ -182,60 +186,51 @@ JSONArray data = null;
 						<script type="text/javascript">
 		let _myGridID;
 		const _columns = [ {
-			dataField : "number",
-			headerText : "문서번호",
+				dataField : "name",
+				headerText : "파일이름",
+				dataType : "string",
+				width : 400,
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript", // 자바스크립 함수 호출로 사용하고자 하는 경우에 baseUrl 에 "javascript" 로 설정
+					// baseUrl 에 javascript 로 설정한 경우, 링크 클릭 시 callback 호출됨.
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						alert(oid);
+					}
+				},			
+			},{
+			dataField : "part_code",
+			headerText : "품번",
 			dataType : "string",
-			width : 100
-		}, {
-			dataField : "name",
-			headerText : "문서제목",
+			width : 150
+		},  {
+			dataField : "name_of_parts",
+			headerText : "품명",
 			dataType : "string",
-			renderer : {
-				type : "LinkRenderer",
-				baseUrl : "javascript", // 자바스크립 함수 호출로 사용하고자 하는 경우에 baseUrl 에 "javascript" 로 설정
-				// baseUrl 에 javascript 로 설정한 경우, 링크 클릭 시 callback 호출됨.
-				jsCallback : function(rowIndex, columnIndex, value, item) {
-					const oid = item.oid;
-					alert(oid);
-				}
-			},			
+			width : 150
 		}, {
 			dataField : "version",
 			headerText : "버전",
 			dataType : "string",
-			width : 80
+			width : 100,
 		}, {
 			dataField : "state",
 			headerText : "상태",
 			dataType : "string",
-			width : 100,
+			width : 100
 		}, {
 			dataField : "creator",
 			headerText : "작성자",
-			dataType : "string",
-			width : 100
-		}, {
-			dataField : "createdDate",
-			headerText : "작성일",
 			dataType : "date",
-			formatString : "yyyy-mm-dd",
 			width : 100
 		},{
 			dataField : "modifier",
 			headerText : "수정자",
 			dataType : "string",
 			width : 100
-		}, {
-			dataField : "modifiedDate",
-			headerText : "수정일",
-			dataType : "date",
-			formatString : "yyyy-mm-dd",
-			width : 100
-		}, {
-			dataField : "oid",
-			visible : false,
-			dataType : "string"
 		} ]
+		
 
 		function _createAUIGrid(columnLayout) {
 			const props = {
@@ -286,23 +281,31 @@ JSONArray data = null;
 		</table>
 		<script type="text/javascript">
 			function registerLine() {
-				const url = getCallUrl("/document/register");
+				const url = getCallUrl("/epm/register");
 				const params = new Object();
-				const _addRows = AUIGrid.getAddedRowItems(_myGridID); // 문사
+				const _addRows = AUIGrid.getAddedRowItems(_myGridID); // 문서
 				const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_); // 결재
 				params.name = document.getElementById("name").value;
 				params._addRows = _addRows;
 				params._addRows_ = _addRows_;
-				console.log(params);
-				// 				call(url, params, function(data) {
-				// 					alert(data.msg);
-				// 					if (data.result) {
-				// 						document.location.href = getCallUrl("/workspace/approval");
-				// 					}
-				// 				})
+				toRegister(params, _addRows_);
+				
+				
+				if (!confirm("도면결재를 등록하시겠습니까?")) {
+					return false;
+				}
+				
+// 				parent.openLayer();
+				call(url, params, function(data) {
+					console.log(data.msg);
+					if (data.result) {
+						document.location.href = getCallUrl("/epm/register");
+					}
+				})
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("name").focus();
 				_createAUIGrid(_columns);
 				_createAUIGrid_(_columns_);
 			});
