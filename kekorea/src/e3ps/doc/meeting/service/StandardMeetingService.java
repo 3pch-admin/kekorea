@@ -166,4 +166,33 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 				trs.rollback();
 		}
 	}
+
+	@Override
+	public void modify(MeetingTemplateDTO dto) throws Exception {
+		String name = dto.getName();
+		String content = dto.getContent();
+		String oid = dto.getOid();
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(oid);
+			meetingTemplate.setName(name);
+			meetingTemplate.setContent(content);
+			meetingTemplate.setOwnership(CommonUtils.sessionOwner());
+			meetingTemplate.setEnable(true);
+			PersistenceHelper.manager.modify(meetingTemplate);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+	
 }
