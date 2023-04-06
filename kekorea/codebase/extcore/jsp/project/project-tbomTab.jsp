@@ -19,12 +19,12 @@ JSONArray data = JSONArray.fromObject(list);
 </head>
 <body>
 	<form>
-		<div id="grid_wrap4" style="height: 780px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap5" style="height: 780px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
-			let myGridID4;
+			let myGridID5;
 			const data =
 		<%=data%>
-			const columns4 = [ {
+			const columns5 = [ {
 				dataField : "engType",
 				headerText : "설계구분",
 				dataType : "string",
@@ -117,7 +117,7 @@ JSONArray data = JSONArray.fromObject(list);
 				width : 250,
 			} ];
 
-			const footerLayout4 = [ {
+			const footerLayout5 = [ {
 				labelText : "∑",
 				positionField : "#base",
 			}, {
@@ -153,7 +153,7 @@ JSONArray data = JSONArray.fromObject(list);
 				colSpan : "5",
 			}, ];
 
-			function createAUIGrid4(columnLayout) {
+			function createAUIGrid5(columnLayout) {
 				const props = {
 					headerHeight : 30,
 					showRowNumColumn : true,
@@ -163,18 +163,18 @@ JSONArray data = JSONArray.fromObject(list);
 					showFooter : true,
 					footerPosition : "top",
 				};
-				myGridID4 = AUIGrid.create("#grid_wrap4", columnLayout, props);
-				AUIGrid.setFooter(myGridID4, footerLayout4);
-				AUIGrid.setGridData(myGridID4, data);
+				myGridID5 = AUIGrid.create("#grid_wrap5", columnLayout, props);
+				AUIGrid.setFooter(myGridID5, footerLayout5);
+				AUIGrid.setGridData(myGridID5, data);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
-				createAUIGrid4(columns4);
-				AUIGrid.resize(myGridID4);
+				createAUIGrid5(columns5);
+				AUIGrid.resize(myGridID5);
 			})
 
 			window.addEventListener("resize", function() {
-				AUIGrid.resize(myGridID4);
+				AUIGrid.resize(myGridID5);
 			});
 		</script>
 	</form>

@@ -92,16 +92,22 @@ public class PartlistController extends BaseController {
 
 	@Description(value = "수배표 비교 페이지 공통 함수")
 	@GetMapping(value = "/compare")
-	public ModelAndView compare(@RequestParam String oid, @RequestParam String _oid, @RequestParam String invoke)
+	public ModelAndView compare(@RequestParam String oid, @RequestParam String compareArr, @RequestParam String invoke)
 			throws Exception {
 		ModelAndView model = new ModelAndView();
 		Project p1 = (Project) CommonUtils.getObject(oid);
-		Project p2 = (Project) CommonUtils.getObject(_oid);
-		ArrayList<Map<String, Object>> data = PartlistHelper.manager.compare(p1, p2, invoke, null, null);
+		
+		String[] compareOids = compareArr.split(",");
+		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
+		for(String _oid : compareOids) {
+			Project project = (Project)CommonUtils.getObject(_oid);
+			destList.add(project);
+		}
+		
+		ArrayList<Map<String, Object>> data = PartlistHelper.manager.compare(p1, destList, invoke);
 		model.addObject("p1", p1);
-		model.addObject("p2", p2);
 		model.addObject("oid", oid);
-		model.addObject("_oid", _oid);
+		model.addObject("destList", destList);
 		model.addObject("data", JSONArray.fromObject(data));
 		model.setViewName("popup:/bom/partlist/partlist-compare");
 		return model;

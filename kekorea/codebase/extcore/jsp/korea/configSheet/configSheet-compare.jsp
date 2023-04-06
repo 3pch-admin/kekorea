@@ -82,20 +82,16 @@ String compareArr = (String) request.getAttribute("compareArr");
 				headerText : "수량",
 				dataType : "numeric",
 				width : 100,
-				labelFunction : function(rowIndex, columnIndex, value, headerText, item, dataField, cItem) {
-					if(item.qty1 === undefined) {
-						return 0;
-					}
-					return value;
-				},
 				filter : {
 					showIcon : true,
 					inline : true
 				},
 			} ]
 		}, 
-		<%int i = 2;
-for (Project project : destList) {%>
+		<%
+			int i = 2;
+			for(Project project : destList) {
+		%>
 		{
 			headerText : "<%=project.getKekNumber()%>",
 			children : [ {
@@ -122,8 +118,10 @@ for (Project project : destList) {%>
 				},
 			} ]
 		}, 
-		<%i++;
-}%>
+		<%
+			i++;
+			}
+		%>
 		{
 			dataField : "name",
 			headerText : "부품명",
@@ -214,6 +212,49 @@ for (Project project : destList) {%>
 		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 			hideContextMenu();
 		});
+	}
+</script>
+
+<script type="text/javascript">
+	function _compare() {
+		if (!confirm("선택한 기준으로 데이터를 다시 비교합니다.")) {
+			return false;
+		}
+
+		const oid = document.getElementById("oid").value;
+		const _oid = document.getElementById("_oid").value;
+		// 		const compareKey = document.querySelector("input[name=compareKey]:checked").value;
+		const sort = document.getElementById("sort").value;
+		const url = getCallUrl("/tbom/compare");
+		const params = new Object();
+		params.oid = oid;
+		params._oid = _oid;
+		// 		params.compareKey = compareKey;
+		params.sort = sort;
+		AUIGrid.showAjaxLoader(myGridID);
+		openLayer();
+		call(url, params, function(data) {
+			if (data.result) {
+				AUIGrid.removeAjaxLoader(myGridID);
+				AUIGrid.setGridData(myGridID, data.list);
+				closeLayer();
+			}
+		})
+	}
+
+	function checkboxHandler(event) {
+		const target = event.target || event.srcElement;
+		if (!target) {
+			return;
+		}
+		const dataField = target.value;
+		const checked = target.checked;
+
+		if (checked) {
+			AUIGrid.showColumnByDataField(myGridID, dataField);
+		} else {
+			AUIGrid.hideColumnByDataField(myGridID, dataField);
+		}
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {

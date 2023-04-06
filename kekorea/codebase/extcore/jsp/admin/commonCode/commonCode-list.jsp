@@ -46,7 +46,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		</tr>
 		<tr>
 			<th>설명</th>
-			<td  class="indent5" colspan="3">
+			<td class="indent5" colspan="3">
 				<input type="text" name="description" id="description" class="width-200">
 			</td>
 			<th>사용여부</th>
@@ -255,7 +255,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		let params = new Object();
 		let url = getCallUrl("/commonCode/list");
 		AUIGrid.showAjaxLoader(myGridID);
- 		params = form(params, "search_table");
+		params = form(params, "search_table");
 		parent.openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
@@ -265,9 +265,9 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			parent.closeLayer();
 		});
 	}
-	
+
 	// 그리드 행 추가
-	function addRow(){
+	function addRow() {
 		const item = new Object();
 		item.enable = true;
 		item.createDate = new Date();
@@ -282,15 +282,15 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			AUIGrid.removeRow(myGridID, rowIndex);
 		}
 	}
-	
-	function save(){
-		
+
+	function save() {
+
 		const url = getCallUrl("/commonCode/create");
 		const params = new Object();
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
 		const removeRows = AUIGrid.getRemovedItems(myGridID);
 		const editRows = AUIGrid.getEditedRowItems(myGridID);
-		
+
 		if (addRows.length === 0 && removeRows.length === 0 && editRows.length === 0) {
 			alert("변경된 내용이 없습니다.");
 			return false;
@@ -301,13 +301,13 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			let rowIndex = AUIGrid.rowIdToIndex(myGridID, item.oid);
 
 			if (isNull(item.name)) {
-				AUIGrid.showToastMessage(myGridID,rowIndex, 0, "코드 명의 값은 공백을 입력 할 수 없습니다.");
+				AUIGrid.showToastMessage(myGridID, rowIndex, 0, "코드 명의 값은 공백을 입력 할 수 없습니다.");
 				return false;
 			}
-			
+
 			if (isNull(item.code)) {
 				AUIGrid.showToastMessage(myGridID, rowIndex, 1, "코드의 값은 공백을 입력 할 수 없습니다.");
-					return false;
+				return false;
 			}
 
 			if (isNull(item.codeType)) {
@@ -324,7 +324,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 				AUIGrid.showToastMessage(myGridID, rowIndex, 0, "코드 명의 값은 공백을 입력 할 수 없습니다.");
 				return false;
 			}
-			
+
 			if (isNull(item.code)) {
 				AUIGrid.showToastMessage(myGridID, rowIndex, 1, "코드의 값은 공백을 입력 할 수 없습니다.");
 				return false;
@@ -334,7 +334,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		if (!confirm("저장 하시겠습니까?")) {
 			return false;
 		}
-		
+
 		params.addRows = addRows;
 		params.removeRows = removeRows;
 		params.editRows = editRows;
@@ -345,30 +345,15 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 				loadGridData();
 			}
 		}, "POST");
-		
+
 	}
 
-	$(function() {
-
+	document.addEventListener("DOMContentLoaded", function() {
 		createAUIGrid(columns);
 
 		selectbox("codeType");
 		selectbox("enable");
-
 	});
-	
-// 	document.addEventListener("DOMContentLoaded", function() {
-// 		const columns = loadColumnLayout("commonCode-list");
-// 		const contenxtHeader = genColumnHtml(columns);
-// 		$("#h_item_ul").append(contenxtHeader);
-// 		$("#headerMenu").menu({
-// 			select : headerMenuSelectHandler
-// 		});
-// 		createAUIGrid(columns);
-// 		AUIGrid.resize(myGridID);
-// 		selectbox("codeType");
-// 		selectbox("enable");
-// 	});
 
 	document.addEventListener("keydown", function(event) {
 		const keyCode = event.keyCode || event.which;
@@ -376,7 +361,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			loadGridData();
 		}
 	});
-	
+
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
 	});

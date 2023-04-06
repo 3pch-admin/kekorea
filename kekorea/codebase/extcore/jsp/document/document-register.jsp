@@ -21,7 +21,7 @@
 					</div>
 				</td>
 				<td class="right">
-					<input type="button" value="결재등록" title="결재등록" onclick="registerLine();">
+					<input type="button" value="결재등록" title="결재등록" onclick="save();">
 				</td>
 			</tr>
 		</table>
@@ -56,19 +56,11 @@
 								dataField : "number",
 								headerText : "문서번호",
 								dataType : "string",
-								width : 100
+								width : 140
 							}, {
 								dataField : "name",
 								headerText : "문서제목",
 								dataType : "string",
-								renderer : {
-									type : "LinkRenderer",
-									baseUrl : "javascript",
-									jsCallback : function(rowIndex, columnIndex, value, item) {
-										const oid = item.oid;
-										alert(oid);
-									}
-								},
 							}, {
 								dataField : "version",
 								headerText : "버전",
@@ -145,27 +137,16 @@
 						</script>
 					</div>
 				</td>
-				<!-- 				<td> -->
-				<%-- 					<jsp:include page="/extcore/include/document-include.jsp"> --%>
-				<%-- 						<jsp:param value="" name="oid" /> --%>
-				<%-- 						<jsp:param value="create" name="mode" /> --%>
-				<%-- 						<jsp:param value="true" name="multi" /> --%>
-				<%-- 						<jsp:param value="" name="obj" /> --%>
-				<%-- 						<jsp:param value="250" name="height" /> --%>
-				<%-- 					</jsp:include> --%>
-				<!-- 				</td> -->
 			</tr>
 			<tr>
 				<th class="req lb">결재</th>
 				<td>
-					<jsp:include page="/extcore/include/register-include.jsp">
-						<jsp:param value="250" name="height" />
-					</jsp:include>
+					<jsp:include page="/extcore/include/register-include.jsp"></jsp:include>
 				</td>
 			</tr>
 		</table>
 		<script type="text/javascript">
-			function registerLine() {
+			function save() {
 				const url = getCallUrl("/document/register");
 				const params = new Object();
 				const _addRows = AUIGrid.getAddedRowItems(_myGridID);
@@ -175,10 +156,13 @@
 				params.name = name;
 				params.description = description;
 				params._addRows = _addRows; //문서
-				params._addRows_ = _addRows_; //결재
-				toRegister(params, _addRows);
 				toRegister(params, _addRows_);
-				console.log(params);
+
+				if (!confirm("문서결재를 등록하시겠습니까?")) {
+					return false;
+				}
+
+				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
 					if (data.result) {
@@ -188,6 +172,7 @@
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("name").focus();
 				_createAUIGrid(_columns);
 				_createAUIGrid_(_columns_);
 			});

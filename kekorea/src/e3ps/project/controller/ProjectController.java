@@ -212,7 +212,7 @@ public class ProjectController extends BaseController {
 	@GetMapping(value = "/info")
 	public ModelAndView info(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		org.json.JSONArray list = CommonCodeHelper.manager.parseJson("TASK_TYPE");
+		JSONArray list = CommonCodeHelper.manager.parseJson("TASK_TYPE");
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);

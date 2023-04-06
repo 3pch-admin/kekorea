@@ -77,8 +77,8 @@ public class KoreaController extends BaseController {
 //		CommonCode makCode = CommonCodeHelper.manager.getCommonCode(code, "MAK");
 		model.addObject("customers", customers);
 //		model.addObject("sessionUser", sessionUser);
-//		model.addObject("sessionUser", sessionUser);
-//		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
 		model.addObject("list", list);
 		model.setViewName("/extcore/jsp/korea/korea-chart.jsp");

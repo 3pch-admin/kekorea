@@ -26,7 +26,7 @@ public interface DocumentService {
 	 * @throws WTException
 	 */
 	public abstract Map<String, Object> createDocumentAction(Map<String, Object> param) throws WTException;
-	
+
 	/**
 	 * 산출물 수정
 	 * 
@@ -44,7 +44,6 @@ public interface DocumentService {
 	 * @throws WTException
 	 */
 	public abstract Map<String, Object> modifyDocumentAction(Map<String, Object> param) throws WTException;
-	
 
 	/**
 	 * 문서 추가
@@ -88,7 +87,7 @@ public interface DocumentService {
 	 * @throws WTException
 	 */
 	public abstract Map<String, Object> modifyRequestDocumentAction(Map<String, Object> param) throws WTException;
-	
+
 	/**
 	 * 산출물 등록
 	 * 
@@ -97,7 +96,7 @@ public interface DocumentService {
 	 * @throws WTException
 	 */
 	public abstract Map<String, Object> createOutputAction(Map<String, Object> param) throws WTException;
-	
+
 	/**
 	 * 산출물 개정
 	 * 
@@ -105,9 +104,11 @@ public interface DocumentService {
 	 * @return Map<String, Object>
 	 * @throws WTException
 	 */
-	public abstract void reviseOutput(Map<String, Object> param ,Versioned versioned) throws WTException;
+	public abstract void reviseOutput(Map<String, Object> param, Versioned versioned) throws WTException;
 
+	/**
+	 * 문서 결재
+	 */
 	public abstract void register(Map<String, Object> params) throws Exception;
-	
 
 }

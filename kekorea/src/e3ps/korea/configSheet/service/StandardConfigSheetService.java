@@ -14,6 +14,7 @@ import e3ps.korea.configSheet.ConfigSheetVariable;
 import e3ps.korea.configSheet.ConfigSheetVariableLink;
 import e3ps.korea.configSheet.beans.ConfigSheetDTO;
 import e3ps.project.Project;
+import e3ps.workspace.service.WorkspaceHelper;
 import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
@@ -37,7 +38,9 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 		ArrayList<String> secondarys = dto.getSecondarys();
 		ArrayList<Map<String, String>> addRows = dto.getAddRows();
 		ArrayList<Map<String, String>> _addRows = dto.get_addRows();
-		ArrayList<Map<String, String>> _addRows_ = dto.get_addRows_();
+		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
+		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
+		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
@@ -91,6 +94,7 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 				variable.setSpec(spec);
 				variable.setNote(note);
 				variable.setApply(apply);
+				variable.setSort(sort);
 				PersistenceHelper.manager.save(variable);
 
 				ConfigSheetVariableLink link = ConfigSheetVariableLink.newConfigSheetVariableLink(configSheet,
@@ -98,6 +102,10 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 				link.setSort(sort);
 				PersistenceHelper.manager.save(link);
 				sort++;
+			}
+
+			if (approvalRows.size() > 0) {
+				WorkspaceHelper.service.register(configSheet, agreeRows, approvalRows, receiveRows);
 			}
 
 			trs.commit();

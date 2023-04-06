@@ -308,7 +308,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function loadGridData() {
 				const url = getCallUrl("/document/list");
-// 				const url = getCallUrl("/doc/list");
+				// 				const url = getCallUrl("/doc/list");
 				const params = new Object();
 				const psize = document.getElementById("psize").value;
 				params.latest = true;
@@ -326,7 +326,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function create() {
 				const url = getCallUrl("/document/create");
-// 				const url = getCallUrl("/doc/create");
+				// 				const url = getCallUrl("/doc/create");
 				popup(url);
 			}
 

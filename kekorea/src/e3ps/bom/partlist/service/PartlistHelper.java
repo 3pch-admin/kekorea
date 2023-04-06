@@ -630,50 +630,41 @@ public class PartlistHelper {
 	/**
 	 * 수배표 비교
 	 */
-	public ArrayList<Map<String, Object>> compare(Project p1, Project p2, String invoke, String compareKey, String sort)
+	public ArrayList<Map<String, Object>> compare(Project p1, ArrayList<Project> destList, String invoke)
 			throws Exception {
-		if (StringUtils.isNull(sort)) {
-			sort = "sort";
-		}
-
-		if (StringUtils.isNull(compareKey)) {
-			compareKey = "lotNo+partNo";
-		}
-
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
-		ArrayList<Map<String, Object>> _list = new ArrayList<>();
-
-		if ("a".equals(invoke)) {
-			String[] t = new String[] { "기계_1차_수배", "기계_2차_수배", "전기_1차_수배", "전기_2차_수배" };
-			list = integratedData(p1, t);
-			_list = integratedData(p2, t);
-		} else if ("m".equals(invoke)) {
-			String[] t = new String[] { "기계_1차_수배", "기계_2차_수배" };
-			list = integratedData(p1, t);
-			_list = integratedData(p2, t);
-		} else if ("e".equals(invoke)) {
-			String[] t = new String[] { "전기_1차_수배", "전기_2차_수배" };
-			list = integratedData(p1, t);
-			_list = integratedData(p2, t);
-		}
-
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
+		String[] t = null;
+		if ("a".equals(invoke)) {
+			t = new String[] { "기계_1차_수배", "기계_2차_수배", "전기_1차_수배", "전기_2차_수배" };
+			list = integratedData(p1, t);
+		} else if ("m".equals(invoke)) {
+			t = new String[] { "기계_1차_수배", "기계_2차_수배" };
+			list = integratedData(p1, t);
+		} else if ("e".equals(invoke)) {
+			t = new String[] { "전기_1차_수배", "전기_2차_수배" };
+			list = integratedData(p1, t);
+		}
 
 		// list1의 데이터를 먼저 추가
 		for (Map<String, Object> data : list) {
 			Map<String, Object> mergedData = new HashMap<>();
-			mergedData.put("lotNo1", data.get("lotNo"));
+			mergedData.put("lotNo", data.get("lotNo"));
 			mergedData.put("unitName", data.get("unitName"));
-			mergedData.put("partNo1", data.get("partNo"));
+			mergedData.put("partNo", data.get("partNo"));
 			mergedData.put("partName", data.get("partName"));
 			mergedData.put("standard", data.get("standard"));
 			mergedData.put("maker", data.get("maker"));
 			mergedData.put("customer", data.get("customer"));
 			mergedData.put("quantity1", data.get("quantity"));
+			// 작번 개수 만큼 입력..
+//				for (int i = 0; i < destList.size(); i++) {
+//					mergedData.put("quantity" + (2 + i), 0);
+//				}
 			mergedData.put("unit", data.get("unit"));
 			mergedData.put("price", data.get("price"));
 			mergedData.put("currency", data.get("currency"));
-			mergedData.put("won1", data.get("won"));
+			mergedData.put("won", data.get("won"));
 			mergedData.put("partListDate_txt", data.get("partListDate_txt"));
 			mergedData.put("exchangeRate", data.get("exchangeRate"));
 			mergedData.put("referDrawing", data.get("referDrawing"));
@@ -682,66 +673,54 @@ public class PartlistHelper {
 			mergedList.add(mergedData);
 		}
 
-		for (Map<String, Object> data : _list) {
-			String partNo = (String) data.get("partNo");
-			String lotNo = (String) data.get("lotNo");
-			String key = partNo + "-" + lotNo;
+		// 전체 작번 START
+		for (int i = 0; i < destList.size(); i++) {
+			Project p2 = (Project) destList.get(i);
+			ArrayList<Map<String, Object>> _list = integratedData(p2, t);
+			for (Map<String, Object> data : _list) {
+				String partNo = (String) data.get("partNo");
+				String lotNo = (String) data.get("lotNo");
+				String key = partNo + "-" + lotNo;
 //			String key = partNo;
-			boolean isExist = false;
+				boolean isExist = false;
 
-			// mergedList에 partNo가 동일한 데이터가 있는지 확인
-			for (Map<String, Object> mergedData : mergedList) {
-				String mergedPartNo = (String) mergedData.get("partNo1");
-				String mergedLotNo = (String) mergedData.get("lotNo1");
-				String _key = mergedPartNo + "-" + mergedLotNo;
+				// mergedList에 partNo가 동일한 데이터가 있는지 확인
+				for (Map<String, Object> mergedData : mergedList) {
+					String mergedPartNo = (String) mergedData.get("partNo");
+					String mergedLotNo = (String) mergedData.get("lotNo");
+					String _key = mergedPartNo + "-" + mergedLotNo;
 
-				if (key.equals(_key)) {
-					// partNo가 동일한 데이터가 있으면 데이터를 업데이트하고 isExist를 true로 변경
-					mergedData.put("lotNo2", data.get("lotNo"));
+					if (key.equals(_key)) {
+						// partNo가 동일한 데이터가 있으면 데이터를 업데이트하고 isExist를 true로 변경
+						mergedData.put("quantity" + (2 + i), data.get("quantity"));
+						isExist = true;
+						break;
+					}
+				}
+
+				if (!isExist) {
+					// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
+					Map<String, Object> mergedData = new HashMap<>();
+					mergedData.put("lotNo", data.get("lotNo"));
 					mergedData.put("unitName", data.get("unitName"));
-					mergedData.put("partNo2", data.get("partNo"));
+					mergedData.put("partNo", data.get("partNo"));
 					mergedData.put("partName", data.get("partName"));
 					mergedData.put("standard", data.get("standard"));
 					mergedData.put("maker", data.get("maker"));
 					mergedData.put("customer", data.get("customer"));
-					mergedData.put("quantity2", data.get("quantity"));
+					mergedData.put("model", data.get("model"));
+					mergedData.put("quantity" + (2 + i), data.get("quantity"));
 					mergedData.put("unit", data.get("unit"));
 					mergedData.put("price", data.get("price"));
 					mergedData.put("currency", data.get("currency"));
-					mergedData.put("won2", data.get("won"));
+					mergedData.put("won", data.get("won"));
 					mergedData.put("partListDate_txt", data.get("partListDate_txt"));
 					mergedData.put("exchangeRate", data.get("exchangeRate"));
 					mergedData.put("referDrawing", data.get("referDrawing"));
 					mergedData.put("classification", data.get("classification"));
 					mergedData.put("note", data.get("note"));
-					isExist = true;
-					break;
+					mergedList.add(mergedData);
 				}
-			}
-
-			if (!isExist) {
-				// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
-				Map<String, Object> mergedData = new HashMap<>();
-				mergedData.put("partNo1", "");
-				mergedData.put("lotNo1", "");
-				mergedData.put("partNo2", data.get("partNo"));
-				mergedData.put("lotNo2", data.get("lotNo"));
-				mergedData.put("quantity2", data.get("quantity"));
-				mergedData.put("won2", data.get("won"));
-				mergedData.put("partName", data.get("partName"));
-				mergedData.put("standard", data.get("standard"));
-				mergedData.put("maker", data.get("maker"));
-				mergedData.put("customer", data.get("customer"));
-				mergedData.put("unit", data.get("unit"));
-				mergedData.put("price", data.get("price"));
-				mergedData.put("currency", data.get("currency"));
-				mergedData.put("won2", data.get("won"));
-				mergedData.put("partListDate_txt", data.get("partListDate_txt"));
-				mergedData.put("exchangeRate", data.get("exchangeRate"));
-				mergedData.put("referDrawing", data.get("referDrawing"));
-				mergedData.put("classification", data.get("classification"));
-				mergedData.put("note", data.get("note"));
-				mergedList.add(mergedData);
 			}
 		}
 		return mergedList;

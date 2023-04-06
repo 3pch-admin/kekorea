@@ -11,7 +11,9 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 ArrayList<Map<String, String>> projectTypes = (ArrayList<Map<String, String>>) request.getAttribute("projectTypes");
 ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) request.getAttribute("list");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
-WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser"); 
+String before = (String)request.getAttribute("before");
+String end = (String)request.getAttribute("end");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
@@ -42,9 +44,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		</td>
 		<th>발행일</th>
 		<td class="indent5">
-			<input type="text" name="pdateFrom" id="pdateFrom" class="width-100">
+			<input type="text" name="pdateFrom" id="pdateFrom" class="width-100" value="<%=before%>">
 			~
-			<input type="text" name="pdateTo" id="pdateTo" class="width-100">
+			<input type="text" name="pdateTo" id="pdateTo" class="width-100" value="<%=end %>">
 		</td>
 		<th>USER ID</th>
 		<td class="indent5">

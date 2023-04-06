@@ -226,6 +226,7 @@ String end = (String) request.getAttribute("end");
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					useContextMenu : true,
+					enableRowCheckShiftKey : true,
 					contextMenuItems : [ {
 						label : "통합 수배표 비교",
 						callback : contextItemHandler
@@ -244,7 +245,8 @@ String end = (String) request.getAttribute("end");
 					}, {
 						label : "CONFIG SHEET 비교",
 						callback : contextItemHandler
-					} ]
+					} ],
+					autoGridHeight : true
 				}
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
@@ -266,77 +268,37 @@ String end = (String) request.getAttribute("end");
 
 			function contextItemHandler(event) {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const arr = [];
+				if (checkedItems.length <= 1) {
+					alert("데이터 비교를 위해선 최소 2개 이상의 데이터를 선택해야 합니다.");
+					return false;
+				}
+				for (let i = 1; i < checkedItems.length; i++) {
+					arr.push(checkedItems[i].item.oid);
+				}
 				switch (event.contextIndex) {
 				case 0:
-					if (checkedItems.length <= 0) {
-						alert("통합 수배표 비교할 작번을 선택하세요.");
-						return;
-					}
-					if (checkedItems.length !== 2) {
-						alert("통합 수배표 비교할 작번을 2개 선택하세요.");
-						return;
-					}
-					const url0 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid + "&invoke=a");
+					const url0 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(",") + "&invoke=a");
 					popup(url0);
 					break;
 				case 1:
-					if (checkedItems.length <= 0) {
-						alert("기계 수배표 비교할 작번을 선택하세요.");
-						return;
-					}
-					if (checkedItems.length !== 2) {
-						alert("기계 수배표 비교할 작번을 2개 선택하세요.");
-						return;
-					}
-					const url1 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid + "&invoke=m");
+					const url1 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(",") + "&invoke=m");
 					popup(url1);
 					break;
 				case 2:
-					if (checkedItems.length <= 0) {
-						alert("전기 수배표 비교할 작번을 선택하세요.");
-						return;
-					}
-					if (checkedItems.length !== 2) {
-						alert("전기 수배표 비교할 작번을 2개 선택하세요.");
-						return;
-					}
-					const url2 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid + "&invoke=e");
+					const url2 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(",") + "&invoke=e");
 					popup(url2);
 					break;
 				case 3:
-					if (checkedItems.length <= 0) {
-						alert("T-BOM 비교할 작번을 선택하세요.");
-						return;
-					}
-					if (checkedItems.length !== 2) {
-						alert("T-BOM 비교할 작번을 2개 선택하세요.");
-						return;
-					}
-					const url3 = getCallUrl("/tbom/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					const url3 = getCallUrl("/tbom/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
 					popup(url3, 1500, 800);
 					break;
 				case 4:
-					if (checkedItems.length <= 0) {
-						alert("도면 일람표 비교할 작번을 선택하세요.");
-						return;
-					}
-					if (checkedItems.length !== 2) {
-						alert("도면 일람표 비교할 작번을 2개 선택하세요.");
-						return;
-					}
-					const url4 = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					const url4 = getCallUrl("/configSheet/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
 					popup(url4);
 					break;
 				case 5:
-					if (checkedItems.length <= 0) {
-						alert("CONFIG SHEET 비교할 작번을 선택하세요.");
-						return;
-					}
-					if (checkedItems.length !== 2) {
-						alert("CONFIG SHEET 비교할 작번을 2개 선택하세요.");
-						return;
-					}
-					const url5 = getCallUrl("/workOrder/compare?oid=" + checkedItems[0].item.oid + "&_oid=" + checkedItems[1].item.oid);
+					const url5 = getCallUrl("/configSheet/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
 					popup(url5);
 					break;
 				case 2:
@@ -380,6 +342,8 @@ String end = (String) request.getAttribute("end");
 					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
+					AUIGrid.resize(myGridID);
+					selectbox("psize");
 				});
 
 				callChart(kekNumbers, pdateFrom, pdateTo, projectType, maks);
@@ -391,6 +355,10 @@ String end = (String) request.getAttribute("end");
 				const chart = document.getElementById("chart");
 				chart.src = url;
 			}
+
+			document.getElementById("kekNumber").addEventListener("input", function() {
+				this.value = this.value.toUpperCase().replace(/[^a-zA-Z0-9]/g, "");
+			});
 
 			document.addEventListener("DOMContentLoaded", function() {
 				document.getElementById("kekNumber").focus();

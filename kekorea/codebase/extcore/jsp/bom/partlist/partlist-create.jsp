@@ -98,7 +98,7 @@
 								dataField : "kekNumber",
 								headerText : "KEK 작번",
 								dataType : "string",
-								width : 130,
+								width : 100,
 								filter : {
 									showIcon : true,
 									inline : true
@@ -107,7 +107,7 @@
 								dataField : "keNumber",
 								headerText : "KE 작번",
 								dataType : "string",
-								width : 130,
+								width : 100,
 								filter : {
 									showIcon : true,
 									inline : true
@@ -209,6 +209,15 @@
 		<script type="text/javascript">
 			let myGridID;
 			const columns = [ {
+				dataField : "check",
+				headerText : "체크",
+				dataType : "boolean",
+				width : 80,
+				editable : false,
+				renderer : {
+					type : "CheckboxRenderer"
+				}
+			}, {
 				dataField : "lotNo",
 				headerText : "LOT_NO",
 				dataType : "numeric",
@@ -347,10 +356,24 @@
 
 			function auiCellEditEndHandler(event) {
 				const rowIndex = event.rowIndex;
-				const item = {
-					sort : event.rowIndex,
+				const dataField = event.dataField;
+				const item = event.item;
+				const partNo = item.partNo;
+				const newItem = {
+					sort : rowIndex
+				};
+
+				if (dataField === "partNo") {
+					const url = getCallUrl("/erp/validate?partNo=" + partNo);
+					call(url, null, function(data) {
+						if(data.result) {
+							const check = data.check;
+							AUIGrid.updateRow(myGridID, check, rowIndex);
+						}
+					}, "GET");
 				}
-				AUIGrid.updateRow(myGridID, item, event.rowIndex);
+
+// 				AUIGrid.updateRow(myGridID, newItem, event.rowIndex);
 			}
 
 			function contextItemHandler(event) {
