@@ -3,6 +3,7 @@ package e3ps.epm.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,12 @@ import e3ps.epm.column.EpmProductColumnData;
 import e3ps.epm.column.ViewerColumnData;
 import e3ps.epm.dto.EpmDTO;
 import e3ps.org.People;
+import e3ps.workspace.ApprovalContract;
+import e3ps.workspace.ApprovalContractPersistableLink;
+import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.clients.folder.FolderTaskLogic;
+import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.epm.EPMDocumentMaster;
 import wt.epm.build.EPMBuildHistory;
@@ -35,6 +40,7 @@ import wt.fc.ReferenceFactory;
 import wt.folder.Folder;
 import wt.folder.IteratedFolderMemberLink;
 import wt.part.WTPart;
+import wt.pom.Transaction;
 import wt.query.ClassAttribute;
 import wt.query.ColumnExpression;
 import wt.query.OrderBy;
@@ -709,4 +715,5 @@ public class EpmHelper {
 		
 		return null;
 	}
+	
 }

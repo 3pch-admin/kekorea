@@ -41,7 +41,7 @@ public class EpmController extends BaseController {
 	public Map<String, Object> register(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			EpmHelper.service.approvalEpmAction(params);
+			EpmHelper.service.register(params);
 			result.put("msg", REGISTER_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

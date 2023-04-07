@@ -290,7 +290,6 @@ JSONArray data = null;
 				params._addRows_ = _addRows_;
 				toRegister(params, _addRows_);
 				
-				
 				if (!confirm("도면결재를 등록하시겠습니까?")) {
 					return false;
 				}

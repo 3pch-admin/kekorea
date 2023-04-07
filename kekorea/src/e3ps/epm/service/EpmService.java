@@ -1,7 +1,9 @@
 package e3ps.epm.service;
 
+import java.util.ArrayList;
 import java.util.Map;
 
+import e3ps.workspace.ApprovalContract;
 import wt.epm.EPMDocument;
 import wt.method.RemoteInterface;
 import wt.util.WTException;
@@ -158,5 +160,13 @@ public interface EpmService {
 	public abstract Map<String, Object> createViewerAction(Map<String, Object> param) throws WTException;
 
 	public abstract Map<String, Object> approvalModifyEpmAction(Map<String, Object> param) throws WTException;
+
+	/**
+	 * 도면 결재
+	 */
+	public abstract void register(Map<String, Object> params) throws Exception;
+
+	public abstract void register(ApprovalContract contract, ArrayList<Map<String, String>> approvalRows,
+			ArrayList<Map<String, String>> agreeRows, ArrayList<Map<String, String>> receiveRows);
 
 }
