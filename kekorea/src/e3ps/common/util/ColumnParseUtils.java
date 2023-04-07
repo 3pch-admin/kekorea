@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.dto.CommonCodeDTO;
-import e3ps.admin.sheetvariable.Category;
-import e3ps.admin.sheetvariable.CategoryItemsLink;
-import e3ps.admin.sheetvariable.beans.CategoryColumnData;
+import e3ps.admin.configSheetCode.Category;
+import e3ps.admin.configSheetCode.CategoryItemsLink;
+import e3ps.admin.configSheetCode.beans.CategoryColumnData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.dto.PartListDTO;

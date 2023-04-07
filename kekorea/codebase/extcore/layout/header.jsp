@@ -101,7 +101,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						<a onclick="moveToPage(this, '/project/list', '작번 관리 > 작번 조회');">작번 조회</a>
 					</li>
 					<li>
-						<a href="graph_morris.html">나의 작번</a>
+						<a onclick="moveToPage(this, '/project/my', '나의 작번 > 나의 작번');">나의 작번</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/template/list', '작번 관리 > 템플릿 조회');">템플릿 조회</a>

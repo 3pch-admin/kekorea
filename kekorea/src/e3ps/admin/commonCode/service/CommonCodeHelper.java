@@ -33,30 +33,23 @@ public class CommonCodeHelper {
 		String code = (String) params.get("code");
 		String codeType = (String) params.get("codeType");
 		String description = (String) params.get("description");
-		String enable = (String) params.get("enable");
+		boolean enable = (boolean) params.get("enable");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
 
-		if (!StringUtils.isNull(name)) {
-			QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.NAME, name);
-		}
-
-		if (!StringUtils.isNull(code)) {
-			QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.CODE, code);
-		}
-
-		if (!StringUtils.isNull(description)) {
-			QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.DESCRIPTION, description);
-		}
-
-		if (!StringUtils.isNull(enable)) {
-			QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, Boolean.parseBoolean(enable));
-		}
+		QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.NAME, name);
+		QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.CODE, code);
+		QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.DESCRIPTION, description);
+		QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, enable);
 
 		if (!StringUtils.isNull(codeType)) {
 
 			if (codeType.equals("MAK")) {
+				if (query.getConditionCount() > 0) {
+					query.appendAnd();
+				}
+
 				query.appendOpenParen();
 				query.appendWhere(new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", "MAK"),
 						new int[] { idx });
@@ -65,6 +58,10 @@ public class CommonCodeHelper {
 						new int[] { idx });
 				query.appendCloseParen();
 			} else if (codeType.equals("CUSTOMER")) {
+				if (query.getConditionCount() > 0) {
+					query.appendAnd();
+				}
+
 				query.appendOpenParen();
 				query.appendWhere(new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", "CUSTOMER"),
 						new int[] { idx });
@@ -78,10 +75,10 @@ public class CommonCodeHelper {
 		}
 
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.CODE_TYPE, false);
-		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.SORT, false);
 
-//		PageQueryUtils pager = new PageQueryUtils(params, query);
-//		PagingQueryResult result = pager.find();
+		System.out.println(query);
+
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();

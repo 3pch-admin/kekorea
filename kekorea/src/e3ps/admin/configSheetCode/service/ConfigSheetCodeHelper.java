@@ -1,4 +1,4 @@
-package e3ps.admin.sheetvariable.service;
+package e3ps.admin.configSheetCode.service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,10 +12,10 @@ import wt.fc.QueryResult;
 import wt.query.QuerySpec;
 import wt.services.ServiceFactory;
 
-public class SheetVariableHelper {
+public class ConfigSheetCodeHelper {
 
-	public static final SheetVariableHelper manager = new SheetVariableHelper();
-	public static final SheetVariableService service = ServiceFactory.getService(SheetVariableService.class);
+	public static final ConfigSheetCodeHelper manager = new ConfigSheetCodeHelper();
+	public static final ConfigSheetCodeService service = ServiceFactory.getService(ConfigSheetCodeService.class);
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<>();

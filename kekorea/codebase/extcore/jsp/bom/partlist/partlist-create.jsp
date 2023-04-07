@@ -2,6 +2,9 @@
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+String engType = (String) request.getAttribute("engType");
+%>
 <%@include file="/extcore/include/auigrid.jsp"%>
 <table class="button-table">
 	<tr>
@@ -31,14 +34,16 @@
 		<table class="create-table">
 			<colgroup>
 				<col width="130">
-				<col width="700">
+				<col width="400">
 				<col width="130">
-				<col width="700">
+				<col width="400">
+				<col width="130">
+				<col width="400">
 			</colgroup>
 			<tr>
 				<th class="req lb">수배표 제목</th>
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-500">
+					<input type="text" name="name" id="name" class="width-400">
 				</td>
 				<th>설계구분</th>
 				<td class="indent5">
@@ -48,10 +53,14 @@
 						<option value="전기">전기</option>
 					</select>
 				</td>
+				<th>진행율</th>
+				<td class="indent5">
+					<input type="number" name="progress" id="progress" class="width-300" value="0">
+				</td>
 			</tr>
 			<tr>
 				<th class="req lb">KEK 작번</th>
-				<td colspan="3">
+				<td colspan="5">
 					<div class="include">
 						<input type="button" value="작번 추가" title="작번 추가" class="blue" onclick="_insert();">
 						<input type="button" value="작번 삭제" title="작번 삭제" class="red" onclick="_deleteRow();">
@@ -63,64 +72,36 @@
 								headerText : "작번유형",
 								dataType : "string",
 								width : 80,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
 							}, {
 								dataField : "customer_name",
 								headerText : "거래처",
 								dataType : "string",
 								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
 							}, {
 								dataField : "mak_name",
 								headerText : "막종",
 								dataType : "string",
 								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
 							}, {
 								dataField : "detail_name",
 								headerText : "막종상세",
 								dataType : "string",
 								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
 							}, {
 								dataField : "kekNumber",
 								headerText : "KEK 작번",
 								dataType : "string",
 								width : 100,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
 							}, {
 								dataField : "keNumber",
 								headerText : "KE 작번",
 								dataType : "string",
 								width : 100,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
 							}, {
 								dataField : "description",
 								headerText : "작업 내용",
 								dataType : "string",
 								style : "aui-left",
-								filter : {
-									showIcon : true,
-									inline : true
-								},
 							}, {
 								dataField : "oid",
 								headerText : "",
@@ -174,19 +155,19 @@
 			</tr>
 			<tr>
 				<th class="req lb">내용</th>
-				<td class="indent5" colspan="3">
+				<td class="indent5" colspan="5">
 					<textarea name="description" id="description" rows="8"></textarea>
 				</td>
 			</tr>
 			<tr>
 				<th class="req lb">결재</th>
-				<td colspan="3">
+				<td colspan="5">
 					<jsp:include page="/extcore/include/register-include.jsp"></jsp:include>
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">첨부파일</th>
-				<td class="indent5" colspan="3">
+				<td class="indent5" colspan="5">
 					<jsp:include page="/extcore/include/secondary-include.jsp">
 						<jsp:param value="" name="oid" />
 						<jsp:param value="create" name="mode" />
@@ -213,7 +194,7 @@
 				headerText : "체크",
 				dataType : "string",
 				width : 80,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "lotNo",
 				headerText : "LOT_NO",
@@ -229,7 +210,7 @@
 				headerText : "UNIT NAME",
 				dataType : "string",
 				width : 120,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "partNo",
 				headerText : "부품번호",
@@ -240,13 +221,13 @@
 				headerText : "부품명",
 				dataType : "string",
 				width : 200,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "standard",
 				headerText : "규격",
 				dataType : "string",
 				width : 250,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "maker",
 				headerText : "MAKER",
@@ -272,39 +253,39 @@
 				headerText : "단위",
 				dataType : "string",
 				width : 80,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "price",
 				headerText : "단가",
 				dataType : "numeric",
 				width : 120,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "currency",
 				headerText : "화폐",
 				dataType : "string",
 				width : 60,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "won",
 				headerText : "원화금액",
 				dataType : "numeric",
 				width : 120,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "partListDate",
 				headerText : "수배일자",
 				dataType : "date",
 				formatString : "yyyy-mm-dd",
 				width : 100,
-				editable : false
+// 				editable : false
 			}, {
 				dataField : "exchangeRate",
 				headerText : "환율",
 				dataType : "numeric",
 				width : 80,
 				formatString : "#,##0.0000",
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "referDrawing",
 				headerText : "참고도면",
@@ -355,29 +336,8 @@
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				readyHandler();
-				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+// 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRow);
-				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
-			}
-
-			function auiCellEditBegin(event) {
-				const dataField = event.dataField;
-				const isClipboard = event.isClipboard;
-				const item = event.item;
-				const rowIndex = event.rowIndex;
-				const partNo = item.partNo;
-				if ((dataField !== "partNo" && dataField !== "lotNo" && dataField !== "quantity") && isClipboard) {
-					return false;
-				}
-
-				if (dataField === "quantity") {
-					if (isNull(partNo)) {
-						alert(rowIndex + "행의 부품번호를 입력하세요.");
-						return false;
-					}
-				}
-
-				return true;
 			}
 
 			function auiCellEditEndHandler(event) {
@@ -386,7 +346,7 @@
 				const item = event.item;
 				const partNo = item.partNo;
 				const lotNo = item.lotNo;
-				let quantity = item.quantity;
+				const quantity = item.quantity;
 				if (dataField === "lotNo") {
 					const url = getCallUrl("/erp/getUnitName?lotNo=" + lotNo);
 					call(url, null, function(data) {
@@ -415,44 +375,44 @@
 					}, "GET");
 				}
 
-				if (dataField === "partNo" || dataField === "quantity") {
+				if (dataField === "quantity") {
 					// 값이 있을 경우만
-					quantity = 1;
-					if (!isNull(partNo) && !isNull(quantity)) {
-						const url = getCallUrl("/erp/getItem?partNo=" + partNo + "&quantity=" + quantity);
-						call(url, null, function(data) {
-							if (data.result) {
-								const newItem = {
-									unit : data.unit,
-									exchangeRate : data.exchangeRate,
-									price : data.price,
-									maker : data.maker,
-									customer : data.customer,
-									currency : data.currency,
-									won : data.won,
-									partName : data.partName,
-									standard : data.standard,
-									partListDate : new Date(),
-									sort : rowIndex,
-									quantity : quantity
-								};
-								AUIGrid.updateRow(myGridID, newItem, rowIndex);
-							}
-						}, "GET");
-					}
+					const url = getCallUrl("/erp/getErpItemByPartNoAndQuantity?partNo=" + partNo + "&quantity=" + quantity);
+					call(url, null, function(data) {
+						if (data.result) {
+							const newItem = {
+								unit : data.unit,
+								exchangeRate : data.exchangeRate,
+								price : data.price,
+								maker : data.maker,
+								customer : data.customer,
+								currency : data.currency,
+								won : data.won,
+								partName : data.partName,
+								standard : data.standard,
+								partListDate : new Date(),
+								sort : rowIndex,
+							};
+							AUIGrid.updateRow(myGridID, newItem, rowIndex);
+						}
+					}, "GET");
 				}
-				// 				AUIGrid.updateRow(myGridID, newItem, event.rowIndex);
 			}
 
 			function contextItemHandler(event) {
-				const item = new Object();
+				const item = {
+					partListDate : new Date(),
+					lotNo : 0,
+					quantity : 0,
+					price : 0,
+					exchangeRate : 0,
+					won : 0
+				}
 				switch (event.contextIndex) {
 				case 0:
-					item.createdDate = new Date();
 					AUIGrid.addRow(myGridID, item, "selectionUp");
 					break;
 				case 1:
-					item.createdDate = new Date();
 					AUIGrid.addRow(myGridID, item, "selectionDown");
 					break;
 				case 3:
@@ -473,7 +433,7 @@
 			function auiBeforeRemoveRow(event) {
 				const rows = AUIGrid.getRowCount(myGridID);
 				if (rows === 1) {
-					alert("최 소 하나의 행이 존재해야합니다.");
+					alert("최소 하나의 행이 존재해야합니다.");
 					return false;
 				}
 				return true;
@@ -499,11 +459,12 @@
 
 			function readyHandler() {
 				const item = {
+					partListDate : new Date(),
 					lotNo : 0,
-					won : 0,
-					price : 0,
 					quantity : 0,
-					partListDate : new Date()
+					price : 0,
+					exchangeRate : 0,
+					won : 0
 				}
 				AUIGrid.addRow(myGridID, item, "last");
 			}
@@ -518,9 +479,15 @@
 					alert("하나의 행만 선택하세요.");
 					return false;
 				}
-				const item = new Object();
 				const rowIndex = checkedItems[0].rowIndex;
-				item.partListDate = new Date();
+				const item = {
+					partListDate : new Date(),
+					lotNo : 0,
+					quantity : 0,
+					price : 0,
+					exchangeRate : 0,
+					won : 0
+				}
 				AUIGrid.addRow(myGridID, item, rowIndex);
 			}
 
@@ -534,9 +501,15 @@
 					alert("하나의 행만 선택하세요.");
 					return false;
 				}
-				const item = new Object();
 				const rowIndex = checkedItems[0].rowIndex;
-				item.partListDate = new Date();
+				const item = {
+					partListDate : new Date(),
+					lotNo : 0,
+					quantity : 0,
+					price : 0,
+					exchangeRate : 0,
+					won : 0
+				}
 				AUIGrid.addRow(myGridID, item, rowIndex + 1);
 			}
 		</script>
@@ -548,12 +521,76 @@
 
 		const params = new Object();
 		const url = getCallUrl("/partlist/create");
-		const addRows = AUIGrid.getAddedRowItems(myGridID);
-		const _addRows = AUIGrid.getAddedRowItems(_myGridID);
-		const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
-		const name = document.getElementById("name").value;
+		const addRows = AUIGrid.getGridData(myGridID);
+		const _addRows = AUIGrid.getGridData(_myGridID);
+		const name = document.getElementById("name");
+		const _addRows_ = AUIGrid.getGridData(_myGridID_);
 		const engType = document.getElementById("engType").value;
-		const description = document.getElementById("description").value;
+		const description = document.getElementById("description");
+		const progress = document.getElementById("progress").value;
+		if (isNull(name.value)) {
+			alert("수배표 제목을 입력하세요.");
+			name.focus();
+			return false;
+		}
+
+		if (isNull(engType)) {
+			alert("설계구분을 선택하세요.");
+			return false;
+		}
+
+		if (isNull(description.value)) {
+			alert("내용을 입력하세요.");
+			description.focus();
+			return false;
+		}
+
+		if (_addRows.length === 0) {
+			alert("최소 하나 이상의 작번을 추가하세요.");
+			_insert();
+			return false;
+		}
+
+		for (let i = 0; i < addRows.length; i++) {
+			const item = addRows[i];
+			const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
+			if (isNull(item.partNo)) {
+				AUIGrid.showToastMessage(myGridID, rowIndex, 3, "부품번호를 입력하세요.");
+				return false;
+			}
+
+			if (item.check === "NG") {
+				AUIGrid.showToastMessage(myGridID, rowIndex, 0, "ERP에 등록된 부품번호가 아닙니다.");
+				return false;
+			}
+
+			if (isNull(item.lotNo)) {
+				AUIGrid.showToastMessage(myGridID, rowIndex, 1, "LOT NO를 입력하세요.");
+				return false;
+			}
+
+			if (item.lotNo === 0) {
+				AUIGrid.showToastMessage(myGridID, rowIndex, 1, "LOT NO를 입력하세요.");
+				return false;
+			}
+
+			if (isNull(item.quantity)) {
+				AUIGrid.showToastMessage(myGridID, rowIndex, 8, "수량을 입력하세요.");
+				return false;
+			}
+
+			if (item.quantity === 0) {
+				AUIGrid.showToastMessage(myGridID, rowIndex, 8, "수량은 0을 입력 할 수 없습니다.");
+				return false;
+			}
+		}
+
+		if (_addRows_.length === 0) {
+			alert("결재선을 지정하세요.");
+			_register();
+			return false;
+		}
+
 		addRows.sort(function(a, b) {
 			return a.sort - b.sort;
 		});
@@ -563,10 +600,10 @@
 		}
 		params.addRows = addRows;
 		params._addRows = _addRows;
-		params._addRows_ = _addRows_;
-		params.name = name;
+		params.name = name.value;
 		params.engType = engType;
-		params.description = description;
+		params.description = description.value;
+		params.progress = Number(progress);
 		params.secondarys = toArray("secondarys");
 		toRegister(params, _addRows_);
 		openLayer();
@@ -580,23 +617,9 @@
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
+		document.getElementById("name").focus();
 		$("#tabs").tabs({
 			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					_createAUIGrid(_columns);
-					AUIGrid.resize(_myGridID);
-					_createAUIGrid_(_columns_);
-					AUIGrid.resize(_myGridID_);
-					break;
-				case "tabs-2":
-					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
-					break;
-				}
-			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
@@ -615,6 +638,7 @@
 						_createAUIGrid_(_columns_);
 					}
 					selectbox("engType");
+					$("#engType").bindSelectDisabled(true);
 					break;
 				case "tabs-2":
 					const isCreated = AUIGrid.isCreated(myGridID);
@@ -628,6 +652,11 @@
 			}
 		});
 		selectbox("engType");
+		$("#engType").bindSelectSetValue("<%=engType%>");
+		$("#engType").bindSelectDisabled(true);
+		_createAUIGrid(_columns);
+		_createAUIGrid_(_columns_);
+		createAUIGrid(columns);
 	});
 
 	window.addEventListener("resize", function() {

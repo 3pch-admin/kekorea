@@ -4,6 +4,7 @@
 	
 2. ResourceBuild 실행
 	- tools bundle -Dbundle.input=e3ps.admin.commonCode.** -Dbundle.buildLocales=true
+	- tools bundle -Dbundle.input=e3ps.admin.numberRuleCode.** -Dbundle.buildLocales=true
 	
 3. State ResourceBuild 실행
 	- Shell -> ResourceBuild.bat wt.lifecycle.**

@@ -1,4 +1,4 @@
-package e3ps.admin.sheetvariable.service;
+package e3ps.admin.configSheetCode.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,10 +14,10 @@ import wt.pom.Transaction;
 import wt.services.StandardManager;
 import wt.util.WTException;
 
-public class StandardSheetVariableService extends StandardManager implements SheetVariableService {
+public class StandardConfigSheetCodeService extends StandardManager implements ConfigSheetCodeService {
 
-	public static StandardSheetVariableService newStandardSheetVariableService() throws WTException {
-		StandardSheetVariableService instance = new StandardSheetVariableService();
+	public static StandardConfigSheetCodeService newStandardSheetVariableService() throws WTException {
+		StandardConfigSheetCodeService instance = new StandardConfigSheetCodeService();
 		instance.initialize();
 		return instance;
 	}

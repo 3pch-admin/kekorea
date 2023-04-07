@@ -1,4 +1,4 @@
-package e3ps.admin.spec.controller;
+package e3ps.admin.configSheetCode.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,35 +19,29 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.admin.commonCode.dto.CommonCodeDTO;
-import e3ps.admin.spec.service.SpecHelper;
+import e3ps.admin.sheetvariable.service.SheetVariableHelper;
+import e3ps.admin.spec.service.SpecCodeHelper;
 import e3ps.common.controller.BaseController;
-import e3ps.common.util.CommonUtils;
-import wt.org.WTUser;
-import wt.session.SessionHelper;
 
 @Controller
-@RequestMapping(value = "/spec/**")
-public class SpecController extends BaseController {
-
-	@Description(value = "사양 관리 리스트 페이지")
+@RequestMapping(value = "/sheetVariable/**")
+public class ConfigSheetCodeController extends BaseController {
+	
+	@Description(value = "CONFIG SHEET 카테고리 리스트 페이지")
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		boolean isAdmin = CommonUtils.isAdmin();
-		WTUser sessionUser = (WTUser)SessionHelper.manager.getPrincipal();
-		model.addObject("sessionUser", sessionUser);
-		model.addObject("isAdmin", isAdmin);
-		model.setViewName("/extcore/jsp/admin/spec/spec-list.jsp");
+		model.setViewName("/extcore/jsp/admin/sheetVariable/sheetVariable-list.jsp");
 		return model;
 	}
 
-	@Description(value = "사양 관리 리스트 가져 오는 함수")
+	@Description(value = "CONFIG SHEET 카테고리 리스트 가져 오는 함수")
 	@ResponseBody
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = SpecHelper.manager.list(params);
+			result = ConfigSheetCodeHelper.manager.list(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -56,8 +50,8 @@ public class SpecController extends BaseController {
 		}
 		return result;
 	}
-
-	@Description(value = "사양 관리 그리드 저장")
+	
+	@Description(value = "CONFIG SHEET 카테고리 그리드 저장")
 	@PostMapping(value = "/save")
 	@ResponseBody
 	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
@@ -93,7 +87,7 @@ public class SpecController extends BaseController {
 			dataMap.put("editRows", editRow); // 수정행
 			dataMap.put("removeRows", removeRow); // 삭제행
 
-			SpecHelper.service.save(dataMap);
+			ConfigSheetCodeHelper.service.save(dataMap);
 			result.put("result", SUCCESS);
 			result.put("msg", SAVE_MSG);
 		} catch (Exception e) {

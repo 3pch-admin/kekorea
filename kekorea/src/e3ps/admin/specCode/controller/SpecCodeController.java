@@ -1,4 +1,4 @@
-package e3ps.admin.sheetvariable.controller;
+package e3ps.admin.specCode.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,30 +18,36 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import e3ps.admin.commonCode.dto.CommonCodeDTO;
-import e3ps.admin.sheetvariable.service.SheetVariableHelper;
-import e3ps.admin.spec.service.SpecHelper;
+import e3ps.admin.spec.dto.SpecCodeDTO;
+import e3ps.admin.spec.service.SpecCodeHelper;
 import e3ps.common.controller.BaseController;
+import e3ps.common.util.CommonUtils;
+import wt.org.WTUser;
+import wt.session.SessionHelper;
 
 @Controller
-@RequestMapping(value = "/sheetVariable/**")
-public class SheetVariableController extends BaseController {
-	
-	@Description(value = "CONFIG SHEET 카테고리 리스트 페이지")
+@RequestMapping(value = "/spec/**")
+public class SpecCodeController extends BaseController {
+
+	@Description(value = "사양 관리 리스트 페이지")
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/extcore/jsp/admin/sheetVariable/sheetVariable-list.jsp");
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.setViewName("/extcore/jsp/admin/spec/spec-list.jsp");
 		return model;
 	}
 
-	@Description(value = "CONFIG SHEET 카테고리 리스트 가져 오는 함수")
+	@Description(value = "사양 관리 리스트 가져 오는 함수")
 	@ResponseBody
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			result = SheetVariableHelper.manager.list(params);
+			result = SpecCodeHelper.manager.list(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -50,8 +56,8 @@ public class SheetVariableController extends BaseController {
 		}
 		return result;
 	}
-	
-	@Description(value = "CONFIG SHEET 카테고리 그리드 저장")
+
+	@Description(value = "사양 관리 그리드 저장")
 	@PostMapping(value = "/save")
 	@ResponseBody
 	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
@@ -64,34 +70,35 @@ public class SheetVariableController extends BaseController {
 
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			ArrayList<CommonCodeDTO> addRow = new ArrayList<>();
+			ArrayList<SpecCodeDTO> addRow = new ArrayList<>();
 			for (LinkedHashMap<String, Object> add : addRows) {
-				CommonCodeDTO dto = mapper.convertValue(add, CommonCodeDTO.class);
+				SpecCodeDTO dto = mapper.convertValue(add, SpecCodeDTO.class);
 				addRow.add(dto);
 			}
 
-			ArrayList<CommonCodeDTO> editRow = new ArrayList<>();
+			ArrayList<SpecCodeDTO> editRow = new ArrayList<>();
 			for (LinkedHashMap<String, Object> edit : editRows) {
-				CommonCodeDTO dto = mapper.convertValue(edit, CommonCodeDTO.class);
+				SpecCodeDTO dto = mapper.convertValue(edit, SpecCodeDTO.class);
 				editRow.add(dto);
 			}
 
-			ArrayList<CommonCodeDTO> removeRow = new ArrayList<>();
+			ArrayList<SpecCodeDTO> removeRow = new ArrayList<>();
 			for (LinkedHashMap<String, Object> remove : removeRows) {
-				CommonCodeDTO dto = mapper.convertValue(remove, CommonCodeDTO.class);
+				SpecCodeDTO dto = mapper.convertValue(remove, SpecCodeDTO.class);
 				removeRow.add(dto);
 			}
 
-			HashMap<String, List<CommonCodeDTO>> dataMap = new HashMap<>();
+			HashMap<String, List<SpecCodeDTO>> dataMap = new HashMap<>();
 			dataMap.put("addRows", addRow); // 추가행
 			dataMap.put("editRows", editRow); // 수정행
 			dataMap.put("removeRows", removeRow); // 삭제행
 
-			SheetVariableHelper.service.save(dataMap);
+			SpecCodeHelper.service.save(dataMap);
 			result.put("result", SUCCESS);
 			result.put("msg", SAVE_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;

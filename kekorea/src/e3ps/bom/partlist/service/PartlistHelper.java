@@ -359,30 +359,6 @@ public class PartlistHelper {
 		return map;
 	}
 
-	public ArrayList<PartListData> getPartListData(PartListMaster master) throws Exception {
-		ArrayList<PartListData> list = new ArrayList<PartListData>();
-
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(MasterDataLink.class, true);
-
-		long ids = master.getPersistInfo().getObjectIdentifier().getId();
-
-		SearchCondition sc = new SearchCondition(MasterDataLink.class, "roleAObjectRef.key.id", "=", ids);
-		query.appendWhere(sc, new int[] { idx });
-
-		ClassAttribute ca = new ClassAttribute(MasterDataLink.class, MasterDataLink.SORT);
-		OrderBy by = new OrderBy(ca, false);
-		query.appendOrderBy(by, new int[] { idx });
-
-		QueryResult result = PersistenceHelper.manager.find(query);
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			MasterDataLink link = (MasterDataLink) obj[0];
-			list.add(link.getPartListData());
-		}
-		return list;
-	}
-
 	public WTPart getPartByYCode(Map<String, Object> param) throws Exception {
 		String yCode = (String) param.get("yCode");
 		WTPart part = null;
@@ -516,6 +492,32 @@ public class PartlistHelper {
 	}
 
 	/**
+	 * 수배된 데이터들 ArrayList 로 가져오기
+	 */
+	public ArrayList<PartListData> getPartListData(String oid) throws Exception {
+		PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
+		return getPartListData(master);
+	}
+
+	/**
+	 * 수배된 데이터들 ArrayList 로 가져오기
+	 */
+	public ArrayList<PartListData> getPartListData(PartListMaster master) throws Exception {
+		ArrayList<PartListData> list = new ArrayList<PartListData>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(MasterDataLink.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, MasterDataLink.class, "roleAObjectRef.key.id", master);
+		QuerySpecUtils.toOrderBy(query, idx, MasterDataLink.class, MasterDataLink.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			MasterDataLink link = (MasterDataLink) obj[0];
+			list.add(link.getData());
+		}
+		return list;
+	}
+
+	/**
 	 * 수배표된 데이터들을 JSONArray 형태로 가져오는 함수
 	 */
 	public JSONArray getData(String oid) throws Exception {
@@ -533,6 +535,7 @@ public class PartlistHelper {
 			PartListData data = link.getData();
 
 			Map<String, Object> map = new HashMap<>();
+			map.put("check", "OK");
 			map.put("lotNo", data.getLotNo());
 			map.put("unitName", data.getUnitName());
 			map.put("partNo", data.getPartNo());
@@ -573,6 +576,7 @@ public class PartlistHelper {
 			PartListData data = link.getData();
 
 			Map<String, Object> map = new HashMap<>();
+			map.put("oid", data.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("lotNo", data.getLotNo());
 			map.put("unitName", data.getUnitName());
 			map.put("partNo", data.getPartNo());
@@ -727,58 +731,7 @@ public class PartlistHelper {
 	}
 
 	/**
-	 * 비교할 데이터 가져오기
-	 */
-	private ArrayList<Map<String, Object>> compareData(String oid, String sort) throws Exception {
-		ArrayList<Map<String, Object>> list = new ArrayList<>();
-		PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
-
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(PartListMaster.class, false);
-		int idx_link = query.appendClassList(MasterDataLink.class, true);
-		int idx_data = query.appendClassList(PartListData.class, false);
-		QuerySpecUtils.toInnerJoin(query, PartListMaster.class, MasterDataLink.class, WTAttributeNameIfc.ID_NAME,
-				"roleAObjectRef.key.id", idx, idx_link);
-		QuerySpecUtils.toInnerJoin(query, PartListData.class, MasterDataLink.class, WTAttributeNameIfc.ID_NAME,
-				"roleBObjectRef.key.id", idx_data, idx_link);
-		QuerySpecUtils.toEqualsAnd(query, idx_link, MasterDataLink.class, "roleAObjectRef.key.id", master);
-//		if("sort".equals(sort)) {
-//			QuerySpecUtils.toOrderBy(query, idx_link, MasterDataLink.class, sort, false);
-//		} else {
-		QuerySpecUtils.toOrderBy(query, idx_data, PartListData.class, sort, false);
-//		}
-
-		QueryResult result = PersistenceHelper.manager.find(query);
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			MasterDataLink link = (MasterDataLink) obj[0];
-			PartListData data = link.getData();
-			Map<String, Object> map = new HashMap<>();
-			map.put("lotNo", String.valueOf(data.getLotNo()));
-			map.put("unitName", data.getUnitName());
-			map.put("partNo", data.getPartNo());
-			map.put("partName", data.getPartName());
-			map.put("standard", data.getStandard());
-			map.put("maker", data.getMaker());
-			map.put("customer", data.getCustomer());
-			map.put("quantity", data.getQuantity());
-			map.put("unit", data.getUnit());
-			map.put("price", data.getPrice());
-			map.put("currency", data.getCurrency());
-			map.put("won", data.getWon());
-			map.put("partListDate_txt", CommonUtils.getPersistableTime(data.getPartListDate()));
-			map.put("exchangeRate", data.getExchangeRate());
-			map.put("referDrawing", data.getReferDrawing());
-			map.put("classification", data.getClassification());
-			map.put("note", data.getNote());
-			list.add(map);
-		}
-
-		return list;
-	}
-
-	/**
-	 * // * 수배표 비교 데이터
+	 * 수배표 비교 데이터
 	 */
 	public ArrayList<Map<String, Object>> integratedData(Project project, String[] t) throws Exception {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
@@ -842,6 +795,9 @@ public class PartlistHelper {
 		return list;
 	}
 
+	/**
+	 * 결재 정보창에서 볼 수배표 데이터
+	 */
 	public JSONArray jsonAuiWorkSpaceData(String oid) throws Exception {
 		ArrayList<Map<String, String>> list = new ArrayList<>();
 		PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);

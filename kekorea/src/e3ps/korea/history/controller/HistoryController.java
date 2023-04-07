@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.admin.spec.service.SpecHelper;
+import e3ps.admin.spec.service.SpecCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
@@ -35,7 +35,7 @@ public class HistoryController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		ArrayList<Map<String, String>> headers = CommonCodeHelper.manager.getArrayKeyValueMap("SPEC");
-		Map<String, ArrayList<Map<String, String>>> list = SpecHelper.manager.getOptionList();
+		Map<String, ArrayList<Map<String, String>>> list = SpecCodeHelper.manager.getOptionList();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 

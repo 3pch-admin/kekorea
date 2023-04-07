@@ -21,7 +21,6 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "type", type = String.class, javaDoc = "결재 타입", constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(columnName = "approvalType")),
 				
-                @GeneratedProperty(name = "state", type = String.class, javaDoc = "결재 상태", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "role", type = String.class, javaDoc = "결재 역할", constraints = @PropertyConstraints(required = true)),
 

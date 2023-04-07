@@ -2,7 +2,6 @@ package e3ps.org.dto;
 
 import java.sql.Timestamp;
 
-import e3ps.common.util.CommonUtils;
 import e3ps.org.People;
 import e3ps.org.PeopleWTUserLink;
 import e3ps.org.service.OrgHelper;
@@ -39,22 +38,22 @@ public class UserDTO {
 		QueryResult result = PersistenceHelper.manager.navigate(wtUser, "people", PeopleWTUserLink.class);
 		if (result.hasMoreElements()) {
 			people = (People) result.nextElement();
+			setOid(people.getPersistInfo().getObjectIdentifier().getStringValue());
+			setWoid(wtUser.getPersistInfo().getObjectIdentifier().getStringValue());
+			setName(people.getName());
+			setId(people.getId());
+			setEmail(people.getEmail());
+			setDuty(people.getDuty());
+			if (people.getDepartment() != null) {
+				setDepartment_oid(people.getDepartment().getPersistInfo().getObjectIdentifier().getStringValue());
+				setDepartment_name(people.getDepartment().getName());
+				setDepartment_code(people.getDepartment().getCode());
+			}
+			setCreatedDate(people.getCreateTimestamp());
+			setResign(people.getResign());
+			setMak(OrgHelper.manager.getGridMaks(people));
+			setInstall(OrgHelper.manager.getGridInstalls(people));
 		}
-		setOid(people.getPersistInfo().getObjectIdentifier().getStringValue());
-		setWoid(wtUser.getPersistInfo().getObjectIdentifier().getStringValue());
-		setName(people.getName());
-		setId(people.getId());
-		setEmail(people.getEmail());
-		setDuty(people.getDuty());
-		if (people.getDepartment() != null) {
-			setDepartment_oid(people.getDepartment().getPersistInfo().getObjectIdentifier().getStringValue());
-			setDepartment_name(people.getDepartment().getName());
-			setDepartment_code(people.getDepartment().getCode());
-		}
-		setCreatedDate(people.getCreateTimestamp());
-		setResign(people.getResign());
-		setMak(OrgHelper.manager.getGridMaks(people));
-		setInstall(OrgHelper.manager.getGridInstalls(people));
 	}
 
 	public UserDTO(People people) throws Exception {
