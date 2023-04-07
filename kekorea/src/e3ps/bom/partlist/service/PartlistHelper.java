@@ -545,7 +545,7 @@ public class PartlistHelper {
 			map.put("price", data.getPrice());
 			map.put("currency", data.getCurrency());
 			map.put("won", data.getWon());
-			map.put("partListDate", data.getPartListDate());
+			map.put("partListDate_txt", CommonUtils.getPersistableTime(data.getPartListDate()));
 			map.put("exchangeRate", data.getExchangeRate());
 			map.put("referDrawing", data.getReferDrawing());
 			map.put("classification", data.getClassification());

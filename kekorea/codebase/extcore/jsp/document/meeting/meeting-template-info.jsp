@@ -61,11 +61,4 @@ MeetingTemplateDTO dto = (MeetingTemplateDTO) request.getAttribute("dto");
 		const url = getCallUrl("/meeting/modify?oid=" + oid);
 		document.location.href = url;
 	}
-
-	document.addEventListener("keydown", function(event) {
-		const keyCode = event.keyCode || event.which;
-		if (keyCode === 27) {
-			self.close();
-		}
-	})
 </script>
