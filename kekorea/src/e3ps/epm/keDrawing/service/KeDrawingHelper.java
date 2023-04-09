@@ -26,6 +26,7 @@ import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.WTPrincipal;
 import wt.query.QuerySpec;
+import wt.query.SearchCondition;
 import wt.queue.ProcessingQueue;
 import wt.queue.QueueHelper;
 import wt.services.ServiceFactory;
@@ -79,7 +80,8 @@ public class KeDrawingHelper {
 				query.appendAnd();
 			}
 			query.appendOpenParen();
-			QuerySpecUtils.toBoolean(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
+			SearchCondition sc = new SearchCondition(KeDrawing.class, KeDrawing.LATEST, SearchCondition.IS_TRUE);
+			query.appendWhere(sc, new int[] { idx });
 			QuerySpecUtils.toBooleanOr(query, idx, KeDrawing.class, KeDrawing.LATEST, false);
 			query.appendCloseParen();
 		}

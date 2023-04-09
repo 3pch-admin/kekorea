@@ -106,6 +106,18 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		headerText : "코드 타입",
 		dataType : "string",
 		width : 200,
+		renderer : {
+			type : "IconRenderer",
+			iconWidth : 16,
+			iconHeight : 16,
+			iconPosition : "aisleRight",
+			iconTableRef : {
+				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+			},
+			onClick : function(event) {
+				AUIGrid.openInputer(event.pid);
+			}
+		},
 		editRenderer : {
 			type : "ComboBoxRenderer",
 			autoCompleteMode : true,
@@ -137,32 +149,6 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			}
 			return retStr == "" ? value : retStr;
 		}
-	}, {
-		dataField : "parentName",
-		headerText : "상위코드 명",
-		dataType : "string",
-		width : 180,
-		editRenderer : {
-			type : "RemoteListRenderer",
-			fieldName : "value",
-			showEditorBtnOver : true, // 마우스 오버 시 에디터버턴 보이기
-			remoter : function(request, response) { // remoter 지정 필수
-				if (String(request.term).length < 2) {
-					alert("2글자 이상 입력하십시오.");
-					response(false); // 데이터 요청이 없는 경우 반드시 false 삽입하십시오.
-					return;
-				}
-				// 데이터 요청
-				let url = getCallUrl("/commonCode/remoter");
-				let params = new Object();
-				params.term = request.term;
-				params.target = "code";
-				call(url, params, function(data) {
-					parentList = data.list;
-					response(data.list);
-				}, "POST");
-			}
-		},
 	}, {
 		dataField : "description",
 		headerText : "설명",
