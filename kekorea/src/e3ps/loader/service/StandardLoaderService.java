@@ -159,9 +159,29 @@ public class StandardLoaderService extends StandardManager implements LoaderServ
 
 	@Override
 	public void loaderProjectUserType() throws Exception {
+		String[] codes = new String[] { "PM", "SUB_PM", "MACHINE", "ELEC", "SOFT" };
+		String[] names = new String[] { "총괄 책임자", "세부일정 책임자", "기계", "전기", "SW" };
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
+
+			int sort = 1;
+			for (int i = 0; i < codes.length; i++) {
+				String code = codes[i];
+				String name = names[i];
+				CommonCode userTypeCode = CommonCodeHelper.manager.getCommonCode(code, "USER_TYPE");
+				if (userTypeCode == null) {
+					userTypeCode = CommonCode.newCommonCode();
+					userTypeCode.setName(name);
+					userTypeCode.setCode(code);
+					userTypeCode.setCodeType(CommonCodeType.toCommonCodeType("USER_TYPE"));
+					userTypeCode.setDescription(name);
+					userTypeCode.setEnable(true);
+					userTypeCode.setSort(sort);
+					PersistenceHelper.manager.save(userTypeCode);
+					sort++;
+				}
+			}
 
 			trs.commit();
 			trs = null;

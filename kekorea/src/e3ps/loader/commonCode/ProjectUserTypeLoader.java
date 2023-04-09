@@ -7,7 +7,7 @@ public class ProjectUserTypeLoader {
 	public static void main(String[] args) throws Exception {
 		ProjectUserTypeLoader loader = new ProjectUserTypeLoader();
 		loader.load();
-		System.out.println("태스크 타입 로더 종료!!");
+		System.out.println("프로젝트 유저 타입 로더 종료!!");
 		System.exit(0);
 	}
 
