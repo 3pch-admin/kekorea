@@ -30,7 +30,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 790px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			const list = [ {
@@ -40,6 +40,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				key : "OPTION",
 				value : "옵션"
 			} ]
+
 			const columns = [ {
 				dataField : "name",
 				headerText : "코드 명",
@@ -55,6 +56,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				headerText : "코드",
 				dataType : "string",
 				width : 120,
+				editRenderer : {
+					type : "InputEditRenderer",
+					regExp : "^[a-zA-Z1-9-]+$",
+					autoUpperCase : true
+				},
 				filter : {
 					showIcon : true,
 					inline : true
@@ -64,7 +70,51 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				headerText : "코드타입",
 				dataType : "string",
 				width : 120,
-				editable : false,
+				renderer : {
+					type : "IconRenderer",
+					iconWidth : 16,
+					iconHeight : 16,
+					iconPosition : "aisleRight",
+					iconTableRef : {
+						"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+					},
+					onClick : function(event) {
+						AUIGrid.openInputer(event.pid);
+					}
+				},
+				editRenderer : {
+					type : "ComboBoxRenderer",
+					autoCompleteMode : true,
+					autoEasyMode : true,
+					matchFromFirst : false,
+					showEditorBtnOver : false,
+					list : list,
+					keyField : "key",
+					valueField : "value",
+					validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+						let isValid = false;
+						for (let i = 0, len = list.length; i < len; i++) {
+							if (list[i]["value"] == newValue) {
+								isValid = true;
+								break;
+							}
+						}
+
+						if (fromClipboard) {
+							for (let i = 0, len = list.length; i < len; i++) {
+								if (list[i]["key"] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+						}
+
+						return {
+							"validate" : isValid,
+							"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+						};
+					}
+				},
 				labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
 					let retStr = "";
 					for (let i = 0, len = list.length; i < len; i++) {
@@ -127,43 +177,90 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				const props = {
 					rowIdField : "oid",
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					showRowCheckColumn : true,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
 					selectionMode : "multipleCells",
 					showInlineFilter : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					displayTreeOpen : true,
-					editable : true
+					editable : true,
+					useContextMenu : true,
+					forceTreeView : true,
+					contextMenuItems : [ {
+						label : "선택된 행 이전 추가",
+						callback : contextItemHandler
+					}, {
+						label : "선택된 행 이후 추가",
+						callback : contextItemHandler
+					}, {
+						label : "선택된 행 자식 추가",
+						callback : contextItemHandler
+					}, {
+						label : "_$line"
+					}, {
+						label : "선택된 행 삭제",
+						callback : contextItemHandler
+					} ],
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinish);
 				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
-				AUIGrid.bind(myGridID, "cellEditEndBefore", auiCellEditEndBefore);
 			}
 
-			function auiCellEditEndBefore(event) {
-				const dataField = event.dataField;
-				const value = event.value;
-				if (dataField === "code") {
-					const isUnique = AUIGrid.isUniqueValue(myGridID, "code", value);
-					if (!isUnique) {
-						alert("입력하신 코드는 이미 존재합니다.");
-						return "";
+			function contextItemHandler(event) {
+				const _$depth = event.item._$depth;
+				const item = {}
+				switch (event.contextIndex) {
+				case 0:
+					if (_$depth === 1) {
+						alert("최상위랑 같은 레벨에 행을 추가 할 수 없습니다.");
+						return false;
 					}
+					AUIGrid.addRow(myGridID, item, "selectionUp");
+					break;
+				case 1:
+					if (_$depth === 1) {
+						alert("최상위랑 같은 레벨에 행을 추가 할 수 없습니다.");
+						return false;
+					}
+					AUIGrid.addRow(myGridID, item, "selectionDown");
+					break;
+				case 2:
+					const parentRowId = event.item.oid;
+					const newItem = new Object();
+					newItem.parentRowId = parentRowId;
+					AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "selectionDown");
+					break;
+				case 4:
+					const selectedItems = AUIGrid.getSelectedItems(myGridID);
+					const rows = AUIGrid.getRowCount(myGridID);
+
+					if (_$depth === 1) {
+						alert("최상위 행은 삭제를 할 수 없습니다.");
+						return false;
+					}
+
+					if (rows === 1) {
+						alert("최 소 하나의 행이 존재해야합니다.");
+						return false;
+					}
+					for (let i = selectedItems.length - 1; i >= 0; i--) {
+						const rowIndex = selectedItems[i].rowIndex;
+						AUIGrid.removeRow(myGridID, rowIndex);
+					}
+					break;
 				}
-				return value;
 			}
 
 			function save() {
-				const url = getCallUrl("/spec/save");
+				const url = getCallUrl("/specCode/save");
 				const params = new Object();
 				const addRows = AUIGrid.getAddedRowItems(myGridID);
 				const removeRows = AUIGrid.getRemovedItems(myGridID);
@@ -177,19 +274,60 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
 					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item.oid);
+					const depth = item._$depth;
+
+					if (depth === 1) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "최상위와 같은 레벨의 데이터 생성은 불가능 합니다.");
+						return false;
+					}
+
+					if (depth === 2 && item.codeType !== "SPEC") {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 2, "사양 코드타입을 선택하세요.");
+						return false;
+					}
+
+					if (depth === 3 && item.codeType !== "OPTION") {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 2, "옵션 코드타입을 선택하세요.");
+						return false;
+					}
+
 					if (isNull(item.name)) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "코드 명 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
+
 					if (isNull(item.code)) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "코드 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
+
+					// 					const isUnique = AUIGrid.isUniqueValue(myGridID, "code", item.code);
+					// 					if (!isUnique) {
+					// 						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "입력하신 코드는 이미 존재합니다.");
+					// 						return false;
+					// 					}
 				}
 
 				for (let i = 0; i < editRows.length; i++) {
 					const item = editRows[i];
 					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item.oid);
+					const depth = item._$depth;
+
+					if (depth === 1) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "최상위와 같은 레벨의 데이터 생성은 불가능 합니다.");
+						return false;
+					}
+
+					if (depth === 2 && item.codeType !== "SPEC") {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 2, "사양 코드타입을 선택하세요.");
+						return false;
+					}
+
+					if (depth === 3 && item.codeType !== "OPTION") {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 2, "옵션 코드타입을 선택하세요.");
+						return false;
+					}
+
 					if (isNull(item.name)) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "코드 명 값은 공백을 입력 할 수 없습니다.");
 						return false;
@@ -198,6 +336,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "코드 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
+
+					// 					const isUnique = AUIGrid.isUniqueValue(myGridID, "code", item.code);
+					// 					if (!isUnique) {
+					// 						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "입력하신 코드는 이미 존재합니다.");
+					// 						return false;
+					// 					}
 				}
 
 				if (!confirm("저장 하시겠습니까?")) {
@@ -206,6 +350,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				params.addRows = addRows;
 				params.removeRows = removeRows;
 				params.editRows = editRows;
+				console.log(params);
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
@@ -229,14 +374,14 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				const depth = item._$depth;
 				if (depth == 2) {
 					const item = {
-						"codeType" : "SPEC"
+						codeType : "SPEC",
 					};
 					AUIGrid.updateRow(myGridID, item, "selectedIndex");
 				}
 
 				if (depth == 3) {
 					const item = {
-						"codeType" : "OPTION"
+						codeType : "OPTION",
 					};
 					AUIGrid.updateRow(myGridID, item, "selectedIndex");
 				}
@@ -258,7 +403,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function loadGridData() {
 				const params = new Object();
-				const url = getCallUrl("/spec/list");
+				const url = getCallUrl("/specCode/list");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

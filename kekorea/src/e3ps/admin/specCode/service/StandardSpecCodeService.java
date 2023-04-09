@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import e3ps.admin.spec.SpecCode;
-import e3ps.admin.spec.SpecCodeType;
-import e3ps.admin.spec.dto.SpecCodeDTO;
+import e3ps.admin.specCode.SpecCode;
+import e3ps.admin.specCode.SpecCodeType;
+import e3ps.admin.specCode.dto.SpecCodeDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
 import wt.fc.PersistenceHelper;
@@ -16,7 +16,7 @@ import wt.util.WTException;
 
 public class StandardSpecCodeService extends StandardManager implements SpecCodeService {
 
-	public static StandardSpecCodeService newStandardSpecService() throws WTException {
+	public static StandardSpecCodeService newStandardSpecCodeService() throws WTException {
 		StandardSpecCodeService instance = new StandardSpecCodeService();
 		instance.initialize();
 		return instance;
@@ -42,7 +42,7 @@ public class StandardSpecCodeService extends StandardManager implements SpecCode
 				ArrayList<SpecCodeDTO> children = dto.getChildren();
 
 				SpecCode parent = null;
-				if (!StringUtils.isNull(_$parent) && _$parent.indexOf("CommonCode") > -1) {
+				if (!StringUtils.isNull(_$parent) && _$parent.indexOf("SpecCode") > -1) {
 					parent = (SpecCode) CommonUtils.getObject(_$parent);
 				}
 

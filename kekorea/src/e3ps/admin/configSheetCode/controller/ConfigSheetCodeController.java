@@ -19,8 +19,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.admin.commonCode.dto.CommonCodeDTO;
-import e3ps.admin.sheetvariable.service.SheetVariableHelper;
-import e3ps.admin.spec.service.SpecCodeHelper;
+import e3ps.admin.configSheetCode.service.ConfigSheetCodeHelper;
 import e3ps.common.controller.BaseController;
 
 @Controller
@@ -31,7 +30,7 @@ public class ConfigSheetCodeController extends BaseController {
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.setViewName("/extcore/jsp/admin/sheetVariable/sheetVariable-list.jsp");
+		model.setViewName("/extcore/jsp/admin/configSheetCode/configSheetCode-list.jsp");
 		return model;
 	}
 

@@ -14,8 +14,6 @@ import e3ps.common.util.StringUtils;
 import net.sf.json.JSONArray;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
-import wt.query.ClassAttribute;
-import wt.query.OrderBy;
 import wt.query.QuerySpec;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
@@ -171,6 +169,7 @@ public class CommonCodeHelper {
 		int idx = query.appendClassList(CommonCode.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE, code);
 		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
+		QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, true);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -180,13 +179,15 @@ public class CommonCodeHelper {
 		return null;
 	}
 
+	/**
+	 * 부모가 동일한 자식 코드 가져오기 KEY-VALUE 그리드용
+	 */
 	public ArrayList<Map<String, Object>> getChildrens(String parentCode, String codeType) throws Exception {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		CommonCode parent = getCommonCode(parentCode, codeType);
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, "parentReference.key.id",
-				parent.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, "parentReference.key.id", parent);
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {

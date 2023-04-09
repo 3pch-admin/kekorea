@@ -16,7 +16,7 @@ import wt.util.WTException;
 
 public class StandardConfigSheetCodeService extends StandardManager implements ConfigSheetCodeService {
 
-	public static StandardConfigSheetCodeService newStandardSheetVariableService() throws WTException {
+	public static StandardConfigSheetCodeService newStandardConfigSheetCodeService() throws WTException {
 		StandardConfigSheetCodeService instance = new StandardConfigSheetCodeService();
 		instance.initialize();
 		return instance;

@@ -3,8 +3,8 @@ package e3ps.korea.history.service;
 import java.util.ArrayList;
 import java.util.Map;
 
-import e3ps.admin.commonCode.CommonCode;
-import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.admin.specCode.SpecCode;
+import e3ps.admin.specCode.service.SpecCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
@@ -69,13 +69,13 @@ public class StandardHistoryService extends StandardManager implements HistorySe
 					PersistenceHelper.manager.save(history);
 				}
 				// 어차피 뱅그르르르...
-				ArrayList<Map<String, String>> headers = CommonCodeHelper.manager.getArrayKeyValueMap("SPEC");
+				ArrayList<Map<String, String>> headers = SpecCodeHelper.manager.getArrayKeyValueMap("SPEC");
 				for (Map<String, String> header : headers) {
 					String dataField = header.get("key");
 					String code = editRow.get(header.get("key")); // option value....
 
 					if (!StringUtils.isNull(code)) {
-						CommonCode optionCode = CommonCodeHelper.manager.getCommonCode(code, "OPTION");
+						SpecCode optionCode = SpecCodeHelper.manager.getSpecCode(code, "OPTION");
 
 						QuerySpec qs = new QuerySpec();
 						int idx_link = qs.appendClassList(HistoryOptionLink.class, true);
@@ -83,9 +83,9 @@ public class StandardHistoryService extends StandardManager implements HistorySe
 						QuerySpecUtils.toInnerJoin(qs, HistoryOptionLink.class, History.class, "roleAObjectRef.key.id",
 								WTAttributeNameIfc.ID_NAME, idx_link, _idx);
 						QuerySpecUtils.toEqualsAnd(qs, idx_link, HistoryOptionLink.class, "roleAObjectRef.key.id",
-								history.getPersistInfo().getObjectIdentifier().getId());
+								history);
 						QuerySpecUtils.toEqualsAnd(qs, idx_link, HistoryOptionLink.class, "roleBObjectRef.key.id",
-								optionCode.getPersistInfo().getObjectIdentifier().getId());
+								optionCode);
 						QueryResult result = PersistenceHelper.manager.find(qs);
 
 						if (result.hasMoreElements()) {

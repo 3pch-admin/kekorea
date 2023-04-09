@@ -3,7 +3,7 @@ package e3ps.admin.specCode.service;
 import java.util.HashMap;
 import java.util.List;
 
-import e3ps.admin.spec.dto.SpecCodeDTO;
+import e3ps.admin.specCode.dto.SpecCodeDTO;
 import wt.method.RemoteInterface;
 
 @RemoteInterface

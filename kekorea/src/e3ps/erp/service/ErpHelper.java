@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 
+import e3ps.bom.partlist.cache.CacheProcessor;
 import e3ps.common.db.DBCPManager;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.StringUtils;
@@ -1402,48 +1403,58 @@ public class ErpHelper {
 		ResultSet _rs = null;
 		try {
 
-			con = dataSource.getConnection();
-			st = con.createStatement();
+			String cacheKey = partNo + quantity;
+			CacheProcessor cache = new CacheProcessor();
+			System.out.println("캐시 데이터 확인 해보기 = " + cache.get());
+			Map<String, Object> cacheData = cache.getValue(cacheKey);
+			if (cacheData == null) {
+				con = dataSource.getConnection();
+				st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
-			sql.append("SELECT ITEMSEQ, ITEMNAME, SPEC");
-			sql.append(" FROM KEK_VDAITEM");
-			sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
+				StringBuffer sql = new StringBuffer();
+				sql.append("SELECT ITEMSEQ, ITEMNAME, SPEC");
+				sql.append(" FROM KEK_VDAITEM");
+				sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
 
-			rs = st.executeQuery(sql.toString());
-			if (rs.next()) {
-				int itemSeq = (int) rs.getInt(1);
-				String itemName = (String) rs.getString(2);
-				String spec = (String) rs.getString(3);
+				rs = st.executeQuery(sql.toString());
+				if (rs.next()) {
+					int itemSeq = (int) rs.getInt(1);
+					String itemName = (String) rs.getString(2);
+					String spec = (String) rs.getString(3);
 
-				StringBuffer sb = new StringBuffer();
-				sb.append("EXEC KEK_SPLMBASEGETPRICE '" + itemSeq + "', '', '" + quantity + "'");
-				_rs = st.executeQuery(sb.toString());
+					StringBuffer sb = new StringBuffer();
+					sb.append("EXEC KEK_SPLMBASEGETPRICE '" + itemSeq + "', '', '" + quantity + "'");
+					_rs = st.executeQuery(sb.toString());
 
-				String maker = "";
-				String customer = "";
-				String unit = "";
-				String currency = "";
-				int price = 0;
-				Integer exchangeRate = 0;
-				if (_rs.next()) {
-					maker = (String) _rs.getString("MakerName");
-					customer = (String) _rs.getString("CustName");
-					unit = (String) _rs.getString("UnitName");
-					currency = (String) _rs.getString("CurrName");
-					price = (int) _rs.getInt("price");
-					exchangeRate = (int) _rs.getInt("ExRate");
+					String maker = "";
+					String customer = "";
+					String unit = "";
+					String currency = "";
+					int price = 0;
+					Integer exchangeRate = 0;
+					if (_rs.next()) {
+						maker = (String) _rs.getString("MakerName");
+						customer = (String) _rs.getString("CustName");
+						unit = (String) _rs.getString("UnitName");
+						currency = (String) _rs.getString("CurrName");
+						price = (int) _rs.getInt("price");
+						exchangeRate = (int) _rs.getInt("ExRate");
 
+					}
+					result.put("maker", maker);
+					result.put("customer", customer);
+					result.put("unit", unit);
+					result.put("currency", currency);
+					result.put("price", price);
+					result.put("exchangeRate", exchangeRate);
+					result.put("standard", spec);
+					result.put("partName", itemName);
+					result.put("won", quantity * price * exchangeRate);
+
+					cache.setValue(cacheKey, result);
+				} else {
+					result = cache.getValue(cacheKey);
 				}
-				result.put("maker", maker);
-				result.put("customer", customer);
-				result.put("unit", unit);
-				result.put("currency", currency);
-				result.put("price", price);
-				result.put("exchangeRate", exchangeRate);
-				result.put("standard", spec);
-				result.put("partName", itemName);
-				result.put("won", quantity * price * exchangeRate);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

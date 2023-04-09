@@ -34,6 +34,7 @@ import e3ps.doc.meeting.MeetingProjectLink;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.org.People;
+import e3ps.part.service.PartHelper;
 import e3ps.project.Project;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -534,6 +535,9 @@ public class PartlistHelper {
 			MasterDataLink link = (MasterDataLink) obj[0];
 			PartListData data = link.getData();
 
+			
+			WTPart wtPart = PartHelper.manager.getWTPart(data.getPartNo());
+			
 			Map<String, Object> map = new HashMap<>();
 			map.put("check", "OK");
 			map.put("lotNo", data.getLotNo());

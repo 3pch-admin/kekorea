@@ -2,8 +2,6 @@ package e3ps.admin.numberRuleCode.dto;
 
 import java.util.ArrayList;
 
-import e3ps.admin.commonCode.CommonCode;
-import e3ps.admin.commonCode.dto.CommonCodeDTO;
 import e3ps.admin.numberRuleCode.NumberRuleCode;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
