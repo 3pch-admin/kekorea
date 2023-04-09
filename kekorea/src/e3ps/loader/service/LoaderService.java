@@ -38,4 +38,9 @@ public interface LoaderService {
 	 */
 	public abstract void loaderTaskType() throws Exception;
 
+	/**
+	 * 프로젝트 타입 로더
+	 */
+	public abstract void loaderProjectType() throws Exception;
+
 }

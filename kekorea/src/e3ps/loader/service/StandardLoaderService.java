@@ -25,12 +25,9 @@ public class StandardLoaderService extends StandardManager implements LoaderServ
 
 	@Override
 	public void loaderMak(String mak, String detail) throws Exception {
-		SessionContext pre = SessionContext.newContext();
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
-
-			SessionHelper.manager.setAdministrator();
 
 			CommonCode makCode = CommonCodeHelper.manager.getCommonCode(mak, "MAK");
 			CommonCode detailCode = CommonCodeHelper.manager.getCommonCode(detail, "MAK_DETAIL");
@@ -67,18 +64,14 @@ public class StandardLoaderService extends StandardManager implements LoaderServ
 		} finally {
 			if (trs != null)
 				trs.rollback();
-			SessionContext.setContext(pre);
 		}
 	}
 
 	@Override
 	public void loadeInstall(String customer, String install) throws Exception {
-		SessionContext pre = SessionContext.newContext();
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
-
-			SessionHelper.manager.setAdministrator();
 
 			CommonCode customerCode = CommonCodeHelper.manager.getCommonCode(customer, "CUSTOMER");
 			CommonCode installCode = CommonCodeHelper.manager.getCommonCode(install, "INSTALL");
@@ -115,7 +108,6 @@ public class StandardLoaderService extends StandardManager implements LoaderServ
 		} finally {
 			if (trs != null)
 				trs.rollback();
-			SessionContext.setContext(pre);
 		}
 	}
 
@@ -205,6 +197,41 @@ public class StandardLoaderService extends StandardManager implements LoaderServ
 				taskTypeCode.setEnable(true);
 				taskTypeCode.setSort(sort);
 				PersistenceHelper.manager.save(taskTypeCode);
+				sort++;
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void loaderProjectType() throws Exception {
+		String[] names = new String[] { "개조", "평가용", "판매", "이설", "연구개발", "양산", "견적" };
+
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			int sort = 1;
+			for (int i = 0; i < names.length; i++) {
+				String name = names[i];
+
+				CommonCode projectTypeCode = CommonCode.newCommonCode();
+				projectTypeCode.setName(name);
+				projectTypeCode.setCode(name);
+				projectTypeCode.setCodeType(CommonCodeType.toCommonCodeType("PROJECT_TYPE"));
+				projectTypeCode.setDescription(name);
+				projectTypeCode.setEnable(true);
+				projectTypeCode.setSort(sort);
+				PersistenceHelper.manager.save(projectTypeCode);
 				sort++;
 			}
 
