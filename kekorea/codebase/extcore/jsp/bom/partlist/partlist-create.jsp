@@ -652,8 +652,7 @@ String engType = (String) request.getAttribute("engType");
 			}
 		});
 		selectbox("engType");
-		$("#engType").bindSelectSetValue("<%=engType%>
-	");
+		$("#engType").bindSelectSetValue("<%=engType%>");
 		$("#engType").bindSelectDisabled(true);
 		_createAUIGrid(_columns);
 		_createAUIGrid_(_columns_);
