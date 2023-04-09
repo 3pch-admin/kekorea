@@ -164,4 +164,59 @@ public class StandardLoaderService extends StandardManager implements LoaderServ
 			SessionContext.setContext(pre);
 		}
 	}
+
+	@Override
+	public void loaderProjectUserType() throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void loaderTaskType() throws Exception {
+		String[] codes = new String[] { "MACHINE", "ELEC", "SOFT", "NORMAL", "T-BOM", "COMMON" };
+		String[] names = new String[] { "기계", "전기", "SW", "일반", "T-BOM", "공통" };
+
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			int sort = 1;
+			for (int i = 0; i < codes.length; i++) {
+				String code = codes[i];
+				String name = names[i];
+
+				CommonCode taskTypeCode = CommonCode.newCommonCode();
+				taskTypeCode.setName(name);
+				taskTypeCode.setCode(code);
+				taskTypeCode.setCodeType(CommonCodeType.toCommonCodeType("TASK_TYPE"));
+				taskTypeCode.setDescription(name);
+				taskTypeCode.setEnable(true);
+				taskTypeCode.setSort(sort);
+				PersistenceHelper.manager.save(taskTypeCode);
+				sort++;
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
 }

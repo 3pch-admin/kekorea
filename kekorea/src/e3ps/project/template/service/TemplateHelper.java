@@ -34,12 +34,12 @@ public class TemplateHelper {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<TemplateDTO> list = new ArrayList<TemplateDTO>();
 
-		String templateName = (String) params.get("templateName");
+		String name = (String) params.get("name");
 		String duration = (String) params.get("duration");
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Template.class, true);
 
-		QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.NAME, templateName);
+		QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.NAME, name);
 		QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.DURATION, duration);
 		QuerySpecUtils.toBooleanAnd(query, idx, Template.class, Template.ENABLE, true);
 		QuerySpecUtils.toOrderBy(query, idx, Template.class, Template.CREATE_TIMESTAMP, true);
