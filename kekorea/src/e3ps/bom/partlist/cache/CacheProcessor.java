@@ -16,10 +16,6 @@ public class CacheProcessor {
 		}
 	}
 
-	public HashMap<String, Map<String, Object>> get() {
-		return cacheData;
-	}
-
 	public Map<String, Object> getValue(String key) {
 		return cacheData.get(key);
 	}

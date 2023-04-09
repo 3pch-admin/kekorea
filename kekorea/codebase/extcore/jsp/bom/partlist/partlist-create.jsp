@@ -555,32 +555,38 @@ String engType = (String) request.getAttribute("engType");
 			const item = addRows[i];
 			const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
 			if (isNull(item.partNo)) {
+				alert("부품번호를 입력하세요.\n수배표 탭으로 이동하여 확인 해주세요.");
 				AUIGrid.showToastMessage(myGridID, rowIndex, 3, "부품번호를 입력하세요.");
 				return false;
 			}
 
 			if (item.check === "NG") {
+				alert("ERP에 등록된 부품번호가 아닙니다.\n수배표 탭으로 이동하여 확인 해주세요.");
 				AUIGrid.showToastMessage(myGridID, rowIndex, 0, "ERP에 등록된 부품번호가 아닙니다.");
 				return false;
 			}
 
 			if (isNull(item.lotNo)) {
+				alert("LOT NO를 입력하세요.\n수배표 탭으로 이동하여 확인 해주세요.");
 				AUIGrid.showToastMessage(myGridID, rowIndex, 1, "LOT NO를 입력하세요.");
 				return false;
 			}
 
 			if (item.lotNo === 0) {
-				AUIGrid.showToastMessage(myGridID, rowIndex, 1, "LOT NO를 입력하세요.");
+				alert("LOT NO의 값은 0이 될 수 없습니다.\n수배표 탭으로 이동하여 확인 해주세요.");
+				AUIGrid.showToastMessage(myGridID, rowIndex, 1, "LOT NO의 값은 0이 될 수 없습니다.");
 				return false;
 			}
 
 			if (isNull(item.quantity)) {
+				alert("수량을 입력하세요.\n수배표 탭으로 이동하여 확인 해주세요.");
 				AUIGrid.showToastMessage(myGridID, rowIndex, 8, "수량을 입력하세요.");
 				return false;
 			}
 
 			if (item.quantity === 0) {
-				AUIGrid.showToastMessage(myGridID, rowIndex, 8, "수량은 0을 입력 할 수 없습니다.");
+				alert("수량의 값은 0이 될 수 없습니다.\n수배표 탭으로 이동하여 확인 해주세요.");
+				AUIGrid.showToastMessage(myGridID, rowIndex, 8, "수량의 값은 0이 될 수 없습니다.");
 				return false;
 			}
 		}

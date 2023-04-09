@@ -1405,7 +1405,6 @@ public class ErpHelper {
 
 			String cacheKey = partNo + quantity;
 			CacheProcessor cache = new CacheProcessor();
-			System.out.println("캐시 데이터 확인 해보기 = " + cache.get());
 			Map<String, Object> cacheData = cache.getValue(cacheKey);
 			if (cacheData == null) {
 				con = dataSource.getConnection();
@@ -1453,6 +1452,7 @@ public class ErpHelper {
 
 					cache.setValue(cacheKey, result);
 				} else {
+					System.out.println("캐싱 데이터로 가져오는건지?");
 					result = cache.getValue(cacheKey);
 				}
 			}
