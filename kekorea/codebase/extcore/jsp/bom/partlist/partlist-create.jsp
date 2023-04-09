@@ -194,7 +194,7 @@ String engType = (String) request.getAttribute("engType");
 				headerText : "체크",
 				dataType : "string",
 				width : 80,
-// 				editable : false,
+				editable : false,
 			}, {
 				dataField : "lotNo",
 				headerText : "LOT_NO",
@@ -210,7 +210,7 @@ String engType = (String) request.getAttribute("engType");
 				headerText : "UNIT NAME",
 				dataType : "string",
 				width : 120,
-// 				editable : false,
+				editable : false,
 			}, {
 				dataField : "partNo",
 				headerText : "부품번호",
@@ -221,13 +221,13 @@ String engType = (String) request.getAttribute("engType");
 				headerText : "부품명",
 				dataType : "string",
 				width : 200,
-// 				editable : false,
+				editable : false,
 			}, {
 				dataField : "standard",
 				headerText : "규격",
 				dataType : "string",
 				width : 250,
-// 				editable : false,
+				editable : false,
 			}, {
 				dataField : "maker",
 				headerText : "MAKER",
@@ -253,39 +253,39 @@ String engType = (String) request.getAttribute("engType");
 				headerText : "단위",
 				dataType : "string",
 				width : 80,
-// 				editable : false,
+				editable : false,
 			}, {
 				dataField : "price",
 				headerText : "단가",
 				dataType : "numeric",
 				width : 120,
-// 				editable : false,
+				editable : false,
 			}, {
 				dataField : "currency",
 				headerText : "화폐",
 				dataType : "string",
 				width : 60,
-// 				editable : false,
+				editable : false,
 			}, {
 				dataField : "won",
 				headerText : "원화금액",
 				dataType : "numeric",
 				width : 120,
-// 				editable : false,
+				editable : false,
 			}, {
 				dataField : "partListDate",
 				headerText : "수배일자",
 				dataType : "date",
 				formatString : "yyyy-mm-dd",
 				width : 100,
-// 				editable : false
+				editable : false
 			}, {
 				dataField : "exchangeRate",
 				headerText : "환율",
 				dataType : "numeric",
 				width : 80,
 				formatString : "#,##0.0000",
-// 				editable : false,
+				editable : false,
 			}, {
 				dataField : "referDrawing",
 				headerText : "참고도면",
@@ -336,7 +336,7 @@ String engType = (String) request.getAttribute("engType");
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				readyHandler();
-// 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRow);
 			}
 
@@ -652,7 +652,8 @@ String engType = (String) request.getAttribute("engType");
 			}
 		});
 		selectbox("engType");
-		$("#engType").bindSelectSetValue("<%=engType%>");
+		$("#engType").bindSelectSetValue("<%=engType%>
+	");
 		$("#engType").bindSelectDisabled(true);
 		_createAUIGrid(_columns);
 		_createAUIGrid_(_columns_);
