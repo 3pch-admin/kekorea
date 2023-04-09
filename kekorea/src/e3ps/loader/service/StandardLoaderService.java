@@ -188,16 +188,18 @@ public class StandardLoaderService extends StandardManager implements LoaderServ
 			for (int i = 0; i < codes.length; i++) {
 				String code = codes[i];
 				String name = names[i];
-
-				CommonCode taskTypeCode = CommonCode.newCommonCode();
-				taskTypeCode.setName(name);
-				taskTypeCode.setCode(code);
-				taskTypeCode.setCodeType(CommonCodeType.toCommonCodeType("TASK_TYPE"));
-				taskTypeCode.setDescription(name);
-				taskTypeCode.setEnable(true);
-				taskTypeCode.setSort(sort);
-				PersistenceHelper.manager.save(taskTypeCode);
-				sort++;
+				CommonCode taskTypeCode = CommonCodeHelper.manager.getCommonCode(code, "TASK_TYPE");
+				if (taskTypeCode == null) {
+					taskTypeCode = CommonCode.newCommonCode();
+					taskTypeCode.setName(name);
+					taskTypeCode.setCode(code);
+					taskTypeCode.setCodeType(CommonCodeType.toCommonCodeType("TASK_TYPE"));
+					taskTypeCode.setDescription(name);
+					taskTypeCode.setEnable(true);
+					taskTypeCode.setSort(sort);
+					PersistenceHelper.manager.save(taskTypeCode);
+					sort++;
+				}
 			}
 
 			trs.commit();
@@ -224,15 +226,18 @@ public class StandardLoaderService extends StandardManager implements LoaderServ
 			for (int i = 0; i < names.length; i++) {
 				String name = names[i];
 
-				CommonCode projectTypeCode = CommonCode.newCommonCode();
-				projectTypeCode.setName(name);
-				projectTypeCode.setCode(name);
-				projectTypeCode.setCodeType(CommonCodeType.toCommonCodeType("PROJECT_TYPE"));
-				projectTypeCode.setDescription(name);
-				projectTypeCode.setEnable(true);
-				projectTypeCode.setSort(sort);
-				PersistenceHelper.manager.save(projectTypeCode);
-				sort++;
+				CommonCode projectTypeCode = CommonCodeHelper.manager.getCommonCode(name, "PROJECT_TYPE");
+				if (projectTypeCode == null) {
+					projectTypeCode = CommonCode.newCommonCode();
+					projectTypeCode.setName(name);
+					projectTypeCode.setCode(name);
+					projectTypeCode.setCodeType(CommonCodeType.toCommonCodeType("PROJECT_TYPE"));
+					projectTypeCode.setDescription(name);
+					projectTypeCode.setEnable(true);
+					projectTypeCode.setSort(sort);
+					PersistenceHelper.manager.save(projectTypeCode);
+					sort++;
+				}
 			}
 
 			trs.commit();
