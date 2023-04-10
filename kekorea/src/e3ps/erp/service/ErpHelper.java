@@ -1409,7 +1409,7 @@ public class ErpHelper {
 			if (cacheData == null) {
 				con = dataSource.getConnection();
 				st = con.createStatement();
-
+				
 				StringBuffer sql = new StringBuffer();
 				sql.append("SELECT ITEMSEQ, ITEMNAME, SPEC");
 				sql.append(" FROM KEK_VDAITEM");

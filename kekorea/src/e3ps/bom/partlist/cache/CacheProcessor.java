@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class CacheProcessor {
 
-	private HashMap<String, Map<String, Object>> cacheData;
+	private static HashMap<String, Map<String, Object>> cacheData;
 	private long expirationTime;
 
 	public CacheProcessor() {

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
@@ -138,21 +139,25 @@ public class WorkOrderController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "도면일람표 비교 페이지")
+	@Description(value = "도면일람표 비교 페이지 공통 함수")
 	@GetMapping(value = "/compare")
-	public ModelAndView compare(@RequestParam String oid, @RequestParam String _oid,
-			@RequestParam(required = false) String compareKey, @RequestParam(required = false) String sort)
-			throws Exception {
+	public ModelAndView compare(@RequestParam String oid, @RequestParam String compareArr) throws Exception {
 		ModelAndView model = new ModelAndView();
 		Project p1 = (Project) CommonUtils.getObject(oid);
-		Project p2 = (Project) CommonUtils.getObject(_oid);
-		ArrayList<Map<String, Object>> data = WorkOrderHelper.manager.compare(p1, p2, compareKey, sort);
+
+		String[] compareOids = compareArr.split(",");
+		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
+		for (String _oid : compareOids) {
+			Project project = (Project) CommonUtils.getObject(_oid);
+			destList.add(project);
+		}
+
+		ArrayList<Map<String, Object>> data = WorkOrderHelper.manager.compare(p1, destList);
 		model.addObject("p1", p1);
-		model.addObject("p2", p2);
 		model.addObject("oid", oid);
-		model.addObject("_oid", _oid);
+		model.addObject("destList", destList);
 		model.addObject("data", JSONArray.fromObject(data));
-		model.setViewName("popup:/bom/tbom/tbom-compare");
+		model.setViewName("popup:/epm/workOrder/workOrder-compare");
 		return model;
 	}
 }
