@@ -21,6 +21,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.bom.partlist.dto.PartListDTO;
+import e3ps.bom.tbom.TBOMData;
+import e3ps.bom.tbom.TBOMMaster;
+import e3ps.bom.tbom.TBOMMasterDataLink;
+import e3ps.bom.tbom.TBOMMasterProjectLink;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
@@ -474,9 +479,63 @@ public class WorkOrderHelper {
 	 * 도면 일람표 비교 기능
 	 */
 	public ArrayList<Map<String, Object>> compare(Project p1, ArrayList<Project> destList) throws Exception {
+		ArrayList<Map<String, Object>> list = integratedData(p1);
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
-		
-		
-		return null;
+
+		return mergedList;
+	}
+
+	/**
+	 * 비교할 데이터 수집
+	 */
+	private ArrayList<Map<String, Object>> integratedData(Project project) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WorkOrder.class, true);
+		int idx_link = query.appendClassList(WorkOrderProjectLink.class, false);
+		int idx_p = query.appendClassList(Project.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, WorkOrder.class, WorkOrderProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toInnerJoin(query, Project.class, WorkOrderProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleBObjectRef.key.id", idx_p, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, WorkOrderProjectLink.class, "roleBObjectRef.key.id", project);
+
+		QuerySpecUtils.toOrderBy(query, idx, WorkOrder.class, WorkOrder.CREATE_TIMESTAMP, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WorkOrder workOrder = (WorkOrder) obj[0];
+
+			QuerySpec _query = new QuerySpec();
+			int _idx = _query.appendClassList(TBOMMaster.class, false);
+			int _idx_link = _query.appendClassList(TBOMMasterDataLink.class, true);
+			int idx_data = _query.appendClassList(TBOMData.class, false);
+			QuerySpecUtils.toInnerJoin(_query, TBOMMaster.class, TBOMMasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleAObjectRef.key.id", _idx, _idx_link);
+			QuerySpecUtils.toInnerJoin(_query, TBOMData.class, TBOMMasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleBObjectRef.key.id", idx_data, _idx_link);
+			QuerySpecUtils.toEqualsAnd(_query, _idx_link, TBOMMasterDataLink.class, "roleAObjectRef.key.id", master);
+			QuerySpecUtils.toOrderBy(_query, idx_data, TBOMData.class, TBOMData.SORT, false);
+			QueryResult qr = PersistenceHelper.manager.find(_query);
+			while (qr.hasMoreElements()) {
+				Object[] oo = (Object[]) qr.nextElement();
+				TBOMMasterDataLink link = (TBOMMasterDataLink) oo[0];
+				TBOMData data = link.getData();
+				Map<String, Object> map = new HashMap<>();
+				map.put("lotNo", String.valueOf(data.getLotNo()));
+				map.put("code", data.getKePart().getMaster().getCode());
+				map.put("name", data.getKePart().getMaster().getName());
+				map.put("model", data.getKePart().getMaster().getModel());
+				map.put("keNumber", data.getKePart().getMaster().getKeNumber());
+				map.put("qty", data.getQty());
+				map.put("unit", data.getUnit());
+				map.put("provide", data.getProvide());
+				map.put("discontinue", data.getDiscontinue());
+				list.add(map);
+			}
+		}
+		return list;
 	}
 }

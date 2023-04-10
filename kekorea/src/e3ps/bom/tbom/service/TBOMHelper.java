@@ -14,7 +14,6 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.common.util.StringUtils;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import e3ps.project.Project;
@@ -227,7 +226,6 @@ public class TBOMHelper {
 	public ArrayList<Map<String, Object>> compare(Project p1, ArrayList<Project> destList) throws Exception {
 
 		ArrayList<Map<String, Object>> list = integratedData(p1);
-
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
 
 		// list1의 데이터를 먼저 추가

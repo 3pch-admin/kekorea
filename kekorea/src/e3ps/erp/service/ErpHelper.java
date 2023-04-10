@@ -35,6 +35,16 @@ public class ErpHelper {
 
 	private static final BasicDataSource dataSource = ErpConnectionPool.getDataSource();
 
+	/**
+	 * 캐시 처리
+	 */
+	private static HashMap<String, Map<String, Object>> cacheManager = null;
+	static {
+		if (cacheManager == null) {
+			cacheManager = new HashMap<>();
+		}
+	}
+
 	public String[] getKEK_VDAItem(String yCode) throws Exception {
 		String[] values = new String[2];
 
@@ -1404,12 +1414,11 @@ public class ErpHelper {
 		try {
 
 			String cacheKey = partNo + quantity;
-			CacheProcessor cache = new CacheProcessor();
-			Map<String, Object> cacheData = cache.getValue(cacheKey);
+			Map<String, Object> cacheData = cacheManager.get(cacheKey);
 			if (cacheData == null) {
 				con = dataSource.getConnection();
 				st = con.createStatement();
-				
+
 				StringBuffer sql = new StringBuffer();
 				sql.append("SELECT ITEMSEQ, ITEMNAME, SPEC");
 				sql.append(" FROM KEK_VDAITEM");
@@ -1450,10 +1459,10 @@ public class ErpHelper {
 					result.put("partName", itemName);
 					result.put("won", quantity * price * exchangeRate);
 
-					cache.setValue(cacheKey, result);
+					cacheManager.put(cacheKey, result);
 				} else {
 					System.out.println("캐싱 데이터로 가져오는건지?");
-					result = cache.getValue(cacheKey);
+					result = cacheManager.get(cacheKey);
 				}
 			}
 		} catch (Exception e) {
