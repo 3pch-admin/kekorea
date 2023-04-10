@@ -20,7 +20,7 @@ import wt.services.ServiceFactory;
 
 public class ErpHelper {
 
-	public static final boolean isOperation = false;
+	public static final boolean isOperation = true;
 
 	public static final String OUTPUT_PATH = "";
 
