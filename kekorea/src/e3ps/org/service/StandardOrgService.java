@@ -16,7 +16,6 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.org.Department;
 import e3ps.org.People;
-import e3ps.org.PeopleInstallLink;
 import e3ps.org.PeopleMakLink;
 import e3ps.org.PeopleWTUserLink;
 import e3ps.org.dto.UserDTO;
@@ -25,21 +24,15 @@ import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.fc.ReferenceFactory;
 import wt.federation.PrincipalManager.DirContext;
-import wt.org.OrganizationServicesHelper;
 import wt.org.OrganizationServicesMgr;
-import wt.org.WTGroup;
 import wt.org.WTUser;
 import wt.ownership.Ownership;
 import wt.pom.Transaction;
-import wt.query.ClassAttribute;
-import wt.query.OrderBy;
 import wt.query.QuerySpec;
-import wt.query.SearchCondition;
 import wt.services.ManagerException;
 import wt.services.StandardManager;
 import wt.session.SessionContext;
 import wt.session.SessionHelper;
-import wt.util.WTAttributeNameIfc;
 import wt.util.WTException;
 import wt.util.WTProperties;
 
@@ -412,265 +405,6 @@ public class StandardOrgService extends StandardManager implements OrgService {
 	}
 
 	@Override
-	public Map<String, Object> setResignAction(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<String> list = (List<String>) param.get("list");
-		People user = null;
-		ReferenceFactory rf = new ReferenceFactory();
-		WTGroup group = null;
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			group = OrganizationServicesMgr.getGroup("국제엘렉트릭코리아 퇴사자 그룹");
-
-			if (group != null) {
-				System.out.println("그룹이 존재 합니다.");
-			} else {
-				group = WTGroup.newWTGroup("국제엘렉트릭코리아 퇴사자 그룹");
-				OrganizationServicesHelper.manager.savePrincipal(group);
-			}
-
-			for (String oid : list) {
-				user = (People) rf.getReference(oid).getObject();
-				user.setResign(true);
-				PersistenceHelper.manager.modify(user);
-
-				boolean success = OrganizationServicesHelper.manager.addMember(group, user.getWtUser());
-				if (success) {
-					System.out.println("퇴사자 그룹에 할당된 사용자 이름 : " + user.getWtUser().getFullName() + ", 아이디 :  "
-							+ user.getWtUser().getName());
-				}
-			}
-
-			map.put("msg", "선택한 사용자들의 퇴사 처리가 되었습니다.");
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			map.put("msg", "사용자 퇴사 처리 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-		return map;
-	}
-
-	@Override
-	public Map<String, Object> addUserAction(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-		String oid = (String) param.get("oid");
-		People user = null;
-		ReferenceFactory rf = new ReferenceFactory();
-		ArrayList<String[]> data = new ArrayList<String[]>();
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			user = (People) rf.getReference(oid).getObject();
-			UserViewData udata = new UserViewData(user);
-			// 0 oid, 1 number, 2 name, 3 version, 4 state, 5 creator, 6 createdate
-			String[] s = new String[] { udata.oid, udata.name, udata.id, udata.duty, udata.departmentName, udata.email,
-					udata.resign, udata.createDate };
-			data.add(s);
-
-			map.put("list", data);
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			map.put("msg", "사용자 추가 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요");
-			map.put("url", "/Windchill/plm/approval/addUser");
-			e.printStackTrace();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-		return map;
-	}
-
-	@Override
-	public Map<String, Object> modifyUserAction(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-		String oid = (String) param.get("oid");
-		String name = (String) param.get("name");
-		String rank = (String) param.get("rank");
-		String duty = (String) param.get("duty");
-		String email = (String) param.get("email");
-		People user = null;
-		ReferenceFactory rf = new ReferenceFactory();
-		WTUser wtuser = null;
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			user = (People) rf.getReference(oid).getObject();
-			user.setName(name);
-			user.setDuty(duty);
-			user.setEmail(email + email_prefix);
-
-			wtuser = user.getWtUser();
-			wtuser.setFullName(name);
-			wtuser.setEMail(email + email_prefix);
-			PersistenceHelper.manager.modify(wtuser);
-
-			user.setWtUser(wtuser);
-
-			PersistenceHelper.manager.modify(user);
-
-			map.put("msg", "사용자 정보가 수정 되었습니다.");
-			map.put("url", "/Windchill/plm/org/viewUser?oid=" + oid);
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			map.put("msg", "사용자 정보 수정 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요");
-			map.put("url", "/Windchill/plm/org/modifyUser?oid=" + oid);
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-		return map;
-	}
-
-	@Override
-	public Map<String, Object> setDutyAction(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<String> list = (List<String>) param.get("list");
-		String duty = (String) param.get("duty");
-		ReferenceFactory rf = new ReferenceFactory();
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			for (String oid : list) {
-				People user = (People) rf.getReference(oid).getObject();
-				user.setDuty(duty);
-				PersistenceHelper.manager.modify(user);
-			}
-
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-
-		return map;
-	}
-
-	@Override
-	public Map<String, Object> setDeptAction(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<String> list = (List<String>) param.get("list");
-		String doid = (String) param.get("doid");
-		ReferenceFactory rf = new ReferenceFactory();
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			for (String oid : list) {
-				People user = (People) rf.getReference(oid).getObject();
-				Department dept = null;
-				if (!StringUtils.isNull(doid)) {
-					dept = (Department) rf.getReference(doid).getObject();
-				}
-				user.setDepartment(dept);
-				PersistenceHelper.manager.modify(user);
-			}
-
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-
-		return map;
-	}
-
-	@Override
-	public void save(WTUser wtuser) throws Exception {
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			People user = People.newPeople();
-			user.setWtUser(wtuser);
-			user.setName(wtuser.getFullName());
-			user.setId(wtuser.getName());
-			user.setEmail(wtuser.getEMail());
-			user.setDepartment(OrgHelper.manager.getRoot());
-			user.setDuty("사원");
-			PersistenceHelper.manager.save(user);
-
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			trs.rollback();
-			throw e;
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-	}
-
-	@Override
-	public void modify(WTUser wtuser) throws Exception {
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			People user = OrgHelper.manager.getUser(wtuser.getName());
-			user.setName(wtuser.getFullName());
-			user.setId(wtuser.getName());
-			user.setEmail(wtuser.getEMail());
-			PersistenceHelper.manager.modify(user);
-
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			trs.rollback();
-			throw e;
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-	}
-
-	@Override
-	public void save(Map<String, Object> params) throws Exception {
-		ArrayList<Map<String, Object>> editRow = (ArrayList<Map<String, Object>>) params.get("editRows");
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			editRow.forEach(map -> {
-				String name = (String) map.get("name");
-			});
-
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			trs.rollback();
-			throw e;
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-	}
-
-	@Override
 	public void save(HashMap<String, List<UserDTO>> dataMap) throws Exception {
 		List<UserDTO> editRows = dataMap.get("editRows");
 		Transaction trs = new Transaction();
@@ -680,7 +414,6 @@ public class StandardOrgService extends StandardManager implements OrgService {
 			for (UserDTO dto : editRows) {
 				String oid = dto.getOid();
 				String maks = dto.getMak();
-				String installs = dto.getInstall();
 				String email = dto.getEmail();
 				String duty = dto.getDuty();
 				String department_oid = dto.getDepartment_oid();
@@ -698,7 +431,6 @@ public class StandardOrgService extends StandardManager implements OrgService {
 				PersistenceHelper.manager.modify(people);
 
 				ArrayList<PeopleMakLink> makLinks = OrgHelper.manager.getMakLinks(people);
-				ArrayList<PeopleInstallLink> installLinks = OrgHelper.manager.getInstallLinks(people);
 
 				for (PeopleMakLink link : makLinks) {
 					PersistenceHelper.manager.delete(link);
@@ -709,19 +441,6 @@ public class StandardOrgService extends StandardManager implements OrgService {
 					for (String mak : makArray) {
 						CommonCode makCode = CommonCodeHelper.manager.getCommonCode(mak.trim(), "MAK");
 						PeopleMakLink link = PeopleMakLink.newPeopleMakLink(people, makCode);
-						PersistenceHelper.manager.save(link);
-					}
-				}
-
-				for (PeopleInstallLink link : installLinks) {
-					PersistenceHelper.manager.delete(link);
-				}
-
-				if (!StringUtils.isNull(installs)) {
-					String[] installArray = installs.split(",");
-					for (String install : installArray) {
-						CommonCode installCode = CommonCodeHelper.manager.getCommonCode(install.trim(), "INSTALL");
-						PeopleInstallLink link = PeopleInstallLink.newPeopleInstallLink(people, installCode);
 						PersistenceHelper.manager.save(link);
 					}
 				}

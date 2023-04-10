@@ -135,4 +135,22 @@ public class ErpController extends BaseController {
 		}
 		return result;
 	}
+
+	@Description(value = "YCODE로 ERP 부품정보 가져오기")
+	@GetMapping(value = "/getErpItemByPartNo")
+	@ResponseBody
+	public Map<String, Object> getErpItemByPartNo(@RequestParam String partNo) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			if (ErpHelper.isOperation) {
+				result = ErpHelper.manager.getErpItemByPartNo(partNo);
+			}
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("msg", e.toString());
+			result.put("result", FAIL);
+		}
+		return result;
+	}
 }

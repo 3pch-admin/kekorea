@@ -1462,8 +1462,6 @@ public class ErpHelper {
 					result.put("standard", spec);
 					result.put("partName", itemName);
 					result.put("won", quantity * price * exchangeRate);
-
-					cacheManager.put(cacheKey, result);
 				}
 			} else {
 				System.out.println("캐싱 데이터로 가져오는건지?");
@@ -1542,10 +1540,10 @@ public class ErpHelper {
 				String currency = "";
 				int price = 0;
 				if (_rs.next()) {
-					maker = (String) _rs.getString("MakerName");
-					customer = (String) _rs.getString("CustName");
-					unit = (String) _rs.getString("UnitName");
-					currency = (String) _rs.getString("CurrName");
+					maker = (String) _rs.getString("makerName");
+					customer = (String) _rs.getString("custName");
+					unit = (String) _rs.getString("unitName");
+					currency = (String) _rs.getString("currName");
 					price = (int) _rs.getInt("price");
 				}
 
@@ -1556,6 +1554,95 @@ public class ErpHelper {
 				result.put("unit", unit);
 				result.put("price", price);
 				result.put("currency", currency);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (con != null) {
+				con.close();
+			}
+
+			if (st != null) {
+				st.close();
+			}
+
+			if (rs != null) {
+				rs.close();
+			}
+
+			if (_rs != null) {
+				_rs.close();
+			}
+		} finally {
+			if (con != null) {
+				con.close();
+			}
+
+			if (st != null) {
+				st.close();
+			}
+
+			if (rs != null) {
+				rs.close();
+			}
+
+			if (_rs != null) {
+				_rs.close();
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * PDM에 등록된 데이터 YCODE로 ERP에서 추가 정보 가져오기 ㄴ
+	 */
+	public Map<String, Object> getErpItemByPartNo(String partNo) throws Exception {
+		Map<String, Object> result = new HashMap<>();
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+		ResultSet _rs = null;
+		try {
+
+			con = dataSource.getConnection();
+			st = con.createStatement();
+
+			StringBuffer sql = new StringBuffer();
+			sql.append("SELECT ITEMSEQ, ITEMNAME, SPEC");
+			sql.append(" FROM KEK_VDAITEM");
+			sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
+
+			rs = st.executeQuery(sql.toString());
+			if (rs.next()) {
+				int itemSeq = (int) rs.getInt(1);
+				String itemName = (String) rs.getString(2);
+				String spec = (String) rs.getString(3);
+
+				StringBuffer sb = new StringBuffer();
+				sb.append("EXEC KEK_SPLMBASEGETPRICE '" + itemSeq + "', '', '1'");
+				_rs = st.executeQuery(sb.toString());
+
+				String maker = "";
+				String customer = "";
+				String unit = "";
+				String currency = "";
+				int price = 0;
+				Integer exchangeRate = 0;
+				if (_rs.next()) {
+					maker = (String) _rs.getString("makerName");
+					customer = (String) _rs.getString("custName");
+					unit = (String) _rs.getString("unitName");
+					currency = (String) _rs.getString("currName");
+					price = (int) _rs.getInt("price");
+					exchangeRate = (int) _rs.getInt("exRate");
+				}
+				result.put("maker", maker);
+				result.put("customer", customer);
+				result.put("unit", unit);
+				result.put("currency", currency);
+				result.put("price", price);
+				result.put("exchangeRate", exchangeRate);
+				result.put("standard", spec);
+				result.put("partName", itemName);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -521,15 +521,15 @@ public class WorkOrderHelper {
 			while (qr.hasMoreElements()) {
 				Object[] oo = (Object[]) qr.nextElement();
 				WorkOrderDataLink link = (WorkOrderDataLink) oo[0];
-				Persistable data = link.getData();
 				Map<String, Object> map = new HashMap();
 
 				map.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("dataType", link.getDataType());
 				map.put("lotNo", link.getLotNo());
-				map.put("rev", link.getRev());
+				map.put("rev", link.getRev()); // 등록당시
 				map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
 				map.put("note", link.getNote());
+				
 				Persistable per = link.getData();
 				if (per instanceof KeDrawing) {
 					KeDrawing keDrawing = (KeDrawing) per;
