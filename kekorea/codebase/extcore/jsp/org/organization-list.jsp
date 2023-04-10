@@ -10,7 +10,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) request.getAttribute("list");
 JSONArray maks = (JSONArray) request.getAttribute("maks");
-JSONArray installs = (JSONArray) request.getAttribute("installs");
 JSONArray departments = JSONArray.fromObject(list);
 %>
 <!DOCTYPE html>

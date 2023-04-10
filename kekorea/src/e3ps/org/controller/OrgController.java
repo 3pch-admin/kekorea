@@ -40,10 +40,8 @@ public class OrgController extends BaseController {
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		ArrayList<HashMap<String, String>> list = OrgHelper.manager.getDepartmentMap();
 		JSONArray maks = CommonCodeHelper.manager.parseJson("MAK");
-		JSONArray installs = CommonCodeHelper.manager.parseJson("INSTALL");
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("maks", maks);
-		model.addObject("installs", installs);
 		model.addObject("list", list);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/org/organization-list.jsp");
