@@ -1457,9 +1457,9 @@ public class OrgHelper {
 		}
 		parentNode.put("children", children);
 	}
-	
+
 	/**
-	 * 결재선 지정시 부서별 사용자 검색 
+	 * 결재선 지정시 부서별 사용자 검색
 	 */
 	public ArrayList<UserDTO> loadDepartmentUser(String oid) throws Exception {
 		ArrayList<UserDTO> list = new ArrayList<>();
@@ -1480,9 +1480,9 @@ public class OrgHelper {
 				WTAttributeNameIfc.ID_NAME, idx, idx_w);
 		QuerySpecUtils.toInnerJoin(query, People.class, Department.class, "departmentReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_d);
+		QuerySpecUtils.toBooleanAnd(query, idx, People.class, People.RESIGN, false);
 
 		query.appendAnd();
-
 		query.appendOpenParen();
 		SearchCondition sc = new SearchCondition(People.class, "departmentReference.key.id", "=",
 				department.getPersistInfo().getObjectIdentifier().getId());

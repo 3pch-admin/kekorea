@@ -500,6 +500,13 @@ public class StandardPartlistService extends StandardManager implements Partlist
 			master.setTotalPrice(totalPrice);
 			PersistenceHelper.manager.modify(master);
 
+			for (String secondary : secondarys) {
+				ApplicationData applicationData = ApplicationData.newApplicationData(master);
+				applicationData.setRole(ContentRoleType.SECONDARY);
+				PersistenceHelper.manager.save(applicationData);
+				ContentServerHelper.service.updateContent(master, applicationData, secondary);
+			}
+
 			// 결재시작
 			if (approvalRows.size() > 0) {
 				WorkspaceHelper.service.register(master, agreeRows, approvalRows, receiveRows);

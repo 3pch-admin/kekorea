@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
@@ -54,13 +53,6 @@ public class WorkOrderController extends BaseController {
 		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
 		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
 
-		org.json.JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
-		org.json.JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
-		org.json.JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
-
-		model.addObject("elecs", elecs);
-		model.addObject("softs", softs);
-		model.addObject("machines", machines);
 		model.addObject("list", list);
 		model.addObject("customers", customers);
 		model.addObject("projectTypes", projectTypes);

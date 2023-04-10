@@ -612,6 +612,7 @@ String engType = (String) request.getAttribute("engType");
 		params.progress = Number(progress);
 		params.secondarys = toArray("secondarys");
 		toRegister(params, _addRows_);
+		console.log(params);
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);

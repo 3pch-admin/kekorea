@@ -94,7 +94,8 @@
 					</select>
 				</td>
 				<th>버전</th>
-				<td colspan="5" class="indent5">
+				<td colspan="5">
+					&nbsp;
 					<div class="pretty p-switch">
 						<input type="radio" name="latest" value="true" checked="checked">
 						<div class="state p-success">
@@ -103,6 +104,7 @@
 							</label>
 						</div>
 					</div>
+					&nbsp;
 					<div class="pretty p-switch">
 						<input type="radio" name="latest" value="">
 						<div class="state p-success">
