@@ -433,7 +433,7 @@ public class KeDrawingHelper {
 		int idx_k = query.appendClassList(KeDrawing.class, true);
 		QuerySpecUtils.toInnerJoin(query, KeDrawingMaster.class, KeDrawing.class, WTAttributeNameIfc.ID_NAME,
 				"masterReference.key.id", idx, idx_k);
-		QuerySpecUtils.toEqualsAnd(query, idx_k, KeDrawing.class, KeDrawing.VERSION, rev);
+		QuerySpecUtils.toEqualsAnd(query, idx_k, KeDrawing.class, KeDrawing.VERSION, Integer.parseInt(rev));
 		QuerySpecUtils.toEqualsAnd(query, idx, KeDrawingMaster.class, KeDrawingMaster.KE_NUMBER, number);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {

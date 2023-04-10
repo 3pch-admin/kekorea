@@ -20,6 +20,8 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "name", type = String.class, javaDoc = "즐겨 찾기 이름", constraints = @PropertyConstraints(required = true)),
 
+				@GeneratedProperty(name = "bookMarkType", type = String.class, javaDoc = "오픈 타입, 인페이지 OR 팝업", constraints = @PropertyConstraints(required = true)),
+
 				@GeneratedProperty(name = "description", type = String.class, javaDoc = "즐겨 찾기 설명", constraints = @PropertyConstraints(upperLimit = 2000))
 
 		},
@@ -34,8 +36,7 @@ import wt.util.WTException;
 
 						myRole = @MyRole(name = "bookMark", cardinality = Cardinality.DEFAULT))
 
-		}
-)
+		})
 public class Bookmark extends _Bookmark {
 	static final long serialVersionUID = 1;
 

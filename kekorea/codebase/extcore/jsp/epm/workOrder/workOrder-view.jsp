@@ -132,10 +132,10 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 						let url;
 						if (doid.indexOf("KeDrawing") > -1) {
 							url = getCallUrl("/keDrawing/viewByNumberAndRev?number=" + number + "&rev=" + rev);
+							popup(url, 1400, 700);
 						} else {
 							url = getCallUrl("/project/info?oid=" + oid);
 						}
-						popup(url);
 					}
 				},
 			}, {
@@ -161,10 +161,10 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 						let url;
 						if (doid.indexOf("KeDrawing") > -1) {
 							url = getCallUrl("/keDrawing/viewByNumberAndRev?number=" + number + "&rev=" + current);
+							popup(url, 1400, 700);
 						} else {
 							url = getCallUrl("/project/info?oid=" + oid);
 						}
-						popup(url);
 					}
 				},
 			}, {

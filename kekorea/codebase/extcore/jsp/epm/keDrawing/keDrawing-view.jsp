@@ -77,11 +77,15 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			</tr>
 			<tr>
 				<th class="lb">도면파일</th>
-				<td class="indent5" colspan="3">
+				<td class="indent5">
 					<a href="<%=primarys[5]%>">
 						<span style="position: relative; bottom: 2px;"><%=primarys[2]%></span>
 						<img src="<%=primarys[4]%>" style="position: relative; top: 1px;">
 					</a>
+				</td>
+				<th class="lb">개정사유</th>
+				<td class="indent5">
+					<%=dto.getNote()%>
 				</td>
 			</tr>
 			<tr>
@@ -160,7 +164,6 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 							headerText : "KEK 작번",
 							dataType : "string",
 							width : 130,
-							style : "underline",
 							filter : {
 								showIcon : true,
 								inline : true
@@ -170,7 +173,6 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 							headerText : "KE 작번",
 							dataType : "string",
 							width : 130,
-							style : "underline",
 							filter : {
 								showIcon : true,
 								inline : true
@@ -189,7 +191,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 							headerText : "작업 내용",
 							dataType : "string",
 							width : 450,
-							style : "left indent10",
+							style : "aui-left",
 							filter : {
 								showIcon : true,
 								inline : true
@@ -293,15 +295,14 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 								showInlineFilter : true,
 								filterLayerWidth : 320,
 								filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-<<<<<<< HEAD
 								fixedColumnCount : 1,
-=======
->>>>>>> 3cca5440853f3a20ba45ff32fea07c0201933125
 								cellMergePolicy : "withNull",
 								enableCellMerge : true,
 							}
 							_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-							AUIGrid.setGridData(_myGridID, <%=data%>);
+							AUIGrid.setGridData(_myGridID,
+					<%=data%>
+						);
 						}
 					</script>
 				</td>
@@ -332,15 +333,6 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				headerText : "DRAWING TITLE",
 				dataType : "string",
 				style : "aui-left",
-				renderer : {
-					type : "LinkRenderer",
-					baseUrl : "javascript",
-					jsCallback : function(rowIndex, columnIndex, value, item) {
-						const oid = item.oid;
-						const url = getCallUrl("/keDrawing/view?oid=" + oid);
-						popup(url, 1100, 600);
-					}
-				},
 				filter : {
 					showIcon : true,
 					inline : true
@@ -356,7 +348,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 					jsCallback : function(rowIndex, columnIndex, value, item) {
 						const oid = item.oid;
 						const url = getCallUrl("/keDrawing/view?oid=" + oid);
-						popup(url, 1100, 600);
+						popup(url, 1400, 700);
 					}
 				},
 				filter : {

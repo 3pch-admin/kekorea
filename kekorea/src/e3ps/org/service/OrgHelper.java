@@ -9,6 +9,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.org.Bookmark;
 import e3ps.org.Department;
 import e3ps.org.People;
 import e3ps.org.PeopleMakLink;
@@ -27,12 +28,6 @@ import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
 
 public class OrgHelper {
-
-	public static final String[] dutys = new String[] { "사장", "전무", "수석연구원", "책임연구원", "선임연구원", "전임연구원", "주임연구원", "연구원",
-			"상무", "상무(보)", "차장", "부장" };
-
-	public static final String[] ranks = new String[] { "사장", "전무", "수석연구원", "책임연구원", "선임연구원", "전임연구원", "주임연구원", "연구원",
-			"상무", "상무(보)", "차장", "부장" };
 
 	public static final OrgService service = ServiceFactory.getService(OrgService.class);
 	public static final OrgHelper manager = new OrgHelper();
@@ -402,8 +397,27 @@ public class OrgHelper {
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
-
 		return map;
+	}
+
+	/**
+	 * 사용자별 즐겨찾기 가져오기
+	 */
+	public ArrayList<Bookmark> getUserBookmark() throws Exception {
+		ArrayList<Bookmark> list = new ArrayList<Bookmark>();
+		WTUser sessionUser = CommonUtils.sessionUser();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Bookmark.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, Bookmark.class, "wtUserReference.key.id", sessionUser);
+		QuerySpecUtils.toOrderBy(query, idx, Bookmark.class, Bookmark.CREATE_TIMESTAMP, true);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Bookmark bookMark = (Bookmark) obj[0];
+			list.add(bookMark);
+		}
+		return list;
 	}
 
 }
