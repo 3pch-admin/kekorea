@@ -237,13 +237,29 @@ public class MeetingController extends BaseController {
 	public Map<String, Object> getContent(@RequestParam String oid) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			String content = MeetingHelper.manager.getContent(oid);
+			String content = MeetingHelper.manager.getContent(oid);System.out.println(content);
 			result.put("content", content);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
 		}
+		return result;
+	}
+
+	@Description(value = "회의록 템플릿 내용 가져오기 ajax")
+	@ResponseBody
+	@PostMapping(value = "/getContents")
+	public Map<String, Object> getContents(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();System.out.println("★★★★★★★★★★★★★★★★★★★★★★★★");
+		try {System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+			ArrayList<Map<String, String>> content = MeetingHelper.manager.getContents(oid);
+			result.put("content", content);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);System.out.println("#################################");
+		}System.out.println("&&&&&&&&&&&&&&&&&"+result);
 		return result;
 	}
 
