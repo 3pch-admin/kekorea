@@ -1464,10 +1464,10 @@ public class ErpHelper {
 					result.put("won", quantity * price * exchangeRate);
 
 					cacheManager.put(cacheKey, result);
-				} else {
-					System.out.println("캐싱 데이터로 가져오는건지?");
-					result = cacheManager.get(cacheKey);
 				}
+			} else {
+				System.out.println("캐싱 데이터로 가져오는건지?");
+				result = cacheManager.get(cacheKey);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

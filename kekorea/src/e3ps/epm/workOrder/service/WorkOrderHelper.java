@@ -35,6 +35,7 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
@@ -455,7 +456,7 @@ public class WorkOrderHelper {
 			setCellValue(workbook, sheet.getRow(rowIndex), 1, link.getDataType(), cellStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 2, name, nameStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 3, number, cellStyle);
-			setCellValue(workbook, sheet.getRow(rowIndex), 4, String.valueOf(link.getCurrent()), cellStyle);
+			setCellValue(workbook, sheet.getRow(rowIndex), 4, String.valueOf(link.getRev()), cellStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 5, String.valueOf(version), cellStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 6, String.valueOf(link.getLotNo()), cellStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 7, link.getNote(), cellStyle);
@@ -526,18 +527,18 @@ public class WorkOrderHelper {
 				map.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("dataType", link.getDataType());
 				map.put("lotNo", link.getLotNo());
-				map.put("current", link.getCurrent());
+				map.put("rev", link.getRev());
 				map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
 				map.put("note", link.getNote());
 				Persistable per = link.getData();
 				if (per instanceof KeDrawing) {
 					KeDrawing keDrawing = (KeDrawing) per;
+					KeDrawing latest = KeDrawingHelper.manager.getLatest(keDrawing);
 					map.put("name", keDrawing.getMaster().getName());
 					map.put("number", keDrawing.getMaster().getKeNumber());
-					map.put("rev", keDrawing.getVersion());
+					map.put("current", latest.getVersion()); // 최신버전
 					map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
 					map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
-					map.put("latest", latest.getVersion());
 				}
 				list.add(map);
 			}

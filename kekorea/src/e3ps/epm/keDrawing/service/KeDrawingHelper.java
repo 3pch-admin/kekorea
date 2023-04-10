@@ -300,19 +300,18 @@ public class KeDrawingHelper {
 			map.put("oid", order.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("dataType", link.getDataType());
 			map.put("lotNo", link.getLotNo());
-			map.put("current", link.getCurrent());
+			map.put("rev", link.getRev());
 			map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
 			map.put("note", link.getNote());
 			Persistable per = link.getData();
 			if (per instanceof KeDrawing) {
 				KeDrawing keDrawing = (KeDrawing) per;
+				KeDrawing latest = getLatest(keDrawing);
 				map.put("name", keDrawing.getMaster().getName());
 				map.put("number", keDrawing.getMaster().getKeNumber());
-				map.put("rev", keDrawing.getVersion());
+				map.put("current", latest.getVersion());
 				map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
 				map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
-				KeDrawing latest = getLatest(keDrawing);
-				map.put("latest", latest.getVersion());
 			}
 			list.add(map);
 		}
@@ -405,20 +404,19 @@ public class KeDrawingHelper {
 
 			map.put("dataType", link.getDataType());
 			map.put("lotNo", link.getLotNo());
-			map.put("current", link.getCurrent());
+			map.put("rev", link.getRev());
 			map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
 			map.put("note", link.getNote());
 			Persistable per = link.getData();
 			if (per instanceof KeDrawing) {
 				KeDrawing keDrawing = (KeDrawing) per;
+				KeDrawing latest = getLatest(keDrawing);
 				map.put("oid", keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("name", keDrawing.getMaster().getName());
 				map.put("number", keDrawing.getMaster().getKeNumber());
-				map.put("rev", keDrawing.getVersion());
+				map.put("current", latest.getVersion());
 				map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
 				map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
-				KeDrawing latest = getLatest(keDrawing);
-				map.put("latest", latest.getVersion());
 			}
 			list.add(map);
 		}

@@ -6,9 +6,7 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import wt.content.ContentHolder;
-import wt.content.FormatContentHolder;
 import wt.fc.Item;
-import wt.fc.WTObject;
 import wt.ownership.Ownable;
 import wt.util.WTException;
 
