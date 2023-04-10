@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
+
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
@@ -19,8 +20,6 @@ import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.doc.meeting.MeetingTemplate;
-import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.dto.ProjectDTO;
@@ -29,6 +28,7 @@ import e3ps.project.task.Task;
 import e3ps.project.task.dto.TaskTreeNode;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.task.variable.TaskStateVariable;
+import e3ps.project.task.variable.TaskTypeVariable;
 import e3ps.project.template.Template;
 import e3ps.project.template.service.TemplateHelper;
 import e3ps.project.variable.ProjectStateVariable;
@@ -442,25 +442,48 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				trs.rollback();
 		}
 	}
-	
+
 	@Override
 	public void save(HashMap<String, List<ProjectDTO>> dataMap) throws Exception {
 		List<ProjectDTO> editRows = dataMap.get("editRows");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
-
 			for (ProjectDTO edit : editRows) {
 				String oid = edit.getOid();
 				Double elecPrice = edit.getElecPrice();
 				Double machinePrice = edit.getMachinePrice();
-//				Double totalPrice = edit.getTotalPrice();
-				Project project = (Project) CommonUtils.getObject(oid);
 				
+				Project project = (Project) CommonUtils.getObject(oid);
+//				WTUser wtuser = null;
+				String soft = edit.getSoft();
+				String elec = edit.getElec();
+				String machine = edit.getMachine();
+				
+//				WTUser machineUser = ProjectHelper.manager.getUserType(project, TaskTypeVariable.MACHINE);
+//				WTUser softUser = ProjectHelper.manager.getUserType(project, TaskTypeVariable.SOFT);
+//				WTUser elecUser = ProjectHelper.manager.getUserType(project, TaskTypeVariable.ELEC);
+				WTUser machineUser = (WTUser) CommonUtils.getObject(machine);
+				WTUser softUser = (WTUser) CommonUtils.getObject(soft);
+				WTUser elecUser = (WTUser) CommonUtils.getObject(elec);
+				
+//				wtuser.setFullName(soft);
+//				wtuser.setFullName(machine);
+//				wtuser.setFullName(elec);
 				project.setElecPrice(elecPrice);
 				project.setMachinePrice(machinePrice);
-//				project.setTotalPrice()
+//				edit.setSoft(soft);
+//				edit.setElec(elec);
+//				edit.setMachine(machine);
+//				System.out.println(machineUser.getName());
+//				machineUser.setFullName(machine);
+				
+				machineUser.setName(machine);
+				softUser.setFullName(soft);
+				elecUser.setFullName(elec);
 				PersistenceHelper.manager.modify(project);
+//				System.out.println(machineUser.getName());
+//				System.out.println("저장 후 이름 나오나" + machineUser + elecUser + softUser);
 			}
 
 			trs.commit();

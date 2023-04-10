@@ -372,7 +372,6 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 				}, {
 					dataField : "machine",
 					headerText : "기계 담당자",
-					dataType : "string",
 					width : 100,
 					renderer : {
 						type : "IconRenderer",
@@ -398,7 +397,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
 							for (let i = 0, len = machines.length; i < len; i++) {
-								if (machines[i] == newValue) {
+								if (machines[i]== newValue) {
 									isValid = true;
 									break;
 								}
@@ -422,7 +421,6 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 				}, {
 					dataField : "elec",
 					headerText : "전기 담당자",
-					dataType : "string",
 					width : 100,
 					renderer : {
 						type : "IconRenderer",
@@ -526,14 +524,11 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 					width : 130,
 					formatString : "#,##0",
 					postfix : "원",
-					editRenderer : {
-						type : "InputEditRenderer",
-						onlyNumeric : true,
-					},
 					filter : {
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "machinePrice",
 					headerText : "기계 견적 금액",
@@ -642,8 +637,10 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 				const description = document.getElementById("description").value;
 				const psize = document.getElementById("psize").value;
 				const elecPrice = document.getElementById("elecPrice");
-				const totalPrice = document.getElementById("totalPrice");
 				const machinePrice = document.getElementById("machinePrice");
+				const machine = document.getElementById("machine");
+				const elec = document.getElementById("elec");
+				const soft = document.getElementById("soft");
 				params.kekNumber = kekNumber;
 				params.keNumber = keNumber;
 				params.pdateFrom = pdateFrom;
@@ -663,8 +660,10 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 				params.description = description;
 				params.psize = psize;
 				params.elecPrice = elecPrice;
-				params.totalPrice = totalPrice;
 				params.machinePrice = machinePrice;
+				params.machine= machine;
+				params.soft= soft;
+				params.elec = elec;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -681,16 +680,11 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 				const params = new Object();
 				const url = getCallUrl("/project/save");
 				const editRows = AUIGrid.getEditedRowItems(myGridID);
-				
 				if (editRows.length == 0) {
 					alert("변경된 내용이 없습니다.");
 					return false;
 				}
 				
-				for (let i = 0; i < editRows.length; i++) {
-					const item = editRows[i];
-					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item, item.oid);
-				}
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
 				}

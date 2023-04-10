@@ -416,15 +416,18 @@ public class ProjectController extends BaseController {
 			ArrayList<ProjectDTO> editRow = new ArrayList<>();
 			for(LinkedHashMap<String, Object> edit : editRows) {
 				ProjectDTO dto = mapper.convertValue(edit, ProjectDTO.class);
+				
 				editRow.add(dto);
 			}
 			
 			HashMap<String, List<ProjectDTO>> dataMap = new HashMap<>();
 			dataMap.put("editRows", editRow);
 			ProjectHelper.service.save(dataMap);
+			System.out.println("------------------------------------------" + params);
 			result.put("msg", SAVE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
+			System.out.println("저장실패");
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
