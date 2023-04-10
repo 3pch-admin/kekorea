@@ -21,6 +21,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.bom.partlist.dto.PartListDTO;
+import e3ps.bom.tbom.TBOMData;
+import e3ps.bom.tbom.TBOMMaster;
+import e3ps.bom.tbom.TBOMMasterDataLink;
+import e3ps.bom.tbom.TBOMMasterProjectLink;
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
@@ -29,6 +35,7 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
@@ -449,7 +456,7 @@ public class WorkOrderHelper {
 			setCellValue(workbook, sheet.getRow(rowIndex), 1, link.getDataType(), cellStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 2, name, nameStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 3, number, cellStyle);
-			setCellValue(workbook, sheet.getRow(rowIndex), 4, String.valueOf(link.getCurrent()), cellStyle);
+			setCellValue(workbook, sheet.getRow(rowIndex), 4, String.valueOf(link.getRev()), cellStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 5, String.valueOf(version), cellStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 6, String.valueOf(link.getLotNo()), cellStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 7, link.getNote(), cellStyle);
@@ -471,11 +478,71 @@ public class WorkOrderHelper {
 	}
 
 	/**
-	 * 도면일람표 비교
+	 * 도면 일람표 비교 기능
 	 */
-	public ArrayList<Map<String, Object>> compare(Project p1, Project p2, String compareKey, String sort) {
+	public ArrayList<Map<String, Object>> compare(Project p1, ArrayList<Project> destList) throws Exception {
+		ArrayList<Map<String, Object>> list = integratedData(p1);
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
 
 		return mergedList;
+	}
+
+	/**
+	 * 비교할 데이터 수집
+	 */
+	private ArrayList<Map<String, Object>> integratedData(Project project) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WorkOrder.class, true);
+		int idx_link = query.appendClassList(WorkOrderProjectLink.class, false);
+		int idx_p = query.appendClassList(Project.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, WorkOrder.class, WorkOrderProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toInnerJoin(query, Project.class, WorkOrderProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleBObjectRef.key.id", idx_p, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, WorkOrderProjectLink.class, "roleBObjectRef.key.id", project);
+
+		QuerySpecUtils.toOrderBy(query, idx, WorkOrder.class, WorkOrder.CREATE_TIMESTAMP, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WorkOrder workOrder = (WorkOrder) obj[0];
+
+			QuerySpec _query = new QuerySpec();
+			int _idx = _query.appendClassList(WorkOrder.class, false);
+			int _idx_link = _query.appendClassList(WorkOrderDataLink.class, true);
+			QuerySpecUtils.toInnerJoin(_query, WorkOrder.class, WorkOrderDataLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleAObjectRef.key.id", _idx, _idx_link);
+			QuerySpecUtils.toEqualsAnd(_query, _idx_link, WorkOrderDataLink.class, "roleAObjectRef.key.id", workOrder);
+			QuerySpecUtils.toOrderBy(_query, _idx_link, WorkOrderDataLink.class, WorkOrderDataLink.SORT, true);
+			QueryResult qr = PersistenceHelper.manager.find(_query);
+			while (qr.hasMoreElements()) {
+				Object[] oo = (Object[]) qr.nextElement();
+				WorkOrderDataLink link = (WorkOrderDataLink) oo[0];
+				Persistable data = link.getData();
+				Map<String, Object> map = new HashMap();
+
+				map.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("dataType", link.getDataType());
+				map.put("lotNo", link.getLotNo());
+				map.put("rev", link.getRev());
+				map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
+				map.put("note", link.getNote());
+				Persistable per = link.getData();
+				if (per instanceof KeDrawing) {
+					KeDrawing keDrawing = (KeDrawing) per;
+					KeDrawing latest = KeDrawingHelper.manager.getLatest(keDrawing);
+					map.put("name", keDrawing.getMaster().getName());
+					map.put("number", keDrawing.getMaster().getKeNumber());
+					map.put("current", latest.getVersion()); // 최신버전
+					map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
+					map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
+				}
+				list.add(map);
+			}
+		}
+		return list;
 	}
 }

@@ -56,8 +56,14 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				<th class="lb">수배표 제목</th>
 				<td class="indent5"><%=dto.getName()%></td>
 				<th>설계구분</th>
-				<td class="indent5"><%=dto.getState()%></td>
+				<td class="indent5"><%=dto.getEngType()%></td>
 			</tr>
+			<tr>
+				<th class="lb">상태</th>
+				<td class="indent5"><%=dto.getState()%></td>
+				<th>전체금액</th>
+				<td class="indent5"><%=dto.getTotalPrice_txt() %>원</td>
+			</tr>			
 			<tr>
 				<th class="lb">작성자</th>
 				<td class="indent5"><%=dto.getCreator()%></td>
@@ -396,7 +402,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 <script type="text/javascript">
 	function modify() {
 		openLayer();
-		const oid = document.getElementById("loid").value;
+		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/partlist/modify?oid=" + oid);
 		document.location.href = url;
 	}
@@ -405,6 +411,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		if (!confirm("삭제 하시겠습니까?")) {
 			return false;
 		}
+		
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/partlist/delete?oid=" + oid);
 		openLayer();

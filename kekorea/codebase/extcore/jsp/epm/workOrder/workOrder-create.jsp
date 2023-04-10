@@ -377,8 +377,8 @@
 
 	function auiCellEditEndHandler(event) {
 		const dataField = event.dataField;
-		if (dataField === "number") {
-			const number = event.item.number;
+		const number = event.item.number;
+		if (dataField === "number" && !isNull(number)) {
 			const url = getCallUrl("/workOrder/getData?number=" + number);
 			call(url, null, function(data) {
 				if (data.ok) {
@@ -458,6 +458,18 @@
 			return false;
 		}
 
+		if (_addRows_.length === 0) {
+			alert("결재선을 지정하세요.");
+			_register();
+			return false;
+		}
+
+
+		if(addRows.length === 0) {
+			alert("도면일람표의 데이터는 최소 하나 이상이어야 합니다.");
+			return false;
+		}
+		
 		_addRows.sort(function(a, b) {
 			return a.sort - b.sort;
 		});

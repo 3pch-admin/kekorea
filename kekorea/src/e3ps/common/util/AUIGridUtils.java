@@ -6,16 +6,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.context.annotation.Description;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import com.ptc.wvs.server.util.FileHelper;
 import com.ptc.wvs.server.util.PublishUtils;
 
-import e3ps.common.content.service.CommonContentHelper;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
 import wt.content.ContentHolder;
@@ -55,7 +50,7 @@ public class AUIGridUtils {
 		if (result.hasMoreElements()) {
 			ApplicationData data = (ApplicationData) result.nextElement();
 			String ext = FileUtil.getExtension(data.getFileName());
-			String icon = CommonContentHelper.manager.getIcon(ext);
+			String icon = getAUIGridFileIcon(ext);
 			String url = ContentHelper.getDownloadURL(holder, data, false, data.getFileName()).toString();
 			template += "<a href=" + url + "><img src=" + icon + " style='position: relative; top: 2px;'></a>";
 		}
@@ -71,7 +66,7 @@ public class AUIGridUtils {
 		while (result.hasMoreElements()) {
 			ApplicationData data = (ApplicationData) result.nextElement();
 			String ext = FileUtil.getExtension(data.getFileName());
-			String icon = CommonContentHelper.manager.getIcon(ext);
+			String icon = getAUIGridFileIcon(ext);
 			String url = ContentHelper.getDownloadURL(holder, data, false, data.getFileName()).toString();
 			template += "<a href=" + url + "><img src=" + icon + " style='position: relative; top: 2px;'></a>&nbsp;";
 		}
@@ -85,33 +80,25 @@ public class AUIGridUtils {
 		String thumnail_mini = FileHelper.getViewContentURLForType(PublishUtils.findRepresentable(epm),
 				ContentRoleType.THUMBNAIL_SMALL);
 		if (thumnail_mini == null) {
-			thumnail_mini = "/Windchill/jsp/images/productview_publish_24.png";
+			thumnail_mini = "/Windchill/extcore/images/productview_publish_24.png";
 		}
 		return thumnail_mini;
 	}
 
 	/**
 	 * 뷰어블 파일을 AUIGrid 상 표기 위한 함수
-	 * 
-	 * @param part : 부품 객체
-	 * @return String
-	 * @throws Exception
 	 */
 	public static String getThumnailSmall(WTPart part) throws Exception {
 		String thumnail_mini = FileHelper.getViewContentURLForType(PublishUtils.findRepresentable(part),
 				ContentRoleType.THUMBNAIL_SMALL);
 		if (thumnail_mini == null) {
-			thumnail_mini = "/Windchill/jsp/images/productview_publish_24.png";
+			thumnail_mini = "/Windchill/extcore/images/productview_publish_24.png";
 		}
 		return thumnail_mini;
 	}
 
 	/**
 	 * 그리드 상에서 첨부 파일 올리는 경우 호출하는 함수
-	 * 
-	 * @param request : HttpServletRequest 객체
-	 * @return : Map<String, Object>
-	 * @throws Exception
 	 */
 	public static Map<String, Object> upload(HttpServletRequest request) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -129,7 +116,7 @@ public class AUIGridUtils {
 
 			map.put("name", origin);
 			map.put("fullPath", fullPath);
-			map.put("icon", CommonContentHelper.manager.getIcon(ext));
+			map.put("icon", getAUIGridFileIcon(ext));
 			map.put("base64", ContentUtils.imageToBase64(new File(fullPath), ext));
 
 		} catch (Exception e) {
@@ -137,5 +124,42 @@ public class AUIGridUtils {
 			throw e;
 		}
 		return map;
+	}
+
+	/**
+	 * AUIGrid 에서 사용할 파일 아이콘 가져 오는 함수
+	 */
+	private static String getAUIGridFileIcon(String ext) {
+		String icon = "";
+		if (ext.equalsIgnoreCase("pdf")) {
+			icon = "/Windchill/extcore/images/fileicon/file_pdf.gif";
+		} else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx")) {
+			icon = "/Windchill/extcore/images/fileicon/file_excel.gif";
+		} else if (ext.equalsIgnoreCase("ppt") || ext.equalsIgnoreCase("pptx")) {
+			icon = "/Windchill/extcore/images/fileicon/file_ppoint.gif";
+		} else if (ext.equalsIgnoreCase("doc") || ext.equalsIgnoreCase("docs")) {
+			icon = "/Windchill/extcore/images/fileicon/file_msword.gif";
+		} else if (ext.equalsIgnoreCase("html") || ext.equalsIgnoreCase("htm")) {
+			icon = "/Windchill/extcore/images/fileicon/file_html.gif";
+		} else if (ext.equalsIgnoreCase("gif")) {
+			icon = "/Windchill/extcore/images/fileicon/file_gif.gif";
+		} else if (ext.equalsIgnoreCase("png")) {
+			icon = "/Windchill/extcore/images/fileicon/file_png.gif";
+		} else if (ext.equalsIgnoreCase("bmp")) {
+			icon = "/Windchill/extcore/images/fileicon/file_bmp.gif";
+		} else if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
+			icon = "/Windchill/extcore/images/fileicon/file_jpg.jpg";
+		} else if (ext.equalsIgnoreCase("zip") || ext.equalsIgnoreCase("rar") || ext.equalsIgnoreCase("jar")) {
+			icon = "/Windchill/extcore/images/fileicon/file_zip.gif";
+		} else if (ext.equalsIgnoreCase("tar") || ext.equalsIgnoreCase("gz")) {
+			icon = "/Windchill/extcore/images/fileicon/file_zip.gif";
+		} else if (ext.equalsIgnoreCase("exe")) {
+			icon = "/Windchill/extcore/images/fileicon/file_exe.gif";
+		} else if (ext.equalsIgnoreCase("dwg")) {
+			icon = "/Windchill/extcore/images/fileicon/file_dwg.gif";
+		} else if (ext.equalsIgnoreCase("xml")) {
+			icon = "/Windchill/extcore/images/fileicon/file_xml.png";
+		}
+		return icon;
 	}
 }

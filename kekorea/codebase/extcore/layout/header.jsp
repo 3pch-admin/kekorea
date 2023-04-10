@@ -101,7 +101,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						<a onclick="moveToPage(this, '/project/list', '작번 관리 > 작번 조회');">작번 조회</a>
 					</li>
 					<li>
-						<a href="graph_morris.html">나의 작번</a>
+						<a onclick="moveToPage(this, '/project/my', '나의 작번 > 나의 작번');">나의 작번</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/template/list', '작번 관리 > 템플릿 조회');">템플릿 조회</a>
@@ -266,14 +266,17 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						<a onclick="moveToPage(this, '/commonCode/list', '관리자 > 코드 관리');">코드 관리</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/spec/list', '관리자 > 이력 관리 컬럼');">이력 관리 컬럼</a>
+						<a onclick="moveToPage(this, '/specCode/list', '관리자 > 이력 관리 컬럼');">이력 관리 컬럼</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/sheetVariable/list', '관리자 > CONFIG SHEET 카테고리');">CONFIG SHEET 카테고리</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/password/list', '관리자 > 비밀번호 세팅');">비밀번호 세팅</a>
+						<a onclick="moveToPage(this, '/numberRuleCode/list', '관리자 > KEK 도번 관리');">KEK 도번 관리</a>
 					</li>
+					<!-- 					<li> -->
+					<!-- 						<a onclick="moveToPage(this, '/password/list', '관리자 > 비밀번호 세팅');">비밀번호 세팅</a> -->
+					<!-- 					</li> -->
 					<li>
 						<a onclick="moveToPage(this, '/meeting/template', '관리자 > 회의록 템플릿');">회의록 템플릿</a>
 					</li>

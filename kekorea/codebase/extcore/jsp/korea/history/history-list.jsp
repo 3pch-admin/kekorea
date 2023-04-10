@@ -16,6 +16,8 @@ ArrayList<Map<String, String>> projectTypes = (ArrayList<Map<String, String>>) r
 ArrayList<HashMap<String, String>> templates = (ArrayList<HashMap<String, String>>) request.getAttribute("templates");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+String before = (String) request.getAttribute("before");
+String end = (String) request.getAttribute("end");
 %>
 <!DOCTYPE html>
 <html>
@@ -56,9 +58,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				</td>
 				<th>발행일</th>
 				<td class="indent5">
-					<input type="text" name="pdateFrom" id="pdateFrom" class="width-100">
+					<input type="text" name="pdateFrom" id="pdateFrom" class="width-100" value="<%=before%>">
 					~
-					<input type="text" name="pdateTo" id="pdateTo" class="width-100">
+					<input type="text" name="pdateTo" id="pdateTo" class="width-100" value="<%=end %>">
 				</td>
 				<th>USER ID</th>
 				<td class="indent5">
@@ -337,7 +339,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			for (Map<String, String> header : headers) {
 				String key = header.get("key");
 				String value = header.get("value");
-				JSONArray array = JSONArray.fromObject(list.get(key));
+				ArrayList<Map<String, String>> data = list.get(key);
+				JSONArray array =  JSONArray.fromObject(new ArrayList()); 
+				if(data != null && !data.isEmpty()) {
+					array = JSONArray.fromObject(data);
+				}
 			%>
 				{
 					dataField : "<%=key%>",
@@ -442,7 +448,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 				params.editRows = editRows;
 				params.removeRows = removeRows;
-				console.log(params);
+				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
 					if (data.result) {

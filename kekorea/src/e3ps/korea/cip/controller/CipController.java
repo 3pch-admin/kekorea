@@ -3,15 +3,11 @@ package e3ps.korea.cip.controller;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Date;
-import java.util.Date;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +26,7 @@ import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.korea.cip.dto.CipDTO;
 import e3ps.korea.cip.service.CipHelper;
+import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -125,16 +122,5 @@ public class CipController extends BaseController {
 			result.put("result", FAIL);
 		}
 		return result;
-	}
-
-	@Description(value = "막종상세, 거래처, 설치라인 관련 CIP")
-	@GetMapping(value = "/view")
-	public ModelAndView view(@RequestParam String mak_oid, @RequestParam String detail_oid,
-			@RequestParam String customer_oid, @RequestParam String install_oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		ArrayList<CipDTO> list = CipHelper.manager.view(mak_oid, detail_oid, customer_oid, install_oid);
-		model.addObject("list", list);
-		model.setViewName("popup:/korea/cip/cip-view");
-		return model;
 	}
 }

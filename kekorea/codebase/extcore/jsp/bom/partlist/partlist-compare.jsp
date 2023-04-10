@@ -28,13 +28,13 @@ String compareArr = (String) request.getAttribute("compareArr");
 			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('partlist-compare');">
 		</td>
 		<td class="right">
-			<select name="sort" id="sort" class="width-200">
-				<option value="">선택</option>
-				<option value="sort">등록순</option>
-				<option value="partNo">부품번호</option>
-				<option value="lotNo">LOT</option>
-			</select>
-			<input type="button" value="비교" title="비교" class="red" onclick="_compare('');">
+<!-- 			<select name="sort" id="sort" class="width-200"> -->
+<!-- 				<option value="">선택</option> -->
+<!-- 				<option value="sort">등록순</option> -->
+<!-- 				<option value="partNo">부품번호</option> -->
+<!-- 				<option value="lotNo">LOT</option> -->
+<!-- 			</select> -->
+<!-- 			<input type="button" value="비교" title="비교" class="red" onclick="_compare('');"> -->
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -298,7 +298,7 @@ for (Project project : destList) {%>
 		});
 		createAUIGrid(columns);
 		AUIGrid.resize(myGridID);
-		selectbox("sort");
+// 		selectbox("sort");
 	})
 
 	window.addEventListener("resize", function() {

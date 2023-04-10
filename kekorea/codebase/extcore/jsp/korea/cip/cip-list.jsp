@@ -1,10 +1,9 @@
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="java.sql.Timestamp"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="wt.org.WTUser"%>
 <%@page import="java.util.HashMap"%>
-<%@page import="org.json.JSONObject"%>
-<%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 JSONArray maks = (JSONArray) request.getAttribute("maks");
@@ -31,7 +30,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
-		<input type="hidden" name="time" id="time" value="<%=time %>">
+		<input type="hidden" name="time" id="time" value="<%=time%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 
@@ -141,9 +140,12 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
-			const maks = <%=maks%>
-			const installs = <%=installs%>
-			const customers = <%=customers%>
+			const maks =
+		<%=maks%>
+			const installs =
+		<%=installs%>
+			const customers =
+		<%=customers%>
 			let recentGridItem = null;
 			let detailMap = {};
 			let installMap = {};
@@ -365,7 +367,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						const param = item.mak_code;
 						const dd = detailMap[param];
 						if (dd === undefined)
-							return "";
+							return value;
 						for (let i = 0, len = dd.length; i < len; i++) {
 							if (dd[i]["key"] == value) {
 								retStr = dd[i]["value"];
@@ -487,7 +489,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						const param = item.customer_code;
 						const dd = installMap[param];
 						if (dd === undefined)
-							return "";
+							return value;
 						for (let i = 0, len = dd.length; i < len; i++) {
 							if (dd[i]["key"] == value) {
 								retStr = dd[i]["value"];
@@ -627,8 +629,30 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				});
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
+				AUIGrid.bind(myGridID, "ready", readyHandler);
 			}
-			
+
+			function readyHandler() {
+				const item = AUIGrid.getGridData(myGridID);
+				for (let i = 0; i < item.length; i++) {
+					if (detailMap.length === undefined) {
+						const mak = item[i].mak_code;
+						const url = getCallUrl("/commonCode/getChildrens?parentCode=" + mak + "&codeType=MAK");
+						call(url, null, function(data) {
+							detailMap[mak] = data.list;
+						}, "GET");
+					}
+
+					if (installMap.length === undefined) {
+						const customer = item[i].customer_code;
+						const url = getCallUrl("/commonCode/getChildrens?parentCode=" + customer + "&codeType=CUSTOMER");
+						call(url, null, function(data) {
+							installMap[customer] = data.list;
+						}, "GET");
+					}
+				}
+			}
+
 			function auiCellEditBegin(event) {
 				const item = event.item;
 				const sessionId = document.getElementById("sessionId").value;

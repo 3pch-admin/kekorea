@@ -17,7 +17,6 @@
 	let myGridID;
 	let recentGridItem = null;
 	const data = window.list;
-	console.log(data);
 	const columns = [ {
 		dataField : "lotNo",
 		headerText : "LOT",
@@ -29,7 +28,7 @@
 		dataField : "name",
 		headerText : "DRAWING TITLE",
 		dataType : "string",
-		style : "left indent10",
+		style : "aui-left",
 		editable : false
 	}, {
 		dataField : "keNumber",
@@ -162,8 +161,13 @@
 	}
 
 	function revise() {
-
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
+
+		if (addRows.length === 0) {
+			alert("개정할 도면의 데이터가 존재하지 않습니다.");
+			return false;
+		}
+
 		for (let i = 0; i < addRows.length; i++) {
 			const item = addRows[i];
 			const version = item.version;
@@ -200,6 +204,7 @@
 		const params = new Object();
 		const url = getCallUrl("/keDrawing/revise");
 		params.addRows = addRows;
+		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {

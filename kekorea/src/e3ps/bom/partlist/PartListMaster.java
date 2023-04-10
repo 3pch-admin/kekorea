@@ -14,7 +14,7 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "totalPrice", type = Double.class, javaDoc = "전체 금액", constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "totalPrice", type = Double.class, javaDoc = "전체 금액", initialValue = "0D", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "description", type = String.class, javaDoc = "설명", constraints = @PropertyConstraints(upperLimit = 2000)),
 

@@ -9,6 +9,7 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 %>
 <%@include file="/extcore/include/tinymce.jsp"%>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -18,6 +19,7 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 			</div>
 		</td>
 		<td class="right">
+<!-- 			<input type="button" value="수정" title="수정" class="green" onclick="modify();"> -->
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>

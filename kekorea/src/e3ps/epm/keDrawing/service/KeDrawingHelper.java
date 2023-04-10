@@ -26,6 +26,7 @@ import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.WTPrincipal;
 import wt.query.QuerySpec;
+import wt.query.SearchCondition;
 import wt.queue.ProcessingQueue;
 import wt.queue.QueueHelper;
 import wt.services.ServiceFactory;
@@ -79,7 +80,8 @@ public class KeDrawingHelper {
 				query.appendAnd();
 			}
 			query.appendOpenParen();
-			QuerySpecUtils.toBoolean(query, idx, KeDrawing.class, KeDrawing.LATEST, true);
+			SearchCondition sc = new SearchCondition(KeDrawing.class, KeDrawing.LATEST, SearchCondition.IS_TRUE);
+			query.appendWhere(sc, new int[] { idx });
 			QuerySpecUtils.toBooleanOr(query, idx, KeDrawing.class, KeDrawing.LATEST, false);
 			query.appendCloseParen();
 		}
@@ -298,19 +300,18 @@ public class KeDrawingHelper {
 			map.put("oid", order.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("dataType", link.getDataType());
 			map.put("lotNo", link.getLotNo());
-			map.put("current", link.getCurrent());
+			map.put("rev", link.getRev());
 			map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
 			map.put("note", link.getNote());
 			Persistable per = link.getData();
 			if (per instanceof KeDrawing) {
 				KeDrawing keDrawing = (KeDrawing) per;
+				KeDrawing latest = getLatest(keDrawing);
 				map.put("name", keDrawing.getMaster().getName());
 				map.put("number", keDrawing.getMaster().getKeNumber());
-				map.put("rev", keDrawing.getVersion());
+				map.put("current", latest.getVersion());
 				map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
 				map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
-				KeDrawing latest = getLatest(keDrawing);
-				map.put("latest", latest.getVersion());
 			}
 			list.add(map);
 		}
@@ -403,20 +404,19 @@ public class KeDrawingHelper {
 
 			map.put("dataType", link.getDataType());
 			map.put("lotNo", link.getLotNo());
-			map.put("current", link.getCurrent());
+			map.put("rev", link.getRev());
 			map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
 			map.put("note", link.getNote());
 			Persistable per = link.getData();
 			if (per instanceof KeDrawing) {
 				KeDrawing keDrawing = (KeDrawing) per;
+				KeDrawing latest = getLatest(keDrawing);
 				map.put("oid", keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("name", keDrawing.getMaster().getName());
 				map.put("number", keDrawing.getMaster().getKeNumber());
-				map.put("rev", keDrawing.getVersion());
+				map.put("current", latest.getVersion());
 				map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
 				map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
-				KeDrawing latest = getLatest(keDrawing);
-				map.put("latest", latest.getVersion());
 			}
 			list.add(map);
 		}

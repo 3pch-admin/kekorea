@@ -31,6 +31,8 @@ import e3ps.common.util.DateUtils;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.korea.cip.dto.CipDTO;
 import e3ps.korea.cip.service.CipHelper;
+import e3ps.org.Department;
+import e3ps.org.People;
 import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
 import e3ps.project.dto.ProjectDTO;
@@ -65,12 +67,10 @@ public class ProjectController extends BaseController {
 		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
 		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
 
-		org.json.JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
-		org.json.JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
-		org.json.JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
+		JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
+		JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
+		JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
 
-		
-		
 		model.addObject("elecs", elecs);
 		model.addObject("softs", softs);
 		model.addObject("machines", machines);
@@ -100,6 +100,46 @@ public class ProjectController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "나의 작번 리스트 페이지")
+	@GetMapping(value = "/my")
+	public ModelAndView my() throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, -4);
+		Timestamp date = new Timestamp(calendar.getTime().getTime());
+		String before = date.toString().substring(0, 10);
+		String end = DateUtils.getCurrentTimestamp().toString().substring(0, 10);
+
+		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
+		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
+		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
+
+		JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
+		JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
+		JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
+
+		People people = CommonUtils.sessionPeople();
+		Department department = people.getDepartment();
+		model.addObject("department", department);
+		model.addObject("elecs", elecs);
+		model.addObject("softs", softs);
+		model.addObject("machines", machines);
+		model.addObject("list", list);
+		model.addObject("customers", customers);
+		model.addObject("projectTypes", projectTypes);
+		model.addObject("maks", maks);
+		model.addObject("before", before);
+		model.addObject("end", end);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.setViewName("/extcore/jsp/project/project-my-list.jsp");
+		return model;
 	}
 
 	@Description(value = "프로젝트 등록 함수")
@@ -187,9 +227,9 @@ public class ProjectController extends BaseController {
 		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
 		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
 
-		org.json.JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
-		org.json.JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
-		org.json.JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
+		JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
+		JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
+		JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
 
 		model.addObject("elecs", elecs);
 		model.addObject("softs", softs);
@@ -407,19 +447,20 @@ public class ProjectController extends BaseController {
 	@Description(value = "저장")
 	@PostMapping(value = "/save")
 	@ResponseBody
-	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params) throws Exception {
+	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
+			throws Exception {
 		ArrayList<LinkedHashMap<String, Object>> editRows = params.get("editRows");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			ArrayList<ProjectDTO> editRow = new ArrayList<>();
-			for(LinkedHashMap<String, Object> edit : editRows) {
+			for (LinkedHashMap<String, Object> edit : editRows) {
 				ProjectDTO dto = mapper.convertValue(edit, ProjectDTO.class);
 				
 				editRow.add(dto);
 			}
-			
+
 			HashMap<String, List<ProjectDTO>> dataMap = new HashMap<>();
 			dataMap.put("editRows", editRow);
 			ProjectHelper.service.save(dataMap);

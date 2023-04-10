@@ -10,7 +10,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) request.getAttribute("list");
 JSONArray maks = (JSONArray) request.getAttribute("maks");
-JSONArray installs = (JSONArray) request.getAttribute("installs");
 JSONArray departments = JSONArray.fromObject(list);
 %>
 <!DOCTYPE html>
@@ -319,7 +318,8 @@ JSONArray departments = JSONArray.fromObject(list);
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					editable : true
+					editable : true,
+					enableRowCheckShiftKey : true,
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();

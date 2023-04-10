@@ -35,6 +35,9 @@ String oid = (String) request.getAttribute("oid");
 						<div id="_grid_wrap" style="height: 280px; border-top: 1px solid #3180c3;"></div>
 						<script type="text/javascript">
 							let _myGridID;
+							const approvals = window.approvals;
+							const agrees = window.agrees;
+							const receives = window.receives;
 							const _columns = [ {
 								dataField : "name",
 								headerText : "부서명",
@@ -44,8 +47,8 @@ String oid = (String) request.getAttribute("oid");
 							function _createAUIGrid(columnLayout) {
 								const props = {
 									headerHeight : 30,
-									rowHeight : 30,
 									showRowNumColumn : true,
+									showAutoNoDataMessage : false,
 									rowNumHeaderText : "번호",
 									fillColumnSizeMode : true,
 									selectionMode : "multipleCells",
@@ -120,12 +123,10 @@ String oid = (String) request.getAttribute("oid");
 							function _$createAUIGrid(columnLayout) {
 								const props = {
 									headerHeight : 30,
-									rowHeight : 30,
 									showRowNumColumn : true,
 									rowNumHeaderText : "번호",
-									fillColumnSizeMode : true,
 									selectionMode : "multipleCells",
-									noDataMessage : "검색된 사용자가 없습니다",
+									showAutoNoDataMessage : false,
 									showRowCheckColumn : true,
 									enableRowCheckShiftKey : true,
 									showDragKnobColumn : true,
@@ -278,11 +279,10 @@ String oid = (String) request.getAttribute("oid");
 							function _createAUIGrid1(columnLayout) {
 								const props = {
 									headerHeight : 30,
-									rowHeight : 30,
 									showRowNumColumn : true,
 									rowNumHeaderText : "번호",
-									fillColumnSizeMode : true,
 									selectionMode : "multipleCells",
+									showAutoNoDataMessage : false,
 									showRowCheckColumn : true,
 									enableRowCheckShiftKey : true,
 									showDragKnobColumn : true,
@@ -314,6 +314,7 @@ String oid = (String) request.getAttribute("oid");
 									}
 									return copy;
 								});
+								AUIGrid.setGridData(_myGridID1, agrees);
 							}
 
 							document.addEventListener("DOMContentLoaded", function() {
@@ -369,11 +370,10 @@ String oid = (String) request.getAttribute("oid");
 							function _createAUIGrid2(columnLayout) {
 								const props = {
 									headerHeight : 30,
-									rowHeight : 30,
 									showRowNumColumn : true,
 									rowNumHeaderText : "순서",
-									fillColumnSizeMode : true,
 									selectionMode : "multipleCells",
+									showAutoNoDataMessage : false,
 									showRowCheckColumn : true,
 									enableRowCheckShiftKey : true,
 									showDragKnobColumn : true,
@@ -405,6 +405,7 @@ String oid = (String) request.getAttribute("oid");
 									}
 									return copy;
 								});
+								AUIGrid.setGridData(_myGridID2, approvals);
 							}
 
 							document.addEventListener("DOMContentLoaded", function() {
@@ -461,11 +462,10 @@ String oid = (String) request.getAttribute("oid");
 							function _createAUIGrid3(columnLayout) {
 								const props = {
 									headerHeight : 30,
-									rowHeight : 30,
 									showRowNumColumn : true,
 									rowNumHeaderText : "번호",
-									fillColumnSizeMode : true,
 									selectionMode : "multipleCells",
+									showAutoNoDataMessage : false,
 									showRowCheckColumn : true,
 									enableRowCheckShiftKey : true,		
 									showDragKnobColumn : true,
@@ -497,6 +497,7 @@ String oid = (String) request.getAttribute("oid");
 									}
 									return copy;
 								});
+								AUIGrid.setGridData(_myGridID3, receives);
 							}
 
 							document.addEventListener("DOMContentLoaded", function() {

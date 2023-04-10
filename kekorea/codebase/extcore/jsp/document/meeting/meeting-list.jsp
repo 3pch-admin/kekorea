@@ -2,6 +2,7 @@
 <%@page import="java.util.Map"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="wt.org.WTUser"%>
+<%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) request.getAttribute("customers");
@@ -10,6 +11,8 @@ ArrayList<Map<String, String>> projectTypes = (ArrayList<Map<String, String>>) r
 ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) request.getAttribute("list");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+String before = (String) request.getAttribute("before");
+String end = (String) request.getAttribute("end");
 %>
 <!DOCTYPE html>
 <html>
@@ -207,12 +210,22 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
-				return [ {
+				return [{
+// 				const columns = [ {
 					dataField : "name",
 					headerText : "회의록 제목",
 					dataType : "string",
 					width : 350,
 					style : "underline",
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.oid;
+							const url = getCallUrl("/meeting/view?oid=" + oid);
+							popup(url);
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -227,6 +240,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "customer_name",
 					headerText : "거래처",
@@ -236,6 +250,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "install_name",
 					headerText : "설치장소",
@@ -245,6 +260,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "mak_name",
 					headerText : "막종",
@@ -254,6 +270,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "detail_name",
 					headerText : "막종상세",
@@ -263,24 +280,45 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "kekNumber",
 					headerText : "KEK 작번",
 					dataType : "string",
-					width : 130,
+					width : 100,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.oid;
+							const url = getCallUrl("/project/info?oid=" + oid);
+							popup(url);
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "keNumber",
 					headerText : "KE 작번",
 					dataType : "string",
-					width : 130,
+					width : 100,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.oid;
+							const url = getCallUrl("/project/info?oid=" + oid);
+							popup(url);
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "userId",
 					headerText : "USER ID",
@@ -290,6 +328,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "description",
 					headerText : "작업 내용",
@@ -300,15 +339,17 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "model",
 					headerText : "모델",
 					dataType : "string",
-					width : 100,
+					width : 130,
 					filter : {
 						showIcon : true,
 						inline : true
 					},
+					editable : false
 				}, {
 					dataField : "pdate",
 					headerText : "발행일",
@@ -320,6 +361,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						inline : true,
 						displayFormatValues : true
 					},
+					editable : false
 				}, {
 					dataField : "state",
 					headerText : "상태",
