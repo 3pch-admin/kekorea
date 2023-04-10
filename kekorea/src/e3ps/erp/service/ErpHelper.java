@@ -42,6 +42,7 @@ public class ErpHelper {
 	static {
 		if (cacheManager == null) {
 			cacheManager = new HashMap<>();
+			System.out.println("hashCode = " + cacheManager.hashCode());
 		}
 	}
 
@@ -1415,6 +1416,9 @@ public class ErpHelper {
 
 			String cacheKey = partNo + quantity;
 			Map<String, Object> cacheData = cacheManager.get(cacheKey);
+
+			System.out.println("cacheData=" + cacheData);
+
 			if (cacheData == null) {
 				con = dataSource.getConnection();
 				st = con.createStatement();
@@ -1441,12 +1445,12 @@ public class ErpHelper {
 					int price = 0;
 					Integer exchangeRate = 0;
 					if (_rs.next()) {
-						maker = (String) _rs.getString("MakerName");
-						customer = (String) _rs.getString("CustName");
-						unit = (String) _rs.getString("UnitName");
-						currency = (String) _rs.getString("CurrName");
+						maker = (String) _rs.getString("makerName");
+						customer = (String) _rs.getString("custName");
+						unit = (String) _rs.getString("unitName");
+						currency = (String) _rs.getString("currName");
 						price = (int) _rs.getInt("price");
-						exchangeRate = (int) _rs.getInt("ExRate");
+						exchangeRate = (int) _rs.getInt("exRate");
 
 					}
 					result.put("maker", maker);
