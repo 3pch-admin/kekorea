@@ -6,8 +6,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
@@ -20,17 +18,11 @@ import wt.content.ContentHolder;
 import wt.content.ContentItem;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
-import wt.fc.IconDelegate;
-import wt.fc.IconDelegateFactory;
-import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.fc.ReferenceFactory;
-import wt.fc.WTObject;
 import wt.representation.Representable;
 import wt.representation.Representation;
-import wt.session.SessionHelper;
 import wt.util.FileUtil;
-import wt.util.IconSelector;
 import wt.util.WTProperties;
 
 public class ContentUtils {
@@ -75,7 +67,7 @@ public class ContentUtils {
 				primarys[1] = data.getPersistInfo().getObjectIdentifier().getStringValue();
 				primarys[2] = data.getFileName();
 				primarys[3] = data.getFileSizeKB() + "KB";
-				primarys[4] = getFileIcons(primarys[2]);
+				primarys[4] = getFileIcon(primarys[2]);
 				primarys[5] = ContentHelper.getDownloadURL(holder, data, false, primarys[2]).toString();
 				primarys[6] = "<a href=" + primarys[5] + "><img src=" + primarys[4] + "></a>";
 			}
@@ -107,7 +99,7 @@ public class ContentUtils {
 				secondary[1] = data.getPersistInfo().getObjectIdentifier().getStringValue();
 				secondary[2] = data.getFileName();
 				secondary[3] = data.getFileSizeKB() + "KB";
-				secondary[4] = getFileIcons(secondary[2]);
+				secondary[4] = getFileIcon(secondary[2]);
 				secondary[5] = ContentHelper.getDownloadURL(holder, data, false, secondary[2]).toString();
 				secondary[6] = "<a href=" + secondary[5] + "><img src=" + secondary[4] + "></a>";
 				secondarys.add(secondary);
@@ -117,92 +109,42 @@ public class ContentUtils {
 	}
 
 	/**
-	 * @param name : 파일 명
-	 * @return String
-	 *         <p>
-	 *         파일명을 뒤에서 부터 검색 해서 처음 나오는 . 기준으로 확장자 가져오기
-	 *         </p>
+	 * 파일확장자로 파일 아이콘 경로 리턴
 	 */
-	private static String getFileIcons(String name) {
+	private static String getFileIcon(String name) {
 		String ext = FileUtil.getExtension(name);
 
-		String icon = "/Windchill/jsp/images/fileicon/file_notepad.gif";
+		String icon = "/Windchill/extcore/images/fileicon/file_notepad.gif";
 		if (ext.equalsIgnoreCase("pdf")) {
-			icon = "/Windchill/jsp/images/fileicon/file_pdf.gif";
+			icon = "/Windchill/extcore/images/fileicon/file_pdf.gif";
 		} else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx")) {
-			icon = "/Windchill/jsp/images/fileicon/file_excel.gif";
+			icon = "/Windchill/extcore/images/fileicon/file_excel.gif";
 		} else if (ext.equalsIgnoreCase("ppt") || ext.equalsIgnoreCase("pptx")) {
-			icon = "/Windchill/jsp/images/fileicon/file_ppoint.gif";
+			icon = "/Windchill/extcore/images/fileicon/file_ppoint.gif";
 		} else if (ext.equalsIgnoreCase("doc") || ext.equalsIgnoreCase("docs")) {
-			icon = "/Windchill/jsp/images/fileicon/file_msword.gif";
+			icon = "/Windchill/extcore/images/fileicon/file_msword.gif";
 		} else if (ext.equalsIgnoreCase("html") || ext.equalsIgnoreCase("htm")) {
-			icon = "/Windchill/jsp/images/fileicon/file_html.gif";
+			icon = "/Windchill/extcore/images/fileicon/file_html.gif";
 		} else if (ext.equalsIgnoreCase("gif")) {
-			icon = "/Windchill/jsp/images/fileicon/file_gif.gif";
+			icon = "/Windchill/extcore/images/fileicon/file_gif.gif";
 		} else if (ext.equalsIgnoreCase("png")) {
-			icon = "/Windchill/jsp/images/fileicon/file_png.gif";
+			icon = "/Windchill/extcore/images/fileicon/file_png.gif";
 		} else if (ext.equalsIgnoreCase("bmp")) {
-			icon = "/Windchill/jsp/images/fileicon/file_bmp.gif";
+			icon = "/Windchill/extcore/images/fileicon/file_bmp.gif";
 		} else if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
-			icon = "/Windchill/jsp/images/fileicon/file_jpg.jpg";
+			icon = "/Windchill/extcore/images/fileicon/file_jpg.jpg";
 		} else if (ext.equalsIgnoreCase("zip") || ext.equalsIgnoreCase("rar") || ext.equalsIgnoreCase("jar")) {
-			icon = "/Windchill/jsp/images/fileicon/file_zip.gif";
+			icon = "/Windchill/extcore/images/fileicon/file_zip.gif";
 		} else if (ext.equalsIgnoreCase("tar") || ext.equalsIgnoreCase("gz")) {
-			icon = "/Windchill/jsp/images/fileicon/file_zip.gif";
+			icon = "/Windchill/extcore/images/fileicon/file_zip.gif";
 		} else if (ext.equalsIgnoreCase("exe")) {
-			icon = "/Windchill/jsp/images/fileicon/file_exe.gif";
+			icon = "/Windchill/extcore/images/fileicon/file_exe.gif";
 		} else if (ext.equalsIgnoreCase("dwg")) {
-			icon = "/Windchill/jsp/images/fileicon/file_dwg.gif";
+			icon = "/Windchill/extcore/images/fileicon/file_dwg.gif";
 		} else if (ext.equalsIgnoreCase("xml")) {
-			icon = "/Windchill/jsp/images/fileicon/file_xml.png";
+			icon = "/Windchill/extcore/images/fileicon/file_xml.png";
 		}
 		return icon;
-	}
-
-	public static String getOpenIcon(String oid) throws Exception {
-		ReferenceFactory rf = new ReferenceFactory();
-		WTObject obj = (WTObject) rf.getReference(oid).getObject();
-		return getOpenIcon(obj, "");
-	}
-
-	public static String getStandardIcon(String oid) throws Exception {
-		ReferenceFactory rf = new ReferenceFactory();
-		WTObject obj = (WTObject) rf.getReference(oid).getObject();
-		return getStandardIcon(obj, "");
-	}
-
-	public static String getStandardIcon(WTObject obj) throws Exception {
-		return getStandardIcon(obj, "");
-	}
-
-	public static String getOpenIcon(WTObject obj) throws Exception {
-		return getOpenIcon(obj, "");
-	}
-
-	public static String getStandardIcon(WTObject obj, String tooltip) throws Exception {
-		IconDelegateFactory factory = IconDelegateFactory.getInstance();
-		IconDelegate delegate = factory.getIconDelegate(obj);
-		IconSelector selector = delegate.getStandardIconSelector();
-		if (StringUtils.isNull(tooltip)) {
-			tooltip = delegate.getToolTip(SessionHelper.getLocale());
-		}
-		/// Windchill/jsp/images/part.gif
-		// icon.append("<img src=\"/Windchill/" + selector.getIconKey() + "\" title=\""
-		/// + tooltip + "\">");
-		return "/Windchill/" + selector.getIconKey();
-	}
-
-	public static String getOpenIcon(WTObject obj, String tooltip) throws Exception {
-		// StringBuffer icon = new StringBuffer();
-		IconDelegateFactory factory = IconDelegateFactory.getInstance();
-		IconDelegate delegate = factory.getIconDelegate(obj);
-		IconSelector selector = delegate.getOpenIconSelector();
-		if (StringUtils.isNull(tooltip)) {
-			tooltip = delegate.getToolTip(SessionHelper.getLocale());
-		}
-		// icon.append("<img src=\"/Windchill/" + selector.getIconKey() + "\" title=\""
-		// + tooltip + "\">");
-		return "/Windchill/" + selector.getIconKey();
 	}
 
 	public static String[] getRepresentationData(ContentHolder holder) throws Exception {
@@ -311,81 +253,16 @@ public class ContentUtils {
 	}
 
 	/**
-	 * 파일 확장자로 첨부 파일 이미지를 가져 오는 함수
+	 * Base64 형태로 IMG 소스 가져오기
 	 */
-	public static String getFileIcon(String ext) throws Exception {
-		if (ext.equalsIgnoreCase("pdf")) {
-			return "/Windchill/extcore/images/fileicon/file_pdf.gif";
-		}
-		return "/Windchill/extcore/images/fileicon/file_generic.gif";
-	}
-
-	public static void updateSecondary(Map<String, Object> param, ContentHolder holder) throws Exception {
-
-		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.SECONDARY);
-		while (result.hasMoreElements()) {
-			ContentItem item = (ContentItem) result.nextElement();
-			ContentServerHelper.service.deleteContent(holder, item);
-		}
-
-		Iterator<String> it = param.keySet().iterator();
-		while (it.hasNext()) {
-			String key = (String) it.next();
-			if (key.contains(SECONDARY_KEY)) {
-				String value = (String) param.get(key);
-
-				String path = value.split("&")[0];
-				String fname = value.split("&")[1];
-
-				File file = new File(path);
-				String category = getCategory(file.getName());
-				ApplicationData data = ApplicationData.newApplicationData(holder);
-				data.setRole(ContentRoleType.SECONDARY);
-				data.setCategory(category);
-				data.setCreatedBy(SessionHelper.manager.getPrincipalReference());
-				data = (ApplicationData) ContentServerHelper.service.updateContent(holder, data, path);
-
-				data.setFileName(fname);
-				PersistenceHelper.manager.modify(data);
-			}
-		}
-	}
-
-	public static String getCategory(String name) {
-		String ext = FileUtil.getExtension(name);
-		String category = "기타파일";
-		if (ext.equalsIgnoreCase("pdf")) {
-			category = "PDF 파일";
-		} else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx")) {
-			category = "엑셀 파일";
-		} else if (ext.equalsIgnoreCase("ppt") || ext.equalsIgnoreCase("pptx")) {
-			category = "파워포인트 파일";
-		} else if (ext.equalsIgnoreCase("doc") || ext.equalsIgnoreCase("docs")) {
-			category = "워드 파일";
-		} else if (ext.equalsIgnoreCase("html") || ext.equalsIgnoreCase("htm")) {
-			category = "웹 페이지 파일";
-		} else if (ext.equalsIgnoreCase("gif")) {
-			category = "이미지 파일 (GIF)";
-		} else if (ext.equalsIgnoreCase("png")) {
-			category = "이미지 파일 (PNG)";
-		} else if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
-			category = "이미지 파일 (JPG)";
-		} else if (ext.equalsIgnoreCase("bmp")) {
-			category = "이미지 파일 (BMP)";
-		} else if (ext.equalsIgnoreCase("tif") || ext.equalsIgnoreCase("tiff")) {
-			category = "실행 파일 (TIFF)";
-		} else if (ext.equalsIgnoreCase("exe")) {
-			category = "실행 파일";
-		}
-		return category;
-
-	}
-
 	public static String imageToBase64(File image, String ext) throws Exception {
 		String base64 = Base64.getEncoder().encodeToString(loadFileAsBytesArray(image));
 		return "data:image/" + ext + ";base64," + base64;
 	}
 
+	/**
+	 * File -> byte[] 로 변경
+	 */
 	private static byte[] loadFileAsBytesArray(File file) throws Exception {
 		int length = (int) file.length();
 		BufferedInputStream reader = new BufferedInputStream(new FileInputStream(file));

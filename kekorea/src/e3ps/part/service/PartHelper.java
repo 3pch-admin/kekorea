@@ -2247,4 +2247,16 @@ public class PartHelper {
 		}
 		return JSONArray.fromObject(list);
 	}
+
+	/**
+	 * 품번으로 최신 부품 있는지 확인 한다.
+	 */
+	public WTPart getWTPart(String partNo) throws Exception {
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WTPartMaster.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, WTPartMaster.class, WTPartMaster.NUMBER, partNo);
+		
+		return null;
+	}
 }

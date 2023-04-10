@@ -1,0 +1,40 @@
+ResourceInfo.class=wt.tools.resource.EnumResourceInfo
+ResourceInfo.customizable=true
+ResourceInfo.deprecated=false
+
+
+# Entry Format (values equal to default value are not included)
+# <key>.value=
+# <key>.category=
+# <key>.comment=
+# <key>.argComment<n>=
+# <key>.constant=
+# <key>.customizable=
+# <key>.deprecated=
+# <key>.abbreviatedDisplay=
+# <key>.fullDisplay=
+# <key>.shortDescription=
+# <key>.longDescription=
+# <key>.order=
+# <key>.defaultValue=
+# <key>.selectable=
+
+# Entry Contents
+
+SIZE.value=SIZE
+SIZE.sort=1
+
+YEAR.value=YEAR
+YEAR.sort=2
+
+DRAWING_COMPANY.value=DRAWING_COMPANY
+DRAWING_COMPANY.sort=3
+
+WRITTEN_DOCUMENT.value=WRITTEN_DOCUMENT
+WRITTEN_DOCUMENT.sort=4
+
+BUSINESS_SECTOR.value=BUSINESS_SECTOR
+BUSINESS_SECTOR.sort=5
+
+CLASSIFICATION_WRITING_DEPARTMENT.value=CLASSIFICATION_WRITING_DEPARTMENT
+CLASSIFICATION_WRITING_DEPARTMENT.sort=6

@@ -16,8 +16,6 @@ import e3ps.common.util.StringUtils;
 //import net.sf.json.JSONArray;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
-import wt.query.ClassAttribute;
-import wt.query.OrderBy;
 import wt.query.QuerySpec;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
@@ -35,30 +33,23 @@ public class CommonCodeHelper {
 		String code = (String) params.get("code");
 		String codeType = (String) params.get("codeType");
 		String description = (String) params.get("description");
-		String enable = (String) params.get("enable");
+		boolean enable = (boolean) params.get("enable");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
 
-		if (!StringUtils.isNull(name)) {
-			QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.NAME, name);
-		}
-
-		if (!StringUtils.isNull(code)) {
-			QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.CODE, code);
-		}
-
-		if (!StringUtils.isNull(description)) {
-			QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.DESCRIPTION, description);
-		}
-
-		if (!StringUtils.isNull(enable)) {
-			QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, Boolean.parseBoolean(enable));
-		}
+		QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.NAME, name);
+		QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.CODE, code);
+		QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.DESCRIPTION, description);
+		QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, enable);
 
 		if (!StringUtils.isNull(codeType)) {
 
 			if (codeType.equals("MAK")) {
+				if (query.getConditionCount() > 0) {
+					query.appendAnd();
+				}
+
 				query.appendOpenParen();
 				query.appendWhere(new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", "MAK"),
 						new int[] { idx });
@@ -67,6 +58,10 @@ public class CommonCodeHelper {
 						new int[] { idx });
 				query.appendCloseParen();
 			} else if (codeType.equals("CUSTOMER")) {
+				if (query.getConditionCount() > 0) {
+					query.appendAnd();
+				}
+
 				query.appendOpenParen();
 				query.appendWhere(new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", "CUSTOMER"),
 						new int[] { idx });
@@ -80,10 +75,10 @@ public class CommonCodeHelper {
 		}
 
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.CODE_TYPE, false);
-		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.SORT, false);
 
-//		PageQueryUtils pager = new PageQueryUtils(params, query);
-//		PagingQueryResult result = pager.find();
+		System.out.println(query);
+
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -178,6 +173,7 @@ public class CommonCodeHelper {
 		int idx = query.appendClassList(CommonCode.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE, code);
 		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
+		QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, true);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -187,13 +183,15 @@ public class CommonCodeHelper {
 		return null;
 	}
 
+	/**
+	 * 부모가 동일한 자식 코드 가져오기 KEY-VALUE 그리드용
+	 */
 	public ArrayList<Map<String, Object>> getChildrens(String parentCode, String codeType) throws Exception {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		CommonCode parent = getCommonCode(parentCode, codeType);
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, "parentReference.key.id",
-				parent.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, "parentReference.key.id", parent);
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {

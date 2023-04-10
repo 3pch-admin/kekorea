@@ -1217,7 +1217,7 @@ public class OrgHelper {
 	/**
 	 * 부서별 사용자를 가져온다 AUIGrid 에서 편집 용도
 	 */
-	public org.json.JSONArray getDepartmentUser(String code) throws Exception {
+	public JSONArray getDepartmentUser(String code) throws Exception {
 		ArrayList<HashMap<String, String>> list = new ArrayList<>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTUser.class, true);
@@ -1241,7 +1241,7 @@ public class OrgHelper {
 			map.put("name", wtUser.getFullName());
 			list.add(map);
 		}
-		return new org.json.JSONArray(list);
+		return JSONArray.fromObject(list);
 	}
 
 	/**
@@ -1458,6 +1458,9 @@ public class OrgHelper {
 		parentNode.put("children", children);
 	}
 
+	/**
+	 * 결재선 지정시 부서별 사용자 검색
+	 */
 	public ArrayList<UserDTO> loadDepartmentUser(String oid) throws Exception {
 		ArrayList<UserDTO> list = new ArrayList<>();
 		Department department = null;
@@ -1477,8 +1480,23 @@ public class OrgHelper {
 				WTAttributeNameIfc.ID_NAME, idx, idx_w);
 		QuerySpecUtils.toInnerJoin(query, People.class, Department.class, "departmentReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_d);
-		QuerySpecUtils.toEqualsAnd(query, idx, People.class, "departmentReference.key.id",
+		QuerySpecUtils.toBooleanAnd(query, idx, People.class, People.RESIGN, false);
+
+		query.appendAnd();
+		query.appendOpenParen();
+		SearchCondition sc = new SearchCondition(People.class, "departmentReference.key.id", "=",
 				department.getPersistInfo().getObjectIdentifier().getId());
+		query.appendWhere(sc, new int[] { idx });
+
+		ArrayList<Department> departments = OrgHelper.manager.getSubDepartment(department, new ArrayList<Department>());
+		for (int i = 0; i < departments.size(); i++) {
+			Department sub = (Department) departments.get(i);
+			query.appendOr();
+			long sfid = sub.getPersistInfo().getObjectIdentifier().getId();
+			query.appendWhere(new SearchCondition(People.class, "departmentReference.key.id", "=", sfid),
+					new int[] { idx });
+		}
+		query.appendCloseParen();
 		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
@@ -1496,7 +1514,6 @@ public class OrgHelper {
 	public ArrayList<Map<String, String>> keyValue(Map<String, String> params) throws Exception {
 		ArrayList<Map<String, String>> list = new ArrayList<>();
 		String value = params.get("value");
-		System.out.println("valu=" + value);
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(People.class, true);

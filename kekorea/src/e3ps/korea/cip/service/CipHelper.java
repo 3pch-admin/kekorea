@@ -72,7 +72,6 @@ public class CipHelper {
 
 		QuerySpecUtils.toOrderBy(query, idx, Cip.class, Cip.CREATE_TIMESTAMP, true);
 
-		System.out.println(query);
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 

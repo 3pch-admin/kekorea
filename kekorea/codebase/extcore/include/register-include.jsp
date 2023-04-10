@@ -1,6 +1,17 @@
+<%@page import="e3ps.workspace.service.WorkspaceHelper"%>
+<%@page import="e3ps.common.util.CommonUtils"%>
+<%@page import="wt.fc.Persistable"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+String oid = request.getParameter("oid");
+JSONArray lines = new JSONArray();
+if (!StringUtils.isNull(oid)) {
+	Persistable per = CommonUtils.getObject(oid);
+	lines = WorkspaceHelper.manager.loadAllLines(per);
+}
+%>
 <div class="include">
 	<input type="button" value="결재선 추가" title="결재선 추가" class="blue" onclick="_register();">
 	<input type="button" value="결재선 삭제" title="결재선 삭제" class="red" onclick="_deleteRow_();">
@@ -49,6 +60,7 @@
 				showRowNumColumn : true,
 				rowNumHeaderText : "번호",
 				selectionMode : "multipleCells",
+				showAutoNoDataMessage : false,
 				showStateColumn : true,
 				showRowCheckColumn : true,
 				showAutoNoDataMessage : false,
@@ -66,25 +78,33 @@
 				} ],
 			}
 			_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
-			AUIGrid.bind(_myGridID_, "removeRow", auiRemoveRow);
-		}
-
-		function auiRemoveRow(event) {
-			const data = AUIGrid.getGridData(_myGridID_);
-			// 			const removeRows = AUIGrid.getRemovedItems(_myGridID_);
-			// 			for (let i = 0; i < data.length; i++) {
-			// 				const rowIndex = AUIGrid.rowIdToIndex(_myGridID_, data[i]._$uid);
-			// 				const sort = data[i].sort;
-			// 				const item = {
-			// 					sort : (sort - removeRows.length)
-			// 				}
-			// 				AUIGrid.updateRow(_myGridID_, item, rowIndex);
-			// 			}
+			AUIGrid.setGridData(_myGridID_,
+	<%=lines%>
+		);
 		}
 
 		function _register() {
+			const list = AUIGrid.getGridData(_myGridID_);
+			const approvals = [];
+			const agrees = [];
+			const receives = [];
+
+			for (let i = 0; i < list.length; i++) {
+				const type = list[i].type;
+				if ("검토" === type) {
+					agrees.push(list[i]);
+				} else if ("결재" === type) {
+					approvals.push(list[i]);
+				} else if ("수신" === type) {
+					receives.push(list[i]);
+				}
+			}
+			
 			const url = getCallUrl("/workspace/popup");
-			popup(url, 1200, 700);
+			const p = popup(url, 1200, 700);
+			p.approvals = approvals;
+			p.agrees = agrees;
+			p.receives = receives;
 		}
 
 		function contextItemHandler(event) {

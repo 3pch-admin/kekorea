@@ -98,15 +98,34 @@ public class ErpController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description(value = "수배표 부품정보 가져오기")
-	@GetMapping(value = "/getItem")
+	@GetMapping(value = "/getErpItemByPartNoAndQuantity")
 	@ResponseBody
-	public Map<String, Object> getItem(@RequestParam String partNo, @RequestParam int quantity) throws Exception {
+	public Map<String, Object> getErpItemByPartNoAndQuantity(@RequestParam String partNo, @RequestParam int quantity)
+			throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			if (ErpHelper.isOperation) {
-				result = ErpHelper.manager.getItem(partNo, quantity);
+				result = ErpHelper.manager.getErpItemByPartNoAndQuantity(partNo, quantity);
+			}
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("msg", e.toString());
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+
+	@Description(value = "규격으로 ERP 부품정보 가져오기")
+	@GetMapping(value = "/getErpItemBySpec")
+	@ResponseBody
+	public Map<String, Object> getErpItemBySpec(@RequestParam String spec) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			if (ErpHelper.isOperation) {
+				result = ErpHelper.manager.getErpItemBySpec(spec);
 			}
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

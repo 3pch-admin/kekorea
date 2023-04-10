@@ -143,7 +143,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					rowNumHeaderText : "번호",
 					showStateColumn : true,
@@ -252,14 +251,24 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 				// PDM 에 등록 안된 품목이다..
 				if (dataField === "spec") {
-					if(!item.ycode_check) {
+					if (item.ycode !== undefined && !item.ycode) {
+						const url = getCallUrl("/erp/getErpItemBySpec?spec=" + item.spec);
+						call(url, null, function(data) {
+							console.log(data);
+							if (data.result) {
+								const newItem = {
+									name : data.itemName,
+									number : data.itemNo,
+									maker : data.maker,
+									customer : data.customer,
+									price : data.price,
+									currency : data.currency,
+									unit : data.unit
+								};
+								AUIGrid.updateRow(myGridID, newItem, rowIndex);
+							}
+						}, "GET");
 					}
-					// 					if (check !== "OK") {
-					// 						const url = getCallUrl("/erp/bundleGetErpData?spec=" + spec);
-					// 						call(url, null, function(data) {
-
-					// 						}, "GET");
-					// 					}
 				}
 			}
 

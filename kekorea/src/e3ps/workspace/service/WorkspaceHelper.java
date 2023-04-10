@@ -10,6 +10,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.epm.workOrder.WorkOrder;
+import e3ps.org.dto.UserDTO;
 import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
@@ -668,5 +669,87 @@ public class WorkspaceHelper {
 			}
 		}
 		return isEndApprovalLine;
+	}
+
+	/**
+	 * 모든 결재 라인 삭제
+	 */
+	public void deleteAllLines(Persistable per) throws Exception {
+		ApprovalMaster master = getMaster(per);
+		if (master != null) {
+			ApprovalLine submitLine = getSubmitLine(master);
+			PersistenceHelper.manager.delete(submitLine);
+
+			ArrayList<ApprovalLine> approvalLines = getApprovalLines(master);
+			ArrayList<ApprovalLine> agreeLines = getAgreeLines(master);
+			ArrayList<ApprovalLine> receiveLines = getReceiveLines(master);
+
+			for (ApprovalLine line : approvalLines) {
+				PersistenceHelper.manager.delete(line);
+			}
+			for (ApprovalLine line : agreeLines) {
+				PersistenceHelper.manager.delete(line);
+			}
+			for (ApprovalLine line : receiveLines) {
+				PersistenceHelper.manager.delete(line);
+			}
+			PersistenceHelper.manager.delete(master);
+		}
+	}
+
+	public JSONArray loadAllLines(Persistable per) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		ApprovalMaster master = getMaster(per);
+		if (master != null) {
+			ArrayList<ApprovalLine> approvalLines = getApprovalLines(master);
+			ArrayList<ApprovalLine> agreeLines = getAgreeLines(master);
+			ArrayList<ApprovalLine> receiveLines = getReceiveLines(master);
+
+			for (ApprovalLine line : agreeLines) {
+				WTUser wtUser = (WTUser) line.getOwnership().getOwner().getPrincipal();
+				UserDTO dto = new UserDTO(wtUser);
+				Map<String, Object> map = new HashMap<>();
+				map.put("woid", wtUser.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("type", "검토");
+				map.put("name", dto.getName());
+				map.put("id", dto.getId());
+				map.put("duty", dto.getDuty());
+				map.put("department_name", dto.getDepartment_name());
+				map.put("email", dto.getEmail());
+				list.add(map);
+			}
+
+			int sort = 1;
+			for (ApprovalLine line : approvalLines) {
+				WTUser wtUser = (WTUser) line.getOwnership().getOwner().getPrincipal();
+				UserDTO dto = new UserDTO(wtUser);
+				Map<String, Object> map = new HashMap<>();
+				map.put("woid", wtUser.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("sort", sort);
+				map.put("type", "결재");
+				map.put("name", dto.getName());
+				map.put("id", dto.getId());
+				map.put("duty", dto.getDuty());
+				map.put("department_name", dto.getDepartment_name());
+				map.put("email", dto.getEmail());
+				list.add(map);
+				sort++;
+			}
+
+			for (ApprovalLine line : receiveLines) {
+				WTUser wtUser = (WTUser) line.getOwnership().getOwner().getPrincipal();
+				UserDTO dto = new UserDTO(wtUser);
+				Map<String, Object> map = new HashMap<>();
+				map.put("woid", wtUser.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("type", "수신");
+				map.put("name", dto.getName());
+				map.put("id", dto.getId());
+				map.put("duty", dto.getDuty());
+				map.put("department_name", dto.getDepartment_name());
+				map.put("email", dto.getEmail());
+				list.add(map);
+			}
+		}
+		return JSONArray.fromObject(list);
 	}
 }

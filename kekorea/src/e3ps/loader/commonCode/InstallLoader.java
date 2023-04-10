@@ -38,8 +38,8 @@ public class InstallLoader {
 					continue;
 				}
 
-				String customer = row.getCell(2).getStringCellValue();
-				String install = row.getCell(3).getStringCellValue();
+				String customer = row.getCell(0).getStringCellValue();
+				String install = row.getCell(1).getStringCellValue();
 
 				if (!StringUtils.isNull(customer) && !StringUtils.isNull(install)) {
 					LoaderHelper.service.loadeInstall(customer, install);

@@ -1,0 +1,34 @@
+ResourceInfo.class=wt.tools.resource.EnumResourceInfo
+ResourceInfo.customizable=true
+ResourceInfo.deprecated=false
+
+
+# Entry Format (values equal to default value are not included)
+# <key>.value=
+# <key>.category=
+# <key>.comment=
+# <key>.argComment<n>=
+# <key>.constant=
+# <key>.customizable=
+# <key>.deprecated=
+# <key>.abbreviatedDisplay=
+# <key>.fullDisplay=
+# <key>.shortDescription=
+# <key>.longDescription=
+# <key>.order=
+# <key>.defaultValue=
+# <key>.selectable=
+
+# Entry Contents
+
+#CONFIG SHEET 카테고리
+CATEGORY.value=\uce74\ud14c\uace0\ub9ac
+CATEGORY.sort=1
+
+#CONFIG SHEET 아이템
+CATEGORY_ITEM.value=\uce74\ud14c\uace0\ub9ac\u0020\uc544\uc774\ud15c
+CATEGORY_ITEM.sort=2
+
+#CONFIG SHEET 사양
+CATEGORY_SPEC.value=\uce74\ud14c\uace0\ub9ac\u0020\uc0ac\uc591
+CATEGORY_SPEC.sort=3

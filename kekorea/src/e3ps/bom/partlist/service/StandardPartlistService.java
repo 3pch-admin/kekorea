@@ -82,7 +82,7 @@ public class StandardPartlistService extends StandardManager implements Partlist
 			}
 
 			// 결재 이력 삭제해ㅑ할거..
-
+			WorkspaceHelper.manager.deleteAllLines(master);
 			PersistenceHelper.manager.delete(master);
 
 			trs.commit();
@@ -101,7 +101,7 @@ public class StandardPartlistService extends StandardManager implements Partlist
 	public void create(PartListDTO dto) throws Exception {
 		String name = dto.getName();
 		String engType = dto.getEngType();
-		String description = dto.getContent();
+		String description = dto.getDescription();
 		ArrayList<String> secondarys = dto.getSecondarys();
 		ArrayList<Map<String, Object>> _addRows = dto.get_addRows();
 		ArrayList<Map<String, Object>> addRows = dto.getAddRows();
@@ -121,6 +121,7 @@ public class StandardPartlistService extends StandardManager implements Partlist
 			PartListMaster master = PartListMaster.newPartListMaster();
 			master.setNumber(number);
 			master.setName(name);
+			master.setEngType(engType); // 먼저 저장을 하고 후에 변경을 해야한다.. 필수값 에러 ..
 			master.setDescription(description);
 			master.setOwnership(CommonUtils.sessionOwner());
 
@@ -138,6 +139,7 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				ContentServerHelper.service.updateContent(master, applicationData, secondary);
 			}
 
+			double totalPrice = 0D;
 			int sort = 0;
 			for (Map<String, Object> addRow : addRows) {
 				// 수배표 데이터..
@@ -191,9 +193,11 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				link.setSort(sort);
 				PersistenceHelper.manager.save(link);
 				sort++;
+
+				totalPrice += data.getWon();
+
 			}
 
-			double totalPrice = 0D;
 			for (Map<String, Object> _addRow : _addRows) {
 				String oid = (String) _addRow.get("oid");
 				Project project = (Project) CommonUtils.getObject(oid);
@@ -230,6 +234,7 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				if (t == null) {
 					throw new Exception(project.getKekNumber() + "작번에 태스크(1차_수배, 2차_수배)가 존재하지 않습니다.");
 				}
+
 				master.setEngType(engType + "_" + t.getName());
 				PartListMasterProjectLink link = PartListMasterProjectLink.newPartListMasterProjectLink(master,
 						project);
@@ -303,9 +308,205 @@ public class StandardPartlistService extends StandardManager implements Partlist
 
 	@Override
 	public void modify(PartListDTO dto) throws Exception {
+		String oid = dto.getOid();
+		String name = dto.getName();
+		String engType = dto.getEngType();
+		String description = dto.getDescription();
+		ArrayList<String> secondarys = dto.getSecondarys();
+		ArrayList<Map<String, Object>> _addRows = dto.get_addRows();
+		ArrayList<Map<String, Object>> addRows = dto.getAddRows();
+		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
+		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
+		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
+		String toid = dto.getToid();
+		int progress = dto.getProgress();
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
+
+			PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
+			master.setName(name);
+			master.setDescription(description);
+
+			// 기존 결재선 삭제
+			WorkspaceHelper.manager.deleteAllLines(master);
+
+			// 산출물로 연결된거 삭제
+			QueryResult _qr = PersistenceHelper.manager.navigate(master, "output", OutputDocumentLink.class, false);
+			while (_qr.hasMoreElements()) {
+				OutputDocumentLink link = (OutputDocumentLink) _qr.nextElement();
+				Output output = link.getOutput();
+				PersistenceHelper.manager.delete(output);
+			}
+
+			// 관련 작번 삭제
+			QueryResult qr = PersistenceHelper.manager.navigate(master, "project", PartListMasterProjectLink.class,
+					false);
+			while (qr.hasMoreElements()) {
+				PartListMasterProjectLink link = (PartListMasterProjectLink) qr.nextElement();
+				PersistenceHelper.manager.delete(link);
+			}
+
+			ArrayList<PartListData> dataList = PartlistHelper.manager.getPartListData(oid);
+			for (PartListData data : dataList) {
+				PersistenceHelper.manager.delete(data);
+			}
+
+			// 수배표 내용 수정
+			double totalPrice = 0D;
+			int sort = 0;
+			for (Map<String, Object> addRow : addRows) {
+				// 수배표 데이터..
+				PartListData data = PartListData.newPartListData();
+
+				int lotNo = (int) addRow.get("lotNo");
+				String unitName = (String) addRow.get("unitName");
+				String partNo = (String) addRow.get("partNo");
+				String partName = (String) addRow.get("partName");
+				String standard = (String) addRow.get("standard");
+				String maker = (String) addRow.get("maker");
+				String customer = (String) addRow.get("customer");
+				int quantity = (int) addRow.get("quantity");
+				String unit = (String) addRow.get("unit");
+				int price = (int) addRow.get("price");
+				String currency = (String) addRow.get("currency");
+				int won = (int) addRow.get("won");
+				Object exchangeRate = (Object) addRow.get("exchangeRate");
+				String referDrawing = (String) addRow.get("referDrawing");
+				String classification = (String) addRow.get("classification");
+				String note = (String) addRow.get("note");
+
+				System.out.println("문제 발생 체크 = " + partNo + " 행 = " + sort);
+
+				data.setLotNo(lotNo);
+				data.setUnitName(unitName);
+				data.setPartNo(partNo);
+				data.setPartName(partName);
+				data.setStandard(standard);
+				data.setMaker(maker);
+				data.setCustomer(customer);
+				data.setQuantity(quantity);
+				data.setUnit(unit);
+				data.setPrice(price);
+				data.setCurrency(currency);
+				data.setWon(won);
+
+				if (exchangeRate instanceof Double) {
+					double value = (double) exchangeRate;
+					data.setExchangeRate((int) value);
+				} else {
+					data.setExchangeRate((int) exchangeRate);
+				}
+
+				data.setReferDrawing(referDrawing);
+				data.setClassification(classification);
+				data.setNote(note);
+				data.setPartListDate(new Timestamp(new Date().getTime()));
+				data.setSort(sort);
+				PersistenceHelper.manager.save(data);
+
+				MasterDataLink link = MasterDataLink.newMasterDataLink(master, data);
+				link.setSort(sort);
+				PersistenceHelper.manager.save(link);
+				sort++;
+
+				totalPrice += data.getWon();
+			}
+
+			for (Map<String, Object> _addRow : _addRows) {
+				Project project = (Project) CommonUtils.getObject((String) _addRow.get("oid"));
+
+				if ("기계".equals(engType)) {
+					double outputMachinePrice = project.getOutputMachinePrice() != null
+							? project.getOutputMachinePrice()
+							: 0D;
+					outputMachinePrice += totalPrice;
+					project.setOutputMachinePrice(outputMachinePrice);
+				} else if ("전기".equals(engType)) {
+					double outputElecPrice = project.getOutputElecPrice() != null ? project.getOutputElecPrice() : 0D;
+					outputElecPrice += totalPrice;
+					project.setOutputElecPrice(outputElecPrice);
+				}
+				PersistenceHelper.manager.modify(project);
+
+				String taskName = "";
+				if (!StringUtils.isNull(toid)) {
+					Task task = (Task) CommonUtils.getObject(toid);
+					taskName = task.getName();
+				} else {
+					if ("기계".equals(engType)) {
+						taskName = "기계_수배표";
+					} else if ("전기".equals(engType)) {
+						taskName = "전기_수배표";
+					}
+				}
+
+				// 기계_수배표 전기_수배표
+				Task parentTask = ProjectHelper.manager.getTaskByName(project, taskName);
+				// 1차수배 2차수배
+				Task t = ProjectHelper.manager.getTaskByParent(project, parentTask);
+				if (t == null) {
+					throw new Exception(project.getKekNumber() + "작번에 태스크(1차_수배, 2차_수배)가 존재하지 않습니다.");
+				}
+
+				master.setEngType(engType + "_" + t.getName());
+				PartListMasterProjectLink link = PartListMasterProjectLink.newPartListMasterProjectLink(master,
+						project);
+				PersistenceHelper.manager.save(link);
+
+				// 산출물
+				Output output = Output.newOutput();
+				output.setName(master.getName());
+				output.setLocation(master.getLocation());
+				output.setTask(t);
+				output.setProject(project);
+				output.setDocument(master);
+				output.setOwnership(CommonUtils.sessionOwner());
+				output = (Output) PersistenceHelper.manager.save(output);
+
+				// 태스크
+				if (t.getStartDate() == null) {
+					// 중복적으로 실제 시작일이 변경 되지 않게
+					t.setStartDate(DateUtils.getCurrentTimestamp());
+				}
+
+				if (progress >= 100) {
+					t.setEndDate(DateUtils.getCurrentTimestamp());
+					t.setState(TaskStateVariable.COMPLETE);
+					t.setProgress(100);
+				} else {
+					t.setState(TaskStateVariable.INWORK);
+					t.setProgress(progress);
+				}
+				t = (Task) PersistenceHelper.manager.modify(t);
+
+				// 무조건 부모는 존재 한다
+				Task pTask = t.getParentTask();
+				if (pTask.getStartDate() == null) {
+					pTask.setStartDate(DateUtils.getCurrentTimestamp());
+					pTask.setState(TaskStateVariable.INWORK);
+				}
+				PersistenceHelper.manager.modify(pTask);
+
+				// 시작이 된 흔적이 없을 경우
+				if (project.getStartDate() == null) {
+					project.setStartDate(DateUtils.getCurrentTimestamp());
+					project.setKekState(ProjectStateVariable.KEK_INWORK);
+					project.setState(ProjectStateVariable.INWORK);
+					project = (Project) PersistenceHelper.manager.modify(project);
+				}
+
+				ProjectHelper.service.calculation(project);
+				ProjectHelper.service.commit(project);
+			}
+
+			master.setTotalPrice(totalPrice);
+			PersistenceHelper.manager.modify(master);
+
+			// 결재시작
+			if (approvalRows.size() > 0) {
+				WorkspaceHelper.service.register(master, agreeRows, approvalRows, receiveRows);
+			}
 
 			trs.commit();
 			trs = null;

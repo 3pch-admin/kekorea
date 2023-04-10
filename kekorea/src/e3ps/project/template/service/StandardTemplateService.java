@@ -59,6 +59,7 @@ public class StandardTemplateService extends StandardManager implements Template
 			template.setName(name);
 			template.setEnable(true);
 			template.setOwnership(ownership);
+			template.setUpdateUser(ownership);
 			template.setDescription(description);
 			Timestamp start = DateUtils.getPlanStartDate();
 			template.setPlanStartDate(start);

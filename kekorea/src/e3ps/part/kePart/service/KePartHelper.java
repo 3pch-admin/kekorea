@@ -59,7 +59,8 @@ public class KePartHelper {
 			}
 
 			query.appendOpenParen();
-			QuerySpecUtils.toBoolean(query, idx, KePart.class, KePart.LATEST, true);
+			SearchCondition sc = new SearchCondition(KeDrawing.class, KeDrawing.LATEST, SearchCondition.IS_TRUE);
+			query.appendWhere(sc, new int[] { idx });
 			QuerySpecUtils.toBooleanOr(query, idx, KePart.class, KePart.LATEST, false);
 			query.appendCloseParen();
 		}
@@ -121,7 +122,7 @@ public class KePartHelper {
 			int lotNo = dto.getLotNo();
 			boolean isExist = exist(keNumber, lotNo);
 			if (isExist) {
-				result.put("isExist", true); 
+				result.put("isExist", true);
 				result.put("msg", "LOT NO가 = " + lotNo + "이고 품번이 = " + keNumber + "가 이미 존재합니다.");
 				return result;
 			}
@@ -138,7 +139,7 @@ public class KePartHelper {
 			if (!orgKeNumber.equals(keNumber) || orgLotNo != lotNo) {
 				boolean isExist = exist(keNumber, lotNo);
 				if (isExist) {
-					result.put("isExist", true); 
+					result.put("isExist", true);
 					result.put("msg", "LOT NO가 = " + lotNo + "이고 도번이 = " + keNumber + "가 이미 존재합니다.");
 					return result;
 				}
