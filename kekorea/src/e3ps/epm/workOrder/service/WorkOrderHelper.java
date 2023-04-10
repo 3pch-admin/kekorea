@@ -26,6 +26,7 @@ import e3ps.bom.tbom.TBOMData;
 import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.TBOMMasterDataLink;
 import e3ps.bom.tbom.TBOMMasterProjectLink;
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
@@ -509,30 +510,35 @@ public class WorkOrderHelper {
 			WorkOrder workOrder = (WorkOrder) obj[0];
 
 			QuerySpec _query = new QuerySpec();
-			int _idx = _query.appendClassList(TBOMMaster.class, false);
-			int _idx_link = _query.appendClassList(TBOMMasterDataLink.class, true);
-			int idx_data = _query.appendClassList(TBOMData.class, false);
-			QuerySpecUtils.toInnerJoin(_query, TBOMMaster.class, TBOMMasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+			int _idx = _query.appendClassList(WorkOrder.class, false);
+			int _idx_link = _query.appendClassList(WorkOrderDataLink.class, true);
+			QuerySpecUtils.toInnerJoin(_query, WorkOrder.class, WorkOrderDataLink.class, WTAttributeNameIfc.ID_NAME,
 					"roleAObjectRef.key.id", _idx, _idx_link);
-			QuerySpecUtils.toInnerJoin(_query, TBOMData.class, TBOMMasterDataLink.class, WTAttributeNameIfc.ID_NAME,
-					"roleBObjectRef.key.id", idx_data, _idx_link);
-			QuerySpecUtils.toEqualsAnd(_query, _idx_link, TBOMMasterDataLink.class, "roleAObjectRef.key.id", master);
-			QuerySpecUtils.toOrderBy(_query, idx_data, TBOMData.class, TBOMData.SORT, false);
+			QuerySpecUtils.toEqualsAnd(_query, _idx_link, WorkOrderDataLink.class, "roleAObjectRef.key.id", workOrder);
+			QuerySpecUtils.toOrderBy(_query, _idx_link, WorkOrderDataLink.class, WorkOrderDataLink.SORT, true);
 			QueryResult qr = PersistenceHelper.manager.find(_query);
 			while (qr.hasMoreElements()) {
 				Object[] oo = (Object[]) qr.nextElement();
-				TBOMMasterDataLink link = (TBOMMasterDataLink) oo[0];
-				TBOMData data = link.getData();
-				Map<String, Object> map = new HashMap<>();
-				map.put("lotNo", String.valueOf(data.getLotNo()));
-				map.put("code", data.getKePart().getMaster().getCode());
-				map.put("name", data.getKePart().getMaster().getName());
-				map.put("model", data.getKePart().getMaster().getModel());
-				map.put("keNumber", data.getKePart().getMaster().getKeNumber());
-				map.put("qty", data.getQty());
-				map.put("unit", data.getUnit());
-				map.put("provide", data.getProvide());
-				map.put("discontinue", data.getDiscontinue());
+				WorkOrderDataLink link = (WorkOrderDataLink) oo[0];
+				Persistable data = link.getData();
+				Map<String, Object> map = new HashMap();
+
+				map.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("dataType", link.getDataType());
+				map.put("lotNo", link.getLotNo());
+				map.put("current", link.getCurrent());
+				map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
+				map.put("note", link.getNote());
+				Persistable per = link.getData();
+				if (per instanceof KeDrawing) {
+					KeDrawing keDrawing = (KeDrawing) per;
+					map.put("name", keDrawing.getMaster().getName());
+					map.put("number", keDrawing.getMaster().getKeNumber());
+					map.put("rev", keDrawing.getVersion());
+					map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
+					map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
+					map.put("latest", latest.getVersion());
+				}
 				list.add(map);
 			}
 		}

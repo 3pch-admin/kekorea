@@ -1,8 +1,6 @@
 package e3ps.doc.meeting.controller;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,13 +22,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.DateUtils;
 import e3ps.doc.meeting.MeetingProjectLink;
 import e3ps.doc.meeting.MeetingTemplate;
 import e3ps.doc.meeting.dto.MeetingDTO;
 import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.doc.meeting.service.MeetingHelper;
-import e3ps.org.service.OrgHelper;
 import e3ps.project.template.service.TemplateHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -51,13 +47,6 @@ public class MeetingController extends BaseController {
 		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
 		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
 
-		org.json.JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
-		org.json.JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
-		org.json.JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
-
-		model.addObject("elecs", elecs);
-		model.addObject("softs", softs);
-		model.addObject("machines", machines);
 		model.addObject("list", list);
 		model.addObject("customers", customers);
 		model.addObject("projectTypes", projectTypes);
@@ -237,7 +226,8 @@ public class MeetingController extends BaseController {
 	public Map<String, Object> getContent(@RequestParam String oid) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			String content = MeetingHelper.manager.getContent(oid);System.out.println(content);
+			String content = MeetingHelper.manager.getContent(oid);
+			System.out.println(content);
 			result.put("content", content);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
@@ -251,15 +241,19 @@ public class MeetingController extends BaseController {
 	@ResponseBody
 	@PostMapping(value = "/getContents")
 	public Map<String, Object> getContents(@RequestParam String oid) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();System.out.println("★★★★★★★★★★★★★★★★★★★★★★★★");
-		try {System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		Map<String, Object> result = new HashMap<String, Object>();
+		System.out.println("★★★★★★★★★★★★★★★★★★★★★★★★");
+		try {
+			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			ArrayList<Map<String, String>> content = MeetingHelper.manager.getContents(oid);
 			result.put("content", content);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
-			result.put("result", FAIL);System.out.println("#################################");
-		}System.out.println("&&&&&&&&&&&&&&&&&"+result);
+			result.put("result", FAIL);
+			System.out.println("#################################");
+		}
+		System.out.println("&&&&&&&&&&&&&&&&&" + result);
 		return result;
 	}
 
