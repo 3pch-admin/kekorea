@@ -663,17 +663,29 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						createAUIGrid(columns);
 					}
 					break;
+				case "tabs-3":
+					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
+					if (isCreated) {
+						AUIGrid.resize(_myGridID_);
+					} else {
+						_createAUIGrid_(_columns_);
+					}
+					break;
 				}
 			}
 		});
+		createAUIGrid(columns);
 		_createAUIGrid(_columns);
 		_createAUIGrid_(_columns_);
-		createAUIGrid(columns);
+		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(_myGridID_);
 		selectbox("engType");
 	});
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(_myGridID_);
 	});
 </script>

@@ -471,11 +471,12 @@ public class WorkOrderHelper {
 	}
 
 	/**
-	 * 도면일람표 비교
+	 * 도면 일람표 비교 기능
 	 */
-	public ArrayList<Map<String, Object>> compare(Project p1, Project p2, String compareKey, String sort) {
+	public ArrayList<Map<String, Object>> compare(Project p1, ArrayList<Project> destList) throws Exception {
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
-
-		return mergedList;
+		
+		
+		return null;
 	}
 }

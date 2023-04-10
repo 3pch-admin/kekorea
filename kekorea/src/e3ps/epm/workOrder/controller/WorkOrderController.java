@@ -27,6 +27,7 @@ import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
 import e3ps.project.template.service.TemplateHelper;
+import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -129,6 +130,8 @@ public class WorkOrderController extends BaseController {
 		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
 		WorkOrderDTO dto = new WorkOrderDTO(workOrder);
 		JSONArray list = KeDrawingHelper.manager.getData(workOrder);
+		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(workOrder);
+		model.addObject("history", history);
 		model.addObject("list", list);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/epm/workOrder/workOrder-view");
