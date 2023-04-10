@@ -161,8 +161,6 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				String classification = (String) addRow.get("classification");
 				String note = (String) addRow.get("note");
 
-				System.out.println("문제 발생 체크 = " + partNo + " 행 = " + sort);
-
 				data.setLotNo(lotNo);
 				data.setUnitName(unitName);
 				data.setPartNo(partNo);

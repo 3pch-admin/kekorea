@@ -20,3 +20,6 @@
 5. View 이름 변경
 	- Shell -> Windchill wt.vc.views.LoadView
 	- Design View -> Engineering View 로 변경
+	
+6. 유저 로더
+	- Shell -> java wt.load.LoadFromFile -d "엑셀파일" -u wcadmin -p 패스워드	
