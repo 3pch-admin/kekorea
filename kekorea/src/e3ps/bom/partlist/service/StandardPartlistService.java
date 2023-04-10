@@ -446,6 +446,11 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				if (t == null) {
 					throw new Exception(project.getKekNumber() + "작번에 태스크(1차_수배, 2차_수배)가 존재하지 않습니다.");
 				}
+
+				System.out.println("engType=" + engType);
+				System.out.println("tt=" +  t.getName());
+				
+
 				master.setEngType(engType + "_" + t.getName());
 				PartListMasterProjectLink link = PartListMasterProjectLink.newPartListMasterProjectLink(master,
 						project);
