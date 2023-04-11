@@ -71,6 +71,7 @@ public class RequestDocumentHelper {
 					node.put("state", dto.getState());
 					node.put("model", dto.getModel());
 					node.put("pdate_txt", dto.getPdate_txt());
+					node.put("modifier", dto.getModifier());
 					node.put("creator", dto.getCreator());
 					node.put("creatorId", requestDocument.getCreatorName());
 					node.put("createdDate_txt", dto.getCreatedDate_txt());
@@ -92,6 +93,7 @@ public class RequestDocumentHelper {
 					data.put("state", dto.getState());
 					data.put("model", dto.getModel());
 					data.put("pdate_txt", dto.getPdate_txt());
+					node.put("modifier", dto.getModifier());
 					data.put("creator", dto.getCreator());
 					data.put("creatorId", requestDocument.getCreatorName());
 					data.put("createdDate_txt", dto.getCreatedDate_txt());

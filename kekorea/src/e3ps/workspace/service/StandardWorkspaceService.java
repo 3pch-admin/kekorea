@@ -5,14 +5,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.bom.partlist.PartListMaster;
-import e3ps.bom.tbom.TBOMMaster;
 import e3ps.common.Constants;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.doc.request.RequestDocument;
+import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.erp.service.ErpHelper;
+import e3ps.org.Department;
+import e3ps.org.People;
+import e3ps.org.PeopleWTUserLink;
 import e3ps.part.kePart.KePart;
+import e3ps.project.Project;
+import e3ps.project.ProjectUserLink;
+import e3ps.project.task.Task;
+import e3ps.project.task.variable.TaskStateVariable;
+import e3ps.project.variable.ProjectStateVariable;
 import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.ApprovalLine;
@@ -28,6 +39,7 @@ import wt.lifecycle.State;
 import wt.org.WTUser;
 import wt.ownership.Ownership;
 import wt.pom.Transaction;
+import wt.query.QuerySpec;
 import wt.services.StandardManager;
 import wt.util.WTException;
 
@@ -333,6 +345,12 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 				if (per instanceof LifeCycleManaged) {
 					State state = State.toState("APPROVED");
 					per = (Persistable) LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) per, state);
+
+					if (per instanceof RequestDocument) {
+						RequestDocument requestDocument = (RequestDocument) per;
+						settingUser(requestDocument, master);
+					}
+
 //					if (per instanceof RequestDocument) {
 //						RequestDocument req = (RequestDocument) per;
 //						setProjectRoleUser(req, master);
@@ -364,6 +382,64 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 		} finally {
 			if (trs != null)
 				trs.rollback();
+		}
+	}
+
+	/**
+	 * 의뢰서 결재 완료시 작업되는 부분
+	 */
+	private void settingUser(RequestDocument requestDocument, ApprovalMaster master) throws Exception {
+
+		QueryResult result = PersistenceHelper.manager.navigate(requestDocument, "project",
+				RequestDocumentProjectLink.class);
+		while (result.hasMoreElements()) {
+			Project project = (Project) result.nextElement();
+
+			Timestamp time = new Timestamp(new Date().getTime());
+			project.setStartDate(time);
+			project.setKekState("설계중");
+			project.setState(ProjectStateVariable.INWORK);
+			project = (Project) PersistenceHelper.manager.modify(project);
+
+			QuerySpec query = new QuerySpec();
+			int idx = query.appendClassList(Task.class, true);
+			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "projectReference.key.id", project);
+			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, Task.NAME, "의뢰서");
+			QueryResult qr = PersistenceHelper.manager.find(query);
+			if (qr.hasMoreElements()) {
+				Object[] obj = (Object[]) qr.nextElement();
+				Task tt = (Task) obj[0];
+				tt.setState(TaskStateVariable.COMPLETE);
+				tt.setEndDate(time);
+				PersistenceHelper.manager.modify(tt);
+			}
+
+			ArrayList<ApprovalLine> agreeLines = WorkspaceHelper.manager.getAgreeLines(master);
+			for (ApprovalLine agreeLine : agreeLines) {
+				WTUser user = (WTUser) agreeLine.getOwnership().getOwner().getPrincipal();
+
+				QueryResult _qr = PersistenceHelper.manager.navigate(user, "people", PeopleWTUserLink.class);
+
+				if (_qr.hasMoreElements()) {
+					People pp = (People) _qr.nextElement();
+					Department department = pp.getDepartment();
+					String name = department.getName();
+
+					if ("기계설계".equals(name)) {
+						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, user);
+						userLink.setUserType(CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE"));
+						PersistenceHelper.manager.save(userLink);
+					} else if ("전기설계".equals(name)) {
+						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, user);
+						userLink.setUserType(CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE"));
+						PersistenceHelper.manager.save(userLink);
+					} else if ("SW설계".equals(name)) {
+						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, user);
+						userLink.setUserType(CommonCodeHelper.manager.getCommonCode("SOFT", "USER_TYPE"));
+						PersistenceHelper.manager.save(userLink);
+					}
+				}
+			}
 		}
 	}
 
