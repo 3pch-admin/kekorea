@@ -80,7 +80,6 @@ public class MeetingHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			Meeting meeting = (Meeting) obj[0];
-
 			JSONObject node = new JSONObject();
 			node.put("oid", meeting.getPersistInfo().getObjectIdentifier().getStringValue());
 			node.put("name", meeting.getName());
@@ -163,35 +162,6 @@ public class MeetingHelper {
 	public String getContent(String oid) throws Exception {
 		MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(oid);
 		return meetingTemplate.getContent();
-	}
-	
-//회의록 템플릿 내용 가져오기 ajax
-	public ArrayList<Map<String, String>> getContents(String oid) throws Exception {
-		System.out.println("oid=" + oid);
-		ArrayList<Map<String, String>> list = new ArrayList<>();
-		MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(oid);
-		QuerySpec query = new QuerySpec();
-//		int idx = query.appendClassList(CommonCode.class, true);
-		int idx = query.appendClassList(Meeting.class, false);
-		QuerySpecUtils.toEqualsAnd(query, idx, Meeting.class, "tinyReference.key.id",
-				meetingTemplate.getPersistInfo().getObjectIdentifier().getId());
-		QuerySpecUtils.toOrderBy(query, idx, Meeting.class, Meeting.NAME, false);
-		QueryResult result = PersistenceHelper.manager.find(query);
-		System.out.println(query);
-		Map<String, String> empty = new HashMap<>();
-		empty.put("value", "");
-		empty.put("name", "선택");
-		list.add(empty);
-
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			MeetingTemplate mtt = (MeetingTemplate) obj[0];
-			Map<String, String> map = new HashMap<>();
-			map.put("value", mtt.getPersistInfo().getObjectIdentifier().getStringValue());
-			map.put("name", mtt.getName());
-			list.add(map);
-		}
-		return list;
 	}
 
 	public JSONArray jsonArrayAui(String oid) throws Exception {

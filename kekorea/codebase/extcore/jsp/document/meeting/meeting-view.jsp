@@ -36,7 +36,7 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 		<th>회의록 제목</th>
 		<td class="indent5"><%=dto.getName()%></td>
 		<th>회의록 템플릿</th>
-		<td class="indent5"><%=dto.getName()%></td>
+		<td class="indent5"><%=dto.getT_name()%></td>
 	</tr>
 	<tr>
 		<th>KEK 작번</th>
@@ -67,6 +67,7 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 	</tr>
 </table>
 <script type="text/javascript">
+
 	function loadTinymce() {
 		tinymce.init({
 			selector : 'textarea',

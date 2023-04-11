@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.doc.meeting.Meeting;
 import e3ps.doc.meeting.MeetingProjectLink;
 import e3ps.doc.meeting.MeetingTemplate;
 import e3ps.doc.meeting.dto.MeetingDTO;
@@ -237,32 +238,17 @@ public class MeetingController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "회의록 템플릿 내용 가져오기 ajax")
-	@ResponseBody
-	@PostMapping(value = "/getContents")
-	public Map<String, Object> getContents(@RequestParam String oid) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		System.out.println("★★★★★★★★★★★★★★★★★★★★★★★★");
-		try {
-			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-			ArrayList<Map<String, String>> content = MeetingHelper.manager.getContents(oid);
-			result.put("content", content);
-			result.put("result", SUCCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("result", FAIL);
-			System.out.println("#################################");
-		}
-		System.out.println("&&&&&&&&&&&&&&&&&" + result);
-		return result;
-	}
-
 	@Description(value = "회의록 뷰")
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		MeetingProjectLink link = (MeetingProjectLink) CommonUtils.getObject(oid);
 		MeetingDTO dto = new MeetingDTO(link);
+		Meeting meeting = (Meeting) CommonUtils.getObject(dto.getOid());
+		String toid = meeting.getTiny().toString();
+		MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(toid);
+		MeetingTemplateDTO tdto = new MeetingTemplateDTO(meetingTemplate);
+		dto.setT_name(tdto.getName());
 		model.addObject("dto", dto);
 		model.setViewName("popup:/document/meeting/meeting-view");
 		return model;
