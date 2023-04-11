@@ -10,7 +10,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -18,18 +17,13 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
-import e3ps.bom.partlist.cache.CacheProcessor;
 import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.common.db.DBCPManager;
-import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
-import e3ps.common.util.DateUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.epm.service.EpmHelper;
+import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.erp.ErpConnectionPool;
-import e3ps.erp.ErpSendHistory;
-import e3ps.part.service.PartHelper;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputDocumentLink;
@@ -41,14 +35,10 @@ import wt.content.ContentHelper;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.doc.WTDocument;
-import wt.epm.EPMDocument;
-import wt.esi.ERPMaterialCollectorDelegate;
-import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.WTUser;
 import wt.part.WTPart;
-import wt.pom.Transaction;
 import wt.services.ServiceFactory;
 import wt.session.SessionHelper;
 import wt.util.FileUtil;
@@ -56,14 +46,6 @@ import wt.util.FileUtil;
 public class ErpHelper {
 
 	public static final boolean isOperation = true;
-
-	public static final String OUTPUT_PATH = "";
-
-	public static final String EPM_PATH = "";
-
-	public static boolean isSendERP = true;
-
-	public static final String erpName = "erp";
 
 	public static final ErpService service = ServiceFactory.getService(ErpService.class);
 	public static final ErpHelper manager = new ErpHelper();
@@ -84,790 +66,6 @@ public class ErpHelper {
 		if (cacheManager == null) {
 			cacheManager = new HashMap<>();
 		}
-	}
-
-	/**
-	 * 표준산출물
-	 * 
-	 * @param param
-	 * @return
-	 * @throws Exception
-	 */
-	public Map<String, Object> getKEK_VPJTOutputStdRpt(Map<String, Object> param) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>(); // json
-		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>(); // data
-//		String key = (String) param.get("key");
-		Connection con = null;
-		Statement st = null;
-		ResultSet rs = null;
-		try {
-
-			con = DBCPManager.getConnection(erpName);
-			st = con.createStatement();
-
-			StringBuffer sql = new StringBuffer();
-
-			sql.append("SELECT StdReportSeq, StdReportName from KEK_VPJTOutputStdRpt");
-
-			rs = st.executeQuery(sql.toString());
-			while (rs.next()) {
-				int StdReportSeq = (int) rs.getInt(1);
-				String StdReportName = (String) rs.getString(2);
-
-				Map<String, Object> dataMap = new HashMap<String, Object>();
-				dataMap.put("name", StdReportSeq);
-				dataMap.put("value", StdReportName);
-				list.add(dataMap);
-			}
-			map.put("result", SUCCESS);
-			map.put("list", list);
-		} catch (Exception e) {
-			e.printStackTrace();
-			map.put("result", FAIL);
-			map.put("msg", FAIL_DATA_LOAD);
-		} finally {
-//			instance.freeConnection(erpName, con);
-			DBCPManager.freeConnection(con, st, rs);
-		}
-		return map;
-	}
-
-	/**
-	 * 메이커
-	 * 
-	 * @param makerName
-	 * @return
-	 * @throws Exception
-	 */
-	public ArrayList<Map<String, Object>> getAllKEK_VDAMAKER() throws Exception {
-
-		Map<String, Object> map = new HashMap<String, Object>();
-
-		Connection con = null;
-		Statement st = null;
-		ResultSet rs = null;
-		ArrayList<Map<String, Object>> list = new ArrayList<>();
-		try {
-
-			con = DBCPManager.getConnection(erpName);
-			st = con.createStatement();
-
-			StringBuffer sql = new StringBuffer();
-
-			sql.append("SELECT MakerSeq, MakerName from KEK_VDAMAKER ");
-
-			rs = st.executeQuery(sql.toString());
-			while (rs.next()) {
-				int MakerSeq = (int) rs.getInt(1);
-				String MakerName = (String) rs.getString(2);
-
-				Map<String, Object> mapp = new HashMap<String, Object>();
-
-				mapp.put("id", MakerSeq);
-				mapp.put("name", MakerName);
-				list.add(mapp);
-			}
-
-			map.put("result", SUCCESS);
-			map.put("list", list);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			map.put("result", FAIL);
-			map.put("msg", FAIL_DATA_LOAD);
-		} finally {
-			DBCPManager.freeConnection(con, st, rs);
-		}
-		return list;
-	}
-
-	public int getDevMaxSeq(String tableName) {
-		int seq = 0;
-
-		Connection con = null;
-		Statement st = null;
-		ResultSet rs = null;
-		try {
-			// TCW_PART_IF
-			con = DBCPManager.getConnection(erpName);
-			st = con.createStatement();
-			String sql = "SELECT MAX(SEerpName " + tableName;
-			System.out.println("### getDevMaxSeq = " + sql);
-			rs = st.executeQuery(sql);
-
-			while (rs.next()) {
-				seq = rs.getInt(1);
-				// System.out.println(rs.getInt(1));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			DBCPManager.freeConnection(con, st, rs);
-		}
-		return seq + 1;
-	}
-
-	public boolean searchPartSpec(String spec) {
-		boolean reValue = false;
-
-		Connection con = null;
-		Statement st = null;
-		ResultSet rs = null;
-		int seq = 0;
-		try {
-			// TCW_PART_IF
-			con = DBCPManager.getConnection(erpName);
-			st = con.createStatement();
-			String sql = "SELECT COUNT(*)  from KEK_VDAItem WHERE SPEC = '" + spec + "' ";
-
-			rs = st.executeQuery(sql);
-
-			while (rs.next()) {
-				seq = rs.getInt(1);
-				// System.out.println(rs.getInt(1));
-			}
-
-			if (seq > 1) {
-				reValue = true;
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			DBCPManager.freeConnection(con, st, rs);
-		}
-		return reValue;
-	}
-
-	public Map<String, Object> getKEK_LotNo(Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>(); // json
-		String lotNo = (String) param.get("lotNo");
-		int index = (int) param.get("index");
-//		DBConnectionManager instance = null;
-		Connection con = null;
-		Statement st = null;
-		ResultSet rs = null;
-		try {
-
-			if (!StringUtils.isNull(lotNo)) {
-
-				con = DBCPManager.getConnection(erpName);
-				st = con.createStatement();
-
-				StringBuffer sql = new StringBuffer();
-
-				sql.append("SELECT LOTSEQ, LOTNO, LOTUNITNAME FROM KEK_VDALOTNO WHERE LOTNO='" + lotNo + "'");
-
-				rs = st.executeQuery(sql.toString());
-				if (rs.next()) {
-					// int LotSeq = (int) rs.getInt(1);
-					// String LotNo = (String) rs.getString(2);
-					String LotUnitName = (String) rs.getString(3);
-
-					map.put("LotUnitName", LotUnitName);
-				}
-			}
-			map.put("index", index);
-		} catch (Exception e) {
-			e.printStackTrace();
-			DBCPManager.freeConnection(con, st, rs);
-		} finally {
-			DBCPManager.freeConnection(con, st, rs);
-		}
-		return map;
-	}
-
-	public Map<String, Object> getKEK_VDAItemBySpec(Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>(); // json
-		String spec = (String) param.get("spec");
-		String qty = (String) param.get("qty");
-		int index = (int) param.get("index");
-//		DBConnectionManager instance = null;
-		Connection con = null;
-		Statement st = null;
-		ResultSet rs = null;
-		try {
-
-			if (!StringUtils.isNull(spec)) {
-				con = DBCPManager.getConnection(erpName);
-				st = con.createStatement();
-
-				StringBuffer sql = new StringBuffer();
-
-				sql.append("SELECT ItemSeq, ItemName, Spec, ItemNo");
-				sql.append(" from KEK_VDAItem");
-				sql.append(" WHERE Spec='" + spec.trim() + "'");
-
-				if (StringUtils.isNull(qty)) {
-					qty = "1";
-				}
-
-				rs = st.executeQuery(sql.toString());
-				if (rs.next()) {
-
-					int ItemSeq = (int) rs.getInt(1);
-					String ItemName = (String) rs.getString(2);
-//					String Spec = (String) rs.getString(3);
-					String ItemNo = (String) rs.getString(4);
-
-					// PLM 체크..
-					boolean isYcode = EpmHelper.manager.checkPLMYCode(ItemNo);
-
-					if (isYcode) {
-						System.out.println("중복 리턴..");
-						map.put("result", FAIL);
-						map.put("YCODE", "true");
-						return map;
-					}
-
-					StringBuffer sb = new StringBuffer();
-					sb.append("EXEC KEK_SPLMBaseGetPrice '" + ItemSeq + "', '', '" + qty.trim() + "'");
-
-					ResultSet result = st.executeQuery(sb.toString());
-
-					String MakerName = "";
-					String CustName = "";
-					String UnitName = "";
-					String CurrName = "";
-					String Price = "";
-					String ExRate = "";
-					if (result.next()) {
-
-						MakerName = (String) result.getString("MakerName");
-						CustName = (String) result.getString("CustName");
-						UnitName = (String) result.getString("UnitName");
-						CurrName = (String) result.getString("CurrName");
-						Price = (String) result.getString("Price");
-						ExRate = (String) result.getString("ExRate");
-
-						if (StringUtils.isNull(Price)) {
-							Price = "1";
-						}
-					}
-					map.put("ItemNo", ItemNo);
-					map.put("ExRate", ExRate);
-					map.put("ItemName", ItemName);
-					// map.put("Spec", Spec);
-					map.put("MakerName", MakerName);
-					map.put("CustName", CustName);
-					map.put("UnitName", UnitName);
-
-					String price = String.format("%,f", Double.parseDouble(Price));
-					map.put("Price", price.substring(0, price.lastIndexOf(".")));
-					map.put("CurrName", CurrName);
-
-					String ext = "";
-
-					if (qty.contains("-")) {
-						ext = qty.substring(0, 1);
-						qty = qty.substring(1);
-					}
-
-					String Won = String.format("%,f",
-							Double.parseDouble(qty) * Double.parseDouble(Price) * Double.parseDouble(ExRate));
-					map.put("won", ext.trim() + Won.substring(0, Won.lastIndexOf(".")));
-
-				}
-			}
-			map.put("result", SUCCESS);
-			map.put("index", index);
-		} catch (Exception e) {
-			e.printStackTrace();
-			map.put("result", FAIL);
-			map.put("msg", FAIL_DATA_LOAD);
-			DBCPManager.freeConnection(con, st, rs);
-		} finally {
-			if (spec != null) {
-				DBCPManager.freeConnection(con, st, rs);
-			}
-		}
-		return map;
-	}
-
-	public Map<String, Object> checkYCode(Map<String, Object> param) {
-		String yCode = (String) param.get("number");
-		int index = (int) param.get("index");
-		Map<String, Object> map = new HashMap<String, Object>();
-		Connection con = null;
-		Statement st = null;
-		ResultSet rs = null;
-		try {
-
-			if (!StringUtils.isNull(yCode)) {
-				con = DBCPManager.getConnection(erpName);
-				st = con.createStatement();
-
-				StringBuffer sql = new StringBuffer();
-
-				sql.append("SELECT ItemSeq, ItemName");
-				sql.append(" from KEK_VDAItem");
-//				sql.append(" WHERE ItemNo='" + yCode.trim + "'");
-				sql.append(" WHERE ItemNo='" + yCode.trim() + "' AND SMSatausNAME != '폐기'");
-
-				rs = st.executeQuery(sql.toString());
-				if (rs.next()) {
-					map.put("check", "true");
-				} else {
-					map.put("check", "false");
-				}
-			} else {
-				map.put("check", "false");
-			}
-
-			map.put("result", SUCCESS);
-			map.put("index", index);
-		} catch (Exception e) {
-			DBCPManager.freeConnection(con, st, rs);
-			map.put("result", FAIL);
-			map.put("index", index);
-			e.printStackTrace();
-		} finally {
-			DBCPManager.freeConnection(con, st, rs);
-		}
-		return map;
-	}
-
-	public Map<String, Object> getOutputList(Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>(); // json
-//		String lotNo = (String) param.get("lotNo");
-		int index = 0;// (int) param.get("index");
-		Connection con = null;
-		Statement st = null;
-		ResultSet rs = null;
-		String stdNo = (String) param.get("stdNo");
-		String pjtSeq = (String) param.get("pjtSeq");
-		String stdReportSeq = (String) param.get("stdReportSeq");
-		String ifFlag = (String) param.get("ifFlag");
-
-		String predate = (String) param.get("predate");
-		String postdate = (String) param.get("postdate");
-
-		ArrayList<Map<String, Object>> list = new ArrayList<>();
-
-		try {
-			String pjtSeqValue = "";
-			if (pjtSeq != null && pjtSeq.length() > 0) {
-				pjtSeq = pjtSeq.trim().toUpperCase();
-				String[] ss = ErpHelper.manager.getKEK_VPJTProject(pjtSeq);
-
-				if (ss != null) {
-					if (ss[0] != null) {
-						pjtSeqValue = ss[0];
-					}
-				}
-			}
-
-			con = DBCPManager.getConnection(erpName);
-			st = con.createStatement();
-
-			StringBuffer sql = new StringBuffer();
-
-			sql.append(
-					" SELECT STDNO, (SELECT PJTNO FROM KEK_VPJTProject WHERE A1.PJTSEQ=PJTSEQ), (SELECT STDREPORTNAME FROM KEK_VPJTOutputStdRpt WHERE A1.STDREPORTSEQ=STDREPORTSEQ), CREATE_TIME, FLAG, INTERFACE_DATE, RESULT, USERID ");
-			sql.append(" FROM KEK_TPJTOutputRptDo_IF A1 ");
-			sql.append(" WHERE ");
-			if ("true".equals(ifFlag)) {
-				sql.append(" FLAG = '0'");
-			} else {
-				sql.append(" FLAG IS NULL");
-			}
-			if (stdNo != null && stdNo.length() > 0) {
-				sql.append(" AND STDNO= '" + stdNo + "'");
-			}
-			if (pjtSeqValue != null && pjtSeqValue.length() > 0) {
-				sql.append(" AND PJTSEQ= '" + pjtSeqValue + "'");
-			}
-			if (stdReportSeq != null && stdReportSeq.length() > 0) {
-				sql.append(" AND STDREPORTSEQ = '" + stdReportSeq + "'");
-			}
-
-			if (predate != null && predate.length() > 0 && postdate != null && postdate.length() > 0) {
-
-				sql.append(" AND CREATE_TIME BETWEEN '" + DateUtils.convertStartDate(predate) + "' AND '"
-						+ DateUtils.convertStartDate(postdate) + "'");
-			}
-
-			sql.append(" ORDER BY CREATE_TIME");
-
-			System.out.println("### sql = " + sql);
-
-			rs = st.executeQuery(sql.toString());
-			while (rs.next()) {
-				// STDNO, PJTSEQ, STDREPORTSEQ, CREATE_TIME, FLAG,
-				// INTERFACE_DATE, RESULT, USERID
-
-				String re1 = (String) rs.getString(1);
-				String re2 = (String) rs.getString(2);
-				String re3 = (String) rs.getString(3);
-				String re4 = (String) rs.getString(4);
-				String re5 = (String) rs.getString(5);
-
-				String re6 = (String) rs.getString(6);
-
-				// String re6Va = DateUtils.getDateString(re6, "yyyy-MM-dd");
-
-				String re7 = (String) rs.getString(7);
-				String re8 = (String) rs.getString(8);
-
-				// System.out.println("##
-				// ="+re1+"//"+re2+"//"+re3+"//"+re4+"//"+re5+"//"+re6+"//"+re7);
-
-				Map<String, Object> reMap = new HashMap<String, Object>(); // json
-
-				reMap.put("STDNO", re1);
-				reMap.put("PJTSEQ", re2);
-				reMap.put("STDREPORTSEQ", re3);
-				reMap.put("CREATE_TIME", re4);
-				reMap.put("FLAG", re5);
-				reMap.put("INTERFACE_DATE", re6);
-				reMap.put("RESULT", re7);
-				reMap.put("USERID", re8);
-				list.add(reMap);
-			}
-			map.put("result", SUCCESS);
-			map.put("index", index);
-			map.put("list", list);
-		} catch (Exception e) {
-			e.printStackTrace();
-			map.put("result", FAIL);
-			map.put("msg", FAIL_DATA_LOAD);
-			DBCPManager.freeConnection(con, st, rs);
-		} finally {
-			DBCPManager.freeConnection(con, st, rs);
-		}
-		return map;
-	}
-
-	public Map<String, Object> getPjtBomAction(Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>(); // json
-		int index = 0;
-		Connection con = null;
-		Statement st = null;
-		ResultSet rs = null;
-
-		String resultMsg = (String) param.get("resultMsg");
-		String pjtSeq = (String) param.get("pjtSeq");
-		String stdReportSeq = (String) param.get("stdReportSeq");
-		String ifFlag = (String) param.get("ifFlag");
-
-		String predate = (String) param.get("predate");
-		String postdate = (String) param.get("postdate");
-
-		System.out.println("##" + resultMsg + "--" + pjtSeq + "--" + stdReportSeq + "--" + ifFlag);
-
-		ArrayList<Map<String, Object>> list = new ArrayList<>();
-
-		try {
-			String pjtSeqValue = "";
-			if (pjtSeq != null && pjtSeq.length() > 0) {
-				pjtSeq = pjtSeq.trim().toUpperCase();
-				String[] ss = ErpHelper.manager.getKEK_VPJTProject(pjtSeq);
-
-				if (ss != null) {
-					if (ss[0] != null) {
-						pjtSeqValue = ss[0];
-					}
-				}
-			}
-			con = DBCPManager.getConnection(erpName);
-			st = con.createStatement();
-
-			StringBuffer sql = new StringBuffer();
-			sql.append(
-					" SELECT DISNO, (SELECT PJTNO FROM KEK_VPJTProject WHERE A1.PJTSEQ=PJTSEQ), REMARKM, DISTRIBUTIONNO, CREATE_TIME, FLAG, INTERFACE_DATE, RESULT, USERID, ITEMSEQ ");
-			sql.append(" FROM KEK_TPJTBOM_IF A1 ");
-			sql.append(" WHERE ");
-			if ("2".equals(ifFlag)) {
-				sql.append(" FLAG = '0' ");
-			} else if ("3".equals(ifFlag)) {
-				sql.append(" FLAG ='1' ");
-			} else {
-				sql.append(" FLAG IS NULL ");
-			}
-			if (resultMsg != null && resultMsg.length() > 0) {
-				sql.append(" AND RESULT= '" + resultMsg + "'");
-			}
-			if (pjtSeq != null && pjtSeq.length() > 0) {
-				sql.append(" AND PJTSEQ= '" + pjtSeqValue + "'");
-			}
-			if (stdReportSeq != null && stdReportSeq.length() > 0) {
-				sql.append(" AND STDREPORTSEQ = '" + stdReportSeq + "'");
-			}
-
-			if (predate != null && predate.length() > 0 && postdate != null && postdate.length() > 0) {
-
-				sql.append(" AND CREATE_TIME BETWEEN '" + DateUtils.convertStartDate(predate) + "' AND '"
-						+ DateUtils.convertStartDate(postdate) + "'");
-			}
-
-			sql.append(" ORDER BY CREATE_TIME");
-
-			System.out.println("### sql = " + sql);
-
-			rs = st.executeQuery(sql.toString());
-			while (rs.next()) {
-				// DISNO, (SELECT PJTNO FROM KEK_VPJTProject WHERE A1.PJTSEQ=PJTSEQ), REMARKM,
-				// DISTRIBUTIONNO, CREATE_TIME, FLAG,
-				// INTERFACE_DATE, RESULT, USERID
-
-				String re1 = (String) rs.getString(1);
-				String re2 = (String) rs.getString(2);
-				String re3 = (String) rs.getString(3);
-				String re4 = (String) rs.getString(4);
-
-				String re5 = (String) rs.getString(5);
-
-				String re6 = (String) rs.getString(6);
-
-				String re7 = (String) rs.getString(7);
-				String re8 = (String) rs.getString(8);
-				String re9 = (String) rs.getString(9);
-				int re10 = (int) rs.getInt(10);
-				// System.out.println("##
-				// ="+re1+"//"+re2+"//"+re3+"//"+re4+"//"+re5+"//"+re6+"//"+re7+"//"+re8);
-
-				Map<String, Object> reMap = new HashMap<String, Object>(); // json
-
-				reMap.put("DISNO", re1);
-				reMap.put("PJTSEQ", re2);
-				reMap.put("REMARKM", re3);
-				reMap.put("DISTRIBUTIONNO", re4);
-				reMap.put("CREATE_TIME", re5);
-
-				reMap.put("FLAG", re6);
-				reMap.put("INTERFACE_DATE", re7);
-				reMap.put("RESULT", re8);
-				reMap.put("USERID", re9);
-				reMap.put("ITEMSEQ", re10);
-				list.add(reMap);
-			}
-			map.put("result", SUCCESS);
-			map.put("index", index);
-			map.put("list", list);
-		} catch (Exception e) {
-			e.printStackTrace();
-			map.put("result", FAIL);
-			map.put("msg", FAIL_DATA_LOAD);
-			DBCPManager.freeConnection(con, st, rs);
-		} finally {
-			DBCPManager.freeConnection(con, st, rs);
-		}
-		return map;
-	}
-
-	public Map<String, Object> getErpPartAction(Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>(); // json
-		int index = 0;
-		Connection con = null;
-		Statement st = null;
-		ResultSet rs = null;
-
-		String resultMsg = (String) param.get("resultMsg");
-		String partSpec = (String) param.get("partSpec");
-		String stdReportSeq = (String) param.get("stdReportSeq");
-		String ifFlag = (String) param.get("ifFlag");
-
-		String predate = (String) param.get("predate");
-		String postdate = (String) param.get("postdate");
-
-		System.out.println("##" + resultMsg + "--" + partSpec + "--" + stdReportSeq + "--" + ifFlag);
-
-		ArrayList<Map<String, Object>> list = new ArrayList<>();
-
-		try {
-			con = DBCPManager.getConnection(erpName);
-			st = con.createStatement();
-
-			StringBuffer sql = new StringBuffer();
-			sql.append(
-					" SELECT A1.PART_NO, A1.PART_NAME, A1.PART_SPEC, A1.USERID, A1.FLAG, A1.CREATE_DATE, A1.INTERFACE_DATE, A1.RESULT  ");
-			sql.append(" FROM KEK_TDAItem_IF A1 ");
-			sql.append(" WHERE ");
-			if ("2".equals(ifFlag)) {
-				// 정상처리
-				sql.append(" FLAG = '0' ");
-			} else if ("3".equals(ifFlag)) {
-				// 오류처리
-				sql.append(" FLAG ='1' ");
-			} else if ("1".equals(ifFlag)) {
-				sql.append(" FLAG IS NULL ");
-			}
-			if (resultMsg != null && resultMsg.length() > 0) {
-				sql.append(" AND RESULT= '" + resultMsg + "'");
-			}
-			if (partSpec != null && partSpec.length() > 0) {
-				sql.append(" AND A1.PART_SPEC= '" + partSpec + "'");
-			}
-			if (stdReportSeq != null && stdReportSeq.length() > 0) {
-				sql.append(" AND STDREPORTSEQ = '" + stdReportSeq + "'");
-			}
-
-			if (predate != null && predate.length() > 0 && postdate != null && postdate.length() > 0) {
-
-				sql.append(" AND A1.CREATE_DATE BETWEEN '" + DateUtils.convertStartDate(predate) + "' AND '"
-						+ DateUtils.convertStartDate(postdate) + "'");
-			}
-
-			sql.append(" ORDER BY CREATE_DATE");
-
-			System.out.println("### sql = " + sql);
-
-			rs = st.executeQuery(sql.toString());
-			while (rs.next()) {
-				// A1.PART_NO, A1.PART_NAME, A1.PART_SPEC,
-				// A1.USERID, A1.FLAG, A1.CREATE_DATE,
-				// A1.INTERFACE_DATE, A1.RESULT
-
-				String re1 = (String) rs.getString(1);
-				String re2 = (String) rs.getString(2);
-				String re3 = (String) rs.getString(3);
-
-				String re4 = (String) rs.getString(4);
-				String re5 = (String) rs.getString(5);
-				String re6 = (String) rs.getString(6);
-
-				String re7 = (String) rs.getString(7);
-				String re8 = (String) rs.getString(8);
-				// System.out.println("##
-				// ="+re1+"//"+re2+"//"+re3+"//"+re4+"//"+re5+"//"+re6+"//"+re7+"//"+re8);
-
-				Map<String, Object> reMap = new HashMap<String, Object>(); // json
-
-				reMap.put("PART_NO", re1);
-				reMap.put("PART_NAME", re2);
-				reMap.put("PART_SPEC", re3);
-				reMap.put("USERID", re4);
-				reMap.put("FLAG", re5);
-
-				reMap.put("CREATE_TIME", re6);
-				reMap.put("INTERFACE_DATE", re7);
-				reMap.put("RESULT", re8);
-
-				list.add(reMap);
-			}
-			map.put("result", SUCCESS);
-			map.put("index", index);
-			map.put("list", list);
-		} catch (Exception e) {
-			e.printStackTrace();
-			map.put("result", FAIL);
-			map.put("msg", FAIL_DATA_LOAD);
-			DBCPManager.freeConnection(con, st, rs);
-		} finally {
-			DBCPManager.freeConnection(con, st, rs);
-		}
-		return map;
-	}
-
-	public Map<String, Object> getMainDataAction() {
-		Map<String, Object> map = new HashMap<String, Object>(); // json
-		int index = 0;
-		Connection con = null;
-		Statement st = null;
-		ResultSet rs = null;
-
-//		String flagSql = "";
-
-//		String[] tableName = {
-//				
-//				"KEK_TPJTOutputRptDo_IF",
-//				"KEK_TPJTBOM_IF",
-//				"KEK_TDAItem_IF",
-//				"KEK_TPJTUnitBOM_IF"
-//		
-//		};
-
-		ArrayList<Map<String, Object>> list = new ArrayList<>();
-
-		try {
-
-			con = DBCPManager.getConnection(erpName);
-			st = con.createStatement();
-
-			StringBuffer sql = new StringBuffer();
-			/*
-			 * SELECT count(distinct(disno)) FROM KEK_TPJTBOM_IF WHERE FLAG IS NOT NULL AND
-			 * RESULT!= '정상처리';
-			 */
-			sql.append(" SELECT COUNT(*) ");
-			sql.append(" FROM KEK_TPJTBOM_IF ");
-			sql.append(" WHERE ");
-
-			rs = st.executeQuery(sql.toString());
-			while (rs.next()) {
-//				int re1 = (int) rs.getInt(1);
-
-				Map<String, Object> reMap = new HashMap<String, Object>(); // json
-
-				list.add(reMap);
-			}
-
-			map.put("result", SUCCESS);
-			map.put("index", index);
-			map.put("list", list);
-		} catch (Exception e) {
-			e.printStackTrace();
-			map.put("result", FAIL);
-			map.put("msg", FAIL_DATA_LOAD);
-			DBCPManager.freeConnection(con, st, rs);
-		} finally {
-			DBCPManager.freeConnection(con, st, rs);
-		}
-		return map;
-	}
-
-	/**
-	 * 부품 일괄 등록시(YCODE NG 시) ERP 조회 해서 데이터 가져오기
-	 */
-	public Map<String, Object> bundleGetErpData(String spec) throws Exception {
-
-		Connection con = null;
-		Statement st = null;
-		ResultSet rs = null;
-
-		try {
-			con = DBCPManager.getConnection(erpName);
-			st = con.createStatement();
-
-			StringBuffer sql = new StringBuffer();
-
-			sql.append("SELECT ITEMSEQ, ITEMNAME, SPEC, ITEMNO");
-			sql.append(" FROM KEK_VDAITEM");
-			sql.append(" WHERE SPEC='" + spec.trim() + "'");
-
-			rs = st.executeQuery(sql.toString());
-			if (rs.next()) {
-				int itemSeq = (int) rs.getInt(1);
-				String itemName = (String) rs.getString(2);
-				String itemNo = (String) rs.getString(4);
-
-				StringBuffer sb = new StringBuffer();
-				sb.append("EXEC KEK_SPLMBaseGetPrice '" + itemSeq + "', '', '1'");
-
-				ResultSet result = st.executeQuery(sb.toString());
-				String maker = "";
-				String customer = "";
-				String unit = "";
-				String price = "";
-				String currency = "";
-				String rate = "";
-
-				if (result.next()) {
-					maker = (String) result.getString("MakerName");
-					customer = (String) result.getString("CustName");
-					unit = (String) result.getString("UnitName");
-					currency = (String) result.getString("CurrName");
-					price = (String) result.getString("Price");
-					rate = (String) result.getString("ExRate");
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-
-		}
-
-		return null;
 	}
 
 	/**
@@ -943,8 +141,6 @@ public class ErpHelper {
 			String cacheKey = partNo + quantity;
 			Map<String, Object> cacheData = cacheManager.get(cacheKey);
 
-			System.out.println("cacheData=" + cacheData);
-
 			if (cacheData == null) {
 				con = dataSource.getConnection();
 				st = con.createStatement();
@@ -990,7 +186,6 @@ public class ErpHelper {
 					result.put("won", quantity * price * exchangeRate);
 				}
 			} else {
-				System.out.println("캐싱 데이터로 가져오는건지?");
 				result = cacheManager.get(cacheKey);
 			}
 		} catch (Exception e) {
@@ -1916,11 +1111,97 @@ public class ErpHelper {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		ArrayList<WTDocument> list = new ArrayList<>();
 		String partNo = "";
 		try {
-			
-			
-		} catch(Exception e) {
+
+			con = dataSource.getConnection();
+			st = con.createStatement();
+
+			int keyIdx = 1;
+			StringBuffer sql = new StringBuffer();
+			sql.append(
+					"INSERT INTO KEK_TDAITEM_IF (SEQ, PART_NAME, PART_SPEC, UNITSEQ, MAKERSEQ, USERID, PRICE, CURRSEQ, CUSTSEQ, ");
+			sql.append("CREATE_DATE,");
+
+			QueryResult result = PersistenceHelper.manager.navigate(part, "document", WTDocumentWTPartLink.class);
+			while (result.hasMoreElements()) {
+				WTDocument doc = (WTDocument) result.nextElement();
+				list.add(doc);
+			}
+
+			for (int i = 0; i < list.size(); i++) {
+				String addName = "ADDFILENAME" + keyIdx;
+				String addExt = "ADDFILEEXT" + keyIdx;
+				String addSize = "ADDFILESIZE" + keyIdx;
+				sql.append("" + addName + ", " + addExt + ", " + addSize + ", ");
+				keyIdx++;
+			}
+
+			sql.append("ISCODE)");
+
+			int seq = getMaxSequence("KEK_TDAITEM_IF");
+			sql.append(" VALUES('" + seq + "', ");
+
+			String partName = IBAUtils.getStringValue(part, "NAME_OF_PARTS");
+			String spec = IBAUtils.getStringValue(part, "DWG_NO");
+			sql.append("'" + partName + "', ");
+			sql.append("'" + spec + "', ");
+
+			sql.append("'" + getKekUnitSeq(IBAUtils.getStringValue(part, "STD_UNIT")) + "', ");
+			sql.append("'" + getKekMakerSeq(IBAUtils.getStringValue(part, "MAKER")) + "', ");
+
+			WTUser user = (WTUser) SessionHelper.manager.getPrincipal();
+			sql.append("'" + user.getName() + "', ");
+
+			int price = IBAUtils.getIntegerValue(part, "PRICE");
+			sql.append("'" + price + "', ");
+			sql.append("'" + getKekCurrencySeq(IBAUtils.getStringValue(part, "CURRNAME")) + "', ");
+			sql.append("'" + getKekCustSeq(IBAUtils.getStringValue(part, "CUSTNAME")) + "', ");
+
+			String createTime = new Timestamp(new Date().getTime()).toString();
+			sql.append("'" + createTime + "', ");
+
+			for (WTDocument doc : list) {
+				String[] primarys = ContentUtils.getPrimary(doc);
+				sql.append("'" + primarys[2] + "', ");
+				sql.append("'" + FileUtil.getExtension(primarys[2]) + "', ");
+				sql.append("'" + primarys[7] + "', ");
+			}
+
+			sql.append("'Y');");
+			st.executeUpdate(sql.toString());
+
+			String dir = epmOutputDir + File.separator + spec;
+			File directory = new File(dir);
+			if (!directory.exists()) {
+				directory.mkdirs();
+			}
+
+			for (WTDocument doc : list) {
+				QueryResult qr = ContentHelper.service.getContentsByRole(doc, ContentRoleType.PRIMARY);
+				if (qr.hasMoreElements()) {
+					ApplicationData data = (ApplicationData) qr.nextElement();
+					byte[] buffer = new byte[10240];
+					InputStream is = ContentServerHelper.service.findLocalContentStream(data);
+					File write = new File(directory + File.separator + data.getFileName());
+					FileOutputStream fos = new FileOutputStream(write);
+					int j = 0;
+					while ((j = is.read(buffer, 0, 10240)) > 0) {
+						fos.write(buffer, 0, j);
+					}
+					fos.close();
+					is.close();
+				}
+			}
+
+			StringBuffer sb = new StringBuffer();
+			sb.append("EXEC KEK_SPLMITEMIF");
+			st.executeUpdate(sb.toString());
+
+			partNo = savePartNo(part, spec);
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			ErpConnectionPool.free(con, st, rs);

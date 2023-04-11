@@ -249,7 +249,7 @@ public class StandardPartService extends StandardManager implements PartService 
 				PersistenceHelper.manager.save(link);
 
 				part = (WTPart) PersistenceHelper.manager.refresh(part);
-				String code = ErpHelper.manager.sendToErp(part);
+				String code = ErpHelper.manager.sendToErpItem(part);
 				list.add(code);
 			}
 

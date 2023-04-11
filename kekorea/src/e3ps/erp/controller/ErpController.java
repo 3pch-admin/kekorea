@@ -46,22 +46,6 @@ public class ErpController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "부품 일괄 등록시 ERP 조회 해서 데이터 가져오기")
-	@GetMapping(value = "/bundleGetErpData")
-	@ResponseBody
-	public Map<String, Object> bundleGetErpData(@RequestParam String spec) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			if (ErpHelper.isOperation) {
-				result = ErpHelper.manager.bundleGetErpData(spec);
-			}
-			result.put("result", SUCCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("result", FAIL);
-		}
-		return result;
-	}
 
 	@Description(value = "수배표 YCODE 체크")
 	@GetMapping(value = "/validate")
