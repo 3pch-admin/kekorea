@@ -22,7 +22,9 @@ String height = request.getParameter("height");
 			rowNumHeaderText : "번호",
 			fillColumnSizeMode : true,
 			selectionMode: "singleRow",
-			displayTreeOpen : true
+			displayTreeOpen : true,
+			showAutoNoDataMessage : false,
+			forceTreeView : true
 		}
 		_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 		loadDepartmentTree();

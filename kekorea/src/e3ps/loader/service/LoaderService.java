@@ -25,9 +25,22 @@ public interface LoaderService {
 
 	/**
 	 * 부서 로더
-	 * 
-	 * @throws Exception
 	 */
 	public abstract void loaderDepartment() throws Exception;
+
+	/**
+	 * 프로젝트 유저 타입 로더
+	 */
+	public abstract void loaderProjectUserType() throws Exception;
+
+	/**
+	 * 태스크 타입 로더
+	 */
+	public abstract void loaderTaskType() throws Exception;
+
+	/**
+	 * 프로젝트 타입 로더
+	 */
+	public abstract void loaderProjectType() throws Exception;
 
 }

@@ -106,14 +106,6 @@ String end = (String) request.getAttribute("end");
 		<script type="text/javascript">
 			let myGridID;
 			const columns = [ {
-				dataField : "state",
-				headerText : "진행상태",
-				dataType : "string",
-				width : 80,
-				renderer : {
-					type : "TemplateRenderer",
-				},
-			}, {
 				dataField : "projectType_name",
 				headerText : "작번유형",
 				dataType : "string",
@@ -245,6 +237,9 @@ String end = (String) request.getAttribute("end");
 					}, {
 						label : "CONFIG SHEET 비교",
 						callback : contextItemHandler
+					}, {
+						label : "이력 비교",
+						callback : contextItemHandler
 					} ],
 					autoGridHeight : true
 				}
@@ -294,14 +289,16 @@ String end = (String) request.getAttribute("end");
 					popup(url3, 1500, 800);
 					break;
 				case 4:
-					const url4 = getCallUrl("/configSheet/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
+					const url4 = getCallUrl("/workOrder/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
 					popup(url4);
 					break;
 				case 5:
 					const url5 = getCallUrl("/configSheet/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
 					popup(url5);
 					break;
-				case 2:
+				case 6:
+					const url6 = getCallUrl("/history/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
+					popup(url6);
 					break;
 				}
 			}

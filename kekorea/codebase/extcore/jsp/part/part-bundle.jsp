@@ -143,7 +143,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					rowNumHeaderText : "번호",
 					showStateColumn : true,
@@ -214,7 +213,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				params.addRows = addRows;
 				params.secondarys = secondarys;
 				params.erp = Boolean(erp);
-				console.log(params);
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
@@ -230,7 +228,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const number = item.number;
 				const rowIndex = event.rowIndex;
 				const check = item.ycode_check;
-				if (dataField === "spec") {
+				if (dataField === "spec" && !isNull(spec)) {
 					const url = getCallUrl("/part/bundleValidatorSpec?spec=" + spec);
 					call(url, null, function(data) {
 						const dwg_check = data.dwg_check;
@@ -240,7 +238,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					}, "GET");
 				}
 
-				if (dataField === "number") {
+				if (dataField === "number" && !isNull(number)) {
 					const url = getCallUrl("/part/bundleValidatorNumber?number=" + number);
 					call(url, null, function(data) {
 						const ycode_check = data.ycode_check;
@@ -251,15 +249,46 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				}
 
 				// PDM 에 등록 안된 품목이다..
-				if (dataField === "spec") {
-					if(!item.ycode_check) {
+				if (dataField === "spec" && !isNull(spec)) {
+					console.log(item.ycode);
+					if (item.ycode !== undefined && item.ycode === false) {
+						const url = getCallUrl("/erp/getErpItemBySpec?spec=" + item.spec);
+						call(url, null, function(data) {
+							if (data.result) {
+								const newItem = {
+									name : data.itemName,
+									number : data.itemNo,
+									maker : data.maker,
+									customer : data.customer,
+									price : data.price,
+									currency : data.currency,
+									unit : data.unit
+								};
+								AUIGrid.updateRow(myGridID, newItem, rowIndex);
+							}
+						}, "GET");
 					}
-					// 					if (check !== "OK") {
-					// 						const url = getCallUrl("/erp/bundleGetErpData?spec=" + spec);
-					// 						call(url, null, function(data) {
+				}
 
-					// 						}, "GET");
-					// 					}
+				// PDM 에 데이터가 있다.
+				if (dataField === "number" && !isNull(number)) {
+					if (item.dwg !== undefined && item.dwg === false) {
+						const url = getCallUrl("/erp/getErpItemByPartNo?partNo=" + number);
+						call(url, null, function(data) {
+							if (data.result) {
+								const newItem = {
+									name : data.itemName,
+									number : data.itemNo,
+									maker : data.maker,
+									customer : data.customer,
+									price : data.price,
+									currency : data.currency,
+									unit : data.unit
+								};
+								AUIGrid.updateRow(myGridID, newItem, rowIndex);
+							}
+						}, "GET");
+					}
 				}
 			}
 

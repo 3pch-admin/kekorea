@@ -21,6 +21,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.bom.partlist.dto.PartListDTO;
+import e3ps.bom.tbom.TBOMData;
+import e3ps.bom.tbom.TBOMMaster;
+import e3ps.bom.tbom.TBOMMasterDataLink;
+import e3ps.bom.tbom.TBOMMasterProjectLink;
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
@@ -29,6 +35,7 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
@@ -449,7 +456,7 @@ public class WorkOrderHelper {
 			setCellValue(workbook, sheet.getRow(rowIndex), 1, link.getDataType(), cellStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 2, name, nameStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 3, number, cellStyle);
-			setCellValue(workbook, sheet.getRow(rowIndex), 4, String.valueOf(link.getCurrent()), cellStyle);
+			setCellValue(workbook, sheet.getRow(rowIndex), 4, String.valueOf(link.getRev()), cellStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 5, String.valueOf(version), cellStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 6, String.valueOf(link.getLotNo()), cellStyle);
 			setCellValue(workbook, sheet.getRow(rowIndex), 7, link.getNote(), cellStyle);
@@ -471,11 +478,117 @@ public class WorkOrderHelper {
 	}
 
 	/**
-	 * 도면일람표 비교
+	 * 도면 일람표 비교 기능
 	 */
-	public ArrayList<Map<String, Object>> compare(Project p1, Project p2, String compareKey, String sort) {
+	public ArrayList<Map<String, Object>> compare(Project p1, ArrayList<Project> destList) throws Exception {
+		ArrayList<Map<String, Object>> list = integratedData(p1);
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
 
+		// list1의 데이터를 먼저 추가
+		for (Map<String, Object> data : list) {
+			Map<String, Object> mergedData = new HashMap<>();
+			mergedData.put("lotNo", data.get("lotNo"));
+			mergedData.put("name", data.get("name"));
+			mergedData.put("number", data.get("number"));
+			mergedData.put("rev1", data.get("rev"));
+			mergedList.add(mergedData);
+		}
+
+		for (int i = 0; i < destList.size(); i++) {
+			Project p2 = (Project) destList.get(i);
+			ArrayList<Map<String, Object>> _list = integratedData(p2);
+			for (Map<String, Object> data : _list) {
+				String partNo = (String) data.get("partNo");
+				String lotNo = (String) data.get("lotNo");
+				String rev = (String) data.get("rev");
+				String key = partNo + "-" + lotNo + "-" + rev;
+				boolean isExist = false;
+
+				// mergedList에 partNo가 동일한 데이터가 있는지 확인
+				for (Map<String, Object> mergedData : mergedList) {
+					String mergedPartNo = (String) mergedData.get("partNo");
+					String mergedLotNo = (String) mergedData.get("lotNo");
+					String mergedRev = (String) mergedData.get("rev1");
+					String _key = mergedPartNo + "-" + mergedLotNo + "-" + mergedRev;
+
+					if (key.equals(_key)) {
+						// partNo가 동일한 데이터가 있으면 데이터를 업데이트하고 isExist를 true로 변경
+						mergedData.put("rev" + (2 + i), data.get("rev"));
+						isExist = true;
+						break;
+					}
+				}
+
+				if (!isExist) {
+					// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
+					Map<String, Object> mergedData = new HashMap<>();
+					mergedData.put("rev" + (2 + i), data.get("rev"));
+					mergedData.put("lotNo", data.get("lotNo"));
+					mergedData.put("name", data.get("name"));
+					mergedData.put("number", data.get("number"));
+					mergedList.add(mergedData);
+				}
+			}
+		}
 		return mergedList;
+	}
+
+	/**
+	 * 비교할 데이터 수집
+	 */
+	private ArrayList<Map<String, Object>> integratedData(Project project) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WorkOrder.class, true);
+		int idx_link = query.appendClassList(WorkOrderProjectLink.class, false);
+		int idx_p = query.appendClassList(Project.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, WorkOrder.class, WorkOrderProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toInnerJoin(query, Project.class, WorkOrderProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleBObjectRef.key.id", idx_p, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, WorkOrderProjectLink.class, "roleBObjectRef.key.id", project);
+
+		QuerySpecUtils.toOrderBy(query, idx, WorkOrder.class, WorkOrder.CREATE_TIMESTAMP, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WorkOrder workOrder = (WorkOrder) obj[0];
+
+			QuerySpec _query = new QuerySpec();
+			int _idx = _query.appendClassList(WorkOrder.class, false);
+			int _idx_link = _query.appendClassList(WorkOrderDataLink.class, true);
+			QuerySpecUtils.toInnerJoin(_query, WorkOrder.class, WorkOrderDataLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleAObjectRef.key.id", _idx, _idx_link);
+			QuerySpecUtils.toEqualsAnd(_query, _idx_link, WorkOrderDataLink.class, "roleAObjectRef.key.id", workOrder);
+			QuerySpecUtils.toOrderBy(_query, _idx_link, WorkOrderDataLink.class, WorkOrderDataLink.SORT, true);
+			QueryResult qr = PersistenceHelper.manager.find(_query);
+			while (qr.hasMoreElements()) {
+				Object[] oo = (Object[]) qr.nextElement();
+				WorkOrderDataLink link = (WorkOrderDataLink) oo[0];
+				Map<String, Object> map = new HashMap();
+
+				map.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("dataType", link.getDataType());
+				map.put("lotNo", String.valueOf(link.getLotNo()));
+				map.put("rev", String.valueOf(link.getRev())); // 등록당시
+				map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
+				map.put("note", link.getNote());
+
+				Persistable per = link.getData();
+				if (per instanceof KeDrawing) {
+					KeDrawing keDrawing = (KeDrawing) per;
+					KeDrawing latest = KeDrawingHelper.manager.getLatest(keDrawing);
+					map.put("name", keDrawing.getMaster().getName());
+					map.put("number", keDrawing.getMaster().getKeNumber());
+					map.put("current", latest.getVersion()); // 최신버전
+					map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
+					map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
+				}
+				list.add(map);
+			}
+		}
+		return list;
 	}
 }

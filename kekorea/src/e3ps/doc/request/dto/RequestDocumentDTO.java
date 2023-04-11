@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import e3ps.common.util.CommonUtils;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.project.Project;
@@ -31,17 +32,14 @@ public class RequestDocumentDTO {
 	private String state;
 	private String model;
 	private String docType;
-
-	@JsonIgnore
 	private Timestamp pdate;
-
+	private String pdate_txt;
 	private String creator;
-	@JsonIgnore
 	private Timestamp createdDate;
-
+	private String createdDate_txt;
 	private String modifier;
-	@JsonIgnore
 	private Timestamp modifiedDate;
+	private String modifiedDate_txt;
 
 	// 변수 담기 용도
 	private ArrayList<Map<String, String>> addRows = new ArrayList<>();
@@ -56,6 +54,20 @@ public class RequestDocumentDTO {
 
 	public RequestDocumentDTO() {
 
+	}
+
+	public RequestDocumentDTO(RequestDocument request) throws Exception {
+		setOid(request.getPersistInfo().getObjectIdentifier().getStringValue());
+		setName(request.getName());
+//		setVersion(CommonUtils.getFullVersion(request));
+		setState(request.getLifeCycleState().getDisplay());
+		setCreator(request.getCreatorFullName());
+		setCreatedDate(request.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(request.getCreateTimestamp()));
+		setModifier(request.getModifierFullName());
+		setModifiedDate(request.getModifyTimestamp());
+		setModifiedDate_txt(CommonUtils.getPersistableTime(request.getModifyTimestamp()));
+		setDocType(request.getDocType().getDisplay());
 	}
 
 	public RequestDocumentDTO(RequestDocumentProjectLink link) throws Exception {
@@ -92,11 +104,16 @@ public class RequestDocumentDTO {
 //		setVersion(CommonUtils.getFullVersion(request));
 		setState(request.getLifeCycleState().getDisplay());
 		setModel(project.getModel());
-		setPdate(project.getPDate());
+		if (project.getPDate() != null) {
+			setPdate(project.getPDate());
+			setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
+		}
 		setCreator(request.getCreatorFullName());
 		setCreatedDate(request.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(request.getCreateTimestamp()));
 		setModifier(request.getModifierFullName());
 		setModifiedDate(request.getModifyTimestamp());
+		setModifiedDate_txt(CommonUtils.getPersistableTime(request.getModifyTimestamp()));
 		setDocType(request.getDocType().getDisplay());
 	}
 }

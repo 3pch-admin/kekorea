@@ -6,12 +6,14 @@ import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.admin.specCode.SpecCode;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.korea.history.History;
 import e3ps.korea.history.HistoryOptionLink;
+import e3ps.korea.history.ProjectHistoryLink;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.template.Template;
@@ -186,6 +188,9 @@ public class HistoryHelper {
 		return map;
 	}
 
+	/**
+	 * 이력 옵션 링크 가져오기
+	 */
 	public ArrayList<HistoryOptionLink> getLinks(History history) throws Exception {
 		ArrayList<HistoryOptionLink> list = new ArrayList<HistoryOptionLink>();
 		if (history == null) {
@@ -196,6 +201,47 @@ public class HistoryHelper {
 		while (result.hasMoreElements()) {
 			HistoryOptionLink link = (HistoryOptionLink) result.nextElement();
 			list.add(link);
+		}
+		return list;
+	}
+
+	/**
+	 * 이력관리 비교
+	 */
+	public ArrayList<Map<String, Object>> compare(Project p1, ArrayList<Project> destList,
+			ArrayList<SpecCode> fixedList) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		destList.add(0, p1);
+
+		for (SpecCode fix : fixedList) {
+			Map<String, Object> mergedList = new HashMap<>();
+			for (int i = 0; i < destList.size(); i++) {
+
+				mergedList.put("key", fix.getName());
+				Project project = (Project) destList.get(i);
+				History history = null;
+				QueryResult qr = PersistenceHelper.manager.navigate(project, "history", ProjectHistoryLink.class);
+				if (qr.hasMoreElements()) {
+					history = (History) qr.nextElement();
+				}
+
+				if (history != null) {
+					QuerySpec query = new QuerySpec();
+					int idx = query.appendClassList(HistoryOptionLink.class, true);
+					QuerySpecUtils.toEqualsAnd(query, idx, HistoryOptionLink.class, "roleAObjectRef.key.id", history);
+					QuerySpecUtils.toEqualsAnd(query, idx, HistoryOptionLink.class, HistoryOptionLink.DATA_FIELD,
+							fix.getCode());
+					QueryResult result = PersistenceHelper.manager.find(query);
+					if (result.hasMoreElements()) {
+						Object[] obj = (Object[]) result.nextElement();
+						HistoryOptionLink link = (HistoryOptionLink) obj[0];
+						SpecCode option = link.getOption();
+						mergedList.put(String.valueOf(project.getPersistInfo().getObjectIdentifier().getId()),
+								option.getName());
+					}
+				}
+			}
+			list.add(mergedList);
 		}
 		return list;
 	}

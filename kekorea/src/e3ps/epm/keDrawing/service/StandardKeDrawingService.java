@@ -3,6 +3,7 @@ package e3ps.epm.keDrawing.service;
 import java.util.HashMap;
 import java.util.List;
 
+import e3ps.common.Constants;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.keDrawing.KeDrawing;
@@ -57,6 +58,7 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				keDrawing.setVersion(version);
 				keDrawing.setMaster(master);
 				keDrawing.setLatest(true);
+				keDrawing.setState(Constants.State.INWORK);
 				PersistenceHelper.manager.save(keDrawing);
 
 				ApplicationData dd = ApplicationData.newApplicationData(keDrawing);

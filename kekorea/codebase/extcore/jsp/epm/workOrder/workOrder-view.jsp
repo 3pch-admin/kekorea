@@ -4,8 +4,16 @@
 <%
 WorkOrderDTO dto = (WorkOrderDTO) request.getAttribute("dto");
 JSONArray list = (JSONArray) request.getAttribute("list");
+JSONArray history = (JSONArray) request.getAttribute("history");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<style type="text/css">
+.compare {
+	background-color: yellow;
+	color: red;
+	font-weight: bold;
+}
+</style>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
@@ -27,6 +35,9 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 		</li>
 		<li>
 			<a href="#tabs-2">도면 일람표</a>
+		</li>
+		<li>
+			<a href="#tabs-3">결재이력</a>
 		</li>
 	</ul>
 	<div id="tabs-1">
@@ -64,7 +75,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			<tr>
 				<th class="lb">내용</th>
 				<td class="indent5" colspan="3">
-					<textarea rows="7" cols="" readonly="readonly"><%=dto.getContent() != null ? dto.getContent() : ""%></textarea>
+					<textarea rows="7" cols="" readonly="readonly"><%=dto.getDescription() != null ? dto.getDescription() : ""%></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -110,21 +121,58 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				headerText : "DWG. NO",
 				dataType : "string",
 				width : 200,
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const doid = item.doid;
+						const number = item.number;
+						const rev = item.rev;
+						let url;
+						if (doid.indexOf("KeDrawing") > -1) {
+							url = getCallUrl("/keDrawing/viewByNumberAndRev?number=" + number + "&rev=" + rev);
+							popup(url, 1400, 700);
+						} else {
+							url = getCallUrl("/project/info?oid=" + oid);
+						}
+					}
+				},
 			}, {
 				dataField : "current",
 				headerText : "CURRENT VER",
 				dataType : "string",
 				width : 130,
+				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+					const rev = item.rev;
+					if (value !== rev) {
+						return "compare";
+					}
+					return "";
+				},
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const doid = item.doid;
+						const number = item.number;
+						const current = item.current;
+						let url;
+						if (doid.indexOf("KeDrawing") > -1) {
+							url = getCallUrl("/keDrawing/viewByNumberAndRev?number=" + number + "&rev=" + current);
+							popup(url, 1400, 700);
+						} else {
+							url = getCallUrl("/project/info?oid=" + oid);
+						}
+					}
+				},
 			}, {
 				dataField : "rev",
 				headerText : "REV",
 				dataType : "string",
 				width : 130,
-			}, {
-				dataField : "latest",
-				headerText : "REV (최신)",
-				dataType : "string",
-				width : 130,
+
 			}, {
 				dataField : "lotNo",
 				headerText : "LOT",
@@ -168,6 +216,68 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			}
 		</script>
 	</div>
+	<div id="tabs-3">
+		<div id="_grid_wrap_" style="height: 550px; border-top: 1px solid #3180c3;"></div>
+		<script type="text/javascript">
+			let _myGridID_;
+			const history =
+		<%=history%>
+			const _columns_ = [ {
+				dataField : "type",
+				headerText : "타입",
+				dataType : "string",
+				width : 80
+			}, {
+				dataField : "role",
+				headerText : "역할",
+				dataType : "string",
+				width : 80
+			}, {
+				dataField : "name",
+				headerText : "제목",
+				dataType : "string",
+				style : "aui-left"
+			}, {
+				dataField : "state",
+				headerText : "상태",
+				dataType : "string",
+				width : 100
+			}, {
+				dataField : "owner",
+				headerText : "담당자",
+				dataType : "string",
+				width : 100
+			}, {
+				dataField : "receiveDate_txt",
+				headerText : "수신일",
+				dataType : "string",
+				width : 130
+			}, {
+				dataField : "completeDate_txt",
+				headerText : "완료일",
+				dataType : "string",
+				width : 130
+			}, {
+				dataField : "description",
+				headerText : "결재의견",
+				dataType : "string",
+				style : "aui-left",
+				width : 450,
+			}, ]
+			function _createAUIGrid_(columnLayout) {
+				const props = {
+					headerHeight : 30,
+					showRowNumColumn : true,
+					rowNumHeaderText : "번호",
+					selectionMode : "singleRow",
+					noDataMessage : "결재이력이 없습니다.",
+					enableSorting : false
+				}
+				_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
+				AUIGrid.setGridData(_myGridID_, history);
+			}
+		</script>
+	</div>
 </div>
 <script type="text/javascript">
 	function zip() {
@@ -189,19 +299,6 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs({
 			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					_createAUIGrid(_columns);
-					AUIGrid.resize(_myGridID);
-					break;
-				case "tabs-2":
-					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
-					break;
-				}
-			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
@@ -221,13 +318,28 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 						createAUIGrid(columns);
 					}
 					break;
+				case "tabs-3":
+					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
+					if (_isCreated_) {
+						AUIGrid.resize(_myGridID_);
+					} else {
+						_createAUIGrid_(_columns_);
+					}
+					break;
 				}
 			}
 		});
+		createAUIGrid(columns);
+		_createAUIGrid(_columns);
+		_createAUIGrid_(_columns_);
+		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(_myGridID_);
 	})
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(_myGridID_);
 	});
 </script>

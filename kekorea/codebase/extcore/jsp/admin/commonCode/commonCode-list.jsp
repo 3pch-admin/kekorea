@@ -1,5 +1,5 @@
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.admin.commonCode.CommonCodeType"%>
-<%@page import="org.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 CommonCodeType[] codeTypes = (CommonCodeType[]) request.getAttribute("codeTypes");
@@ -33,7 +33,8 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 					<%
 					for (CommonCodeType codeType : codeTypes) {
 						String value = codeType.toString();
-						if (value.equals("MAK_DETAIL") || value.equals("INSTALL")) {
+						if (value.equals("MAK_DETAIL") || value.equals("INSTALL") || value.equals("CATEGORY")
+						|| value.equals("CATEGORY_ITEM") || value.equals("CATEGORY_SPEC")) {
 							continue;
 						}
 					%>
@@ -50,12 +51,25 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 				<input type="text" name="description" id="description" class="width-200">
 			</td>
 			<th>사용여부</th>
-			<td class="indent5">
-				<select name="enable" id="enable" class="width-200">
-					<option value="">선택</option>
-					<option value="true">사용</option>
-					<option value="false">미사용</option>
-				</select>
+			<td>
+				&nbsp;
+				<div class="pretty p-switch">
+					<input type="radio" name="enable" value="true" checked="checked">
+					<div class="state p-success">
+						<label>
+							<b>최신버전</b>
+						</label>
+					</div>
+				</div>
+				&nbsp;
+				<div class="pretty p-switch">
+					<input type="radio" name="enable" value="">
+					<div class="state p-success">
+						<label>
+							<b>모든버전</b>
+						</label>
+					</div>
+				</div>
 			</td>
 		</tr>
 	</table>
@@ -156,7 +170,16 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		dataField : "description",
 		headerText : "설명",
 		dataType : "string",
-		style : "left indent10",
+		style : "aui-left",
+	}, {
+		dataField : "sort",
+		headerText : "정렬",
+		dataType : "numeric",
+		width : 80,
+		editRenderer : {
+			type : "InputEditRenderer",
+			onlyNumeric : true,
+		},
 	}, {
 		dataField : "enable",
 		headerText : "사용여부",
@@ -167,55 +190,74 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			editable : true, // 체크박스 편집 활성화 여부(기본값 : false)
 		},
 	}, {
-		dataField : "createDate",
+		dataField : "createDate_txt",
 		headerText : "작성일",
-		dataType : "date",
-		formatString : "yyyy-mm-dd",
+		dataType : "string",
 		width : 120
-	}, {
-		dataField : "poid",
-		headerText : "poid",
-		dataType : "string",
-		visible : false
-	}, {
-		dataField : "oid",
-		headerText : "oid",
-		dataType : "string",
-		visible : false
 	} ]
 
 	function createAUIGrid(columnLayout) {
-
 		const props = {
 			rowIdField : "oid",
 			headerHeight : 30,
-			rowHeight : 30,
 			showRowNumColumn : true,
+			showAutoNoDataMessage : false,
 			rowNumHeaderText : "번호",
-			showRowCheckColumn : true, // 체크 박스 출력
-			fillColumnSizeMode : true, // 화면 꽉채우기
+			showRowCheckColumn : true,
 			editable : true,
 			showStateColumn : true,
 			selectionMode : "multipleCells",
 			flat2tree : true,
 			treeIdField : "oid",
-			treeIdRefField : "parent"
+			treeIdRefField : "parent",
+			enableRowCheckShiftKey : true,
+			useContextMenu : true,
+			enableRightDownFocus : true,
+			forceTreeView : true,
+			contextMenuItems : [ {
+				label : "선택된 행 이전 추가",
+				callback : contextItemHandler
+			}, {
+				label : "선택된 행 이후 추가",
+				callback : contextItemHandler
+			}, {
+				label : "_$line"
+			}, {
+				label : "선택된 행 삭제",
+				callback : contextItemHandler
+			} ],
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		loadGridData();
-		// LazyLoading 바인딩
-		// 		AUIGrid.bind(myGridID, "vScrollC	hange", vScrollChangeHandler);
-		// 클릭 이벤트 바인딩
-		AUIGrid.bind(myGridID, "cellClick", function(event) {
-			let dataField = event.dataField;
-			let oid = event.item.oid;
-			if ("name" === dataField || "number" === dataField) {
-				// 뷰 생성
-			}
-		});
 		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditHandler);
 		AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
+	}
+
+	function contextItemHandler(event) {
+		const item = {
+			enable : true,
+		}
+		switch (event.contextIndex) {
+		case 0:
+			AUIGrid.addRow(myGridID, item, "selectionUp");
+			break;
+		case 1:
+			AUIGrid.addRow(myGridID, item, "selectionDown");
+			break;
+		case 3:
+			const selectedItems = AUIGrid.getSelectedItems(myGridID);
+			const rows = AUIGrid.getRowCount(myGridID);
+			if (rows === 1) {
+				alert("최 소 하나의 행이 존재해야합니다.");
+				return false;
+			}
+			for (let i = selectedItems.length - 1; i >= 0; i--) {
+				const rowIndex = selectedItems[i].rowIndex;
+				AUIGrid.removeRow(myGridID, rowIndex);
+			}
+			break;
+		}
 	}
 
 	function auiAddRowHandler(event) {
@@ -252,10 +294,14 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 	};
 
 	function loadGridData() {
-		let params = new Object();
-		let url = getCallUrl("/commonCode/list");
+		const params = new Object();
+		const url = getCallUrl("/commonCode/list");
+		const enable = !!document.querySelector("input[name=enable]:checked").value;
+		const codeType = document.getElementById("codeType").value;
+		params.enable = enable;
+		params.codeType = codeType;
+		console.log(params);
 		AUIGrid.showAjaxLoader(myGridID);
-		params = form(params, "search_table");
 		parent.openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
@@ -270,7 +316,6 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 	function addRow() {
 		const item = new Object();
 		item.enable = true;
-		item.createDate = new Date();
 		AUIGrid.addRow(myGridID, item, "first");
 	}
 
@@ -349,10 +394,9 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
+		document.getElementById("name").focus();
 		createAUIGrid(columns);
-
 		selectbox("codeType");
-		selectbox("enable");
 	});
 
 	document.addEventListener("keydown", function(event) {

@@ -50,6 +50,9 @@ public class TaskHelper {
 		if (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			BigDecimal next = (BigDecimal) obj[0];
+
+			System.out.println("next=" + next);
+
 			if (next != null) {
 				sort = next.intValue() + 1;
 			}

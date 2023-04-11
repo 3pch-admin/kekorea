@@ -1,0 +1,46 @@
+ResourceInfo.class=wt.tools.resource.EnumResourceInfo
+ResourceInfo.customizable=true
+ResourceInfo.deprecated=false
+
+
+# Entry Format (values equal to default value are not included)
+# <key>.value=
+# <key>.category=
+# <key>.comment=
+# <key>.argComment<n>=
+# <key>.constant=
+# <key>.customizable=
+# <key>.deprecated=
+# <key>.abbreviatedDisplay=
+# <key>.fullDisplay=
+# <key>.shortDescription=
+# <key>.longDescription=
+# <key>.order=
+# <key>.defaultValue=
+# <key>.selectable=
+
+# Entry Contents
+
+#사이즈
+SIZE.value=\uc0ac\uc774\uc988
+SIZE.sort=1
+
+#년도
+YEAR.value=\ub144\ub3c4
+YEAR.sort=2
+
+#도면생성회사
+DRAWING_COMPANY.value=\ub3c4\uba74\uc0dd\uc131\ud68c\uc0ac
+DRAWING_COMPANY.sort=3
+
+#작성문서구분
+WRITTEN_DOCUMENT.value=\uc791\uc131\ubb38\uc11c
+WRITTEN_DOCUMENT.sort=4
+
+#사업부문
+BUSINESS_SECTOR.value=\uc0ac\uc5c5\ubd80\ubb38
+BUSINESS_SECTOR.sort=5
+
+#작성부서구분
+CLASSIFICATION_WRITING_DEPARTMENT.value=\uc791\uc131\ubd80\uc11c\uad6c\ubd84
+CLASSIFICATION_WRITING_DEPARTMENT.sort=6

@@ -271,20 +271,6 @@ public class QuerySpecUtils {
 		OrderBy orderBy = new OrderBy(ca, sort);
 		query.appendOrderBy(orderBy, new int[] { idx });
 	}
-
-	/**
-	 * 쿼리문에 boolean 조건 추가
-	 */
-	public static void toBoolean(QuerySpec query, int idx, Class clazz, String column, boolean value) throws Exception {
-		SearchCondition sc = null;
-		if (value) {
-			sc = new SearchCondition(clazz, column, SearchCondition.IS_TRUE);
-		} else {
-			sc = new SearchCondition(clazz, column, SearchCondition.IS_FALSE);
-		}
-		query.appendWhere(sc, new int[] { idx });
-	}
-
 	/**
 	 * 쿼리문에 boolean (and) 조건 추가
 	 */

@@ -1,6 +1,7 @@
 package e3ps.bom.partlist.dto;
 
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ public class PartListDTO {
 	private String oid;
 	private String loid;
 	private String poid;
+	private double totalPrice;
+	private String totalPrice_txt;
 	private String projectType_code;
 	private String projectType_name;
 	private String projectType_oid;
@@ -60,6 +63,8 @@ public class PartListDTO {
 	private String toid;
 	private int progress;
 
+	private DecimalFormat df = new DecimalFormat("#,##0.00");
+
 	public PartListDTO() {
 
 	}
@@ -68,6 +73,8 @@ public class PartListDTO {
 		setOid(master.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(master.getName());
 		setContent(master.getDescription());
+		setTotalPrice_txt(df.format(master.getTotalPrice()));
+		setTotalPrice(master.getTotalPrice());
 		setState(master.getLifeCycleState().getDisplay());
 		setCreator(master.getCreatorFullName());
 		setCreatedDate(master.getCreateTimestamp());
@@ -81,6 +88,8 @@ public class PartListDTO {
 		PartListMaster master = link.getMaster();
 		Project project = link.getProject();
 		setOid(master.getPersistInfo().getObjectIdentifier().getStringValue());
+		setTotalPrice_txt(df.format(master.getTotalPrice()));
+		setTotalPrice(master.getTotalPrice());
 		setLoid(link.getPersistInfo().getObjectIdentifier().getStringValue());
 		setPoid(project.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(master.getName());

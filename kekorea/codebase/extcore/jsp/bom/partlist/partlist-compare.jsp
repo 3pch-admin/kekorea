@@ -28,21 +28,12 @@ String compareArr = (String) request.getAttribute("compareArr");
 			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('partlist-compare');">
 		</td>
 		<td class="right">
-			<select name="sort" id="sort" class="width-200">
-				<option value="">선택</option>
-				<option value="sort">등록순</option>
-				<option value="partNo">부품번호</option>
-				<option value="lotNo">LOT</option>
-			</select>
-			<input type="button" value="비교" title="비교" class="red" onclick="_compare('');">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
 </table>
 
 <div id="grid_wrap" style="height: 800px; border-top: 1px solid #3180c3;"></div>
-<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
-<
 <script type="text/javascript">
 	let myGridID;
 	const data =
@@ -268,37 +259,20 @@ for (Project project : destList) {%>
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
 			showAutoNoDataMessage : false,
-			// 			showFooter : true,
 			enableFilter : true,
 			selectionMode : "multipleCells",
 			enableMovingColumn : true,
 			showInlineFilter : true,
-			useContextMenu : true,
 			enableRightDownFocus : true,
-		// 			footerPosition : "top",
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-		// 		AUIGrid.setFooter(myGridID, footerLayout);
 		AUIGrid.setGridData(myGridID, data);
-		AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
-		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-			hideContextMenu();
-		});
-		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-			hideContextMenu();
-		});
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
 		const columns = loadColumnLayout("partlist-compare");
-		const contenxtHeader = genColumnHtml(columns);
-		$("#h_item_ul").append(contenxtHeader);
-		$("#headerMenu").menu({
-			select : headerMenuSelectHandler
-		});
 		createAUIGrid(columns);
 		AUIGrid.resize(myGridID);
-		selectbox("sort");
 	})
 
 	window.addEventListener("resize", function() {

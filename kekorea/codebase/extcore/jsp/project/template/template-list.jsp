@@ -33,7 +33,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>템플릿 명</th>
 				<td class="indent5">
-					<input type="text" name="templateName" id="templateName">
+					<input type="text" name="name" id="name">
 				</td>
 				<th>작성자</th>
 				<td class="indent5">
@@ -225,10 +225,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/template/list");
-				const templateName = document.getElementById("templateName").value;
+				const name = document.getElementById("name").value;
 				const duration = document.getElementById("duration").value;
 				const psize = document.getElementById("psize").value;
-				params.templateName = templateName;
+				params.name = name;
 				params.duration = duration;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
@@ -286,6 +286,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("name").focus();
 				const columns = loadColumnLayout("template-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

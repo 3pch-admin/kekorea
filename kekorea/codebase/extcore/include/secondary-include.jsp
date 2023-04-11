@@ -22,13 +22,13 @@ String height = StringUtils.replaceToValue(request.getParameter("height"), "150"
 			buttonTxt : "파일 선택",
 			uploadMaxFileSize : (1024 * 1024 * 1024),
 			dropBoxID : "uploadQueueBox",
-			uploadUrl : getCallUrl("/content/upload"),
+			uploadUrl : getCallUrl("/aui/upload"),
 			queueBoxID : "uploadQueueBox",
 			uploadPars : {
 				roleType : "secondary"
 			},
 			uploadMaxFileCount : 100,
-			deleteUrl : getCallUrl("/content/delete"),
+			deleteUrl : getCallUrl("/aui/delete"),
 			fileKeys : {},
 			onComplete : function() {
 				let form = document.querySelector("form");

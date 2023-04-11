@@ -12,17 +12,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.admin.spec.service.SpecHelper;
+import e3ps.admin.specCode.SpecCode;
+import e3ps.admin.specCode.service.SpecCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.korea.history.service.HistoryHelper;
-import e3ps.org.service.OrgHelper;
+import e3ps.project.Project;
 import e3ps.project.template.service.TemplateHelper;
+import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -34,8 +37,8 @@ public class HistoryController extends BaseController {
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		ArrayList<Map<String, String>> headers = CommonCodeHelper.manager.getArrayKeyValueMap("SPEC");
-		Map<String, ArrayList<Map<String, String>>> list = SpecHelper.manager.getOptionList();
+		ArrayList<Map<String, String>> headers = SpecCodeHelper.manager.getArrayKeyValueMap("SPEC");
+		Map<String, ArrayList<Map<String, String>>> list = SpecCodeHelper.manager.getOptionList();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 
@@ -50,13 +53,6 @@ public class HistoryController extends BaseController {
 		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
 		ArrayList<HashMap<String, String>> templates = TemplateHelper.manager.getTemplateArrayMap();
 
-		org.json.JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
-		org.json.JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
-		org.json.JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
-
-		model.addObject("elecs", elecs);
-		model.addObject("softs", softs);
-		model.addObject("machines", machines);
 		model.addObject("templates", templates);
 		model.addObject("customers", customers);
 		model.addObject("projectTypes", projectTypes);
@@ -102,5 +98,29 @@ public class HistoryController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "이력관리 비교 페이지 공통 함수")
+	@GetMapping(value = "/compare")
+	public ModelAndView compare(@RequestParam String oid, @RequestParam String compareArr) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Project p1 = (Project) CommonUtils.getObject(oid);
+
+		String[] compareOids = compareArr.split(",");
+		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
+		for (String _oid : compareOids) {
+			Project project = (Project) CommonUtils.getObject(_oid);
+			destList.add(project);
+		}
+
+		ArrayList<SpecCode> fixedList = SpecCodeHelper.manager.getSpecCode();
+		ArrayList<Map<String, Object>> data = HistoryHelper.manager.compare(p1, destList, fixedList);
+		model.addObject("p1", p1);
+		model.addObject("oid", oid);
+		model.addObject("fixedList", fixedList);
+		model.addObject("destList", destList);
+		model.addObject("data", JSONArray.fromObject(data));
+		model.setViewName("popup:/korea/history/history-compare");
+		return model;
 	}
 }

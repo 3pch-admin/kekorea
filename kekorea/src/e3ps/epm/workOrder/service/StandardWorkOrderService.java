@@ -68,7 +68,7 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			for (int i = addRows.size() - 1; i >= 0; i--) {
 				Map<String, Object> addRow = addRows.get(i);
 				String oid = (String) addRow.get("oid");
-				int current = (int) addRow.get("current");
+				int rev = (int) addRow.get("rev");
 				int lotNo = (int) addRow.get("lotNo");
 				String dataType = (String) addRow.get("dataType");
 				String note = (String) addRow.get("note");
@@ -83,7 +83,7 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 				link.setDataType(dataType);
 				link.setLotNo(lotNo);
 				link.setNote(note);
-				link.setCurrent(current);
+				link.setRev(rev);
 				PersistenceHelper.manager.save(link);
 				sort++;
 				list.add(link);

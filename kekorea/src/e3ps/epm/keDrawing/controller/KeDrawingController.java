@@ -2,11 +2,11 @@ package e3ps.epm.keDrawing.controller;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Date;
 
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
@@ -25,9 +25,9 @@ import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.epm.keDrawing.KeDrawing;
-import e3ps.epm.keDrawing.KeDrawingMaster;
 import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
+import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 
@@ -186,10 +186,31 @@ public class KeDrawingController extends BaseController {
 		String[] primarys = ContentUtils.getPrimary(dto.getOid());
 		JSONArray list = KeDrawingHelper.manager.history(keDrawing.getMaster());
 		JSONArray data = KeDrawingHelper.manager.jsonArrayAui(oid);
+		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(keDrawing);
+		model.addObject("data", data);
+		model.addObject("list", list);
+		model.addObject("history", history);
+		model.addObject("primarys", primarys);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/epm/keDrawing/keDrawing-view");
+		return model;
+	}
+
+	@Description(value = "도면일람표 도면 뷰 페이지 생성 페이지")
+	@GetMapping(value = "/viewByNumberAndRev")
+	public ModelAndView viewByNumberAndRev(@RequestParam String number, @RequestParam String rev) throws Exception {
+		ModelAndView model = new ModelAndView();
+		KeDrawing keDrawing = KeDrawingHelper.manager.getKeDrawingByNumberAndRev(number, rev);
+		KeDrawingDTO dto = new KeDrawingDTO(keDrawing);
+		String[] primarys = ContentUtils.getPrimary(dto.getOid());
+		JSONArray list = KeDrawingHelper.manager.history(keDrawing.getMaster());
+		JSONArray data = KeDrawingHelper.manager
+				.jsonArrayAui(keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
 		model.addObject("data", data);
 		model.addObject("list", list);
 		model.addObject("primarys", primarys);
 		model.addObject("dto", dto);
+		model.setViewName("popup:/epm/keDrawing/keDrawing-view");
 		model.setViewName("popup:/epm/keDrawing/keDrawing-view");
 		return model;
 	}

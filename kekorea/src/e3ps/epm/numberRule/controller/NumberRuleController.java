@@ -20,6 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.admin.numberRuleCode.NumberRuleCode;
+import e3ps.admin.numberRuleCode.service.NumberRuleCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.epm.numberRule.service.NumberRuleHelper;
@@ -34,12 +36,12 @@ public class NumberRuleController extends BaseController {
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
-		ArrayList<CommonCode> sizes = CommonCodeHelper.manager.getArrayCodeList("SIZE");
-		ArrayList<CommonCode> drawingCompanys = CommonCodeHelper.manager.getArrayCodeList("DRAWING_COMPANY");
-		ArrayList<CommonCode> writtenDocuments = CommonCodeHelper.manager.getArrayCodeList("WRITTEN_DOCUMENT");
-		ArrayList<CommonCode> businessSectors = CommonCodeHelper.manager.getArrayCodeList("BUSINESS_SECTOR");
-		ArrayList<CommonCode> classificationWritingDepartment = CommonCodeHelper.manager
-				.getArrayCodeList("CLASSIFICATION_WRITING_DEPARTMENT");
+		ArrayList<NumberRuleCode> sizes = NumberRuleCodeHelper.manager.getArrayNumberRuleCode("SIZE");
+		ArrayList<NumberRuleCode> drawingCompanys = NumberRuleCodeHelper.manager.getArrayNumberRuleCode("DRAWING_COMPANY");
+		ArrayList<NumberRuleCode> writtenDocuments = NumberRuleCodeHelper.manager.getArrayNumberRuleCode("WRITTEN_DOCUMENT");
+		ArrayList<NumberRuleCode> businessSectors = NumberRuleCodeHelper.manager.getArrayNumberRuleCode("BUSINESS_SECTOR");
+		ArrayList<NumberRuleCode> classificationWritingDepartments = NumberRuleCodeHelper.manager
+				.getArrayNumberRuleCode("CLASSIFICATION_WRITING_DEPARTMENT");
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		Timestamp time = new Timestamp(new Date().getTime());
@@ -49,7 +51,7 @@ public class NumberRuleController extends BaseController {
 		model.addObject("drawingCompanys", drawingCompanys);
 		model.addObject("writtenDocuments", writtenDocuments);
 		model.addObject("businessSectors", businessSectors);
-		model.addObject("classificationWritingDepartment", classificationWritingDepartment);
+		model.addObject("classificationWritingDepartments", classificationWritingDepartments);
 		model.addObject("sizes", sizes);
 		model.setViewName("/extcore/jsp/epm/numberRule/numberRule-list.jsp");
 		return model;

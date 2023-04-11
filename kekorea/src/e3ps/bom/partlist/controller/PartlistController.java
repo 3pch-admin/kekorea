@@ -96,14 +96,14 @@ public class PartlistController extends BaseController {
 			throws Exception {
 		ModelAndView model = new ModelAndView();
 		Project p1 = (Project) CommonUtils.getObject(oid);
-		
+
 		String[] compareOids = compareArr.split(",");
 		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
-		for(String _oid : compareOids) {
-			Project project = (Project)CommonUtils.getObject(_oid);
+		for (String _oid : compareOids) {
+			Project project = (Project) CommonUtils.getObject(_oid);
 			destList.add(project);
 		}
-		
+
 		ArrayList<Map<String, Object>> data = PartlistHelper.manager.compare(p1, destList, invoke);
 		model.addObject("p1", p1);
 		model.addObject("oid", oid);
@@ -112,28 +112,6 @@ public class PartlistController extends BaseController {
 		model.setViewName("popup:/bom/partlist/partlist-compare");
 		return model;
 	}
-
-//	@Description(value = "수배표 비교")
-//	@ResponseBody
-//	@PostMapping(value = "/compare")
-//	public Map<String, Object> compare(@RequestBody Map<String, Object> params) throws Exception {
-//		Map<String, Object> result = new HashMap<>();
-//		try {
-//			String oid = (String) params.get("oid");
-//			String _oid = (String) params.get("_oid");
-//			String compareKey = (String) params.get("compareKey");
-//			String sort = (String) params.get("sort");
-//			Project p1 = (Project) CommonUtils.getObject(oid);
-//			Project p2 = (Project) CommonUtils.getObject(_oid);
-//			ArrayList<Map<String, Object>> data = PartlistHelper.manager.compare(p1, p2, compareKey, sort);
-//			result.put("list", data);
-//			result.put("result", SUCCESS);
-//		} catch (Exception e) {
-//			result.put("result", FAIL);
-//			result.put("msg", e.toString());
-//		}
-//		return result;
-//	}
 
 	@Description(value = "수배표 팝업 조회 페이지")
 	@GetMapping(value = "/popup")
@@ -153,6 +131,15 @@ public class PartlistController extends BaseController {
 	@GetMapping(value = "/create")
 	public ModelAndView create() throws Exception {
 		ModelAndView model = new ModelAndView();
+		People people = CommonUtils.sessionPeople();
+		Department department = people.getDepartment();
+		String engType = "";
+		if (department.getCode().equals("MACHINE")) {
+			engType = "기계";
+		} else if (department.getCode().equals("ELEC")) {
+			engType = "전기";
+		}
+		model.addObject("engType", engType);
 		model.setViewName("popup:/bom/partlist/partlist-create");
 		return model;
 	}
@@ -179,8 +166,8 @@ public class PartlistController extends BaseController {
 	public ModelAndView modify(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
-		PartListMasterProjectLink link = (PartListMasterProjectLink) CommonUtils.getObject(oid);
-		PartListDTO dto = new PartListDTO(link);
+		PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
+		PartListDTO dto = new PartListDTO(master);
 		JSONArray list = PartlistHelper.manager.getData(dto.getOid());
 		JSONArray data = PartlistHelper.manager.jsonAuiProject(dto.getOid());
 		model.addObject("isAdmin", isAdmin);
