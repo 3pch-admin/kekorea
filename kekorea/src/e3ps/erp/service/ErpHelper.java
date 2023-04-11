@@ -18,7 +18,6 @@ import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.service.PartlistHelper;
-import e3ps.common.db.DBCPManager;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.StringUtils;

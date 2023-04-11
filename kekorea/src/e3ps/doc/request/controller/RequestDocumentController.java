@@ -23,12 +23,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.ContentUtils;
+import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.dto.RequestDocumentDTO;
 import e3ps.doc.request.service.RequestDocumentHelper;
+import e3ps.epm.keDrawing.KeDrawing;
+import e3ps.epm.keDrawing.dto.KeDrawingDTO;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
 import e3ps.project.template.service.TemplateHelper;
+import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -193,7 +199,7 @@ public class RequestDocumentController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description(value = "의뢰서 태스크 연결 제거 함수")
 	@ResponseBody
 	@GetMapping(value = "/disconnect")
@@ -226,5 +232,18 @@ public class RequestDocumentController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "의뢰서 정보 페이지")
+	@GetMapping(value = "/view")
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		RequestDocument requestDocument = (RequestDocument) CommonUtils.getObject(oid);
+		RequestDocumentDTO dto = new RequestDocumentDTO(requestDocument);
+		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(requestDocument);
+		model.addObject("history", history);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/doc/request/requestDocument-view");
+		return model;
 	}
 }
