@@ -3,6 +3,7 @@ package e3ps.bom.tbom.service;
 import java.util.Map;
 
 import e3ps.bom.tbom.dto.TBOMDTO;
+import e3ps.workspace.notice.dto.NoticeDTO;
 import wt.method.RemoteInterface;
 
 @RemoteInterface
@@ -22,4 +23,9 @@ public interface TBOMService {
 	 * T-BOM 태스크 연결 제거
 	 */
 	public abstract void disconnect(String oid) throws Exception;
+
+	/**
+	 * T-BOM 수정
+	 */
+	public abstract void modify(TBOMDTO dto)  throws Exception;
 }

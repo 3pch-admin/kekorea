@@ -160,13 +160,13 @@ public interface EpmService {
 	public abstract Map<String, Object> createViewerAction(Map<String, Object> param) throws WTException;
 
 	public abstract Map<String, Object> approvalModifyEpmAction(Map<String, Object> param) throws WTException;
-
+	
 	/**
-	 * 도면 결재
+	 *  결재 등록
+	 * @throws Exception 
 	 */
 	public abstract void register(Map<String, Object> params) throws Exception;
-
-	public abstract void register(ApprovalContract contract, ArrayList<Map<String, String>> approvalRows,
-			ArrayList<Map<String, String>> agreeRows, ArrayList<Map<String, String>> receiveRows);
+	
+	
 
 }

@@ -78,7 +78,7 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 				Task task = ProjectHelper.manager.getTaskByName(project, "T-BOM");
 				if (task == null) {
 					throw new Exception(project.getKekNumber() + "작번에 T-BOM 태스크가 없습니다.");
-				}
+				} 
 				// 산출물
 				Output output = Output.newOutput();
 				output.setName(master.getName());
@@ -236,6 +236,31 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 			if (trs != null)
 				trs.rollback();
 		}
+	}
+	
+	@Override
+	public void modify(TBOMDTO dto) throws Exception {
+		String name = dto.getName();
+		String oid = dto.getOid();
+		String description = dto.getDescription();
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
 
+			TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
+			master.setName(name);
+			master.setDescription(description);
+			PersistenceHelper.manager.modify(master);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
 	}
 }

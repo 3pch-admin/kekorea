@@ -16,14 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.dto.TBOMDTO;
 import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.StringUtils;
-import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.project.Project;
 import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
@@ -212,5 +209,32 @@ public class TBOMController extends BaseController {
 		model.addObject("data", JSONArray.fromObject(data));
 		model.setViewName("popup:/bom/tbom/tbom-compare");
 		return model;
+	}
+	
+	@Description(value = "T-BOM 수정 페이지")
+	@GetMapping(value = "/modify")
+	public ModelAndView modify(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
+		TBOMDTO dto = new TBOMDTO(master);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/bom/tbom/tbom-modify");
+		return model;
+	}
+
+	@Description(value = "T-BOM 수정 페이지 등록")
+	@PostMapping(value = "/modify")
+	@ResponseBody
+	public Map<String, Object> modify(@RequestBody TBOMDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			TBOMHelper.service.modify(dto);
+			result.put("result", SUCCESS);
+			result.put("msg", MODIFY_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
 	}
 }

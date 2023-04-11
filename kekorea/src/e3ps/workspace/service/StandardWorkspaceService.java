@@ -171,7 +171,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			// 객체 상태 변경
 			if (persistable instanceof LifeCycleManaged) {
 				LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) persistable,
-						State.toState("UNDERAPPROVAL"));
+						State.toState("INWORK"));
 				// 일괄결재..
 			} else if (persistable instanceof ApprovalContract) {
 

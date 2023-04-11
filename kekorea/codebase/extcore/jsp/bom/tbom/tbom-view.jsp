@@ -10,6 +10,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 JSONArray history = (JSONArray) request.getAttribute("history");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -19,6 +20,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			</div>
 		</td>
 		<td class="right">
+		<input type="button" value="수정" title="수정" class="green" onclick="modify();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -155,6 +157,12 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 								}
 								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 								AUIGrid.setGridData(_myGridID, list);
+							}
+							
+							function modify() {
+								const oid = document.getElementById("oid").value;
+								const url = getCallUrl("/tbom/modify?oid=" + oid);
+								document.location.href = url;
 							}
 						</script>
 					</div>
@@ -380,4 +388,6 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(_myGridID_);
 	});
+	
+	
 </script>

@@ -42,6 +42,7 @@ import wt.content.ContentHelper;
 import wt.content.ContentItem;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
+import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
@@ -1430,4 +1431,44 @@ public class StandardEpmService extends StandardManager implements EpmService, M
 		return map;
 	}
 
+	@Override
+	public void register(Map<String, Object> params) throws Exception {
+		String name = (String) params.get("name"); // 제목
+		ArrayList<Map<String, String>> _addRows_ = (ArrayList<Map<String, String>>) params.get("_addRows_"); // 결재문서
+		ArrayList<Map<String, String>> agreeRows = (ArrayList<Map<String, String>>) params.get("agreeRows"); // 검토
+		ArrayList<Map<String, String>> approvalRows = (ArrayList<Map<String, String>>) params.get("approvalRows"); // 결재
+		ArrayList<Map<String, String>> receiveRows = (ArrayList<Map<String, String>>) params.get("receiveRows"); // 수신
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			ApprovalContract contract = ApprovalContract.newApprovalContract();
+			contract.setName(name);
+			contract.setStartTime(new Timestamp(new Date().getTime()));
+			contract.setState(WorkspaceHelper.STATE_APPROVAL_APPROVING);
+
+			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
+
+			for (Map<String, String> _addRow_ : _addRows_) {
+				String oid = _addRow_.get("oid");
+				EPMDocument epm = (EPMDocument) CommonUtils.getObject(oid);
+				ApprovalContractPersistableLink aLink = ApprovalContractPersistableLink.newApprovalContractPersistableLink(contract, epm);
+				PersistenceHelper.manager.save(aLink);
+			}
+
+			if (approvalRows.size() > 0) {
+				WorkspaceHelper.service.register(contract, approvalRows, agreeRows, receiveRows);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
 }

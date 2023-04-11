@@ -1,11 +1,7 @@
-<%@page import="net.sf.json.JSONArray"%>
 <%@page import="java.util.Map"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%
-JSONArray data = null;
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -251,7 +247,6 @@ JSONArray data = null;
 			const url = getCallUrl("/epm/popup?method=append&multi=false");
 								popup(url);
 							}
-
 							function append(data) {
 								// 			rowIdField : "oid",
 								for (let i = 0; i < data.length; i++) {
@@ -263,7 +258,6 @@ JSONArray data = null;
 									}
 								}
 							}
-
 							// 행 삭제
 							function _deleteRow() {
 								let checked = AUIGrid.getCheckedRowItems(_myGridID);
@@ -274,10 +268,8 @@ JSONArray data = null;
 							}
 						</script>
 					</div>
-
 				</td>
 			</tr>
-
 		</table>
 		<script type="text/javascript">
 			function registerLine() {
@@ -290,15 +282,20 @@ JSONArray data = null;
 				params._addRows_ = _addRows_;
 				toRegister(params, _addRows_);
 				
+				if (isNull(params.name)) {
+					alert("결재 제목 값은 공백을 입력 할 수 없습니다.");
+					name.focus();
+					return false;
+				}
+				
 				if (!confirm("도면결재를 등록하시겠습니까?")) {
 					return false;
 				}
 				
-// 				parent.openLayer();
+				parent.openLayer();
 				call(url, params, function(data) {
-					console.log(data.msg);
 					if (data.result) {
-						document.location.href = getCallUrl("/epm/register");
+						document.location.href = getCallUrl("/workspace/approval");
 					}
 				})
 			}
