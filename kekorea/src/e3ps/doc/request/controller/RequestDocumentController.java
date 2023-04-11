@@ -238,12 +238,14 @@ public class RequestDocumentController extends BaseController {
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
 		RequestDocument requestDocument = (RequestDocument) CommonUtils.getObject(oid);
 		RequestDocumentDTO dto = new RequestDocumentDTO(requestDocument);
 		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(requestDocument);
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("history", history);
 		model.addObject("dto", dto);
-		model.setViewName("popup:/doc/request/requestDocument-view");
+		model.setViewName("popup:/document/request/requestDocument-view");
 		return model;
 	}
 }

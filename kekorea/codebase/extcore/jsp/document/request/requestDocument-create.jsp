@@ -80,7 +80,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			<tr>
 				<th class="lb">첨부파일</th>
 				<td class="indent5" colspan="3">
-					<jsp:include page="/extcore/include/primary-include.jsp">
+					<jsp:include page="/extcore/include/secondary-include.jsp">
 						<jsp:param value="" name="oid" />
 						<jsp:param value="create" name="mode" />
 						<jsp:param value="150" name="height" />
@@ -759,6 +759,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			params.primarys = toArray("primarys");
 			params.template = template.value;
 			toRegister(params, _addRows_);
+			console.log(params);
 			openLayer();
 			call(url, params, function(data) {
 				alert(data.msg);

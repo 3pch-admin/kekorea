@@ -161,13 +161,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataType : "string",
 					width : 350,
 					style : "underline",
-					renderer : {
-						type : "LinkRenderer",
-						baseUrl : "javascript",
-						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
-						}
-					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -401,6 +394,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu();
 				});
+				AUIGrid.bind(myGridID, "cellDoubleClick", auiCellDoubleClick);
+			}
+
+			function auiCellDoubleClick(event) {
+				const dataField = event.dataField;
+				const oid = event.item.oid;
+				if (dataField === "name") {
+					const url = getCallUrl("/requestDocument/view?oid=" + oid);
+					popup(url, 1400, 700);
+				}
 			}
 
 			function save() {
