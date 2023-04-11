@@ -12,7 +12,6 @@ import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
-import e3ps.epm.keDrawing.KeDrawingMasterLink;
 import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
@@ -307,6 +306,7 @@ public class KeDrawingHelper {
 			if (per instanceof KeDrawing) {
 				KeDrawing keDrawing = (KeDrawing) per;
 				KeDrawing latest = getLatest(keDrawing);
+				map.put("doid", keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("name", keDrawing.getMaster().getName());
 				map.put("number", keDrawing.getMaster().getKeNumber());
 				map.put("current", latest.getVersion());
@@ -421,6 +421,27 @@ public class KeDrawingHelper {
 			list.add(map);
 		}
 		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 도면번호 + 버전에 해당 하는 도면 찾아오는 함수
+	 */
+	public KeDrawing getKeDrawingByNumberAndRev(String number, String rev) throws Exception {
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(KeDrawingMaster.class, true);
+		int idx_k = query.appendClassList(KeDrawing.class, true);
+		QuerySpecUtils.toInnerJoin(query, KeDrawingMaster.class, KeDrawing.class, WTAttributeNameIfc.ID_NAME,
+				"masterReference.key.id", idx, idx_k);
+		QuerySpecUtils.toEqualsAnd(query, idx_k, KeDrawing.class, KeDrawing.VERSION, Integer.parseInt(rev));
+		QuerySpecUtils.toEqualsAnd(query, idx, KeDrawingMaster.class, KeDrawingMaster.KE_NUMBER, number);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			KeDrawing keDrawing = (KeDrawing) obj[1];
+			return keDrawing;
+		}
+		return null;
 	}
 
 }

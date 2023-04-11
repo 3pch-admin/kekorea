@@ -95,7 +95,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/workspace/view?oid=" + oid + "&columnType=COLUMN_APPROVAL&poid=e3ps.bom.partlist.PartListMaster:664344");
+							const url = getCallUrl("/workspace/lineView?oid=" + oid + "&columnType=COLUMN_RECEIVE&poid=" + item.poid);
 							popup(url, 1400, 700);
 						}
 					},
@@ -113,7 +113,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/workspace/view?oid=" + oid + "&columnType=COLUMN_APPROVAL&poid=e3ps.bom.partlist.PartListMaster:664344");
+							const url = getCallUrl("/workspace/lineView?oid=" + oid + "&columnType=COLUMN_RECEIVE&poid=" + item.poid);
 							popup(url, 1400, 700);
 						}
 					},
@@ -131,7 +131,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/workspace/view?oid=" + oid + "&columnType=COLUMN_APPROVAL&poid=e3ps.bom.partlist.PartListMaster:664344");
+							const url = getCallUrl("/workspace/lineView?oid=" + oid + "&columnType=COLUMN_RECEIVE&poid=" + item.poid);
 							popup(url, 1400, 700);
 						}
 					},

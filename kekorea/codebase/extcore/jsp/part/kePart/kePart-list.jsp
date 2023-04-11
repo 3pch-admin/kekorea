@@ -564,12 +564,8 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 			}
 
 			function addRow() {
-				const sessionName = document.getElementById("sessionName").value;
-				const time = document.getElementById("time").value;
 				const item = {
 					latest : true,
-					creator : sessionName,
-					modifier : sessionName,
 					state : "작업중",
 					version : 1
 				};

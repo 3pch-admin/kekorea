@@ -4,9 +4,16 @@
 <%
 WorkOrderDTO dto = (WorkOrderDTO) request.getAttribute("dto");
 JSONArray list = (JSONArray) request.getAttribute("list");
-JSONArray history = (JSONArray) request.getAttribute("list");
+JSONArray history = (JSONArray) request.getAttribute("history");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<style type="text/css">
+.compare {
+	background-color: yellow;
+	color: red;
+	font-weight: bold;
+}
+</style>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
@@ -68,7 +75,7 @@ JSONArray history = (JSONArray) request.getAttribute("list");
 			<tr>
 				<th class="lb">내용</th>
 				<td class="indent5" colspan="3">
-					<textarea rows="7" cols="" readonly="readonly"><%=dto.getContent() != null ? dto.getContent() : ""%></textarea>
+					<textarea rows="7" cols="" readonly="readonly"><%=dto.getDescription() != null ? dto.getDescription() : ""%></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -114,16 +121,58 @@ JSONArray history = (JSONArray) request.getAttribute("list");
 				headerText : "DWG. NO",
 				dataType : "string",
 				width : 200,
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const doid = item.doid;
+						const number = item.number;
+						const rev = item.rev;
+						let url;
+						if (doid.indexOf("KeDrawing") > -1) {
+							url = getCallUrl("/keDrawing/viewByNumberAndRev?number=" + number + "&rev=" + rev);
+							popup(url, 1400, 700);
+						} else {
+							url = getCallUrl("/project/info?oid=" + oid);
+						}
+					}
+				},
 			}, {
 				dataField : "current",
 				headerText : "CURRENT VER",
 				dataType : "string",
 				width : 130,
+				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+					const rev = item.rev;
+					if (value !== rev) {
+						return "compare";
+					}
+					return "";
+				},
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const doid = item.doid;
+						const number = item.number;
+						const current = item.current;
+						let url;
+						if (doid.indexOf("KeDrawing") > -1) {
+							url = getCallUrl("/keDrawing/viewByNumberAndRev?number=" + number + "&rev=" + current);
+							popup(url, 1400, 700);
+						} else {
+							url = getCallUrl("/project/info?oid=" + oid);
+						}
+					}
+				},
 			}, {
 				dataField : "rev",
 				headerText : "REV",
 				dataType : "string",
 				width : 130,
+
 			}, {
 				dataField : "lotNo",
 				headerText : "LOT",
@@ -167,11 +216,12 @@ JSONArray history = (JSONArray) request.getAttribute("list");
 			}
 		</script>
 	</div>
-<div id="tabs-3">
+	<div id="tabs-3">
 		<div id="_grid_wrap_" style="height: 550px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let _myGridID_;
-			const history = <%=history%>
+			const history =
+		<%=history%>
 			const _columns_ = [ {
 				dataField : "type",
 				headerText : "타입",
@@ -227,7 +277,7 @@ JSONArray history = (JSONArray) request.getAttribute("list");
 				AUIGrid.setGridData(_myGridID_, history);
 			}
 		</script>
-	</div>	
+	</div>
 </div>
 <script type="text/javascript">
 	function zip() {
@@ -275,7 +325,7 @@ JSONArray history = (JSONArray) request.getAttribute("list");
 					} else {
 						_createAUIGrid_(_columns_);
 					}
-					break;					
+					break;
 				}
 			}
 		});

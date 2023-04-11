@@ -62,8 +62,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				<th class="lb">상태</th>
 				<td class="indent5"><%=dto.getState()%></td>
 				<th>전체금액</th>
-				<td class="indent5"><%=dto.getTotalPrice_txt() %>원</td>
-			</tr>			
+				<td class="indent5"><%=dto.getTotalPrice_txt()%>원
+				</td>
+			</tr>
 			<tr>
 				<th class="lb">작성자</th>
 				<td class="indent5"><%=dto.getCreator()%></td>
@@ -84,37 +85,21 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 								headerText : "작번유형",
 								dataType : "string",
 								width : 80,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
 							}, {
 								dataField : "customer_name",
 								headerText : "거래처",
 								dataType : "string",
 								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
 							}, {
 								dataField : "mak_name",
 								headerText : "막종",
 								dataType : "string",
 								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
 							}, {
 								dataField : "detail_name",
 								headerText : "막종상세",
 								dataType : "string",
 								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
 							}, {
 								dataField : "kekNumber",
 								headerText : "KEK 작번",
@@ -127,10 +112,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 										const oid = item.oid;
 										alert(oid);
 									}
-								},
-								filter : {
-									showIcon : true,
-									inline : true
 								},
 							}, {
 								dataField : "keNumber",
@@ -145,27 +126,19 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 										alert(oid);
 									}
 								},
-								filter : {
-									showIcon : true,
-									inline : true
-								},
 							}, {
 								dataField : "description",
 								headerText : "작업 내용",
 								dataType : "string",
 								style : "aui-left",
-								filter : {
-									showIcon : true,
-									inline : true
-								},
 							} ]
 							function _createAUIGrid(columnLayout) {
 								const props = {
 									headerHeight : 30,
-									rowHeight : 30,
 									showRowNumColumn : true,
 									rowNumHeaderText : "번호",
 									selectionMode : "singleRow",
+									showAutoNoDataMessage : false,
 								}
 								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 								AUIGrid.setGridData(_myGridID, data);
@@ -411,7 +384,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		if (!confirm("삭제 하시겠습니까?")) {
 			return false;
 		}
-		
+
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/partlist/delete?oid=" + oid);
 		openLayer();

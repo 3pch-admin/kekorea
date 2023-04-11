@@ -484,6 +484,52 @@ public class WorkOrderHelper {
 		ArrayList<Map<String, Object>> list = integratedData(p1);
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
 
+		// list1의 데이터를 먼저 추가
+		for (Map<String, Object> data : list) {
+			Map<String, Object> mergedData = new HashMap<>();
+			mergedData.put("lotNo", data.get("lotNo"));
+			mergedData.put("name", data.get("name"));
+			mergedData.put("number", data.get("number"));
+			mergedData.put("rev1", data.get("rev"));
+			mergedList.add(mergedData);
+		}
+
+		for (int i = 0; i < destList.size(); i++) {
+			Project p2 = (Project) destList.get(i);
+			ArrayList<Map<String, Object>> _list = integratedData(p2);
+			for (Map<String, Object> data : _list) {
+				String partNo = (String) data.get("partNo");
+				String lotNo = (String) data.get("lotNo");
+				String rev = (String) data.get("rev");
+				String key = partNo + "-" + lotNo + "-" + rev;
+				boolean isExist = false;
+
+				// mergedList에 partNo가 동일한 데이터가 있는지 확인
+				for (Map<String, Object> mergedData : mergedList) {
+					String mergedPartNo = (String) mergedData.get("partNo");
+					String mergedLotNo = (String) mergedData.get("lotNo");
+					String mergedRev = (String) mergedData.get("rev1");
+					String _key = mergedPartNo + "-" + mergedLotNo + "-" + mergedRev;
+
+					if (key.equals(_key)) {
+						// partNo가 동일한 데이터가 있으면 데이터를 업데이트하고 isExist를 true로 변경
+						mergedData.put("rev" + (2 + i), data.get("rev"));
+						isExist = true;
+						break;
+					}
+				}
+
+				if (!isExist) {
+					// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
+					Map<String, Object> mergedData = new HashMap<>();
+					mergedData.put("rev" + (2 + i), data.get("rev"));
+					mergedData.put("lotNo", data.get("lotNo"));
+					mergedData.put("name", data.get("name"));
+					mergedData.put("number", data.get("number"));
+					mergedList.add(mergedData);
+				}
+			}
+		}
 		return mergedList;
 	}
 
@@ -521,15 +567,15 @@ public class WorkOrderHelper {
 			while (qr.hasMoreElements()) {
 				Object[] oo = (Object[]) qr.nextElement();
 				WorkOrderDataLink link = (WorkOrderDataLink) oo[0];
-				Persistable data = link.getData();
 				Map<String, Object> map = new HashMap();
 
 				map.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("dataType", link.getDataType());
-				map.put("lotNo", link.getLotNo());
-				map.put("rev", link.getRev());
+				map.put("lotNo", String.valueOf(link.getLotNo()));
+				map.put("rev", String.valueOf(link.getRev())); // 등록당시
 				map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
 				map.put("note", link.getNote());
+
 				Persistable per = link.getData();
 				if (per instanceof KeDrawing) {
 					KeDrawing keDrawing = (KeDrawing) per;

@@ -110,8 +110,7 @@ public class CommonCodeHelper {
 			map.put("value", commonCode.getName());
 			list.add(map);
 		}
-		return new JSONArray(list);
-		//return JSONArray.fromObject(list);
+		return JSONArray.fromObject(list);
 	}
 
 	public JSONArray parseJson() throws Exception {
@@ -123,8 +122,7 @@ public class CommonCodeHelper {
 			map.put("value", codeType.getDisplay());
 			list.add(map);
 		}
-		return new JSONArray(list);
-		//return JSONArray.fromObject(list);
+		return JSONArray.fromObject(list);
 	}
 
 	public ArrayList<CommonCode> getArrayCodeList(String codeType) throws Exception {

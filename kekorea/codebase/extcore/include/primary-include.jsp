@@ -27,14 +27,14 @@ if ("create".equals(mode)) {
 			uploadFileName : "primary",
 			buttonTxt : "파일 선택",
 			uploadMaxFileSize : (1024 * 1024 * 1024),
-			uploadUrl : getCallUrl("/content/upload"),
+			uploadUrl : getCallUrl("/aui/upload"),
 			dropBoxID : "uploadQueueBox",
 			queueBoxID : "uploadQueueBox",
 			uploadPars : {
 				roleType : "primary"
 			},
 			uploadMaxFileCount : 100,
-			deleteUrl : getCallUrl("/content/delete"),
+			deleteUrl : getCallUrl("/aui/delete"),
 			fileKeys : {},
 			onComplete : function() {
 				let form = document.querySelector("form");

@@ -244,13 +244,13 @@
 	}, {
 		dataField : "current",
 		headerText : "CURRENT VER",
-		dataType : "string",
+		dataType : "numeric",
 		width : 130,
 		editable : false
 	}, {
 		dataField : "rev",
 		headerText : "REV",
-		dataType : "string",
+		dataType : "numeric",
 		width : 130,
 		editable : false
 	}, {
@@ -464,12 +464,11 @@
 			return false;
 		}
 
-
-		if(addRows.length === 0) {
+		if (addRows.length === 0) {
 			alert("도면일람표의 데이터는 최소 하나 이상이어야 합니다.");
 			return false;
 		}
-		
+
 		_addRows.sort(function(a, b) {
 			return a.sort - b.sort;
 		});
@@ -502,21 +501,6 @@
 		document.getElementById("name").focus();
 		$("#tabs").tabs({
 			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					_createAUIGrid(_columns);
-					AUIGrid.resize(_myGridID);
-					_createAUIGrid_(_columns_);
-					AUIGrid.resize(_myGridID_);
-					break;
-				case "tabs-2":
-					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
-					break;
-				}
-			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
@@ -545,6 +529,12 @@
 				}
 			}
 		});
+		createAUIGrid(columns);
+		_createAUIGrid(_columns);
+		_createAUIGrid_(_columns_);
+		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(_myGridID_);
 	})
 
 	window.addEventListener("resize", function() {

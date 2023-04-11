@@ -44,10 +44,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				</td>
 			</tr>
 			<tr>
-				<th class="lb">첨부파일</th>
+				<th class="lb">제작사양서</th>
 				<td class="indent5">
-					<div class="AXUpload5" id="secondary_layer"></div>
-					<div class="AXUpload5QueueBox_list" id="uploadQueueBox" style="height: 300px;"></div>
+					
 				</td>
 		</table>
 		<script type="text/javascript">
@@ -197,7 +196,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				}
 
 				if (addRows.length !== secondarys.length) {
-					alert("등록하려는 데이터와 첨부파일의 개수가 일치하지 않습니다.\n데이터 개수 : " + addRows.length + ", 첨부파일 개수 : " + secondarys.length);
+					alert("등록하려는 데이터와 제작사양서의 개수가 일치하지 않습니다.\n데이터 개수 : " + addRows.length + ", 제작사양서 개수 : " + secondarys.length);
 					return false;
 				}
 
@@ -209,7 +208,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					return false;
 				}
 				const params = new Object();
-				const url = getCallUrl("/part/bundle");
+				const url = getCallUrl("/part/spec");
 				params.addRows = addRows;
 				params.secondarys = secondarys;
 				params.erp = Boolean(erp);
