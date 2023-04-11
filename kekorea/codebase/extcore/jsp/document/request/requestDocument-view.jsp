@@ -10,6 +10,7 @@
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 RequestDocumentDTO dto = (RequestDocumentDTO) request.getAttribute("dto");
 JSONArray history = (JSONArray) request.getAttribute("history");
+JSONArray data = (JSONArray) request.getAttribute("data");
 %>
 <input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
@@ -38,10 +39,10 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 	<div id="tabs-1">
 		<table class="view-table">
 			<colgroup>
-				<col width="150">
-				<col width="600">
-				<col width="150">
-				<col width="600">
+				<col style="width: 10%;">
+				<col style="width: 40%;">
+				<col style="width: 10%;">
+				<col style="width: 40%;">
 			</colgroup>
 			<tr>
 				<th class="lb">의뢰서 제목</th>
@@ -57,6 +58,102 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				<th class="lb">설명</th>
 				<td class="indent5" colspan="3">
 					<textarea id="descriptionNotice" rows="5" readonly="readonly"><%=dto.getDescription() != null ? dto.getDescription() : ""%></textarea>
+				</td>
+			</tr>
+			<tr>
+				<th class="lb">KEK 작번</th>
+				<td colspan="3">
+					<div class="include">
+						<div id="_grid_wrap" style="height: 200px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+						<script type="text/javascript">
+							let _myGridID;
+							const data =
+						<%=data%>
+							const _columns = [ {
+								dataField : "projectType_name",
+								headerText : "작번유형",
+								dataType : "string",
+								width : 80,
+							}, {
+								dataField : "customer_name",
+								headerText : "거래처",
+								dataType : "string",
+								width : 120,
+							}, {
+								dataField : "mak_name",
+								headerText : "막종",
+								dataType : "string",
+								width : 120,
+							}, {
+								dataField : "detail_name",
+								headerText : "막종상세",
+								dataType : "string",
+								width : 120,
+							}, {
+								dataField : "kekNumber",
+								headerText : "KEK 작번",
+								dataType : "string",
+								width : 100,
+								renderer : {
+									type : "LinkRenderer",
+									baseUrl : "javascript",
+									jsCallback : function(rowIndex, columnIndex, value, item) {
+										const oid = item.oid;
+										alert(oid);
+									}
+								},
+							}, {
+								dataField : "keNumber",
+								headerText : "KE 작번",
+								dataType : "string",
+								width : 100,
+								renderer : {
+									type : "LinkRenderer",
+									baseUrl : "javascript",
+									jsCallback : function(rowIndex, columnIndex, value, item) {
+										const oid = item.oid;
+										alert(oid);
+									}
+								},
+							}, {
+								dataField : "userId",
+								headerText : "USER ID",
+								dataType : "string",
+								width : 100,
+							}, {
+								dataField : "customDate_txt",
+								headerText : "요구납기일",
+								dataType : "string",
+								width : 100,
+							}, {
+								dataField : "description",
+								headerText : "작업 내용",
+								dataType : "string",
+								style : "aui-left",
+							}, {
+								dataField : "model",
+								headerText : "모델",
+								dataType : "string",
+								width : 120,
+							}, {
+								dataField : "pdate_txt",
+								headerText : "발행일",
+								dataType : "string",
+								width : 100,
+							}, ]
+							function _createAUIGrid(columnLayout) {
+								const props = {
+									headerHeight : 30,
+									showRowNumColumn : true,
+									rowNumHeaderText : "번호",
+									selectionMode : "singleRow",
+									showAutoNoDataMessage : false,
+								}
+								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
+								AUIGrid.setGridData(_myGridID, data);
+							}
+						</script>
+					</div>
 				</td>
 			</tr>
 			<tr>
@@ -150,11 +247,11 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
-					const isCreated = AUIGrid.isCreated(myGridID);
-					if (isCreated) {
-						AUIGrid.resize(myGridID);
+					const _isCreated = AUIGrid.isCreated(_myGridID);
+					if (_isCreated) {
+						AUIGrid.resize(_myGridID);
 					} else {
-						createAUIGrid(columns);
+						_createAUIGrid(_columns);
 					}
 					break;
 				case "tabs-2":
@@ -168,14 +265,14 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				}
 			},
 		});
-		createAUIGrid(columns);
+		_createAUIGrid(_columns);
 		_createAUIGrid_(_columns_);
-		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
 		AUIGrid.resize(_myGridID_);
 	});
 
 	window.addEventListener("resize", function() {
-		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
 		AUIGrid.resize(_myGridID_);
 	});
 </script>

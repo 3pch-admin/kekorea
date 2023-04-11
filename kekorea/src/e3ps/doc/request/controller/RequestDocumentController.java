@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
@@ -242,8 +243,10 @@ public class RequestDocumentController extends BaseController {
 		RequestDocument requestDocument = (RequestDocument) CommonUtils.getObject(oid);
 		RequestDocumentDTO dto = new RequestDocumentDTO(requestDocument);
 		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(requestDocument);
+		JSONArray data = RequestDocumentHelper.manager.jsonAuiProject(dto.getOid());
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("history", history);
+		model.addObject("data", data);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/document/request/requestDocument-view");
 		return model;
