@@ -597,6 +597,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("name").focus();
 				const columns = loadColumnLayout("keDrawing-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

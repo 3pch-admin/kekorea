@@ -526,14 +526,6 @@
 						createAUIGrid(columns);
 					}
 					break;
-				case "tabs-3":
-					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated_) {
-						AUIGrid.resize(_myGridID_);
-					} else {
-						_createAUIGrid_(_columns_);
-					}
-					break;
 				}
 			}
 		});

@@ -37,18 +37,18 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 </table>
 
 
-<div id="grid_wrap" style="height: 730px; border-top: 1px solid #3180c3;"></div>
+<div id="grid_wrap" style="height: 900px; border-top: 1px solid #3180c3;"></div>
 <%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
 	let myGridID;
 	const data = <%=data%>
-	console.log(data);
 	function _layout() {
 		return [ {
 			dataField : "key",
 			headerText : "",
 			dataType : "string",
 			width : 250,
+			style : "aui-left",
 			filter : {
 				showIcon : true,
 				inline : true
@@ -91,7 +91,7 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 			showInlineFilter : true,
 			useContextMenu : true,
 			enableRightDownFocus : true,
-			autoGridHeight : true
+// 			autoGridHeight : true
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		AUIGrid.setGridData(myGridID, data);

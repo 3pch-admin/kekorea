@@ -185,6 +185,7 @@ public class ErpHelper {
 					result.put("won", quantity * price * exchangeRate);
 				}
 			} else {
+				System.out.println("캐시 데이터 처리..");
 				result = cacheManager.get(cacheKey);
 			}
 		} catch (Exception e) {

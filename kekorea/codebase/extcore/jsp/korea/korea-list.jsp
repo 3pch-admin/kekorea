@@ -289,7 +289,7 @@ String end = (String) request.getAttribute("end");
 					popup(url3, 1500, 800);
 					break;
 				case 4:
-					const url4 = getCallUrl("/configSheet/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
+					const url4 = getCallUrl("/workOrder/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
 					popup(url4);
 					break;
 				case 5:
