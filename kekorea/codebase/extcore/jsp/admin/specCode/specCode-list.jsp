@@ -58,7 +58,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				width : 120,
 				editRenderer : {
 					type : "InputEditRenderer",
-					regExp : "^[a-zA-Z1-9-]+$",
+					regExp : "^[a-zA-Z0-9-]+$",
 					autoUpperCase : true
 				},
 				filter : {
@@ -191,6 +191,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					editable : true,
 					useContextMenu : true,
 					forceTreeView : true,
+					enableRightDownFocus : true,
 					contextMenuItems : [ {
 						label : "선택된 행 이전 추가",
 						callback : contextItemHandler
@@ -236,6 +237,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					const parentRowId = event.item.oid;
 					const newItem = new Object();
 					newItem.parentRowId = parentRowId;
+					newItem.enable = true;
+					newItem.sort = 1;
 					AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "selectionDown");
 					break;
 				case 4:

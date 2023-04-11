@@ -56,7 +56,7 @@ public class ContentUtils {
 	 * ContentHolder 객체로 주 첨부 파일 내용들 가져오는 함수
 	 */
 	public static String[] getPrimary(ContentHolder holder) throws Exception {
-		String[] primarys = new String[7];
+		String[] primarys = new String[8];
 		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
 		if (result.hasMoreElements()) {
 			ContentItem item = (ContentItem) result.nextElement();
@@ -70,6 +70,7 @@ public class ContentUtils {
 				primarys[4] = getFileIcon(primarys[2]);
 				primarys[5] = ContentHelper.getDownloadURL(holder, data, false, primarys[2]).toString();
 				primarys[6] = "<a href=" + primarys[5] + "><img src=" + primarys[4] + "></a>";
+				primarys[7] = String.valueOf(data.getFileSize());
 			}
 		}
 		return primarys;

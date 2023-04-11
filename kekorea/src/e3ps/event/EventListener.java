@@ -2,6 +2,7 @@ package e3ps.event;
 
 import com.ptc.wvs.server.publish.PublishServiceEvent;
 
+import e3ps.org.service.OrgHelper;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.events.KeyedEvent;
@@ -56,9 +57,9 @@ public class EventListener extends ServiceEventListenerAdapter {
 		}
 
 		if (target instanceof WTUser) {
-			WTUser wtuser = (WTUser) target;
+			WTUser wtUser = (WTUser) target;
 			if (POST_STORE.equals(type)) {
-//				OrgHelper.service.save(wtuser);
+				OrgHelper.service.save(wtUser);
 			} else if (POST_MODIFY.equals(type)) {
 //				OrgHelper.service.modify(wtuser);
 			}

@@ -204,6 +204,16 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						inline : true
 					},
 				}, {
+					dataField : "state",
+					headerText : "상태",
+					dataType : "string",
+					width : 80,
+					editable : false,
+					filter : {
+						showIcon : false,
+						inline : false
+					},
+				}, {
 					dataField : "latest",
 					headerText : "최신버전",
 					dataType : "boolean",
@@ -425,13 +435,10 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 			}
 
 			function addRow() {
-				const sessionName = document.getElementById("sessionName").value;
-				const time = document.getElementById("time").value;
 				const item = {
-					creator : sessionName,
-					modifier : sessionName,
 					latest : true,
-					preView : null
+					preView : null,
+					state : "작업중"
 				};
 				AUIGrid.addRow(myGridID, item, "first");
 			}

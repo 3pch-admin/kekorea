@@ -54,6 +54,7 @@ public class SpecCodeHelper {
 			node.put("description", specCode.getDescription());
 			node.put("enable", specCode.getEnable());
 			node.put("sort", specCode.getSort());
+			node.put("parent", null);
 			options(node, specCode);
 			children.add(node);
 		}
@@ -86,6 +87,7 @@ public class SpecCodeHelper {
 			node.put("description", optionCode.getDescription());
 			node.put("sort", optionCode.getSort());
 			node.put("enable", optionCode.getEnable());
+			node.put("parent", specCode.getPersistInfo().getObjectIdentifier().getStringValue());
 			children.add(node);
 		}
 		parentNode.put("children", children);

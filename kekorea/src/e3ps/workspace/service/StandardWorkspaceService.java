@@ -6,9 +6,13 @@ import java.util.Date;
 import java.util.Map;
 
 import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.tbom.TBOMMaster;
+import e3ps.common.Constants;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.erp.service.ErpHelper;
+import e3ps.part.kePart.KePart;
 import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.ApprovalLine;
@@ -175,6 +179,14 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 				// 일괄결재..
 			} else if (persistable instanceof ApprovalContract) {
 
+			} else if (persistable instanceof KePart) {
+				KePart kePart = (KePart) persistable;
+				kePart.setState(Constants.State.APPROVED);
+				PersistenceHelper.manager.modify(kePart);
+			} else if (persistable instanceof KeDrawing) {
+				KeDrawing keDrawing = (KeDrawing) persistable;
+				keDrawing.setState(Constants.State.APPROVED);
+				PersistenceHelper.manager.modify(keDrawing);
 			}
 
 			trs.commit();
@@ -331,6 +343,14 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 				} else if (per instanceof ApprovalContract) {
 					ApprovalContract contract = (ApprovalContract) per;
 //					approvalContract(contract);
+				} else if (per instanceof KePart) {
+					KePart kePart = (KePart) per;
+					kePart.setState(Constants.State.APPROVED);
+					PersistenceHelper.manager.modify(kePart);
+				} else if (per instanceof KeDrawing) {
+					KeDrawing keDrawing = (KeDrawing) per;
+					keDrawing.setState(Constants.State.APPROVED);
+					PersistenceHelper.manager.modify(keDrawing);
 				}
 
 			}
@@ -353,12 +373,10 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 	private void sendToERP(Persistable per) throws Exception {
 		if (per instanceof WTDocument) {
 			WTDocument document = (WTDocument) per;
-//			document = (WTDocument) CommonUtils.getLatestVersion(document);
-			// ?? 최신버전
-			ErpHelper.service.sendOutputToERP(document);
+			ErpHelper.manager.sendToErp(document);
 		} else if (per instanceof PartListMaster) {
 			PartListMaster mm = (PartListMaster) per;
-			ErpHelper.service.sendPartListToERP(mm);
+			ErpHelper.manager.sendToErp(mm);
 		}
 	}
 

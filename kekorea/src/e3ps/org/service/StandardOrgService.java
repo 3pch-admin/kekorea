@@ -42,7 +42,7 @@ public class StandardOrgService extends StandardManager implements OrgService {
 	private static String userDirectory;
 	private static String userSearch;
 
-	private String email_prefix = "@kekorea.co.kr";
+	private String postFix = "@kokusai-electric.com";
 
 	static {
 		try {
@@ -455,6 +455,63 @@ public class StandardOrgService extends StandardManager implements OrgService {
 		} finally {
 			if (trs != null)
 				trs.rollback();
+		}
+	}
+
+	@Override
+	public void save(WTUser wtUser) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			People user = People.newPeople();
+			user.setDepartment(OrgHelper.manager.getRoot());
+			user.setWtUser(wtUser);
+			user.setName(wtUser.getFullName());
+			user.setId(wtUser.getName());
+			user.setEmail(wtUser.getEMail() != null ? wtUser.getEMail() : "");
+			user = (People) PersistenceHelper.manager.save(user);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+
+		}
+	}
+
+	@Override
+	public void modify(WTUser wtUser) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+			People user = null;
+			QueryResult result = PersistenceHelper.manager.navigate(wtUser, "people", PeopleWTUserLink.class);
+			if (result.hasMoreElements()) {
+				user = (People) result.nextElement();
+				user.setDepartment(OrgHelper.manager.getRoot());
+				user.setWtUser(wtUser);
+				user.setName(wtUser.getFullName());
+				user.setId(wtUser.getName());
+				user.setEmail(wtUser.getEMail() != null ? wtUser.getEMail() : "");
+				user = (People) PersistenceHelper.manager.modify(user);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+
 		}
 	}
 }

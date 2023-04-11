@@ -33,4 +33,14 @@ public interface OrgService {
 	 * 사용자 정보 저장 그리드 용
 	 */
 	public abstract void save(HashMap<String, List<UserDTO>> dataMap) throws Exception;
+
+	/**
+	 * OOTB WTUSER 생성시 이벤트로 PEOPLE 객체 생성
+	 */
+	public abstract void save(WTUser wtUser) throws Exception;
+
+	/**
+	 * OOTB WTUSER 수정시 이벤트로 PEOPLE 객체 수정
+	 */
+	public abstract void modify(WTUser wtUser) throws Exception;
 }

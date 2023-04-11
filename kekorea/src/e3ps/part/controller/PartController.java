@@ -68,9 +68,7 @@ public class PartController extends BaseController {
 	public Map<String, Object> bundle(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-
-			PartHelper.service.bundle(params);
-
+			result = PartHelper.service.bundle(params);
 			result.put("result", SUCCESS);
 			result.put("msg", SAVE_MSG);
 		} catch (Exception e) {
@@ -109,12 +107,12 @@ public class PartController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description(value = "도면 정보 페이지")
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		WTPart part = (WTPart)CommonUtils.getObject(oid);
+		WTPart part = (WTPart) CommonUtils.getObject(oid);
 		PartDTO dto = new PartDTO(part);
 		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(part.getMaster());
 		JSONArray data = PartHelper.manager.jsonArrayAui(dto.getOid());
@@ -126,4 +124,33 @@ public class PartController extends BaseController {
 		model.setViewName("popup:/part/part-view");
 		return model;
 	}
+
+	@Description(value = "제작사양서 등록 리스트 페이지")
+	@GetMapping(value = "/spec")
+	public ModelAndView spec() throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.setViewName("/extcore/jsp/part/part-spec.jsp");
+		return model;
+	}
+
+	@Description(value = "제작사양서 등록")
+	@PostMapping(value = "/spec")
+	@ResponseBody
+	public Map<String, Object> spec(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			PartHelper.service.spec(params);
+			result.put("result", SUCCESS);
+			result.put("msg", SAVE_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+
 }

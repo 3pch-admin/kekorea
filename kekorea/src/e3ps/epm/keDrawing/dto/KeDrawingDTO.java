@@ -31,6 +31,7 @@ public class KeDrawingDTO {
 	private String primary;
 	private String note;
 	private String preView;
+	private String state;
 
 	// 변수 담기용
 	private String primaryPath;
@@ -59,5 +60,6 @@ public class KeDrawingDTO {
 		setPrimary(AUIGridUtils.primaryTemplate(keDrawing));
 		setPreView(ContentUtils.getPreViewBase64(keDrawing));
 		setNote(keDrawing.getNote());
+		setState(keDrawing.getState());
 	}
 }

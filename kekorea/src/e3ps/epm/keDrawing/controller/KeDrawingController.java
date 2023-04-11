@@ -27,6 +27,7 @@ import e3ps.common.util.ContentUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
+import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 
@@ -185,8 +186,10 @@ public class KeDrawingController extends BaseController {
 		String[] primarys = ContentUtils.getPrimary(dto.getOid());
 		JSONArray list = KeDrawingHelper.manager.history(keDrawing.getMaster());
 		JSONArray data = KeDrawingHelper.manager.jsonArrayAui(oid);
+		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(keDrawing);
 		model.addObject("data", data);
 		model.addObject("list", list);
+		model.addObject("history", history);
 		model.addObject("primarys", primarys);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/epm/keDrawing/keDrawing-view");
@@ -201,7 +204,8 @@ public class KeDrawingController extends BaseController {
 		KeDrawingDTO dto = new KeDrawingDTO(keDrawing);
 		String[] primarys = ContentUtils.getPrimary(dto.getOid());
 		JSONArray list = KeDrawingHelper.manager.history(keDrawing.getMaster());
-		JSONArray data = KeDrawingHelper.manager.jsonArrayAui(keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
+		JSONArray data = KeDrawingHelper.manager
+				.jsonArrayAui(keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
 		model.addObject("data", data);
 		model.addObject("list", list);
 		model.addObject("primarys", primarys);
