@@ -52,7 +52,7 @@ public class ApprovalLineDTO {
 			setCreatedDate(line.getCreateTimestamp());
 			setReceiveTime(line.getStartTime()); // 수신일 = 받은 시간
 			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
-//			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
+			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
 			setAgreeLine(line.getType().equals(WorkspaceHelper.AGREE_LINE));
 			setApprovalLine(line.getType().equals(WorkspaceHelper.APPROVAL_LINE));
 			setReceiveLine(line.getType().equals(WorkspaceHelper.RECEIVE_LINE));
@@ -71,7 +71,7 @@ public class ApprovalLineDTO {
 			setCompleteTime(line.getCompleteTime() != null ? line.getCompleteTime() : null);
 			setState(line.getState());
 			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
-//			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
+			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
 			setAgreeLine(line.getType().equals(WorkspaceHelper.AGREE_LINE));
 			setApprovalLine(line.getType().equals(WorkspaceHelper.APPROVAL_LINE));
 			setReceiveLine(line.getType().equals(WorkspaceHelper.RECEIVE_LINE));
@@ -87,7 +87,7 @@ public class ApprovalLineDTO {
 			setState(line.getState());
 			setReceiveTime(line.getCreateTimestamp());
 			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
-//			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
+			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
 			setAgreeLine(line.getType().equals(WorkspaceHelper.AGREE_LINE));
 			setApprovalLine(line.getType().equals(WorkspaceHelper.APPROVAL_LINE));
 			setReceiveLine(line.getType().equals(WorkspaceHelper.RECEIVE_LINE));
@@ -106,7 +106,7 @@ public class ApprovalLineDTO {
 			setReceiveTime(master.getStartTime());
 			setCompleteTime(master.getCompleteTime()); // 반드시 완료날짜 잇음
 			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
-//			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
+			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
 			point(master);
 		} else if ("COLUMN_PROGRESS".equals(columnType)) {
 			// 진행함
@@ -117,7 +117,7 @@ public class ApprovalLineDTO {
 			setState(master.getState());
 			setReceiveTime(master.getStartTime());
 			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
-//			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
+			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
 			point(master);
 		} else if ("COLUMN_REJECT".equals(columnType)) {
 			// 반려함
@@ -129,7 +129,7 @@ public class ApprovalLineDTO {
 			setReceiveTime(master.getStartTime());
 			setCompleteTime(master.getCompleteTime());
 			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
-//			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
+			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
 			point(master);
 		}
 	}
