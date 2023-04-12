@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.bom.partlist.service.PartlistHelper;
-import e3ps.bom.tbom.service.TBOMHelper;
+import e3ps.admin.configSheetCode.ConfigSheetCode;
+import e3ps.admin.configSheetCode.service.ConfigSheetCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
@@ -62,17 +62,10 @@ public class ConfigSheetController extends BaseController {
 
 	@Description(value = "CONFIG SHEET 등록 페이지")
 	@GetMapping(value = "/create")
-	public ModelAndView create(@RequestParam(required = false) String oid) throws Exception {
+	public ModelAndView create() throws Exception {
 		ModelAndView model = new ModelAndView();
-		JSONArray categorys = CommonCodeHelper.manager.parseJson("CATEGORY");
-
-		net.sf.json.JSONArray baseData = null;
-		if (!StringUtils.isNull(oid)) {
-			baseData = ConfigSheetHelper.manager.loadBaseGridData(oid);
-		} else {
-			baseData = ConfigSheetHelper.manager.loadBaseGridData();
-		}
-		model.addObject("oid", oid);
+		JSONArray categorys = ConfigSheetCodeHelper.manager.parseJson("CATEGORY");
+		JSONArray baseData = ConfigSheetHelper.manager.loadBaseGridData();
 		model.addObject("baseData", baseData);
 		model.addObject("categorys", categorys);
 		model.setViewName("popup:/korea/configSheet/configSheet-create");
@@ -112,19 +105,19 @@ public class ConfigSheetController extends BaseController {
 		model.setViewName("popup:/korea/configSheet/configSheet-view");
 		return model;
 	}
-	
+
 	@Description(value = "CONFIG SHEET 비교 페이지")
 	@GetMapping(value = "/compare")
 	public ModelAndView compare(@RequestParam String oid, @RequestParam String compareArr) throws Exception {
 		ModelAndView model = new ModelAndView();
-		
+
 		String[] compareOids = compareArr.split(",");
 		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
-		for(String _oid : compareOids) {
-			Project project = (Project)CommonUtils.getObject(_oid);
+		for (String _oid : compareOids) {
+			Project project = (Project) CommonUtils.getObject(_oid);
 			destList.add(project);
 		}
-		
+
 		Project p1 = (Project) CommonUtils.getObject(oid);
 		ArrayList<Map<String, Object>> data = ConfigSheetHelper.manager.compare(p1, destList);
 		model.addObject("p1", p1);

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import e3ps.admin.commonCode.CommonCode;
-import e3ps.admin.commonCode.CommonCodeType;
-import e3ps.admin.commonCode.dto.CommonCodeDTO;
+import e3ps.admin.configSheetCode.ConfigSheetCode;
+import e3ps.admin.configSheetCode.ConfigSheetCodeType;
+import e3ps.admin.configSheetCode.dto.ConfigSheetCodeDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
 import wt.fc.PersistenceHelper;
@@ -23,15 +23,15 @@ public class StandardConfigSheetCodeService extends StandardManager implements C
 	}
 
 	@Override
-	public void save(HashMap<String, List<CommonCodeDTO>> dataMap) throws Exception {
-		List<CommonCodeDTO> addRows = dataMap.get("addRows");
-		List<CommonCodeDTO> editRows = dataMap.get("editRows");
-		List<CommonCodeDTO> removeRows = dataMap.get("removeRows");
+	public void save(HashMap<String, List<ConfigSheetCodeDTO>> dataMap) throws Exception {
+		List<ConfigSheetCodeDTO> addRows = dataMap.get("addRows");
+		List<ConfigSheetCodeDTO> editRows = dataMap.get("editRows");
+		List<ConfigSheetCodeDTO> removeRows = dataMap.get("removeRows");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			for (CommonCodeDTO dto : addRows) {
+			for (ConfigSheetCodeDTO dto : addRows) {
 				String name = dto.getName();
 				String code = dto.getCode();
 				String codeType = dto.getCodeType();
@@ -39,26 +39,26 @@ public class StandardConfigSheetCodeService extends StandardManager implements C
 				boolean enable = dto.isEnable();
 				int sort = dto.getSort();
 				String _$parent = dto.get_$parent();
-				ArrayList<CommonCodeDTO> children = dto.getChildren();
+				ArrayList<ConfigSheetCodeDTO> children = dto.getChildren();
 
-				CommonCode parent = null;
-				if (!StringUtils.isNull(_$parent) && _$parent.indexOf("CommonCode") > -1) {
-					parent = (CommonCode) CommonUtils.getObject(_$parent);
+				ConfigSheetCode parent = null;
+				if (!StringUtils.isNull(_$parent) && _$parent.indexOf("ConfigSheetCode") > -1) {
+					parent = (ConfigSheetCode) CommonUtils.getObject(_$parent);
 				}
 
-				CommonCode commonCode = CommonCode.newCommonCode();
-				commonCode.setName(name);
-				commonCode.setCode(code);
-				commonCode.setCodeType(CommonCodeType.toCommonCodeType(codeType));
-				commonCode.setDescription(description);
-				commonCode.setSort(sort);
-				commonCode.setParent(parent);
-				commonCode.setEnable(enable);
-				PersistenceHelper.manager.save(commonCode);
-				save(commonCode, children);
+				ConfigSheetCode configSheetCode = ConfigSheetCode.newConfigSheetCode();
+				configSheetCode.setName(name);
+				configSheetCode.setCode(code);
+				configSheetCode.setCodeType(ConfigSheetCodeType.toConfigSheetCodeType(codeType));
+				configSheetCode.setDescription(description);
+				configSheetCode.setSort(sort);
+				configSheetCode.setParent(parent);
+				configSheetCode.setEnable(enable);
+				PersistenceHelper.manager.save(configSheetCode);
+				save(configSheetCode, children);
 			}
 
-			for (CommonCodeDTO dto : editRows) {
+			for (ConfigSheetCodeDTO dto : editRows) {
 				// 단순 수정만..
 				String oid = dto.getOid();
 				String name = dto.getName();
@@ -66,19 +66,19 @@ public class StandardConfigSheetCodeService extends StandardManager implements C
 				String description = dto.getDescription();
 				boolean enable = dto.isEnable();
 				int sort = dto.getSort();
-				CommonCode commonCode = (CommonCode) CommonUtils.getObject(oid);
-				commonCode.setName(name);
-				commonCode.setCode(code);
-				commonCode.setSort(sort);
-				commonCode.setDescription(description);
-				commonCode.setEnable(enable);
-				PersistenceHelper.manager.modify(commonCode);
+				ConfigSheetCode configSheetCode = (ConfigSheetCode) CommonUtils.getObject(oid);
+				configSheetCode.setName(name);
+				configSheetCode.setCode(code);
+				configSheetCode.setSort(sort);
+				configSheetCode.setDescription(description);
+				configSheetCode.setEnable(enable);
+				PersistenceHelper.manager.modify(configSheetCode);
 			}
 
-			for (CommonCodeDTO dto : removeRows) {
+			for (ConfigSheetCodeDTO dto : removeRows) {
 				String oid = dto.getOid();
-				CommonCode commonCode = (CommonCode) CommonUtils.getObject(oid);
-				PersistenceHelper.manager.delete(commonCode);
+				ConfigSheetCode configSheetCode = (ConfigSheetCode) CommonUtils.getObject(oid);
+				PersistenceHelper.manager.delete(configSheetCode);
 			}
 
 			trs.commit();
@@ -94,25 +94,25 @@ public class StandardConfigSheetCodeService extends StandardManager implements C
 	}
 
 	// 어차피 도는 부분.. no transaction
-	private void save(CommonCode parentCode, ArrayList<CommonCodeDTO> list) throws Exception {
-		for (CommonCodeDTO dto : list) {
+	private void save(ConfigSheetCode parentCode, ArrayList<ConfigSheetCodeDTO> list) throws Exception {
+		for (ConfigSheetCodeDTO dto : list) {
 			String name = dto.getName();
 			String code = dto.getCode();
 			String codeType = dto.getCodeType();
 			String description = dto.getDescription();
 			boolean enable = dto.isEnable();
 			int sort = dto.getSort();
-			ArrayList<CommonCodeDTO> children = dto.getChildren();
-			CommonCode commonCode = CommonCode.newCommonCode();
-			commonCode.setName(name);
-			commonCode.setCode(code);
-			commonCode.setCodeType(CommonCodeType.toCommonCodeType(codeType));
-			commonCode.setDescription(description);
-			commonCode.setSort(sort);
-			commonCode.setParent(parentCode);
-			commonCode.setEnable(enable);
-			PersistenceHelper.manager.save(commonCode);
-			save(commonCode, children);
+			ArrayList<ConfigSheetCodeDTO> children = dto.getChildren();
+			ConfigSheetCode configSheetCode = ConfigSheetCode.newConfigSheetCode();
+			configSheetCode.setName(name);
+			configSheetCode.setCode(code);
+			configSheetCode.setCodeType(ConfigSheetCodeType.toConfigSheetCodeType(codeType));
+			configSheetCode.setDescription(description);
+			configSheetCode.setSort(sort);
+			configSheetCode.setParent(parentCode);
+			configSheetCode.setEnable(enable);
+			PersistenceHelper.manager.save(configSheetCode);
+			save(configSheetCode, children);
 		}
 	}
 }

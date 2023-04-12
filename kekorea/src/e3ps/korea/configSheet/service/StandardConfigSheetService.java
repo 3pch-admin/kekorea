@@ -5,6 +5,8 @@ import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.admin.configSheetCode.ConfigSheetCode;
+import e3ps.admin.configSheetCode.service.ConfigSheetCodeHelper;
 import e3ps.common.Constants;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
@@ -75,17 +77,17 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 				String note = addRow.get("note");
 				String apply = addRow.get("apply");
 
-				CommonCode category = null;
-				CommonCode item = null;
-				CommonCode spec = null;
+				ConfigSheetCode category = null;
+				ConfigSheetCode item = null;
+				ConfigSheetCode spec = null;
 				if (!StringUtils.isNull(category_code)) {
-					category = CommonCodeHelper.manager.getCommonCode(category_code, "CATEGORY");
+					category = ConfigSheetCodeHelper.manager.getConfigSheetCode(category_code, "CATEGORY");
 				}
 				if (!StringUtils.isNull(item_code)) {
-					item = CommonCodeHelper.manager.getCommonCode(item_code, "CATEGORY_ITEM");
+					item = ConfigSheetCodeHelper.manager.getConfigSheetCode(item_code, "CATEGORY_ITEM");
 				}
 				if (!StringUtils.isNull(spec_code)) {
-					spec = CommonCodeHelper.manager.getCommonCode(spec_code, "CATEGORY_SPEC");
+					spec = ConfigSheetCodeHelper.manager.getConfigSheetCode(spec_code, "CATEGORY_SPEC");
 				}
 
 				ConfigSheetVariable variable = ConfigSheetVariable.newConfigSheetVariable();

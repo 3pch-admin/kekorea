@@ -4,13 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import e3ps.admin.commonCode.CommonCode;
-import e3ps.bom.partlist.PartListMaster;
-import e3ps.bom.partlist.PartListMasterProjectLink;
+import e3ps.admin.configSheetCode.ConfigSheetCode;
 import e3ps.bom.tbom.TBOMData;
-import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.TBOMMasterDataLink;
-import e3ps.bom.tbom.TBOMMasterProjectLink;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
@@ -19,9 +15,7 @@ import e3ps.korea.configSheet.ConfigSheetProjectLink;
 import e3ps.korea.configSheet.ConfigSheetVariable;
 import e3ps.korea.configSheet.ConfigSheetVariableLink;
 import e3ps.korea.configSheet.beans.ConfigSheetDTO;
-import e3ps.korea.history.History;
 import e3ps.project.Project;
-import lombok.experimental.var;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.fc.PagingQueryResult;
@@ -116,40 +110,28 @@ public class ConfigSheetHelper {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 
 		QuerySpec query = new QuerySpec();
-		int idx_q = query.appendClassList(CommonCode.class, true);
-		int idx_i = query.appendClassList(CommonCode.class, true);
-//		int idx_s = query.appendClassList(CommonCode.class, true);
+		int idx_q = query.appendClassList(ConfigSheetCode.class, true);
+		int idx_i = query.appendClassList(ConfigSheetCode.class, true);
 
-		QuerySpecUtils.toEqualsAnd(query, idx_q, CommonCode.class, CommonCode.CODE_TYPE, "CATEGORY");
+		QuerySpecUtils.toEqualsAnd(query, idx_q, ConfigSheetCode.class, ConfigSheetCode.CODE_TYPE, "CATEGORY");
 		query.appendAnd();
-		SearchCondition sc = new SearchCondition(CommonCode.class, WTAttributeNameIfc.ID_NAME, CommonCode.class,
-				"parentReference.key.id");
+		SearchCondition sc = new SearchCondition(ConfigSheetCode.class, WTAttributeNameIfc.ID_NAME,
+				ConfigSheetCode.class, "parentReference.key.id");
 		sc.setFromIndicies(new int[] { idx_q, idx_i }, 0);
 		sc.setOuterJoin(2);
 		query.appendWhere(sc, new int[] { idx_q, idx_i });
-//		query.appendAnd();
 
-//		sc = new SearchCondition(CommonCode.class, WTAttributeNameIfc.ID_NAME, CommonCode.class,
-//				"parentReference.key.id");
-//		sc.setFromIndicies(new int[] { idx_i, idx_s }, 0);
-//		sc.setOuterJoin(2);
-//		query.appendWhere(sc, new int[] { idx_i, idx_s });
-
-		QuerySpecUtils.toOrderBy(query, idx_q, CommonCode.class, CommonCode.SORT, false);
-		QuerySpecUtils.toOrderBy(query, idx_i, CommonCode.class, CommonCode.SORT, false);
-//		QuerySpecUtils.toOrderBy(query, idx_s, CommonCode.class, CommonCode.SORT, false);
+		QuerySpecUtils.toOrderBy(query, idx_q, ConfigSheetCode.class, ConfigSheetCode.SORT, false);
+		QuerySpecUtils.toOrderBy(query, idx_i, ConfigSheetCode.class, ConfigSheetCode.SORT, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		int sort = 0;
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
-			CommonCode category = (CommonCode) obj[0];
-			CommonCode item = (CommonCode) obj[1];
-//			CommonCode spec = (CommonCode) obj[2];
-
+			ConfigSheetCode category = (ConfigSheetCode) obj[0];
+			ConfigSheetCode item = (ConfigSheetCode) obj[1];
 			Map<String, Object> map = new HashMap<>();
 			map.put("category_code", category != null ? category.getCode() : "");
 			map.put("item_code", item != null ? item.getCode() : "");
-//			map.put("spec_code", spec != null ? spec.getCode() : "");
 			map.put("sort", sort);
 			sort++;
 			list.add(map);
@@ -169,16 +151,16 @@ public class ConfigSheetHelper {
 		QuerySpecUtils.toInnerJoin(query, ConfigSheet.class, ConfigSheetVariableLink.class, WTAttributeNameIfc.ID_NAME,
 				"roleAObjectRef.key.id", idx, idx_link);
 		QuerySpecUtils.toEqualsAnd(query, idx_link, ConfigSheetVariableLink.class, "roleAObjectRef.key.id",
-				configSheet.getPersistInfo().getObjectIdentifier().getId());
+				configSheet);
 		QuerySpecUtils.toOrderBy(query, idx_link, ConfigSheetVariableLink.class, ConfigSheetVariableLink.SORT, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			ConfigSheetVariableLink link = (ConfigSheetVariableLink) obj[1];
 			ConfigSheetVariable variable = link.getVariable();
-			CommonCode category = variable.getCategory();
-			CommonCode item = variable.getItem();
-			CommonCode spec = variable.getSpec();
+			ConfigSheetCode category = variable.getCategory();
+			ConfigSheetCode item = variable.getItem();
+			ConfigSheetCode spec = variable.getSpec();
 			int sort = link.getSort();
 			Map<String, Object> map = new HashMap<>();
 			map.put("category_code", category != null ? category.getCode() : "");
@@ -235,7 +217,6 @@ public class ConfigSheetHelper {
 		// 기준데이터
 		ArrayList<Map<String, Object>> list = integratedData(p1);
 
-		
 		return mergedList;
 	}
 
@@ -266,11 +247,12 @@ public class ConfigSheetHelper {
 			int _idx = _query.appendClassList(ConfigSheet.class, false);
 			int _idx_link = _query.appendClassList(ConfigSheetVariableLink.class, true);
 			int idx_data = _query.appendClassList(ConfigSheetVariable.class, false);
-			QuerySpecUtils.toInnerJoin(_query, ConfigSheet.class, ConfigSheetVariableLink.class, WTAttributeNameIfc.ID_NAME,
-					"roleAObjectRef.key.id", _idx, _idx_link);
-			QuerySpecUtils.toInnerJoin(_query, ConfigSheetVariable.class, ConfigSheetVariableLink.class, WTAttributeNameIfc.ID_NAME,
-					"roleBObjectRef.key.id", idx_data, _idx_link);
-			QuerySpecUtils.toEqualsAnd(_query, _idx_link, ConfigSheetVariableLink.class, "roleAObjectRef.key.id", configSheet);
+			QuerySpecUtils.toInnerJoin(_query, ConfigSheet.class, ConfigSheetVariableLink.class,
+					WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", _idx, _idx_link);
+			QuerySpecUtils.toInnerJoin(_query, ConfigSheetVariable.class, ConfigSheetVariableLink.class,
+					WTAttributeNameIfc.ID_NAME, "roleBObjectRef.key.id", idx_data, _idx_link);
+			QuerySpecUtils.toEqualsAnd(_query, _idx_link, ConfigSheetVariableLink.class, "roleAObjectRef.key.id",
+					configSheet);
 			QuerySpecUtils.toOrderBy(_query, idx_data, ConfigSheetVariable.class, ConfigSheetVariable.SORT, false);
 			QueryResult qr = PersistenceHelper.manager.find(_query);
 			while (qr.hasMoreElements()) {

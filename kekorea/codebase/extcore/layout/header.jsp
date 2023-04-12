@@ -272,7 +272,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						<a onclick="moveToPage(this, '/specCode/list', '관리자 > 이력 관리 컬럼');">이력 관리 컬럼</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/sheetVariable/list', '관리자 > CONFIG SHEET 카테고리');">CONFIG SHEET 카테고리</a>
+						<a onclick="moveToPage(this, '/configSheetCode/list', '관리자 > CONFIG SHEET 카테고리');">CONFIG SHEET 카테고리</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/numberRuleCode/list', '관리자 > KEK 도번 관리');">KEK 도번 관리</a>

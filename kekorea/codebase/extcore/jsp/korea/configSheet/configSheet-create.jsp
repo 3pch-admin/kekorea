@@ -5,7 +5,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 JSONArray categorys = (JSONArray) request.getAttribute("categorys");
-net.sf.json.JSONArray baseData = (net.sf.json.JSONArray) request.getAttribute("baseData");
+JSONArray baseData = (net.sf.json.JSONArray) request.getAttribute("baseData");
 String oid = (String) request.getAttribute("oid");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>

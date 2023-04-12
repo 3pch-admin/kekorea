@@ -208,7 +208,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						callback : contextItemHandler
 					} ],
 				};
-
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinish);
