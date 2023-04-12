@@ -61,9 +61,14 @@ public class ErpHelper {
 	 * 캐시 처리
 	 */
 	private static HashMap<String, Map<String, Object>> cacheManager = null;
+	private static HashMap<String, Map<String, Object>> validateCache = null;
 	static {
 		if (cacheManager == null) {
 			cacheManager = new HashMap<>();
+		}
+
+		if (validateCache == null) {
+			validateCache = new HashMap<>();
 		}
 	}
 
@@ -76,18 +81,27 @@ public class ErpHelper {
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			con = dataSource.getConnection();
-			st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
-			sql.append("SELECT *");
-			sql.append(" FROM KEK_VDAITEM");
-			sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
-			rs = st.executeQuery(sql.toString());
-			if (rs.next()) {
-				result.put("check", "OK");
+			String cacheKey = partNo;
+			Map<String, Object> cacheData = validateCache.get(cacheKey);
+
+			if (cacheData == null) {
+
+				con = dataSource.getConnection();
+				st = con.createStatement();
+
+				StringBuffer sql = new StringBuffer();
+				sql.append("SELECT *");
+				sql.append(" FROM KEK_VDAITEM");
+				sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
+				rs = st.executeQuery(sql.toString());
+				if (rs.next()) {
+					result.put("check", "OK");
+				} else {
+					result.put("check", "NG");
+				}
 			} else {
-				result.put("check", "NG");
+				result = validateCache.get(partNo);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -306,6 +306,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 		try {
 			trs.start();
 
+			String sessionUserName = CommonUtils.sessionUser().getName();
 			Timestamp completeTime = new Timestamp(new Date().getTime());
 			ApprovalLine line = (ApprovalLine) CommonUtils.getObject(oid);
 
@@ -315,7 +316,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 
 			line.setDescription(description);
 			line.setCompleteTime(completeTime);
-			line.setCompleteUserID(CommonUtils.sessionUser().getName());
+			line.setCompleteUserID(sessionUserName);
 			line.setState(WorkspaceHelper.STATE_APPROVAL_COMPLETE);
 			line = (ApprovalLine) PersistenceHelper.manager.modify(line);
 
@@ -349,6 +350,14 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 					if (per instanceof RequestDocument) {
 						RequestDocument requestDocument = (RequestDocument) per;
 						settingUser(requestDocument, master);
+					}
+
+					// 최종 결재자 세팅
+					if (per instanceof PartListMaster) {
+						PartListMaster mm = (PartListMaster) per;
+						mm.setLast(sessionUserName);
+						PersistenceHelper.manager.modify(mm);
+						mm = (PartListMaster) PersistenceHelper.manager.refresh(mm);
 					}
 
 //					if (per instanceof RequestDocument) {

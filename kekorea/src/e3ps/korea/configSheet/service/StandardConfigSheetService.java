@@ -73,22 +73,22 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 			for (Map<String, String> addRow : addRows) {
 				String category_code = addRow.get("category_code");
 				String item_code = addRow.get("item_code");
-				String spec_code = addRow.get("spec_code");
+				String spec = addRow.get("spec");
 				String note = addRow.get("note");
 				String apply = addRow.get("apply");
 
 				ConfigSheetCode category = null;
 				ConfigSheetCode item = null;
-				ConfigSheetCode spec = null;
+//				ConfigSheetCode spec = null;
 				if (!StringUtils.isNull(category_code)) {
 					category = ConfigSheetCodeHelper.manager.getConfigSheetCode(category_code, "CATEGORY");
 				}
 				if (!StringUtils.isNull(item_code)) {
 					item = ConfigSheetCodeHelper.manager.getConfigSheetCode(item_code, "CATEGORY_ITEM");
 				}
-				if (!StringUtils.isNull(spec_code)) {
-					spec = ConfigSheetCodeHelper.manager.getConfigSheetCode(spec_code, "CATEGORY_SPEC");
-				}
+//				if (!StringUtils.isNull(spec_code)) {
+//					spec = ConfigSheetCodeHelper.manager.getConfigSheetCode(spec_code, "CATEGORY_SPEC");
+//				}
 
 				ConfigSheetVariable variable = ConfigSheetVariable.newConfigSheetVariable();
 				variable.setCategory(category);

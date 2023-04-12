@@ -212,6 +212,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				loadGridData();
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinish);
 				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
+				AUIGrid.bind(myGridID, "ready", auiReadyHandler);
+			}
+
+			function auiReadyHandler() {
+				AUIGrid.showItemsOnDepth(myGridID, 2);
 			}
 
 			function contextItemHandler(event) {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.configSheetCode.ConfigSheetCode;
 import e3ps.common.util.QuerySpecUtils;
 import net.sf.json.JSONArray;
@@ -162,5 +161,27 @@ public class ConfigSheetCodeHelper {
 			return configSheetCode;
 		}
 		return null;
+	}
+
+	/**
+	 * CONFIG SHEET CODE의 자식 코드 가져오기
+	 */
+	public ArrayList<Map<String, Object>> getChildrens(String parentCode, String codeType) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		ConfigSheetCode parent = getConfigSheetCode(parentCode, codeType);
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ConfigSheetCode.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, ConfigSheetCode.class, "parentReference.key.id", parent);
+		QuerySpecUtils.toOrderBy(query, idx, ConfigSheetCode.class, ConfigSheetCode.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			ConfigSheetCode configSheetCode = (ConfigSheetCode) obj[0];
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("key", configSheetCode.getCode());
+			map.put("value", configSheetCode.getName());
+			list.add(map);
+		}
+		return list;
 	}
 }

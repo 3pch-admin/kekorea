@@ -6,6 +6,13 @@
 String engType = (String) request.getAttribute("engType");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<style type="text/css">
+.ng {
+	background-color: yellow;
+	color: red;
+	font-weight: bold;
+}
+</style>
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -195,6 +202,12 @@ String engType = (String) request.getAttribute("engType");
 				dataType : "string",
 				width : 80,
 				editable : false,
+				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+					if (value === "NG")  {
+						return "ng";
+					}
+					return "";
+				},
 			}, {
 				dataField : "lotNo",
 				headerText : "LOT_NO",

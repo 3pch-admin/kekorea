@@ -144,7 +144,6 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 							function _createAUIGrid(columnLayout) {
 								const props = {
 									headerHeight : 30,
-									rowHeight : 30,
 									showRowNumColumn : true,
 									rowNumHeaderText : "번호",
 									selectionMode : "singleRow",
@@ -194,7 +193,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				mergeRef : "category_code",
 				mergePolicy : "restrict",
 			}, {
-				dataField : "spec_name",
+				dataField : "spec",
 				headerText : "사양",
 				dataType : "string",
 				width : 250,
@@ -212,7 +211,6 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
@@ -292,23 +290,6 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs({
 			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					_createAUIGrid(_columns);
-					AUIGrid.resize(_myGridID);
-					break;
-				case "tabs-2":
-					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
-					break;
-				case "tabs-3":
-					_createAUIGrid_(_columns_);
-					AUIGrid.resize(_myGridID_);
-					break;
-				}
-			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
@@ -339,5 +320,18 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				}
 			}
 		});
+
+		_createAUIGrid(_columns);
+		_createAUIGrid_(_columns_);
+		createAUIGrid(columns);
+		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(_myGridID_);
+		AUIGrid.resize(myGridID);
+	});
+
+	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(_myGridID_);
 	});
 </script>

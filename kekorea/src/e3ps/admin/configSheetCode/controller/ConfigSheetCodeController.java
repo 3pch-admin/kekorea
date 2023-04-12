@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -19,6 +20,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.admin.commonCode.dto.CommonCodeDTO;
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.admin.configSheetCode.dto.ConfigSheetCodeDTO;
 import e3ps.admin.configSheetCode.service.ConfigSheetCodeHelper;
 import e3ps.common.controller.BaseController;
@@ -94,6 +96,24 @@ public class ConfigSheetCodeController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+		}
+		return result;
+	}
+	
+	@Description(value = "CONFIG SHEET 자식 코드 가져오는 함수")
+	@ResponseBody
+	@GetMapping(value = "/getChildrens")
+	public Map<String, Object> getChildrens(@RequestParam String parentCode, @RequestParam String codeType)
+			throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ArrayList<Map<String, Object>> childrens = ConfigSheetCodeHelper.manager.getChildrens(parentCode, codeType);
+			result.put("list", childrens);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}

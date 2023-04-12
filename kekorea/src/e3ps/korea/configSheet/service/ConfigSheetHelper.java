@@ -136,6 +136,7 @@ public class ConfigSheetHelper {
 			sort++;
 			list.add(map);
 		}
+//		return new org.json.JSONArray(list);
 		return JSONArray.fromObject(list);
 	}
 
@@ -160,15 +161,14 @@ public class ConfigSheetHelper {
 			ConfigSheetVariable variable = link.getVariable();
 			ConfigSheetCode category = variable.getCategory();
 			ConfigSheetCode item = variable.getItem();
-			ConfigSheetCode spec = variable.getSpec();
+			String spec = variable.getSpec();
 			int sort = link.getSort();
 			Map<String, Object> map = new HashMap<>();
 			map.put("category_code", category != null ? category.getCode() : "");
 			map.put("category_name", category != null ? category.getName() : "");
 			map.put("item_code", item != null ? item.getCode() : "");
 			map.put("item_name", item != null ? item.getName() : "");
-			map.put("spec_code", spec != null ? spec.getCode() : "");
-			map.put("spec_name", spec != null ? spec.getName() : "");
+			map.put("spec", spec);
 			map.put("note", variable.getNote());
 			map.put("apply", variable.getApply());
 			map.put("sort", sort);

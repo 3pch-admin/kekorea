@@ -21,6 +21,8 @@ import wt.util.WTException;
 				@GeneratedProperty(name = "note", type = String.class, javaDoc = "NOTE", constraints = @PropertyConstraints(upperLimit = 2000)),
 
 				@GeneratedProperty(name = "apply", type = String.class, javaDoc = "APPLY"),
+				
+				@GeneratedProperty(name = "spec", type = String.class, javaDoc = "SPEC"),
 
 				@GeneratedProperty(name = "sort", type = Integer.class)
 
@@ -42,15 +44,15 @@ import wt.util.WTException;
 
 								constraints = @PropertyConstraints(required = false)),
 
-						myRole = @MyRole(name = "variable", cardinality = Cardinality.ONE)),
+						myRole = @MyRole(name = "variable", cardinality = Cardinality.ONE))
 
-				@GeneratedForeignKey(name = "VariableSpecLink",
-
-						foreignKeyRole = @ForeignKeyRole(name = "spec", type = ConfigSheetCode.class,
-
-								constraints = @PropertyConstraints(required = false)),
-
-						myRole = @MyRole(name = "variable", cardinality = Cardinality.ONE)),
+//				@GeneratedForeignKey(name = "VariableSpecLink",
+//
+//						foreignKeyRole = @ForeignKeyRole(name = "spec", type = ConfigSheetCode.class,
+//
+//								constraints = @PropertyConstraints(required = false)),
+//
+//						myRole = @MyRole(name = "variable", cardinality = Cardinality.ONE)),
 
 		}
 
