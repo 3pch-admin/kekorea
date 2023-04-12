@@ -223,9 +223,6 @@ public class HistoryHelper {
 				QueryResult qr = PersistenceHelper.manager.navigate(project, "history", ProjectHistoryLink.class);
 				if (qr.hasMoreElements()) {
 					history = (History) qr.nextElement();
-				}
-
-				if (history != null) {
 					QuerySpec query = new QuerySpec();
 					int idx = query.appendClassList(HistoryOptionLink.class, true);
 					QuerySpecUtils.toEqualsAnd(query, idx, HistoryOptionLink.class, "roleAObjectRef.key.id", history);

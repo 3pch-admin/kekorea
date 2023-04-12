@@ -9,6 +9,55 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 JSONArray list = (JSONArray) request.getAttribute("list");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<style type="text/css">
+.row1 {
+	background-color: #99CCFF;
+}
+
+.row2 {
+	background-color: #FFCCFF;
+}
+
+.row3 {
+	background-color: #CCFFCC;
+}
+
+.row4 {
+	background-color: #FFFFCC;
+}
+
+.row5 {
+	background-color: #FFCC99;
+}
+
+.row6 {
+	background-color: #CCCCFF;
+}
+
+.row7 {
+	background-color: #99FF66;
+}
+
+.row8 {
+	background-color: #CC99FF;
+}
+
+.row9 {
+	background-color: #66CCFF;
+}
+
+.row10 {
+	background-color: #CCFFCC;
+}
+
+.row11 {
+	background-color: #FFCCFF;
+}
+
+.row12 {
+	background-color: #FFFFCC;
+}
+</style>
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -216,6 +265,37 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					rowNumHeaderText : "번호",
 					selectionMode : "multipleCells",
 					enableCellMerge : true,
+					rowStyleFunction : function(rowIndex, item) {
+						const value = item.category_code;
+						if (value === "CATEGORY_2") {
+							return "row1";
+						} else if (value === "CATEGORY_3") {
+							return "row2";
+						} else if (value === "CATEGORY_4") {
+							return "row3";
+						} else if (value === "CATEGORY_5") {
+							return "row4";
+						} else if (value === "CATEGORY_6") {
+							return "row5";
+						} else if (value === "CATEGORY_7") {
+							return "row6";
+						} else if (value === "CATEGORY_8" || value === "CATEGORY_9") {
+							return "row7";
+						} else if (value === "CATEGORY_10") {
+							return "row8";
+						} else if (value === "CATEGORY_11") {
+							return "row9";
+						} else if (value === "CATEGORY_12") {
+							return "row4";
+						} else if (value === "CATEGORY_13") {
+							return "row10";
+						} else if (value === "CATEGORY_14") {
+							return "row11";
+						} else if (value === "CATEGORY_15") {
+							return "row12";
+						}
+						return "";
+					}
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
 				AUIGrid.setGridData(myGridID, data);

@@ -1,6 +1,8 @@
 package e3ps.korea.configSheet.controller;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,11 +21,13 @@ import e3ps.admin.configSheetCode.ConfigSheetCode;
 import e3ps.admin.configSheetCode.service.ConfigSheetCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.StringUtils;
+import e3ps.common.util.DateUtils;
 import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.korea.configSheet.beans.ConfigSheetDTO;
 import e3ps.korea.configSheet.service.ConfigSheetHelper;
+import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
+import e3ps.project.template.service.TemplateHelper;
 import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
@@ -56,6 +60,7 @@ public class ConfigSheetController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}
@@ -84,6 +89,7 @@ public class ConfigSheetController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}
@@ -106,10 +112,11 @@ public class ConfigSheetController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "CONFIG SHEET 비교 페이지")
+	@Description(value = "CONIFG SHEET 비교 페이지 공통 함수")
 	@GetMapping(value = "/compare")
 	public ModelAndView compare(@RequestParam String oid, @RequestParam String compareArr) throws Exception {
 		ModelAndView model = new ModelAndView();
+		Project p1 = (Project) CommonUtils.getObject(oid);
 
 		String[] compareOids = compareArr.split(",");
 		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
@@ -118,14 +125,72 @@ public class ConfigSheetController extends BaseController {
 			destList.add(project);
 		}
 
-		Project p1 = (Project) CommonUtils.getObject(oid);
-		ArrayList<Map<String, Object>> data = ConfigSheetHelper.manager.compare(p1, destList);
+		ArrayList<ConfigSheetCode> fixedList = ConfigSheetCodeHelper.manager.getConfigSheetCode("CATEGORY");
+		ArrayList<Map<String, Object>> data = ConfigSheetHelper.manager.compare(p1, destList, fixedList);
 		model.addObject("p1", p1);
-		model.addObject("destList", destList);
 		model.addObject("oid", oid);
-		model.addObject("compareArr", compareArr);
+		model.addObject("fixedList", fixedList);
+		model.addObject("destList", destList);
 		model.addObject("data", JSONArray.fromObject(data));
 		model.setViewName("popup:/korea/configSheet/configSheet-compare");
 		return model;
+	}
+
+	@Description(value = "CONFIG SHEET 복사할 작번 추가 페이지")
+	@GetMapping(value = "/load")
+	public ModelAndView load(@RequestParam String method, @RequestParam String multi) throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, -4);
+		Timestamp date = new Timestamp(calendar.getTime().getTime());
+		String before = date.toString().substring(0, 10);
+		String end = DateUtils.getCurrentTimestamp().toString().substring(0, 10);
+
+		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
+		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
+		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
+
+		JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
+		JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
+		JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
+
+		model.addObject("elecs", elecs);
+		model.addObject("softs", softs);
+		model.addObject("machines", machines);
+		model.addObject("list", list);
+		model.addObject("customers", customers);
+		model.addObject("projectTypes", projectTypes);
+		model.addObject("maks", maks);
+		model.addObject("before", before);
+		model.addObject("end", end);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("method", method);
+		model.addObject("multi", Boolean.parseBoolean(multi));
+		model.setViewName("popup:/korea/configSheet/configSheet-load");
+		return model;
+	}
+
+	@Description(value = "CONFIG SHEET 복사하기")
+	@PostMapping(value = "/copy")
+	@ResponseBody
+	public Map<String, Object> copy(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		String oid = (String) params.get("oid");
+		try {
+			ArrayList<Map<String, Object>> list = ConfigSheetHelper.manager.copyBaseData(oid);
+			result.put("list", list);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		System.out.println(result);
+		return result;
 	}
 }

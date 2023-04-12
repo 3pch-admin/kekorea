@@ -6,6 +6,11 @@ import java.util.Map;
 
 import e3ps.admin.configSheetCode.ConfigSheetCode;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.korea.configSheet.ConfigSheet;
+import e3ps.korea.configSheet.ConfigSheetProjectLink;
+import e3ps.korea.configSheet.ConfigSheetVariable;
+import e3ps.korea.configSheet.ConfigSheetVariableLink;
+import e3ps.project.Project;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.fc.PersistenceHelper;
@@ -69,8 +74,7 @@ public class ConfigSheetCodeHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ConfigSheetCode.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, ConfigSheetCode.class, ConfigSheetCode.CODE_TYPE, "CATEGORY_ITEM");
-		QuerySpecUtils.toEqualsAnd(query, idx, ConfigSheetCode.class, "parentReference.key.id",
-				categoryCode.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, ConfigSheetCode.class, "parentReference.key.id", categoryCode);
 //		QuerySpecUtils.toBooleanAnd(query, idx, ConfigSheetCode.class, ConfigSheetCode.ENABLE, true);
 		QuerySpecUtils.toOrderBy(query, idx, ConfigSheetCode.class, ConfigSheetCode.SORT, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
@@ -99,8 +103,7 @@ public class ConfigSheetCodeHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ConfigSheetCode.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, ConfigSheetCode.class, ConfigSheetCode.CODE_TYPE, "CATEGORY_SPEC");
-		QuerySpecUtils.toEqualsAnd(query, idx, ConfigSheetCode.class, "parentReference.key.id",
-				itemCode.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, ConfigSheetCode.class, "parentReference.key.id", itemCode);
 //		QuerySpecUtils.toBooleanAnd(query, idx, ConfigSheetCode.class, ConfigSheetCode.ENABLE, true);
 		QuerySpecUtils.toOrderBy(query, idx, ConfigSheetCode.class, ConfigSheetCode.SORT, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
@@ -181,6 +184,26 @@ public class ConfigSheetCodeHelper {
 			map.put("key", configSheetCode.getCode());
 			map.put("value", configSheetCode.getName());
 			list.add(map);
+		}
+		return list;
+	}
+
+	/**
+	 * CONFIG SHEET 코드 배열로 가져오기
+	 */
+	public ArrayList<ConfigSheetCode> getConfigSheetCode(String codeType) throws Exception {
+		ArrayList<ConfigSheetCode> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ConfigSheetCode.class, true);
+
+		QuerySpecUtils.toEqualsAnd(query, idx, ConfigSheetCode.class, ConfigSheetCode.CODE_TYPE, codeType);
+		QuerySpecUtils.toBooleanAnd(query, idx, ConfigSheetCode.class, ConfigSheetCode.ENABLE, true);
+		QuerySpecUtils.toOrderBy(query, idx, ConfigSheetCode.class, ConfigSheetCode.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			ConfigSheetCode configSheetCode = (ConfigSheetCode) obj[0];
+			list.add(configSheetCode);
 		}
 		return list;
 	}

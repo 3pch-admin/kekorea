@@ -213,7 +213,7 @@ String end = (String) request.getAttribute("end");
 					showRowCheckColumn : true,
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
-					selectionMode : "singleRow",
+					selectionMode : "multipleCells",
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
