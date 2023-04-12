@@ -750,10 +750,8 @@ public class ErpHelper {
 					sql.append("'" + data.getPrice() + "', ");
 					sql.append("'" + accDate + "', ");
 
-					ApprovalMaster am = WorkspaceHelper.manager.getMaster(master);
-					ArrayList<ApprovalLine> agreeLines = WorkspaceHelper.manager.getAgreeLines(am);
-					// 여기 머 들어가는지 확인..
-//					sql.append("'" + APPUSERID + "');");
+					String lastId = master.getLast();
+					sql.append("'" + lastId + "');");
 					st.executeUpdate(sql.toString());
 				}
 

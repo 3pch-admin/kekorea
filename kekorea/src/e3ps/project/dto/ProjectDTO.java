@@ -135,18 +135,18 @@ public class ProjectDTO {
 		}
 		setModel(project.getModel());
 
-		WTUser machineUser = ProjectHelper.manager.getUserType(project, TaskTypeVariable.MACHINE);
+		WTUser machineUser = ProjectHelper.manager.getUserType(project, ProjectUserTypeVariable.MACHINE);
 
 		if (machineUser != null) {
 			setMachine(machineUser.getFullName());
 		}
 
-		WTUser elecUser = ProjectHelper.manager.getUserType(project, TaskTypeVariable.ELEC);
+		WTUser elecUser = ProjectHelper.manager.getUserType(project, ProjectUserTypeVariable.ELEC);
 		if (elecUser != null) {
 			setElec(elecUser.getFullName());
 		}
 
-		WTUser softUser = ProjectHelper.manager.getUserType(project, TaskTypeVariable.SOFT);
+		WTUser softUser = ProjectHelper.manager.getUserType(project, ProjectUserTypeVariable.SOFT);
 		if (softUser != null) {
 			setSoft(softUser.getFullName());
 		}

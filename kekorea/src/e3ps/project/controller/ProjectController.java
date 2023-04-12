@@ -41,6 +41,7 @@ import e3ps.project.service.ProjectHelper;
 import e3ps.project.task.Task;
 import e3ps.project.task.dto.TaskDTO;
 import e3ps.project.template.service.TemplateHelper;
+import e3ps.project.variable.ProjectUserTypeVariable;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -457,7 +458,7 @@ public class ProjectController extends BaseController {
 			ArrayList<ProjectDTO> editRow = new ArrayList<>();
 			for (LinkedHashMap<String, Object> edit : editRows) {
 				ProjectDTO dto = mapper.convertValue(edit, ProjectDTO.class);
-				
+
 				editRow.add(dto);
 			}
 
@@ -475,4 +476,77 @@ public class ProjectController extends BaseController {
 		}
 		return result;
 	}
+
+	@Description(value = "프로젝트 담당자 수정 페이지")
+	@GetMapping(value = "/editUser")
+	public ModelAndView editUser(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Project project = (Project) CommonUtils.getObject(oid);
+		WTUser pmUser = ProjectHelper.manager.getUserType(project, ProjectUserTypeVariable.PM);
+		WTUser subPmUser = ProjectHelper.manager.getUserType(project, ProjectUserTypeVariable.SUB_PM);
+		WTUser machineUser = ProjectHelper.manager.getUserType(project, ProjectUserTypeVariable.MACHINE);
+		WTUser elecUser = ProjectHelper.manager.getUserType(project, ProjectUserTypeVariable.ELEC);
+		WTUser softUser = ProjectHelper.manager.getUserType(project, ProjectUserTypeVariable.SOFT);
+		model.addObject("pmUser", pmUser);
+		model.addObject("subPmUser", subPmUser);
+		model.addObject("machineUser", machineUser);
+		model.addObject("elecUser", elecUser);
+		model.addObject("softUser", softUser);
+		model.addObject("oid", oid);
+		model.setViewName("popup:/project/project-edit-user");
+		return model;
+	}
+
+	@Description(value = "프로젝트 담당자 수정 함수")
+	@ResponseBody
+	@PostMapping(value = "/editUser")
+	public Map<String, Object> editUser(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ProjectHelper.service.editUser(params);
+			result.put("msg", SAVE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "프로젝트 금액 수정 페이지")
+	@GetMapping(value = "/money")
+	public ModelAndView money(@RequestParam String oid, @RequestParam String money, @RequestParam String type)
+			throws Exception {
+		ModelAndView model = new ModelAndView();
+
+		if ("m".equals(type)) {
+			model.addObject("name", "기계");
+		} else if ("e".equals(type)) {
+			model.addObject("name", "전기");
+		}
+		model.addObject("type", type);
+		model.addObject("money", Double.parseDouble(money.replaceAll(",", "")));
+		model.addObject("oid", oid);
+		model.setViewName("popup:/project/project-money");
+		return model;
+	}
+
+	@Description(value = "프로젝트 금액 수정 함수")
+	@ResponseBody
+	@PostMapping(value = "/money")
+	public Map<String, Object> money(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ProjectHelper.service.money(params);
+			result.put("msg", SAVE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
 }

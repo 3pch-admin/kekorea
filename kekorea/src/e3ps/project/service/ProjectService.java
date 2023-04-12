@@ -32,4 +32,14 @@ public interface ProjectService {
 	public abstract void commit(Project project) throws Exception;
 
 	public abstract void save(HashMap<String, List<ProjectDTO>> dataMap) throws Exception;
+
+	/**
+	 * 프로젝트 담당자 수정
+	 */
+	public abstract void editUser(Map<String, Object> params) throws Exception;
+
+	/**
+	 * 프로젝트 금액 수정
+	 */
+	public abstract void money(Map<String, Object> params) throws Exception;
 }

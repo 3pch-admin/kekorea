@@ -591,3 +591,10 @@ div#loading_layer {
 span#subLoc {
 	font-weight: 800;
 }
+
+/** 프로젝트 담당자 수정 아이콘 **/
+img.edit {
+	position: relative;
+	top: 2px;
+	cursor: pointer;
+}
