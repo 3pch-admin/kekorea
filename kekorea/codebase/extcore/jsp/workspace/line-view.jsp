@@ -115,6 +115,21 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				<td class="left">
 					<div class="header">
 						<img src="/Windchill/extcore/images/header.png">
+						관련 객체
+					</div>
+				</td>
+			</tr>
+		</table>
+
+		<jsp:include page="/extcore/jsp/workspace/include/persistable.jsp">
+			<jsp:param value="<%=per.getPersistInfo().getObjectIdentifier().getStringValue()%>" name="oid" />
+		</jsp:include>
+
+		<table class="button-table">
+			<tr>
+				<td class="left">
+					<div class="header">
+						<img src="/Windchill/extcore/images/header.png">
 						결재 라인
 					</div>
 				</td>
@@ -174,7 +189,8 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 					showRowNumColumn : true,
 					rowNumHeaderText : "번호",
 					selectionMode : "singleRow",
-					enableSorting : false
+					enableSorting : false,
+					autoGridHeight : true
 				}
 				_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
 				AUIGrid.setGridData(_myGridID_, history);

@@ -35,7 +35,6 @@ public class ErpConnectionPool {
 	}
 
 	public static void free(Connection con, Statement st, ResultSet rs) throws Exception {
-		System.out.println("Free Start");
 		if (con != null) {
 			con.close();
 		}

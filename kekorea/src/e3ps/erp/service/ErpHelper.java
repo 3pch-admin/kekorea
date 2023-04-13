@@ -58,7 +58,7 @@ public class ErpHelper {
 	 */
 	private static HashMap<String, Map<String, Object>> cacheManager = null;
 	private static HashMap<String, Map<String, Object>> validateCache = null;
-	private static HashMap<Integer, Map<String, Object>> lotCache = null;
+	private static HashMap<Integer, Map<String, Object>> unitCache = null;
 	static {
 		if (cacheManager == null) {
 			cacheManager = new HashMap<>();
@@ -68,8 +68,8 @@ public class ErpHelper {
 			validateCache = new HashMap<>();
 		}
 
-		if (lotCache == null) {
-			lotCache = new HashMap<>();
+		if (unitCache == null) {
+			unitCache = new HashMap<>();
 		}
 	}
 
@@ -84,7 +84,7 @@ public class ErpHelper {
 		try {
 
 			Map<String, Object> cacheData = validateCache.get(partNo);
-			if (cacheData == null) {
+			if (cacheData == null || cacheData.get("check") == "NG") {
 
 				con = dataSource.getConnection();
 				st = con.createStatement();
@@ -96,8 +96,10 @@ public class ErpHelper {
 				rs = st.executeQuery(sql.toString());
 				if (rs.next()) {
 					result.put("check", "OK");
+					validateCache.put(partNo, result);
 				} else {
 					result.put("check", "NG");
+					validateCache.put(partNo, result);
 				}
 			} else {
 				System.out.println("PART NO VALIDATE CACHE");
@@ -122,7 +124,7 @@ public class ErpHelper {
 		ResultSet rs = null;
 		try {
 
-			Map<String, Object> cacheData = lotCache.get(lotNo);
+			Map<String, Object> cacheData = unitCache.get(lotNo);
 			if (cacheData == null) {
 				con = dataSource.getConnection();
 				st = con.createStatement();
@@ -132,7 +134,7 @@ public class ErpHelper {
 				rs = st.executeQuery(sql.toString());
 				if (rs.next()) {
 					result.put("unitName", (String) rs.getString(1));
-					lotCache.put(lotNo, result);
+					unitCache.put(lotNo, result);
 				}
 			} else {
 				System.out.println("UNIT NAME CACHE");
@@ -204,6 +206,7 @@ public class ErpHelper {
 					result.put("standard", spec);
 					result.put("partName", itemName);
 					result.put("won", quantity * price * exchangeRate);
+					cacheManager.put(cacheKey, result);
 				}
 			} else {
 				System.out.println("수배표 등록 CACHE");

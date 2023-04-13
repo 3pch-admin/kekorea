@@ -99,6 +99,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			submitLine.setState(WorkspaceHelper.STATE_SUBMIT_COMPLETE);
 			PersistenceHelper.manager.save(submitLine);
 
+			System.out.println("isAgree=" + isAgree);
 			int sort = 0;
 			if (isAgree) {
 				sort = 1;

@@ -96,7 +96,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/workspace/lineView?oid=" + oid + "&columnType=COLUMN_AGREE&poid=" + item.poid);
-							popup(url, 1400, 700);
+							popup(url, 1500, 800);
 						}
 					},
 					filter : {
@@ -114,7 +114,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/workspace/lineView?oid=" + oid + "&columnType=COLUMN_AGREE&poid=" + item.poid);
-							popup(url, 1400, 700);
+							popup(url, 1500, 800);
 						}
 					},
 					filter : {
@@ -132,7 +132,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/workspace/lineView?oid=" + oid + "&columnType=COLUMN_AGREE&poid=" + item.poid);
-							popup(url, 1400, 700);
+							popup(url, 1500, 800);
 						}
 					},
 					filter : {

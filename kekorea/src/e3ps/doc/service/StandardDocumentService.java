@@ -40,7 +40,7 @@ public class StandardDocumentService extends StandardManager implements Document
 			contract.setDescription(description);
 			contract.setStartTime(new Timestamp(new Date().getTime()));
 			contract.setState(WorkspaceHelper.STATE_APPROVAL_APPROVING);
-
+			contract.setContractType("DOCUMENT");
 			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
 
 			for (Map<String, String> _addRow : _addRows) {
@@ -52,7 +52,7 @@ public class StandardDocumentService extends StandardManager implements Document
 			}
 
 			if (approvalRows.size() > 0) {
-				WorkspaceHelper.service.register(contract, approvalRows, agreeRows, receiveRows);
+				WorkspaceHelper.service.register(contract, agreeRows, approvalRows, receiveRows);
 			}
 
 			trs.commit();

@@ -121,7 +121,7 @@ Department department = (Department) request.getAttribute("department");
 				</td>
 				<th>기계 담당자</th>
 				<td class="indent5">
-					<input type="text" name="machine" id="machine" readonly="readonly">
+					<input type="text" name="machine" id="machine">
 					<input type="hidden" name="machineOid" id="machineOid">
 				</td>
 				<th>전기 담당자</th>

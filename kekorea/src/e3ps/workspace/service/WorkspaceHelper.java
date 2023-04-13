@@ -756,4 +756,11 @@ public class WorkspaceHelper {
 		}
 		return JSONArray.fromObject(list);
 	}
+	
+	/**
+	 * 일괄결재 prefix 가져오기
+	 */
+	public String prefix(Persistable per) {
+		
+	}
 }

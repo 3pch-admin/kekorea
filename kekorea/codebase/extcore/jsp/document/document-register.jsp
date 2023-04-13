@@ -185,6 +185,7 @@
 				params.description = description.value;
 				params._addRows = _addRows; //문서
 				toRegister(params, _addRows_);
+				console.log(params);
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
