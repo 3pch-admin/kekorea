@@ -370,7 +370,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 					},
 					editable : false
 				}, {
-					dataField : "machine",
+					dataField : "machine_oid",
 					headerText : "기계 담당자",
 					width : 100,
 					renderer : {
@@ -397,7 +397,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
 							for (let i = 0, len = machines.length; i < len; i++) {
-								if (machines[i]== newValue) {
+								if (machines[i]["oid"]== newValue) {
 									isValid = true;
 									break;
 								}
@@ -419,7 +419,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 						return retStr == "" ? value : retStr;
 					},
 				}, {
-					dataField : "elec",
+					dataField : "elec_oid",
 					headerText : "전기 담당자",
 					width : 100,
 					renderer : {
@@ -446,7 +446,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
 							for (let i = 0, len = elecs.length; i < len; i++) {
-								if (elecs[i] == newValue) {
+								if (elecs[i]["oid"] == newValue) {
 									isValid = true;
 									break;
 								}
@@ -468,7 +468,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 						return retStr == "" ? value : retStr;
 					},
 				}, {
-					dataField : "soft",
+					dataField : "soft_oid",
 					headerText : "SW 담당자",
 					dataType : "string",
 					width : 100,
@@ -496,7 +496,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
 							for (let i = 0, len = softs.length; i < len; i++) {
-								if (softs[i] == newValue) {
+								if (softs[i]["oid"] == newValue) {
 									isValid = true;
 									break;
 								}
@@ -690,6 +690,8 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 				}
 				
 				params.editRows = editRows;
+				console.log(params);
+				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
 					if (data.result) {

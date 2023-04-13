@@ -151,17 +151,40 @@
 				const params = new Object();
 				const _addRows = AUIGrid.getAddedRowItems(_myGridID);
 				const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
-				const name = document.getElementById("name").value;
-				const description = document.getElementById("description").value;
-				params.name = name;
-				params.description = description;
-				params._addRows = _addRows; //문서
-				toRegister(params, _addRows_);
+				const name = document.getElementById("name");
+				const description = document.getElementById("description");
+
+				if (isNull(name.value)) {
+					alert("결재 제목을 입력하세요.");
+					name.focus();
+					return false;
+				}
+
+				if (isNull(description.value)) {
+					alert("결재 의견을 입력하세요.");
+					description.focus();
+					return false;
+				}
+
+				if (_addRows.length === 0) {
+					alert("결재할 문서를 추가하세요.");
+					_insert();
+					return false;
+				}
+
+				if (_addRows_.length === 0) {
+					alert("결재선을 지정하세요.");
+					_register();
+					return false;
+				}
 
 				if (!confirm("문서결재를 등록하시겠습니까?")) {
 					return false;
 				}
-
+				params.name = name.value;
+				params.description = description.value;
+				params._addRows = _addRows; //문서
+				toRegister(params, _addRows_);
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);

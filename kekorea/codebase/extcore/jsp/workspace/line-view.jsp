@@ -218,8 +218,27 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 		})
 	}
 
+	function _unagree() {
+		if (!confirm("검토 반려 하시겠습니까?")) {
+			return false;
+		}
+		const url = getCallUrl("/workspace/_unagree");
+		const params = new Object();
+		const description = document.getElementById("description").value;
+		params.oid = oid;
+		params.description = description;
+		openLayer();
+		call(url, params, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			}
+		})
+	}
+
 	function _reject() {
-		if (!confirm("반려 하시겠습니까?")) {
+		if (!confirm("결재 반려 하시겠습니까?")) {
 			return false;
 		}
 		const url = getCallUrl("/workspace/_reject");
@@ -278,6 +297,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
+		document.getElementById("description").focus();
 		$("#tabs").tabs({
 			active : 0,
 			create : function(event, ui) {

@@ -18,6 +18,7 @@ import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
@@ -36,6 +37,7 @@ import wt.org.OrganizationServicesHelper;
 import wt.org.WTUser;
 import wt.ownership.Ownership;
 import wt.pom.Transaction;
+import wt.query.QuerySpec;
 import wt.services.StandardManager;
 import wt.session.SessionHelper;
 import wt.util.WTException;
@@ -450,65 +452,49 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 			trs.start();
 			for (ProjectDTO edit : editRows) {
 				String oid = edit.getOid();
-				System.out.println("^^^^^^^^^^^"+oid);
-				Double elecPrice = edit.getElecPrice();
-				Double machinePrice = edit.getMachinePrice();
+
+				double elecPrice = edit.getElecPrice();
+				double machinePrice = edit.getMachinePrice();
 
 				Project project = (Project) CommonUtils.getObject(oid);
-//				project.setElecPrice(elecPrice);
-//				project.setMachinePrice(machinePrice);
-//				PersistenceHelper.manager.modify(project);
+				project.setElecPrice(elecPrice);
+				project.setMachinePrice(machinePrice);
+				PersistenceHelper.manager.modify(project);
 
-				if (elecPrice != null) {
-					project.setElecPrice(elecPrice);
-					PersistenceHelper.manager.save(project);
-				}
-				
-				if (machinePrice != null) {
-					project.setMachinePrice(machinePrice);
-					PersistenceHelper.manager.save(project);
-				}
-//				String machine = edit.getMachine();
-//				Project  machine = (Project) CommonUtils.getObject(oid);
-				WTUser machineUser = (WTUser) ProjectHelper.manager.getUserType(project, "MACHINE");
-				String moid = machineUser.getPersistInfo().getObjectIdentifier().getStringValue();
-				System.out.println("&&&&&&&&&&&&&&&&"+moid);
-				if (machineUser != null) {
-//					WTUser user = (WTUser) ProjectHelper.manager.getUserType(project, machine);
-					System.out.println("*************************"+ machineUser);
-					WTUser user = (WTUser) CommonUtils.getObject(moid);
+				String machine_oid = edit.getMachine_oid();
+				if (!StringUtils.isNull(machine_oid)) {
+					CommonCode userType = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.MACHINE,
+							"USER_TYPE");
+					deleteUserLink(project, userType);
+					WTUser user = (WTUser) CommonUtils.getObject(machine_oid);
 					ProjectUserLink link = ProjectUserLink.newProjectUserLink(project, user);
-//					link.getProject().getPersistInfo().getObjectIdentifier().getStringValue().equals(machine);
-					PersistenceHelper.manager.save(link);
-					System.out.println("@@@@@@@@@@@@"+link);
-				}
-//				String elec = edit.getElec();
-//				String elec = project.getPersistInfo().getObjectIdentifier().getStringValue();
-				WTUser elecUser = (WTUser) ProjectHelper.manager.getUserType(project, "ELEC");
-				String eoid = machineUser.getPersistInfo().getObjectIdentifier().getStringValue();
-				if (elecUser != null) {
-//					WTUser user = (WTUser) ProjectHelper.manager.getUserType(project, elec);
-					WTUser user = (WTUser) CommonUtils.getObject(eoid);
-//					WTUser user = (WTUser) ProjectHelper.manager.getUserType(project, "ELEC");
-					ProjectUserLink link = ProjectUserLink.newProjectUserLink(project, user);
-//					link.getProject().getPersistInfo().getObjectIdentifier().getStringValue().equals(elec);
-					link.setUserType(CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE"));
+					link.setUserType(userType);
 					PersistenceHelper.manager.save(link);
 				}
-//				String soft = edit.getSoft();
-				WTUser softUser = (WTUser) ProjectHelper.manager.getUserType(project, "SOFT");
-				String soid = machineUser.getPersistInfo().getObjectIdentifier().getStringValue();
-//				Project  soft = (Project) CommonUtils.getObject(oid);
-				if (softUser != null) {
-//					user.getPersistInfo().getObjectIdentifier().getStringValue();
-//					WTUser user = (WTUser) ProjectHelper.manager.getUserType(project, soft);
-					WTUser user = (WTUser) CommonUtils.getObject(soid);
-//					WTUser user = (WTUser) ProjectHelper.manager.getUserType(project, "SOFT");
+
+				String elec_oid = edit.getElec_oid();
+				if (!StringUtils.isNull(elec_oid)) {
+					CommonCode userType = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.ELEC,
+							"USER_TYPE");
+					deleteUserLink(project, userType);
+					WTUser user = (WTUser) CommonUtils.getObject(elec_oid);
 					ProjectUserLink link = ProjectUserLink.newProjectUserLink(project, user);
-//					link.getProject().getPersistInfo().getObjectIdentifier().getStringValue().equals(soft);
-					link.setUserType(CommonCodeHelper.manager.getCommonCode("SOFT", "USER_TYPE"));
+					link.setUserType(userType);
 					PersistenceHelper.manager.save(link);
 				}
+
+				String soft_oid = edit.getSoft_oid();
+				if (!StringUtils.isNull(soft_oid)) {
+					CommonCode userType = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.SOFT,
+							"USER_TYPE");
+					deleteUserLink(project, userType);
+					WTUser user = (WTUser) CommonUtils.getObject(soft_oid);
+					ProjectUserLink link = ProjectUserLink.newProjectUserLink(project, user);
+					link.setUserType(userType);
+					PersistenceHelper.manager.save(link);
+				}
+
+				PersistenceHelper.manager.modify(project);
 			}
 
 			trs.commit();
@@ -520,6 +506,20 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 		} finally {
 			if (trs != null)
 				trs.rollback();
+		}
+	}
+
+	private void deleteUserLink(Project project, CommonCode userType) throws Exception {
+		// 한 트랜젝션에서 일어날거거
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ProjectUserLink.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, "roleAObjectRef.key.id", project);
+		QuerySpecUtils.toEqualsAnd(query, idx, ProjectUserLink.class, "userTypeReference.key.id", userType);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			ProjectUserLink link = (ProjectUserLink) obj[0];
+			PersistenceHelper.manager.delete(link);
 		}
 	}
 

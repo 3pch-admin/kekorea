@@ -130,8 +130,58 @@ public class ApprovalLineDTO {
 			setCompleteTime(master.getCompleteTime());
 			setMoid(master.getPersistInfo().getObjectIdentifier().getStringValue());
 			setPoid(master.getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
-			point(master);
+			reject(master);
 		}
+	}
+
+	private void reject(ApprovalMaster master) throws Exception {
+		ApprovalLine submitLine = WorkspaceHelper.manager.getSubmitLine(master);
+		String point = "<img src='/Windchill/extcore/images/process-nleft.gif' class='line'><span class='inactive'><span class='text'>"
+				+ submitLine.getOwnership().getOwner().getFullName() + "</span></span>"
+				+ "<img src='/Windchill/extcore/images/process-nright.gif' class='line'>";
+
+		point += "<img src='/Windchill/extcore/images/process-line.gif' class='line dot'>";
+
+		ArrayList<ApprovalLine> agreeLines = WorkspaceHelper.manager.getAgreeLines(master);
+		for (int i = 0; i < agreeLines.size(); i++) {
+			ApprovalLine agreeLine = (ApprovalLine) agreeLines.get(i);
+			if (agreeLine.getState().equals(WorkspaceHelper.STATE_AGREE_REJECT)) {
+				point += "<img src='/Windchill/extcore/images/process-sleft.gif' class='line'><span class='active'><span class='text'>"
+						+ agreeLine.getOwnership().getOwner().getFullName() + "</span></span>"
+						+ "<img src='/Windchill/extcore/images/process-sright.gif' class='line'>";
+			} else {
+				point += "<img src='/Windchill/extcore/images/process-nleft.gif' class='line'><span class='inactive'><span class='text'>"
+						+ agreeLine.getOwnership().getOwner().getFullName() + "</span></span>"
+						+ "<img src='/Windchill/extcore/images/process-nright.gif' class='line'>";
+			}
+
+			if (i != agreeLines.size() - 1) {
+				point += "<img src='/Windchill/extcore/images/process-line.gif' class='line dot'>";
+			}
+		}
+
+		if (agreeLines.size() > 0) {
+			point += "<img src='/Windchill/extcore/images/process-line.gif' class='line dot'>";
+		}
+
+		ArrayList<ApprovalLine> approvalLines = WorkspaceHelper.manager.getApprovalLines(master);
+		for (int i = 0; i < approvalLines.size(); i++) {
+			ApprovalLine approvalLine = (ApprovalLine) approvalLines.get(i);
+			if (approvalLine.getState().equals(WorkspaceHelper.STATE_APPROVAL_REJECT)) {
+				point += "<img src='/Windchill/extcore/images/process-sleft.gif' class='line'><span class='active'><span class='text'>"
+						+ approvalLine.getOwnership().getOwner().getFullName() + "</span></span>"
+						+ "<img src='/Windchill/extcore/images/process-sright.gif' class='line'>";
+			} else {
+				point += "<img src='/Windchill/extcore/images/process-nleft.gif' class='line'><span class='inactive'><span class='text'>"
+						+ approvalLine.getOwnership().getOwner().getFullName() + "</span></span>"
+						+ "<img src='/Windchill/extcore/images/process-nright.gif' class='line'>";
+			}
+
+			if (i != approvalLines.size() - 1) {
+				point += "<img src='/Windchill/extcore/images/process-line.gif' class='line dot'>";
+			}
+		}
+		setPoint(point);
 	}
 
 	private void point(ApprovalMaster master) throws Exception {

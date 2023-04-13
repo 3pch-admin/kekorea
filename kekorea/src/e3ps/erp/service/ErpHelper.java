@@ -18,7 +18,6 @@ import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.service.PartlistHelper;
-import e3ps.common.util.ContentUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.WTDocumentWTPartLink;
@@ -26,9 +25,6 @@ import e3ps.erp.ErpConnectionPool;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputDocumentLink;
-import e3ps.workspace.ApprovalLine;
-import e3ps.workspace.ApprovalMaster;
-import e3ps.workspace.service.WorkspaceHelper;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
 import wt.content.ContentRoleType;
@@ -568,7 +564,13 @@ public class ErpHelper {
 			}
 			sql.append("'" + stdNo + "', ");
 
-			String rptFileName = ContentUtils.getPrimary(document)[2];
+			ApplicationData data = null;
+			QueryResult result = ContentHelper.service.getContentsByRole(document, ContentRoleType.PRIMARY);
+			if (result.hasMoreElements()) {
+				data = (ApplicationData) result.nextElement();
+			}
+
+			String rptFileName = data.getFileName();
 			sql.append("'" + rptFileName + "', ");
 
 			String createTime = new Timestamp(new Date().getTime()).toString().substring(0, 16);
@@ -577,7 +579,7 @@ public class ErpHelper {
 			String ext = FileUtil.getExtension(rptFileName);
 			sql.append("'" + ext + "', ");
 
-			long fileSize = Long.parseLong(ContentUtils.getPrimary(document)[8]);
+			long fileSize = data != null ? data.getFileSize() : 0L;
 			sql.append("'" + fileSize + "');");
 			st.executeUpdate(sql.toString());
 
@@ -588,9 +590,7 @@ public class ErpHelper {
 				directory.mkdirs();
 			}
 
-			QueryResult qr = ContentHelper.service.getContentsByRole(document, ContentRoleType.PRIMARY);
-			if (qr.hasMoreElements()) {
-				ApplicationData data = (ApplicationData) qr.nextElement();
+			if (data != null) {
 				byte[] buffer = new byte[10240];
 				InputStream is = ContentServerHelper.service.findLocalContentStream(data);
 				File write = new File(directory + File.separator + data.getFileName());
@@ -1053,11 +1053,14 @@ public class ErpHelper {
 			String createTime = new Timestamp(new Date().getTime()).toString();
 			sql.append("'" + createTime + "', ");
 
-			String[] primarys = ContentUtils.getPrimary(part);
-			String fileName = primarys[2];
-			sql.append("'" + fileName + "', ");
-			sql.append("'" + FileUtil.getExtension(fileName) + "', ");
-			sql.append("'" + primarys[7] + "', ");
+			QueryResult result = ContentHelper.service.getContentsByRole(part, ContentRoleType.PRIMARY);
+			ApplicationData data = null;
+			if (result.hasMoreElements()) {
+				data = (ApplicationData) result.nextElement();
+			}
+			sql.append("'" + data.getFileName() + "', ");
+			sql.append("'" + FileUtil.getExtension(data.getFileName()) + "', ");
+			sql.append("'" + data != null ? data.getFileSize() : 0L + "', ");
 			sql.append("'Y');");
 			st.executeUpdate(sql.toString());
 
@@ -1067,12 +1070,10 @@ public class ErpHelper {
 				directory.mkdirs();
 			}
 
-			QueryResult result = ContentHelper.service.getContentsByRole(part, ContentRoleType.PRIMARY);
-			if (result.hasMoreElements()) {
-				ApplicationData adata = (ApplicationData) result.nextElement();
+			if (data != null) {
 				byte[] buffer = new byte[10240];
-				InputStream is = ContentServerHelper.service.findLocalContentStream(adata);
-				File write = new File(directory + File.separator + adata.getFileName());
+				InputStream is = ContentServerHelper.service.findLocalContentStream(data);
+				File write = new File(directory + File.separator + data.getFileName());
 				FileOutputStream fos = new FileOutputStream(write);
 				int j = 0;
 				while ((j = is.read(buffer, 0, 10240)) > 0) {
@@ -1186,10 +1187,14 @@ public class ErpHelper {
 			sql.append("'" + createTime + "', ");
 
 			for (WTDocument doc : list) {
-				String[] primarys = ContentUtils.getPrimary(doc);
-				sql.append("'" + primarys[2] + "', ");
-				sql.append("'" + FileUtil.getExtension(primarys[2]) + "', ");
-				sql.append("'" + primarys[7] + "', ");
+				ApplicationData data = null;
+				QueryResult qr = ContentHelper.service.getContentsByRole(doc, ContentRoleType.PRIMARY);
+				if (qr.hasMoreElements()) {
+					data = (ApplicationData) result.nextElement();
+				}
+				sql.append("'" + data.getFileName() + "', ");
+				sql.append("'" + FileUtil.getExtension(data.getFileName()) + "', ");
+				sql.append("'" + data.getFileSize() + "', ");
 			}
 
 			sql.append("'Y');");
