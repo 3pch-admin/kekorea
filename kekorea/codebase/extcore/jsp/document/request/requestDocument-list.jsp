@@ -126,6 +126,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('requestDocument-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('requestDocument-list');">
+					<input type="button" value="확장" title="확장" class="red" onclick="expand();">
 					<%
 					if (isAdmin) {
 					%>
@@ -155,27 +156,20 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			let myGridID;
 			function _layout() {
 				return [ {
-					dataField : "projectType_name",
-					headerText : "작번유형",
+					dataField : "name",
+					headerText : "의뢰서 제목",
 					dataType : "string",
-					width : 80,
+					width : 350,
+					style : "underline",
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 				}, {
-					dataField : "name",
-					headerText : "의뢰서 제목",
+					dataField : "projectType_name",
+					headerText : "작번유형",
 					dataType : "string",
-					width : 350,
-					style : "aui-left",
-					renderer : {
-						type : "LinkRenderer",
-						baseUrl : "javascript",
-						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
-						}
-					},
+					width : 80,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -271,6 +265,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : false,
 						inline : false
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
 					dataField : "state",
 					headerText : "상태",
@@ -280,6 +277,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
 					dataField : "model",
 					headerText : "모델",
@@ -290,10 +290,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						inline : true
 					},
 				}, {
-					dataField : "pdate",
+					dataField : "pdate_txt",
 					headerText : "발행일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
+					dataType : "string",
 					width : 100,
 					filter : {
 						showIcon : true,
@@ -309,6 +308,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
 					dataField : "creator",
 					headerText : "작성자",
@@ -318,17 +320,22 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
-					dataField : "createdDate",
+					dataField : "createdDate_txt",
 					headerText : "작성일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
+					dataType : "string",
 					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true,
 						displayFormatValues : true
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
 					dataField : "modifier",
 					headerText : "수정자",
@@ -338,17 +345,22 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
 					dataField : "modifiedDate",
 					headerText : "수정일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
+					dataType : "string",
 					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true,
 						displayFormatValues : true
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				} ]
 			}
 
@@ -368,6 +380,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+					fixedColumnCount : 1,
+					enableCellMerge : true,
+					forceTreeView : true
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
@@ -379,6 +394,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu();
 				});
+				AUIGrid.bind(myGridID, "cellDoubleClick", auiCellDoubleClick);
+			}
+
+			function auiCellDoubleClick(event) {
+				const dataField = event.dataField;
+				const oid = event.item.oid;
+				if (dataField === "name") {
+					const url = getCallUrl("/requestDocument/view?oid=" + oid);
+					popup(url, 1400, 700);
+				}
 			}
 
 			function save() {

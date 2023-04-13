@@ -31,6 +31,7 @@ import wt.clients.folder.FolderTaskLogic;
 import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
+import wt.doc.DocumentType;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.folder.Folder;
@@ -107,6 +108,7 @@ public class StandardRequestDocumentService extends StandardManager implements R
 			requestDocument.setName(name);
 			requestDocument.setDescription(description);
 			requestDocument.setOwnership(CommonUtils.sessionOwner());
+			requestDocument.setDocType(DocumentType.toDocumentType("$$Request"));
 
 			Folder folder = FolderTaskLogic.getFolder(RequestDocumentHelper.REQUEST_DOCUMENT_ROOT,
 					CommonUtils.getContainer());

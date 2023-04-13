@@ -213,7 +213,7 @@ String end = (String) request.getAttribute("end");
 					showRowCheckColumn : true,
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
-					selectionMode : "singleRow",
+					selectionMode : "multipleCells",
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
@@ -289,7 +289,7 @@ String end = (String) request.getAttribute("end");
 					popup(url3, 1500, 800);
 					break;
 				case 4:
-					const url4 = getCallUrl("/configSheet/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
+					const url4 = getCallUrl("/workOrder/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
 					popup(url4);
 					break;
 				case 5:

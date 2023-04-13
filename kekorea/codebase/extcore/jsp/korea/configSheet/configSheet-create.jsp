@@ -5,10 +5,59 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 JSONArray categorys = (JSONArray) request.getAttribute("categorys");
-net.sf.json.JSONArray baseData = (net.sf.json.JSONArray) request.getAttribute("baseData");
+JSONArray baseData = (JSONArray) request.getAttribute("baseData");
 String oid = (String) request.getAttribute("oid");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<style type="text/css">
+.row1 {
+	background-color: #99CCFF;
+}
+
+.row2 {
+	background-color: #FFCCFF;
+}
+
+.row3 {
+	background-color: #CCFFCC;
+}
+
+.row4 {
+	background-color: #FFFFCC;
+}
+
+.row5 {
+	background-color: #FFCC99;
+}
+
+.row6 {
+	background-color: #CCCCFF;
+}
+
+.row7 {
+	background-color: #99FF66;
+}
+
+.row8 {
+	background-color: #CC99FF;
+}
+
+.row9 {
+	background-color: #66CCFF;
+}
+
+.row10 {
+	background-color: #CCFFCC;
+}
+
+.row11 {
+	background-color: #FFCCFF;
+}
+
+.row12 {
+	background-color: #FFFFCC;
+}
+</style>
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -140,7 +189,7 @@ String oid = (String) request.getAttribute("oid");
 								const url = getCallUrl("/project/popup?method=append&multi=true");
 								popup(url, 1500, 700);
 							}
-
+							
 							function append(data, callBack) {
 								for (let i = 0; i < data.length; i++) {
 									const item = data[i].item;
@@ -198,6 +247,7 @@ String oid = (String) request.getAttribute("oid");
 			<tr>
 				<td class="left">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
+					<input type="button" value="불러오기" title="불러오기" class="blue" onclick="load();">
 				</td>
 			</tr>
 		</table>
@@ -215,52 +265,41 @@ String oid = (String) request.getAttribute("oid");
 		dataField : "category_code",
 		headerText : "CATEGORY",
 		dataType : "string",
+		style : "aui-left",
 		width : 250,
 		cellMerge : true,
-		renderer : {
-			type : "IconRenderer",
-			iconWidth : 16,
-			iconHeight : 16,
-			iconPosition : "aisleRight",
-			iconTableRef : {
-				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
-			},
-			onClick : function(event) {
-				AUIGrid.openInputer(event.pid);
-			}
-		},
-		editRenderer : {
-			type : "ComboBoxRenderer",
-			autoCompleteMode : true,
-			autoEasyMode : true,
-			matchFromFirst : false,
-			showEditorBtnOver : false,
-			list : categorys,
-			keyField : "key",
-			valueField : "value",
-			descendants : [ "item_code" ],
-			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
-				let isValid = false;
-				if (fromClipboard) {
-					for (let i = 0; i < categorys.length; i++) {
-						const key = categorys[i]["key"];
-						if (newValue === key) {
-							isValid = true;
-						}
-					}
-				}
-				for (let i = 0, len = categorys.length; i < len; i++) {
-					if (categorys[i]["value"] == newValue) {
-						isValid = true;
-						break;
-					}
-				}
-				return {
-					"validate" : isValid,
-					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
-				};
-			},
-		},
+		// 		editRenderer : {
+		// 			type : "ComboBoxRenderer",
+		// 			autoCompleteMode : true,
+		// 			autoEasyMode : true,
+		// 			matchFromFirst : false,
+		// 			showEditorBtnOver : false,
+		// 			list : categorys,
+		// 			keyField : "key",
+		// 			valueField : "value",
+		// 			descendants : [ "item_code" ],
+		// 			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+		// 				let isValid = false;
+		// 				if (fromClipboard) {
+		// 					for (let i = 0; i < categorys.length; i++) {
+		// 						const key = categorys[i]["key"];
+		// 						if (newValue === key) {
+		// 							isValid = true;
+		// 						}
+		// 					}
+		// 				}
+		// 				for (let i = 0, len = categorys.length; i < len; i++) {
+		// 					if (categorys[i]["value"] == newValue) {
+		// 						isValid = true;
+		// 						break;
+		// 					}
+		// 				}
+		// 				return {
+		// 					"validate" : isValid,
+		// 					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+		// 				};
+		// 			},
+		// 		},
 		labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
 			let retStr = "";
 			for (let i = 0, len = categorys.length; i < len; i++) {
@@ -277,61 +316,63 @@ String oid = (String) request.getAttribute("oid");
 		dataType : "string",
 		width : 350,
 		cellMerge : true,
+		style : "aui-left",
 		mergeRef : "category_code",
 		mergePolicy : "restrict",
-		renderer : {
-			type : "IconRenderer",
-			iconWidth : 16,
-			iconHeight : 16,
-			iconPosition : "aisleRight",
-			iconTableRef : {
-				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
-			},
-			onClick : function(event) {
-				AUIGrid.openInputer(event.pid);
-			}
-		},
-		editRenderer : {
-			type : "ComboBoxRenderer",
-			autoCompleteMode : true,
-			autoEasyMode : true,
-			matchFromFirst : false,
-			showEditorBtnOver : false,
-			keyField : "key",
-			valueField : "value",
-			descendants : [ "spec_code" ],
-			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
-				const param = item.category_code;
-				const dd = itemListMap[param];
-				let isValid = false;
-				if (fromClipboard) {
-					for (let i = 0; i < dd.length; i++) {
-						const key = dd[i]["key"];
-						if (newValue === key) {
-							isValid = true;
-						}
-					}
-				}
-				for (let i = 0, len = dd.length; i < len; i++) {
-					if (dd[i]["value"] == newValue) {
-						isValid = true;
-						break;
-					}
-				}
-				return {
-					"validate" : isValid,
-					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
-				};
-			},
-			listFunction : function(rowIndex, columnIndex, item, dataField) {
-				const param = item.category_code;
-				const dd = itemListMap[param];
-				if (dd === undefined) {
-					return [];
-				}
-				return dd;
-			},
-		},
+		editable : false,
+		// 		renderer : {
+		// 			type : "IconRenderer",
+		// 			iconWidth : 16,
+		// 			iconHeight : 16,
+		// 			iconPosition : "aisleRight",
+		// 			iconTableRef : {
+		// 				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+		// 			},
+		// 			onClick : function(event) {
+		// 				AUIGrid.openInputer(event.pid);
+		// 			}
+		// 		},
+		// 		editRenderer : {
+		// 			type : "ComboBoxRenderer",
+		// 			autoCompleteMode : true,
+		// 			autoEasyMode : true,
+		// 			matchFromFirst : false,
+		// 			showEditorBtnOver : false,
+		// 			keyField : "key",
+		// 			valueField : "value",
+		// 			descendants : [ "spec_code" ],
+		// 			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+		// 				const param = item.category_code;
+		// 				const dd = itemListMap[param];
+		// 				let isValid = false;
+		// 				if (fromClipboard) {
+		// 					for (let i = 0; i < dd.length; i++) {
+		// 						const key = dd[i]["key"];
+		// 						if (newValue === key) {
+		// 							isValid = true;
+		// 						}
+		// 					}
+		// 				}
+		// 				for (let i = 0, len = dd.length; i < len; i++) {
+		// 					if (dd[i]["value"] == newValue) {
+		// 						isValid = true;
+		// 						break;
+		// 					}
+		// 				}
+		// 				return {
+		// 					"validate" : isValid,
+		// 					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+		// 				};
+		// 			},
+		// 			listFunction : function(rowIndex, columnIndex, item, dataField) {
+		// 				const param = item.category_code;
+		// 				const dd = itemListMap[param];
+		// 				if (dd === undefined) {
+		// 					return [];
+		// 				}
+		// 				return dd;
+		// 			},
+		// 		},
 		labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
 			let retStr = "";
 			const param = item.category_code;
@@ -348,77 +389,77 @@ String oid = (String) request.getAttribute("oid");
 			return retStr == "" ? value : retStr;
 		},
 	}, {
-		dataField : "spec_code",
+		dataField : "spec",
 		headerText : "사양",
 		dataType : "string",
 		width : 350,
-		renderer : {
-			type : "IconRenderer",
-			iconWidth : 16,
-			iconHeight : 16,
-			iconPosition : "aisleRight",
-			iconTableRef : {
-				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
-			},
-			onClick : function(event) {
-				AUIGrid.openInputer(event.pid);
-			}
-		},
-		editRenderer : {
-			type : "ComboBoxRenderer",
-			autoCompleteMode : true,
-			autoEasyMode : true,
-			matchFromFirst : false,
-			showEditorBtnOver : false,
-			keyField : "key",
-			valueField : "value",
-			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
-				const param = item.item_code;
-				const dd = specListMap[param];
-				let isValid = false;
-				if (fromClipboard) {
-					for (let i = 0; i < dd.length; i++) {
-						const key = dd[i]["key"];
-						if (newValue === key) {
-							isValid = true;
-						}
-					}
-				}
-				for (let i = 0, len = dd.length; i < len; i++) {
-					if (dd[i]["value"] == newValue) {
-						isValid = true;
-						break;
-					}
-				}
-				return {
-					"validate" : isValid,
-					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
-				};
-			},
-			listFunction : function(rowIndex, columnIndex, item, dataField) {
-				const param = item.item_code;
-				const dd = specListMap[param];
-				if (dd === undefined) {
-					return [];
-				}
-				return dd;
-			},
-		},
-		labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
-			let retStr = "";
-			const param = item.item_code;
-			const dd = specListMap[param];
-			if (dd === undefined) {
-				return value;
-			}
-			for (let i = 0, len = dd.length; i < len; i++) {
-				if (dd[i]["key"] == value) {
-					retStr = dd[i]["value"];
-					break;
-				}
-			}
-			return retStr == "" ? value : retStr;
-		},
+	// 		renderer : {
+	// 			type : "IconRenderer",
+	// 			iconWidth : 16,
+	// 			iconHeight : 16,
+	// 			iconPosition : "aisleRight",
+	// 			iconTableRef : {
+	// 				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+	// 			},
+	// 			onClick : function(event) {
+	// 				AUIGrid.openInputer(event.pid);
+	// 			}
+	// 		},
+	// 		editRenderer : {
+	// 			type : "ComboBoxRenderer",
+	// 			autoCompleteMode : true,
+	// 			autoEasyMode : true,
+	// 			matchFromFirst : false,
+	// 			showEditorBtnOver : false,
+	// 			keyField : "key",
+	// 			valueField : "value",
+	// 			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+	// 				const param = item.item_code;
+	// 				const dd = specListMap[param];
+	// 				let isValid = false;
+	// 				if (fromClipboard) {
+	// 					for (let i = 0; i < dd.length; i++) {
+	// 						const key = dd[i]["key"];
+	// 						if (newValue === key) {
+	// 							isValid = true;
+	// 						}
+	// 					}
+	// 				}
+	// 				for (let i = 0, len = dd.length; i < len; i++) {
+	// 					if (dd[i]["value"] == newValue) {
+	// 						isValid = true;
+	// 						break;
+	// 					}
+	// 				}
+	// 				return {
+	// 					"validate" : isValid,
+	// 					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+	// 				};
+	// 			},
+	// 			listFunction : function(rowIndex, columnIndex, item, dataField) {
+	// 				const param = item.item_code;
+	// 				const dd = specListMap[param];
+	// 				if (dd === undefined) {
+	// 					return [];
+	// 				}
+	// 				return dd;
+	// 			},
+	// 		},
+	// 		labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+	// 			let retStr = "";
+	// 			const param = item.item_code;
+	// 			const dd = specListMap[param];
+	// 			if (dd === undefined) {
+	// 				return value;
+	// 			}
+	// 			for (let i = 0, len = dd.length; i < len; i++) {
+	// 				if (dd[i]["key"] == value) {
+	// 					retStr = dd[i]["value"];
+	// 					break;
+	// 				}
+	// 			}
+	// 			return retStr == "" ? value : retStr;
+	// 		},
 	}, {
 		dataField : "note",
 		headerText : "NOTE",
@@ -452,11 +493,75 @@ String oid = (String) request.getAttribute("oid");
 				label : "선택된 행 삭제",
 				callback : contextItemHandler
 			} ],
+			rowStyleFunction : function(rowIndex, item) {
+				const value = item.category_code;
+				if (value === "CATEGORY_2") {
+					return "row1";
+				} else if (value === "CATEGORY_3") {
+					return "row2";
+				} else if (value === "CATEGORY_4") {
+					return "row3";
+				} else if (value === "CATEGORY_5") {
+					return "row4";
+				} else if (value === "CATEGORY_6") {
+					return "row5";
+				} else if (value === "CATEGORY_7") {
+					return "row6";
+				} else if (value === "CATEGORY_8" || value === "CATEGORY_9") {
+					return "row7";
+				} else if (value === "CATEGORY_10") {
+					return "row8";
+				} else if (value === "CATEGORY_11") {
+					return "row9";
+				} else if (value === "CATEGORY_12") {
+					return "row4";
+				} else if (value === "CATEGORY_13") {
+					return "row10";
+				} else if (value === "CATEGORY_14") {
+					return "row11";
+				} else if (value === "CATEGORY_15") {
+					return "row12";
+				}
+				return "";
+			}
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+		AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
 		readyHandler();
 		auiReadyHandler();
+	}
+
+	
+	function load() {
+		const url = getCallUrl("/configSheet/copy?method=copy&multi=false");
+		popup(url, 1500, 700);
+	}
+
+	function copy(data, callBack) {
+		const oid = data.item.oid;
+		const params = new Object();
+		const url = getCallUrl("/configSheet/copy");
+		params.oid = oid;
+		openLayer();
+		call(url, params, function(data) {
+			if (data.result && data.list.length > 0) {
+				AUIGrid.clearGridData(myGridID);
+				AUIGrid.addRow(myGridID, data.list);
+				callBack(true, "");
+			} else {
+				callBack(true, data.msg);
+			}
+			closeLayer();
+		})
+	}
+	
+	function auiCellEditBegin(event) {
+		const dataField = event.dataField;
+		if (dataField === "category_code") {
+			return false;
+		}
+		return true;
 	}
 
 	function contextItemHandler(event) {
@@ -482,20 +587,20 @@ String oid = (String) request.getAttribute("oid");
 		for (let i = 0; i < item.length; i++) {
 			if (itemListMap.length === undefined) {
 				const categoryCode = item[i].category_code;
-				const url = getCallUrl("/commonCode/getChildrens?parentCode=" + categoryCode + "&codeType=CATEGORY");
+				const url = getCallUrl("/configSheetCode/getChildrens?parentCode=" + categoryCode + "&codeType=CATEGORY");
 				call(url, null, function(data) {
 					itemListMap[categoryCode] = data.list;
 				}, "GET");
 			}
-			if (specListMap.length === undefined) {
-				const itemCode = item[i].item_code;
-				if (itemCode !== "") {
-					const url = getCallUrl("/commonCode/getChildrens?parentCode=" + itemCode + "&codeType=CATEGORY_ITEM");
-					call(url, null, function(data) {
-						specListMap[itemCode] = data.list;
-					}, "GET");
-				}
-			}
+			// 			if (specListMap.length === undefined) {
+			// 				const itemCode = item[i].item_code;
+			// 				if (itemCode !== "") {
+			// 					const url = getCallUrl("/configSheetCode/getChildrens?parentCode=" + itemCode + "&codeType=CATEGORY_ITEM");
+			// 					call(url, null, function(data) {
+			// 						specListMap[itemCode] = data.list;
+			// 					}, "GET");
+			// 				}
+			// 			}
 		}
 	}
 
@@ -517,13 +622,13 @@ String oid = (String) request.getAttribute("oid");
 			}, "GET");
 		}
 
-		if (dataField === "item_code") {
-			const itemCode = item.item_code;
-			const url = getCallUrl("/commonCode/getChildrens?parentCode=" + itemCode + "&codeType=CATEGORY_ITEM");
-			call(url, null, function(data) {
-				specListMap[itemCode] = data.list;
-			}, "GET");
-		}
+		// 		if (dataField === "item_code") {
+		// 			const itemCode = item.item_code;
+		// 			const url = getCallUrl("/commonCode/getChildrens?parentCode=" + itemCode + "&codeType=CATEGORY_ITEM");
+		// 			call(url, null, function(data) {
+		// 				specListMap[itemCode] = data.list;
+		// 			}, "GET");
+		// 		}
 	}
 
 	function deleteRow() {
@@ -569,26 +674,13 @@ String oid = (String) request.getAttribute("oid");
 		document.getElementById("name").focus();
 		$("#tabs").tabs({
 			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					_createAUIGrid(_columns);
-					_createAUIGrid_(_columns_);
-					break;
-				case "tabs-2":
-					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
-					break;
-				}
-			},
 			activate : function(event, ui) {
 				const tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
-					const _isCreated_ = AUIGrid.isCreated(_myGridID);
-					const _isCreated = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated_ && _isCreated) {
+					const _isCreated = AUIGrid.isCreated(_myGridID);
+					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
+					if (_isCreated && _isCreated_) {
 						AUIGrid.resize(_myGridID);
 						AUIGrid.resize(_myGridID_);
 					} else {
@@ -612,6 +704,12 @@ String oid = (String) request.getAttribute("oid");
 				}
 			}
 		});
+		_createAUIGrid(_columns);
+		_createAUIGrid_(_columns_);
+		createAUIGrid(columns);
+		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(_myGridID_);
+		AUIGrid.resize(myGridID);
 	});
 
 	window.addEventListener("resize", function() {

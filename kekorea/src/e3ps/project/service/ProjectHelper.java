@@ -29,6 +29,7 @@ import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.task.variable.TaskStateVariable;
 import e3ps.project.template.Template;
+import e3ps.project.variable.ProjectStateVariable;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.doc.WTDocument;
@@ -3267,6 +3268,9 @@ public class ProjectHelper {
 		return map;
 	}
 
+	/**
+	 * 프로젝트 트리
+	 */
 	public JSONArray load(String oid) throws Exception {
 		Project project = (Project) CommonUtils.getObject(oid);
 		JSONArray list = new JSONArray();
@@ -3277,6 +3281,7 @@ public class ProjectHelper {
 		node.put("duration", project.getDuration());
 		node.put("allocate", 0);
 		node.put("taskType", project.getProjectType().getName());
+		node.put("treeIcon", getTreeIcon(project));
 		node.put("type", "project");
 		node.put("isNew", false);
 
@@ -3292,7 +3297,7 @@ public class ProjectHelper {
 			children.put("taskType", task.getTaskType().getCode());
 			children.put("type", "task");
 			children.put("isNew", false);
-			children.put("stateKey", stateKey(task));
+			children.put("treeIcon", getTreeIcon(task));
 			load(children, project, task);
 			childrens.add(children);
 		}
@@ -3301,38 +3306,18 @@ public class ProjectHelper {
 		return list;
 	}
 
-	private void load(JSONObject node, Project project, Task parentTask) throws Exception {
-		JSONArray childrens = new JSONArray();
-		ArrayList<Task> taskList = TaskHelper.manager.getProjectTasks(project, parentTask);
-		for (Task task : taskList) {
-			JSONObject children = new JSONObject();
-			children.put("oid", task.getPersistInfo().getObjectIdentifier().getStringValue());
-			children.put("name", task.getName());
-			children.put("description", task.getDescription());
-			children.put("duration", task.getDuration());
-			children.put("allocate", task.getAllocate() != null ? task.getAllocate() : 0);
-			children.put("taskType", task.getTaskType().getCode());
-			children.put("type", "task");
-			children.put("isNew", false);
-			children.put("stateKey", stateKey(task));
-			load(children, project, task);
-			childrens.add(children);
-		}
-		node.put("children", childrens);
-	}
+	/**
+	 * 프로젝트 태스크 트리 아이콘
+	 */
+	private Object getTreeIcon(Task task) {
+		// 준비중, 진행중, 완료됨, 지연됨
+		String icon = "/Windchill/extcore/images/task_ready.gif";
 
-	protected int stateKey(Task task) throws Exception {
-
-		// 준비 0
-		// 약간 위험 1
-		// 위험도 좀 있음 2
-		// 완료 3
-		// 딜레이 4
 		String state = task.getState();
 		if (TaskStateVariable.COMPLETE.equals(state)) {
-			return 3;
+			return "/Windchill/extcore/images/task_complete.gif";
 		} else if (TaskStateVariable.READY.equals(state)) {
-			return 0;
+			return "/Windchill/extcore/images/task_ready.gif";
 		} else {
 
 			Timestamp today = DateUtils.getCurrentTimestamp();
@@ -3347,22 +3332,88 @@ public class ProjectHelper {
 			int tdu = DateUtils.getDuration(task.getPlanEndDate(), DateUtils.getCurrentTimestamp()); // 1...
 
 			if (task.getPlanEndDate() != null && today.getTime() > task.getPlanEndDate().getTime()) {
-				return 4;
+				return "/Windchill/extcore/images/task_delay.gif";
 			} else {
 				if (tdu <= perDay) {
 					if (task.getProgress() < 50) {
-						return 2;
+						return "/Windchill/extcore/images/task_orange.gif";
 					} else if (task.getProgress() >= 51 && task.getProgress() < 100) {
-						return 1;
+						return "/Windchill/extcore/images/task_yellow.gif";
 					} else if (task.getProgress() == 100) {
-						return 3;
+						return "/Windchill/extcore/images/task_complete.gif";
 					}
 				} else {
-					return 1;
+					return "/Windchill/extcore/images/task_yellow.gif";
 				}
 			}
 		}
-		return 0;
+		return icon;
+	}
+
+	/**
+	 * 프로젝트 트리 아이콘 경로
+	 */
+	private String getTreeIcon(Project project) {
+		// 준비중, 진행중, 완료됨, 지연됨
+		String icon = "/Windchill/extcore/images/task_ready.gif";
+
+		String state = project.getState();
+
+		if (ProjectStateVariable.COMPLETE.equals(state)) {
+			return "/Windchill/extcore/images/task_complete.gif";
+		} else if (ProjectStateVariable.READY.equals(state)) {
+			return "/Windchill/extcore/images/task_ready.gif";
+		} else {
+			Timestamp today = DateUtils.getCurrentTimestamp();
+			int du = DateUtils.getDuration(project.getPlanStartDate(), project.getPlanEndDate());
+			BigDecimal counting = new BigDecimal(du);
+			BigDecimal multi = new BigDecimal(0.2);
+
+			BigDecimal result = counting.multiply(multi);
+			int perDay = Math.round(result.floatValue()); // 2??
+
+			int tdu = DateUtils.getDuration(project.getPlanEndDate(), DateUtils.getCurrentTimestamp()); // 1...
+
+			if (today.getTime() > project.getPlanEndDate().getTime()) {
+				return "/Windchill/extcore/images/task_delay.gif";
+			} else {
+				if (tdu <= perDay) {
+					if (project.getProgress() < 50) {
+						return "/Windchill/extcore/images/task_orange.gif";
+					} else if (project.getProgress() >= 51 && project.getProgress() < 100) {
+						return "/Windchill/extcore/images/task_yellow.gif";
+					} else if (project.getProgress() == 100) {
+						return "/Windchill/extcore/images/task_complete.gif";
+					}
+				} else {
+					return "/Windchill/extcore/images/task_yellow.gif";
+				}
+			}
+		}
+		return icon;
+	}
+
+	/**
+	 * 프로젝트 태스크 트리
+	 */
+	private void load(JSONObject node, Project project, Task parentTask) throws Exception {
+		JSONArray childrens = new JSONArray();
+		ArrayList<Task> taskList = TaskHelper.manager.getProjectTasks(project, parentTask);
+		for (Task task : taskList) {
+			JSONObject children = new JSONObject();
+			children.put("oid", task.getPersistInfo().getObjectIdentifier().getStringValue());
+			children.put("name", task.getName());
+			children.put("description", task.getDescription());
+			children.put("duration", task.getDuration());
+			children.put("allocate", task.getAllocate() != null ? task.getAllocate() : 0);
+			children.put("taskType", task.getTaskType().getCode());
+			children.put("type", "task");
+			children.put("isNew", false);
+			children.put("treeIcon", getTreeIcon(task));
+			load(children, project, task);
+			childrens.add(children);
+		}
+		node.put("children", childrens);
 	}
 
 	/**

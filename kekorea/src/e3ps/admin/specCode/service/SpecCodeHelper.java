@@ -38,7 +38,7 @@ public class SpecCodeHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(SpecCode.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, SpecCode.class, SpecCode.CODE_TYPE, "SPEC");
-		QuerySpecUtils.toBooleanAnd(query, idx, SpecCode.class, SpecCode.ENABLE, true);
+//		QuerySpecUtils.toBooleanAnd(query, idx, SpecCode.class, SpecCode.ENABLE, true);
 		QuerySpecUtils.toOrderBy(query, idx, SpecCode.class, SpecCode.SORT, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 
@@ -54,6 +54,7 @@ public class SpecCodeHelper {
 			node.put("description", specCode.getDescription());
 			node.put("enable", specCode.getEnable());
 			node.put("sort", specCode.getSort());
+			node.put("parent", null);
 			options(node, specCode);
 			children.add(node);
 		}
@@ -71,7 +72,7 @@ public class SpecCodeHelper {
 		int idx = query.appendClassList(SpecCode.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, SpecCode.class, SpecCode.CODE_TYPE, "OPTION");
 		QuerySpecUtils.toEqualsAnd(query, idx, SpecCode.class, "parentReference.key.id", specCode);
-		QuerySpecUtils.toBooleanAnd(query, idx, SpecCode.class, SpecCode.ENABLE, true);
+//		QuerySpecUtils.toBooleanAnd(query, idx, SpecCode.class, SpecCode.ENABLE, true);
 		QuerySpecUtils.toOrderBy(query, idx, SpecCode.class, SpecCode.SORT, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		JSONArray children = new JSONArray();
@@ -86,6 +87,7 @@ public class SpecCodeHelper {
 			node.put("description", optionCode.getDescription());
 			node.put("sort", optionCode.getSort());
 			node.put("enable", optionCode.getEnable());
+			node.put("parent", specCode.getPersistInfo().getObjectIdentifier().getStringValue());
 			children.add(node);
 		}
 		parentNode.put("children", children);

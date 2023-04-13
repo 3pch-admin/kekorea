@@ -6,12 +6,16 @@ import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.doc.meeting.Meeting;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.dto.RequestDocumentDTO;
 import e3ps.project.Project;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -29,32 +33,78 @@ public class RequestDocumentHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		ArrayList<RequestDocumentDTO> list = new ArrayList<>();
-
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(RequestDocument.class, true);
-		int idx_link = query.appendClassList(RequestDocumentProjectLink.class, true);
-		int idx_p = query.appendClassList(Project.class, true);
 
-		QuerySpecUtils.toInnerJoin(query, RequestDocumentProjectLink.class, RequestDocument.class,
-				"roleAObjectRef.key.id", WTAttributeNameIfc.ID_NAME, idx_link, idx);
-		QuerySpecUtils.toInnerJoin(query, RequestDocumentProjectLink.class, Project.class, "roleBObjectRef.key.id",
-				WTAttributeNameIfc.ID_NAME, idx_link, idx_p);
-
-		QuerySpecUtils.toEqualsAnd(query, idx, RequestDocument.class, RequestDocument.DOC_TYPE, "$$Request");
-
-		QuerySpecUtils.toOrderBy(query, idx, RequestDocument.class, RequestDocument.CREATE_TIMESTAMP, true);
+		QuerySpecUtils.toOrderBy(query, idx, RequestDocument.class, Meeting.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 
+		JSONArray list = new JSONArray();
+
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
-			RequestDocumentProjectLink link = (RequestDocumentProjectLink) obj[1];
-			RequestDocumentDTO column = new RequestDocumentDTO(link);
-			list.add(column);
-		}
+			RequestDocument requestDocument = (RequestDocument) obj[0];
 
+			JSONObject node = new JSONObject();
+			node.put("oid", requestDocument.getPersistInfo().getObjectIdentifier().getStringValue());
+			node.put("name", requestDocument.getName());
+			QueryResult group = PersistenceHelper.manager.navigate(requestDocument, "project",
+					RequestDocumentProjectLink.class, false);
+			int isNode = 1;
+			JSONArray children = new JSONArray();
+			while (group.hasMoreElements()) {
+				RequestDocumentProjectLink link = (RequestDocumentProjectLink) group.nextElement();
+				RequestDocumentDTO dto = new RequestDocumentDTO(link);
+				if (isNode == 1) {
+					node.put("poid", dto.getPoid());
+					node.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
+					node.put("projectType_name", dto.getProjectType_name());
+					node.put("customer_name", dto.getCustomer_name());
+					node.put("install_name", dto.getInstall_name());
+					node.put("mak_name", dto.getMak_name());
+					node.put("detail_name", dto.getDetail_name());
+					node.put("kekNumber", dto.getKekNumber());
+					node.put("keNumber", dto.getKeNumber());
+					node.put("userId", dto.getUserId());
+					node.put("description", dto.getDescription());
+					node.put("state", dto.getState());
+					node.put("model", dto.getModel());
+					node.put("pdate_txt", dto.getPdate_txt());
+					node.put("modifier", dto.getModifier());
+					node.put("creator", dto.getCreator());
+					node.put("creatorId", requestDocument.getCreatorName());
+					node.put("createdDate_txt", dto.getCreatedDate_txt());
+				} else {
+					JSONObject data = new JSONObject();
+					data.put("name", dto.getName());
+					data.put("oid", dto.getOid());
+					data.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
+					data.put("poid", dto.getPoid());
+					data.put("projectType_name", dto.getProjectType_name());
+					data.put("customer_name", dto.getCustomer_name());
+					data.put("install_name", dto.getInstall_name());
+					data.put("mak_name", dto.getMak_name());
+					data.put("detail_name", dto.getDetail_name());
+					data.put("kekNumber", dto.getKekNumber());
+					data.put("keNumber", dto.getKeNumber());
+					data.put("userId", dto.getUserId());
+					data.put("description", dto.getDescription());
+					data.put("state", dto.getState());
+					data.put("model", dto.getModel());
+					data.put("pdate_txt", dto.getPdate_txt());
+					node.put("modifier", dto.getModifier());
+					data.put("creator", dto.getCreator());
+					data.put("creatorId", requestDocument.getCreatorName());
+					data.put("createdDate_txt", dto.getCreatedDate_txt());
+					children.add(data);
+				}
+				isNode++;
+			}
+			node.put("children", children);
+			list.add(node);
+		}
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
@@ -96,5 +146,41 @@ public class RequestDocumentHelper {
 		QueryResult qr = PersistenceHelper.manager.find(query);
 		result.put("validate", qr.size() > 0 ? true : false);
 		return result;
+	}
+
+	/**
+	 * 의뢰서 관련 작번 리스트
+	 */
+	public JSONArray jsonAuiProject(String oid) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		RequestDocument master = (RequestDocument) CommonUtils.getObject(oid);
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(RequestDocument.class, true);
+		int idx_link = query.appendClassList(RequestDocumentProjectLink.class, true);
+		QuerySpecUtils.toInnerJoin(query, RequestDocument.class, RequestDocumentProjectLink.class,
+				WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, RequestDocumentProjectLink.class, "roleAObjectRef.key.id", master);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			RequestDocumentProjectLink link = (RequestDocumentProjectLink) obj[1];
+			Project project = link.getProject();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
+			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("userId", project.getUserId());
+			map.put("customDate_txt", CommonUtils.getPersistableTime(project.getCustomDate()));
+			map.put("model", project.getModel());
+			map.put("pdate_txt", CommonUtils.getPersistableTime(project.getPDate()));
+			map.put("description", project.getDescription());
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
 	}
 }

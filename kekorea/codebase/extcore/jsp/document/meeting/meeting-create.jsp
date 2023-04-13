@@ -205,7 +205,7 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 		params.tiny = document.getElementById("tiny").value;
 		params._addRows = _addRows;
 		params.secondarys = toArray("secondarys");
-
+		
 		if (isNull(params.name)) {
 			alert("회의록 제목은 공백을 입력할 수 없습니다.");
 			document.getElementById("name").focus();
@@ -251,28 +251,11 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 	document.addEventListener("DOMContentLoaded", function() {
 		loadTinymce();
 		const tinyBox = document.getElementById("tiny");
-		// 		$("#tiny").change({
-		// 			onchange : function(){
-		// 				const value = tinyBox.value;
-		// 				$("#description").val({
-		// 					ajaxUrl : getCallUrl("/meeting/getContents?oid="+value),
-		// 					reversKeys : {
-		// 						options : "content",
-		// 						optionValue : "value",
-		// 						optionText : "name"
-		// 					},
-		// 					setValue : this.optionValue,
-		// 					alwaysOnChange : true,
-		// 				})
-		// 			}
-		// 		});
 		$('#tiny').change(function() {
 			const tinyBox = document.getElementById("tiny");
 			const value = tinyBox.value;
  			const url = getCallUrl("/meeting/getContent?oid=" + value);
-			console.log(value + "@@@@@@@@@@@@");
 			call(url, null, function(data) {
-				console.log("!!!!!!!!!!!!!!!!!!" + typeof data);
 				if (data.result) {
 					tinymce.activeEditor.setContent(data.content);
 				} else {
@@ -280,68 +263,10 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 				}
 			}, "GET");
 		});
-		// 		tinyBox.addEventListener("change", function() {
-		// 			const value = tinyBox.value; console.log("$$$$$$$$$$$"+value);
-		// 			const url = getCallUrl("/meeting/getContent?oid=" + value);
-		// 			call(url, null, function(data) {console.log("!!!!!!!!!!!!!!!!!!"+typeof data);
-		// 				if (data.result) {
-		// 					tinymce.activeEditor.setContent(data.content);
-		// 				} else {
-		// 					alert(data.msg);
-		// 				}
-		// 			}, "GET");
-		// 		})
 		_createAUIGrid(_columns);
 		AUIGrid.resize(_myGridID);
 		selectbox("tiny");
 	});
-
-	// 	$('#tiny').change(function(){
-	// 		const tinyBox = document.getElementById("tiny");
-	// 		const value = tinyBox.value;console.log(value+"@@@@@@@@@@@@")
-	// 		$.ajax({
-	// 			url: '/meeting/getContents?oid='+value,
-	// 			type: 'POST',
-	// 			dataType: 'json',
-	// 			success: function(data){
-	// 				console.log("################"+data);
-	// 			},error:function(request,status,error){
-	// 				alert("code : "+request.status+"\n"+"message : "+request.responseText+"\n"+"error : "+error);
-	// 			}
-	// 		})
-	// 	});
-	// 	const tinyBox = document.getElementById("tiny");
-	// 	tinyBox.addEventListener("change", function() {
-	// 		const value = tinyBox.value; console.log(value);
-	// 		const url = getCallUrl("/meeting/getContent?oid=" + value);
-	// 		call(url, null, function(data) {console.log(data);
-	// 			if (data.result) {
-	// 				tinymce.activeEditor.setContent(data.content);
-	// 			} else {
-	// 				alert(data.msg);
-	// 			}
-	// 		}, "GET");
-	// 	})
-
-	// 	원본 코드
-	// 	document.addEventListener("DOMContentLoaded", function() {
-	// 		loadTinymce();
-	// 		const tinyBox = document.getElementById("tiny");
-	// 		tinyBox.addEventListener("change", function() {
-	// 			const value = tinyBox.value; console.log(value);
-	// 			const url = getCallUrl("/meeting/getContent?oid=" + value);
-	// 			call(url, null, function(data) {console.log(data);
-	// 				if (data.result) {
-	// 					tinymce.activeEditor.setContent(data.content);
-	// 				} else {
-	// 					alert(data.msg);
-	// 				}
-	// 			}, "GET");
-	// 		})
-	// 		_createAUIGrid(_columns);
-	// 		AUIGrid.resize(_myGridID);
-	// 		selectbox("tiny");
-	// 	});
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(_myGridID);

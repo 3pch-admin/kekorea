@@ -149,11 +149,26 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<td class="center"><%=dto.getEndDate_txt()%></td>
 					</tr>
 					<tr>
-						<th class="lb rb">총괄 책임자</th>
-						<th class="rb">세부일정 책임자</th>
-						<th class="rb">기계</th>
-						<th class="rb">전기</th>
-						<th class="rb">SOFT</th>
+						<th class="lb rb">
+							총괄 책임자&nbsp;
+							<img src="/Windchill/extcore/images/edit.gif" class="edit" onclick="edit();">
+						</th>
+						<th class="rb">
+							세부일정 책임자&nbsp;
+							<img src="/Windchill/extcore/images/edit.gif" class="edit" onclick="edit();">
+						</th>
+						<th class="rb">
+							기계&nbsp;
+							<img src="/Windchill/extcore/images/edit.gif" class="edit" onclick="edit();">
+						</th>
+						<th class="rb">
+							전기&nbsp;
+							<img src="/Windchill/extcore/images/edit.gif" class="edit" onclick="edit();">
+						</th>
+						<th class="rb">
+							SOFT&nbsp;
+							<img src="/Windchill/extcore/images/edit.gif" class="edit" onclick="edit();">
+						</th>
 					</tr>
 					<tr>
 						<td class="center"><%=dto.getPm()%></td>
@@ -203,8 +218,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						if (!dto.isEstimate()) {
 						%>
 						<th class="rb">작번 견적 금액</th>
-						<th class="rb">기계 견적 금액</th>
-						<th class="rb">전기 견적 금액</th>
+						<th class="rb">
+							기계 견적 금액&nbsp;
+							<img src="/Windchill/extcore/images/edit.gif" class="edit" onclick="money('<%=inputOutputMachine%>', 'm');">
+						</th>
+						<th class="rb">
+							전기 견적 금액&nbsp;
+							<img src="/Windchill/extcore/images/edit.gif" class="edit" onclick="money('<%=inputOutputElec%>', 'e');">
+						</th>
 						<%
 						} else {
 						%>
@@ -355,8 +376,19 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<iframe style="height: 800px;" src="/Windchill/plm/project/workOrderTab?oid=<%=dto.getOid()%>"></iframe>
 			</div>
 		</div>
-
 		<script type="text/javascript">
+			function money(money, type) {
+				const oid = document.getElementById("oid").value;
+				const url = getCallUrl("/project/money?oid=" + oid + "&money=" + money + "&type=" + type);
+				popup(url, 500, 300);
+			}
+
+			function edit() {
+				const oid = document.getElementById("oid").value;
+				const url = getCallUrl("/project/editUser?oid=" + oid);
+				popup(url, 500, 300);
+			}
+
 			document.addEventListener("DOMContentLoaded", function() {
 				$("#tabs").tabs({
 					heightStyle : "content"

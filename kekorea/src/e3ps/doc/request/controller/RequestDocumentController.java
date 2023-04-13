@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,14 +21,22 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.ContentUtils;
+import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.dto.RequestDocumentDTO;
 import e3ps.doc.request.service.RequestDocumentHelper;
+import e3ps.epm.keDrawing.KeDrawing;
+import e3ps.epm.keDrawing.dto.KeDrawingDTO;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
 import e3ps.project.template.service.TemplateHelper;
+import e3ps.workspace.service.WorkspaceHelper;
+import net.sf.json.JSONArray;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.WTUser;
@@ -193,7 +200,7 @@ public class RequestDocumentController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description(value = "의뢰서 태스크 연결 제거 함수")
 	@ResponseBody
 	@GetMapping(value = "/disconnect")
@@ -226,5 +233,22 @@ public class RequestDocumentController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "의뢰서 정보 페이지")
+	@GetMapping(value = "/view")
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		RequestDocument requestDocument = (RequestDocument) CommonUtils.getObject(oid);
+		RequestDocumentDTO dto = new RequestDocumentDTO(requestDocument);
+		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(requestDocument);
+		JSONArray data = RequestDocumentHelper.manager.jsonAuiProject(dto.getOid());
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("history", history);
+		model.addObject("data", data);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/document/request/requestDocument-view");
+		return model;
 	}
 }

@@ -37,6 +37,7 @@ public class ConfigSheetDTO {
 	private String creator;
 	private Timestamp createdDate;
 	private String createdDate_txt;
+	private String creatorId;
 
 	// 변수용
 	private ArrayList<String> secondarys = new ArrayList<>();
@@ -59,6 +60,7 @@ public class ConfigSheetDTO {
 		setCreator(configSheet.getOwnership().getOwner().getFullName());
 		setCreatedDate(configSheet.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(configSheet.getCreateTimestamp()));
+		setCreatorId(configSheet.getOwnership().getOwner().getName());
 	}
 
 	public ConfigSheetDTO(ConfigSheetProjectLink link) throws Exception {
@@ -103,5 +105,6 @@ public class ConfigSheetDTO {
 		setCreator(configSheet.getOwnership().getOwner().getFullName());
 		setCreatedDate(configSheet.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(configSheet.getCreateTimestamp()));
+		setCreatorId(configSheet.getOwnership().getOwner().getName());
 	}
 }

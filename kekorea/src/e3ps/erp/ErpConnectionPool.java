@@ -10,6 +10,7 @@ public class ErpConnectionPool {
 
 	private static final String DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 	private static final String URL = "jdbc:sqlserver://211.171.82.73:14233;databasename=KEK";
+//	private static final String URL = "jdbc:sqlserver://211.171.82.73:14233;databasename=KEKPLM_IF";
 	private static final String USERNAME = "plm_e3ps";
 	private static final String PASSWORD = "proe2015!";
 	private static final int MAX_TOTAL = 100; // 최대 생성 가능한 Connection 수

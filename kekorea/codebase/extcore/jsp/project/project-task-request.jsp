@@ -229,6 +229,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 							showAutoNoDataMessage : false,
 							selectionMode : "singleRow",
 							rowCheckToRadio : true,
+// 							autoGridHeight : true
 						};
 						myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 						AUIGrid.setGridData(myGridID,
