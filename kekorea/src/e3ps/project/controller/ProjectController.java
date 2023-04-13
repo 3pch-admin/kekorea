@@ -471,7 +471,6 @@ public class ProjectController extends BaseController {
 			System.out.println("저장실패");
 			e.printStackTrace();
 			result.put("result", FAIL);
-			result.put("msg", e.toString());
 		}
 		return result;
 	}
