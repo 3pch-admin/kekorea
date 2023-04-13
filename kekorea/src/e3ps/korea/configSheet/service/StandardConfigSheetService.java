@@ -1,6 +1,8 @@
 package e3ps.korea.configSheet.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
@@ -16,6 +18,8 @@ import e3ps.korea.configSheet.ConfigSheetVariable;
 import e3ps.korea.configSheet.ConfigSheetVariableLink;
 import e3ps.korea.configSheet.beans.ConfigSheetDTO;
 import e3ps.project.Project;
+import e3ps.workspace.notice.Notice;
+import e3ps.workspace.notice.dto.NoticeDTO;
 import e3ps.workspace.service.WorkspaceHelper;
 import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
@@ -121,5 +125,51 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 				trs.rollback();
 		}
 
+	}
+
+	@Override
+	public void save(HashMap<String, List<ConfigSheetDTO>> dataMap) throws Exception {
+		List<ConfigSheetDTO> removeRows = dataMap.get("removeRows");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			for (ConfigSheetDTO dto : removeRows) {
+				String oid = dto.getLoid();
+				ConfigSheetProjectLink link = (ConfigSheetProjectLink) CommonUtils.getObject(oid);
+				PersistenceHelper.manager.delete(link);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void delete(String oid) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
+			PersistenceHelper.manager.delete(configSheet);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
 	}
 }

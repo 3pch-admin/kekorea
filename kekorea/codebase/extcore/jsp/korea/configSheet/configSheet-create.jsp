@@ -534,7 +534,7 @@ String oid = (String) request.getAttribute("oid");
 
 	
 	function load() {
-		const url = getCallUrl("/configSheet/load?method=copy&multi=false");
+		const url = getCallUrl("/configSheet/copy?method=copy&multi=false");
 		popup(url, 1500, 700);
 	}
 
@@ -547,10 +547,10 @@ String oid = (String) request.getAttribute("oid");
 		call(url, params, function(data) {
 			if (data.result && data.list.length > 0) {
 				AUIGrid.clearGridData(myGridID);
-				AUIGrid.setGridData(myGridID, data.list);
-				callBack(true);
+				AUIGrid.addRow(myGridID, data.list);
+				callBack(true, "");
 			} else {
-				alert(data.msg);
+				callBack(true, data.msg);
 			}
 			closeLayer();
 		})

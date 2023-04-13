@@ -213,10 +213,9 @@ public class ConfigSheetHelper {
 	 */
 	public ArrayList<Map<String, Object>> compare(Project p1, ArrayList<Project> destList,
 			ArrayList<ConfigSheetCode> fixedList) throws Exception {
+		System.out.println("CONFIG SHEET 비교 START = " + new Timestamp(new Date().getTime()));
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		destList.add(0, p1);
-
-		System.out.println("start = " + new Timestamp(new Date().getTime()));
 
 		for (ConfigSheetCode fix : fixedList) {
 
@@ -273,48 +272,43 @@ public class ConfigSheetHelper {
 				list.add(mergedList);
 			}
 		}
-		System.out.println("end = " + new Timestamp(new Date().getTime()));
+		destList.remove(0);
+		System.out.println("CONFIG  SHEET비교 END = " + new Timestamp(new Date().getTime()));
 		return list;
 	}
 
 	/**
 	 * 선택한 작번 CONFIG SHEET 복사
 	 */
-	public ArrayList<Map<String, Object>> copyBaseData(String oid) throws Exception {
+	public ArrayList<Map<String, Object>> copyBaseData(ConfigSheet configSheet) throws Exception {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
-		Project project = (Project) CommonUtils.getObject(oid);
-		QueryResult qr = PersistenceHelper.manager.navigate(project, "configSheet", ConfigSheetProjectLink.class);
-		while (qr.hasMoreElements()) {
-			ConfigSheet configSheet = (ConfigSheet) qr.nextElement();
-			QuerySpec query = new QuerySpec();
-			int idx = query.appendClassList(ConfigSheet.class, true);
-			int idx_link = query.appendClassList(ConfigSheetVariableLink.class, true);
-			QuerySpecUtils.toInnerJoin(query, ConfigSheet.class, ConfigSheetVariableLink.class,
-					WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx, idx_link);
-			QuerySpecUtils.toEqualsAnd(query, idx_link, ConfigSheetVariableLink.class, "roleAObjectRef.key.id",
-					configSheet);
-			QuerySpecUtils.toOrderBy(query, idx_link, ConfigSheetVariableLink.class, ConfigSheetVariableLink.SORT,
-					false);
-			QueryResult result = PersistenceHelper.manager.find(query);
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				ConfigSheetVariableLink link = (ConfigSheetVariableLink) obj[1];
-				ConfigSheetVariable variable = link.getVariable();
-				ConfigSheetCode category = variable.getCategory();
-				ConfigSheetCode item = variable.getItem();
-				String spec = variable.getSpec();
-				int sort = link.getSort();
-				Map<String, Object> map = new HashMap<>();
-				map.put("category_code", category != null ? category.getCode() : "");
-				map.put("category_name", category != null ? category.getName() : "");
-				map.put("item_code", item != null ? item.getCode() : "");
-				map.put("item_name", item != null ? item.getName() : "");
-				map.put("spec", spec);
-				map.put("note", variable.getNote());
-				map.put("apply", variable.getApply());
-				map.put("sort", sort);
-				list.add(map);
-			}
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ConfigSheet.class, true);
+		int idx_link = query.appendClassList(ConfigSheetVariableLink.class, true);
+		QuerySpecUtils.toInnerJoin(query, ConfigSheet.class, ConfigSheetVariableLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, ConfigSheetVariableLink.class, "roleAObjectRef.key.id",
+				configSheet);
+		QuerySpecUtils.toOrderBy(query, idx_link, ConfigSheetVariableLink.class, ConfigSheetVariableLink.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			ConfigSheetVariableLink link = (ConfigSheetVariableLink) obj[1];
+			ConfigSheetVariable variable = link.getVariable();
+			ConfigSheetCode category = variable.getCategory();
+			ConfigSheetCode item = variable.getItem();
+			String spec = variable.getSpec();
+			int sort = link.getSort();
+			Map<String, Object> map = new HashMap<>();
+			map.put("category_code", category != null ? category.getCode() : "");
+			map.put("category_name", category != null ? category.getName() : "");
+			map.put("item_code", item != null ? item.getCode() : "");
+			map.put("item_name", item != null ? item.getName() : "");
+			map.put("spec", spec);
+			map.put("note", variable.getNote());
+			map.put("apply", variable.getApply());
+			map.put("sort", sort);
+			list.add(map);
 		}
 		return list;
 	}

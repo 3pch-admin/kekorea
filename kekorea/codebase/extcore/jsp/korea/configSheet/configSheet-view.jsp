@@ -7,6 +7,7 @@ ConfigSheetDTO dto = (ConfigSheetDTO) request.getAttribute("dto");
 String oid = (String) request.getAttribute("oid");
 JSONArray history = (JSONArray) request.getAttribute("history");
 JSONArray list = (JSONArray) request.getAttribute("list");
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
 <style type="text/css">
@@ -58,6 +59,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 	background-color: #FFFFCC;
 }
 </style>
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -67,6 +69,13 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			</div>
 		</td>
 		<td class="right">
+			<%
+			if (isAdmin) {
+			%>
+			<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
+			<%
+			}
+			%>
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -367,6 +376,23 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 	</div>
 </div>
 <script type="text/javascript">
+	function _delete() {
+
+		if (!confirm("삭제 하시겠습니까?")) {
+			return false;
+		}
+
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/configSheet/delete?oid=" + oid);
+		openLayer();
+		call(url, null, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			}
+		}, "GET");
+	}
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs({
 			active : 0,

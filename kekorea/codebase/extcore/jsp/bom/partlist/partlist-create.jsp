@@ -229,6 +229,12 @@ String engType = (String) request.getAttribute("engType");
 				headerText : "부품번호",
 				dataType : "string",
 				width : 130,
+				editRenderer : {
+					type : "InputEditRenderer",
+					regExp : "^[a-zA-Z0-9]+$",
+					autoUpperCase : true,
+					maxlength : 10,
+				},
 			}, {
 				dataField : "partName",
 				headerText : "부품명",

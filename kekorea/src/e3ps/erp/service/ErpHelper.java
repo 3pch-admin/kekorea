@@ -62,6 +62,7 @@ public class ErpHelper {
 	 */
 	private static HashMap<String, Map<String, Object>> cacheManager = null;
 	private static HashMap<String, Map<String, Object>> validateCache = null;
+	private static HashMap<Integer, Map<String, Object>> lotCache = null;
 	static {
 		if (cacheManager == null) {
 			cacheManager = new HashMap<>();
@@ -69,6 +70,10 @@ public class ErpHelper {
 
 		if (validateCache == null) {
 			validateCache = new HashMap<>();
+		}
+
+		if (lotCache == null) {
+			lotCache = new HashMap<>();
 		}
 	}
 
@@ -82,9 +87,7 @@ public class ErpHelper {
 		ResultSet rs = null;
 		try {
 
-			String cacheKey = partNo;
-			Map<String, Object> cacheData = validateCache.get(cacheKey);
-
+			Map<String, Object> cacheData = validateCache.get(partNo);
 			if (cacheData == null) {
 
 				con = dataSource.getConnection();
@@ -101,7 +104,8 @@ public class ErpHelper {
 					result.put("check", "NG");
 				}
 			} else {
-				result = validateCache.get(partNo);
+				System.out.println("PART NO VALIDATE CACHE");
+				result = cacheData;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -122,14 +126,21 @@ public class ErpHelper {
 		ResultSet rs = null;
 		try {
 
-			con = dataSource.getConnection();
-			st = con.createStatement();
+			Map<String, Object> cacheData = lotCache.get(lotNo);
+			if (cacheData == null) {
+				con = dataSource.getConnection();
+				st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
-			sql.append("SELECT LOTSEQ, LOTNO, LOTUNITNAME FROM KEK_VDALOTNO WHERE LOTNO='" + lotNo + "'");
-			rs = st.executeQuery(sql.toString());
-			if (rs.next()) {
-				result.put("unitName", (String) rs.getString(3));
+				StringBuffer sql = new StringBuffer();
+				sql.append("SELECT LOTUNITNAME FROM KEK_VDALOTNO WHERE LOTNO='" + lotNo + "'");
+				rs = st.executeQuery(sql.toString());
+				if (rs.next()) {
+					result.put("unitName", (String) rs.getString(1));
+					lotCache.put(lotNo, result);
+				}
+			} else {
+				System.out.println("UNIT NAME CACHE");
+				result = cacheData;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -199,8 +210,8 @@ public class ErpHelper {
 					result.put("won", quantity * price * exchangeRate);
 				}
 			} else {
-				System.out.println("캐시 데이터 처리..");
-				result = cacheManager.get(cacheKey);
+				System.out.println("수배표 등록 CACHE");
+				result = cacheData;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

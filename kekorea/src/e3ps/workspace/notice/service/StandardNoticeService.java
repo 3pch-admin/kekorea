@@ -118,7 +118,6 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 			if (trs != null)
 				trs.rollback();
 		}
-
 	}
 
 	@Override
