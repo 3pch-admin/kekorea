@@ -35,6 +35,7 @@ public class StandardDocumentService extends StandardManager implements Document
 		try {
 			trs.start();
 
+			
 			ApprovalContract contract = ApprovalContract.newApprovalContract();
 			contract.setName(name);
 			contract.setDescription(description);

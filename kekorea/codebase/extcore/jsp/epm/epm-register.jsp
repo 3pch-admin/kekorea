@@ -10,6 +10,7 @@
 <%@include file="/extcore/include/css.jsp"%>
 <%@include file="/extcore/include/script.jsp"%>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
 	<form>
@@ -180,72 +181,70 @@
 						<input type="button" value="도면 삭제" title="도면 삭제" class="red" onclick="_deleteRow();">
 						<div id="_grid_wrap" style="height: 200px; border-top: 1px solid #3180c3; margin: 3px 5px 3px 5px;"></div>
 						<script type="text/javascript">
-		let _myGridID;
-		const _columns = [ {
-				dataField : "name",
-				headerText : "파일이름",
-				dataType : "string",
-				width : 400,
-				renderer : {
-					type : "LinkRenderer",
-					baseUrl : "javascript", // 자바스크립 함수 호출로 사용하고자 하는 경우에 baseUrl 에 "javascript" 로 설정
-					// baseUrl 에 javascript 로 설정한 경우, 링크 클릭 시 callback 호출됨.
-					jsCallback : function(rowIndex, columnIndex, value, item) {
-						const oid = item.oid;
-						alert(oid);
-					}
-				},			
-			},{
-			dataField : "part_code",
-			headerText : "품번",
-			dataType : "string",
-			width : 150
-		},  {
-			dataField : "name_of_parts",
-			headerText : "품명",
-			dataType : "string",
-			width : 150
-		}, {
-			dataField : "version",
-			headerText : "버전",
-			dataType : "string",
-			width : 100,
-		}, {
-			dataField : "state",
-			headerText : "상태",
-			dataType : "string",
-			width : 100
-		}, {
-			dataField : "creator",
-			headerText : "작성자",
-			dataType : "date",
-			width : 100
-		},{
-			dataField : "modifier",
-			headerText : "수정자",
-			dataType : "string",
-			width : 100
-		} ]
-		
+							let _myGridID;
+							const _columns = [ {
+								dataField : "name",
+								headerText : "파일이름",
+								dataType : "string",
+								width : 400,
+								renderer : {
+									type : "LinkRenderer",
+									baseUrl : "javascript", // 자바스크립 함수 호출로 사용하고자 하는 경우에 baseUrl 에 "javascript" 로 설정
+									// baseUrl 에 javascript 로 설정한 경우, 링크 클릭 시 callback 호출됨.
+									jsCallback : function(rowIndex, columnIndex, value, item) {
+										const oid = item.oid;
+										alert(oid);
+									}
+								},
+							}, {
+								dataField : "part_code",
+								headerText : "품번",
+								dataType : "string",
+								width : 150
+							}, {
+								dataField : "name_of_parts",
+								headerText : "품명",
+								dataType : "string",
+								width : 150
+							}, {
+								dataField : "version",
+								headerText : "버전",
+								dataType : "string",
+								width : 100,
+							}, {
+								dataField : "state",
+								headerText : "상태",
+								dataType : "string",
+								width : 100
+							}, {
+								dataField : "creator",
+								headerText : "작성자",
+								dataType : "date",
+								width : 100
+							}, {
+								dataField : "modifier",
+								headerText : "수정자",
+								dataType : "string",
+								width : 100
+							} ]
 
-		function _createAUIGrid(columnLayout) {
-			const props = {
-				headerHeight : 30,
-				rowHeight : 30,
-				showRowNumColumn : true,
-				rowNumHeaderText : "번호",
-				fillColumnSizeMode : true,
-				showStateColumn : true, // 상태표시 행 출력 여부
-				softRemoveRowMode : false,
-				showRowCheckColumn : true, // 체크 박스 출력
-			}
-			_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-<%-- 			AUIGrid.setGridData(_myGridID, <%=data%>); --%>
-		}
-		// 등록 및 수정
-		function _insert() {
-			const url = getCallUrl("/epm/popup?method=append&multi=false");
-								popup(url);
+							function _createAUIGrid(columnLayout) {
+								const props = {
+									headerHeight : 30,
+									rowHeight : 30,
+									showRowNumColumn : true,
+									rowNumHeaderText : "번호",
+									fillColumnSizeMode : true,
+									showStateColumn : true, // 상태표시 행 출력 여부
+									softRemoveRowMode : false,
+									showRowCheckColumn : true, // 체크 박스 출력
+								}
+								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
+							}
+
+							function _insert() {
+								const url = getCallUrl("/epm/popup?method=append&multi=false");
+								popup(url, 1400, 600);
 							}
 							function append(data) {
 								// 			rowIdField : "oid",
@@ -277,25 +276,39 @@
 				const params = new Object();
 				const _addRows = AUIGrid.getAddedRowItems(_myGridID); // 문서
 				const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_); // 결재
-				params.name = document.getElementById("name").value;
-				params._addRows = _addRows;
-				params._addRows_ = _addRows_;
-				toRegister(params, _addRows_);
-				
-				if (isNull(params.name)) {
-					alert("결재 제목 값은 공백을 입력 할 수 없습니다.");
+				const name = document.getElementById("name");
+
+				if (isNull(name.value)) {
+					alert("결재 제목을 입력하세요.");
 					name.focus();
 					return false;
 				}
-				
+
+				if (_addRows_.length === 0) {
+					alert("결재선을 지정하세요.");
+					_register();
+					return false;
+				}
+
+				if (_addRows.length === 0) {
+					alert("결재할 도면을 추가하세요.");
+					_insert();
+					return false;
+				}
+
 				if (!confirm("도면결재를 등록하시겠습니까?")) {
 					return false;
 				}
-				
+				params.name = name.value;
+				params._addRows = _addRows;
+				params._addRows_ = _addRows_;
+				toRegister(params, _addRows_);
 				parent.openLayer();
 				call(url, params, function(data) {
 					if (data.result) {
 						document.location.href = getCallUrl("/workspace/approval");
+					} else{
+						closeLayer();
 					}
 				})
 			}

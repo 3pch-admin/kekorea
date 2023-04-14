@@ -35,17 +35,18 @@ public class EpmController extends BaseController {
 		return model;
 	}
 
-	@Description("도면 결재")
-	@ResponseBody
+	@Description(value = "도면 결재")
 	@PostMapping(value = "/register")
+	@ResponseBody
 	public Map<String, Object> register(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			EpmHelper.service.register(params);
-			result.put("msg", REGISTER_MSG);
 			result.put("result", SUCCESS);
+			result.put("msg", REGISTER_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;

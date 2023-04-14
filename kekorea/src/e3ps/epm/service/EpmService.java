@@ -162,8 +162,7 @@ public interface EpmService {
 	public abstract Map<String, Object> approvalModifyEpmAction(Map<String, Object> param) throws WTException;
 	
 	/**
-	 *  결재 등록
-	 * @throws Exception 
+	 *  도면 결재
 	 */
 	public abstract void register(Map<String, Object> params) throws Exception;
 	
