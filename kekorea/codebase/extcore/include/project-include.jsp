@@ -10,8 +10,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 String oid = StringUtils.getParameter(request.getParameter("oid"));
-String mode = StringUtils.getParameter(request.getParameter("mode"), "create");
-String multi = StringUtils.getParameter(request.getParameter("multi"), "false");
+String mode = StringUtils.getParameter(request.getParameter("mode"));
+String multi = StringUtils.getParameter(request.getParameter("multi"));
 String obj = StringUtils.getParameter(request.getParameter("obj"));
 String height = StringUtils.getParameter(request.getParameter("height"), "150");
 JSONArray data = null;
@@ -29,6 +29,7 @@ if ("meeting".equals(obj)) {
 	data = IssueHelper.manager.jsonArrayAui(oid);
 }
 %>
+<input type="hidden" id="param" name="param" value="<%=oid %>">
 <div class="include">
 	<%
 	// 등록 및 수정
@@ -39,8 +40,10 @@ if ("meeting".equals(obj)) {
 	<%
 	}
 	%>
-	<div id="_grid_wrap" style="height: <%=height%>px; border-top: 1px solid #3180c3; margin: 3px 5px 3px 5px;"></div>
+	<div id="_grid_wrap" style="height: <%=height%>px; border-top: 1px solid #3180c3; margin:  5px;"></div>
 	<script type="text/javascript">
+	console.log(document.getElementById("param").value);//e3ps.doc.meeting.Meeting:558611-v / e3ps.doc.meeting.Meeting:558611-m
+	const data = <%=data%>;console.log(data);
 		let _myGridID;
 		const _columns = [ {
 			dataField : "projectType_name",
@@ -82,8 +85,8 @@ if ("meeting".equals(obj)) {
 			dataField : "kekNumber",
 			headerText : "KEK 작번",
 			dataType : "string",
-			width : 130,
-			<%if ("view".equals(mode)) {%>
+			width : 100,
+			<%if ("view".equals(mode)) { %>
 			renderer : {
 				type : "LinkRenderer",
 				baseUrl : "javascript", // 자바스크립 함수 호출로 사용하고자 하는 경우에 baseUrl 에 "javascript" 로 설정
@@ -93,16 +96,16 @@ if ("meeting".equals(obj)) {
 					alert(oid);
 				}
 			},			
+			<%}%>
 			filter : {
 				showIcon : true,
 				inline : true
 			},
-			<%}%>
 		}, {
 			dataField : "keNumber",
 			headerText : "KE 작번",
 			dataType : "string",
-			width : 130,
+			width : 100,
 			<%if ("view".equals(mode)) {%>
 			renderer : {
 				type : "LinkRenderer",
@@ -112,17 +115,17 @@ if ("meeting".equals(obj)) {
 					const oid = item.oid;
 					alert(oid);
 				}
-			},			
+			},
+			<%}%>	
 			filter : {
 				showIcon : true,
 				inline : true
 			},
-			<%}%>			
 		}, {
 			dataField : "description",
 			headerText : "작업 내용",
 			dataType : "string",
-			style : "left indent10",
+			style : "aui-left",
 			filter : {
 				showIcon : true,
 				inline : true
@@ -136,28 +139,32 @@ if ("meeting".equals(obj)) {
 		function _createAUIGrid(columnLayout) {
 			const props = {
 				headerHeight : 30,
-				rowHeight : 30,
 				showRowNumColumn : true,
+				rowNumHeaderText : "번호",
 				<%if ("create".equals(mode) || "update".equals(mode)) {%>
 				showRowCheckColumn : true,
 				showStateColumn : true,
-				<%}%>
-				rowNumHeaderText : "번호",
+				showAutoNoDataMessage : false,
+				selectionMode : "singleRow",
+				enableSorting : false,
+				<%} else {%>
+				rowHeight : 30,
+				selectionMode : "multipleCells",
+				filterLayerWidth : 320,
 				noDataMessage : "관련 작번이 없습니다.",
+				filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+				<%}%>
 				<%if ("view".equals(mode)) {%>
 				enableFilter : true,
 				showInlineFilter : true,
 				<%}%>
-				selectionMode : "multipleCells",
-				filterLayerWidth : 320,
-				filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				// 그리드 공통속성 끝
 				<%if (!Boolean.parseBoolean(multi)) {%>
-				rowCheckToRadio : true
+				rowCheckToRadio : true,
 				<%}%>
 			}
 			_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-			<%if ("view".equals(mode)) {%>
+			<%if ("view".equals(mode) || "update".equals(mode)) {%>
 			AUIGrid.setGridData(_myGridID, <%=data%>);
 			<%}%>
 		}
@@ -165,10 +172,10 @@ if ("meeting".equals(obj)) {
 	<%if ("create".equals(mode) || "update".equals(mode)) {%>
 		function _insert() {
 			const url = getCallUrl("/project/popup?method=append&multi=<%=multi%>");
-			popup(url);
+			popup(url,1500,700);
 		}
 	
-		function append(data) {
+		function append(data, callBack) {
 			for (let i = 0; i < data.length; i++) {
 				const item = data[i].item;
 				item.sort = data.length - i;
@@ -177,16 +184,22 @@ if ("meeting".equals(obj)) {
 					AUIGrid.addRow(_myGridID, item, "first");
 				}
 			}
+			callBack(true);
 		}
 
 		// 행 삭제
 		function _deleteRow() {
 			const checked = AUIGrid.getCheckedRowItems(_myGridID);
+			if (checked.length === 0) {
+				alert("삭제할 행을 선택하세요.");
+				return false;
+			}
 			for (let i = checked.length - 1; i >= 0; i--) {
 				const rowIndex = checked[i].rowIndex;
 				AUIGrid.removeRow(_myGridID, rowIndex);
 			}
 		}
+		
 	<%}%>
 	
 	_createAUIGrid(_columns);

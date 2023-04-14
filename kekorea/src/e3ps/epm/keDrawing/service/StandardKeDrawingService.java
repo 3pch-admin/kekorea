@@ -3,7 +3,6 @@ package e3ps.epm.keDrawing.service;
 import java.util.HashMap;
 import java.util.List;
 
-import e3ps.common.Constants;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.keDrawing.KeDrawing;
@@ -42,6 +41,7 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 			for (KeDrawingDTO dto : addRows) {
 				String name = dto.getName();
 				String keNumber = dto.getKeNumber();
+				String state = dto.getState();
 				int version = dto.getVersion();
 				int lotNo = dto.getLotNo();
 				String primaryPath = dto.getPrimaryPath();
@@ -58,7 +58,7 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				keDrawing.setVersion(version);
 				keDrawing.setMaster(master);
 				keDrawing.setLatest(true);
-				keDrawing.setState(Constants.State.INWORK);
+				keDrawing.setState(state);
 				PersistenceHelper.manager.save(keDrawing);
 
 				ApplicationData dd = ApplicationData.newApplicationData(keDrawing);
@@ -89,10 +89,13 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 			for (KeDrawingDTO dto : editRows) {
 				String oid = dto.getOid();
 				String name = dto.getName();
+				String state = dto.getState();
 				int lotNo = dto.getLotNo();
 				String primaryPath = dto.getPrimaryPath();
 				KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
 				KeDrawingMaster master = keDrawing.getMaster();
+				keDrawing.setState(state);
+				keDrawing = (KeDrawing) PersistenceHelper.manager.modify(keDrawing);
 				master.setName(name);
 				master.setLotNo(lotNo);
 				PersistenceHelper.manager.modify(master);

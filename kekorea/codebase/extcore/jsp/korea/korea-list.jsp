@@ -88,6 +88,14 @@ String end = (String) request.getAttribute("end");
 				<td class="left">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('korea-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('korea-list');">
+					<input type="button" value="통합수배표비교" title="통합수배표비교" onclick="loadGridData();">
+					<input type="button" value="P-BOM비교" title="P-BOM비교" class="red" onclick="loadGridData();">
+					<input type="button" value="T-BOM비교" title="T-BOM비교" class="blue" onclick="loadGridData();">
+					<input type="button" value="기계수배표비교" title="기계수배표비교" class="orange" onclick="loadGridData();">
+					<input type="button" value="전기수배표비교" title="전기수배표비교" onclick="loadGridData();">
+					<input type="button" value="도면일람표비교" title="도면일람표비교" class="blue" onclick="loadGridData();">
+					<input type="button" value="CONFIG SHEET비교" title="CONFIG SHEET비교" class="red" onclick="loadGridData();">
+					<input type="button" value="이력비교" title="이력비교" class="orange" onclick="loadGridData();">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">

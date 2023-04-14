@@ -194,5 +194,61 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 				trs.rollback();
 		}
 	}
+
+	@Override
+	public void modify(MeetingDTO dto) throws Exception {
+		String name = dto.getName();
+		String content = dto.getContent();
+		String tiny = dto.getTiny();
+		ArrayList<Map<String, String>> _addRows = dto.get_addRows();
+		ArrayList<String> secondarys = dto.getSecondarys();
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Meeting meeting = Meeting.newMeeting();
+			meeting.setNumber(MeetingHelper.manager.getNextNumber());
+			meeting.setName(name);
+			meeting.setOwnership(CommonUtils.sessionOwner());
+			meeting.setContent(content);
+
+			if (!StringUtils.isNull(tiny)) {
+				MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(tiny);
+				meeting.setTiny(meetingTemplate);
+			}
+
+			meeting.setDocType(DocumentType.toDocumentType("$$Meeting"));
+
+			Folder folder = FolderTaskLogic.getFolder(MeetingHelper.LOCATION, CommonUtils.getContainer());
+			FolderHelper.assignLocation((FolderEntry) meeting, folder);
+
+			PersistenceHelper.manager.modify(meeting);
+
+			for (String secondary : secondarys) {
+				ApplicationData applicationData = ApplicationData.newApplicationData(meeting);
+				applicationData.setRole(ContentRoleType.SECONDARY);
+				PersistenceHelper.manager.modify(applicationData);
+				ContentServerHelper.service.updateContent(meeting, applicationData, secondary);
+			}
+
+			for (Map<String, String> _addRow : _addRows) {
+				String oid = _addRow.get("oid");
+				Project project = (Project) CommonUtils.getObject(oid);
+				MeetingProjectLink link = MeetingProjectLink.newMeetingProjectLink(meeting, project);
+				PersistenceHelper.manager.modify(link);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+		
+	}
 	
 }

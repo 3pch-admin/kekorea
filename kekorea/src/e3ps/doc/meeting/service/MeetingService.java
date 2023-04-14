@@ -48,4 +48,9 @@ public interface MeetingService {
 	 * 회의록 템플릿 수정
 	 */
 	public abstract void modify(MeetingTemplateDTO dto) throws Exception;
+	
+	/**
+	 * 회의록 수정
+	 */
+	public abstract void modify(MeetingDTO dto) throws Exception;
 }

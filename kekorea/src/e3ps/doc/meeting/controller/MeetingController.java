@@ -245,13 +245,55 @@ public class MeetingController extends BaseController {
 		MeetingProjectLink link = (MeetingProjectLink) CommonUtils.getObject(oid);
 		MeetingDTO dto = new MeetingDTO(link);
 		Meeting meeting = (Meeting) CommonUtils.getObject(dto.getOid());
-		String toid = meeting.getTiny().toString();
-		MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(toid);
-		MeetingTemplateDTO tdto = new MeetingTemplateDTO(meetingTemplate);
-		dto.setT_name(tdto.getName());
+		if(meeting.getTiny() != null) {
+			String mtoid = meeting.getTiny().toString();
+			MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(mtoid);
+			MeetingTemplateDTO mtdto = new MeetingTemplateDTO(meetingTemplate);
+			dto.setT_name(mtdto.getName());
+		} else {
+			dto.setT_name(" ");
+		}
 		model.addObject("dto", dto);
 		model.setViewName("popup:/document/meeting/meeting-view");
 		return model;
+	}
+
+	@Description(value = "회의록 수정 뷰")
+	@GetMapping(value = "/meetingModify")
+	public ModelAndView meetingModify(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		MeetingProjectLink link = (MeetingProjectLink) CommonUtils.getObject(oid);
+		MeetingDTO dto = new MeetingDTO(link);
+		Meeting meeting = (Meeting) CommonUtils.getObject(dto.getOid());
+		if(meeting.getTiny() != null) {
+			String mtoid = meeting.getTiny().toString();
+			MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(mtoid);
+			MeetingTemplateDTO mtdto = new MeetingTemplateDTO(meetingTemplate);
+			dto.setT_name(mtdto.getName());
+		} else {
+			dto.setT_name("");
+		}
+		model.addObject("dto", dto);
+		ArrayList<Map<String, String>> list = MeetingHelper.manager.getMeetingTemplateMap();
+		model.addObject("list", list);
+		model.setViewName("popup:/document/meeting/meeting-modify");
+		return model;
+	}
+	
+	@Description(value = "회의록 수정")
+	@PostMapping(value = "/meetingModify")
+	@ResponseBody
+	public Map<String, Object> meetingModify(@RequestBody MeetingDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			MeetingHelper.service.modify(dto);
+			result.put("result", SUCCESS);
+			result.put("msg", SAVE_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
 	}
 
 	@Description(value = "회의록 템플릿 수정 페이지")

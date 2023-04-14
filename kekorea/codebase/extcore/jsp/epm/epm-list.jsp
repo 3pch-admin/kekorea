@@ -5,7 +5,6 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="wt.doc.WTDocument"%>
-<%@page import="e3ps.common.util.ColumnUtils"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@page import="wt.fc.PagingQueryResult"%>
@@ -156,8 +155,28 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 600px; border-top: 1px solid #3180c3;"></div>
-		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
+		<table>
+			<colgroup>
+				<col width="230">
+				<col width="10">
+				<col width="*">
+			</colgroup>
+			<tr>
+				<td valign="top">
+					<jsp:include page="/extcore/include/folder-include.jsp">
+						<jsp:param value="<%=EpmHelper.PRODUCT_ROOT%>" name="location" />
+						<jsp:param value="product" name="container" />
+						<jsp:param value="list" name="mode" />
+						<jsp:param value="670" name="height" />
+					</jsp:include>
+				</td>
+				<td>&nbsp;</td>
+				<td>
+					<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
+					<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
+				</td>
+			</tr>
+		</table>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
@@ -251,7 +270,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 				}, {
 					dataField : "reference",
-						headerText : "REFERENCE 도면",
+					headerText : "REFERENCE 도면",
 					dataType : "string",
 					width : 150,
 					filter : {
@@ -332,7 +351,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const props = {
 					headerHeight : 30,
 					showRowNumColumn : true,
-					showRowCheckColumn : true,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
@@ -343,7 +361,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					useContextMenu : true,
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
-					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요",
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
 				loadGridData();
@@ -387,7 +405,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns);
+				_createAUIGrid(_columns);
 				AUIGrid.resize(myGridID);
+				AUIGrid.resize(_myGridID);
 				selectbox("psize");
 				selectbox("state");
 				finderUser("creator");
@@ -409,6 +429,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(myGridID);
+				AUIGrid.resize(_myGridID);
 			});
 		</script>
 	</form>

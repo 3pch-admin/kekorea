@@ -326,7 +326,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				switch (tabId) {
 				case "tabs-1":
 					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated) {
+					if (_isCreated_) {
 						AUIGrid.resize(_myGridID_);
 					} else {
 						_createAUIGrid_(_columns_);

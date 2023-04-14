@@ -6,7 +6,6 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="wt.doc.WTDocument"%>
-<%@page import="e3ps.common.util.ColumnUtils"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@page import="wt.fc.PagingQueryResult"%>
@@ -316,6 +315,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
 				}
+				
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);

@@ -137,6 +137,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 		<script type="text/javascript">
 			let myGridID;
 			let recentGridItem = null;
+			const list = [ "사용", "폐기" ];
 			function _layout() {
 				return [ {
 					dataField : "lotNo",
@@ -208,10 +209,43 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					headerText : "상태",
 					dataType : "string",
 					width : 80,
-					editable : false,
+					editable : true,
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16,
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+						},
+						onClick : function(event) {
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true,
+						autoEasyMode : true,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						list : list,
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							let isValid = false;
+							for (let i = 0, len = list.length; i < len; i++) {
+								if (list[i] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						}
+					},
 					filter : {
-						showIcon : false,
-						inline : false
+						showIcon : true,
+						inline : true
 					},
 				}, {
 					dataField : "latest",
@@ -574,7 +608,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					const oid = checkedItems[i].item.oid;
 					const latest = checkedItems[i].item.latest;
 					const rowIndex = checkedItems[i].rowIndex;
-
+					checkedItems[i].item.note = "";
 					if (!latest) {
 						alert("최신버전이 아닌 도면이 포함되어있습니다.\n" + (rowIndex + 1) + "행 데이터");
 						return false;

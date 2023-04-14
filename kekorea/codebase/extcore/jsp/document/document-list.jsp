@@ -339,6 +339,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				});
 				createAUIGrid(columns);
 				_createAUIGrid(_columns);
+				AUIGrid.resize(myGridID);
+				AUIGrid.resize(_myGridID);
 				selectbox("state");
 				finderUser("creator");
 				twindate("created");
@@ -363,8 +365,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			})
 
 			window.addEventListener("resize", function() {
-				AUIGrid.resize(_myGridID);
 				AUIGrid.resize(myGridID);
+				AUIGrid.resize(_myGridID);
 			});
 		</script>
 	</form>

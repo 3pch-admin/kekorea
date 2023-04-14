@@ -2,7 +2,6 @@ package e3ps.erp.service;
 
 import e3ps.common.util.CommonUtils;
 import e3ps.erp.ErpSendHistory;
-import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.pom.Transaction;
 import wt.services.StandardManager;

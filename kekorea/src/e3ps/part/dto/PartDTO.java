@@ -1,4 +1,4 @@
-package e3ps.part.beans;
+package e3ps.part.dto;
 
 import java.sql.Timestamp;
 
@@ -6,13 +6,11 @@ import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.IBAUtils;
-import e3ps.common.util.ThumnailUtils;
 import e3ps.part.service.PartHelper;
 import lombok.Getter;
 import lombok.Setter;
 import wt.epm.EPMDocument;
 import wt.part.WTPart;
-import wt.session.SessionHelper;
 
 @Getter
 @Setter

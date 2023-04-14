@@ -21,9 +21,4 @@ public interface KePartService {
 	 */
 	public abstract void revise(HashMap<String, List<KePartDTO>> dataMap) throws Exception;
 
-	/**
-	 * KePart 결재
-	 */
-	public abstract void register(Map<String, Object> params) throws Exception;
-
 }

@@ -23,44 +23,35 @@ String height = request.getParameter("height");
 		const props = {
 			rowIdField : "oid",
 			headerHeight : 30,
-			rowHeight : 30,
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
-			fillColumnSizeMode : true,
 			selectionMode: "singleRow",
-			enableFilter : true, // 필터 사용 여부
+			enableFilter : true, 
 			showInlineFilter : true,		
-			displayTreeOpen : true
+			displayTreeOpen : true,
+			forceTreeView : true
 		}
 		_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 		loadFolderTree();
-		AUIGrid.bind(_myGridID, "selectionChange", auiGridSelectionChangeHandler);
+// 		AUIGrid.bind(_myGridID, "selectionChange", auiGridSelectionChangeHandler);
+		AUIGrid.bind(_myGridID, "cellDoubleClick", auiCellDoubleClick);
 	}
 	
 	let timerId = null;
-	function auiGridSelectionChangeHandler(event) {
-		<%
-			if("list".equals(mode)) {
-		%>
+	function auiCellDoubleClick(event) {
+		<%if ("list".equals(mode)) {%>
 		// 500ms 보다 빠르게 그리드 선택자가 변경된다면 데이터 요청 안함
 		if (timerId) {
 			clearTimeout(timerId);
 		}
 
 		timerId = setTimeout(function () {
-			// 선택 대표 셀 정보 
-			const primeCell = event.primeCell;
-			// 대표 셀에 대한 전체 행 아이템
-			const rowItem = primeCell.item;
-			const oid = rowItem.oid; // oid로 할지 location 으로 할지...
-			// 히든 값 세팅
+			const primeCell = event.item;
+			const oid = primeCell.oid;
 			document.getElementById("oid").value = oid;
-// 			requestMyData("./data/getJsonDetails.php?id=" + custId, myGridID2);
 			loadGridData();
 		}, 500);  
-		<%
-			}
-		%>
+		<%}%>
 	}
 	
 	

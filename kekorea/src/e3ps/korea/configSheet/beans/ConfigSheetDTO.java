@@ -38,6 +38,8 @@ public class ConfigSheetDTO {
 	private Timestamp createdDate;
 	private String createdDate_txt;
 	private String creatorId;
+	private int version;
+	private boolean latest;
 
 	// 변수용
 	private ArrayList<String> secondarys = new ArrayList<>();
@@ -106,5 +108,7 @@ public class ConfigSheetDTO {
 		setCreatedDate(configSheet.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(configSheet.getCreateTimestamp()));
 		setCreatorId(configSheet.getOwnership().getOwner().getName());
+		setVersion(configSheet.getVersion());
+		setLatest(configSheet.getLatest());
 	}
 }
