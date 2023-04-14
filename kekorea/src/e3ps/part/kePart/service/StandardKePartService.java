@@ -1,15 +1,20 @@
 package e3ps.part.kePart.service;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.epm.keDrawing.KeDrawing;
-import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import e3ps.part.kePart.beans.KePartDTO;
+import e3ps.workspace.ApprovalContract;
+import e3ps.workspace.ApprovalContractPersistableLink;
+import e3ps.workspace.service.WorkspaceHelper;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
 import wt.content.ContentRoleType;
@@ -44,6 +49,7 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				String keNumber = dto.getKeNumber();
 				String name = dto.getName();
 				int lotNo = dto.getLotNo();
+				int version = dto.getVersion();
 				String state = dto.getState();
 				String model = dto.getModel();
 				String code = dto.getCode();
@@ -62,7 +68,7 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				kePart.setMaster(master);
 				kePart.setState(state);
 				kePart.setLatest(true);
-				kePart.setVersion(1);
+				kePart.setVersion(version);
 				kePart.setOwnership(ownership);
 				PersistenceHelper.manager.save(kePart);
 
@@ -94,10 +100,13 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				String keNumber = dto.getKeNumber();
 				String model = dto.getModel();
 				String code = dto.getCode();
+				String state = dto.getState();
 				int lotNo = dto.getLotNo();
 				String primaryPath = dto.getPrimaryPath();
 				KePart kePart = (KePart) CommonUtils.getObject(oid);
 				KePartMaster master = kePart.getMaster();
+				kePart.setState(state);
+				PersistenceHelper.manager.modify(kePart);
 				master.setName(name);
 				master.setKeNumber(keNumber);
 				master.setLotNo(lotNo);

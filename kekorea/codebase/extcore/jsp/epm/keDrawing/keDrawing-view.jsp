@@ -1,3 +1,4 @@
+<%@page import="java.util.Map"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.common.util.ContentUtils"%>
@@ -5,7 +6,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 KeDrawingDTO dto = (KeDrawingDTO) request.getAttribute("dto");
-String[] primarys = (String[]) request.getAttribute("primarys");
+Map<String, Object> primary = (String[]) request.getAttribute("primary");
 JSONArray list = (JSONArray) request.getAttribute("list");
 JSONArray data = (JSONArray) request.getAttribute("data");
 JSONArray history = (JSONArray) request.getAttribute("history");
@@ -81,11 +82,11 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			</tr>
 			<tr>
 				<th class="lb">도면파일</th>
-				<td class="indent5">
-					<a href="<%=primarys[5]%>">
-						<span style="position: relative; bottom: 2px;"><%=primarys[2]%></span>
-						<img src="<%=primarys[4]%>" style="position: relative; top: 1px;">
-					</a>
+				<td class="indent5"><%=primary.get("link") %>
+<%-- 					<a href="<%=primarys[5]%>"> --%>
+<%-- 						<span style="position: relative; bottom: 2px;"><%=primarys[2]%></span> --%>
+<%-- 						<img src="<%=primarys[4]%>" style="position: relative; top: 1px;"> --%>
+<!-- 					</a> -->
 				</td>
 				<th class="lb">개정사유</th>
 				<td class="indent5">

@@ -18,7 +18,6 @@ import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.service.PartlistHelper;
-import e3ps.common.util.ContentUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.WTDocumentWTPartLink;
@@ -26,9 +25,6 @@ import e3ps.erp.ErpConnectionPool;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputDocumentLink;
-import e3ps.workspace.ApprovalLine;
-import e3ps.workspace.ApprovalMaster;
-import e3ps.workspace.service.WorkspaceHelper;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
 import wt.content.ContentRoleType;
@@ -60,10 +56,20 @@ public class ErpHelper {
 	/**
 	 * 캐시 처리
 	 */
-	private static HashMap<String, Map<String, Object>> cacheManager = null;
+	public static HashMap<String, Map<String, Object>> cacheManager = null;
+	public static HashMap<String, Map<String, Object>> validateCache = null;
+	public static HashMap<Integer, Map<String, Object>> unitCache = null;
 	static {
 		if (cacheManager == null) {
 			cacheManager = new HashMap<>();
+		}
+
+		if (validateCache == null) {
+			validateCache = new HashMap<>();
+		}
+
+		if (unitCache == null) {
+			unitCache = new HashMap<>();
 		}
 	}
 
@@ -76,18 +82,28 @@ public class ErpHelper {
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			con = dataSource.getConnection();
-			st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
-			sql.append("SELECT *");
-			sql.append(" FROM KEK_VDAITEM");
-			sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
-			rs = st.executeQuery(sql.toString());
-			if (rs.next()) {
-				result.put("check", "OK");
+			Map<String, Object> cacheData = validateCache.get(partNo);
+			if (cacheData == null || cacheData.get("check") == "NG") {
+
+				con = dataSource.getConnection();
+				st = con.createStatement();
+
+				StringBuffer sql = new StringBuffer();
+				sql.append("SELECT *");
+				sql.append(" FROM KEK_VDAITEM");
+				sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
+				rs = st.executeQuery(sql.toString());
+				if (rs.next()) {
+					result.put("check", "OK");
+					validateCache.put(partNo, result);
+				} else {
+					result.put("check", "NG");
+					validateCache.put(partNo, result);
+				}
 			} else {
-				result.put("check", "NG");
+				System.out.println("PART NO VALIDATE CACHE");
+				result = cacheData;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -108,14 +124,21 @@ public class ErpHelper {
 		ResultSet rs = null;
 		try {
 
-			con = dataSource.getConnection();
-			st = con.createStatement();
+			Map<String, Object> cacheData = unitCache.get(lotNo);
+			if (cacheData == null) {
+				con = dataSource.getConnection();
+				st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
-			sql.append("SELECT LOTSEQ, LOTNO, LOTUNITNAME FROM KEK_VDALOTNO WHERE LOTNO='" + lotNo + "'");
-			rs = st.executeQuery(sql.toString());
-			if (rs.next()) {
-				result.put("unitName", (String) rs.getString(3));
+				StringBuffer sql = new StringBuffer();
+				sql.append("SELECT LOTUNITNAME FROM KEK_VDALOTNO WHERE LOTNO='" + lotNo + "'");
+				rs = st.executeQuery(sql.toString());
+				if (rs.next()) {
+					result.put("unitName", (String) rs.getString(1));
+					unitCache.put(lotNo, result);
+				}
+			} else {
+				System.out.println("UNIT NAME CACHE");
+				result = cacheData;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -183,10 +206,11 @@ public class ErpHelper {
 					result.put("standard", spec);
 					result.put("partName", itemName);
 					result.put("won", quantity * price * exchangeRate);
+					cacheManager.put(cacheKey, result);
 				}
 			} else {
-				System.out.println("캐시 데이터 처리..");
-				result = cacheManager.get(cacheKey);
+				System.out.println("수배표 등록 CACHE");
+				result = cacheData;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -543,7 +567,13 @@ public class ErpHelper {
 			}
 			sql.append("'" + stdNo + "', ");
 
-			String rptFileName = ContentUtils.getPrimary(document)[2];
+			ApplicationData data = null;
+			QueryResult result = ContentHelper.service.getContentsByRole(document, ContentRoleType.PRIMARY);
+			if (result.hasMoreElements()) {
+				data = (ApplicationData) result.nextElement();
+			}
+
+			String rptFileName = data.getFileName();
 			sql.append("'" + rptFileName + "', ");
 
 			String createTime = new Timestamp(new Date().getTime()).toString().substring(0, 16);
@@ -552,7 +582,7 @@ public class ErpHelper {
 			String ext = FileUtil.getExtension(rptFileName);
 			sql.append("'" + ext + "', ");
 
-			long fileSize = Long.parseLong(ContentUtils.getPrimary(document)[8]);
+			long fileSize = data != null ? data.getFileSize() : 0L;
 			sql.append("'" + fileSize + "');");
 			st.executeUpdate(sql.toString());
 
@@ -563,9 +593,7 @@ public class ErpHelper {
 				directory.mkdirs();
 			}
 
-			QueryResult qr = ContentHelper.service.getContentsByRole(document, ContentRoleType.PRIMARY);
-			if (qr.hasMoreElements()) {
-				ApplicationData data = (ApplicationData) qr.nextElement();
+			if (data != null) {
 				byte[] buffer = new byte[10240];
 				InputStream is = ContentServerHelper.service.findLocalContentStream(data);
 				File write = new File(directory + File.separator + data.getFileName());
@@ -661,13 +689,17 @@ public class ErpHelper {
 	 * 수배표 전송
 	 */
 	public void sendToErp(PartListMaster master) throws Exception {
+		System.out.println("수배표 전송 START = " + new Timestamp(new Date().getTime()));
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		boolean sendResult = true;
+		String sendQuery = "";
 		try {
 			con = dataSource.getConnection();
 			st = con.createStatement();
 
+			con.setAutoCommit(false);
 			// 작번 개수 만큼 전송
 			QueryResult result = PersistenceHelper.manager.navigate(master, "project", PartListMasterProjectLink.class);
 
@@ -684,6 +716,9 @@ public class ErpHelper {
 
 				ArrayList<PartListData> list = PartlistHelper.manager.getPartListData(master);
 				String disNo = "WANT_" + master.getNumber();
+
+				System.out.println("수배표 전체 전송 개수 :  " + list.size());
+
 				for (PartListData data : list) {
 					StringBuffer sql = new StringBuffer();
 
@@ -701,7 +736,8 @@ public class ErpHelper {
 
 					Map<String, Object> pjtData = ErpHelper.manager.getPjtInfoByKekNumber(kekNumber);
 					String pjtSeq = (String) pjtData.get("pjtSeq");
-					sql.append("'" + pjtSeq + "', ");
+					sql.append("'" + StringUtils.replaceToValue(pjtSeq) + "', ");
+//					sql.append("'" + pjtSeq + "', ");
 
 					if (engType.contains("기계")) {
 						engType = "기계";
@@ -716,26 +752,25 @@ public class ErpHelper {
 
 					String userId = master.getCreatorName();
 					sql.append("'" + userId + "', ");
-
 					sql.append("'" + accDate + "', ");
 
 					int lotNo = data.getLotNo();
 					sql.append("'" + getKekLotSeq(String.valueOf(lotNo)) + "', ");
 
 					String partNo = data.getPartNo();
-					sql.append("'" + getKekItemSeq(partNo) + "', ");
+					sql.append("'" + getKekItemSeq(StringUtils.replaceToValue(partNo)) + "', ");
 
 					String makerName = data.getMaker();
-					sql.append("'" + getKekMakerSeq(makerName) + "', ");
+					sql.append("'" + getKekMakerSeq(StringUtils.replaceToValue(makerName)) + "', ");
 
 					String customer = data.getCustomer();
-					sql.append("'" + getKekCustSeq(customer) + "', ");
+					sql.append("'" + getKekCustSeq(StringUtils.replaceToValue(customer)) + "', ");
 
 					String unitName = data.getUnit();
-					sql.append("'" + getKekUnitSeq(unitName) + "', ");
+					sql.append("'" + getKekUnitSeq(StringUtils.replaceToValue(unitName)) + "', ");
 
 					String currency = data.getCurrency();
-					sql.append("'" + getKekCurrencySeq(currency) + "', ");
+					sql.append("'" + getKekCurrencySeq(StringUtils.replaceToValue(currency)) + "', ");
 
 					int qty = data.getQuantity();
 					sql.append("'" + qty + "', ");
@@ -746,14 +781,14 @@ public class ErpHelper {
 					sql.append("'" + data.getNote() + "', ");
 
 					String classification = data.getClassification();
-					sql.append("'" + getKekSupplySeq(classification) + "', ");
+					sql.append("'" + getKekSupplySeq(StringUtils.replaceToValue(classification)) + "', ");
 					sql.append("'" + data.getPrice() + "', ");
 					sql.append("'" + accDate + "', ");
 
-					ApprovalMaster am = WorkspaceHelper.manager.getMaster(master);
-					ArrayList<ApprovalLine> agreeLines = WorkspaceHelper.manager.getAgreeLines(am);
-					// 여기 머 들어가는지 확인..
-//					sql.append("'" + APPUSERID + "');");
+					String lastId = master.getLast();
+					sql.append("'" + lastId + "');");
+					sendQuery += sql.toString() + "\n";
+
 					st.executeUpdate(sql.toString());
 				}
 
@@ -761,11 +796,19 @@ public class ErpHelper {
 				sb.append("EXEC KEK_SPLMBOMIF '" + disNo + "'");
 				st.executeUpdate(sb.toString());
 			}
+			con.commit();
+			sendResult = true;
 		} catch (Exception e) {
+			sendResult = false;
 			e.printStackTrace();
+			con.rollback();
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
+			// 수배표 전송 ERP 이력
+//			ErpHelper.service.save(master.getName(), sendResult, sendQuery, "수배표");
 		}
+		System.out.println("수배표 전송 END = " + new Timestamp(new Date().getTime()));
 	}
 
 	/**
@@ -1030,11 +1073,14 @@ public class ErpHelper {
 			String createTime = new Timestamp(new Date().getTime()).toString();
 			sql.append("'" + createTime + "', ");
 
-			String[] primarys = ContentUtils.getPrimary(part);
-			String fileName = primarys[2];
-			sql.append("'" + fileName + "', ");
-			sql.append("'" + FileUtil.getExtension(fileName) + "', ");
-			sql.append("'" + primarys[7] + "', ");
+			QueryResult result = ContentHelper.service.getContentsByRole(part, ContentRoleType.PRIMARY);
+			ApplicationData data = null;
+			if (result.hasMoreElements()) {
+				data = (ApplicationData) result.nextElement();
+			}
+			sql.append("'" + data.getFileName() + "', ");
+			sql.append("'" + FileUtil.getExtension(data.getFileName()) + "', ");
+			sql.append("'" + data != null ? data.getFileSize() : 0L + "', ");
 			sql.append("'Y');");
 			st.executeUpdate(sql.toString());
 
@@ -1044,12 +1090,10 @@ public class ErpHelper {
 				directory.mkdirs();
 			}
 
-			QueryResult result = ContentHelper.service.getContentsByRole(part, ContentRoleType.PRIMARY);
-			if (result.hasMoreElements()) {
-				ApplicationData adata = (ApplicationData) result.nextElement();
+			if (data != null) {
 				byte[] buffer = new byte[10240];
-				InputStream is = ContentServerHelper.service.findLocalContentStream(adata);
-				File write = new File(directory + File.separator + adata.getFileName());
+				InputStream is = ContentServerHelper.service.findLocalContentStream(data);
+				File write = new File(directory + File.separator + data.getFileName());
 				FileOutputStream fos = new FileOutputStream(write);
 				int j = 0;
 				while ((j = is.read(buffer, 0, 10240)) > 0) {
@@ -1163,10 +1207,14 @@ public class ErpHelper {
 			sql.append("'" + createTime + "', ");
 
 			for (WTDocument doc : list) {
-				String[] primarys = ContentUtils.getPrimary(doc);
-				sql.append("'" + primarys[2] + "', ");
-				sql.append("'" + FileUtil.getExtension(primarys[2]) + "', ");
-				sql.append("'" + primarys[7] + "', ");
+				ApplicationData data = null;
+				QueryResult qr = ContentHelper.service.getContentsByRole(doc, ContentRoleType.PRIMARY);
+				if (qr.hasMoreElements()) {
+					data = (ApplicationData) result.nextElement();
+				}
+				sql.append("'" + data.getFileName() + "', ");
+				sql.append("'" + FileUtil.getExtension(data.getFileName()) + "', ");
+				sql.append("'" + data.getFileSize() + "', ");
 			}
 
 			sql.append("'Y');");

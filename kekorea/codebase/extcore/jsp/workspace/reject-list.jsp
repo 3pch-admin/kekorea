@@ -70,7 +70,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/workspace/masterView?oid=" + oid + "&columnType=COLUMN_REJECT&poid=" + item.poid);
-							popup(url, 1400, 700);
+							popup(url, 1500, 800);
 						}
 					},
 					filter : {
@@ -95,7 +95,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "기안일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd HH:MM:ss",
-					width : 130,
+					width : 150,
 					filter : {
 						showIcon : true,
 						inline : true,
@@ -106,7 +106,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "반려일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd HH:MM:ss",
-					width : 130,
+					width : 150,
 					filter : {
 						showIcon : true,
 						inline : true,

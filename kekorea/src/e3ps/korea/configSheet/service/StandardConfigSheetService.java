@@ -1,10 +1,12 @@
 package e3ps.korea.configSheet.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import e3ps.admin.commonCode.CommonCode;
-import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.admin.configSheetCode.ConfigSheetCode;
+import e3ps.admin.configSheetCode.service.ConfigSheetCodeHelper;
 import e3ps.common.Constants;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
@@ -47,10 +49,11 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 
 			ConfigSheet configSheet = ConfigSheet.newConfigSheet();
 			configSheet.setName(name);
-			configSheet.setDescription(description);
+			configSheet.setDescription(description != null ? description : name);
 			configSheet.setState(Constants.State.INWORK);
 			configSheet.setOwnership(CommonUtils.sessionOwner());
-
+			configSheet.setLatest(true);
+			configSheet.setVersion(1);
 			PersistenceHelper.manager.save(configSheet);
 
 			for (String secondary : secondarys) {
@@ -63,30 +66,30 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 			for (Map<String, String> addRow : _addRows) {
 				String oid = addRow.get("oid");
 				Project project = (Project) CommonUtils.getObject(oid);
-				ConfigSheetProjectLink link = ConfigSheetProjectLink.newConfigSheetProjectLink(configSheet, project);
-				PersistenceHelper.manager.save(link);
+				configSheet.setProject(project);
+				PersistenceHelper.manager.modify(configSheet);
 			}
 
 			int sort = 0;
 			for (Map<String, String> addRow : addRows) {
 				String category_code = addRow.get("category_code");
 				String item_code = addRow.get("item_code");
-				String spec_code = addRow.get("spec_code");
+				String spec = addRow.get("spec");
 				String note = addRow.get("note");
 				String apply = addRow.get("apply");
 
-				CommonCode category = null;
-				CommonCode item = null;
-				CommonCode spec = null;
+				ConfigSheetCode category = null;
+				ConfigSheetCode item = null;
+//				ConfigSheetCode spec = null;
 				if (!StringUtils.isNull(category_code)) {
-					category = CommonCodeHelper.manager.getCommonCode(category_code, "CATEGORY");
+					category = ConfigSheetCodeHelper.manager.getConfigSheetCode(category_code, "CATEGORY");
 				}
 				if (!StringUtils.isNull(item_code)) {
-					item = CommonCodeHelper.manager.getCommonCode(item_code, "CATEGORY_ITEM");
+					item = ConfigSheetCodeHelper.manager.getConfigSheetCode(item_code, "CATEGORY_ITEM");
 				}
-				if (!StringUtils.isNull(spec_code)) {
-					spec = CommonCodeHelper.manager.getCommonCode(spec_code, "CATEGORY_SPEC");
-				}
+//				if (!StringUtils.isNull(spec_code)) {
+//					spec = ConfigSheetCodeHelper.manager.getConfigSheetCode(spec_code, "CATEGORY_SPEC");
+//				}
 
 				ConfigSheetVariable variable = ConfigSheetVariable.newConfigSheetVariable();
 				variable.setCategory(category);
@@ -119,5 +122,51 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 				trs.rollback();
 		}
 
+	}
+
+	@Override
+	public void save(HashMap<String, List<ConfigSheetDTO>> dataMap) throws Exception {
+		List<ConfigSheetDTO> removeRows = dataMap.get("removeRows");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			for (ConfigSheetDTO dto : removeRows) {
+				String oid = dto.getLoid();
+				ConfigSheetProjectLink link = (ConfigSheetProjectLink) CommonUtils.getObject(oid);
+				PersistenceHelper.manager.delete(link);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void delete(String oid) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
+			PersistenceHelper.manager.delete(configSheet);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
 	}
 }

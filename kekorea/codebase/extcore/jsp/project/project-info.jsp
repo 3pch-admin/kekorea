@@ -162,20 +162,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 							label : "저장",
 							callback : contextItemHandler
 						} ],
-
-						rowStyleFunction : function(rowIndex, item) {
-							switch (item.stateKey) {
-							case 0:
-								return "ready";
-							case 1:
-								return "yellow";
-							case 2:
-								return "orange";
-							case 3:
-								return "complete";
-							case 4:
-								return "delay";
-							}
+						treeIconFunction : function(rowIndex, isBranch, isOpen, depth, item) {
+							return item.treeIcon;
 						}
 					}
 					myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);

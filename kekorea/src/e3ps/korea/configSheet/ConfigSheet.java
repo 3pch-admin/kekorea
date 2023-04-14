@@ -8,9 +8,9 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
+import e3ps.project.Project;
 import wt.content.ContentHolder;
 import wt.fc.WTObject;
-import wt.org.WTUser;
 import wt.ownership.Ownable;
 import wt.util.WTException;
 
@@ -24,7 +24,19 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "state", type = String.class, constraints = @PropertyConstraints(required = true)),
 
-		}
+				@GeneratedProperty(name = "version", type = Integer.class, javaDoc = "버전"),
+
+				@GeneratedProperty(name = "latest", type = Boolean.class, javaDoc = "최신버전여부")
+
+		},
+
+		foreignKeys = { @GeneratedForeignKey(name = "ConfigSheetProjectLink",
+
+				foreignKeyRole = @ForeignKeyRole(name = "project", type = Project.class,
+
+						constraints = @PropertyConstraints(required = true)),
+
+				myRole = @MyRole(name = "configSheet", cardinality = Cardinality.ONE)), }
 
 )
 public class ConfigSheet extends _ConfigSheet {

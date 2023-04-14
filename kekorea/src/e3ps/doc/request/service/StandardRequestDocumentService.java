@@ -168,7 +168,6 @@ public class StandardRequestDocumentService extends StandardManager implements R
 			if (trs != null)
 				trs.rollback();
 		}
-
 	}
 
 	private void auiGridDataSave(RequestDocument requestDocument, String template,

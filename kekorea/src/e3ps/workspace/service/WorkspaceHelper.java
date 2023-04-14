@@ -10,6 +10,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.epm.workOrder.WorkOrder;
+import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.org.dto.UserDTO;
 import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalLine;
@@ -134,6 +135,9 @@ public class WorkspaceHelper {
 		} else if (per instanceof WorkOrder) {
 			WorkOrder workOrder = (WorkOrder) per;
 			return workOrder.getName();
+		} else if (per instanceof ConfigSheet) {
+			ConfigSheet configSheet = (ConfigSheet) per;
+			return configSheet.getName();
 		}
 		return "";
 	}
@@ -751,5 +755,21 @@ public class WorkspaceHelper {
 			}
 		}
 		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 일괄결재 prefix 가져오기
+	 */
+	public String prefix(Persistable per) {
+		String prefix = "";
+		if (per instanceof WTDocument) {
+		} else if (per instanceof EPMDocument) {
+			prefix = "도면";
+		} else if (per instanceof WTPart) {
+			prefix = "부품";
+		} else if (per instanceof PartListMaster) {
+			prefix = "수배표";
+		}
+		return prefix;
 	}
 }

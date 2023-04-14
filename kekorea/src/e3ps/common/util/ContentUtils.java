@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
@@ -46,7 +48,7 @@ public class ContentUtils {
 	/**
 	 * OID로 주 첨부 파일 내용들 가져오는 함수
 	 */
-	public static String[] getPrimary(String oid) throws Exception {
+	public static Map<String, Object> getPrimary(String oid) throws Exception {
 		ReferenceFactory rf = new ReferenceFactory();
 		ContentHolder holder = (ContentHolder) rf.getReference(oid).getObject();
 		return getPrimary(holder);
@@ -55,25 +57,25 @@ public class ContentUtils {
 	/**
 	 * ContentHolder 객체로 주 첨부 파일 내용들 가져오는 함수
 	 */
-	public static String[] getPrimary(ContentHolder holder) throws Exception {
-		String[] primarys = new String[8];
+	public static Map<String, Object> getPrimary(ContentHolder holder) throws Exception {
+		Map<String, Object> primary = null;
 		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
 		if (result.hasMoreElements()) {
-			ContentItem item = (ContentItem) result.nextElement();
-
-			if (item instanceof ApplicationData) {
-				ApplicationData data = (ApplicationData) item;
-				primarys[0] = holder.getPersistInfo().getObjectIdentifier().getStringValue();
-				primarys[1] = data.getPersistInfo().getObjectIdentifier().getStringValue();
-				primarys[2] = data.getFileName();
-				primarys[3] = data.getFileSizeKB() + "KB";
-				primarys[4] = getFileIcon(primarys[2]);
-				primarys[5] = ContentHelper.getDownloadURL(holder, data, false, primarys[2]).toString();
-				primarys[6] = "<a href=" + primarys[5] + "><img src=" + primarys[4] + "></a>";
-				primarys[7] = String.valueOf(data.getFileSize());
-			}
+			ApplicationData data = (ApplicationData) result.nextElement();
+			String fileIcon = getFileIcon(data.getFileName());
+			String url = ContentHelper.getDownloadURL(holder, data, false, data.getFileName()).toString();
+			String aoid = data.getPersistInfo().getObjectIdentifier().getStringValue();
+			primary = new HashMap<>();
+			primary.put("oid", holder.getPersistInfo().getObjectIdentifier().getStringValue());
+			primary.put("aoid", aoid);
+			primary.put("name", data.getFileName());
+			primary.put("fileSizeKB", data.getFileSizeKB() + "KB");
+			primary.put("fileIcon", fileIcon);
+			primary.put("url", url);
+			primary.put("link", "<a href='javascript:download(" + aoid + ");'><img src=" + fileIcon + "></a>");
+			primary.put("fileSize", data.getFileSize());
 		}
-		return primarys;
+		return primary;
 	}
 
 	/**

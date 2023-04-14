@@ -44,6 +44,12 @@ public class KeDrawingHelper {
 	private static final String className = "e3ps.common.aspose.AsposeUtils";
 	private static final String methodName = "pdfToImage";
 
+	/**
+	 * 상태값 변수
+	 */
+	public static final String USE = "사용";
+	public static final String DISPOSE = "폐기";
+
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		ArrayList<KeDrawingDTO> list = new ArrayList<>();
 		Map<String, Object> map = new HashMap<String, Object>();

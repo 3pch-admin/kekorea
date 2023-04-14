@@ -45,9 +45,14 @@ public class ProjectDTO {
 	private Timestamp customDate;
 	private String customDate_txt;
 	private String model;
-	private String machine = "지정안됨";
-	private String elec = "지정안됨";
-	private String soft = "지정안됨";
+
+	private String machine_name;
+	private String machine_oid;
+	private String elec_name;
+	private String elec_oid;
+	private String soft_name;
+	private String soft_oid;
+
 	private int kekProgress;
 	private int machineProgress;
 	private int elecProgress;
@@ -135,20 +140,23 @@ public class ProjectDTO {
 		}
 		setModel(project.getModel());
 
-		WTUser machineUser = ProjectHelper.manager.getUserType(project, TaskTypeVariable.MACHINE);
+		WTUser machineUser = ProjectHelper.manager.getUserType(project, ProjectUserTypeVariable.MACHINE);
 
 		if (machineUser != null) {
-			setMachine(machineUser.getFullName());
+			setMachine_name(machineUser.getFullName());
+			setMachine_oid(machineUser.getPersistInfo().getObjectIdentifier().getStringValue());
 		}
 
-		WTUser elecUser = ProjectHelper.manager.getUserType(project, TaskTypeVariable.ELEC);
+		WTUser elecUser = ProjectHelper.manager.getUserType(project, ProjectUserTypeVariable.ELEC);
 		if (elecUser != null) {
-			setElec(elecUser.getFullName());
+			setElec_name(elecUser.getFullName());
+			setElec_oid(elecUser.getPersistInfo().getObjectIdentifier().getStringValue());
 		}
 
-		WTUser softUser = ProjectHelper.manager.getUserType(project, TaskTypeVariable.SOFT);
+		WTUser softUser = ProjectHelper.manager.getUserType(project, ProjectUserTypeVariable.SOFT);
 		if (softUser != null) {
-			setSoft(softUser.getFullName());
+			setSoft_name(softUser.getFullName());
+			setSoft_oid(softUser.getPersistInfo().getObjectIdentifier().getStringValue());
 		}
 
 		setKekProgress(ProjectHelper.manager.getKekProgress(project));

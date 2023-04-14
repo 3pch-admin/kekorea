@@ -76,8 +76,6 @@ public class CommonCodeHelper {
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.CODE_TYPE, false);
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.SORT, false);
 
-		System.out.println(query);
-
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -203,16 +201,14 @@ public class CommonCodeHelper {
 	}
 
 	public ArrayList<Map<String, String>> getChildrens(String parentOid) throws Exception {
-		System.out.println("parentOid=" + parentOid);
 		ArrayList<Map<String, String>> list = new ArrayList<>();
 		CommonCode parent = (CommonCode) CommonUtils.getObject(parentOid);
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, "parentReference.key.id",
 				parent.getPersistInfo().getObjectIdentifier().getId());
-		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
+		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.SORT, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
-		System.out.println(query);
 		Map<String, String> empty = new HashMap<>();
 		empty.put("value", "");
 		empty.put("name", "선택");

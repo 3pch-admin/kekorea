@@ -13,31 +13,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		<ul class="nav metismenu" id="side-menu">
 			<li class="nav-header">
 				<div class="dropdown profile-element">
-					<img alt="image" class="rounded-circle" src="/Windchill/jsp/images/profile_small.jpg" />
 					<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 						<span class="block m-t-xs font-bold"><%=data.getName()%></span>
 						<span class="text-muted text-xs block">
-							<%=data.getDuty()%>
-							<b class="caret"></b>
+							<font color="white"><%=data.getDepartment_name()%>-<%=data.getDuty()%></font>
 						</span>
 					</a>
-					<ul class="dropdown-menu animated fadeInRight m-t-xs">
-						<li>
-							<a class="dropdown-item" href="profile.html">Profile</a>
-						</li>
-						<li>
-							<a class="dropdown-item" href="contacts.html">Contacts</a>
-						</li>
-						<li>
-							<a class="dropdown-item" href="mailbox.html">Mailbox</a>
-						</li>
-						<li class="dropdown-divider"></li>
-						<li>
-							<a class="dropdown-item" href="login.html">Logout</a>
-						</li>
-					</ul>
 				</div>
-				<div class="logo-element">IN+</div>
 			</li>
 			<li>
 				<a href="#">
@@ -163,9 +145,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<li>
 						<a onclick="moveToPage(this, '/part/bundle', '부품 관리 > 부품 일괄 등록');">부품 일괄 등록</a>
 					</li>
-<li>
+					<li>
 						<a onclick="moveToPage(this, '/part/spec', '부품 관리 > 제작사양서 등록');">제작사양서 등록</a>
-					</li>					
+					</li>
 					<!-- 					<li> -->
 					<!-- 						<a href="contacts_2.html">제작사양서 등록</a> -->
 					<!-- 					</li> -->
@@ -272,7 +254,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						<a onclick="moveToPage(this, '/specCode/list', '관리자 > 이력 관리 컬럼');">이력 관리 컬럼</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/sheetVariable/list', '관리자 > CONFIG SHEET 카테고리');">CONFIG SHEET 카테고리</a>
+						<a onclick="moveToPage(this, '/configSheetCode/list', '관리자 > CONFIG SHEET 카테고리');">CONFIG SHEET 카테고리</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/numberRuleCode/list', '관리자 > KEK 도번 관리');">KEK 도번 관리</a>

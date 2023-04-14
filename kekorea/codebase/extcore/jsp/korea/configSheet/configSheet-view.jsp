@@ -7,8 +7,59 @@ ConfigSheetDTO dto = (ConfigSheetDTO) request.getAttribute("dto");
 String oid = (String) request.getAttribute("oid");
 JSONArray history = (JSONArray) request.getAttribute("history");
 JSONArray list = (JSONArray) request.getAttribute("list");
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<style type="text/css">
+.row1 {
+	background-color: #99CCFF;
+}
+
+.row2 {
+	background-color: #FFCCFF;
+}
+
+.row3 {
+	background-color: #CCFFCC;
+}
+
+.row4 {
+	background-color: #FFFFCC;
+}
+
+.row5 {
+	background-color: #FFCC99;
+}
+
+.row6 {
+	background-color: #CCCCFF;
+}
+
+.row7 {
+	background-color: #99FF66;
+}
+
+.row8 {
+	background-color: #CC99FF;
+}
+
+.row9 {
+	background-color: #66CCFF;
+}
+
+.row10 {
+	background-color: #CCFFCC;
+}
+
+.row11 {
+	background-color: #FFCCFF;
+}
+
+.row12 {
+	background-color: #FFFFCC;
+}
+</style>
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -18,6 +69,13 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			</div>
 		</td>
 		<td class="right">
+			<%
+			if (isAdmin) {
+			%>
+			<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
+			<%
+			}
+			%>
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -144,7 +202,6 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 							function _createAUIGrid(columnLayout) {
 								const props = {
 									headerHeight : 30,
-									rowHeight : 30,
 									showRowNumColumn : true,
 									rowNumHeaderText : "번호",
 									selectionMode : "singleRow",
@@ -194,7 +251,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				mergeRef : "category_code",
 				mergePolicy : "restrict",
 			}, {
-				dataField : "spec_name",
+				dataField : "spec",
 				headerText : "사양",
 				dataType : "string",
 				width : 250,
@@ -212,12 +269,42 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
 					selectionMode : "multipleCells",
 					enableCellMerge : true,
+					rowStyleFunction : function(rowIndex, item) {
+						const value = item.category_code;
+						if (value === "CATEGORY_2") {
+							return "row1";
+						} else if (value === "CATEGORY_3") {
+							return "row2";
+						} else if (value === "CATEGORY_4") {
+							return "row3";
+						} else if (value === "CATEGORY_5") {
+							return "row4";
+						} else if (value === "CATEGORY_6") {
+							return "row5";
+						} else if (value === "CATEGORY_7") {
+							return "row6";
+						} else if (value === "CATEGORY_8" || value === "CATEGORY_9") {
+							return "row7";
+						} else if (value === "CATEGORY_10") {
+							return "row8";
+						} else if (value === "CATEGORY_11") {
+							return "row9";
+						} else if (value === "CATEGORY_12") {
+							return "row4";
+						} else if (value === "CATEGORY_13") {
+							return "row10";
+						} else if (value === "CATEGORY_14") {
+							return "row11";
+						} else if (value === "CATEGORY_15") {
+							return "row12";
+						}
+						return "";
+					}
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
 				AUIGrid.setGridData(myGridID, data);
@@ -289,26 +376,26 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 	</div>
 </div>
 <script type="text/javascript">
+	function _delete() {
+
+		if (!confirm("삭제 하시겠습니까?")) {
+			return false;
+		}
+
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/configSheet/delete?oid=" + oid);
+		openLayer();
+		call(url, null, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			}
+		}, "GET");
+	}
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs({
 			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					_createAUIGrid(_columns);
-					AUIGrid.resize(_myGridID);
-					break;
-				case "tabs-2":
-					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
-					break;
-				case "tabs-3":
-					_createAUIGrid_(_columns_);
-					AUIGrid.resize(_myGridID_);
-					break;
-				}
-			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
@@ -339,5 +426,18 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				}
 			}
 		});
+
+		_createAUIGrid(_columns);
+		_createAUIGrid_(_columns_);
+		createAUIGrid(columns);
+		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(_myGridID_);
+		AUIGrid.resize(myGridID);
+	});
+
+	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(_myGridID_);
 	});
 </script>

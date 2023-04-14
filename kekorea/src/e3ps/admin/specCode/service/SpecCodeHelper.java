@@ -38,7 +38,7 @@ public class SpecCodeHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(SpecCode.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, SpecCode.class, SpecCode.CODE_TYPE, "SPEC");
-		QuerySpecUtils.toBooleanAnd(query, idx, SpecCode.class, SpecCode.ENABLE, true);
+//		QuerySpecUtils.toBooleanAnd(query, idx, SpecCode.class, SpecCode.ENABLE, true);
 		QuerySpecUtils.toOrderBy(query, idx, SpecCode.class, SpecCode.SORT, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 
@@ -72,7 +72,7 @@ public class SpecCodeHelper {
 		int idx = query.appendClassList(SpecCode.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, SpecCode.class, SpecCode.CODE_TYPE, "OPTION");
 		QuerySpecUtils.toEqualsAnd(query, idx, SpecCode.class, "parentReference.key.id", specCode);
-		QuerySpecUtils.toBooleanAnd(query, idx, SpecCode.class, SpecCode.ENABLE, true);
+//		QuerySpecUtils.toBooleanAnd(query, idx, SpecCode.class, SpecCode.ENABLE, true);
 		QuerySpecUtils.toOrderBy(query, idx, SpecCode.class, SpecCode.SORT, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		JSONArray children = new JSONArray();

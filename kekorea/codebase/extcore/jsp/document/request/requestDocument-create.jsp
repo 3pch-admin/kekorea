@@ -80,10 +80,9 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			<tr>
 				<th class="lb">첨부파일</th>
 				<td class="indent5" colspan="3">
-					<jsp:include page="/extcore/include/secondary-include.jsp">
-						<jsp:param value="" name="oid" />
+					<jsp:include page="/extcore/include/primary-include.jsp">
+						<jsp:param value="primary" name="oid" />
 						<jsp:param value="create" name="mode" />
-						<jsp:param value="150" name="height" />
 					</jsp:include>
 				</td>
 			</tr>
@@ -102,13 +101,20 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 	</div>
 	<script type="text/javascript">
 		let myGridID;
-		const maks = <%=maks%>
-		const installs = <%=installs%>
-		const customers = <%=customers%>
-		const elecs = <%=elecs%>
-		const machines = <%=machines%>
-		const softs = <%=softs%>
-		const projectTypes = <%=projectTypes%>
+		const maks =
+	<%=maks%>
+		const installs =
+	<%=installs%>
+		const customers =
+	<%=customers%>
+		const elecs =
+	<%=elecs%>
+		const machines =
+	<%=machines%>
+		const softs =
+	<%=softs%>
+		const projectTypes =
+	<%=projectTypes%>
 		let detailMap = {};
 		let installMap = {};
 		const columns = [ {
@@ -393,16 +399,30 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			headerText : "KEK 작번",
 			dataType : "string",
 			width : 130,
+			editRenderer : {
+				type : "InputEditRenderer",
+				regExp : "^[a-zA-Z0-9]+$",
+				autoUpperCase : true
+			},
 		}, {
 			dataField : "keNumber",
 			headerText : "KE 작번",
 			dataType : "string",
 			width : 130,
+			editRenderer : {
+				type : "InputEditRenderer",
+				regExp : "^[a-zA-Z0-9]+$",
+				autoUpperCase : true
+			},
 		}, {
 			dataField : "userId",
 			headerText : "USER ID",
 			dataType : "string",
 			width : 100,
+			editRenderer : {
+				type : "InputEditRenderer",
+				autoUpperCase : true
+			},
 		}, {
 			dataField : "customDate",
 			headerText : "요구 납기일",
@@ -445,6 +465,10 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			headerText : "모델",
 			dataType : "string",
 			width : 130,
+			editRenderer : {
+				type : "InputEditRenderer",
+				autoUpperCase : true
+			},
 		}, {
 			dataField : "pdate",
 			headerText : "발행일",
@@ -663,11 +687,9 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			const item = new Object();
 			switch (event.contextIndex) {
 			case 0:
-				item.createdDate = new Date();
 				AUIGrid.addRow(myGridID, item, "selectionUp");
 				break;
 			case 1:
-				item.createdDate = new Date();
 				AUIGrid.addRow(myGridID, item, "selectionDown");
 				break;
 			case 3:
@@ -759,8 +781,8 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			params.primarys = toArray("primarys");
 			params.template = template.value;
 			toRegister(params, _addRows_);
-			console.log(params);
 			openLayer();
+			console.log(params);
 			call(url, params, function(data) {
 				alert(data.msg);
 				if (data.result) {

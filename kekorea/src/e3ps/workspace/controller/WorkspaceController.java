@@ -51,6 +51,7 @@ public class WorkspaceController extends BaseController {
 			result = WorkspaceHelper.manager.agree(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
 		}
@@ -106,6 +107,7 @@ public class WorkspaceController extends BaseController {
 			result = WorkspaceHelper.manager.receive(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
 		}
@@ -133,6 +135,7 @@ public class WorkspaceController extends BaseController {
 			result = WorkspaceHelper.manager.progress(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
 		}
@@ -160,6 +163,7 @@ public class WorkspaceController extends BaseController {
 			result = WorkspaceHelper.manager.complete(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
 		}
@@ -187,6 +191,7 @@ public class WorkspaceController extends BaseController {
 			result = WorkspaceHelper.manager.reject(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
 		}
@@ -247,6 +252,7 @@ public class WorkspaceController extends BaseController {
 			result.put("msg", AGREE_SUCCESS);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
 		}
@@ -263,6 +269,7 @@ public class WorkspaceController extends BaseController {
 			result.put("msg", AGREE_REJECT);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
 		}
@@ -279,6 +286,7 @@ public class WorkspaceController extends BaseController {
 			result.put("msg", APPROVAL_SUCCESS);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
 		}
@@ -295,6 +303,7 @@ public class WorkspaceController extends BaseController {
 			result.put("msg", REJECT_SUCCESS);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
 		}
@@ -311,6 +320,24 @@ public class WorkspaceController extends BaseController {
 			result.put("msg", RECEIVE_SUCCESS);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "결재위임 함수")
+	@ResponseBody
+	@PostMapping(value = "/reassign")
+	public Map<String, Object> reassign(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkspaceHelper.service.reassign(params);
+			result.put("msg", "결재가 위임 되었습니다.");
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
 		}

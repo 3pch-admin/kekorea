@@ -63,10 +63,8 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				<td class="indent5">
 					<select name="state" id="state" class="width-100">
 						<option value="">선택</option>
-						<option value="작업중">작업중</option>
-						<option value="승인중">승인중</option>
-						<option value="승인됨">승인됨</option>
-						<option value="폐기됨">폐기됨</option>
+						<option value="사용">사용</option>
+						<option value="폐기">폐기</option>
 					</select>
 				<th>버전</th>
 				<td>
@@ -155,7 +153,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
-			const list = [ "작업중", "승인중", "승인됨", "폐기됨" ];
+			const list = [ "사용", "폐기" ];
 			function _layout() {
 				return [ {
 					dataField : "lotNo",
@@ -602,35 +600,29 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					return false;
 				}
 
-				console.log(checkedItems);
-				// 				for (let i = 0; i < checkedItems.length; i++) {
-				// 					const oid = checkedItems[i].item.oid;
-				// 					const latest = checkedItems[i].item.latest;
-				// 					const rowIndex = checkedItems[i].rowIndex;
-				// 					const state = checkedItems[i].state;
+				for (let i = 0; i < checkedItems.length; i++) {
+					const oid = checkedItems[i].item.oid;
+					const latest = checkedItems[i].item.latest;
+					const rowIndex = checkedItems[i].rowIndex;
+					const state = checkedItems[i].state;
+					checkedItems[i].item.note = ""; // 개정사유는 초기화한다.
+					if (state !== "승인됨") {
+						// 						alert("승인되지 않은 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
+						// 						return false;
+					}
 
-				// 					if (state !== "승인됨") {
-				// 						// 						alert("승인되지 않은 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
-				// 						// 						return false;
-				// 					}
+					if (!latest) {
+						alert("최신버전이 아닌 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
+						return false;
+					}
 
-				// 					if (!latest) {
-				// 						alert("최신버전이 아닌 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
-				// 						return false;
-				// 					}
-
-				// 					if (oid === undefined) {
-				// 						alert("신규로 작성한 데이터가 존재합니다.\n" + rowIndex + "행 데이터");
-				// 						return false;
-				// 					}
-				// 				}
-				// 				const url = getCallUrl("/kePart/revise");
-				console.log(checkedItems)
+					if (oid === undefined) {
+						alert("신규로 작성한 데이터가 존재합니다.\n" + rowIndex + "행 데이터");
+						return false;
+					}
+				}
 				const panel = popup("/Windchill/plm/kePart/revise", 1600, 550);
 				panel.list = checkedItems;
-				// 				console.log(checkedItems);
-				// 				console.log(panel.list);
-
 			}
 
 			function exportExcel() {

@@ -16,6 +16,7 @@ import e3ps.common.util.DateUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.service.DocumentHelper;
+import e3ps.erp.service.ErpHelper;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputDocumentLink;
@@ -301,6 +302,14 @@ public class StandardPartlistService extends StandardManager implements Partlist
 			trs.rollback();
 			throw e;
 		} finally {
+
+			System.out.println("==" + ErpHelper.cacheManager);
+			System.out.println("==1" + ErpHelper.unitCache);
+			System.out.println("==2" + ErpHelper.validateCache);
+
+			ErpHelper.validateCache.clear();
+			ErpHelper.unitCache.clear();
+			ErpHelper.validateCache.clear();
 			if (trs != null)
 				trs.rollback();
 		}

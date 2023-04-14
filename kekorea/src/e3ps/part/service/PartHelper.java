@@ -90,21 +90,9 @@ import wt.vc.views.View;
 import wt.vc.views.ViewHelper;
 import wt.vc.wip.WorkInProgressHelper;
 
-/**
- * 
- * @author JunHo
- * @since 2018-11-28
- * @version 1.0
- */
 public class PartHelper {
 
-	// public static final String[] CADTYPE_DISPLAY = new String[] { "어셈블리
-	// (ASSEMBLY)", "파트 (PART)", "도면 (CADDRAWING)" };
-
 	public static final String[] CADTYPE_DISPLAY = new String[] { "어셈블리 (ASSEMBLY)", "파트 (PART)" };
-
-	// public static final String[] CADTYPE_VALUE = new String[] { "separable",
-	// "component", "CADDRAWING" };
 
 	public static final String[] CADTYPE_VALUE = new String[] { "separable", "component" };
 
@@ -2187,11 +2175,18 @@ public class PartHelper {
 		return map;
 	}
 
+	/**
+	 * 부품 검색 함수
+	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<PartDTO> list = new ArrayList<>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTPart.class, true);
+		int idx_m = query.appendClassList(WTPartMaster.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, WTPart.class, WTPartMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_m);
 
 		QuerySpecUtils.toOrderBy(query, idx, WTPart.class, WTPart.CREATE_TIMESTAMP, false);
 		PageQueryUtils pager = new PageQueryUtils(params, query);
@@ -2208,12 +2203,12 @@ public class PartHelper {
 		return map;
 	}
 
-	//부품 정보 관련문서
+	// 부품 정보 관련문서
 	public JSONArray jsonArrayAui(String oid) throws Exception {
 		ArrayList<Map<String, String>> list = new ArrayList<>();
 //		WTPart part = (WTPart) CommonUtils.getObject(oid);
 		QuerySpec query = new QuerySpec();
-		
+
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -2232,14 +2227,15 @@ public class PartHelper {
 		return JSONArray.fromObject(list);
 	}
 
-	//버전 이력
+	// 버전 이력
 	public JSONArray list(WTPartMaster master) throws Exception {
 		ArrayList<PartDTO> list = new ArrayList<>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTPart.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, WTPart.class, "masterReference.key.id", master.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, WTPart.class, "masterReference.key.id",
+				master.getPersistInfo().getObjectIdentifier().getId());
 		QueryResult result = PersistenceHelper.manager.find(query);
-		while(result.hasMoreElements()) {
+		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			WTPart part = (WTPart) obj[0];
 			PartDTO dto = new PartDTO(part);
@@ -2256,7 +2252,7 @@ public class PartHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTPartMaster.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, WTPartMaster.class, WTPartMaster.NUMBER, partNo);
-		
+
 		return null;
 	}
 }
