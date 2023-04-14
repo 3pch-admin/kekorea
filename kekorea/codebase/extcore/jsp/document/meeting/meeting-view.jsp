@@ -10,6 +10,8 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 <%@include file="/extcore/include/tinymce.jsp"%>
 <%@include file="/extcore/include/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
+<input type="hidden" name="poid" id="poid" value="<%=dto.getPoid()%>">
+<input type="hidden" name="loid" id="loid" value="<%=dto.getLoid()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -19,7 +21,7 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 			</div>
 		</td>
 		<td class="right">
-<!-- 			<input type="button" value="수정" title="수정" class="green" onclick="modify();"> -->
+			<input type="button" value="수정" title="수정" class="green" onclick="modify();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -67,7 +69,9 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 	</tr>
 </table>
 <script type="text/javascript">
-
+console.log(document.getElementById("oid").value);
+console.log(document.getElementById("poid").value);
+console.log(document.getElementById("loid").value);
 	function loadTinymce() {
 		tinymce.init({
 			selector : 'textarea',
@@ -95,4 +99,10 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(_myGridID);
 	});
+	
+	function modify() {
+		const loid = document.getElementById("loid").value;
+		const url = getCallUrl("/meeting/meetingModify?oid=" + loid);
+		document.location.href = url;
+	}
 </script>

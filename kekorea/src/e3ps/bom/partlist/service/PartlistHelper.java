@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.eclipse.ui.internal.PartList;
 
 import e3ps.bom.partlist.MasterDataLink;
 import e3ps.bom.partlist.PartListData;
@@ -145,6 +146,36 @@ public class PartlistHelper {
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	public JSONArray jsonArrayAui(String oid) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+//		PartList partlist = (PartList) CommonUtils.getObject(oid);
+//
+//		QuerySpec query = new QuerySpec();
+//		int idx = query.appendClassList(Meeting.class, true);
+//		int idx_link = query.appendClassList(PartListMasterProjectLink.class, true);
+//		QuerySpecUtils.toInnerJoin(query, Meeting.class, PartListMasterProjectLink.class, WTAttributeNameIfc.ID_NAME,
+//				"roleAObjectRef.key.id", idx, idx_link);
+//		QuerySpecUtils.toEqualsAnd(query, idx_link, PartListMasterProjectLink.class, "roleAObjectRef.key.id",
+//				partlist.getPersistInfo().getObjectIdentifier().getId());
+//		QueryResult result = PersistenceHelper.manager.find(query);
+//		while (result.hasMoreElements()) {
+//			Object[] obj = (Object[]) result.nextElement();
+//			PartListMasterProjectLink link = (PartListMasterProjectLink) obj[1];
+//			Project project = link.getProject();
+//			Map<String, String> map = new HashMap<>();
+//			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+//			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
+//			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+//			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
+//			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
+//			map.put("kekNumber", project.getKekNumber());
+//			map.put("keNumber", project.getKeNumber());
+//			map.put("description", project.getDescription());
+//			list.add(map);
+//		}
+		return JSONArray.fromObject(list);
 	}
 
 	public Map<String, Object> findPartList(Map<String, Object> param) throws Exception {

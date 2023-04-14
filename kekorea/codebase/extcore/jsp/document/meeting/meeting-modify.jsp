@@ -1,3 +1,6 @@
+<%@page import="e3ps.doc.meeting.service.MeetingHelper"%>
+<%@page import="net.sf.json.JSONArray"%>
+<%@page import="e3ps.doc.meeting.dto.MeetingDTO"%>
 <%@page import="java.util.Map"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
@@ -5,21 +8,28 @@
 <%
 ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.getAttribute("list");
 %>
+<%
+MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
+String oid = dto.getOid();
+JSONArray data = MeetingHelper.manager.jsonArrayAui(oid);
+%>
 <!-- tinymce -->
 <%@include file="/extcore/include/tinymce.jsp"%>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-
+<input type="hidden" name="oid" id="oid" value="<%=dto.getLoid()%>">
+<input type="hidden" name="poid" id="poid" value="<%=dto.getPoid()%>">
+<input type="hidden" name="loid" id="loid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
 			<div class="header">
 				<img src="/Windchill/extcore/images/header.png">
-				회의록 등록
+				회의록 수정
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="등록" title="등록" onclick="create();">
+			<input type="button" value="수정" title="수정" onclick="modify();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -35,7 +45,7 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 	<tr>
 		<th class="req lb">회의록 제목</th>
 		<td class="indent5">
-			<input type="text" name="name" id="name" class="AXInput width-500">
+			<input type="text" name="name" id="name" class="AXInput width-500"value="<%=dto.getName()%>">
 		</td>
 		<th>회의록 템플릿 선택</th>
 		<td class="indent5">
@@ -45,9 +55,15 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 				for (Map<String, String> map : list) {
 					String value = map.get("oid");
 					String name = map.get("name");
-				%>
-				<option value="<%=value%>"><%=name%></option>
-				<%
+					if(dto.getT_name().equals(map.get("name"))){
+						%>
+						<option value="<%=value%>"  selected="selected"><%=name%></option>
+						<%
+					}else{
+						%>
+						<option value="<%=value%>" ><%=name%></option>
+						<%
+					}
 				}
 				%>
 			</select>
@@ -55,155 +71,50 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 	</tr>
 	<tr>
 		<th class="req lb">KEK 작번</th>
-		<td colspan="3">
-			<div class="include">
-				<input type="button" value="작번 추가" title="작번 추가" class="blue" onclick="_insert();">
-				<input type="button" value="작번 삭제" title="작번 삭제" class="red" onclick="_deleteRow();">
-				<div id="_grid_wrap" style="height: 150px; border-top: 1px solid #3180c3; margin: 5px;"></div>
-				<script type="text/javascript">
-					let _myGridID;
-					const _columns = [ {
-						dataField : "projectType_name",
-						headerText : "작번유형",
-						dataType : "string",
-						width : 80,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "customer_name",
-						headerText : "거래처",
-						dataType : "string",
-						width : 120,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "mak_name",
-						headerText : "막종",
-						dataType : "string",
-						width : 120,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "detail_name",
-						headerText : "막종상세",
-						dataType : "string",
-						width : 120,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "kekNumber",
-						headerText : "KEK 작번",
-						dataType : "string",
-						width : 100,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "keNumber",
-						headerText : "KE 작번",
-						dataType : "string",
-						width : 100,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "description",
-						headerText : "작업 내용",
-						dataType : "string",
-						style : "aui-left",
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "oid",
-						headerText : "",
-						visible : false
-					} ]
-					function _createAUIGrid(columnLayout) {
-						const props = {
-							headerHeight : 30,
-							showRowNumColumn : true,
-							showRowCheckColumn : true,
-							showStateColumn : true,
-							rowNumHeaderText : "번호",
-							showAutoNoDataMessage : false,
-							selectionMode : "singleRow",
-							enableSorting : false
-						}
-						_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-					}
 
-					function _insert() {
-						const url = getCallUrl("/project/popup?method=append&multi=true");
-						popup(url, 1500, 700);
-					}
-
-					function append(data, callBack) {
-						for (let i = 0; i < data.length; i++) {
-							const item = data[i].item;
-							const isUnique = AUIGrid.isUniqueValue(_myGridID, "oid", item.oid);
-							if (isUnique) {
-								AUIGrid.addRow(_myGridID, item, "first");
-							}
-						}
-						callBack(true);
-					}
-
-					function _deleteRow() {
-						const checked = AUIGrid.getCheckedRowItems(_myGridID);
-						if (checked.length === 0) {
-							alert("삭제할 행을 선택하세요.");
-							return false;
-						}
-
-						for (let i = checked.length - 1; i >= 0; i--) {
-							const rowIndex = checked[i].rowIndex;
-							AUIGrid.removeRow(_myGridID, rowIndex);
-						}
-					}
-				</script>
-			</div>
-		</td>
+ 		<td class="indent5" colspan="3">
+ 			<jsp:include page="/extcore/include/project-include.jsp">
+ 				<jsp:param value="<%=dto.getOid()%>" name="oid" />
+				<jsp:param value="update" name="mode" />
+ 				<jsp:param value="true" name="multi" />
+ 				<jsp:param value="meeting" name="obj" />
+ 				<jsp:param value="150" name="height" />
+ 			</jsp:include>
+ 		</td>
 	</tr>
 	<tr>
 		<th class="req lb">내용</th>
 		<td class="indent5" colspan="3">
-			<textarea name="description" id="description" rows="8"></textarea>
+			<textarea name="description" id="description" rows="8"><%=dto.getContent()%></textarea>
 		</td>
 	</tr>
 	<tr>
 		<th class="lb">첨부파일</th>
 		<td class="indent5" colspan="3">
 			<jsp:include page="/extcore/include/secondary-include.jsp">
-				<jsp:param value="secondary" name="oid" />
+				<jsp:param value="<%=dto.getOid()%>" name="oid" />
 				<jsp:param value="create" name="mode" />
 			</jsp:include>
 		</td>
 	</tr>
 </table>
+
 <script type="text/javascript">
+
 	// 등록
-	function create() {
+	function modify() {
 
 		const params = new Object();
-		const url = getCallUrl("/meeting/create");
+		const url = getCallUrl("/meeting/meetingModify");
+		const oid = document.getElementById("poid").value;
 		const content = tinymce.activeEditor.getContent();
 		const _addRows = AUIGrid.getAddedRowItems(_myGridID);
+		const _removeRows = AUIGrid.getRemoveRowItems(_myGridID);
 		params.name = document.getElementById("name").value;
 		params.content = content;
 		params.tiny = document.getElementById("tiny").value;
 		params._addRows = _addRows;
+		params._removeRows = _removeRows;
 		params.secondarys = toArray("secondarys");
 		
 		if (isNull(params.name)) {
@@ -229,6 +140,7 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
+			console.log(data);
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
