@@ -18,10 +18,12 @@ import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.service.PartlistHelper;
+import e3ps.common.util.CommonUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.erp.ErpConnectionPool;
+import e3ps.erp.ErpSendHistory;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputDocumentLink;
@@ -689,13 +691,16 @@ public class ErpHelper {
 	 * 수배표 전송
 	 */
 	public void sendToErp(PartListMaster master) throws Exception {
+		System.out.println("수배표 전송 START = " + new Timestamp(new Date().getTime()));
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		String sendQuery = "";
 		try {
 			con = dataSource.getConnection();
 			st = con.createStatement();
 
+			con.setAutoCommit(false);
 			// 작번 개수 만큼 전송
 			QueryResult result = PersistenceHelper.manager.navigate(master, "project", PartListMasterProjectLink.class);
 
@@ -712,6 +717,9 @@ public class ErpHelper {
 
 				ArrayList<PartListData> list = PartlistHelper.manager.getPartListData(master);
 				String disNo = "WANT_" + master.getNumber();
+
+				System.out.println("수배표 전체 전송 개수 :  " + list.size());
+
 				for (PartListData data : list) {
 					StringBuffer sql = new StringBuffer();
 
@@ -729,6 +737,7 @@ public class ErpHelper {
 
 					Map<String, Object> pjtData = ErpHelper.manager.getPjtInfoByKekNumber(kekNumber);
 					String pjtSeq = (String) pjtData.get("pjtSeq");
+//					sql.append("'" + StringUtils.replaceToValue(pjtSeq) + "', ");
 					sql.append("'" + pjtSeq + "', ");
 
 					if (engType.contains("기계")) {
@@ -744,26 +753,25 @@ public class ErpHelper {
 
 					String userId = master.getCreatorName();
 					sql.append("'" + userId + "', ");
-
 					sql.append("'" + accDate + "', ");
 
 					int lotNo = data.getLotNo();
 					sql.append("'" + getKekLotSeq(String.valueOf(lotNo)) + "', ");
 
 					String partNo = data.getPartNo();
-					sql.append("'" + getKekItemSeq(partNo) + "', ");
+					sql.append("'" + getKekItemSeq(StringUtils.replaceToValue(partNo)) + "', ");
 
 					String makerName = data.getMaker();
-					sql.append("'" + getKekMakerSeq(makerName) + "', ");
+					sql.append("'" + getKekMakerSeq(StringUtils.replaceToValue(makerName)) + "', ");
 
 					String customer = data.getCustomer();
-					sql.append("'" + getKekCustSeq(customer) + "', ");
+					sql.append("'" + getKekCustSeq(StringUtils.replaceToValue(customer)) + "', ");
 
 					String unitName = data.getUnit();
-					sql.append("'" + getKekUnitSeq(unitName) + "', ");
+					sql.append("'" + getKekUnitSeq(StringUtils.replaceToValue(unitName)) + "', ");
 
 					String currency = data.getCurrency();
-					sql.append("'" + getKekCurrencySeq(currency) + "', ");
+					sql.append("'" + getKekCurrencySeq(StringUtils.replaceToValue(currency)) + "', ");
 
 					int qty = data.getQuantity();
 					sql.append("'" + qty + "', ");
@@ -774,12 +782,14 @@ public class ErpHelper {
 					sql.append("'" + data.getNote() + "', ");
 
 					String classification = data.getClassification();
-					sql.append("'" + getKekSupplySeq(classification) + "', ");
+					sql.append("'" + getKekSupplySeq(StringUtils.replaceToValue(classification)) + "', ");
 					sql.append("'" + data.getPrice() + "', ");
 					sql.append("'" + accDate + "', ");
 
 					String lastId = master.getLast();
 					sql.append("'" + lastId + "');");
+					sendQuery += sql.toString() + "\n";
+
 					st.executeUpdate(sql.toString());
 				}
 
@@ -787,11 +797,19 @@ public class ErpHelper {
 				sb.append("EXEC KEK_SPLMBOMIF '" + disNo + "'");
 				st.executeUpdate(sb.toString());
 			}
+			// 수배표 전송 ERP 이력
+			ErpHelper.service.save(master.getName(), true, sendQuery, "수배표");
+
+			con.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
+			con.rollback();
+			ErpHelper.service.save(master.getName(), false, sendQuery, "수배표");
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
+		System.out.println("수배표 전송 END = " + new Timestamp(new Date().getTime()));
 	}
 
 	/**

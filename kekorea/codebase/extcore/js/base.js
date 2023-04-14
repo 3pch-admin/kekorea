@@ -259,3 +259,13 @@ function toRegister(params, rows) {
 	params.approvalRows = approvals;
 	params.receiveRows = receives;
 }
+
+function download(oid) {
+	const url = getCallUrl("/download");
+	const params = new Object();
+	params.aoid = oid;
+	console.log(params);
+	call(url, params, function(data) {
+		console.log(data);
+	})
+}

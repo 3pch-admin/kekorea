@@ -46,8 +46,11 @@ import wt.util.WTAttributeNameIfc;
 
 public class ProjectHelper {
 
-	public final static String PM_ID = "yspark";
-	public final static String SUB_PM_ID = "19940009";
+	public final static String PM_ID = "jhkim";
+	public final static String SUB_PM_ID = "jhkim";
+	
+//	public final static String PM_ID = "yspark";
+//	public final static String SUB_PM_ID = "19940009";
 
 	public static final String STAND = "준비중";
 	public static final String INWORK = "작업 중";

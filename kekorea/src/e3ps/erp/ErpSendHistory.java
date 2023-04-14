@@ -1,5 +1,7 @@
 package e3ps.erp;
 
+import com.ptc.windchill.annotations.metadata.ColumnProperties;
+import com.ptc.windchill.annotations.metadata.ColumnType;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
@@ -20,7 +22,7 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "sendType", type = String.class, constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "sendQuery", type = String.class, constraints = @PropertyConstraints(upperLimit = 4000))
+				@GeneratedProperty(name = "sendQuery", type = String.class, columnProperties = @ColumnProperties(columnType = ColumnType.CLOB))
 
 		}
 

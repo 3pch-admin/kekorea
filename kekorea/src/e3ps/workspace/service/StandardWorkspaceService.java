@@ -390,6 +390,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			trs.rollback();
 			throw e;
 		} finally {
+			System.out.println("롤백 안하나?" + trs);
 			if (trs != null)
 				trs.rollback();
 		}
@@ -549,5 +550,31 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			if (trs != null)
 				trs.rollback();
 		}
+	}
+
+	@Override
+	public void reassign(Map<String, Object> params) throws Exception {
+		String oid = (String) params.get("oid");
+		String reassignUserOid = (String) params.get("reassignUserOid");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			WTUser user = (WTUser) CommonUtils.getObject(reassignUserOid);
+			ApprovalLine line = (ApprovalLine) CommonUtils.getObject(oid);
+			line.setOwnership(Ownership.newOwnership(user));
+			PersistenceHelper.manager.modify(line);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+
 	}
 }

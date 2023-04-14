@@ -163,9 +163,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<li>
 						<a onclick="moveToPage(this, '/part/bundle', '부품 관리 > 부품 일괄 등록');">부품 일괄 등록</a>
 					</li>
-<li>
+					<li>
 						<a onclick="moveToPage(this, '/part/spec', '부품 관리 > 제작사양서 등록');">제작사양서 등록</a>
-					</li>					
+					</li>
 					<!-- 					<li> -->
 					<!-- 						<a href="contacts_2.html">제작사양서 등록</a> -->
 					<!-- 					</li> -->

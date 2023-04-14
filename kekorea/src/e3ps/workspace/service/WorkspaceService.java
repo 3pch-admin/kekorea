@@ -39,4 +39,9 @@ public interface WorkspaceService {
 	 * 수신 확인
 	 */
 	public abstract void _receive(Map<String, Object> params) throws Exception;
+
+	/**
+	 * 결재 위임
+	 */
+	public abstract void reassign(Map<String, Object> params) throws Exception;
 }

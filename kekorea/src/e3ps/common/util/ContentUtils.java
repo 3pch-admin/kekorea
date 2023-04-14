@@ -64,14 +64,15 @@ public class ContentUtils {
 			ApplicationData data = (ApplicationData) result.nextElement();
 			String fileIcon = getFileIcon(data.getFileName());
 			String url = ContentHelper.getDownloadURL(holder, data, false, data.getFileName()).toString();
+			String aoid = data.getPersistInfo().getObjectIdentifier().getStringValue();
 			primary = new HashMap<>();
 			primary.put("oid", holder.getPersistInfo().getObjectIdentifier().getStringValue());
-			primary.put("aoid", data.getPersistInfo().getObjectIdentifier().getStringValue());
+			primary.put("aoid", aoid);
 			primary.put("name", data.getFileName());
 			primary.put("fileSizeKB", data.getFileSizeKB() + "KB");
 			primary.put("fileIcon", fileIcon);
 			primary.put("url", url);
-			primary.put("link", "<a href=" + url + "><img src=" + fileIcon + "></a>");
+			primary.put("link", "<a href='javascript:download(" + aoid + ");'><img src=" + fileIcon + "></a>");
 			primary.put("fileSize", data.getFileSize());
 		}
 		return primary;

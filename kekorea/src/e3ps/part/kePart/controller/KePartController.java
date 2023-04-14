@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
+import e3ps.doc.service.DocumentHelper;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
@@ -98,9 +99,9 @@ public class KePartController extends BaseController {
 				removeRow.add(dto);
 			}
 			HashMap<String, List<KePartDTO>> dataMap = new HashMap<>();
-			dataMap.put("addRows", addRow); 
-			dataMap.put("editRows", editRow); 
-			dataMap.put("removeRows", removeRow); 
+			dataMap.put("addRows", addRow);
+			dataMap.put("editRows", editRow);
+			dataMap.put("removeRows", removeRow);
 
 			result = KePartHelper.manager.isValid(addRow, editRow);
 			if ((boolean) result.get("isExist")) {
@@ -146,10 +147,10 @@ public class KePartController extends BaseController {
 			}
 
 			HashMap<String, List<KePartDTO>> dataMap = new HashMap<>();
-			dataMap.put("addRows", addRow); 
+			dataMap.put("addRows", addRow);
 
 			for (KePartDTO dto : addRow) {
-				KePart kePart = (KePart) CommonUtils.getObject(dto.getOid()); 
+				KePart kePart = (KePart) CommonUtils.getObject(dto.getOid());
 				String keNumber = dto.getKeNumber();
 				if (!keNumber.equals(kePart.getMaster().getKeNumber())) {
 					result.put("result", FAIL);
@@ -175,12 +176,12 @@ public class KePartController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		KePart kePart = (KePart) CommonUtils.getObject(oid);
 		KePartDTO dto = new KePartDTO(kePart);
-		String[] primarys = ContentUtils.getPrimary(dto.getOid());
+		Map<String, Object> primary = ContentUtils.getPrimary(dto.getOid());
 		JSONArray list = KePartHelper.manager.history(kePart.getMaster());
 		JSONArray data = KePartHelper.manager.jsonArrayAui(oid);
 		model.addObject("data", data);
 		model.addObject("list", list);
-		model.addObject("primarys", primarys);
+		model.addObject("primarys", primary);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/part/kePart/kePart-view");
 		return model;
@@ -196,15 +197,30 @@ public class KePartController extends BaseController {
 		model.setViewName("popup:/part/kePart/kePart-history");
 		return model;
 	}
-	
-	@Description(value = "KE 부품 탭 페이지")
-	@GetMapping(value = "/tabper")
-	public ModelAndView tabper(@RequestParam String oid, @RequestParam String moid) throws Exception {
+
+	@Description(value = "KE 부품 결재 페이지")
+	@GetMapping(value = "/register")
+	public ModelAndView register() throws Exception {
 		ModelAndView model = new ModelAndView();
-		model.addObject("oid", oid);
-		model.addObject("moid", moid);
-		model.setViewName("popup:/part/kePart/kePart-tabper");
+		model.setViewName("popup:/part/kePart/kePart-register");
 		return model;
 	}
+	
 
+	@Description(value = "KePart 결재")
+	@PostMapping(value = "/register")
+	@ResponseBody
+	public Map<String, Object> register(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			KePartHelper.service.register(params);
+			result.put("result", SUCCESS);
+			result.put("msg", REGISTER_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("msg", e.toString());
+			result.put("result", FAIL);
+		}
+		return result;
+	}
 }

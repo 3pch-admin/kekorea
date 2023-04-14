@@ -1,15 +1,20 @@
 package e3ps.part.kePart.service;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.epm.keDrawing.KeDrawing;
-import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import e3ps.part.kePart.beans.KePartDTO;
+import e3ps.workspace.ApprovalContract;
+import e3ps.workspace.ApprovalContractPersistableLink;
+import e3ps.workspace.service.WorkspaceHelper;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
 import wt.content.ContentRoleType;
@@ -161,6 +166,50 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				ApplicationData dd = ApplicationData.newApplicationData(latest);
 				dd.setRole(ContentRoleType.PRIMARY);
 				dd = (ApplicationData) ContentServerHelper.service.updateContent(latest, dd, primaryPath);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void register(Map<String, Object> params) throws Exception {
+		String name = (String) params.get("name"); // 제목
+		String description = (String) params.get("description"); // 의견
+		ArrayList<Map<String, String>> _addRows = (ArrayList<Map<String, String>>) params.get("_addRows"); // 결재문서
+		ArrayList<Map<String, String>> agreeRows = (ArrayList<Map<String, String>>) params.get("agreeRows"); // 검토
+		ArrayList<Map<String, String>> approvalRows = (ArrayList<Map<String, String>>) params.get("approvalRows"); // 결재
+		ArrayList<Map<String, String>> receiveRows = (ArrayList<Map<String, String>>) params.get("receiveRows"); // 수신
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			ApprovalContract contract = ApprovalContract.newApprovalContract();
+			contract.setName(name);
+			contract.setDescription(description);
+			contract.setStartTime(new Timestamp(new Date().getTime()));
+			contract.setState(WorkspaceHelper.STATE_APPROVAL_APPROVING);
+			contract.setContractType("KEPART");
+			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
+
+			for (Map<String, String> _addRow : _addRows) {
+				String oid = _addRow.get("oid"); // document oid
+				KePart kePart = (KePart) CommonUtils.getObject(oid);
+				ApprovalContractPersistableLink aLink = ApprovalContractPersistableLink
+						.newApprovalContractPersistableLink(contract, kePart);
+				PersistenceHelper.manager.save(aLink);
+			}
+
+			if (approvalRows.size() > 0) {
+				WorkspaceHelper.service.register(contract, agreeRows, approvalRows, receiveRows);
 			}
 
 			trs.commit();

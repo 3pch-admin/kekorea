@@ -82,6 +82,7 @@ public class ApprovalLineDTO {
 			setReads(line.getReads());
 			setType(line.getType());
 			setName(line.getName());
+			setCreator(line.getMaster().getOwnership().getOwner().getFullName());
 			setRole(line.getRole());
 			setSubmiter(master.getOwnership().getOwner().getFullName());
 			setState(line.getState());

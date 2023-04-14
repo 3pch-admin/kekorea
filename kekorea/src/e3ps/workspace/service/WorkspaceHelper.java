@@ -756,11 +756,20 @@ public class WorkspaceHelper {
 		}
 		return JSONArray.fromObject(list);
 	}
-	
+
 	/**
 	 * 일괄결재 prefix 가져오기
 	 */
 	public String prefix(Persistable per) {
-		
+		String prefix = "";
+		if (per instanceof WTDocument) {
+		} else if (per instanceof EPMDocument) {
+			prefix = "도면";
+		} else if (per instanceof WTPart) {
+			prefix = "부품";
+		} else if (per instanceof PartListMaster) {
+			prefix = "수배표";
+		}
+		return prefix;
 	}
 }

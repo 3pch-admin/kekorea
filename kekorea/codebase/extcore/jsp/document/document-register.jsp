@@ -191,6 +191,8 @@
 					alert(data.msg);
 					if (data.result) {
 						document.location.href = getCallUrl("/workspace/approval");
+					} else {
+						closeLayer();
 					}
 				})
 			}

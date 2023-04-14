@@ -891,4 +891,18 @@ public class PartlistHelper {
 		}
 		return list;
 	}
+
+	/**
+	 * 수배표 프로젝트 링크
+	 */
+	public ArrayList<PartListMasterProjectLink> getLinks(PartListMaster mm) throws Exception {
+		ArrayList<PartListMasterProjectLink> list = new ArrayList<>();
+		QueryResult result = PersistenceHelper.manager.navigate(mm, "project", PartListMasterProjectLink.class, false);
+		while (result.hasMoreElements()) {
+			PartListMasterProjectLink link = (PartListMasterProjectLink) result.nextElement();
+			list.add(link);
+		}
+
+		return list;
+	}
 }

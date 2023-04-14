@@ -54,9 +54,6 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 		<li>
 			<a href="#tabs-1">결재정보</a>
 		</li>
-		<li>
-			<a href="#tabs-2">상세정보</a>
-		</li>
 	</ul>
 	<div id="tabs-1">
 		<table class="view-table">
@@ -94,9 +91,9 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			<tr>
 				<th class="lb">위임</th>
 				<td class="indent5" colspan="3">
-					<input type="text" name="reassignUser" id="reassignUser" data-multi="false" data-method="setUser">
-					<input type="button" title="위임" value="위임" id="reassignApprovalBtn" data-oid="<%=dto.getOid()%>">
+					<input type="text" name="reassignUser" id="reassignUser">
 					<input type="hidden" name="reassignUserOid" id="reassignUserOid">
+					<input type="button" title="위임" value="위임" onclick="reassign();">
 				</td>
 			</tr>
 			<%
@@ -110,18 +107,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			</tr>
 		</table>
 
-		<table class="button-table">
-			<tr>
-				<td class="left">
-					<div class="header">
-						<img src="/Windchill/extcore/images/header.png">
-						관련 객체
-					</div>
-				</td>
-			</tr>
-		</table>
-
-		<jsp:include page="/extcore/jsp/workspace/include/persistable.jsp">
+		<jsp:include page="/extcore/jsp/workspace/persistable.jsp">
 			<jsp:param value="<%=per.getPersistInfo().getObjectIdentifier().getStringValue()%>" name="oid" />
 		</jsp:include>
 
@@ -135,6 +121,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				</td>
 			</tr>
 		</table>
+
 		<div id="_grid_wrap_" style="height: 230px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let _myGridID_;
@@ -197,23 +184,39 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			}
 		</script>
 	</div>
-	<div id="tabs-2">
-		<%
-		// 수배표 정보
-		if (per instanceof PartListMaster) {
-		%>
-		<jsp:include page="/extcore/jsp/workspace/partlist.jsp">
-			<jsp:param value="<%=per.getPersistInfo().getObjectIdentifier().getStringValue()%>" name="oid" />
-		</jsp:include>
-		<%
-		}
-		%>
-	</div>
 </div>
 
 <script type="text/javascript">
 	const oid = document.getElementById("oid").value;
 	const poid = document.getElementById("poid").value;
+
+	function reassign() {
+		const reassignUser = document.getElementById("reassignUser");
+		const reassignUserOid = document.getElementById("reassignUserOid").value;
+		if (isNull(reassignUser.value)) {
+			alert("해당 결재를 위임할 사용자를 선택하세요.");
+			return false;
+		}
+
+		if (!confirm(reassignUser.value + " 사용자에게 결재를 위임하시겠습니까?")) {
+			return false;
+		}
+
+		const url = getCallUrl("/workspace/reassign");
+		const params = new Object();
+		params.reassignUserOid = reassignUserOid;
+		params.oid = oid;
+		openLayer();
+		call(url, params, function(data) {
+			alert(reassignUser.value + "사용자에게 " + data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			} else {
+				closeLayer();
+			}
+		})
+	}
 
 	function _receive() {
 		if (!confirm("수신확인 하시겠습니까?")) {
@@ -308,6 +311,8 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}
@@ -316,20 +321,6 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 		document.getElementById("description").focus();
 		$("#tabs").tabs({
 			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					_createAUIGrid_(_columns_);
-					AUIGrid.resize(_myGridID_);
-					break;
-				case "tabs-2":
-					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
-					break;
-				}
-
-			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
@@ -338,25 +329,18 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 					if (_isCreated) {
 						AUIGrid.resize(_myGridID_);
 					} else {
-						_createAUIGrid_(_columns);
-					}
-					break;
-				case "tabs-2":
-					const isCreated = AUIGrid.isCreated(myGridID);
-					if (isCreated) {
-						AUIGrid.resize(myGridID);
-					} else {
-						createAUIGrid(columns);
+						_createAUIGrid_(_columns_);
 					}
 					break;
 				}
 			}
 		});
+		_createAUIGrid_(_columns_);
+		AUIGrid.resize(_myGridID_);
 		finderUser("reassignUser");
 	})
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(_myGridID_);
-		AUIGrid.resize(myGridID);
 	});
 </script>

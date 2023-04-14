@@ -76,8 +76,6 @@ public class CommonCodeHelper {
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.CODE_TYPE, false);
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.SORT, false);
 
-		System.out.println(query);
-
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
