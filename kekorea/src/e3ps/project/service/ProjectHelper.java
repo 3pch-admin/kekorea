@@ -19,6 +19,8 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
+import e3ps.org.Department;
+import e3ps.org.People;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.dto.ProjectDTO;
@@ -3795,5 +3797,36 @@ public class ProjectHelper {
 			list.add(map);
 		}
 		return JSONArray.fromObject(list);
+	}
+
+	public Map<String, Object> my(Map<String, Object> params) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<ProjectDTO> list = new ArrayList<ProjectDTO>();
+		
+		String machineOid = (String) params.get("machineOid");
+		String elecOid = (String) params.get("elecOid");
+		String softOid = (String) params.get("softOid");
+		
+		QuerySpec  query = new QuerySpec();
+		int idx = query.appendClassList(WTUser.class, true);
+		int idx_d = query.appendClassList(Department.class, false);
+		int idx_p = query.appendClassList(People.class, false);
+		
+		QuerySpecUtils.toInnerJoin(query, WTUser.class, People.class, WTAttributeNameIfc.ID_NAME,
+				"wtUserReference.key.id", idx, idx_p);
+		QuerySpecUtils.toInnerJoin(query, People.class, Department.class, "departmentReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx_p, idx_d);
+		CommonCode code = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+		QuerySpecUtils.toEqualsAnd(query, idx_d, Department.class, Department.CODE, code);
+		QuerySpecUtils.toOrderBy(query, idx, WTUser.class, WTUser.FULL_NAME, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WTUser wtUser = (WTUser) obj[0];
+			map.put("oid", wtUser.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", wtUser.getFullName());
+			list.add((ProjectDTO) map);
+		}
+		return map;
 	}
 }

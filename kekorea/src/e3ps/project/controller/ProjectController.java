@@ -43,6 +43,7 @@ import e3ps.project.task.dto.TaskDTO;
 import e3ps.project.template.service.TemplateHelper;
 import e3ps.project.variable.ProjectUserTypeVariable;
 import net.sf.json.JSONArray;
+import wt.fc.PersistenceHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -109,7 +110,7 @@ public class ProjectController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-
+		Project project = (Project) CommonUtils.getObject(oid);
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MONTH, -4);
 		Timestamp date = new Timestamp(calendar.getTime().getTime());
@@ -127,6 +128,39 @@ public class ProjectController extends BaseController {
 
 		People people = CommonUtils.sessionPeople();
 		Department department = people.getDepartment();
+		String machineOid = project.getUserId();
+//		String machineOid = project.getPersistInfo().getObjectIdentifier().getStringValue();
+		System.out.println("&&&&&&&&&&&&&&&&&&&" + machineOid);
+		if (department.getName().equals(machineOid)) {
+			WTUser user = (WTUser) CommonUtils.getObject(machineOid);
+			CommonCode userType = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.MACHINE, "USER_TYPE");
+			
+		}
+		if(machineOid == null) {
+			department.getName().equals(machineOid);
+			
+		}
+		String elecOid = "";
+		String softOid = "";
+		if (department.getCode().equals(machineOid)) {
+			machineOid = sessionUser.getPersistInfo().getObjectIdentifier().getStringValue();
+			WTUser user = (WTUser) CommonUtils.getObject(machineOid);
+			user.getFullName();
+		}
+		if (department.getCode().equals(elecOid)) {
+			elecOid = sessionUser.getPersistInfo().getObjectIdentifier().getStringValue();
+			WTUser user = (WTUser) CommonUtils.getObject(elecOid);
+			user.getFullName();
+		}
+		if (department.getCode().equals(softOid)) {
+			softOid = sessionUser.getPersistInfo().getObjectIdentifier().getStringValue();
+			WTUser user = (WTUser) CommonUtils.getObject(softOid);
+			user.getFullName();
+		}
+		
+		model.addObject(machineOid);
+		model.addObject(elecOid);
+		model.addObject(softOid);
 		model.addObject("department", department);
 		model.addObject("elecs", elecs);
 		model.addObject("softs", softs);
@@ -142,6 +176,24 @@ public class ProjectController extends BaseController {
 		model.setViewName("/extcore/jsp/project/project-my-list.jsp");
 		return model;
 	}
+
+//	@Description(value = "나의 작번")
+//	@ResponseBody
+//	@PostMapping(value = "/my")
+//	public Map<String, Object> my(@RequestBody Map<String, Object> params) throws Exception {
+//		HashMap<String, Object> result = new HashMap<String, Object>();
+//		try {
+//			System.out.println("헬퍼로 가긴 함");
+//			result = ProjectHelper.manager.my(params);
+//			result.put("result", SUCCESS);
+//		} catch (Exception e) {
+//			System.out.println("안감,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
+//			e.printStackTrace();
+//			result.put("result", FAIL);
+//			result.put("msg", e.toString());
+//		}
+//		return result;
+//	}
 
 	@Description(value = "프로젝트 등록 함수")
 	@ResponseBody
