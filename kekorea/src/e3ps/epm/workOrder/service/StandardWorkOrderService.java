@@ -75,7 +75,6 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 				Persistable persistable = (Persistable) CommonUtils.getObject(oid);
 				if (persistable instanceof KeDrawing) {
 					KeDrawing k = (KeDrawing) persistable;
-					System.out.println("=" + k.getMaster().getName());
 
 				}
 				WorkOrderDataLink link = WorkOrderDataLink.newWorkOrderDataLink(workOrder, persistable);

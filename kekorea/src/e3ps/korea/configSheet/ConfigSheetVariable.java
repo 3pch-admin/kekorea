@@ -9,6 +9,7 @@ import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import e3ps.admin.commonCode.CommonCode;
+import e3ps.admin.configSheetCode.ConfigSheetCode;
 import wt.fc.WTObject;
 import wt.org.WTUser;
 import wt.util.WTException;
@@ -21,7 +22,9 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "apply", type = String.class, javaDoc = "APPLY"),
 				
-				@GeneratedProperty(name="sort", type=Integer.class)
+				@GeneratedProperty(name = "spec", type = String.class, javaDoc = "SPEC"),
+
+				@GeneratedProperty(name = "sort", type = Integer.class)
 
 		},
 
@@ -29,7 +32,7 @@ import wt.util.WTException;
 
 				@GeneratedForeignKey(name = "VariableCategoryLink",
 
-						foreignKeyRole = @ForeignKeyRole(name = "category", type = CommonCode.class,
+						foreignKeyRole = @ForeignKeyRole(name = "category", type = ConfigSheetCode.class,
 
 								constraints = @PropertyConstraints(required = false)),
 
@@ -37,19 +40,19 @@ import wt.util.WTException;
 
 				@GeneratedForeignKey(name = "VariableItemLink",
 
-						foreignKeyRole = @ForeignKeyRole(name = "item", type = CommonCode.class,
+						foreignKeyRole = @ForeignKeyRole(name = "item", type = ConfigSheetCode.class,
 
 								constraints = @PropertyConstraints(required = false)),
 
-						myRole = @MyRole(name = "variable", cardinality = Cardinality.ONE)),
+						myRole = @MyRole(name = "variable", cardinality = Cardinality.ONE))
 
-				@GeneratedForeignKey(name = "VariableSpecLink",
-
-						foreignKeyRole = @ForeignKeyRole(name = "spec", type = CommonCode.class,
-
-								constraints = @PropertyConstraints(required = false)),
-
-						myRole = @MyRole(name = "variable", cardinality = Cardinality.ONE)),
+//				@GeneratedForeignKey(name = "VariableSpecLink",
+//
+//						foreignKeyRole = @ForeignKeyRole(name = "spec", type = ConfigSheetCode.class,
+//
+//								constraints = @PropertyConstraints(required = false)),
+//
+//						myRole = @MyRole(name = "variable", cardinality = Cardinality.ONE)),
 
 		}
 

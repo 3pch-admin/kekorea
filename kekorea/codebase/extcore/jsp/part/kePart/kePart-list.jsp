@@ -137,6 +137,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					<%
 					}
 					%>
+					<input type="button" value="결재" title="결재" onclick="register();">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -602,37 +603,43 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					return false;
 				}
 
-				console.log(checkedItems);
-				// 				for (let i = 0; i < checkedItems.length; i++) {
-				// 					const oid = checkedItems[i].item.oid;
-				// 					const latest = checkedItems[i].item.latest;
-				// 					const rowIndex = checkedItems[i].rowIndex;
-				// 					const state = checkedItems[i].state;
+				for (let i = 0; i < checkedItems.length; i++) {
+					const oid = checkedItems[i].item.oid;
+					const latest = checkedItems[i].item.latest;
+					const rowIndex = checkedItems[i].rowIndex;
+					const state = checkedItems[i].state;
+					checkedItems[i].item.note = ""; // 개정사유는 초기화한다.
+					if (state !== "승인됨") {
+						// 						alert("승인되지 않은 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
+						// 						return false;
+					}
 
-				// 					if (state !== "승인됨") {
-				// 						// 						alert("승인되지 않은 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
-				// 						// 						return false;
-				// 					}
+					if (!latest) {
+						alert("최신버전이 아닌 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
+						return false;
+					}
 
-				// 					if (!latest) {
-				// 						alert("최신버전이 아닌 부품이 포함되어있습니다.\n" + rowIndex + "행 데이터");
-				// 						return false;
-				// 					}
-
-				// 					if (oid === undefined) {
-				// 						alert("신규로 작성한 데이터가 존재합니다.\n" + rowIndex + "행 데이터");
-				// 						return false;
-				// 					}
-				// 				}
-				// 				const url = getCallUrl("/kePart/revise");
-				console.log(checkedItems)
+					if (oid === undefined) {
+						alert("신규로 작성한 데이터가 존재합니다.\n" + rowIndex + "행 데이터");
+						return false;
+					}
+				}
 				const panel = popup("/Windchill/plm/kePart/revise", 1600, 550);
 				panel.list = checkedItems;
-				// 				console.log(checkedItems);
-				// 				console.log(panel.list);
-
 			}
 
+
+			function register() {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				if (checkedItems.length == 0) {
+					alert("결재할 부품을 선택하세요.");
+					return false;
+				}
+				
+				const panel = popup("/Windchill/plm/kePart/register", 1600, 800);
+				panel.list = checkedItems;
+			}
+			
 			function exportExcel() {
 				const exceptColumnFields = [ "button", "primary" ];
 				const sessionName = document.getElementById("sessionName").value;

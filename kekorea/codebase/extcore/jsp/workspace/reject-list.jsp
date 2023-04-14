@@ -95,7 +95,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "기안일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd HH:MM:ss",
-					width : 130,
+					width : 150,
 					filter : {
 						showIcon : true,
 						inline : true,
@@ -106,7 +106,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "반려일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd HH:MM:ss",
-					width : 130,
+					width : 150,
 					filter : {
 						showIcon : true,
 						inline : true,

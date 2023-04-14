@@ -121,7 +121,7 @@ Department department = (Department) request.getAttribute("department");
 				</td>
 				<th>기계 담당자</th>
 				<td class="indent5">
-					<input type="text" name="machine" id="machine" readonly="readonly">
+					<input type="text" name="machine"  id="machine">
 					<input type="hidden" name="machineOid" id="machineOid">
 				</td>
 				<th>전기 담당자</th>
@@ -206,10 +206,13 @@ Department department = (Department) request.getAttribute("department");
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
-				const elecs = <%=elecs%>
-				const machines = <%=machines%>
-				const softs = <%=softs%>
-				return [ {
+				const elecs =
+		<%=elecs%>
+			const machines =
+		<%=machines%>
+			const softs =
+		<%=softs%>
+			return [ {
 					dataField : "state",
 					headerText : "진행상태",
 					dataType : "string",
@@ -670,7 +673,7 @@ Department department = (Department) request.getAttribute("department");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
-				console.log(data);
+					console.log(data);
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
@@ -683,12 +686,12 @@ Department department = (Department) request.getAttribute("department");
 				const params = new Object();
 				const url = getCallUrl("/project/save");
 				const editRows = AUIGrid.getEditedRowItems(myGridID);
-				
+
 				if (editRows.length == 0) {
 					alert("변경된 내용이 없습니다.");
 					return false;
 				}
-				
+
 				for (let i = 0; i < editRows.length; i++) {
 					const item = editRows[i];
 					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item, item.oid);
@@ -696,7 +699,7 @@ Department department = (Department) request.getAttribute("department");
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
 				}
-				
+
 				params.editRows = editRows;
 				call(url, params, function(data) {
 					alert(data.msg);
@@ -705,7 +708,7 @@ Department department = (Department) request.getAttribute("department");
 					}
 				})
 			}
-			
+
 			function exportExcel() {
 				const exceptColumnFields = [ "primary" ];
 				const sessionName = document.getElementById("sessionName").value;

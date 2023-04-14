@@ -1,3 +1,4 @@
+<%@page import="java.util.Map"%>
 <%@page import="java.util.Vector"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.common.util.ContentUtils"%>
@@ -9,14 +10,25 @@ String mode = request.getParameter("mode");
 <%
 // 주첨부
 if ("primary".equals(mode)) {
-	String[] primarys = ContentUtils.getPrimary(oid);
+	Map<String, Object> primarys = ContentUtils.getPrimary(oid);
+	if (primarys != null) {
 %>
 <div>
-	<a href="<%=primarys[5]%>">
-		<span style="position: relative; bottom: 2px;"><%=primarys[2]%></span>
-		<img src="<%=primarys[4]%>" style="position: relative; top: 1px;">
+	<a href="<%=primarys.get("url")%>">
+		<span style="position: relative; bottom: 2px;"><%=primarys.get("name")%></span>
+		<img src="<%=primarys.get("fileIcon")%>" style="position: relative; top: 1px;">
 	</a>
 </div>
+<%
+}
+if (primarys == null) {
+%>
+<font color="red">
+	<b>등록된 주 첨부파일이 없습니다.</b>
+</font>
+<%
+}
+%>
 <%
 } else if ("secondary".equals(mode)) {
 Vector<String[]> secondarys = ContentUtils.getSecondary(oid);

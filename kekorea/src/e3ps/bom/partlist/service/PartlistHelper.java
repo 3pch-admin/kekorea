@@ -1,27 +1,18 @@
 package e3ps.bom.partlist.service;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import e3ps.bom.partlist.MasterDataLink;
 import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.dto.PartListDTO;
-import e3ps.bom.partlist.dto.PartListDataDTO;
-import e3ps.bom.partlist.dto.PartListDataViewData;
 import e3ps.bom.tbom.dto.TBOMMasterDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
@@ -29,10 +20,6 @@ import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.doc.meeting.Meeting;
-import e3ps.doc.meeting.MeetingProjectLink;
-import e3ps.epm.workOrder.WorkOrderProjectLink;
-import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.org.People;
 import e3ps.part.service.PartHelper;
 import e3ps.project.Project;
@@ -535,9 +522,8 @@ public class PartlistHelper {
 			MasterDataLink link = (MasterDataLink) obj[0];
 			PartListData data = link.getData();
 
-			
 			WTPart wtPart = PartHelper.manager.getWTPart(data.getPartNo());
-			
+
 			Map<String, Object> map = new HashMap<>();
 			map.put("check", "OK");
 			map.put("lotNo", data.getLotNo());
@@ -640,6 +626,7 @@ public class PartlistHelper {
 	 */
 	public ArrayList<Map<String, Object>> compare(Project p1, ArrayList<Project> destList, String invoke)
 			throws Exception {
+		System.out.println("수배표 비교 START = " + new Timestamp(new Date().getTime()));
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
 		String[] t = null;
@@ -731,6 +718,7 @@ public class PartlistHelper {
 				}
 			}
 		}
+		System.out.println("수배표 비교 END = " + new Timestamp(new Date().getTime()));
 		return mergedList;
 	}
 
@@ -901,6 +889,20 @@ public class PartlistHelper {
 				list.add(map);
 			}
 		}
+		return list;
+	}
+
+	/**
+	 * 수배표 프로젝트 링크
+	 */
+	public ArrayList<PartListMasterProjectLink> getLinks(PartListMaster mm) throws Exception {
+		ArrayList<PartListMasterProjectLink> list = new ArrayList<>();
+		QueryResult result = PersistenceHelper.manager.navigate(mm, "project", PartListMasterProjectLink.class, false);
+		while (result.hasMoreElements()) {
+			PartListMasterProjectLink link = (PartListMasterProjectLink) result.nextElement();
+			list.add(link);
+		}
+
 		return list;
 	}
 }

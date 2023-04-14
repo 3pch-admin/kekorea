@@ -9,6 +9,7 @@ import org.apache.commons.dbcp2.BasicDataSource;;
 public class ErpConnectionPool {
 
 	private static final String DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+//	private static final String URL = "jdbc:sqlserver://211.171.82.73:14233;databasename=KEK";
 	private static final String URL = "jdbc:sqlserver://211.171.82.73:14233;databasename=KEKPLM_IF";
 	private static final String USERNAME = "plm_e3ps";
 	private static final String PASSWORD = "proe2015!";
@@ -34,7 +35,6 @@ public class ErpConnectionPool {
 	}
 
 	public static void free(Connection con, Statement st, ResultSet rs) throws Exception {
-		System.out.println("Free Start");
 		if (con != null) {
 			con.close();
 		}

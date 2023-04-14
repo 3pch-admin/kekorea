@@ -111,19 +111,15 @@ public class RequestDocumentHelper {
 		return map;
 	}
 
+	/**
+	 * 의뢰서 프로젝트 링크 가져오기
+	 */
 	public ArrayList<RequestDocumentProjectLink> getLinks(RequestDocument requestDocument) throws Exception {
 		ArrayList<RequestDocumentProjectLink> list = new ArrayList<>();
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(RequestDocument.class, true);
-		int idx_link = query.appendClassList(RequestDocumentProjectLink.class, true);
-		QuerySpecUtils.toInnerJoin(query, RequestDocument.class, RequestDocumentProjectLink.class,
-				WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx, idx_link);
-		QuerySpecUtils.toEqualsAnd(query, idx_link, RequestDocumentProjectLink.class, "roleAObjectRef.key.id",
-				requestDocument.getPersistInfo().getObjectIdentifier().getId());
-		QueryResult result = PersistenceHelper.manager.find(query);
+		QueryResult result = PersistenceHelper.manager.navigate(requestDocument, "project",
+				RequestDocumentProjectLink.class, false);
 		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			RequestDocumentProjectLink link = (RequestDocumentProjectLink) obj[1];
+			RequestDocumentProjectLink link = (RequestDocumentProjectLink) result.nextElement();
 			list.add(link);
 		}
 		return list;

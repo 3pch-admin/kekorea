@@ -1,3 +1,4 @@
+<%@page import="java.util.Map"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.project.Project"%>
 <%@page import="net.sf.json.JSONArray"%>
@@ -9,14 +10,62 @@ Project p1 = (Project) request.getAttribute("p1");
 ArrayList<Project> destList = (ArrayList<Project>) request.getAttribute("destList");
 String oid = (String) request.getAttribute("oid");
 String compareArr = (String) request.getAttribute("compareArr");
+ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) request.getAttribute("fixedList");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=11210"></script>
 <style type="text/css">
 .compare {
-	background-color: yellow;
-	color: red;
 	font-weight: bold;
+	color: red;
+}
+
+.row1 {
+	background-color: #99CCFF;
+}
+
+.row2 {
+	background-color: #FFCCFF;
+}
+
+.row3 {
+	background-color: #CCFFCC;
+}
+
+.row4 {
+	background-color: #FFFFCC;
+}
+
+.row5 {
+	background-color: #FFCC99;
+}
+
+.row6 {
+	background-color: #CCCCFF;
+}
+
+.row7 {
+	background-color: #99FF66;
+}
+
+.row8 {
+	background-color: #CC99FF;
+}
+
+.row9 {
+	background-color: #66CCFF;
+}
+
+.row10 {
+	background-color: #CCFFCC;
+}
+
+.row11 {
+	background-color: #FFCCFF;
+}
+
+.row12 {
+	background-color: #FFFFCC;
 }
 </style>
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
@@ -28,164 +77,81 @@ String compareArr = (String) request.getAttribute("compareArr");
 			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('tbom-compare');">
 		</td>
 		<td class="right">
-			<select name="sort" id="sort" class="width-200">
-				<option value="">선택</option>
-				<option value="sort">등록순</option>
-				<option value="partNo">부품번호</option>
-				<option value="lotNo">LOT</option>
-			</select>
-			<input type="button" value="비교" title="비교" class="red" onclick="_compare('');">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
 </table>
 
 
-<div id="grid_wrap" style="height: 730px; border-top: 1px solid #3180c3;"></div>
+<div id="grid_wrap" style="height: 900px; border-top: 1px solid #3180c3;"></div>
 <%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
 	let myGridID;
 	const data = <%=data%>
+	console.log(data);
 	function _layout() {
 		return [ {
-			dataField : "lotNo",
-			headerText : "LOT",
-			dataType : "numeric",
-			width : 100,
-			formatString : "###0",
-			filter : {
-				showIcon : true,
-				inline : true
-			},
-		}, {
-			dataField : "code",
-			headerText : "중간코드",
+			dataField : "category_name",
+			headerText : "",
 			dataType : "string",
-			width : 130,
+			width : 250,
+			style : "aui-left",
+			cellMerge : true,
 			filter : {
 				showIcon : true,
 				inline : true
 			},
 		}, {
-			dataField : "keNumber",
-			headerText : "부품번호",
+			dataField : "item_name",
+			headerText : "",
 			dataType : "string",
-			width : 120,
+			width : 250,
+			cellMerge : true,
+			style : "aui-left",
+			mergeRef : "category_code",
+			mergePolicy : "restrict",
 			filter : {
 				showIcon : true,
 				inline : true
 			},
-		}, {
+		},
+		{
 			headerText : "<%=p1.getKekNumber()%>",
-			children : [ {
-				dataField : "qty1",
-				headerText : "수량",
-				dataType : "numeric",
-				width : 100,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			} ]
+			dataField : "P1",
+			dataType : "string",
+			width : 200,
+			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+				return "";
+			},
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		}, 
-		<%
-			int i = 2;
-			for(Project project : destList) {
-		%>
+		<%int key = 2;
+for (Project project : destList) {
+	String dataField = "P" + key;%>
 		{
 			headerText : "<%=project.getKekNumber()%>",
-			children : [ {
-				dataField : "qty<%=i%>",
-				headerText : "수량",
-				dataType : "numeric",
-				width : 100,
-				labelFunction : function(rowIndex, columnIndex, value, headerText, item, dataField, cItem) {
-					if(item.qty<%=i%> === undefined) {
-						return 0;
-					}
-					return value;
-				},
-				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-					const qty1 = item.qty1;
-					if (value !== qty1) {
-						return "compare";
-					}
-					return "";
-				},
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			} ]
+			dataField : "<%=dataField%>",
+			dataType : "string",
+			width : 250,
+			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+				const P1 = item.P1;
+				if(P1 !== value) {
+					return "compare";
+				}
+				return "";
+			},
+			filter : {
+				showIcon : true,
+				inline : true
+			},
 		}, 
-		<%
-			i++;
-			}
-		%>
-		{
-			dataField : "name",
-			headerText : "부품명",
-			dataType : "string",
-			width : 200,
-			filter : {
-				showIcon : true,
-				inline : true
-			},
-		}, {
-			dataField : "model",
-			headerText : "KokusaiModel",
-			dataType : "string",
-			width : 200,
-			filter : {
-				showIcon : true,
-				inline : true
-			},
-		}, {
-			dataField : "unit",
-			headerText : "UNIT",
-			dataType : "string",
-			width : 130,
-			filter : {
-				showIcon : true,
-				inline : true
-			},
-		}, {
-			dataField : "provide",
-			headerText : "PROVIDE",
-			dataType : "string",
-			width : 130,
-			filter : {
-				showIcon : true,
-				inline : true
-			},
-		}, {
-			dataField : "discontinue",
-			headerText : "DISCONTINUE",
-			dataType : "string",
-			width : 200,
-			filter : {
-				showIcon : true,
-				inline : true
-			},
-		} ]
+		<%key++;
+}%>
+		 ]
 	}
-
-// 	const footerLayout = [ {
-// 		labelText : "∑",
-// 		positionField : "#base",
-// 	}, {
-// 		dataField : "qty1",
-// 		positionField : "qty1",
-// 		operation : "SUM",
-// 		dataType : "numeric",
-// 		postfix : "개"
-// 	}, {
-// 		dataField : "qty2",
-// 		positionField : "qty2",
-// 		operation : "SUM",
-// 		dataType : "numeric",
-// 		postfix : "개"
-// 	}, ];
 
 	function createAUIGrid(columnLayout) {
 		const props = {
@@ -193,17 +159,47 @@ String compareArr = (String) request.getAttribute("compareArr");
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
 			showAutoNoDataMessage : false,
-// 			showFooter : true,
 			enableFilter : true,
 			selectionMode : "multipleCells",
 			enableMovingColumn : true,
 			showInlineFilter : true,
 			useContextMenu : true,
 			enableRightDownFocus : true,
-// 			footerPosition : "top",
+			enableCellMerge : true,
+// 			autoGridHeight : true
+	rowStyleFunction : function(rowIndex, item) {
+				const value = item.category_code;
+				if (value === "CATEGORY_2") {
+					return "row1";
+				} else if (value === "CATEGORY_3") {
+					return "row2";
+				} else if (value === "CATEGORY_4") {
+					return "row3";
+				} else if (value === "CATEGORY_5") {
+					return "row4";
+				} else if (value === "CATEGORY_6") {
+					return "row5";
+				} else if (value === "CATEGORY_7") {
+					return "row6";
+				} else if (value === "CATEGORY_8" || value === "CATEGORY_9") {
+					return "row7";
+				} else if (value === "CATEGORY_10") {
+					return "row8";
+				} else if (value === "CATEGORY_11") {
+					return "row9";
+				} else if (value === "CATEGORY_12") {
+					return "row4";
+				} else if (value === "CATEGORY_13") {
+					return "row10";
+				} else if (value === "CATEGORY_14") {
+					return "row11";
+				} else if (value === "CATEGORY_15") {
+					return "row12";
+				}
+				return "";
+			}
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-// 		AUIGrid.setFooter(myGridID, footerLayout);
 		AUIGrid.setGridData(myGridID, data);
 		AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
@@ -212,49 +208,6 @@ String compareArr = (String) request.getAttribute("compareArr");
 		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 			hideContextMenu();
 		});
-	}
-</script>
-
-<script type="text/javascript">
-	function _compare() {
-		if (!confirm("선택한 기준으로 데이터를 다시 비교합니다.")) {
-			return false;
-		}
-
-		const oid = document.getElementById("oid").value;
-		const _oid = document.getElementById("_oid").value;
-		// 		const compareKey = document.querySelector("input[name=compareKey]:checked").value;
-		const sort = document.getElementById("sort").value;
-		const url = getCallUrl("/tbom/compare");
-		const params = new Object();
-		params.oid = oid;
-		params._oid = _oid;
-		// 		params.compareKey = compareKey;
-		params.sort = sort;
-		AUIGrid.showAjaxLoader(myGridID);
-		openLayer();
-		call(url, params, function(data) {
-			if (data.result) {
-				AUIGrid.removeAjaxLoader(myGridID);
-				AUIGrid.setGridData(myGridID, data.list);
-				closeLayer();
-			}
-		})
-	}
-
-	function checkboxHandler(event) {
-		const target = event.target || event.srcElement;
-		if (!target) {
-			return;
-		}
-		const dataField = target.value;
-		const checked = target.checked;
-
-		if (checked) {
-			AUIGrid.showColumnByDataField(myGridID, dataField);
-		} else {
-			AUIGrid.hideColumnByDataField(myGridID, dataField);
-		}
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
@@ -266,7 +219,6 @@ String compareArr = (String) request.getAttribute("compareArr");
 		});
 		createAUIGrid(columns);
 		AUIGrid.resize(myGridID);
-		selectbox("sort");
 	})
 
 	document.addEventListener("click", function(event) {

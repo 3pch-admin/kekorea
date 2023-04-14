@@ -2187,6 +2187,9 @@ public class PartHelper {
 		return map;
 	}
 
+	/**
+	 * 부품 검색 함수
+	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<PartDTO> list = new ArrayList<>();

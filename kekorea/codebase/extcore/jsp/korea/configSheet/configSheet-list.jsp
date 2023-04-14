@@ -16,6 +16,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 </head>
 <body>
 	<form>
+		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
@@ -59,6 +62,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('configSheet-list');">
 					<input type="button" value="확장" title="확장" class="red" onclick="expand();">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
+					<%
+					if (isAdmin) {
+					%>
+					<input type="button" value="저장" title="저장" onclick="save();">
+					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
+					<%
+					}
+					%>
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -223,6 +234,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerHeight : 30,
 					showRowNumColumn : true,
 					rowNumHeaderText : "번호",
+					showRowCheckColumn : true,
 					showAutoNoDataMessage : false,
 					enableFilter : true,
 					selectionMode : "singleRow",
@@ -275,23 +287,48 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function create() {
-				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				if (checkedItems.length > 1) {
-					alert("기존 정보를 가져올 CONFIG SHEET는 하나만 선택 가능합니다.");
-					return false;
-				}
-				let oid;
-				if (checkedItems.length === 1) {
-					oid = checkedItems[0].item.oid;
-				}
-				let url;
-				if (oid !== undefined) {
-					url = getCallUrl("/configSheet/create?oid=" + oid);
-				} else {
-					url = getCallUrl("/configSheet/create");
-				}
+				const url = getCallUrl("/configSheet/create");
 				popup(url);
 			}
+			
+			function deleteRow() {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const sessionId = document.getElementById("sessionId").value;
+				for (let i = checkedItems.length - 1; i >= 0; i--) {
+					const item = checkedItems[i].item;
+					if (!checker(sessionId, item.creatorId)) {
+						alert("데이터 작성자가 아닙니다.");
+						return false;
+					}
+					const rowIndex = checkedItems[i].rowIndex;
+					AUIGrid.removeRow(myGridID, rowIndex);
+				}
+			}
+			
+			function save() {
+				const url = getCallUrl("/configSheet/save");
+				const params = new Object();
+				const removeRows = AUIGrid.getRemovedItems(myGridID);
+				if (removeRows.length === 0) {
+					alert("변경된 내용이 없습니다.");
+					return false;
+				}
+
+				if (!confirm("해당 기능은 CONFIG SHEET와 프로젝트의 연결고리만 삭제 합니다.\n저장 하시겠습니까?")) {
+					return false;
+				}
+
+				params.removeRows = removeRows;
+				parent.openLayer();
+				call(url, params, function(data) {
+					alert(data.msg);
+					parent.closeLayer();
+					if (data.result) {
+						loadGridData();
+					}
+				});
+			}
+
 
 			function exportExcel() {
 				const exceptColumnFields = [ "primary" ];

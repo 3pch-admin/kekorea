@@ -1,12 +1,11 @@
-<%@page import="e3ps.doc.meeting.beans.MeetingTemplateDTO"%>
 <%@page import="e3ps.doc.meeting.dto.MeetingDTO"%>
 <%@page import="com.lowagie.text.Meta"%>
+<%@page import="e3ps.doc.meeting.dto.MeetingTemplateDTO"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
-MeetingTemplateDTO t_dto = (MeetingTemplateDTO) request.getAttribute("t_dto");
 %>
 <%@include file="/extcore/include/tinymce.jsp"%>
 <%@include file="/extcore/include/auigrid.jsp"%>
@@ -37,7 +36,7 @@ MeetingTemplateDTO t_dto = (MeetingTemplateDTO) request.getAttribute("t_dto");
 		<th>회의록 제목</th>
 		<td class="indent5"><%=dto.getName()%></td>
 		<th>회의록 템플릿</th>
-		<td class="indent5"><%=t_dto.getName()%></td>
+		<td class="indent5"><%=dto.getT_name()%></td>
 	</tr>
 	<tr>
 		<th>KEK 작번</th>
@@ -68,6 +67,7 @@ MeetingTemplateDTO t_dto = (MeetingTemplateDTO) request.getAttribute("t_dto");
 	</tr>
 </table>
 <script type="text/javascript">
+
 	function loadTinymce() {
 		tinymce.init({
 			selector : 'textarea',

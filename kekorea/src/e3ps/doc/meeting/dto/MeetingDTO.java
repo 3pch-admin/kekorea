@@ -7,6 +7,7 @@ import java.util.Map;
 import e3ps.common.util.CommonUtils;
 import e3ps.doc.meeting.Meeting;
 import e3ps.doc.meeting.MeetingProjectLink;
+import e3ps.doc.meeting.MeetingTemplate;
 import e3ps.project.Project;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,6 +41,9 @@ public class MeetingDTO {
 	private String creator;
 	private Timestamp createdDate;
 	private String createdDate_txt;
+	
+	private String t_name;
+	private String toid;
 
 	// 변수 담기 용도
 	private ArrayList<Map<String, String>> _addRows = new ArrayList<>();
@@ -92,4 +96,6 @@ public class MeetingDTO {
 		setCreatedDate(meeting.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(meeting.getCreateTimestamp()));
 	}
+
+
 }

@@ -163,14 +163,14 @@
 					headerText : "파일이름",
 					dataType : "string",
 					width : 350,
-					style : "left indent10",
+					style : "aui-left",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/part/view?oid=" + oid);
-							popup(url, 1400, 600);
+							popup(url, 1500, 800);
 						}
 					},
 					filter : {
@@ -191,7 +191,7 @@
 					headerText : "품명",
 					dataType : "string",
 					width : 300,
-					style : "left indent10",
+					style : "aui-left",
 					filter : {
 						showIcon : true,
 						inline : true
@@ -201,14 +201,14 @@
 					headerText : "규격",
 					dataType : "string",
 					width : 150,
-					style : "left indent10",
+					style : "aui-left",
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/part/view?oid=" + oid);
-							popup(url, 1400, 600);
+							popup(url, 1500, 800);
 						}
 					},
 					filter : {
@@ -315,26 +315,22 @@
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
-					showRowCheckColumn : true,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
+					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					showRowCheckColumn : true
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
-
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {

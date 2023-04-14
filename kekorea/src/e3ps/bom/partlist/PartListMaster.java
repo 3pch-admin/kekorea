@@ -24,7 +24,9 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "version", type = String.class, initialValue = "\"A\"", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "number", type = String.class, constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(columnName = "MASTERNUMBER"))
+				@GeneratedProperty(name = "number", type = String.class, constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(columnName = "MASTERNUMBER")),
+
+				@GeneratedProperty(name = "last", type = String.class, javaDoc = "수배표 최종결재자 ERP 전송 속도 개선")
 
 		}
 
