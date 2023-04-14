@@ -89,7 +89,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/workspace/masterView?oid=" + oid + "&columnType=COLUMN_COMPLETE&poid=" + item.poid);
-							popup(url, 1400, 700);
+							popup(url, 1500, 800);
 						}
 					},
 					filter : {

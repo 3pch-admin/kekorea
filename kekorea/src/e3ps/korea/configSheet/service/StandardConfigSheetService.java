@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import e3ps.admin.commonCode.CommonCode;
-import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.admin.configSheetCode.ConfigSheetCode;
 import e3ps.admin.configSheetCode.service.ConfigSheetCodeHelper;
 import e3ps.common.Constants;
@@ -18,8 +16,6 @@ import e3ps.korea.configSheet.ConfigSheetVariable;
 import e3ps.korea.configSheet.ConfigSheetVariableLink;
 import e3ps.korea.configSheet.beans.ConfigSheetDTO;
 import e3ps.project.Project;
-import e3ps.workspace.notice.Notice;
-import e3ps.workspace.notice.dto.NoticeDTO;
 import e3ps.workspace.service.WorkspaceHelper;
 import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
@@ -53,10 +49,11 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 
 			ConfigSheet configSheet = ConfigSheet.newConfigSheet();
 			configSheet.setName(name);
-			configSheet.setDescription(description);
+			configSheet.setDescription(description != null ? description : name);
 			configSheet.setState(Constants.State.INWORK);
 			configSheet.setOwnership(CommonUtils.sessionOwner());
-
+			configSheet.setLatest(true);
+			configSheet.setVersion(1);
 			PersistenceHelper.manager.save(configSheet);
 
 			for (String secondary : secondarys) {
@@ -69,8 +66,8 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 			for (Map<String, String> addRow : _addRows) {
 				String oid = addRow.get("oid");
 				Project project = (Project) CommonUtils.getObject(oid);
-				ConfigSheetProjectLink link = ConfigSheetProjectLink.newConfigSheetProjectLink(configSheet, project);
-				PersistenceHelper.manager.save(link);
+				configSheet.setProject(project);
+				PersistenceHelper.manager.modify(configSheet);
 			}
 
 			int sort = 0;

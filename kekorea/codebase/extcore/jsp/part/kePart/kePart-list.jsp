@@ -63,10 +63,8 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				<td class="indent5">
 					<select name="state" id="state" class="width-100">
 						<option value="">선택</option>
-						<option value="작업중">작업중</option>
-						<option value="승인중">승인중</option>
-						<option value="승인됨">승인됨</option>
-						<option value="폐기됨">폐기됨</option>
+						<option value="사용">사용</option>
+						<option value="폐기">폐기</option>
 					</select>
 				<th>버전</th>
 				<td>
@@ -137,7 +135,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					<%
 					}
 					%>
-					<input type="button" value="결재" title="결재" onclick="register();">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -156,7 +153,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
-			const list = [ "작업중", "승인중", "승인됨", "폐기됨" ];
+			const list = [ "사용", "폐기" ];
 			function _layout() {
 				return [ {
 					dataField : "lotNo",
@@ -628,18 +625,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				panel.list = checkedItems;
 			}
 
-
-			function register() {
-				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				if (checkedItems.length == 0) {
-					alert("결재할 부품을 선택하세요.");
-					return false;
-				}
-				
-				const panel = popup("/Windchill/plm/kePart/register", 1600, 800);
-				panel.list = checkedItems;
-			}
-			
 			function exportExcel() {
 				const exceptColumnFields = [ "button", "primary" ];
 				const sessionName = document.getElementById("sessionName").value;

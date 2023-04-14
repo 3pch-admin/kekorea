@@ -246,7 +246,7 @@ String oid = (String) request.getAttribute("oid");
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
+<!-- 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();"> -->
 					<input type="button" value="불러오기" title="불러오기" class="blue" onclick="load();">
 				</td>
 			</tr>
@@ -475,24 +475,24 @@ String oid = (String) request.getAttribute("oid");
 		const props = {
 			headerHeight : 30,
 			showRowNumColumn : true,
-			showStateColumn : true,
+// 			showStateColumn : true,
 			rowNumHeaderText : "번호",
 			selectionMode : "multipleCells",
 			enableSorting : false,
-			showRowCheckColumn : true,
+// 			showRowCheckColumn : true,
 			enableCellMerge : true,
 			showDragKnobColumn : true,
-			enableDrag : true,
-			enableMultipleDrag : true,
-			enableDrop : true,
+// 			enableDrag : true,
+// 			enableMultipleDrag : true,
+// 			enableDrop : true,
 			editable : true,
 			enableRowCheckShiftKey : true,
-			useContextMenu : true,
-			enableRightDownFocus : true,
-			contextMenuItems : [ {
-				label : "선택된 행 삭제",
-				callback : contextItemHandler
-			} ],
+// 			useContextMenu : true,
+// 			enableRightDownFocus : true,
+// 			contextMenuItems : [ {
+// 				label : "선택된 행 삭제",
+// 				callback : contextItemHandler
+// 			} ],
 			rowStyleFunction : function(rowIndex, item) {
 				const value = item.category_code;
 				if (value === "CATEGORY_2") {

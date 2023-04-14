@@ -24,7 +24,7 @@ public class IssueDTO {
 	private String detail_name;
 	private String creator;
 	private String creatorId;
-	private String pType;
+	private String projectType;
 	private Timestamp createdDate;
 	private String createdDate_txt;
 
@@ -50,7 +50,9 @@ public class IssueDTO {
 		setCreator(issue.getOwnership().getOwner().getFullName());
 		setCreatorId(issue.getOwnership().getOwner().getName());
 		setCreatedDate(issue.getCreateTimestamp());
-		setPType(project.getPType());
+		if (project.getProjectType() != null) {
+			setProjectType(project.getProjectType().getName());
+		}
 		setCreatedDate_txt(CommonUtils.getPersistableTime(issue.getCreateTimestamp()));
 	}
 }

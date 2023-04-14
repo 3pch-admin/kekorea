@@ -1,5 +1,11 @@
+<%@page import="e3ps.part.service.PartHelper"%>
+<%@page import="wt.org.WTUser"%>
 <%@page import="e3ps.bom.partlist.service.PartlistHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,12 +14,17 @@
 <%@include file="/extcore/include/css.jsp"%>
 <%@include file="/extcore/include/script.jsp"%>
 <%@include file="/extcore/include/auigrid.jsp"%>
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
 	<form>
+		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
+		<input type="hidden" name="oid" id="oid">
+		<input type="hidden" name="container" id="container" value="product"> 
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -124,6 +135,8 @@
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('part-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('part-list');">
+					<input type="button" value="부품" title="부품" class="blue" onclick="toggle('product');">
+					<input type="button" value="라이브러리" title="라이브러리" class="orange" onclick="toggle('library');">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -138,8 +151,28 @@
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 600px; border-top: 1px solid #3180c3;"></div>
-		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
+		<table>
+			<colgroup>
+				<col width="230">
+				<col width="10">
+				<col width="*">
+			</colgroup>
+			<tr>
+				<td valign="top">
+					<jsp:include page="/extcore/include/folder-include.jsp">
+						<jsp:param value="<%=PartHelper.PRODUCT_ROOT%>" name="location" />
+						<jsp:param value="product" name="container" />
+						<jsp:param value="list" name="mode" />
+						<jsp:param value="670" name="height" />
+					</jsp:include>
+				</td>
+				<td>&nbsp;</td>
+				<td>
+					<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
+					<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
+				</td>
+			</tr>
+		</table>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
@@ -330,7 +363,7 @@
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				loadGridData();
+// 				loadGridData();
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
@@ -360,6 +393,21 @@
 				});
 			}
 
+			function toggle(container) {
+				document.getElementById("container").value = container;
+				const location = decodeURIComponent("<%=PartHelper.PRODUCT_ROOT%>");
+				const url = getCallUrl("/loadFolderTree");
+				const params = new Object();
+				params.location = location;
+				params.container = container;
+				parent.openLayer();
+				call(url, params, function(data) {
+					AUIGrid.clearGridData(_myGridID);
+					AUIGrid.setGridData(_myGridID, data.list);
+					parent.closeLayer();
+				});
+			}
+
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("part-list");
 				let contenxtHeader = genColumnHtml(columns);
@@ -368,8 +416,9 @@
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns);
+				_createAUIGrid(_columns);
 				AUIGrid.resize(myGridID);
-
+				AUIGrid.resize(_myGridID);
 				selectbox("state");
 				selectbox("psize");
 				finderUser("creator");
@@ -390,6 +439,7 @@
 
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(myGridID);
+				AUIGrid.resize(_myGridID);
 			});
 		</script>
 	</form>

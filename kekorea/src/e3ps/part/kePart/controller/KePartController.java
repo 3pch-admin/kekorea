@@ -197,30 +197,4 @@ public class KePartController extends BaseController {
 		model.setViewName("popup:/part/kePart/kePart-history");
 		return model;
 	}
-
-	@Description(value = "KE 부품 결재 페이지")
-	@GetMapping(value = "/register")
-	public ModelAndView register() throws Exception {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("popup:/part/kePart/kePart-register");
-		return model;
-	}
-	
-
-	@Description(value = "KePart 결재")
-	@PostMapping(value = "/register")
-	@ResponseBody
-	public Map<String, Object> register(@RequestBody Map<String, Object> params) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			KePartHelper.service.register(params);
-			result.put("result", SUCCESS);
-			result.put("msg", REGISTER_MSG);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("msg", e.toString());
-			result.put("result", FAIL);
-		}
-		return result;
-	}
 }

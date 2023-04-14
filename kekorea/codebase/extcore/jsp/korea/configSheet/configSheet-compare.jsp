@@ -72,10 +72,6 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 <input type="hidden" name="compareArr" id="compareArr" value="<%=compareArr%>">
 <table class="button-table">
 	<tr>
-		<td class="left">
-			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('tbom-compare');">
-			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('tbom-compare');">
-		</td>
 		<td class="right">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
@@ -88,13 +84,12 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 <script type="text/javascript">
 	let myGridID;
 	const data = <%=data%>
-	console.log(data);
 	function _layout() {
 		return [ {
 			dataField : "category_name",
 			headerText : "",
 			dataType : "string",
-			width : 250,
+			width : 150,
 			style : "aui-left",
 			cellMerge : true,
 			filter : {
@@ -166,6 +161,7 @@ for (Project project : destList) {
 			useContextMenu : true,
 			enableRightDownFocus : true,
 			enableCellMerge : true,
+			fixedColumnCount : 3,
 // 			autoGridHeight : true
 	rowStyleFunction : function(rowIndex, item) {
 				const value = item.category_code;

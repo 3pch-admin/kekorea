@@ -18,12 +18,10 @@ import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.service.PartlistHelper;
-import e3ps.common.util.CommonUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.erp.ErpConnectionPool;
-import e3ps.erp.ErpSendHistory;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputDocumentLink;
@@ -58,9 +56,9 @@ public class ErpHelper {
 	/**
 	 * 캐시 처리
 	 */
-	private static HashMap<String, Map<String, Object>> cacheManager = null;
-	private static HashMap<String, Map<String, Object>> validateCache = null;
-	private static HashMap<Integer, Map<String, Object>> unitCache = null;
+	public static HashMap<String, Map<String, Object>> cacheManager = null;
+	public static HashMap<String, Map<String, Object>> validateCache = null;
+	public static HashMap<Integer, Map<String, Object>> unitCache = null;
 	static {
 		if (cacheManager == null) {
 			cacheManager = new HashMap<>();
@@ -695,6 +693,7 @@ public class ErpHelper {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		boolean sendResult = true;
 		String sendQuery = "";
 		try {
 			con = dataSource.getConnection();
@@ -737,8 +736,8 @@ public class ErpHelper {
 
 					Map<String, Object> pjtData = ErpHelper.manager.getPjtInfoByKekNumber(kekNumber);
 					String pjtSeq = (String) pjtData.get("pjtSeq");
-//					sql.append("'" + StringUtils.replaceToValue(pjtSeq) + "', ");
-					sql.append("'" + pjtSeq + "', ");
+					sql.append("'" + StringUtils.replaceToValue(pjtSeq) + "', ");
+//					sql.append("'" + pjtSeq + "', ");
 
 					if (engType.contains("기계")) {
 						engType = "기계";
@@ -797,17 +796,17 @@ public class ErpHelper {
 				sb.append("EXEC KEK_SPLMBOMIF '" + disNo + "'");
 				st.executeUpdate(sb.toString());
 			}
-			// 수배표 전송 ERP 이력
-			ErpHelper.service.save(master.getName(), true, sendQuery, "수배표");
-
 			con.commit();
+			sendResult = true;
 		} catch (Exception e) {
+			sendResult = false;
 			e.printStackTrace();
 			con.rollback();
-			ErpHelper.service.save(master.getName(), false, sendQuery, "수배표");
 			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
+			// 수배표 전송 ERP 이력
+//			ErpHelper.service.save(master.getName(), sendResult, sendQuery, "수배표");
 		}
 		System.out.println("수배표 전송 END = " + new Timestamp(new Date().getTime()));
 	}

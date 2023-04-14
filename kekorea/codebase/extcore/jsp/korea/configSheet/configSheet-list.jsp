@@ -100,6 +100,30 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						inline : true
 					},
 				}, {
+					dataField : "version",
+					headerText : "버전",
+					dataType : "numeric",
+					width : 80,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
+				}, {
+					dataField : "latest",
+					headerText : "최신버전",
+					dataType : "boolean",
+					width : 80,
+					filter : {
+						showIcon : false,
+						inline : false
+					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
+				}, {
 					dataField : "projectType_name",
 					headerText : "작번유형",
 					dataType : "string",
@@ -290,7 +314,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const url = getCallUrl("/configSheet/create");
 				popup(url);
 			}
-			
+
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				const sessionId = document.getElementById("sessionId").value;
@@ -304,7 +328,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
 			}
-			
+
 			function save() {
 				const url = getCallUrl("/configSheet/save");
 				const params = new Object();
@@ -328,7 +352,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					}
 				});
 			}
-
 
 			function exportExcel() {
 				const exceptColumnFields = [ "primary" ];

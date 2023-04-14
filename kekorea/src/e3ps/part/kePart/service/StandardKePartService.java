@@ -49,6 +49,7 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				String keNumber = dto.getKeNumber();
 				String name = dto.getName();
 				int lotNo = dto.getLotNo();
+				int version = dto.getVersion();
 				String state = dto.getState();
 				String model = dto.getModel();
 				String code = dto.getCode();
@@ -67,7 +68,7 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				kePart.setMaster(master);
 				kePart.setState(state);
 				kePart.setLatest(true);
-				kePart.setVersion(1);
+				kePart.setVersion(version);
 				kePart.setOwnership(ownership);
 				PersistenceHelper.manager.save(kePart);
 
@@ -99,10 +100,13 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				String keNumber = dto.getKeNumber();
 				String model = dto.getModel();
 				String code = dto.getCode();
+				String state = dto.getState();
 				int lotNo = dto.getLotNo();
 				String primaryPath = dto.getPrimaryPath();
 				KePart kePart = (KePart) CommonUtils.getObject(oid);
 				KePartMaster master = kePart.getMaster();
+				kePart.setState(state);
+				PersistenceHelper.manager.modify(kePart);
 				master.setName(name);
 				master.setKeNumber(keNumber);
 				master.setLotNo(lotNo);
@@ -166,50 +170,6 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				ApplicationData dd = ApplicationData.newApplicationData(latest);
 				dd.setRole(ContentRoleType.PRIMARY);
 				dd = (ApplicationData) ContentServerHelper.service.updateContent(latest, dd, primaryPath);
-			}
-
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			trs.rollback();
-			throw e;
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-	}
-
-	@Override
-	public void register(Map<String, Object> params) throws Exception {
-		String name = (String) params.get("name"); // 제목
-		String description = (String) params.get("description"); // 의견
-		ArrayList<Map<String, String>> _addRows = (ArrayList<Map<String, String>>) params.get("_addRows"); // 결재문서
-		ArrayList<Map<String, String>> agreeRows = (ArrayList<Map<String, String>>) params.get("agreeRows"); // 검토
-		ArrayList<Map<String, String>> approvalRows = (ArrayList<Map<String, String>>) params.get("approvalRows"); // 결재
-		ArrayList<Map<String, String>> receiveRows = (ArrayList<Map<String, String>>) params.get("receiveRows"); // 수신
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			ApprovalContract contract = ApprovalContract.newApprovalContract();
-			contract.setName(name);
-			contract.setDescription(description);
-			contract.setStartTime(new Timestamp(new Date().getTime()));
-			contract.setState(WorkspaceHelper.STATE_APPROVAL_APPROVING);
-			contract.setContractType("KEPART");
-			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
-
-			for (Map<String, String> _addRow : _addRows) {
-				String oid = _addRow.get("oid"); // document oid
-				KePart kePart = (KePart) CommonUtils.getObject(oid);
-				ApprovalContractPersistableLink aLink = ApprovalContractPersistableLink
-						.newApprovalContractPersistableLink(contract, kePart);
-				PersistenceHelper.manager.save(aLink);
-			}
-
-			if (approvalRows.size() > 0) {
-				WorkspaceHelper.service.register(contract, agreeRows, approvalRows, receiveRows);
 			}
 
 			trs.commit();

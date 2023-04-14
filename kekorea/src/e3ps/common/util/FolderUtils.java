@@ -14,6 +14,9 @@ public class FolderUtils {
 
 	}
 
+	/**
+	 * 폴더 구조 트리로 가져오기
+	 */
 	public static JSONArray loadFolderTree(Map<String, String> params) throws Exception {
 		String location = params.get("location");
 		String container = params.get("container");
@@ -46,6 +49,9 @@ public class FolderUtils {
 		return list;
 	}
 
+	/**
+	 * 폴더 구조 트리로 가져오기 재귀함수
+	 */
 	private static void loadFolderTree(Folder parent, JSONObject parentNode) throws Exception {
 		JSONArray children = new JSONArray();
 		Enumeration result = FolderTaskLogic.getSubFolders(parent);
