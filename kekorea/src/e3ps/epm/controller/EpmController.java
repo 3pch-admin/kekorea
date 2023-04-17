@@ -99,12 +99,10 @@ public class EpmController extends BaseController {
 		EpmDTO dto = new EpmDTO(epm);
 		JSONArray list = EpmHelper.manager.history(epm.getMaster());
 		JSONArray data = EpmHelper.manager.jsonAuiProject(dto.getOid());
-		JSONArray history = WorkspaceHelper.manager.jsonAuiHistory(epm);
 		boolean isAutoCad = dto.getApplicationType().equalsIgnoreCase("AUTOCAD");
 		boolean isCreo = dto.getApplicationType().equalsIgnoreCase("CREO");
 		model.addObject("isAutoCad", isAutoCad);
 		model.addObject("isCreo", isCreo);
-		model.addObject("hstory", history);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
 		model.addObject("list", list);
