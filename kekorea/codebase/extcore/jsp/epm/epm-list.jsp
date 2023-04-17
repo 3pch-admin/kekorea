@@ -239,6 +239,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "품번",
 					dataType : "string",
 					width : 130,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.oid;
+							const url = getCallUrl("/epm/view?oid=" + oid);
+							popup(url, 1400, 600);
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -257,15 +266,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "규격",
 					dataType : "string",
 					width : 130,
-					renderer : {
-						type : "LinkRenderer",
-						baseUrl : "javascript",
-						jsCallback : function(rowIndex, columnIndex, value, item) {
-							const oid = item.oid;
-							const url = getCallUrl("/epm/view?oid=" + oid);
-							popup(url, 1400, 600);
-						}
-					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -384,7 +384,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
-// 				loadGridData();
+				// 				loadGridData();
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
