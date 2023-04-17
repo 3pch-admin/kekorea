@@ -35,13 +35,13 @@
 			<tr>
 				<th class="req lb">도면 일람표 명</th>
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="AXInput width-500">
+					<input type="text" name="name" id="name" class="width-500">
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">내용</th>
 				<td class="indent5">
-					<textarea name="description" id="description" rows="3"></textarea>
+					<textarea name="description" id="description" rows="5"></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -107,12 +107,6 @@
 			imgHeight : 34,
 		},
 	}, {
-		dataField : "dataType",
-		headerText : "파일유형",
-		dataType : "string",
-		width : 100,
-		editable : false,
-	}, {
 		dataField : "name",
 		headerText : "DRAWING TITLE",
 		dataType : "string",
@@ -133,19 +127,19 @@
 		dataField : "current",
 		headerText : "CURRENT VER",
 		dataType : "numeric",
-		width : 130,
+		width : 120,
 		editable : false
 	}, {
 		dataField : "rev",
 		headerText : "REV",
 		dataType : "numeric",
-		width : 130,
+		width : 80,
 		editable : false
 	}, {
 		dataField : "lotNo",
 		headerText : "LOT",
 		dataType : "numeric",
-		width : 100,
+		width : 80,
 		formatString : "###0",
 		editRenderer : {
 			type : "InputEditRenderer",
@@ -173,7 +167,6 @@
 			showRowCheckColumn : true,
 			showStateColumn : true,
 			rowNumHeaderText : "번호",
-			selectionMode : "multipleCells",
 			showDragKnobColumn : true,
 			enableDrag : true,
 			enableMultipleDrag : true,
@@ -183,6 +176,7 @@
 			enableRowCheckShiftKey : true,
 			useContextMenu : true,
 			enableRightDownFocus : true,
+			enableSorting : false,
 			contextMenuItems : [ {
 				label : "선택된 행 이전 추가",
 				callback : contextItemHandler
@@ -273,6 +267,7 @@
 					const item = {
 						ok : data.ok,
 						name : data.name,
+						number : data.number,
 						rev : data.rev,
 						current : data.current,
 						lotNo : data.lotNo,
@@ -286,7 +281,9 @@
 				} else {
 					const item = {
 						ok : data.ok,
+						number : data.number,
 					}
+					AUIGrid.updateRow(myGridID, item, event.rowIndex);
 				}
 			}, "GET");
 		}
@@ -331,7 +328,7 @@
 		const description = document.getElementById("description").value;
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
 		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
-		const adddRows8 = AUIGrid.getAddedRowItems(myGridID8);
+		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
 		const url = getCallUrl("/workOrder/create");
 
 		if (isNull(name.value)) {
@@ -346,7 +343,7 @@
 			return false;
 		}
 
-		if (adddRows8.length === 0) {
+		if (addRows8.length === 0) {
 			alert("결재선을 지정하세요.");
 			_register();
 			return false;
@@ -357,13 +354,13 @@
 			return false;
 		}
 
-// 		_addRows.sort(function(a, b) {
-// 			return a.sort - b.sort;
-// 		});
+		// 		_addRows.sort(function(a, b) {
+		// 			return a.sort - b.sort;
+		// 		});
 
-// 		addRows.sort(function(a, b) {
-// 			return a.sort - b.sort;
-// 		});
+		// 		addRows.sort(function(a, b) {
+		// 			return a.sort - b.sort;
+		// 		});
 
 		if (!confirm("등록 하시겠습니까?")) {
 			return false;
@@ -374,13 +371,15 @@
 		params.addRows = addRows;
 		params.addRows9 = addRows9;
 		params.secondarys = toArray("secondarys");
-		toRegister(params, adddRows8);
+		toRegister(params, addRows8);
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}

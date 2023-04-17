@@ -35,7 +35,7 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 	<tr>
 		<th class="req lb">회의록 제목</th>
 		<td class="indent5">
-			<input type="text" name="name" id="name" class="AXInput width-500">
+			<input type="text" name="name" id="name" class="width-500">
 		</td>
 		<th>회의록 템플릿 선택</th>
 		<td class="indent5">
@@ -97,7 +97,7 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 			return false;
 		}
 		if (addRows9.length === 0) {
-			alert("프로젝트는 하나 이상 선택해야 합니다.");
+			alert("최소 하나이상의 작번을 추가하세요.");
 			return false;
 		}
 

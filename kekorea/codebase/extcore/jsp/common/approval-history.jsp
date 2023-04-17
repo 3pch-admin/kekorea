@@ -5,7 +5,7 @@
 String oid = request.getParameter("oid");
 JSONArray jsonAuiHistory = WorkspaceHelper.manager.jsonAuiHistory(oid);
 %>
-<div id="grid_wrap100" style="height: 200px; border-top: 1px solid #3180c3;"></div>
+<div id="grid_wrap100" style="height: 350px; border-top: 1px solid #3180c3;"></div>
 <script type="text/javascript">
 	let myGridID100;
 	const columns100 = [ {
@@ -58,7 +58,7 @@ JSONArray jsonAuiHistory = WorkspaceHelper.manager.jsonAuiHistory(oid);
 			selectionMode : "multipleCells",
 			noDataMessage : "결재이력이 없습니다.",
 			enableSorting : false,
-			autoGridHeight : true
+// 			autoGridHeight : true
 		}
 		myGridID100 = AUIGrid.create("#grid_wrap100", columnLayout, props);
 		AUIGrid.setGridData(myGridID100, <%=jsonAuiHistory%>);

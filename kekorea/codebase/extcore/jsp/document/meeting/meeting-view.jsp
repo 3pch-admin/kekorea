@@ -52,7 +52,7 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 	<tr>
 		<th class="lb">내용</th>
 		<td class="indent5" colspan="3">
-			<textarea class="description" rows="5" readonly="readonly"><%=dto.getContent()%></textarea>
+			<textarea rows="5" readonly="readonly"><%=dto.getContent()%></textarea>
 		</td>
 	</tr>
 	<tr>

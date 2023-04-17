@@ -135,8 +135,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('part-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('part-list');">
-					<input type="button" value="부품" title="부품" class="blue" onclick="toggle('product');">
-					<input type="button" value="라이브러리" title="라이브러리" class="orange" onclick="toggle('library');">
+					<input type="button" value="라이브러리" title="라이브러리" class="blue" onclick="toggle('product');">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -160,7 +159,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<td valign="top">
 					<jsp:include page="/extcore/include/folder-include.jsp">
-						<jsp:param value="<%=PartHelper.PRODUCT_ROOT%>" name="location" />
+						<jsp:param value="<%=PartHelper.DEFAULT_ROOT%>" name="location" />
 						<jsp:param value="product" name="container" />
 						<jsp:param value="list" name="mode" />
 						<jsp:param value="670" name="height" />
@@ -381,6 +380,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const params = new Object();
 				const url = getCallUrl("/part/list");
 				const psize = document.getElementById("psize").value;
+				const container = document.getElementById("psize").value;
+				const latest = !!document.querySelector("input[name=latest]:checked").value;
+				const oid = document.getElementById("oid").value;
+				params.container = container;
+				params.oid = oid;
+				params.latest = latest;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -392,25 +397,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					parent.closeLayer();
 				});
 			}
-
+			
 			function toggle(container) {
-				document.getElementById("container").value = container;
-				const location = decodeURIComponent("<%=PartHelper.PRODUCT_ROOT%>");
-				const url = getCallUrl("/loadFolderTree");
-				const params = new Object();
-				params.location = location;
-				params.container = container;
-				parent.openLayer();
-				call(url, params, function(data) {
-					AUIGrid.clearGridData(_myGridID);
-					AUIGrid.setGridData(_myGridID, data.list);
-					parent.closeLayer();
-				});
+				const iframe = parent.document.getElementById("content");
+				iframe.src = getCallUrl("/part/library");
 			}
-
+			
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("part-list");
-				let contenxtHeader = genColumnHtml(columns);
+				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
@@ -426,6 +421,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				twindate("created");
 				twindate("modified");
 			});
+			
 			document.addEventListener("keydown", function(event) {
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {

@@ -401,8 +401,7 @@ public class PartlistHelper {
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 
-		net.sf.json.JSONArray list = new net.sf.json.JSONArray();
-
+		JSONArray list = new JSONArray();
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			PartListMaster master = (PartListMaster) obj[0];
@@ -423,7 +422,7 @@ public class PartlistHelper {
 //			QueryResult group = PersistenceHelper.manager.find(qs);
 
 			int isNode = 1;
-			net.sf.json.JSONArray children = new net.sf.json.JSONArray();
+			JSONArray children = new JSONArray();
 			while (group.hasMoreElements()) {
 				PartListMasterProjectLink link = (PartListMasterProjectLink) group.nextElement();
 				PartListDTO dto = new PartListDTO(link);

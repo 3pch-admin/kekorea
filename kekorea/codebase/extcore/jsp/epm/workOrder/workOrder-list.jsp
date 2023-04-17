@@ -477,7 +477,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
-					console.log(data);
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
@@ -488,7 +487,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function create() {
 				const url = getCallUrl("/workOrder/create");
-				popup(url, 1500, 850);
+				popup(url, 1600, 800);
 			}
 
 			function exportExcel() {

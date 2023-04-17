@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.dto.CommonCodeDTO;
-import e3ps.admin.configSheetCode.CategoryItemsLink;
-import e3ps.admin.configSheetCode.beans.CategoryColumnData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.dto.PartListDTO;
@@ -16,7 +14,7 @@ import e3ps.doc.request.dto.RequestDocumentDTO;
 import e3ps.epm.dto.EpmDTO;
 import e3ps.korea.cip.Cip;
 import e3ps.korea.cip.dto.CipDTO;
-import e3ps.part.beans.PartDTO;
+import e3ps.part.dto.PartDTO;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.beans.KePartDTO;
 import e3ps.project.Project;
@@ -92,14 +90,6 @@ public class ColumnParseUtils {
 	private static KePartDTO parse(KePart per) throws Exception {
 		return new KePartDTO(per);
 	}
-
-	private static CategoryColumnData parse(Category per, CategoryItemsLink link) throws Exception {
-		return new CategoryColumnData(per, link);
-	}
-
-//	private static SpecColumnData parse(Spec per) throws Exception {
-//		return new SpecColumnData(per);
-//	}
 
 	private static CommonCodeDTO parse(CommonCode per) throws Exception {
 		return new CommonCodeDTO(per);

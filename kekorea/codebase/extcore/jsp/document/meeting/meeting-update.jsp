@@ -110,7 +110,7 @@ String oid = dto.getOid();
 		}
 		
 		if (addRows9.length === 0) {
-			alert("프로젝트는 하나 이상 선택해야 합니다.");
+			alert("최소 하나이상의 작번을 추가하세요.");
 			return false;
 		}
 

@@ -83,7 +83,6 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 					applicationData.setRole(ContentRoleType.SECONDARY);
 				}
 				PersistenceHelper.manager.save(applicationData);
-
 				ContentServerHelper.service.updateContent(notice, applicationData, vault.getPath());
 			}
 
