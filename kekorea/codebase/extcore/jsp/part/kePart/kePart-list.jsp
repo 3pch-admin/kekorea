@@ -585,11 +585,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			function attach(data) {
-				const template = "<img src='" + data[0].icon + "' style='position: relative; top: 2px;'>";
+				const template = "<img src='" + data.icon + "' style='position: relative; top: 2px;'>";
 				AUIGrid.updateRowsById(myGridID, {
 					_$uid : recentGridItem._$uid,
 					primary : template,
-					cacheId : data[0].cacheId
+					cacheId : data.cacheId
 				});
 			}
 
