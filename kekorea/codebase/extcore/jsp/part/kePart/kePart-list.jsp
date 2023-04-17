@@ -1,4 +1,3 @@
-<%@page import="java.sql.Timestamp"%>
 <%@page import="wt.org.WTUser"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
@@ -8,7 +7,6 @@
 <%
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
-Timestamp time = (Timestamp) request.getAttribute("time");
 %>
 <!DOCTYPE html>
 <html>
@@ -25,7 +23,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
-		<input type="hidden" name="time" id="time" value="<%=time%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 
@@ -551,12 +548,15 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				params.addRows = addRows;
 				params.removeRows = removeRows;
 				params.editRows = editRows;
+				console.log(params);
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
 					parent.closeLayer();
 					if (data.result) {
 						loadGridData();
+					} else {
+						parent.closeLayer();
 					}
 				});
 			}
@@ -585,11 +585,11 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 			}
 
 			function attach(data) {
-				const template = "<img src='" + data.icon + "' style='position: relative; top: 2px;'>";
+				const template = "<img src='" + data[0].icon + "' style='position: relative; top: 2px;'>";
 				AUIGrid.updateRowsById(myGridID, {
 					_$uid : recentGridItem._$uid,
 					primary : template,
-					primaryPath : data.fullPath
+					cacheId : data[0].cacheId
 				});
 			}
 

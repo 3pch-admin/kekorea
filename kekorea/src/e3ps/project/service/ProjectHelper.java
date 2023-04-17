@@ -11,6 +11,7 @@ import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.tbom.TBOMMaster;
+import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
@@ -3821,7 +3822,7 @@ public class ProjectHelper {
 			return MeetingHelper.manager.jsonAuiProject(oid);
 			// TBOM
 		} else if (per instanceof TBOMMaster) {
-
+			return TBOMHelper.manager.jsonAuiProject(oid);
 		}
 		return new JSONArray();
 	}

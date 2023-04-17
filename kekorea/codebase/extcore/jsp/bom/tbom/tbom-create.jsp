@@ -43,144 +43,33 @@
 			<tr>
 				<th class="lb">내용</th>
 				<td class="indent5">
-					<textarea name="description" id="description" rows="3"></textarea>
+					<textarea name="description" id="description" rows="5"></textarea>
 				</td>
 			</tr>
 			<tr>
 				<th class="req lb">KEK 작번</th>
-				<td>
-					<div class="include">
-						<input type="button" value="작번 추가" title="작번 추가" class="blue" onclick="_insert();">
-						<input type="button" value="작번 삭제" title="작번 삭제" class="red" onclick="_deleteRow();">
-						<div id="_grid_wrap" style="height: 150px; border-top: 1px solid #3180c3; margin: 5px;"></div>
-						<script type="text/javascript">
-							let _myGridID;
-							const _columns = [ {
-								dataField : "projectType_name",
-								headerText : "작번유형",
-								dataType : "string",
-								width : 80,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "customer_name",
-								headerText : "거래처",
-								dataType : "string",
-								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "mak_name",
-								headerText : "막종",
-								dataType : "string",
-								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "detail_name",
-								headerText : "막종상세",
-								dataType : "string",
-								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "kekNumber",
-								headerText : "KEK 작번",
-								dataType : "string",
-								width : 130,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "keNumber",
-								headerText : "KE 작번",
-								dataType : "string",
-								width : 130,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "description",
-								headerText : "작업 내용",
-								dataType : "string",
-								style : "left indent10",
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "oid",
-								headerText : "",
-								visible : false
-							} ]
-							function _createAUIGrid(columnLayout) {
-								const props = {
-									headerHeight : 30,
-									showRowNumColumn : true,
-									showRowCheckColumn : true,
-									showStateColumn : true,
-									rowNumHeaderText : "번호",
-									showAutoNoDataMessage : false,
-									selectionMode : "multipleCells",
-								}
-								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-							}
-
-							function _insert() {
-								const url = getCallUrl("/project/popup?method=append&multi=true");
-								popup(url, 1500, 700);
-							}
-
-							function append(data, callBack) {
-								for (let i = 0; i < data.length; i++) {
-									const item = data[i].item;
-									const isUnique = AUIGrid.isUniqueValue(_myGridID, "oid", item.oid);
-									if (isUnique) {
-										AUIGrid.addRow(_myGridID, item, "first");
-									}
-								}
-								callBack(true);
-							}
-
-							function _deleteRow() {
-								const checked = AUIGrid.getCheckedRowItems(_myGridID);
-								if (checked.length === 0) {
-									alert("삭제할 행을 선택하세요.");
-									return false;
-								}
-
-								for (let i = checked.length - 1; i >= 0; i--) {
-									const rowIndex = checked[i].rowIndex;
-									AUIGrid.removeRow(_myGridID, rowIndex);
-								}
-							}
-						</script>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<th class="lb">첨부파일</th>
-				<td class="indent5">
-					<jsp:include page="/extcore/include/secondary-include.jsp">
+				<td colspan="3">
+					<jsp:include page="/extcore/jsp/common/project-include.jsp">
 						<jsp:param value="" name="oid" />
 						<jsp:param value="create" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
 			<tr>
+				<th class="lb">첨부파일</th>
+				<td class="indent5">
+					<jsp:include page="/extcore/jsp/common/attach-secondary.jsp">
+						<jsp:param value="" name="oid" />
+					</jsp:include>
+				</td>
+			</tr>
+			<tr>
 				<th class="req lb">결재</th>
 				<td>
-					<jsp:include page="/extcore/include/register-include.jsp"></jsp:include>
+					<jsp:include page="/extcore/jsp/common/approval-register.jsp">
+						<jsp:param value="" name="oid" />
+						<jsp:param value="create" name="mode" />
+					</jsp:include>
 				</td>
 			</tr>
 		</table>
@@ -268,34 +157,34 @@
 
 			function createAUIGrid(columnLayout) {
 				const props = {
-					headerHeight : 30,
-					showRowNumColumn : true,
-					showRowCheckColumn : true,
-					showStateColumn : true,
-					rowNumHeaderText : "번호",
-					selectionMode : "multipleCells",
-					showDragKnobColumn : true,
-					enableDrag : true,
-					enableMultipleDrag : true,
-					enableDrop : true,
-					$compaEventOnPaste : true,
-					editable : true,
-					enableRowCheckShiftKey : true,
-					useContextMenu : true,
-					enableRightDownFocus : true,
-					contextMenuItems : [ {
-						label : "선택된 행 이전 추가",
-						callback : contextItemHandler
-					}, {
-						label : "선택된 행 이후 추가",
-						callback : contextItemHandler
-					}, {
-						label : "_$line"
-					}, {
-						label : "선택된 행 삭제",
-						callback : contextItemHandler
-					} ],
-				};
+						headerHeight : 30,
+						showRowNumColumn : true,
+						showRowCheckColumn : true,
+						showStateColumn : true,
+						rowNumHeaderText : "번호",
+						showDragKnobColumn : true,
+						enableDrag : true,
+						enableMultipleDrag : true,
+						enableDrop : true,
+						$compaEventOnPaste : true,
+						editable : true,
+						enableRowCheckShiftKey : true,
+						useContextMenu : true,
+						enableRightDownFocus : true,
+						enableSorting : false,
+						contextMenuItems : [ {
+							label : "선택된 행 이전 추가",
+							callback : contextItemHandler
+						}, {
+							label : "선택된 행 이후 추가",
+							callback : contextItemHandler
+						}, {
+							label : "_$line"
+						}, {
+							label : "선택된 행 삭제",
+							callback : contextItemHandler
+						} ],
+					};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				readyHandler();
 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
@@ -391,26 +280,16 @@
 		const url = getCallUrl("/tbom/create");
 		const name = document.getElementById("name");
 		const description = document.getElementById("description").value;
-		const _addRows = AUIGrid.getAddedRowItems(_myGridID);
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
-		const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
+		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
+		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
+	
 		if (isNull(name.value)) {
 			alert("T-BOM 제목을 입력하세요.");
 			name.focus();
 			return false;
 		}
 
-		if (_addRows.length === 0) {
-			alert("최소 하나이상의 작번을 추가하세요.");
-			_insert();
-			return false;
-		}
-
-		if (_addRows.length === 0) {
-			alert("최소 하나이상의 작번을 추가하세요.");
-			_insert();
-			return false;
-		}
 
 		if (!confirm("등록 하시겠습니까?")) {
 			return false;
@@ -418,15 +297,17 @@
 		params.name = name.value;
 		params.description = description;
 		params.addRows = addRows;
-		params._addRows = _addRows;
+		params.addRows9 = addRows9;
 		params.secondarys = toArray("secondarys");
-		toRegister(params, _addRows_);
+		toRegister(params, addRows8);
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}
@@ -434,7 +315,7 @@
 	function auiCellEditEndHandler(event) {
 		const dataField = event.dataField;
 		const number = event.item.keNumber;
-		if (dataField === "keNumber") {
+		if (dataField === "keNumber" && !isNull(number)) {
 			const url = getCallUrl("/tbom/getData?number=" + number);
 			call(url, null, function(data) {
 				if (data.ok) {
@@ -464,36 +345,21 @@
 		document.getElementById("name").focus();
 		$("#tabs").tabs({
 			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					_createAUIGrid(_columns);
-					AUIGrid.resize(_myGridID);
-					_createAUIGrid_(_columns_);
-					AUIGrid.resize(_myGridID_);
-					break;
-				case "tabs-2":
-					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
-					break;
-				}
-			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
-					const _isCreated = AUIGrid.isCreated(_myGridID);
-					if (_isCreated) {
-						AUIGrid.resize(_myGridID);
+					const isCreated9 = AUIGrid.isCreated(myGridID9);
+					if (isCreated9) {
+						AUIGrid.resize(myGridID9);
 					} else {
-						_createAUIGrid(_columns);
+						createAUIGrid9(columns9);
 					}
-					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated_) {
-						AUIGrid.resize(_myGridID_);
+					const isCreated8 = AUIGrid.isCreated(myGridID8);
+					if (isCreated8) {
+						AUIGrid.resize(myGridID8);
 					} else {
-						_createAUIGrid_(_columns_);
+						createAUIGrid8(columns8);
 					}
 					break;
 				case "tabs-2":
@@ -507,11 +373,18 @@
 				}
 			}
 		});
+
+		createAUIGrid9(columns9);
+		createAUIGrid8(columns8);
+		createAUIGrid(columns);
+		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID8);
+		AUIGrid.resize(myGridID);
 	})
 
 	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID8);
 		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID);
-		AUIGrid.resize(_myGridID_);
 	});
 </script>

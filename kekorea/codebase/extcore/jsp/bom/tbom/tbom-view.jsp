@@ -7,7 +7,6 @@
 TBOMDTO dto = (TBOMDTO) request.getAttribute("dto");
 JSONArray list = (JSONArray) request.getAttribute("list");
 JSONArray data = (JSONArray) request.getAttribute("data");
-JSONArray history = (JSONArray) request.getAttribute("history");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
@@ -20,7 +19,8 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			</div>
 		</td>
 		<td class="right">
-		<input type="button" value="수정" title="수정" class="green" onclick="modify();">
+			<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
+			<input type="button" value="수정" title="수정" class="green" onclick="modify();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -60,126 +60,24 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			</tr>
 			<tr>
 				<th class="lb">KEK 작번</th>
-				<td colspan="3">
-					<div class="include">
-						<div id="_grid_wrap" style="height: 200px; border-top: 1px solid #3180c3; margin: 5px;"></div>
-						<script type="text/javascript">
-							let _myGridID;
-							const list =
-						<%=list%>
-							const _columns = [ {
-								dataField : "projectType_name",
-								headerText : "작번유형",
-								dataType : "string",
-								width : 80,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "customer_name",
-								headerText : "거래처",
-								dataType : "string",
-								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "mak_name",
-								headerText : "막종",
-								dataType : "string",
-								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "detail_name",
-								headerText : "막종상세",
-								dataType : "string",
-								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "kekNumber",
-								headerText : "KEK 작번",
-								dataType : "string",
-								width : 130,
-								renderer : {
-									type : "LinkRenderer",
-									baseUrl : "javascript",
-									jsCallback : function(rowIndex, columnIndex, value, item) {
-										const oid = item.oid;
-										alert(oid);
-									}
-								},
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "keNumber",
-								headerText : "KE 작번",
-								dataType : "string",
-								width : 130,
-								renderer : {
-									type : "LinkRenderer",
-									baseUrl : "javascript",
-									jsCallback : function(rowIndex, columnIndex, value, item) {
-										const oid = item.oid;
-										alert(oid);
-									}
-								},
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "description",
-								headerText : "작업 내용",
-								dataType : "string",
-								style : "aui-left",
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							} ]
-							function _createAUIGrid(columnLayout) {
-								const props = {
-									headerHeight : 30,
-									rowHeight : 30,
-									showRowNumColumn : true,
-									rowNumHeaderText : "번호",
-									selectionMode : "singleRow",
-								}
-								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-								AUIGrid.setGridData(_myGridID, list);
-							}
-							
-							function modify() {
-								const oid = document.getElementById("oid").value;
-								const url = getCallUrl("/tbom/modify?oid=" + oid);
-								document.location.href = url;
-							}
-						</script>
-					</div>
+				<td class="indent5" colspan="3">
+					<jsp:include page="/extcore/jsp/common/project-include.jsp">
+						<jsp:param value="<%=dto.getOid()%>" name="oid" />
+						<jsp:param value="view" name="mode" />
+					</jsp:include>
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">내용</th>
 				<td class="indent5" colspan="3">
-					<textarea rows="7" cols="" readonly="readonly"><%=dto.getContent() != null ? dto.getContent() : ""%></textarea>
+					<textarea rows="5" readonly="readonly"><%=dto.getContent() != null ? dto.getContent() : ""%></textarea>
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">첨부파일</th>
 				<td class="indent5" colspan="3">
-					<jsp:include page="/extcore/include/attachment-view.jsp">
+					<jsp:include page="/extcore/jsp/common/secondary-view.jsp">
 						<jsp:param value="<%=dto.getOid()%>" name="oid" />
-						<jsp:param value="secondary" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
@@ -270,124 +168,70 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 		</script>
 	</div>
 	<div id="tabs-3">
-		<div id="_grid_wrap_" style="height: 550px; border-top: 1px solid #3180c3;"></div>
-		<script type="text/javascript">
-			let _myGridID_;
-			const history =
-		<%=history%>
-			const _columns_ = [ {
-				dataField : "type",
-				headerText : "타입",
-				dataType : "string",
-				width : 80
-			}, {
-				dataField : "role",
-				headerText : "역할",
-				dataType : "string",
-				width : 80
-			}, {
-				dataField : "name",
-				headerText : "제목",
-				dataType : "string",
-				style : "aui-left"
-			}, {
-				dataField : "state",
-				headerText : "상태",
-				dataType : "string",
-				width : 100
-			}, {
-				dataField : "owner",
-				headerText : "담당자",
-				dataType : "string",
-				width : 100
-			}, {
-				dataField : "receiveDate_txt",
-				headerText : "수신일",
-				dataType : "string",
-				width : 130
-			}, {
-				dataField : "completeDate_txt",
-				headerText : "완료일",
-				dataType : "string",
-				width : 130
-			}, {
-				dataField : "description",
-				headerText : "결재의견",
-				dataType : "string",
-				style : "aui-left",
-				width : 450,
-			}, ]
-			function _createAUIGrid_(columnLayout) {
-				const props = {
-					headerHeight : 30,
-					showRowNumColumn : true,
-					rowNumHeaderText : "번호",
-					selectionMode : "singleRow",
-					noDataMessage : "결재이력이 없습니다.",
-					enableSorting : false
-				}
-				_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
-				AUIGrid.setGridData(_myGridID_, history);
-			}
-		</script>
+		<!-- 결재이력 -->
+		<jsp:include page="/extcore/jsp/common/approval-history.jsp">
+			<jsp:param value="<%=dto.getOid()%>" name="oid" />
+		</jsp:include>
 	</div>
 </div>
 <script type="text/javascript">
-	$("#tabs").tabs({
-		active : 0,
-		create : function(event, ui) {
-			const tabId = ui.panel.prop("id");
-			switch (tabId) {
-			case "tabs-1":
-				_createAUIGrid(_columns);
-				AUIGrid.resize(_myGridID);
-				break;
-			case "tabs-2":
-				createAUIGrid(columns);
-				AUIGrid.resize(myGridID);
-				break;
-			case "tabs-3":
-				_createAUIGrid_(_columns_);
-				AUIGrid.resize(_myGridID_);
-				break;
+	function _delete() {
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/tbom/delete?oid=" + oid);
+		call(url, null, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			} else {
+				closeLayer();
 			}
-		},
-		activate : function(event, ui) {
-			var tabId = ui.newPanel.prop("id");
-			switch (tabId) {
-			case "tabs-1":
-				const _isCreated = AUIGrid.isCreated(_myGridID);
-				if (_isCreated) {
-					AUIGrid.resize(_myGridID);
-				} else {
-					_createAUIGrid(_columns);
+		}, "GET");
+	}
+
+	document.addEventListener("DOMContentLoaded", function() {
+		$("#tabs").tabs({
+			active : 0,
+			activate : function(event, ui) {
+				var tabId = ui.newPanel.prop("id");
+				switch (tabId) {
+				case "tabs-1":
+					const isCreated9 = AUIGrid.isCreated(myGridID9);
+					if (isCreated9) {
+						AUIGrid.resize(myGridID9);
+					} else {
+						createAUIGrid9(columns9);
+					}
+					break;
+				case "tabs-2":
+					const isCreated = AUIGrid.isCreated(myGridID);
+					if (isCreated) {
+						AUIGrid.resize(myGridID);
+					} else {
+						createAUIGrid(columns);
+					}
+					break;
+				case "tabs-3":
+					const isCreated100 = AUIGrid.isCreated(myGridID100);
+					if (isCreated100) {
+						AUIGrid.resize(myGridID100);
+					} else {
+						createAUIGrid100(columns100);
+					}
+					break;
 				}
-				break;
-			case "tabs-2":
-				const isCreated = AUIGrid.isCreated(myGridID);
-				if (isCreated) {
-					AUIGrid.resize(myGridID);
-				} else {
-					createAUIGrid(columns);
-				}
-				break;
-			case "tabs-3":
-				const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-				if (_isCreated_) {
-					AUIGrid.resize(_myGridID_);
-				} else {
-					_createAUIGrid_(_columns_);
-				}
-				break;
-			}
-		},
+			},
+		})
+		createAUIGrid9(columns9);
+		createAUIGrid(columns);
+		createAUIGrid100(columns100);
+		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID100);
 	})
 
 	window.addEventListener("resize", function() {
-		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID_);
+		AUIGrid.resize(myGridID100);
 	});
-	
-	
 </script>

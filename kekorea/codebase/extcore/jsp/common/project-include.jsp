@@ -21,6 +21,34 @@ boolean isUpdate = "update".equals(mode);
 	<script type="text/javascript">
 		let myGridID9;
 		const columns9 = [ {
+			dataField : "kekNumber",
+			headerText : "KEK 작번",
+			dataType : "string",
+			width : 100,
+			renderer : {
+				type : "LinkRenderer",
+				baseUrl : "javascript",
+				jsCallback : function(rowIndex, columnIndex, value, item) {
+					const oid = item.oid;
+					const url = getCallUrl("/project/info?oid=" + oid);
+					popup(url);
+				}
+			},
+		}, {
+			dataField : "keNumber",
+			headerText : "KE 작번",
+			dataType : "string",
+			width : 100,
+			renderer : {
+				type : "LinkRenderer",
+				baseUrl : "javascript",
+				jsCallback : function(rowIndex, columnIndex, value, item) {
+					const oid = item.oid;
+					const url = getCallUrl("/project/info?oid=" + oid);
+					popup(url);
+				}
+			},
+		}, {
 			dataField : "projectType_name",
 			headerText : "작번유형",
 			dataType : "string",
@@ -46,16 +74,6 @@ boolean isUpdate = "update".equals(mode);
 			dataType : "string",
 			width : 120,
 		}, {
-			dataField : "kekNumber",
-			headerText : "KEK 작번",
-			dataType : "string",
-			width : 100,
-		}, {
-			dataField : "keNumber",
-			headerText : "KE 작번",
-			dataType : "string",
-			width : 100,
-		}, {
 			dataField : "description",
 			headerText : "작업 내용",
 			dataType : "string",
@@ -79,13 +97,9 @@ boolean isUpdate = "update".equals(mode);
 				<%}%>
 			}
 			myGridID9 = AUIGrid.create("#grid_wrap9", columnLayout, props);
-			<%
-				if(isView || isUpdate) {
-			%>
+			<%if (isView || isUpdate) {%>
 			AUIGrid.setGridData(myGridID9, <%=ProjectHelper.manager.jsonAuiProject(oid)%>);
-			<%
-				}
-			%>
+			<%}%>
 		}
 
 		function insert9() {

@@ -431,7 +431,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const item = event.item;
 				if (dataField == "name") {
 					const url = getCallUrl("/workOrder/view?oid=" + item.oid);
-					popup(url);
+					popup(url, 1600, 800);
 				}
 			}
 
