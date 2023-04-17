@@ -504,10 +504,10 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						return false;
 					}
 
-					if (isNull(item.primary)) {
-						AUIGrid.showToastMessage(myGridID, rowIndex, 11, "첨부파일을 선택하세요.");
-						return false;
-					}
+// 					if (isNull(item.primary)) {
+// 						AUIGrid.showToastMessage(myGridID, rowIndex, 11, "첨부파일을 선택하세요.");
+// 						return false;
+// 					}
 				}
 
 				for (let i = 0; i < editRows.length; i++) {
