@@ -13,10 +13,6 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.epm.keDrawing.KeDrawing;
-import e3ps.epm.workOrder.WorkOrder;
-import e3ps.epm.workOrder.WorkOrderDataLink;
-import e3ps.epm.workOrder.WorkOrderProjectLink;
-import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import e3ps.part.kePart.beans.KePartDTO;
@@ -129,7 +125,6 @@ public class KePartHelper {
 		}
 
 		for (KePartDTO dto : editRow) {
-			String oid = dto.getOid();
 			KePartMaster master = (KePartMaster) CommonUtils.getObject(dto.getMoid());
 			String orgKeNumber = master.getKeNumber();
 			int orgLotNo = master.getLotNo();
@@ -224,4 +219,24 @@ public class KePartHelper {
 		return JSONArray.fromObject(list);
 	}
 
+	/**
+	 * TBOM 등록에 사용 되었는지 여부 확인
+	 */
+	public Map<String, Object> isTBOM(ArrayList<KePartDTO> removeRow) throws Exception {
+		Map<String, Object> result = new HashMap<>();
+		for (KePartDTO dto : removeRow) {
+			KePart kePart = (KePart) CommonUtils.getObject(dto.getOid());
+			QuerySpec query = new QuerySpec();
+			int idx = query.appendClassList(TBOMData.class, true);
+			QuerySpecUtils.toEqualsAnd(query, idx, TBOMData.class, "kePartReference.key.id", kePart);
+			QueryResult qr = PersistenceHelper.manager.find(query);
+			if (qr.size() > 0) {
+				result.put("tbom", true);
+				result.put("msg", "TBOM에 사용된 KE 부품 입니다.\n부품번호 = " + dto.getKeNumber());
+				return result;
+			}
+		}
+		result.put("tbom", false);
+		return result;
+	}
 }

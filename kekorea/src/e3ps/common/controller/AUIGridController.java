@@ -1,8 +1,5 @@
 package e3ps.common.controller;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,10 +7,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.annotation.Description;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,11 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.ColumnParseUtils;
-import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.StringUtils;
-import wt.content.ApplicationData;
-import wt.content.ContentServerHelper;
 import wt.fc.PagingQueryResult;
 import wt.fc.PagingSessionHelper;
 
@@ -99,12 +89,5 @@ public class AUIGridController extends BaseController {
 		model.addObject("oid", oid);
 		model.setViewName("popup:/common/aui/aui-preview");
 		return model;
-	}
-
-	@Description(value = "그리드 첨부파일 업로드")
-	@PostMapping(value = "/upload")
-	@ResponseBody
-	public Map<String, Object> upload(HttpServletRequest request) throws Exception {
-		return AUIGridUtils.upload(request);
 	}
 }

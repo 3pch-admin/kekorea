@@ -34,7 +34,7 @@ String method = (String) request.getAttribute("method");
 			uploadFileName : "primary",
 			buttonTxt : "파일 선택",
 			uploadMaxFileSize : (1024 * 1024 * 1024),
-			uploadUrl : getCallUrl("/aui/upload"),
+			uploadUrl : getCallUrl("/content/upload"),
 			dropBoxID : "uploadQueueBox",
 			queueBoxID : "uploadQueueBox",
 			uploadPars : {
@@ -42,23 +42,42 @@ String method = (String) request.getAttribute("method");
 			},
 			uploadMaxFileCount : 1,
 			deleteUrl : getCallUrl("/content/delete"),
-			fileKeys : {},
-			onComplete : function() {
-				data = this[0];
+			fileKeys : {
+				name : "name",
+				type : "type",
+				saveName : "saveName",
+				fileSize : "fileSize",
+				uploadedPath : "uploadedPath",
+				roleType : "roleType",
+				cacheId : "cacheId",
 			},
-			onError : function() {
-				alert("하나의 첨부파일만 업로드가 가능합니다.");
-				document.location.reload();
+			onStart : function() {
+				openLayer();
+			},
+			onComplete : function() {
+				const form = document.querySelector("form");
+				for (let i = 0; i < this.length; i++) {
+					const primaryTag = document.createElement("input");
+					primaryTag.type = "hidden";
+					primaryTag.name = "primarys";
+					primaryTag.value = this[i].cacheId;
+					primaryTag.id = this[i].tagId;
+					form.appendChild(primaryTag);
+				}
+				closeLayer();
+			},
+			onDelete : function() {
+				const key = this.file.tagId;
+				const el = document.getElementById(key);
+				el.parentNode.removeChild(el);
 			}
 		})
 	}
-
+	
 	primaryUploader();
-
+	
 	function save() {
-		opener.
-<%=method%>
-	(data);
+		opener.<%=method%>(data);
 		self.close();
 	}
 </script>
