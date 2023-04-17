@@ -22,7 +22,6 @@ public class MeetingDTO {
 	private String poid;
 	private String loid;
 	private String name;
-	private String t_name;
 	private String number;
 	private String projectType_name;
 	private String content;
