@@ -435,16 +435,16 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu();
 				});
-				AUIGrid.bind(myGridID, "pasteEnd", auiPasteEnd);
+// 				AUIGrid.bind(myGridID, "pasteEnd", auiPasteEnd);
 			}
 
-			function auiPasteEnd(event) {
-				const clipboardData = event.clipboardData;
-				for (let i = 0; i < clipboardData.length; i++) {
-					AUIGrid.setCellValue(myGridID, i, "latest", true);
-					AUIGrid.setCellValue(myGridID, i, "state", "작업중");
-				}
-			}
+// 			function auiPasteEnd(event) {
+// 				const clipboardData = event.clipboardData;
+// 				for (let i = 0; i < clipboardData.length; i++) {
+// 					AUIGrid.setCellValue(myGridID, i, "latest", true);
+// 					AUIGrid.setCellValue(myGridID, i, "state", "사용");
+// 				}
+// 			}
 
 			function loadGridData() {
 				const params = new Object();
@@ -564,7 +564,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 			function addRow() {
 				const item = {
 					latest : true,
-					state : "작업중",
+					state : "사용",
 					version : 1
 				};
 				AUIGrid.addRow(myGridID, item, "first");

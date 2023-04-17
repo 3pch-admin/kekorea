@@ -39,141 +39,6 @@
 				</td>
 			</tr>
 			<tr>
-				<th class="req lb">결재</th>
-				<td>
-					<div class="include">
-						<input type="button" value="결재선 지정" title="결재선 지정" class="blue" onclick="_register();">
-						<input type="button" value="결재선 삭제" title="결재선 삭제" class="red" onclick="_deleteRow_();">
-						<div id="_grid_wrap_" style="height: 200px; border-top: 1px solid #3180c3; margin: 5px;"></div>
-						<script type="text/javascript">
-							let _myGridID_;
-							const _columns_ = [ {
-								dataField : "sort",
-								headerText : "순서",
-								dataType : "numeric",
-								width : 100
-							}, {
-								dataField : "type",
-								headerText : "결재타입",
-								dataType : "string",
-								width : 150,
-							}, {
-								dataField : "name",
-								headerText : "이름",
-								dataType : "string",
-								width : 150,
-							}, {
-								dataField : "id",
-								headerText : "아이디",
-								dataType : "string",
-								width : 150,
-							}, {
-								dataField : "duty",
-								headerText : "직급",
-								dataType : "string",
-								width : 150,
-							}, {
-								dataField : "department_name",
-								headerText : "부서",
-								dataType : "string",
-							} ]
-
-							function _createAUIGrid_(columnLayout) {
-								const props = {
-									headerHeight : 30,
-									rowHeight : 30,
-									showRowNumColumn : true,
-									rowNumHeaderText : "번호",
-									selectionMode : "multipleCells",
-									fillColumnSizeMode : true,
-									showStateColumn : true,
-									softRemoveRowMode : false,
-									showRowCheckColumn : true,
-									showAutoNoDataMessage : false,
-									enableRowCheckShiftKey : true,
-									showDragKnobColumn : true,
-									enableDrag : true,
-									enableMultipleDrag : true,
-									enableDrop : true,
-									useContextMenu : true,
-									enableSorting : false,
-									contextMenuItems : [ {
-										label : "선택된 행 삭제",
-										callback : contextItemHandler
-									} ],
-								}
-								_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
-								AUIGrid.bind(_myGridID_, "removeRow", auiRemoveRow);
-							}
-
-							function auiRemoveRow(event) {
-								const data = AUIGrid.getGridData(_myGridID_);
-								// 			const removeRows = AUIGrid.getRemovedItems(_myGridID_);
-								// 			for (let i = 0; i < data.length; i++) {
-								// 				const rowIndex = AUIGrid.rowIdToIndex(_myGridID_, data[i]._$uid);
-								// 				const sort = data[i].sort;
-								// 				const item = {
-								// 					sort : (sort - removeRows.length)
-								// 				}
-								// 				AUIGrid.updateRow(_myGridID_, item, rowIndex);
-								// 			}
-							}
-
-							function _register() {
-								const url = getCallUrl("/workspace/popup");
-								popup(url, 1200, 700);
-							}
-
-							function contextItemHandler(event) {
-								const item = new Object();
-								switch (event.contextIndex) {
-								case 0:
-									const selectedItems = AUIGrid.getSelectedItems(event.pid);
-									for (let i = selectedItems.length - 1; i >= 0; i--) {
-										const rowIndex = selectedItems[i].rowIndex;
-										AUIGrid.removeRow(event.pid, rowIndex);
-									}
-									break;
-								}
-							}
-
-							function _deleteRow_() {
-								const checked = AUIGrid.getCheckedRowItems(_myGridID_);
-								for (let i = checked.length - 1; i >= 0; i--) {
-									const rowIndex = checked[i].rowIndex;
-									AUIGrid.removeRow(_myGridID_, rowIndex);
-								}
-							}
-
-							function setLine(agree, approval, receive) {
-								AUIGrid.clearGridData(_myGridID_);
-
-								for (let i = receive.length - 1; i >= 0; i--) {
-									const item = receive[i];
-									item.type = "수신";
-									AUIGrid.addRow(_myGridID_, item, "first");
-								}
-
-								let sort = approval.length;
-								for (let i = approval.length - 1; i >= 0; i--) {
-									const item = approval[i];
-									item.type = "결재";
-									item.sort = sort;
-									AUIGrid.addRow(_myGridID_, item, "first");
-									sort--;
-								}
-
-								for (let i = agree.length - 1; i >= 0; i--) {
-									const item = agree[i];
-									item.type = "검토";
-									AUIGrid.addRow(_myGridID_, item, "first");
-								}
-							}
-						</script>
-					</div>
-				</td>
-			</tr>
-			<tr>
 				<th class="req lb">결재 도면</th>
 				<td>
 					<div class="include">
@@ -184,28 +49,18 @@
 							let _myGridID;
 							const _columns = [ {
 								dataField : "name",
-								headerText : "파일이름",
+								headerText : "NAME",
 								dataType : "string",
-								width : 400,
-								renderer : {
-									type : "LinkRenderer",
-									baseUrl : "javascript", // 자바스크립 함수 호출로 사용하고자 하는 경우에 baseUrl 에 "javascript" 로 설정
-									// baseUrl 에 javascript 로 설정한 경우, 링크 클릭 시 callback 호출됨.
-									jsCallback : function(rowIndex, columnIndex, value, item) {
-										const oid = item.oid;
-										alert(oid);
-									}
-								},
 							}, {
-								dataField : "part_code",
-								headerText : "품번",
+								dataField : "dwg_no",
+								headerText : "DWG NO",
 								dataType : "string",
-								width : 150
+								width : 250
 							}, {
 								dataField : "name_of_parts",
-								headerText : "품명",
+								headerText : "NAME_OF_PARTS",
 								dataType : "string",
-								width : 150
+								width : 250
 							}, {
 								dataField : "version",
 								headerText : "버전",
@@ -222,23 +77,20 @@
 								dataType : "date",
 								width : 100
 							}, {
-								dataField : "modifier",
-								headerText : "수정자",
+								dataField : "createdDate",
+								headerText : "작성일",
 								dataType : "string",
 								width : 100
 							} ]
 
 							function _createAUIGrid(columnLayout) {
 								const props = {
-									headerHeight : 30,
-									rowHeight : 30,
-									showRowNumColumn : true,
-									rowNumHeaderText : "번호",
-									fillColumnSizeMode : true,
-									showStateColumn : true, // 상태표시 행 출력 여부
-									softRemoveRowMode : false,
-									showRowCheckColumn : true, // 체크 박스 출력
-								}
+										headerHeight : 30,
+										showRowNumColumn : true,
+										rowNumHeaderText : "번호",
+										showStateColumn : true,
+										showRowCheckColumn : true,
+									}
 								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 							}
 
@@ -267,6 +119,12 @@
 							}
 						</script>
 					</div>
+				</td>
+			</tr>
+			<tr>
+				<th class="req lb">결재</th>
+				<td>
+					<jsp:include page="/extcore/include/register-include.jsp"></jsp:include>
 				</td>
 			</tr>
 		</table>
@@ -307,7 +165,7 @@
 				call(url, params, function(data) {
 					if (data.result) {
 						document.location.href = getCallUrl("/workspace/approval");
-					} else{
+					} else {
 						closeLayer();
 					}
 				})
@@ -317,6 +175,8 @@
 				document.getElementById("name").focus();
 				_createAUIGrid(_columns);
 				_createAUIGrid_(_columns_);
+				AUIGrid.resize(_myGridID);
+				AUIGrid.resize(_myGridID_);
 			});
 
 			window.addEventListener("resize", function() {

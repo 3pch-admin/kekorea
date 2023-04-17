@@ -1,12 +1,10 @@
 package e3ps.epm.dto;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 
-import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.ContentUtils;
 import e3ps.common.util.IBAUtils;
-import e3ps.common.util.ThumnailUtils;
 import lombok.Getter;
 import lombok.Setter;
 import wt.epm.EPMDocument;
@@ -19,12 +17,6 @@ public class EpmDTO {
 	private String cadType;
 	private String thumnail;
 	private String name;
-	private String part_code;
-	private String name_of_parts;
-	private String dwg_no;
-	private String material;
-	private String remark;
-	private String reference;
 	private String version;
 	private String modifier;
 	private Timestamp modifiedDate;
@@ -35,9 +27,24 @@ public class EpmDTO {
 	private String state;
 	private String location;
 	private String[] primary;
-//	private String creoView;
 	private String description;
 	private String preView;
+	private String applicationType;
+
+	private HashMap<String, Object> attr = new HashMap<>();
+	// cad iba 속성
+	private String part_code;
+	private String name_of_parts;
+	private String material;
+	private String remarks;
+	private String reference;
+	private String dwg_no;
+	private String std_unit;
+	private String maker;
+	private String custname;
+	private String cusname;
+	private String price;
+	private String currname;
 
 	public EpmDTO() {
 
@@ -45,23 +52,10 @@ public class EpmDTO {
 
 	public EpmDTO(EPMDocument epm) throws Exception {
 		setOid(epm.getPersistInfo().getObjectIdentifier().getStringValue());
-		setCadType(epm.getAuthoringApplication().toString());
-		setThumnail(AUIGridUtils.getThumnailSmall(epm));
+		setCadType(epm.getDocType().getDisplay());
+		setApplicationType(epm.getAuthoringApplication().getDisplay());
+//		setThumnail(AUIGridUtils.getThumnailSmall(epm));
 		setName(epm.getName());
-		setMaterial(IBAUtils.getStringValue(epm, "MATERIAL"));
-		setRemark(IBAUtils.getStringValue(epm, "REMARKS"));
-		if (getCadType().equals("PROE")) {
-			setName_of_parts(IBAUtils.getStringValue(epm, "NAME_OF_PARTS"));
-			setDwg_no(IBAUtils.getStringValue(epm, "DWG_NO"));
-		} else if (getCadType().equals("ACAD")) {
-			setName_of_parts(IBAUtils.getStringValue(epm, "TITLE1") + " " + IBAUtils.getStringValue(epm, "TITLE2"));
-			setDwg_no(IBAUtils.getStringValue(epm, "DWG_No"));
-		} else {
-			setName_of_parts(epm.getName());
-			setDwg_no(epm.getNumber());
-		}
-		setReference(IBAUtils.getStringValue(epm, "REF_NO"));
-		setPart_code(IBAUtils.getStringValue(epm, "PART_CODE"));
 		setVersion(CommonUtils.getFullVersion(epm));
 		setModifier(epm.getModifierFullName());
 		setModifiedDate(epm.getModifyTimestamp());
@@ -71,8 +65,31 @@ public class EpmDTO {
 		setCreatedDate_txt(CommonUtils.getPersistableTime(epm.getCreateTimestamp()));
 		setState(epm.getLifeCycleState().getDisplay());
 		setLocation(epm.getLocation());
-//		setCreoView(ThumnailUtils.creoViewURL(this.oid));
 		setDescription(epm.getDescription());
-		setPreView(ContentUtils.getPreViewBase64(epm));
+//		setPreView(ContentUtils.getPreViewBase64(epm));
+
+		putAttr(epm);
+	}
+
+	private void putAttr(EPMDocument epm) throws Exception {
+		if (getApplicationType().equalsIgnoreCase("CREO")) {
+			setName_of_parts(IBAUtils.getStringValue(epm, "NAME_OF_PARTS"));
+			setDwg_no(IBAUtils.getStringValue(epm, "DWG_NO"));
+		} else if (getApplicationType().equals("AUTOCAD")) {
+			setName_of_parts(IBAUtils.getStringValue(epm, "TITLE1") + " " + IBAUtils.getStringValue(epm, "TITLE2"));
+			setDwg_no(IBAUtils.getStringValue(epm, "DWG_No"));
+		} else {
+			setName_of_parts(epm.getName());
+			setDwg_no(epm.getNumber());
+		}
+		setMaterial(IBAUtils.getStringValue(epm, "MATERIAL"));
+		setRemarks(IBAUtils.getStringValue(epm, "REMARKS"));
+		setReference(IBAUtils.getStringValue(epm, "REF_NO"));
+		setPart_code(IBAUtils.getStringValue(epm, "PART_CODE"));
+		setMaker(IBAUtils.getStringValue(epm, "MAKER"));
+		setCustname(IBAUtils.getStringValue(epm, "CUSTNAME"));
+		setCusname(IBAUtils.getStringValue(epm, "CUSNAME"));
+		setPrice(IBAUtils.getStringValue(epm, "PRICE"));
+		setCurrname(IBAUtils.getStringValue(epm, "CURRNAME"));
 	}
 }

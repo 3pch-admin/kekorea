@@ -1,10 +1,12 @@
 package e3ps.workspace.notice.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.workspace.notice.Notice;
 import e3ps.workspace.notice.dto.NoticeDTO;
@@ -72,7 +74,8 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 			PersistenceHelper.manager.save(notice);
 
 			for (int i = 0; i < primarys.size(); i++) {
-				String primary = (String) primarys.get(i);
+				String cacheId = (String) primarys.get(i);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
 				ApplicationData applicationData = ApplicationData.newApplicationData(notice);
 				if (i == 0) {
 					applicationData.setRole(ContentRoleType.PRIMARY);
@@ -80,7 +83,8 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 					applicationData.setRole(ContentRoleType.SECONDARY);
 				}
 				PersistenceHelper.manager.save(applicationData);
-				ContentServerHelper.service.updateContent(notice, applicationData, primary);
+
+				ContentServerHelper.service.updateContent(notice, applicationData, vault.getPath());
 			}
 
 			trs.commit();
@@ -90,6 +94,7 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 			trs.rollback();
 			throw e;
 		} finally {
+			CommonContentHelper.manager.clean();
 			if (trs != null)
 				trs.rollback();
 		}
@@ -105,6 +110,10 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 			for (NoticeDTO dto : removeRows) {
 				String oid = dto.getOid();
 				Notice notice = (Notice) CommonUtils.getObject(oid);
+
+				// 첨부 파일 삭제
+				CommonContentHelper.manager.clear(notice);
+
 				PersistenceHelper.manager.delete(notice);
 			}
 
@@ -133,19 +142,24 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 			Notice notice = (Notice) CommonUtils.getObject(oid);
 			notice.setName(name);
 			notice.setDescription(description);
-			PersistenceHelper.manager.modify(notice);
 
-//			for (int i = 0; i < primarys.size(); i++) {
-//				String primary = (String) primarys.get(i);
-//				ApplicationData applicationData = ApplicationData.newApplicationData(notice);
-//				if (i == 0) {
-//					applicationData.setRole(ContentRoleType.PRIMARY);
-//				} else {
-//					applicationData.setRole(ContentRoleType.SECONDARY);
-//				}
-//				PersistenceHelper.manager.modify(applicationData);
-//				ContentServerHelper.service.updateContent(notice, applicationData, primary);
-//			}
+			CommonContentHelper.manager.clear(notice);
+
+			for (int i = 0; i < primarys.size(); i++) {
+				String cacheId = (String) primarys.get(i);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
+				ApplicationData applicationData = ApplicationData.newApplicationData(notice);
+				if (i == 0) {
+					applicationData.setRole(ContentRoleType.PRIMARY);
+				} else {
+					applicationData.setRole(ContentRoleType.SECONDARY);
+				}
+				PersistenceHelper.manager.save(applicationData);
+
+				ContentServerHelper.service.updateContent(notice, applicationData, vault.getPath());
+			}
+
+			PersistenceHelper.manager.modify(notice);
 
 			trs.commit();
 			trs = null;
@@ -154,6 +168,7 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 			trs.rollback();
 			throw e;
 		} finally {
+			CommonContentHelper.manager.clean();
 			if (trs != null)
 				trs.rollback();
 		}

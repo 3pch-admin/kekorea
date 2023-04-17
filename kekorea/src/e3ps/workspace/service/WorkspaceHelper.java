@@ -505,7 +505,8 @@ public class WorkspaceHelper {
 	/**
 	 * 결재 이력 그리드용
 	 */
-	public JSONArray jsonArrayHistory(Persistable per) throws Exception {
+	public JSONArray jsonAuiHistory(String oid) throws Exception {
+		Persistable per = (Persistable) CommonUtils.getObject(oid);
 		ArrayList<Map<String, String>> list = new ArrayList<>();
 		ApprovalMaster master = getMaster(per);
 
@@ -701,7 +702,11 @@ public class WorkspaceHelper {
 		}
 	}
 
-	public JSONArray loadAllLines(Persistable per) throws Exception {
+	/**
+	 * 지정된 결재선 불러오기
+	 */
+	public JSONArray loadAllLines(String oid) throws Exception {
+		Persistable per = (Persistable) CommonUtils.getObject(oid);
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		ApprovalMaster master = getMaster(per);
 		if (master != null) {

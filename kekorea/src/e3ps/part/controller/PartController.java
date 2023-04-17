@@ -15,7 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.part.beans.PartDTO;
+import e3ps.part.dto.PartDTO;
 import e3ps.part.service.PartHelper;
 import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
@@ -36,6 +36,18 @@ public class PartController extends BaseController {
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/part/part-list.jsp");
+		return model;
+	}
+	
+	@Description(value = "부품 조회(라이브러리) 페이지")
+	@GetMapping(value = "/library")
+	public ModelAndView library() throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.setViewName("/extcore/jsp/part/part-library-list.jsp");
 		return model;
 	}
 
@@ -112,7 +124,7 @@ public class PartController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "도면 정보 페이지")
+	@Description(value = "부품 정보 페이지")
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();

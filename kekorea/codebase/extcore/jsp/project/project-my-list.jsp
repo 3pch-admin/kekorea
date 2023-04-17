@@ -18,6 +18,9 @@ JSONArray machines = (JSONArray) request.getAttribute("machines");
 JSONArray elecs = (JSONArray) request.getAttribute("elecs");
 JSONArray softs = (JSONArray) request.getAttribute("softs");
 Department department = (Department) request.getAttribute("department");
+boolean isMachine = (boolean) request.getAttribute("isMachine");
+boolean isElec = (boolean) request.getAttribute("isElec");
+boolean isSw = (boolean) request.getAttribute("isSw");
 %>
 <!DOCTYPE html>
 <html>
@@ -121,18 +124,18 @@ Department department = (Department) request.getAttribute("department");
 				</td>
 				<th>기계 담당자</th>
 				<td class="indent5">
-					<input type="text" name="machine"  id="machine">
-					<input type="hidden" name="machineOid" id="machineOid">
+					<input type="text" name="machine" id="machine" value="<%=isMachine ? sessionUser.getFullName() : ""%>">
+					<input type="hidden" name="machineOid" id="machineOid" value="<%=isMachine ? sessionUser.getPersistInfo().getObjectIdentifier().getStringValue() : ""%>">
 				</td>
 				<th>전기 담당자</th>
 				<td class="indent5">
-					<input type="text" name="elec" id="elec">
-					<input type="hidden" name="elecOid" id="elecOid">
+					<input type="text" name="elec" id="elec" value="<%=isElec ? sessionUser.getFullName() : ""%>">
+					<input type="hidden" name="elecOid" id="elecOid" value="<%=isElec ? sessionUser.getPersistInfo().getObjectIdentifier().getStringValue() : ""%>">
 				</td>
 				<th>SW 담당자</th>
 				<td class="indent5">
-					<input type="text" name="soft" id="soft">
-					<input type="hidden" name="softOid" id="softOid">
+					<input type="text" name="soft" id="soft" value="<%=isSw ? sessionUser.getFullName() : ""%>">
+					<input type="hidden" name="softOid" id="softOid" value="<%=isSw ? sessionUser.getPersistInfo().getObjectIdentifier().getStringValue() : ""%>">
 				</td>
 			</tr>
 			<tr>

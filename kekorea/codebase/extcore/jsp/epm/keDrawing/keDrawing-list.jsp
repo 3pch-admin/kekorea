@@ -472,7 +472,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				const item = {
 					latest : true,
 					preView : null,
-					state : "작업중"
+					state : "사용"
 				};
 				AUIGrid.addRow(myGridID, item, "first");
 			}

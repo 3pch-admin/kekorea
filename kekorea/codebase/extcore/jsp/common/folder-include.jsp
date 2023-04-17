@@ -5,6 +5,7 @@ String container = request.getParameter("container");
 String mode = request.getParameter("mode");
 String height = request.getParameter("height");
 %>
+<input type="hidden" name="container" id="container" value="<%=container %>">
 <!-- 폴더 그리드 리스트 -->
 <div id="_grid_wrap" style="height: <%=height%>px; border-top: 1px solid #3180c3;"></div>
 <script type="text/javascript">
@@ -50,7 +51,8 @@ String height = request.getParameter("height");
 			const oid = primeCell.oid;
 			console.log(primeCell);
 			document.getElementById("oid").value = oid;
-			document.getElementById("location").text = oid;
+			document.getElementById("locationText").innerHTML = primeCell.location;
+			document.getElementById("location").value = primeCell.location;
 			loadGridData();
 		}, 500);  
 		<%}%>

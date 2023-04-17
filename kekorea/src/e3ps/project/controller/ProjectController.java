@@ -110,7 +110,6 @@ public class ProjectController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		Project project = (Project) CommonUtils.getObject(oid);
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MONTH, -4);
 		Timestamp date = new Timestamp(calendar.getTime().getTime());
@@ -128,40 +127,22 @@ public class ProjectController extends BaseController {
 
 		People people = CommonUtils.sessionPeople();
 		Department department = people.getDepartment();
-		String machineOid = project.getUserId();
-//		String machineOid = project.getPersistInfo().getObjectIdentifier().getStringValue();
-		System.out.println("&&&&&&&&&&&&&&&&&&&" + machineOid);
-		if (department.getName().equals(machineOid)) {
-			WTUser user = (WTUser) CommonUtils.getObject(machineOid);
-			CommonCode userType = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.MACHINE, "USER_TYPE");
-			
+
+		boolean isMachine = false;
+		if (department.getName().equals("기계설계")) {
+			isMachine = true;
 		}
-		if(machineOid == null) {
-			department.getName().equals(machineOid);
-			
+		boolean isElec = false;
+		if (department.getName().equals("전기설계")) {
+			isElec = true;
 		}
-		String elecOid = "";
-		String softOid = "";
-		if (department.getCode().equals(machineOid)) {
-			machineOid = sessionUser.getPersistInfo().getObjectIdentifier().getStringValue();
-			WTUser user = (WTUser) CommonUtils.getObject(machineOid);
-			user.getFullName();
+		boolean isSw = false;
+		if (department.getName().equals("SW설계")) {
+			isSw = true;
 		}
-		if (department.getCode().equals(elecOid)) {
-			elecOid = sessionUser.getPersistInfo().getObjectIdentifier().getStringValue();
-			WTUser user = (WTUser) CommonUtils.getObject(elecOid);
-			user.getFullName();
-		}
-		if (department.getCode().equals(softOid)) {
-			softOid = sessionUser.getPersistInfo().getObjectIdentifier().getStringValue();
-			WTUser user = (WTUser) CommonUtils.getObject(softOid);
-			user.getFullName();
-		}
-		
-		model.addObject(machineOid);
-		model.addObject(elecOid);
-		model.addObject(softOid);
-		model.addObject("department", department);
+		model.addObject("isMachine", isMachine);
+		model.addObject("isElec", isElec);
+		model.addObject("isSw", isSw);
 		model.addObject("elecs", elecs);
 		model.addObject("softs", softs);
 		model.addObject("machines", machines);

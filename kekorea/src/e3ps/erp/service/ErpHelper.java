@@ -74,6 +74,13 @@ public class ErpHelper {
 	}
 
 	/**
+	 * ERP 큐
+	 */
+	private static final String processQueueName = "sendToErpProcessQueue";
+	private static final String className = "e3ps.erp.service.ErpHelper";
+	private static final String methodName = "attachMergePdf";
+
+	/**
 	 * YCODE 체크 수배표 등록시
 	 */
 	public Map<String, Object> validate(String partNo) throws Exception {

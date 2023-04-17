@@ -17,8 +17,11 @@ import e3ps.common.util.DateUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.doc.meeting.Meeting;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
+import e3ps.epm.workOrder.WorkOrder;
+import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.org.Department;
 import e3ps.org.People;
 import e3ps.project.Project;
@@ -36,6 +39,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.doc.WTDocument;
 import wt.fc.PagingQueryResult;
+import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.WTUser;
@@ -50,7 +54,7 @@ public class ProjectHelper {
 
 	public final static String PM_ID = "jhkim";
 	public final static String SUB_PM_ID = "jhkim";
-	
+
 //	public final static String PM_ID = "yspark";
 //	public final static String SUB_PM_ID = "19940009";
 
@@ -3799,34 +3803,25 @@ public class ProjectHelper {
 		return JSONArray.fromObject(list);
 	}
 
-	public Map<String, Object> my(Map<String, Object> params) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<ProjectDTO> list = new ArrayList<ProjectDTO>();
-		
-		String machineOid = (String) params.get("machineOid");
-		String elecOid = (String) params.get("elecOid");
-		String softOid = (String) params.get("softOid");
-		
-		QuerySpec  query = new QuerySpec();
-		int idx = query.appendClassList(WTUser.class, true);
-		int idx_d = query.appendClassList(Department.class, false);
-		int idx_p = query.appendClassList(People.class, false);
-		
-		QuerySpecUtils.toInnerJoin(query, WTUser.class, People.class, WTAttributeNameIfc.ID_NAME,
-				"wtUserReference.key.id", idx, idx_p);
-		QuerySpecUtils.toInnerJoin(query, People.class, Department.class, "departmentReference.key.id",
-				WTAttributeNameIfc.ID_NAME, idx_p, idx_d);
-		CommonCode code = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
-		QuerySpecUtils.toEqualsAnd(query, idx_d, Department.class, Department.CODE, code);
-		QuerySpecUtils.toOrderBy(query, idx, WTUser.class, WTUser.FULL_NAME, false);
-		QueryResult result = PersistenceHelper.manager.find(query);
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			WTUser wtUser = (WTUser) obj[0];
-			map.put("oid", wtUser.getPersistInfo().getObjectIdentifier().getStringValue());
-			map.put("name", wtUser.getFullName());
-			list.add((ProjectDTO) map);
+	/**
+	 * 객체와 연관된 작번을 가져오는 함수 객체로 구분해서 처리
+	 */
+	public JSONArray jsonAuiProject(String oid) throws Exception {
+		Persistable per = CommonUtils.getObject(oid);
+
+		// 작업 지시서
+		if (per instanceof WorkOrder) {
+			return WorkOrderHelper.manager.jsonAuiProject(oid);
+			// 수배표
+		} else if (per instanceof PartListMaster) {
+
+			// 회의록
+		} else if (per instanceof Meeting) {
+
+			// TBOM
+		} else if(per instanceof TBOMMaster) {
+			
 		}
-		return map;
+		return new JSONArray();
 	}
 }

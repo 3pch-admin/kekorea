@@ -22,4 +22,7 @@
 	- Design View -> Engineering View 로 변경
 	
 6. 유저 로더
-	- Shell -> java wt.load.LoadFromFile -d "엑셀파일" -u wcadmin -p 패스워드	
+	- Shell -> java wt.load.LoadFromFile -d "엑셀파일" -u wcadmin -p 패스워드
+	
+7. IBA 로더
+	- Shell -> Windchill wt.load.LoadFromFile -d "D:\ptc\Windchill_11.1\Windchill\loadFiles\AttributeDefinitions.xml" -u wcadmin -p 패스워드

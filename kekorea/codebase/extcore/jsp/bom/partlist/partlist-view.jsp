@@ -5,7 +5,6 @@
 PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 JSONArray list = (JSONArray) request.getAttribute("list");
 JSONArray data = (JSONArray) request.getAttribute("data");
-JSONArray history = (JSONArray) request.getAttribute("history");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
@@ -310,66 +309,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		</script>
 	</div>
 	<div id="tabs-3">
-		<div id="_grid_wrap_" style="height: 550px; border-top: 1px solid #3180c3;"></div>
-		<script type="text/javascript">
-			let _myGridID_;
-			const history =
-		<%=history%>
-			const _columns_ = [ {
-				dataField : "type",
-				headerText : "타입",
-				dataType : "string",
-				width : 80
-			}, {
-				dataField : "role",
-				headerText : "역할",
-				dataType : "string",
-				width : 80
-			}, {
-				dataField : "name",
-				headerText : "제목",
-				dataType : "string",
-				style : "aui-left"
-			}, {
-				dataField : "state",
-				headerText : "상태",
-				dataType : "string",
-				width : 100
-			}, {
-				dataField : "owner",
-				headerText : "담당자",
-				dataType : "string",
-				width : 100
-			}, {
-				dataField : "receiveDate_txt",
-				headerText : "수신일",
-				dataType : "string",
-				width : 130
-			}, {
-				dataField : "completeDate_txt",
-				headerText : "완료일",
-				dataType : "string",
-				width : 130
-			}, {
-				dataField : "description",
-				headerText : "결재의견",
-				dataType : "string",
-				style : "aui-left",
-				width : 450,
-			}, ]
-			function _createAUIGrid_(columnLayout) {
-				const props = {
-					headerHeight : 30,
-					showRowNumColumn : true,
-					rowNumHeaderText : "번호",
-					selectionMode : "singleRow",
-					noDataMessage : "결재이력이 없습니다.",
-					enableSorting : false
-				}
-				_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
-				AUIGrid.setGridData(_myGridID_, history);
-			}
-		</script>
+		<!-- 결재이력 -->
+		<jsp:include page="/extcore/jsp/common/approval-history.jsp">
+			<jsp:param value="<%=dto.getOid()%>" name="oid" />
+		</jsp:include>
 	</div>
 </div>
 <script type="text/javascript">
@@ -400,23 +343,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs({
 			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					_createAUIGrid(_columns);
-					AUIGrid.resize(_myGridID);
-					break;
-				case "tabs-2":
-					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
-					break;
-				case "tabs-3":
-					createAUIGrid(_columns_);
-					AUIGrid.resize(_myGridID_);
-					break;
-				}
-			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
@@ -437,11 +363,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					}
 					break;
 				case "tabs-3":
-					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated_) {
-						AUIGrid.resize(_myGridID_);
+					const isCreated100 = AUIGrid.isCreated(myGridID100);
+					if (isCreated100) {
+						AUIGrid.resize(myGridID100);
 					} else {
-						_createAUIGrid_(_columns_);
+						createAUIGrid100(columns100);
 					}
 					break;
 				}
@@ -452,6 +378,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(_myGridID);
-		AUIGrid.resize(_myGridID_);
+		AUIGrid.resize(myGridID100);
 	});
 </script>

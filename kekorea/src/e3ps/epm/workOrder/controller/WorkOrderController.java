@@ -129,7 +129,7 @@ public class WorkOrderController extends BaseController {
 		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
 		WorkOrderDTO dto = new WorkOrderDTO(workOrder);
 		JSONArray list = KeDrawingHelper.manager.getData(workOrder);
-		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(workOrder);
+		JSONArray history = WorkspaceHelper.manager.jsonAuiHistory(workOrder);
 		model.addObject("history", history);
 		model.addObject("list", list);
 		model.addObject("dto", dto);

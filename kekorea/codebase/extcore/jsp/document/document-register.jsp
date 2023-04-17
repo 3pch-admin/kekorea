@@ -117,11 +117,9 @@
 							function _createAUIGrid(columnLayout) {
 								const props = {
 									headerHeight : 30,
-									rowHeight : 30,
 									showRowNumColumn : true,
 									rowNumHeaderText : "번호",
 									showStateColumn : true,
-									softRemoveRowMode : false,
 									showRowCheckColumn : true,
 								}
 								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
@@ -201,11 +199,13 @@
 				document.getElementById("name").focus();
 				_createAUIGrid(_columns);
 				_createAUIGrid_(_columns_);
+				AUIGrid.resize(_myGridID);
+				AUIGrid.resize(_myGridID_);
 			});
 
 			window.addEventListener("resize", function() {
-				AUIGrid.bind(_myGridID);
-				AUIGrid.bind(_myGridID_);
+				AUIGrid.resize(_myGridID);
+				AUIGrid.resize(_myGridID_);
 			});
 		</script>
 	</form>

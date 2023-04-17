@@ -68,20 +68,16 @@ public class PartlistController extends BaseController {
 		boolean isAdmin = CommonUtils.isAdmin();
 		Persistable per = (Persistable) CommonUtils.getObject(oid);
 		PartListDTO dto = null;
-		JSONArray history = null;
 		if (per instanceof PartListMasterProjectLink) {
 			PartListMasterProjectLink link = (PartListMasterProjectLink) per;
 			dto = new PartListDTO(link);
-			history = WorkspaceHelper.manager.jsonArrayHistory(link.getMaster());
 		} else if (per instanceof PartListMaster) {
 			PartListMaster master = (PartListMaster) per;
 			dto = new PartListDTO(master);
-			history = WorkspaceHelper.manager.jsonArrayHistory(master);
 		}
 
 		JSONArray list = PartlistHelper.manager.getData(dto.getOid());
 		JSONArray data = PartlistHelper.manager.jsonAuiProject(dto.getOid());
-		model.addObject("history", history);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
 		model.addObject("dto", dto);

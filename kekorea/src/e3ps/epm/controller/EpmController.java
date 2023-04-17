@@ -64,6 +64,18 @@ public class EpmController extends BaseController {
 		return model;
 	}
 
+	@Description(value = "도면 조회(라이브러리) 페이지")
+	@GetMapping(value = "/library")
+	public ModelAndView library() throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.setViewName("/extcore/jsp/epm/epm-library-list.jsp");
+		return model;
+	}
+
 	@Description(value = "도면 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/list")
@@ -86,8 +98,12 @@ public class EpmController extends BaseController {
 		EPMDocument epm = (EPMDocument) CommonUtils.getObject(oid);
 		EpmDTO dto = new EpmDTO(epm);
 		JSONArray list = EpmHelper.manager.history(epm.getMaster());
-		JSONArray data = EpmHelper.manager.jsonArrayAui(dto.getOid());
-		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(epm);
+		JSONArray data = EpmHelper.manager.jsonAuiProject(dto.getOid());
+		JSONArray history = WorkspaceHelper.manager.jsonAuiHistory(epm);
+		boolean isAutoCad = dto.getApplicationType().equalsIgnoreCase("AUTOCAD");
+		boolean isCreo = dto.getApplicationType().equalsIgnoreCase("CREO");
+		model.addObject("isAutoCad", isAutoCad);
+		model.addObject("isCreo", isCreo);
 		model.addObject("hstory", history);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
@@ -95,7 +111,7 @@ public class EpmController extends BaseController {
 		model.setViewName("popup:/epm/epm-view");
 		return model;
 	}
-	
+
 	@Description(value = "도면 팝업 페이지")
 	@GetMapping(value = "/popup")
 	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {

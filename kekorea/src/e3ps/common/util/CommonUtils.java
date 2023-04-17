@@ -36,9 +36,6 @@ public class CommonUtils {
 
 	/**
 	 * 관리자 그룹인지 확인 하는 함수
-	 * 
-	 * @return boolean
-	 * @throws Exception
 	 */
 	public static boolean isAdmin() throws Exception {
 		return isMember(ADMIN_GROUP);
@@ -46,10 +43,6 @@ public class CommonUtils {
 
 	/**
 	 * 관리자 인지 확인 하는 함수
-	 * 
-	 * @param group : 그룹명
-	 * @return boolean
-	 * @throws Exception
 	 */
 	public static boolean isMember(String group) throws Exception {
 		WTUser user = (wt.org.WTUser) SessionHelper.manager.getPrincipal();
@@ -58,11 +51,6 @@ public class CommonUtils {
 
 	/**
 	 * 관리자 인지 확인 하는 함수
-	 * 
-	 * @param group : 그룹명
-	 * @param user  : 관리자 인지 확인할 객체
-	 * @return boolean
-	 * @throws Exception
 	 */
 	public static boolean isMember(String group, WTUser user) throws Exception {
 		Enumeration en = user.parentGroupNames();
@@ -75,64 +63,34 @@ public class CommonUtils {
 		return false;
 	}
 
-	private static WTLibrary getEPLANContext() throws Exception {
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(WTLibrary.class, true);
-		SearchCondition sc = new SearchCondition(WTLibrary.class, WTLibrary.NAME, "=", "EPLAN");
-		query.appendWhere(sc, new int[] { idx });
-		QueryResult result = PersistenceHelper.manager.find((StatementSpec) query);
-		WTLibrary context = null;
-		if (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			context = (WTLibrary) obj[0];
-		}
-		return context;
-	}
-
-	private static WTLibrary getLibraryContext() throws Exception {
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(WTLibrary.class, true);
-		SearchCondition sc = new SearchCondition(WTLibrary.class, WTLibrary.NAME, "=", "LIBRARY");
-		query.appendWhere(sc, new int[] { idx });
-		QueryResult result = PersistenceHelper.manager.find((StatementSpec) query);
-		WTLibrary context = null;
-		if (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			context = (WTLibrary) obj[0];
-		}
-		return context;
-	}
-
-	private static PDMLinkProduct getPDMLinkContext() throws Exception {
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(PDMLinkProduct.class, true);
+	/**
+	 * 제품 컨테이너 가져오기
+	 */
+	public static WTContainerRef getPDMLinkProductContainer() throws Exception {
+		QuerySpec query = new QuerySpec(PDMLinkProduct.class);
 		SearchCondition sc = new SearchCondition(PDMLinkProduct.class, PDMLinkProduct.NAME, "=", "Commonspace");
-		query.appendWhere(sc, new int[] { idx });
-		QueryResult result = PersistenceHelper.manager.find((StatementSpec) query);
-		PDMLinkProduct context = null;
+		query.appendWhere(sc, new int[] { 0 });
+		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			context = (PDMLinkProduct) obj[0];
+			PDMLinkProduct pdmLinkProduct = (PDMLinkProduct) result.nextElement();
+			return WTContainerRef.newWTContainerRef(pdmLinkProduct);
 		}
-		return context;
+		return null;
 	}
 
-	public static WTContainerRef getEPLAN() throws Exception {
-		WTLibrary eplan = getEPLANContext();
-		WTContainerRef container = WTContainerRef.newWTContainerRef(eplan);
-		return container;
-	}
-
-	public static WTContainerRef getLibrary() throws Exception {
-		WTLibrary library = getLibraryContext();
-		WTContainerRef container = WTContainerRef.newWTContainerRef(library);
-		return container;
-	}
-
-	public static WTContainerRef getContainer() throws Exception {
-		PDMLinkProduct product = getPDMLinkContext();
-		WTContainerRef container = WTContainerRef.newWTContainerRef(product);
-		return container;
+	/**
+	 * 라이브러리 컨테이너 가져오기
+	 */
+	public static WTContainerRef getWTLibraryContainer() throws Exception {
+		QuerySpec query = new QuerySpec(WTLibrary.class);
+		SearchCondition sc = new SearchCondition(WTLibrary.class, WTLibrary.NAME, "=", "LIBRARY");
+		query.appendWhere(sc, new int[] { 0 });
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			WTLibrary wtLibrary = (WTLibrary) result.nextElement();
+			return WTContainerRef.newWTContainerRef(wtLibrary);
+		}
+		return null;
 	}
 
 	/**
@@ -272,9 +230,6 @@ public class CommonUtils {
 
 	/**
 	 * 접속한 사용자의 Ownership 객체를 가져오는 함수
-	 * 
-	 * @return Ownership
-	 * @throws Exception
 	 */
 	public static Ownership sessionOwner() throws Exception {
 		return Ownership.newOwnership(SessionHelper.manager.getPrincipal());
@@ -286,15 +241,15 @@ public class CommonUtils {
 	public static WTUser sessionUser() throws Exception {
 		return (WTUser) SessionHelper.manager.getPrincipal();
 	}
-	
+
 	/**
 	 * 접속한 사용자의 PEOPEL 객체 리턴
 	 */
 	public static People sessionPeople() throws Exception {
 		WTUser sessionUser = sessionUser();
 		QueryResult result = PersistenceHelper.manager.navigate(sessionUser, "people", PeopleWTUserLink.class);
-		if(result.hasMoreElements()) {
-			People people = (People)result.nextElement();
+		if (result.hasMoreElements()) {
+			People people = (People) result.nextElement();
 			return people;
 		}
 		return null;
@@ -310,11 +265,6 @@ public class CommonUtils {
 
 	/**
 	 * WTUser 객체가 RevisionControlled 객체의 작성자인지 확인 하는 함수
-	 * 
-	 * @param rc          : RevisionControlled 상속받은 객체들
-	 * @param sessionUser : WTUser 객체
-	 * @return boolean
-	 * @throws Exception
 	 */
 	public static boolean isCreator(RevisionControlled rc, WTUser sessionUser) throws Exception {
 		return rc.getCreatorName().equals(sessionUser.getName());

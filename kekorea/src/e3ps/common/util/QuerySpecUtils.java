@@ -34,6 +34,14 @@ public class QuerySpecUtils {
 	 * 도면, 문서 기타 등 윈칠에서 관리하는 객체에 대한 최신 버전 쿼리문 작성
 	 */
 	public static void toLatest(QuerySpec query, int idx, Class clazz) throws Exception {
+
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+
+		SearchCondition sc = VersionControlHelper.getSearchCondition(clazz, true);
+		query.appendWhere(sc, new int[] { idx });
+
 		int branchIdx = query.appendClassList(ControlBranch.class, false);
 		int childBranchIdx = query.appendClassList(ControlBranch.class, false);
 
@@ -41,7 +49,7 @@ public class QuerySpecUtils {
 			query.appendAnd();
 		}
 
-		SearchCondition sc = new SearchCondition(clazz, RevisionControlled.BRANCH_IDENTIFIER, ControlBranch.class,
+		sc = new SearchCondition(clazz, RevisionControlled.BRANCH_IDENTIFIER, ControlBranch.class,
 				WTAttributeNameIfc.ID_NAME);
 		query.appendWhere(sc, new int[] { idx, branchIdx });
 
@@ -271,6 +279,7 @@ public class QuerySpecUtils {
 		OrderBy orderBy = new OrderBy(ca, sort);
 		query.appendOrderBy(orderBy, new int[] { idx });
 	}
+
 	/**
 	 * 쿼리문에 boolean (and) 조건 추가
 	 */

@@ -21,10 +21,10 @@ public class FolderUtils {
 		String location = params.get("location");
 		String container = params.get("container");
 		Folder root = null;
-		if ("product".equals(container)) {
-			root = FolderTaskLogic.getFolder(location, CommonUtils.getContainer());
-		} else if ("library".equals(container)) {
-			root = FolderTaskLogic.getFolder(location, CommonUtils.getLibrary());
+		if ("product".equalsIgnoreCase(container)) {
+			root = FolderTaskLogic.getFolder(location, CommonUtils.getPDMLinkProductContainer());
+		} else if ("library".equalsIgnoreCase(container)) {
+			root = FolderTaskLogic.getFolder(location, CommonUtils.getWTLibraryContainer());
 		}
 
 		JSONArray list = new JSONArray();

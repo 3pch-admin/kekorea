@@ -360,7 +360,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					mergeRef : "name",
 					mergePolicy : "restrict"
 				}, {
-					dataField : "cover",
+					dataField : "primary",
 					headerText : "표지",
 					dataType : "string",
 					width : 80,

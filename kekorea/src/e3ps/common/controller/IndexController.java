@@ -1,13 +1,8 @@
 package e3ps.common.controller;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +18,10 @@ import e3ps.org.dto.UserDTO;
 import e3ps.workspace.notice.service.NoticeHelper;
 import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
-import wt.content.ApplicationData;
-import wt.content.ContentServerHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
+@Description(value = "PLM 전체적으로 공통사용될 내용들의 주소 컨트롤러")
 @Controller
 public class IndexController extends BaseController {
 
@@ -105,18 +99,5 @@ public class IndexController extends BaseController {
 		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.setViewName("popup:/common/folder/folder-popup");
 		return model;
-	}
-
-	@Description(value = "첨부파일 다운로드")
-	@PostMapping(value = "/download")
-	public void download(@RequestBody Map<String, String> params, HttpServletResponse response) throws Exception {
-		String aoid = params.get("aoid");
-		ApplicationData data = (ApplicationData) CommonUtils.getObject(aoid);
-		InputStream inputStream = ContentServerHelper.service.findLocalContentStream(data);
-		response.setContentType("application/force-download");
-		response.setHeader("Content-Disposition", "attachment; filename=" + data.getFileName());
-		IOUtils.copy(inputStream, response.getOutputStream());
-		response.flushBuffer();
-		inputStream.close();
 	}
 }

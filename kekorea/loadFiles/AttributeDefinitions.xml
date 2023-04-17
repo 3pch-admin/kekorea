@@ -1,0 +1,457 @@
+<?xml version="1.0"?>
+<!DOCTYPE NmLoader SYSTEM "standardX26.dtd">
+<NmLoader>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>TestOrganizer</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths />
+		<csvdefinitionPaths />
+		<csvdisplay_name />
+		<csvdescription />
+		<csvdata_type>org</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>
+		</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>TestBoolean</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>TestBoolean Display Name</csvdisplay_name>
+		<csvdescription>TestBoolean Description</csvdescription>
+		<csvdata_type>boolean</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>TestBoolean</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubBoolean1</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubBoolean1 Display Name</csvdisplay_name>
+		<csvdescription>SubBoolean1 Description</csvdescription>
+		<csvdata_type>boolean</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubBoolean1</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubBoolean2</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubBoolean2 Display Name</csvdisplay_name>
+		<csvdescription>SubBoolean2 Description</csvdescription>
+		<csvdata_type>boolean</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubBoolean2</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubBoolean3</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubBoolean3 Display Name</csvdisplay_name>
+		<csvdescription>SubBoolean3 Description</csvdescription>
+		<csvdata_type>boolean</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubBoolean3</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>TestFloat</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>TestFloat Display Name</csvdisplay_name>
+		<csvdescription>TestFloat Description</csvdescription>
+		<csvdata_type>float</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>TestFloat</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubFloat1</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubFloat1 Display Name</csvdisplay_name>
+		<csvdescription>SubFloat1 Description</csvdescription>
+		<csvdata_type>float</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubFloat1</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubFloat2</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubFloat2 Display Name</csvdisplay_name>
+		<csvdescription>SubFloat2 Description</csvdescription>
+		<csvdata_type>float</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubFloat2</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubFloat3</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubFloat3 Display Name</csvdisplay_name>
+		<csvdescription>SubFloat3 Description</csvdescription>
+		<csvdata_type>float</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubFloat3</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>TestInteger</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>TestInteger Display Name</csvdisplay_name>
+		<csvdescription>TestInteger Description</csvdescription>
+		<csvdata_type>int</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>TestInteger</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubInteger1</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubInteger1 Display Name</csvdisplay_name>
+		<csvdescription>SubInteger1 Description</csvdescription>
+		<csvdata_type>int</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubInteger1</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubInteger2</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubInteger2 Display Name</csvdisplay_name>
+		<csvdescription>SubInteger2 Description</csvdescription>
+		<csvdata_type>int</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubInteger2</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubInteger3</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubInteger3 Display Name</csvdisplay_name>
+		<csvdescription>SubInteger3 Description</csvdescription>
+		<csvdata_type>int</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubInteger3</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>TestString</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>TestString Display Name</csvdisplay_name>
+		<csvdescription>TestString Description</csvdescription>
+		<csvdata_type>string</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>TestString</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubString1</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubString1 Display Name</csvdisplay_name>
+		<csvdescription>SubString1 Description</csvdescription>
+		<csvdata_type>string</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubString1</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubString2</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubString2 Display Name</csvdisplay_name>
+		<csvdescription>SubString2 Description</csvdescription>
+		<csvdata_type>string</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubString2</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubString3</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubString3 Display Name</csvdisplay_name>
+		<csvdescription>SubString3 Description</csvdescription>
+		<csvdata_type>string</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubString3</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>TestTimeStamp</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>TestTimeStamp Display Name</csvdisplay_name>
+		<csvdescription>TestTimeStamp Description</csvdescription>
+		<csvdata_type>timestamp</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>TestTimeStamp</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubTimeStamp1</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubTimeStamp1 Display Name</csvdisplay_name>
+		<csvdescription>SubTimeStamp1 Description</csvdescription>
+		<csvdata_type>timestamp</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubTimeStamp1</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubTimeStamp2</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubTimeStamp2 Display Name</csvdisplay_name>
+		<csvdescription>SubTimeStamp2 Description</csvdescription>
+		<csvdata_type>timestamp</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubTimeStamp2</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubTimeStamp3</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubTimeStamp3 Display Name</csvdisplay_name>
+		<csvdescription>SubTimeStamp3 Description</csvdescription>
+		<csvdata_type>timestamp</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubTimeStamp3</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>TestUnit</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>TestUnit Display Name</csvdisplay_name>
+		<csvdescription>TestUnit Description</csvdescription>
+		<csvdata_type>unit</csvdata_type>
+		<csvQoMName>Length</csvQoMName>
+		<csvnameValuePairs>ft</csvnameValuePairs>
+		<csvlogicalIdentifier>TestUnit</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubUnit1</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubUnit1 Display Name</csvdisplay_name>
+		<csvdescription>SubUnit1 Description</csvdescription>
+		<csvdata_type>unit</csvdata_type>
+		<csvQoMName>Length</csvQoMName>
+		<csvnameValuePairs>ft</csvnameValuePairs>
+		<csvlogicalIdentifier>SubUnit1</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubUnit2</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubUnit2 Display Name</csvdisplay_name>
+		<csvdescription>SubUnit2 Description</csvdescription>
+		<csvdata_type>unit</csvdata_type>
+		<csvQoMName>Length</csvQoMName>
+		<csvnameValuePairs>ft</csvnameValuePairs>
+		<csvlogicalIdentifier>SubUnit2</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubUnit3</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubUnit3 Display Name</csvdisplay_name>
+		<csvdescription>SubUnit3 Description</csvdescription>
+		<csvdata_type>unit</csvdata_type>
+		<csvQoMName>Length</csvQoMName>
+		<csvnameValuePairs>ft</csvnameValuePairs>
+		<csvlogicalIdentifier>SubUnit3</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>TestURL</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>TestURL Display Name</csvdisplay_name>
+		<csvdescription>TestURL Description</csvdescription>
+		<csvdata_type>url</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>TestURL</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubURL1</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubURL1 Display Name</csvdisplay_name>
+		<csvdescription>SubURL1 Description</csvdescription>
+		<csvdata_type>url</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubURL1</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubURL2</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubURL2 Display Name</csvdisplay_name>
+		<csvdescription>SubURL2 Description</csvdescription>
+		<csvdata_type>url</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubURL2</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>SubURL3</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>SubURL3 Display Name</csvdisplay_name>
+		<csvdescription>SubURL3 Description</csvdescription>
+		<csvdata_type>url</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>SubURL3</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+
+	<csvQuantityOfMeasure handler="wt.units.service.UnitsLoader.createQOM">
+		<csvname>TestFloating_Length</csvname>
+		<csvdescription></csvdescription>
+		<csvbaseUnitSymbol>m</csvbaseUnitSymbol>
+		<csvnameAndValuePairs></csvnameAndValuePairs>
+	</csvQuantityOfMeasure>
+
+
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>TestFloatingLength</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>TestLength Display Name</csvdisplay_name>
+		<csvdescription>TestLength Description</csvdescription>
+		<csvdata_type>UNIT</csvdata_type>
+		<csvQoMName>TestFloating_Length</csvQoMName>
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>TestFloatingLength</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+
+	<csvQuantityOfMeasure handler="wt.units.service.UnitsLoader.createQOM">
+		<csvname>TestFloating_Area</csvname>
+		<csvdescription></csvdescription>
+		<csvbaseUnitSymbol>m**2</csvbaseUnitSymbol>
+		<csvnameAndValuePairs></csvnameAndValuePairs>
+	</csvQuantityOfMeasure>
+
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>TestFloatingArea</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>TestArea Display Name</csvdisplay_name>
+		<csvdescription>TestArea Description</csvdescription>
+		<csvdata_type>UNIT</csvdata_type>
+		<csvQoMName>TestFloating_Area</csvQoMName>
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>TestFloatingArea</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+
+
+	<csvQuantityOfMeasure handler="wt.units.service.UnitsLoader.createQOM">
+		<csvname>TestFloating_Volume</csvname>
+		<csvdescription></csvdescription>
+		<csvbaseUnitSymbol>m**3</csvbaseUnitSymbol>
+		<csvnameAndValuePairs></csvnameAndValuePairs>
+	</csvQuantityOfMeasure>
+
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>TestFloatingVolume</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>TestVolume Display Name</csvdisplay_name>
+		<csvdescription>TestVolume Description</csvdescription>
+		<csvdata_type>UNIT</csvdata_type>
+		<csvQoMName>TestFloating_Volume</csvQoMName>
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>TestFloatingVolume</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+
+
+	<csvQuantityOfMeasure handler="wt.units.service.UnitsLoader.createQOM">
+		<csvname>TestFloating_Power</csvname>
+		<csvdescription></csvdescription>
+		<csvbaseUnitSymbol>w</csvbaseUnitSymbol>
+		<csvnameAndValuePairs></csvnameAndValuePairs>
+	</csvQuantityOfMeasure>
+
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>TestFloatingPower</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>TestPower Display Name</csvdisplay_name>
+		<csvdescription>TestPower Description</csvdescription>
+		<csvdata_type>UNIT</csvdata_type>
+		<csvQoMName>TestFloating_Power</csvQoMName>
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>TestFloatingPower</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+
+	<csvQuantityOfMeasure handler="wt.units.service.UnitsLoader.createQOM">
+		<csvname>TestFloating_Acceleration</csvname>
+		<csvdescription></csvdescription>
+		<csvbaseUnitSymbol>m/s**2</csvbaseUnitSymbol>
+		<csvnameAndValuePairs></csvnameAndValuePairs>
+	</csvQuantityOfMeasure>
+
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>TestFloatingAcceleration</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>TestOrganizer</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>TestAcceleration Display Name</csvdisplay_name>
+		<csvdescription>TestAcceleration Description</csvdescription>
+		<csvdata_type>UNIT</csvdata_type>
+		<csvQoMName>TestFloating_Acceleration</csvQoMName>
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>TestFloatingAcceleration</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+
+</NmLoader>

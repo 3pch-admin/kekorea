@@ -47,139 +47,27 @@
 			<tr>
 				<th class="req lb">KEK 작번</th>
 				<td>
-					<div class="include">
-						<input type="button" value="작번 추가" title="작번 추가" class="blue" onclick="_insert();">
-						<input type="button" value="작번 삭제" title="작번 삭제" class="red" onclick="_deleteRow();">
-						<div id="_grid_wrap" style="height: 150px; border-top: 1px solid #3180c3; margin: 5px;"></div>
-						<script type="text/javascript">
-							let _myGridID;
-							const _columns = [ {
-								dataField : "projectType_name",
-								headerText : "작번유형",
-								dataType : "string",
-								width : 80,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "customer_name",
-								headerText : "거래처",
-								dataType : "string",
-								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "mak_name",
-								headerText : "막종",
-								dataType : "string",
-								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "detail_name",
-								headerText : "막종상세",
-								dataType : "string",
-								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "kekNumber",
-								headerText : "KEK 작번",
-								dataType : "string",
-								width : 130,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "keNumber",
-								headerText : "KE 작번",
-								dataType : "string",
-								width : 130,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "description",
-								headerText : "작업 내용",
-								dataType : "string",
-								style : "left indent10",
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "oid",
-								headerText : "",
-								visible : false
-							} ]
-							function _createAUIGrid(columnLayout) {
-								const props = {
-									headerHeight : 30,
-									rowHeight : 30,
-									showRowNumColumn : true,
-									showRowCheckColumn : true,
-									showStateColumn : true,
-									rowNumHeaderText : "번호",
-									showAutoNoDataMessage : false,
-									selectionMode : "multipleCells",
-								}
-								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-							}
-
-							function _insert() {
-								const url = getCallUrl("/project/popup?method=append&multi=true");
-								popup(url, 1500, 700);
-							}
-
-							function append(data, callBack) {
-								for (let i = 0; i < data.length; i++) {
-									const item = data[i].item;
-									const isUnique = AUIGrid.isUniqueValue(_myGridID, "oid", item.oid);
-									if (isUnique) {
-										AUIGrid.addRow(_myGridID, item, "first");
-									}
-								}
-								callBack(true);
-							}
-
-							function _deleteRow() {
-								const checked = AUIGrid.getCheckedRowItems(_myGridID);
-								if (checked.length === 0) {
-									alert("삭제할 행을 선택하세요.");
-									return false;
-								}
-
-								for (let i = checked.length - 1; i >= 0; i--) {
-									const rowIndex = checked[i].rowIndex;
-									AUIGrid.removeRow(_myGridID, rowIndex);
-								}
-							}
-						</script>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<th class="lb">첨부파일</th>
-				<td class="indent5">
-					<jsp:include page="/extcore/include/secondary-include.jsp">
+					<jsp:include page="/extcore/jsp/common/project-include.jsp">
 						<jsp:param value="" name="oid" />
 						<jsp:param value="create" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
 			<tr>
+				<th class="lb">첨부파일</th>
+				<td class="indent5">
+					<jsp:include page="/extcore/jsp/common/attach-secondary.jsp">
+						<jsp:param value="" name="oid" />
+					</jsp:include>
+				</td>
+			</tr>
+			<tr>
 				<th class="req lb">결재</th>
 				<td>
-					<jsp:include page="/extcore/include/register-include.jsp"></jsp:include>
+					<jsp:include page="/extcore/jsp/common/approval-register.jsp">
+						<jsp:param value="" name="oid" />
+						<jsp:param value="create" name="mode" />
+					</jsp:include>
 				</td>
 			</tr>
 		</table>
@@ -442,8 +330,8 @@
 		const name = document.getElementById("name");
 		const description = document.getElementById("description").value;
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
-		const _addRows = AUIGrid.getAddedRowItems(_myGridID);
-		const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
+		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
+		const adddRows8 = AUIGrid.getAddedRowItems(myGridID8);
 		const url = getCallUrl("/workOrder/create");
 
 		if (isNull(name.value)) {
@@ -452,13 +340,13 @@
 			return false;
 		}
 
-		if (_addRows.length === 0) {
+		if (addRows9.length === 0) {
 			alert("최소 하나이상의 작번을 추가하세요.");
 			_insert();
 			return false;
 		}
 
-		if (_addRows_.length === 0) {
+		if (adddRows8.length === 0) {
 			alert("결재선을 지정하세요.");
 			_register();
 			return false;
@@ -469,13 +357,13 @@
 			return false;
 		}
 
-		_addRows.sort(function(a, b) {
-			return a.sort - b.sort;
-		});
+// 		_addRows.sort(function(a, b) {
+// 			return a.sort - b.sort;
+// 		});
 
-		addRows.sort(function(a, b) {
-			return a.sort - b.sort;
-		});
+// 		addRows.sort(function(a, b) {
+// 			return a.sort - b.sort;
+// 		});
 
 		if (!confirm("등록 하시겠습니까?")) {
 			return false;
@@ -484,9 +372,9 @@
 		params.name = name.value;
 		params.description = description;
 		params.addRows = addRows;
-		params._addRows = _addRows;
+		params.addRows9 = addRows9;
 		params.secondarys = toArray("secondarys");
-		toRegister(params, _addRows_);
+		toRegister(params, adddRows8);
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
@@ -505,17 +393,17 @@
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
-					const _isCreated = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated_ && _isCreated) {
-						AUIGrid.resize(_myGridID);
+					const isCreated9 = AUIGrid.isCreated(myGridID9);
+					if (isCreated9) {
+						AUIGrid.resize(myGridID9);
 					} else {
-						_createAUIGrid(_columns);
+						createAUIGrid9(columns9);
 					}
-					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated_) {
-						AUIGrid.resize(_myGridID_);
+					const isCreated8 = AUIGrid.isCreated(myGridID8);
+					if (isCreated8) {
+						AUIGrid.resize(myGridID8);
 					} else {
-						_createAUIGrid_(_columns_);
+						createAUIGrid8(columns8);
 					}
 					break;
 				case "tabs-2":
@@ -529,17 +417,15 @@
 				}
 			}
 		});
-		createAUIGrid(columns);
-		_createAUIGrid(_columns);
-		_createAUIGrid_(_columns_);
-		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID);
-		AUIGrid.resize(_myGridID_);
+
+		createAUIGrid9(columns9);
+		createAUIGrid8(columns8);
+		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID8);
 	})
 
 	window.addEventListener("resize", function() {
-		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID);
-		AUIGrid.resize(_myGridID_);
+		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID8);
 	});
 </script>

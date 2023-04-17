@@ -1,3 +1,8 @@
+<%@page import="wt.content.ContentHelper"%>
+<%@page import="wt.content.ContentRoleType"%>
+<%@page import="e3ps.common.util.CommonUtils"%>
+<%@page import="e3ps.workspace.notice.Notice"%>
+<%@page import="wt.fc.QueryResult"%>
 <%@page import="wt.log4j.SystemOutFacade"%>
 <%@page import="java.sql.Timestamp"%>
 <%@page import="net.sf.json.JSONArray"%>
@@ -56,18 +61,16 @@ NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 			<tr>
 				<th class="lb">주 첨부파일</th>
 				<td class="indent5" colspan="3">
-					<jsp:include page="/extcore/include/attachment-view.jsp">
+					<jsp:include page="/extcore/jsp/common/primary-view.jsp">
 						<jsp:param value="<%=dto.getOid()%>" name="oid" />
-						<jsp:param value="primary" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">첨부파일</th>
 				<td class="indent5" colspan="3">
-					<jsp:include page="/extcore/include/attachment-view.jsp">
+					<jsp:include page="/extcore/jsp/common/secondary-view.jsp">
 						<jsp:param value="<%=dto.getOid()%>" name="oid" />
-						<jsp:param value="secondary" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>

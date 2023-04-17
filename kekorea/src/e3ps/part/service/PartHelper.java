@@ -29,7 +29,6 @@ import e3ps.part.UnitSubPart;
 import e3ps.part.beans.BomBroker;
 import e3ps.part.beans.BomCompare;
 import e3ps.part.beans.BomTreeData;
-import e3ps.part.beans.PartDTO;
 import e3ps.part.beans.PartTreeData;
 import e3ps.part.beans.PartViewData;
 import e3ps.part.column.BomColumnData;
@@ -37,6 +36,7 @@ import e3ps.part.column.PartLibraryColumnData;
 import e3ps.part.column.PartListDataColumnData;
 import e3ps.part.column.PartProductColumnData;
 import e3ps.part.column.UnitBomColumnData;
+import e3ps.part.dto.PartDTO;
 import e3ps.project.Project;
 import jxl.Workbook;
 import jxl.format.Alignment;
@@ -54,6 +54,7 @@ import wt.clients.folder.FolderTaskLogic;
 import wt.doc.WTDocument;
 import wt.doc.WTDocumentMaster;
 import wt.epm.EPMDocument;
+import wt.epm.EPMDocumentMaster;
 import wt.epm.build.EPMBuildHistory;
 import wt.epm.build.EPMBuildRule;
 import wt.epm.structure.EPMReferenceLink;
@@ -65,7 +66,6 @@ import wt.folder.Folder;
 import wt.folder.IteratedFolderMemberLink;
 import wt.lifecycle.State;
 import wt.part.WTPart;
-import wt.part.WTPartDocumentLink;
 import wt.part.WTPartHelper;
 import wt.part.WTPartMaster;
 import wt.part.WTPartStandardConfigSpec;
@@ -92,30 +92,16 @@ import wt.vc.wip.WorkInProgressHelper;
 
 public class PartHelper {
 
-	public static final String[] CADTYPE_DISPLAY = new String[] { "어셈블리 (ASSEMBLY)", "파트 (PART)" };
+	/**
+	 * 도면 저장 기본위치 제품 - 라이브러리 동일
+	 */
+	public static final String DEFAULT_ROOT = "/Default/도면";
 
-	public static final String[] CADTYPE_VALUE = new String[] { "separable", "component" };
-
-	public static final String[] PART_STATE_DISPLAY = new String[] { "작업 중", "승인 중", "승인됨", "반려됨", "폐기" };
-
-	public static final String[] PART_STATE_VALUE = new String[] { "INWORK", "UNDERAPPROVAL", "RELEASED", "RETURN",
-			"WITHDRAWN" };
-
-	public static final String ELEC_ROOT = "/Default/부품/전장품";
-
-	public static final String LIBRARY_ROOT = "/Default/도면";
-
-	public static final String EPLAN_ROOT = "/Default";
-
-	public static final String PRODUCT_ROOT = "/Default/도면";
-
-	public static final String PRODUCT_CONTEXT = "PRODUCT";
-
-	public static final String LIBRARY_CONTEXT = "LIBRARY";
-
-	public static final String EPLAN_CONTEXT = "EPLAN";
-
-	public static final String ELEC_CONTEXT = "ELEC";
+	/**
+	 * 제품, 라이브러리 컨데이터 구분 변수
+	 */
+	public static final String PRODUCT_CONTAINER = "PRODUCT";
+	public static final String LIBRARY_CONTAINER = "LIBRARY";
 
 	public static final String COMMON_PART = "/Default/도면/부품/일반부품";
 	public static final String NEW_PART = "/Default/도면/부품/신규부품";
@@ -124,14 +110,7 @@ public class PartHelper {
 
 	public static final String SPEC_PART = "/Default/도면/부품/제작사양서";
 
-	/**
-	 * access service
-	 */
 	public static final PartService service = ServiceFactory.getService(PartService.class);
-
-	/**
-	 * access helper
-	 */
 	public static final PartHelper manager = new PartHelper();
 
 	public static File excelForm;
@@ -2181,14 +2160,52 @@ public class PartHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<PartDTO> list = new ArrayList<>();
+
+		boolean latest = (boolean) params.get("latest");
+		String oid = (String) params.get("oid"); // 폴더 OID
+		String container = (String) params.get("container");
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTPart.class, true);
 		int idx_m = query.appendClassList(WTPartMaster.class, false);
 
+		QuerySpecUtils.toCI(query, idx, WTPart.class);
 		QuerySpecUtils.toInnerJoin(query, WTPart.class, WTPartMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
 
-		QuerySpecUtils.toOrderBy(query, idx, WTPart.class, WTPart.CREATE_TIMESTAMP, false);
+		Folder folder = null;
+		if (!StringUtils.isNull(oid)) {
+			folder = (Folder) CommonUtils.getObject(oid);
+		} else {
+			if (container.equals(PRODUCT_CONTAINER)) {
+				folder = FolderTaskLogic.getFolder(DEFAULT_ROOT, CommonUtils.getPDMLinkProductContainer());
+			} else if (container.equalsIgnoreCase(LIBRARY_CONTAINER)) {
+				folder = FolderTaskLogic.getFolder(DEFAULT_ROOT, CommonUtils.getWTLibraryContainer());
+			}
+		}
+
+		if (folder != null) {
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+			int f_idx = query.appendClassList(IteratedFolderMemberLink.class, false);
+			ClassAttribute fca = new ClassAttribute(IteratedFolderMemberLink.class, "roleBObjectRef.key.branchId");
+			SearchCondition fsc = new SearchCondition(fca, "=",
+					new ClassAttribute(WTPart.class, "iterationInfo.branchId"));
+			fsc.setFromIndicies(new int[] { f_idx, idx }, 0);
+			fsc.setOuterJoin(0);
+			query.appendWhere(fsc, new int[] { f_idx, idx });
+			query.appendAnd();
+			long fid = folder.getPersistInfo().getObjectIdentifier().getId();
+			query.appendWhere(new SearchCondition(IteratedFolderMemberLink.class, "roleAObjectRef.key.id", "=", fid),
+					new int[] { f_idx });
+		}
+
+		if (latest) {
+			QuerySpecUtils.toLatest(query, idx, WTPart.class);
+		}
+
+		QuerySpecUtils.toOrderBy(query, idx, WTPart.class, WTPart.MODIFY_TIMESTAMP, true);
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {

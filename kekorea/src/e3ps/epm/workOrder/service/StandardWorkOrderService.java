@@ -39,7 +39,7 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 		String name = dto.getName();
 		String description = dto.getDescription();
 		ArrayList<Map<String, Object>> addRows = dto.getAddRows(); // 도면 일람표
-		ArrayList<Map<String, String>> _addRows = dto.get_addRows(); // 작번
+		ArrayList<Map<String, String>> addRows8 = dto.getAddRows8();
 		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
 		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
 		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
@@ -56,8 +56,8 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			workOrder.setState(Constants.State.INWORK);
 			PersistenceHelper.manager.save(workOrder);
 
-			for (Map<String, String> _addRow : _addRows) {
-				String oid = _addRow.get("oid");
+			for (Map<String, String> addRow8 : addRows8) {
+				String oid = addRow8.get("oid");
 				Project project = (Project) CommonUtils.getObject(oid);
 				WorkOrderProjectLink link = WorkOrderProjectLink.newWorkOrderProjectLink(workOrder, project);
 				PersistenceHelper.manager.save(link);

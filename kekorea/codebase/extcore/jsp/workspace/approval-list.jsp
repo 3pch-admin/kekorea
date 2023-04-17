@@ -192,7 +192,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "singleRow",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,

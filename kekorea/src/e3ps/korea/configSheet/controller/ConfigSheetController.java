@@ -111,7 +111,7 @@ public class ConfigSheetController extends BaseController {
 		ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
 		JSONArray data = ConfigSheetHelper.manager.loadBaseGridData(oid);
 		JSONArray list = ConfigSheetHelper.manager.jsonAuiProject(configSheet);
-		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(configSheet);
+		JSONArray history = WorkspaceHelper.manager.jsonAuiHistory(configSheet);
 		ConfigSheetDTO dto = new ConfigSheetDTO(configSheet);
 		boolean isAdmin = CommonUtils.isAdmin();
 		model.addObject("isAdmin", isAdmin);
@@ -139,7 +139,7 @@ public class ConfigSheetController extends BaseController {
 
 		ArrayList<ConfigSheetCode> fixedList = ConfigSheetCodeHelper.manager.getConfigSheetCode("CATEGORY");
 		ArrayList<Map<String, Object>> data = ConfigSheetHelper.manager.compare(p1, destList, fixedList);
-		
+
 		model.addObject("p1", p1);
 		model.addObject("oid", oid);
 		model.addObject("fixedList", fixedList);

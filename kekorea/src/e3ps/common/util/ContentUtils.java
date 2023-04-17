@@ -63,16 +63,14 @@ public class ContentUtils {
 		if (result.hasMoreElements()) {
 			ApplicationData data = (ApplicationData) result.nextElement();
 			String fileIcon = getFileIcon(data.getFileName());
-			String url = ContentHelper.getDownloadURL(holder, data, false, data.getFileName()).toString();
-			String aoid = data.getPersistInfo().getObjectIdentifier().getStringValue();
 			primary = new HashMap<>();
 			primary.put("oid", holder.getPersistInfo().getObjectIdentifier().getStringValue());
-			primary.put("aoid", aoid);
+			primary.put("aoid", data.getPersistInfo().getObjectIdentifier().getStringValue());
 			primary.put("name", data.getFileName());
 			primary.put("fileSizeKB", data.getFileSizeKB() + "KB");
 			primary.put("fileIcon", fileIcon);
-			primary.put("url", url);
-			primary.put("link", "<a href='javascript:download(" + aoid + ");'><img src=" + fileIcon + "></a>");
+			primary.put("url", "/Windchill/plm/content/download?oid="
+					+ data.getPersistInfo().getObjectIdentifier().getStringValue());
 			primary.put("fileSize", data.getFileSize());
 		}
 		return primary;
@@ -81,7 +79,7 @@ public class ContentUtils {
 	/**
 	 * 객체 OID로 첨부파일 가져오기
 	 */
-	public static Vector<String[]> getSecondary(String oid) throws Exception {
+	public static Vector<Map<String, Object>> getSecondary(String oid) throws Exception {
 		ReferenceFactory rf = new ReferenceFactory();
 		ContentHolder holder = (ContentHolder) rf.getReference(oid).getObject();
 		return getSecondary(holder);
@@ -90,23 +88,22 @@ public class ContentUtils {
 	/**
 	 * ContentHolder 객체에 대한 첨부파일 가져오기
 	 */
-	public static Vector<String[]> getSecondary(ContentHolder holder) throws Exception {
-		Vector<String[]> secondarys = new Vector<String[]>();
+	public static Vector<Map<String, Object>> getSecondary(ContentHolder holder) throws Exception {
+		Vector<Map<String, Object>> secondarys = new Vector<>();
 		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.SECONDARY);
 		while (result.hasMoreElements()) {
-			ContentItem item = (ContentItem) result.nextElement();
-			if (item instanceof ApplicationData) {
-				String[] secondary = new String[8];
-				ApplicationData data = (ApplicationData) item;
-				secondary[0] = holder.getPersistInfo().getObjectIdentifier().getStringValue();
-				secondary[1] = data.getPersistInfo().getObjectIdentifier().getStringValue();
-				secondary[2] = data.getFileName();
-				secondary[3] = data.getFileSizeKB() + "KB";
-				secondary[4] = getFileIcon(secondary[2]);
-				secondary[5] = ContentHelper.getDownloadURL(holder, data, false, secondary[2]).toString();
-				secondary[6] = "<a href=" + secondary[5] + "><img src=" + secondary[4] + "></a>";
-				secondarys.add(secondary);
-			}
+			Map<String, Object> map = new HashMap();
+			ApplicationData data = (ApplicationData) result.nextElement();
+			String fileIcon = getFileIcon(data.getFileName());
+			map.put("oid", holder.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("aoid", data.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", data.getFileName());
+			map.put("fileSizeKB", data.getFileSizeKB() + "KB");
+			map.put("fileIcon", fileIcon);
+			map.put("url", "/Windchill/plm/content/download?oid="
+					+ data.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("fileSize", data.getFileSize());
+			secondarys.add(map);
 		}
 		return secondarys;
 	}

@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -27,12 +26,9 @@ import com.sun.media.jai.codecimpl.TIFFImageEncoder;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.IBAUtils;
-import e3ps.project.output.DocumentOutputLink;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputDocumentLink;
 import e3ps.project.output.OutputTaskLink;
-import e3ps.project.output.TaskOutputLink;
-import e3ps.project.service.ProjectHelper;
 import e3ps.project.service.Schedulers;
 import e3ps.project.task.Task;
 import e3ps.project.task.variable.TaskStateVariable;
@@ -54,7 +50,6 @@ import wt.lifecycle.LifeCycleTemplate;
 import wt.lifecycle.State;
 import wt.part.WTPartUsageLink;
 import wt.pom.Transaction;
-import wt.query.QuerySpec;
 import wt.representation.Representation;
 import wt.services.ManagerException;
 import wt.services.StandardManager;
@@ -521,48 +516,48 @@ public class StandardEventService extends StandardManager implements EventServic
 
 	@Override
 	public void replaceLifeCycle(Workable workable) throws WTException {
-		SessionContext prev = SessionContext.newContext();
-
-		Transaction trs = new Transaction();
-		try {
-
-			trs.start();
-
-			SessionHelper.manager.setAdministrator();
-
-			EPMDocument epm = (EPMDocument) workable;
-
-			String ss = epm.getLifeCycleState().toString();
-
-			State state = State.toState(ss);
-
-			System.out.println("ss=" + ss);
-
-			boolean isLatest = CommonUtils.isLatestVersion(epm);
-			if (!isLatest) {
-				epm = (EPMDocument) CommonUtils.getLatestVersion(epm);
-				epm = (EPMDocument) PersistenceHelper.manager.refresh(epm);
-			}
-
-			LifeCycleTemplate lct = LifeCycleHelper.service.getLifeCycleTemplate(MigratorHelper.LIFECYCLE_NAME,
-					CommonUtils.getContainer());
-
-			System.out.println("라이프 사이클 변경...");
-			LifeCycleHelper.service.reassign((LifeCycleManaged) epm, lct.getLifeCycleTemplateReference());
-
-			epm = (EPMDocument) PersistenceHelper.manager.refresh(epm);
-			System.out.println("라이프 상태값 변경...");
-			LifeCycleHelper.service.setLifeCycleState(epm, state);
-
-			trs.commit();
-			trs = null;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-			SessionContext.setContext(prev);
-		}
+//		SessionContext prev = SessionContext.newContext();
+//
+//		Transaction trs = new Transaction();
+//		try {
+//
+//			trs.start();
+//
+//			SessionHelper.manager.setAdministrator();
+//
+//			EPMDocument epm = (EPMDocument) workable;
+//
+//			String ss = epm.getLifeCycleState().toString();
+//
+//			State state = State.toState(ss);
+//
+//			System.out.println("ss=" + ss);
+//
+//			boolean isLatest = CommonUtils.isLatestVersion(epm);
+//			if (!isLatest) {
+//				epm = (EPMDocument) CommonUtils.getLatestVersion(epm);
+//				epm = (EPMDocument) PersistenceHelper.manager.refresh(epm);
+//			}
+//
+//			LifeCycleTemplate lct = LifeCycleHelper.service.getLifeCycleTemplate(MigratorHelper.LIFECYCLE_NAME,
+//					CommonUtils.getContainer());
+//
+//			System.out.println("라이프 사이클 변경...");
+//			LifeCycleHelper.service.reassign((LifeCycleManaged) epm, lct.getLifeCycleTemplateReference());
+//
+//			epm = (EPMDocument) PersistenceHelper.manager.refresh(epm);
+//			System.out.println("라이프 상태값 변경...");
+//			LifeCycleHelper.service.setLifeCycleState(epm, state);
+//
+//			trs.commit();
+//			trs = null;
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			if (trs != null)
+//				trs.rollback();
+//			SessionContext.setContext(prev);
+//		}
 	}
 }

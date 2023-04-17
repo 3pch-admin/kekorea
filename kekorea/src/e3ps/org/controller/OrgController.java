@@ -58,6 +58,7 @@ public class OrgController extends BaseController {
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;
@@ -89,6 +90,7 @@ public class OrgController extends BaseController {
 			result.put("msg", SAVE_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;
@@ -125,6 +127,7 @@ public class OrgController extends BaseController {
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;
@@ -141,20 +144,10 @@ public class OrgController extends BaseController {
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;
-	}
-
-	@Description(value = "사용자 정보 페이지")
-	@GetMapping(value = "/view")
-	public ModelAndView view(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		WTUser wtUser = (WTUser) CommonUtils.getObject(oid);
-		UserDTO dto = new UserDTO(wtUser);
-		model.addObject("dto", dto);
-		model.setViewName("popup:/org/user-view");
-		return model;
 	}
 
 	@Description(value = "정보 KEY-VALUE")
@@ -168,8 +161,22 @@ public class OrgController extends BaseController {
 			result.put("list", list);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;
+	}
+
+	@Description(value = "사용자 정보 페이지")
+	@GetMapping(value = "/view")
+	public ModelAndView view(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser user = (WTUser) CommonUtils.getObject(oid);
+		UserDTO dto = new UserDTO(user);
+		model.addObject("dto", dto);
+		model.addObject("isAdmin", isAdmin);
+		model.setViewName("/extcore/jsp/org/organization-view.jsp");
+		return model;
 	}
 }

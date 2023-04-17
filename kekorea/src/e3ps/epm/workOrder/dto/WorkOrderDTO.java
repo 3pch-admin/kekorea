@@ -38,7 +38,6 @@ public class WorkOrderDTO {
 	private String creator;
 	private Timestamp createdDate;
 	private String createdDate_txt;
-	private String cover;
 	private String primary;
 
 	// 트리구현
@@ -47,10 +46,20 @@ public class WorkOrderDTO {
 
 	// 변수용
 	private ArrayList<Map<String, Object>> addRows = new ArrayList<>(); // 도면 일람표
-	private ArrayList<Map<String, String>> _addRows = new ArrayList<>(); // 작번
+
+	/**
+	 * 결재 변수
+	 */
 	private ArrayList<Map<String, String>> agreeRows = new ArrayList<>(); // 검토
 	private ArrayList<Map<String, String>> approvalRows = new ArrayList<>(); // 결재
 	private ArrayList<Map<String, String>> receiveRows = new ArrayList<>(); // 수신
+
+	/**
+	 * 작번 변수
+	 */
+	private ArrayList<Map<String, String>> addRows8 = new ArrayList<>();
+	private ArrayList<Map<String, String>> removeRows8 = new ArrayList<>();
+
 	private ArrayList<String> secondarys = new ArrayList<>();
 
 	public WorkOrderDTO() {
@@ -107,7 +116,6 @@ public class WorkOrderDTO {
 			setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
 		}
 		setCreator(workOrder.getOwnership().getOwner().getFullName());
-		setCover(AUIGridUtils.primaryTemplate(workOrder));
 		setPrimary(AUIGridUtils.primaryTemplate(workOrder));
 		setCreatedDate(workOrder.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(workOrder.getCreateTimestamp()));

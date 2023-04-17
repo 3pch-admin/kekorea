@@ -9,6 +9,8 @@ EpmDTO dto = (EpmDTO) request.getAttribute("dto");
 JSONArray list = (JSONArray) request.getAttribute("list");
 JSONArray data = (JSONArray) request.getAttribute("data");
 JSONArray history = (JSONArray) request.getAttribute("history");
+boolean isAutoCad = (boolean) request.getAttribute("isAutoCad");
+boolean isCreo = (boolean) request.getAttribute("isCreo");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
@@ -55,14 +57,18 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			</colgroup>
 			<tr>
 				<th class="lb">도면 번호</th>
-				<td class="indent5" colspan="3"></td>
+				<td class="indent5"><%=dto.getDwg_no()%></td>
+				<th class="lb">도면 번호</th>
+				<td class="indent5"><%=dto.getName()%></td>
 				<td class="center" rowspan="10">
-					<img src="<%=dto.getPreView()%>" style="height: 140px; cursor: pointer;" onclick="preView();" title="클릭시 원본크기로 볼 수 있습니다.">
+					<img src="<%=dto.getThumnail()%>" style="height: 140px; cursor: pointer;" onclick="preView();" title="클릭시 원본크기로 볼 수 있습니다.">
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">도면 이름</th>
-				<td class="indent5" colspan="3"><%=dto.getName()%></td>
+				<td class="indent5"><%=dto.getName()%></td>
+				<th class="lb">부품</th>
+				<td class="indent5"></td>
 			</tr>
 			<tr>
 				<th class="lb">버전</th>
@@ -75,10 +81,10 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				<td class="indent5"><%=dto.getLocation()%></td>
 			</tr>
 			<tr>
-				<th class="lb">종류</th>
-				<td class="indent5"></td>
+				<th class="lb">도면타입</th>
+				<td class="indent5"><%=dto.getCadType()%></td>
 				<th class="lb">응용프로그램</th>
-				<td class="indent5"></td>
+				<td class="indent5"><%=dto.getApplicationType()%></td>
 			</tr>
 			<tr>
 				<th class="lb">작성자</th>
@@ -93,19 +99,9 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				<td class="indent5"><%=dto.getModifiedDate_txt()%></td>
 			</tr>
 			<tr>
-				<th class="lb">도면파일</th>
-				<td class="indent5"></td>
-				<th class="lb">변환 파일</th>
-				<td class="indent5"></td>
-			</tr>
-			<tr>
-				<th class="lb">부품</th>
-				<td class="indent5" colspan="3"></td>
-			</tr>
-			<tr>
 				<th class="lb">설명</th>
 				<td colspan="3" class="indent5">
-					<textarea name="descriptionNotice" id="descriptionNotice" rows="7" cols="" readonly="readonly"><%=dto.getDescription()%></textarea>
+					<textarea class="description" rows="7" cols="" readonly="readonly"><%=dto.getDescription() != null ? dto.getDescription() : ""%></textarea>
 				</td>
 			</tr>
 		</table>
@@ -122,13 +118,17 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				<th class="lb">NAME_OF_PARTS</th>
 				<td class="indent5"><%=dto.getName_of_parts()%></td>
 				<th class="lb">DWG_NO</th>
-				<td class="indent5"><%=dto.getDwg_no()%></td>
+				<td class="indent5">
+					<%
+					//=dto.getDwg_no()
+					%>
+				</td>
 			</tr>
 			<tr>
 				<th class="lb">MATERIAL</th>
 				<td class="indent5"><%=dto.getMaterial()%></td>
 				<th class="lb">REMARKS</th>
-				<td class="indent5"><%=dto.getRemark()%></td>
+				<td class="indent5"><%=dto.getRemarks()%></td>
 			</tr>
 			<tr>
 				<th class="lb">PART_CODE</th>

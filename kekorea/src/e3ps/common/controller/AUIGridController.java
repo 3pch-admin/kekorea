@@ -107,29 +107,4 @@ public class AUIGridController extends BaseController {
 	public Map<String, Object> upload(HttpServletRequest request) throws Exception {
 		return AUIGridUtils.upload(request);
 	}
-
-	@Description(value = "파일 다운로드")
-	@PostMapping(value = "/download")
-	public ResponseEntity<byte[]> download(HttpServletRequest request) throws Exception {
-		String oid = request.getParameter("oid");
-		ApplicationData data = (ApplicationData) CommonUtils.getObject(oid);
-		InputStream is = ContentServerHelper.service.findContentStream(data);
-
-		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		byte[] buffer = new byte[1024];
-		int length;
-		while ((length = is.read(buffer)) != -1) {
-			byteArrayOutputStream.write(buffer, 0, length);
-		}
-
-		byte[] bytes = byteArrayOutputStream.toByteArray();
-		String name = URLEncoder.encode(data.getFileName(), "UTF-8").replaceAll("\\+", "%20");
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		headers.setContentLength(bytes.length);
-		headers.setContentDispositionFormData("attachment", name);
-
-		return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
-	}
 }

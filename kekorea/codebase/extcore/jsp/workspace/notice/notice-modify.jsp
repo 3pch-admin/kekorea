@@ -43,10 +43,9 @@ NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 	<tr>
 		<th class="lb">첨부파일</th>
 		<td class="indent5">
-			<%-- 			<jsp:include page="/extcore/include/primary-update.jsp"> --%>
-			<%-- 				<jsp:param value="<%=dto.getOid()%>" name="oid" /> --%>
-			<%-- 				<jsp:param value="update" name="mode" /> --%>
-			<%-- 			</jsp:include> --%>
+			<jsp:include page="/extcore/jsp/common/attach-primary.jsp">
+				<jsp:param value="<%=dto.getOid() %>" name="oid" />
+			</jsp:include>
 		</td>
 	</tr>
 </table>

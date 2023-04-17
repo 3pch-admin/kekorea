@@ -240,7 +240,6 @@ public class WorkOrderHelper {
 					node.put("pdate_txt", dto.getPdate_txt());
 					node.put("creator", dto.getCreator());
 					node.put("createdDate_txt", dto.getCreatedDate_txt());
-					node.put("cover", dto.getCover());
 					node.put("primary", dto.getPrimary());
 				} else {
 					JSONObject data = new JSONObject();
@@ -261,7 +260,6 @@ public class WorkOrderHelper {
 					data.put("pdate_txt", dto.getPdate_txt());
 					data.put("creator", dto.getCreator());
 					data.put("createdDate_txt", dto.getCreatedDate_txt());
-					data.put("cover", dto.getCover());
 					data.put("primary", dto.getPrimary());
 					children.add(data);
 				}
@@ -360,20 +358,19 @@ public class WorkOrderHelper {
 	}
 
 	/**
-	 * AUI 그리드 작번 리스트 INCLUDE 페이지
+	 * 도면일람표와 역인 작번 리스트
 	 */
-	public net.sf.json.JSONArray jsonArrayAui(String oid) throws Exception {
+	public JSONArray jsonAuiProject(String oid) throws Exception {
 		ArrayList<Map<String, String>> list = new ArrayList<>();
 		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
-
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WorkOrder.class, true);
 		int idx_link = query.appendClassList(WorkOrderProjectLink.class, true);
 		QuerySpecUtils.toInnerJoin(query, WorkOrder.class, WorkOrderProjectLink.class, WTAttributeNameIfc.ID_NAME,
 				"roleAObjectRef.key.id", idx, idx_link);
-		QuerySpecUtils.toEqualsAnd(query, idx_link, WorkOrderProjectLink.class, "roleAObjectRef.key.id",
-				workOrder.getPersistInfo().getObjectIdentifier().getId());
-		QuerySpecUtils.toOrderBy(query, idx_link, WorkOrderProjectLink.class, WorkOrderProjectLink.SORT, false);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, WorkOrderProjectLink.class, "roleAObjectRef.key.id", workOrder);
+		QuerySpecUtils.toOrderBy(query, idx_link, WorkOrderProjectLink.class, WorkOrderProjectLink.CREATE_TIMESTAMP,
+				true);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -381,16 +378,17 @@ public class WorkOrderHelper {
 			Project project = link.getProject();
 			Map<String, String> map = new HashMap<>();
 			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
-			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
-			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
-			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
-			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
+			map.put("projectType_name", project.getProjectType().getName());
+			map.put("customer_name", project.getCustomer().getName());
+			map.put("install_name", project.getInstall().getName());
+			map.put("mak_name", project.getMak().getName());
+			map.put("detail_name", project.getDetail().getName());
 			map.put("kekNumber", project.getKekNumber());
 			map.put("keNumber", project.getKeNumber());
 			map.put("description", project.getDescription());
 			list.add(map);
 		}
-		return net.sf.json.JSONArray.fromObject(list);
+		return JSONArray.fromObject(list);
 	}
 
 	/**

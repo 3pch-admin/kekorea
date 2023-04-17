@@ -33,9 +33,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<input type="hidden" name="oid" id="oid">
-		<!-- 폴더 OID -->
 
-		<table class="search-table" id="product-table">
+		<!-- 라이브러리 테이블 -->
+		<table class="search-table" id="library-table">
 			<colgroup>
 				<col width="130">
 				<col width="*">
@@ -54,11 +54,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				</td>
 			</tr>
 			<tr>
-				<th>파일이름</th>
+				<th>DWG_NO</th>
 				<td class="indent5">
-					<input type="text" name="fileName" id="fileName">
+					<input type="text" name="number" id="number">
 				</td>
-				<th>품번</th>
+				<th>PART_CODE</th>
 				<td class="indent5">
 					<input type="text" name="partCode" id="partCode">
 				</td>
@@ -66,20 +66,32 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<td class="indent5">
 					<input type="text" name="partName" id="partName">
 				</td>
-				<th>규격</th>
+				<th>MAKER</th>
 				<td class="indent5">
-					<input type="text" name="number" id="number">
+					<input type="text" name="maker" id="maker">
 				</td>
 			</tr>
 			<tr>
-				<th>캐드타입</th>
-				<td class="indent5">
-					<select name="cadType" id="cadType" class="width-200">
-						<option value="">선택</option>
-						<option value="CADASSEMBLY">어셈블리 (ASSEMBLY)</option>
-						<option value="CADCOMPONENT">파트 (PART)</option>
-						<option value="CADDRAWING">도면 (DRAWING)</option>
-					</select>
+				<th>버전</th>
+				<td>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="latest" value="true" checked="checked">
+						<div class="state p-success">
+							<label>
+								<b>최신버전</b>
+							</label>
+						</div>
+					</div>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="latest" value="">
+						<div class="state p-success">
+							<label>
+								<b>모든버전</b>
+							</label>
+						</div>
+					</div>
 				</td>
 				<th>MATERIAL</th>
 				<td class="indent5">
@@ -89,9 +101,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<td class="indent5">
 					<input type="text" name="remark" id="remark">
 				</td>
-				<th>REFERENCE 도면´</th>
+				<th>상태</th>
 				<td class="indent5">
-					<input type="text" name="reference" id="reference">
+					<select name="state" id="state" class="width-200">
+						<option value="">선택</option>
+						<option value="INWORK">작업 중</option>
+						<option value="UNDERAPPROVAL">승인 중</option>
+						<option value="RELEASED">승인됨</option>
+						<option value="RETURN">반려됨</option>
+						<option value="WITHDRAWN">폐기</option>
+					</select>
 				</td>
 			</tr>
 			<tr>
@@ -118,49 +137,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<input type="text" name="modifiedTo" id="modifiedTo" class="width-100">
 				</td>
 			</tr>
-			<tr>
-				<th>상태</th>
-				<td class="indent5">
-					<select name="state" id="state" class="width-200">
-						<option value="">선택</option>
-						<option value="INWORK">작업 중</option>
-						<option value="UNDERAPPROVAL">승인 중</option>
-						<option value="RELEASED">승인됨</option>
-						<option value="RETURN">반려됨</option>
-						<option value="WITHDRAWN">폐기</option>
-					</select>
-				</td>
-				<th>버전</th>
-				<td colspan="5">
-					&nbsp;
-					<div class="pretty p-switch">
-						<input type="radio" name="latest" value="true" checked="checked">
-						<div class="state p-success">
-							<label>
-								<b>최신버전</b>
-							</label>
-						</div>
-					</div>
-					&nbsp;
-					<div class="pretty p-switch">
-						<input type="radio" name="latest" value="">
-						<div class="state p-success">
-							<label>
-								<b>모든버전</b>
-							</label>
-						</div>
-					</div>
-				</td>
-			</tr>
 		</table>
+
 
 		<table class="button-table">
 			<tr>
 				<td class="left">
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
-					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('epm-list');">
-					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('epm-list');">
-					<input type="button" value="라이브러리" title="라이브러리" class="blue" onclick="toggle('library');">
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('library-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('library-list');">
+					<input type="button" value="부품" title="부품" class="blue" onclick="toggle('product');">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -185,14 +171,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<td valign="top">
 					<jsp:include page="/extcore/jsp/common/folder-include.jsp">
 						<jsp:param value="<%=EpmHelper.DEFAULT_ROOT%>" name="location" />
-						<jsp:param value="product" name="container" />
+						<jsp:param value="library" name="container" />
 						<jsp:param value="list" name="mode" />
-						<jsp:param value="595" name="height" />
+						<jsp:param value="630" name="height" />
 					</jsp:include>
 				</td>
 				<td>&nbsp;</td>
 				<td>
-					<div id="grid_wrap" style="height: 595px; border-top: 1px solid #3180c3;"></div>
+					<div id="grid_wrap" style="height: 630px; border-top: 1px solid #3180c3;"></div>
 					<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 				</td>
 			</tr>
@@ -280,7 +266,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						inline : true
 					},
 				}, {
-					dataField : "remarks",
+					dataField : "remark",
 					headerText : "REMARK",
 					dataType : "string",
 					width : 150,
@@ -396,15 +382,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function loadGridData() {
+// 				console.log(document.getElementsByName ("number"));
 				const params = new Object();
 				const url = getCallUrl("/epm/list");
-				const container = document.getElementById("psize").value;
-				const latest = !!document.querySelector("input[name=latest]:checked").value;
-				const oid = document.getElementById("oid").value;
 				const psize = document.getElementById("psize").value;
-				params.container = container;
-				params.latest = latest;
-				params.oid = oid;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -423,13 +404,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				exportToExcel("공지사항 리스트, 공지사항, 공지사항 리스트", exceptColumnFields, sessionName);
 			}
 
-			function toggle(container) {
+			function toggle() {
 				const iframe = parent.document.getElementById("content");
-				iframe.src = getCallUrl("/epm/library");
+				iframe.src = getCallUrl("/epm/list");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
-				const columns = loadColumnLayout("epm-list");
+				const columns = loadColumnLayout("library-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
@@ -441,7 +422,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				AUIGrid.resize(_myGridID);
 				selectbox("psize");
 				selectbox("state");
-				selectbox("cadType");
+// 				selectbox("cadType");
 				finderUser("creator");
 				finderUser("modifier");
 				twindate("created");
