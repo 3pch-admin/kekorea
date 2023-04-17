@@ -103,6 +103,12 @@ public class KePartController extends BaseController {
 			dataMap.put("editRows", editRow);
 			dataMap.put("removeRows", removeRow);
 
+			result = KePartHelper.manager.isTBOM(removeRow);
+			if ((boolean) result.get("tbom")) {
+				result.put("result", FAIL);
+				return result;
+			}
+
 			result = KePartHelper.manager.isValid(addRow, editRow);
 			if ((boolean) result.get("isExist")) {
 				result.put("result", FAIL);
