@@ -55,7 +55,7 @@ String method = (String) request.getAttribute("method");
 				openLayer();
 			},
 			onComplete : function() {
-				data = this;
+				data = this[0];
 				closeLayer();
 			},
 			onDelete : function() {
