@@ -21,7 +21,6 @@ import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
-@Description(value = "PLM 전체적으로 공통사용될 내용들의 주소 컨트롤러")
 @Controller
 public class IndexController extends BaseController {
 

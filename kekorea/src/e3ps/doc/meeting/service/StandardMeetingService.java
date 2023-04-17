@@ -1,10 +1,12 @@
 package e3ps.doc.meeting.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.meeting.Meeting;
@@ -14,17 +16,26 @@ import e3ps.doc.meeting.dto.MeetingDTO;
 import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.project.Project;
 import wt.clients.folder.FolderTaskLogic;
+import wt.clients.vc.CheckInOutTaskLogic;
 import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.doc.DocumentType;
+import wt.doc.WTDocumentMaster;
+import wt.doc.WTDocumentMasterIdentity;
+import wt.fc.IdentityHelper;
 import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.folder.Folder;
 import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
+import wt.org.WTUser;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
+import wt.session.SessionHelper;
 import wt.util.WTException;
+import wt.vc.wip.CheckoutLink;
+import wt.vc.wip.WorkInProgressHelper;
 
 public class StandardMeetingService extends StandardManager implements MeetingService {
 
@@ -67,7 +78,7 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 		String name = dto.getName();
 		String content = dto.getContent();
 		String tiny = dto.getTiny();
-		ArrayList<Map<String, String>> _addRows = dto.get_addRows();
+		ArrayList<Map<String, String>> addRows9 = dto.getAddRows9();
 		ArrayList<String> secondarys = dto.getSecondarys();
 		Transaction trs = new Transaction();
 		try {
@@ -86,20 +97,22 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 
 			meeting.setDocType(DocumentType.toDocumentType("$$Meeting"));
 
-			Folder folder = FolderTaskLogic.getFolder(MeetingHelper.LOCATION, CommonUtils.getContainer());
+			Folder folder = FolderTaskLogic.getFolder(MeetingHelper.LOCATION, CommonUtils.getPDMLinkProductContainer());
 			FolderHelper.assignLocation((FolderEntry) meeting, folder);
 
 			PersistenceHelper.manager.save(meeting);
 
-			for (String secondary : secondarys) {
+			for (int i = 0; secondarys != null && i < secondarys.size(); i++) {
+				String cacheId = (String) secondarys.get(i);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
 				ApplicationData applicationData = ApplicationData.newApplicationData(meeting);
 				applicationData.setRole(ContentRoleType.SECONDARY);
 				PersistenceHelper.manager.save(applicationData);
-				ContentServerHelper.service.updateContent(meeting, applicationData, secondary);
+				ContentServerHelper.service.updateContent(meeting, applicationData, vault.getPath());
 			}
 
-			for (Map<String, String> _addRow : _addRows) {
-				String oid = _addRow.get("oid");
+			for (Map<String, String> addRow9 : addRows9) {
+				String oid = addRow9.get("oid");
 				Project project = (Project) CommonUtils.getObject(oid);
 				MeetingProjectLink link = MeetingProjectLink.newMeetingProjectLink(meeting, project);
 				PersistenceHelper.manager.save(link);
@@ -196,45 +209,61 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 	}
 
 	@Override
-	public void modify(MeetingDTO dto) throws Exception {
+	public void update(MeetingDTO dto) throws Exception {
+		String oid = dto.getOid();
 		String name = dto.getName();
 		String content = dto.getContent();
 		String tiny = dto.getTiny();
-		ArrayList<Map<String, String>> _addRows = dto.get_addRows();
+		ArrayList<Map<String, String>> addRows9 = dto.getAddRows9();
 		ArrayList<String> secondarys = dto.getSecondarys();
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			Meeting meeting = Meeting.newMeeting();
-			meeting.setNumber(MeetingHelper.manager.getNextNumber());
-			meeting.setName(name);
-			meeting.setOwnership(CommonUtils.sessionOwner());
-			meeting.setContent(content);
+			Meeting meeting = (Meeting) CommonUtils.getObject(oid);
+
+			// 기존 연결 제거한다..
+			QueryResult result = PersistenceHelper.manager.navigate(meeting, "project", MeetingProjectLink.class,
+					false);
+			while (result.hasMoreElements()) {
+				MeetingProjectLink link = (MeetingProjectLink) result.nextElement();
+				PersistenceHelper.manager.delete(link);
+			}
+
+			Folder cFolder = CheckInOutTaskLogic.getCheckoutFolder();
+			CheckoutLink clink = WorkInProgressHelper.service.checkout(meeting, cFolder, "회의록 수정 체크 아웃");
+			Meeting newMeeting = (Meeting) clink.getWorkingCopy();
+			WTDocumentMaster master = (WTDocumentMaster) newMeeting.getMaster();
+			WTDocumentMasterIdentity identity = (WTDocumentMasterIdentity) master.getIdentificationObject();
+			identity.setName(name);
+			master = (WTDocumentMaster) IdentityHelper.service.changeIdentity(master, identity);
+			newMeeting.setContent(content);
 
 			if (!StringUtils.isNull(tiny)) {
 				MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(tiny);
-				meeting.setTiny(meetingTemplate);
+				newMeeting.setTiny(meetingTemplate);
 			}
 
-			meeting.setDocType(DocumentType.toDocumentType("$$Meeting"));
+			CommonContentHelper.manager.clear(newMeeting);
 
-			Folder folder = FolderTaskLogic.getFolder(MeetingHelper.LOCATION, CommonUtils.getContainer());
-			FolderHelper.assignLocation((FolderEntry) meeting, folder);
-
-			PersistenceHelper.manager.modify(meeting);
-
-			for (String secondary : secondarys) {
-				ApplicationData applicationData = ApplicationData.newApplicationData(meeting);
+			for (int i = 0; secondarys != null && i < secondarys.size(); i++) {
+				String cacheId = (String) secondarys.get(i);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
+				ApplicationData applicationData = ApplicationData.newApplicationData(newMeeting);
 				applicationData.setRole(ContentRoleType.SECONDARY);
-				PersistenceHelper.manager.modify(applicationData);
-				ContentServerHelper.service.updateContent(meeting, applicationData, secondary);
+				PersistenceHelper.manager.save(applicationData);
+				ContentServerHelper.service.updateContent(newMeeting, applicationData, vault.getPath());
 			}
 
-			for (Map<String, String> _addRow : _addRows) {
-				String oid = _addRow.get("oid");
-				Project project = (Project) CommonUtils.getObject(oid);
-				MeetingProjectLink link = MeetingProjectLink.newMeetingProjectLink(meeting, project);
+			WTUser user = (WTUser) SessionHelper.manager.getPrincipal();
+			String msg = user.getFullName() + " 사용자가 문서를 수정 하였습니다.";
+			// 필요하면 수정 사유로 대체
+			newMeeting = (Meeting) WorkInProgressHelper.service.checkin(newMeeting, msg);
+
+			for (Map<String, String> addRow9 : addRows9) {
+				String poid = addRow9.get("oid");
+				Project project = (Project) CommonUtils.getObject(poid);
+				MeetingProjectLink link = MeetingProjectLink.newMeetingProjectLink(newMeeting, project);
 				PersistenceHelper.manager.modify(link);
 			}
 
@@ -248,7 +277,7 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 			if (trs != null)
 				trs.rollback();
 		}
-		
+
 	}
-	
+
 }

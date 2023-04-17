@@ -35,7 +35,7 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 	<tr>
 		<th class="req lb">회의록 제목</th>
 		<td class="indent5">
-			<input type="text" name="name" id="name" class="AXInput width-500">
+			<input type="text" name="name" id="name" class="width-500">
 		</td>
 		<th>회의록 템플릿 선택</th>
 		<td class="indent5">
@@ -56,124 +56,10 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 	<tr>
 		<th class="req lb">KEK 작번</th>
 		<td colspan="3">
-			<div class="include">
-				<input type="button" value="작번 추가" title="작번 추가" class="blue" onclick="_insert();">
-				<input type="button" value="작번 삭제" title="작번 삭제" class="red" onclick="_deleteRow();">
-				<div id="_grid_wrap" style="height: 150px; border-top: 1px solid #3180c3; margin: 5px;"></div>
-				<script type="text/javascript">
-					let _myGridID;
-					const _columns = [ {
-						dataField : "projectType_name",
-						headerText : "작번유형",
-						dataType : "string",
-						width : 80,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "customer_name",
-						headerText : "거래처",
-						dataType : "string",
-						width : 120,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "mak_name",
-						headerText : "막종",
-						dataType : "string",
-						width : 120,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "detail_name",
-						headerText : "막종상세",
-						dataType : "string",
-						width : 120,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "kekNumber",
-						headerText : "KEK 작번",
-						dataType : "string",
-						width : 100,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "keNumber",
-						headerText : "KE 작번",
-						dataType : "string",
-						width : 100,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "description",
-						headerText : "작업 내용",
-						dataType : "string",
-						style : "aui-left",
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "oid",
-						headerText : "",
-						visible : false
-					} ]
-					function _createAUIGrid(columnLayout) {
-						const props = {
-							headerHeight : 30,
-							showRowNumColumn : true,
-							showRowCheckColumn : true,
-							showStateColumn : true,
-							rowNumHeaderText : "번호",
-							showAutoNoDataMessage : false,
-							selectionMode : "singleRow",
-							enableSorting : false
-						}
-						_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-					}
-
-					function _insert() {
-						const url = getCallUrl("/project/popup?method=append&multi=true");
-						popup(url, 1500, 700);
-					}
-
-					function append(data, callBack) {
-						for (let i = 0; i < data.length; i++) {
-							const item = data[i].item;
-							const isUnique = AUIGrid.isUniqueValue(_myGridID, "oid", item.oid);
-							if (isUnique) {
-								AUIGrid.addRow(_myGridID, item, "first");
-							}
-						}
-						callBack(true);
-					}
-
-					function _deleteRow() {
-						const checked = AUIGrid.getCheckedRowItems(_myGridID);
-						if (checked.length === 0) {
-							alert("삭제할 행을 선택하세요.");
-							return false;
-						}
-
-						for (let i = checked.length - 1; i >= 0; i--) {
-							const rowIndex = checked[i].rowIndex;
-							AUIGrid.removeRow(_myGridID, rowIndex);
-						}
-					}
-				</script>
-			</div>
+			<jsp:include page="/extcore/jsp/common/project-include.jsp">
+				<jsp:param value="" name="oid" />
+				<jsp:param value="create" name="mode" />
+			</jsp:include>
 		</td>
 	</tr>
 	<tr>
@@ -185,8 +71,8 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 	<tr>
 		<th class="lb">첨부파일</th>
 		<td class="indent5" colspan="3">
-			<jsp:include page="/extcore/include/secondary-include.jsp">
-				<jsp:param value="secondary" name="oid" />
+			<jsp:include page="/extcore/jsp/common/attach-secondary.jsp">
+				<jsp:param value="" name="oid" />
 				<jsp:param value="create" name="mode" />
 			</jsp:include>
 		</td>
@@ -195,29 +81,26 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 <script type="text/javascript">
 	// 등록
 	function create() {
-
 		const params = new Object();
 		const url = getCallUrl("/meeting/create");
 		const content = tinymce.activeEditor.getContent();
-		const _addRows = AUIGrid.getAddedRowItems(_myGridID);
+		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
 		params.name = document.getElementById("name").value;
 		params.content = content;
 		params.tiny = document.getElementById("tiny").value;
-		params._addRows = _addRows;
+		params.addRows9 = addRows9;
 		params.secondarys = toArray("secondarys");
-		
+
 		if (isNull(params.name)) {
 			alert("회의록 제목은 공백을 입력할 수 없습니다.");
 			document.getElementById("name").focus();
 			return false;
 		}
-		if (_addRows.length === 0) {
-			alert("KEK 작번은 공백을 입력할 수 없습니다.");
+		if (addRows9.length === 0) {
+			alert("최소 하나이상의 작번을 추가하세요.");
 			return false;
 		}
-		_addRows.sort(function(a, b) {
-			return a.sort - b.sort;
-		});
+
 		if (isNull(params.content)) {
 			alert("내용은 공백을 입력할 수 없습니다.");
 			tinymce.activeEditor.focus();
@@ -232,6 +115,8 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}
@@ -252,21 +137,23 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 		const tinyBox = document.getElementById("tiny");
 		$('#tiny').change(function() {
 			const value = tinyBox.value;
- 			const url = getCallUrl("/meeting/getContent?oid=" + value);
+			const url = getCallUrl("/meeting/getContent?oid=" + value);
+			openLayer();
 			call(url, null, function(data) {
 				if (data.result) {
 					tinymce.activeEditor.setContent(data.content);
+					closeLayer();
 				} else {
 					alert(data.msg);
 				}
 			}, "GET");
 		});
-		_createAUIGrid(_columns);
-		AUIGrid.resize(_myGridID);
+		createAUIGrid9(columns9);
+		AUIGrid.resize(myGridID9);
 		selectbox("tiny");
 	});
 
 	window.addEventListener("resize", function() {
-		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(myGridID9);
 	});
 </script>

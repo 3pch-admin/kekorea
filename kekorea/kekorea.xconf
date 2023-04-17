@@ -60,5 +60,10 @@
              value="wt.series.IntegerSeries"/>
 	<Property name="wt.series.HarvardSeries.seriesNames" overridable="true"
              targetFile="codebase/wt.properties"
-             value="MilSpec, InSpec"/>                                       	
+             value="MilSpec, InSpec"/>
+             
+	<!-- wvs.properties -->
+	<Property name="publish.usesPublishRules" overridable="true"
+             targetFile="codebase/WEB-INF/wvs/wvs.properties"
+             value="ARBORTEXT PROE"/>	                                                    		
 </Configuration>

@@ -18,6 +18,7 @@ import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.meeting.Meeting;
+import e3ps.doc.meeting.service.MeetingHelper;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.epm.workOrder.WorkOrder;
@@ -3817,10 +3818,10 @@ public class ProjectHelper {
 
 			// 회의록
 		} else if (per instanceof Meeting) {
-
+			return MeetingHelper.manager.jsonAuiProject(oid);
 			// TBOM
-		} else if(per instanceof TBOMMaster) {
-			
+		} else if (per instanceof TBOMMaster) {
+
 		}
 		return new JSONArray();
 	}

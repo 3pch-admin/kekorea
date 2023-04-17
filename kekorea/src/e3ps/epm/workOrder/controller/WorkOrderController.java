@@ -19,14 +19,12 @@ import org.springframework.web.servlet.ModelAndView;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.DateUtils;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.project.Project;
 import e3ps.project.template.service.TemplateHelper;
-import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -45,8 +43,6 @@ public class WorkOrderController extends BaseController {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MONTH, -4);
 		Timestamp date = new Timestamp(calendar.getTime().getTime());
-		String before = date.toString().substring(0, 10);
-		String end = DateUtils.getCurrentTimestamp().toString().substring(0, 10);
 
 		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
 		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
@@ -57,8 +53,6 @@ public class WorkOrderController extends BaseController {
 		model.addObject("customers", customers);
 		model.addObject("projectTypes", projectTypes);
 		model.addObject("maks", maks);
-		model.addObject("before", before);
-		model.addObject("end", end);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/epm/workOrder/workOrder-list.jsp");
@@ -129,8 +123,10 @@ public class WorkOrderController extends BaseController {
 		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
 		WorkOrderDTO dto = new WorkOrderDTO(workOrder);
 		JSONArray list = KeDrawingHelper.manager.getData(workOrder);
-		JSONArray history = WorkspaceHelper.manager.jsonAuiHistory(workOrder);
-		model.addObject("history", history);
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = CommonUtils.sessionUser();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("list", list);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/epm/workOrder/workOrder-view");
@@ -158,4 +154,38 @@ public class WorkOrderController extends BaseController {
 		model.setViewName("popup:/epm/workOrder/workOrder-compare");
 		return model;
 	}
+
+	@Description(value = "도면 일람표 수정 페이지")
+	@GetMapping(value = "/modify")
+	public ModelAndView modify(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
+		WorkOrderDTO dto = new WorkOrderDTO(workOrder);
+		JSONArray list = KeDrawingHelper.manager.getData(workOrder);
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = CommonUtils.sessionUser();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("list", list);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/epm/workOrder/workOrder-modify");
+		return model;
+	}
+
+	@Description(value = "도면일람표 수정 페이지 등록")
+	@PostMapping(value = "/modify")
+	@ResponseBody
+	public Map<String, Object> modify(@RequestBody WorkOrderDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkOrderHelper.service.modify(dto);
+			result.put("result", SUCCESS);
+			result.put("msg", MODIFY_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
+	}
+
 }

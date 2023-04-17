@@ -35,47 +35,40 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 		<col width="800">
 	</colgroup>
 	<tr>
-		<th>회의록 제목</th>
+		<th class="lb">회의록 제목</th>
 		<td class="indent5"><%=dto.getName()%></td>
 		<th>회의록 템플릿</th>
-		<td class="indent5"><%=dto.getT_name()%></td>
+		<td class="indent5"><%=dto.getTname() != null ? dto.getTname() : ""%></td>
 	</tr>
 	<tr>
-		<th>KEK 작번</th>
+		<th class="lb">KEK 작번</th>
 		<td class="indent5" colspan="3">
-			<jsp:include page="/extcore/include/project-include.jsp">
+			<jsp:include page="/extcore/jsp/common/project-include.jsp">
 				<jsp:param value="<%=dto.getOid()%>" name="oid" />
 				<jsp:param value="view" name="mode" />
-				<jsp:param value="false" name="multi" />
-				<jsp:param value="meeting" name="obj" />
-				<jsp:param value="180" name="height" />
 			</jsp:include>
 		</td>
 	</tr>
 	<tr>
-		<th>내용</th>
+		<th class="lb">내용</th>
 		<td class="indent5" colspan="3">
-			<textarea name="description" id="description"  readonly="readonly"><%=dto.getContent()%></textarea>
+			<textarea rows="5" readonly="readonly"><%=dto.getContent()%></textarea>
 		</td>
 	</tr>
 	<tr>
-		<th>첨부파일</th>
+		<th class="lb">첨부파일</th>
 		<td class="indent5" colspan="3">
-			<jsp:include page="/extcore/include/attachment-view.jsp">
+			<jsp:include page="/extcore/jsp/common/secondary-view.jsp">
 				<jsp:param value="<%=dto.getOid()%>" name="oid" />
-				<jsp:param value="secondary" name="mode" />
 			</jsp:include>
 		</td>
 	</tr>
 </table>
 <script type="text/javascript">
-console.log(document.getElementById("oid").value);
-console.log(document.getElementById("poid").value);
-console.log(document.getElementById("loid").value);
 	function loadTinymce() {
 		tinymce.init({
 			selector : 'textarea',
-			height : 500,
+			height : 400,
 			menubar : false,
 			statusbar : false,
 			language : 'ko_KR',
@@ -89,20 +82,20 @@ console.log(document.getElementById("loid").value);
 			}
 		});
 	}
-	
+
 	document.addEventListener("DOMContentLoaded", function() {
-		_createAUIGrid(_columns);
-		AUIGrid.resize(_myGridID);
+		createAUIGrid9(columns9);
+		AUIGrid.resize(myGridID9);
 		loadTinymce();
 	});
 
 	window.addEventListener("resize", function() {
-		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(myGridID9);
 	});
-	
+
 	function modify() {
 		const loid = document.getElementById("loid").value;
-		const url = getCallUrl("/meeting/meetingModify?oid=" + loid);
+		const url = getCallUrl("/meeting/update?oid=" + loid);
 		document.location.href = url;
 	}
 </script>

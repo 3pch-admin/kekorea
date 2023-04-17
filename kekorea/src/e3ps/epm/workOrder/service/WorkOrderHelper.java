@@ -21,11 +21,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.bom.partlist.dto.PartListDTO;
-import e3ps.bom.tbom.TBOMData;
-import e3ps.bom.tbom.TBOMMaster;
-import e3ps.bom.tbom.TBOMMasterDataLink;
-import e3ps.bom.tbom.TBOMMasterProjectLink;
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
@@ -52,7 +47,6 @@ import wt.fc.QueryResult;
 import wt.org.WTPrincipal;
 import wt.org.WTUser;
 import wt.query.QuerySpec;
-import wt.query.SearchCondition;
 import wt.queue.ProcessingQueue;
 import wt.queue.QueueHelper;
 import wt.services.ServiceFactory;
@@ -100,7 +94,6 @@ public class WorkOrderHelper {
 		PagingQueryResult result = pager.find();
 
 		JSONArray list = new JSONArray();
-		boolean isData = true;
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			WorkOrder workOrder = (WorkOrder) obj[0];
@@ -113,7 +106,7 @@ public class WorkOrderHelper {
 			int _idx_link = _query.appendClassList(WorkOrderProjectLink.class, true);
 
 			QuerySpecUtils.toEqualsAnd(_query, _idx_link, WorkOrderProjectLink.class, "roleAObjectRef.key.id",
-					workOrder.getPersistInfo().getObjectIdentifier().getId());
+					workOrder);
 			QuerySpecUtils.toInnerJoin(_query, WorkOrder.class, WorkOrderProjectLink.class, WTAttributeNameIfc.ID_NAME,
 					"roleAObjectRef.key.id", _idx, _idx_link);
 			QuerySpecUtils.toInnerJoin(_query, Project.class, WorkOrderProjectLink.class, WTAttributeNameIfc.ID_NAME,
@@ -127,20 +120,18 @@ public class WorkOrderHelper {
 
 			if (!StringUtils.isNull(customer_name)) {
 				CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer_name);
-				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "customerReference.key.id",
-						customerCode.getPersistInfo().getObjectIdentifier().getId());
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "customerReference.key.id", customerCode);
 			}
 
 			if (!StringUtils.isNull(install_name)) {
 				CommonCode installCode = (CommonCode) CommonUtils.getObject(install_name);
-				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "installReference.key.id",
-						installCode.getPersistInfo().getObjectIdentifier().getId());
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "installReference.key.id", installCode);
 			}
 
 			if (!StringUtils.isNull(projectType)) {
 				CommonCode projectTypeCode = (CommonCode) CommonUtils.getObject(projectType);
 				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "projectTypeReference.key.id",
-						projectTypeCode.getPersistInfo().getObjectIdentifier().getId());
+						projectTypeCode);
 			}
 
 			if (!StringUtils.isNull(machineOid)) {
@@ -153,10 +144,9 @@ public class WorkOrderHelper {
 						"roleAObjectRef.key.id", _idx_p, idx_plink);
 				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 						"roleBObjectRef.key.id", idx_u, idx_plink);
-				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
-						machine.getPersistInfo().getObjectIdentifier().getId());
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", machine);
 				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
-						machineCode.getPersistInfo().getObjectIdentifier().getId());
+						machineCode);
 			}
 
 			if (!StringUtils.isNull(elecOid)) {
@@ -169,10 +159,9 @@ public class WorkOrderHelper {
 						"roleAObjectRef.key.id", _idx_p, idx_plink);
 				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 						"roleBObjectRef.key.id", idx_u, idx_plink);
-				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
-						elec.getPersistInfo().getObjectIdentifier().getId());
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", elec);
 				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
-						elecCode.getPersistInfo().getObjectIdentifier().getId());
+						elecCode);
 			}
 
 			if (!StringUtils.isNull(softOid)) {
@@ -185,39 +174,30 @@ public class WorkOrderHelper {
 						"roleAObjectRef.key.id", _idx_p, idx_plink);
 				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 						"roleBObjectRef.key.id", idx_u, idx_plink);
-				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
-						soft.getPersistInfo().getObjectIdentifier().getId());
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", soft);
 				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
-						softCode.getPersistInfo().getObjectIdentifier().getId());
+						softCode);
 			}
 
 			if (!StringUtils.isNull(mak_name)) {
 				CommonCode makCode = (CommonCode) CommonUtils.getObject(mak_name);
-				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "makReference.key.id",
-						makCode.getPersistInfo().getObjectIdentifier().getId());
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "makReference.key.id", makCode);
 			}
 
 			if (!StringUtils.isNull(detail_name)) {
 				CommonCode detailCode = (CommonCode) CommonUtils.getObject(detail_name);
-				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "detailReference.key.id",
-						detailCode.getPersistInfo().getObjectIdentifier().getId());
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "detailReference.key.id", detailCode);
 			}
 
 			if (!StringUtils.isNull(template)) {
 				Template t = (Template) CommonUtils.getObject(template);
-				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "templateReference.key.id",
-						t.getPersistInfo().getObjectIdentifier().getId());
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "templateReference.key.id", t);
 			}
 
 			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.DESCRIPTION, description);
-			QuerySpecUtils.toOrderBy(_query, _idx_p, Project.class, Project.P_DATE, false);
 			QueryResult group = PersistenceHelper.manager.find(_query);
-			System.out.println("_query=" + _query);
 			int isNode = 1;
 			JSONArray children = new JSONArray();
-			if (group.size() == 0) {
-				isData = false;
-			}
 			while (group.hasMoreElements()) {
 				Object[] oo = (Object[]) group.nextElement();
 				WorkOrderProjectLink link = (WorkOrderProjectLink) oo[2];
@@ -265,10 +245,8 @@ public class WorkOrderHelper {
 				}
 				isNode++;
 			}
-			if (isData) {
-				node.put("children", children);
-				list.add(node);
-			}
+			node.put("children", children);
+			list.add(node);
 		}
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
@@ -330,6 +308,7 @@ public class WorkOrderHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			KeDrawing keDrawing = (KeDrawing) obj[0];
 			KeDrawingMaster master = (KeDrawingMaster) obj[1];
+			map.put("number", number);
 			map.put("name", master.getName());
 			map.put("rev", keDrawing.getVersion());
 			map.put("lotNo", master.getLotNo());
@@ -337,6 +316,9 @@ public class WorkOrderHelper {
 			map.put("ok", true);
 			map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
 			map.put("oid", keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
+		} else {
+			map.put("number", "서버에 없는 DWG NO 입니다.");
+			map.put("ok", false);
 		}
 		return map;
 	}
@@ -378,11 +360,11 @@ public class WorkOrderHelper {
 			Project project = link.getProject();
 			Map<String, String> map = new HashMap<>();
 			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
-			map.put("projectType_name", project.getProjectType().getName());
-			map.put("customer_name", project.getCustomer().getName());
-			map.put("install_name", project.getInstall().getName());
-			map.put("mak_name", project.getMak().getName());
-			map.put("detail_name", project.getDetail().getName());
+			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
+			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("install_name", project.getInstall() != null ? project.getInstall().getName() : "");
+			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
 			map.put("kekNumber", project.getKekNumber());
 			map.put("keNumber", project.getKeNumber());
 			map.put("description", project.getDescription());

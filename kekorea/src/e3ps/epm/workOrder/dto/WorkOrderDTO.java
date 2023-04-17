@@ -57,8 +57,7 @@ public class WorkOrderDTO {
 	/**
 	 * 작번 변수
 	 */
-	private ArrayList<Map<String, String>> addRows8 = new ArrayList<>();
-	private ArrayList<Map<String, String>> removeRows8 = new ArrayList<>();
+	private ArrayList<Map<String, String>> addRows9 = new ArrayList<>();
 
 	private ArrayList<String> secondarys = new ArrayList<>();
 
