@@ -215,7 +215,8 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 		<!-- 결재이력 -->
 		<jsp:include page="/extcore/jsp/common/approval-history.jsp">
 			<jsp:param value="<%=dto.getOid()%>" name="oid" />
-		</jsp:include></div>
+		</jsp:include>
+	</div>
 </div>
 <script type="text/javascript">
 	function zip() {

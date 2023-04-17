@@ -1,5 +1,6 @@
 package e3ps.bom.tbom.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.TBOMMasterDataLink;
 import e3ps.bom.tbom.TBOMMasterProjectLink;
 import e3ps.bom.tbom.dto.TBOMDTO;
+import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.QuerySpecUtils;
@@ -48,7 +50,7 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 		String name = dto.getName();
 		String description = dto.getDescription();
 		ArrayList<Map<String, Object>> addRows = dto.getAddRows(); // T-BOM
-		ArrayList<Map<String, String>> _addRows = dto.get_addRows(); // 작번
+		ArrayList<Map<String, String>> addRows9 = dto.getAddRows9(); // 작번
 		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
 		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
 		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
@@ -59,7 +61,7 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 			trs.start();
 
 			String number = TBOMHelper.manager.getNextNumber("T-BOM");
-			Folder folder = FolderTaskLogic.getFolder("/Default/프로젝트/T-BOM", CommonUtils.getContainer());
+			Folder folder = FolderTaskLogic.getFolder("/Default/프로젝트/T-BOM", CommonUtils.getPDMLinkProductContainer());
 
 			TBOMMaster master = TBOMMaster.newTBOMMaster();
 			master.setTNumber(number);
@@ -69,8 +71,8 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 			FolderHelper.assignLocation((FolderEntry) master, folder);
 			PersistenceHelper.manager.save(master);
 
-			for (Map<String, String> _addRow : _addRows) { // project
-				String oid = (String) _addRow.get("oid");
+			for (Map<String, String> addRow9 : addRows9) { // project
+				String oid = (String) addRow9.get("oid");
 				Project project = (Project) CommonUtils.getObject(oid);
 				TBOMMasterProjectLink link = TBOMMasterProjectLink.newTBOMMasterProjectLink(master, project);
 				PersistenceHelper.manager.save(link);
@@ -78,7 +80,7 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 				Task task = ProjectHelper.manager.getTaskByName(project, "T-BOM");
 				if (task == null) {
 					throw new Exception(project.getKekNumber() + "작번에 T-BOM 태스크가 없습니다.");
-				} 
+				}
 				// 산출물
 				Output output = Output.newOutput();
 				output.setName(master.getName());
@@ -143,11 +145,12 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 			}
 
 			for (int i = 0; secondarys != null && i < secondarys.size(); i++) {
-				String secondary = secondarys.get(i);
+				String cacheId = (String) secondarys.get(i);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
 				ApplicationData dd = ApplicationData.newApplicationData(master);
 				dd.setRole(ContentRoleType.SECONDARY);
 				PersistenceHelper.manager.save(dd);
-				ContentServerHelper.service.updateContent(master, dd, secondary);
+				ContentServerHelper.service.updateContent(master, dd, vault.getPath());
 			}
 
 			// 결재시작
@@ -237,7 +240,7 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 				trs.rollback();
 		}
 	}
-	
+
 	@Override
 	public void modify(TBOMDTO dto) throws Exception {
 		String name = dto.getName();
@@ -261,6 +264,25 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 		} finally {
 			if (trs != null)
 				trs.rollback();
+		}
+	}
+
+	@Override
+	public void delete(String oid) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+
 		}
 	}
 }

@@ -35,7 +35,7 @@ public class KePartDTO {
 	private String note;
 
 	// 변수 담기용
-	private String primaryPath;
+	private String cacheId;
 	private int next;
 
 	public KePartDTO() {

@@ -1,4 +1,3 @@
-<%@page import="java.sql.Timestamp"%>
 <%@page import="wt.org.WTUser"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
@@ -8,7 +7,6 @@
 <%
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
-Timestamp time = (Timestamp) request.getAttribute("time");
 %>
 <!DOCTYPE html>
 <html>
@@ -25,7 +23,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
-		<input type="hidden" name="time" id="time" value="<%=time%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 
@@ -589,7 +586,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				AUIGrid.updateRowsById(myGridID, {
 					_$uid : recentGridItem._$uid,
 					primary : template,
-					primaryPath : data.fullPath
+					cacheId : data.cacheId
 				});
 			}
 

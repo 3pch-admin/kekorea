@@ -55,15 +55,7 @@ String method = (String) request.getAttribute("method");
 				openLayer();
 			},
 			onComplete : function() {
-				const form = document.querySelector("form");
-				for (let i = 0; i < this.length; i++) {
-					const primaryTag = document.createElement("input");
-					primaryTag.type = "hidden";
-					primaryTag.name = "primarys";
-					primaryTag.value = this[i].cacheId;
-					primaryTag.id = this[i].tagId;
-					form.appendChild(primaryTag);
-				}
+				data = this;
 				closeLayer();
 			},
 			onDelete : function() {
@@ -72,11 +64,25 @@ String method = (String) request.getAttribute("method");
 				el.parentNode.removeChild(el);
 			}
 		})
+		
+		new AXReq("/Windchill/plm/content/list", {
+			pars : "oid=<%=oid%>&roleType=primary",
+			onsucc : function(res) {
+				if (!res.e) {
+					primary.setUploadedList(res.primaryFile);
+					data = res.primaryFile;
+				}
+			}
+		});
 	}
-	
+
 	primaryUploader();
-	
+
 	function save() {
+		if(data === undefined) {
+			alert("첨부파일을 추가하세요.");
+			return false;
+		}
 		opener.<%=method%>(data);
 		self.close();
 	}

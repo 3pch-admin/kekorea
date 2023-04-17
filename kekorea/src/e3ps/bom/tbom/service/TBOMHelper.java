@@ -184,6 +184,9 @@ public class TBOMHelper {
 			map.put("lotNo", master.getLotNo());
 			map.put("oid", kePart.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("ok", true);
+		} else {
+			map.put("keNumber", "서버에 존재하지 않는 KE 부품 번호 입니다.");
+			map.put("ok", true);
 		}
 		return map;
 	}
@@ -210,6 +213,7 @@ public class TBOMHelper {
 			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
 			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("install_name", project.getInstall() != null ? project.getInstall().getName() : "");
 			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
 			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
 			map.put("kekNumber", project.getKekNumber());
