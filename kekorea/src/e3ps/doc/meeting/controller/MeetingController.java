@@ -233,6 +233,7 @@ public class MeetingController extends BaseController {
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;
@@ -244,53 +245,36 @@ public class MeetingController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		MeetingProjectLink link = (MeetingProjectLink) CommonUtils.getObject(oid);
 		MeetingDTO dto = new MeetingDTO(link);
-		Meeting meeting = (Meeting) CommonUtils.getObject(dto.getOid());
-		if(meeting.getTiny() != null) {
-			String mtoid = meeting.getTiny().toString();
-			MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(mtoid);
-			MeetingTemplateDTO mtdto = new MeetingTemplateDTO(meetingTemplate);
-			dto.setT_name(mtdto.getName());
-		} else {
-			dto.setT_name(" ");
-		}
 		model.addObject("dto", dto);
 		model.setViewName("popup:/document/meeting/meeting-view");
 		return model;
 	}
 
 	@Description(value = "회의록 수정 뷰")
-	@GetMapping(value = "/meetingModify")
-	public ModelAndView meetingModify(@RequestParam String oid) throws Exception {
+	@GetMapping(value = "/update")
+	public ModelAndView update(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		MeetingProjectLink link = (MeetingProjectLink) CommonUtils.getObject(oid);
 		MeetingDTO dto = new MeetingDTO(link);
-		Meeting meeting = (Meeting) CommonUtils.getObject(dto.getOid());
-		if(meeting.getTiny() != null) {
-			String mtoid = meeting.getTiny().toString();
-			MeetingTemplate meetingTemplate = (MeetingTemplate) CommonUtils.getObject(mtoid);
-			MeetingTemplateDTO mtdto = new MeetingTemplateDTO(meetingTemplate);
-			dto.setT_name(mtdto.getName());
-		} else {
-			dto.setT_name("");
-		}
-		model.addObject("dto", dto);
 		ArrayList<Map<String, String>> list = MeetingHelper.manager.getMeetingTemplateMap();
+		model.addObject("dto", dto);
 		model.addObject("list", list);
-		model.setViewName("popup:/document/meeting/meeting-modify");
+		model.setViewName("popup:/document/meeting/meeting-update");
 		return model;
 	}
-	
+
 	@Description(value = "회의록 수정")
-	@PostMapping(value = "/meetingModify")
+	@PostMapping(value = "/update")
 	@ResponseBody
-	public Map<String, Object> meetingModify(@RequestBody MeetingDTO dto) throws Exception {
+	public Map<String, Object> update(@RequestBody MeetingDTO dto) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			MeetingHelper.service.modify(dto);
+			MeetingHelper.service.update(dto);
 			result.put("result", SUCCESS);
 			result.put("msg", SAVE_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;

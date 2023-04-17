@@ -71,6 +71,8 @@ boolean isUpdate = "update".equals(mode);
 				showRowNumColumn : true,
 				rowNumHeaderText : "번호",
 				showAutoNoDataMessage : false,
+				enableSorting : false,
+				softRemoveRowMode : false,
 				<%if (isCreate || isUpdate) {%>
 				showRowCheckColumn : true,
 				showStateColumn : true,
@@ -78,7 +80,7 @@ boolean isUpdate = "update".equals(mode);
 			}
 			myGridID9 = AUIGrid.create("#grid_wrap9", columnLayout, props);
 			<%
-				if(isView) {
+				if(isView || isUpdate) {
 			%>
 			AUIGrid.setGridData(myGridID9, <%=ProjectHelper.manager.jsonAuiProject(oid)%>);
 			<%

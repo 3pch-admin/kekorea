@@ -164,7 +164,7 @@ public class MeetingHelper {
 		return meetingTemplate.getContent();
 	}
 
-	public JSONArray jsonArrayAui(String oid) throws Exception {
+	public JSONArray jsonAuiProject(String oid) throws Exception {
 		ArrayList<Map<String, String>> list = new ArrayList<>();
 		Meeting meeting = (Meeting) CommonUtils.getObject(oid);
 
@@ -173,8 +173,7 @@ public class MeetingHelper {
 		int idx_link = query.appendClassList(MeetingProjectLink.class, true);
 		QuerySpecUtils.toInnerJoin(query, Meeting.class, MeetingProjectLink.class, WTAttributeNameIfc.ID_NAME,
 				"roleAObjectRef.key.id", idx, idx_link);
-		QuerySpecUtils.toEqualsAnd(query, idx_link, MeetingProjectLink.class, "roleAObjectRef.key.id",
-				meeting.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx_link, MeetingProjectLink.class, "roleAObjectRef.key.id", meeting);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -184,6 +183,7 @@ public class MeetingHelper {
 			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
 			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("install_name", project.getInstall() != null ? project.getInstall().getName() : "");
 			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
 			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
 			map.put("kekNumber", project.getKekNumber());

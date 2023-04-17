@@ -11,15 +11,12 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 <%
 MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 String oid = dto.getOid();
-JSONArray data = MeetingHelper.manager.jsonArrayAui(oid);
 %>
 <!-- tinymce -->
 <%@include file="/extcore/include/tinymce.jsp"%>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-<input type="hidden" name="oid" id="oid" value="<%=dto.getLoid()%>">
-<input type="hidden" name="poid" id="poid" value="<%=dto.getPoid()%>">
-<input type="hidden" name="loid" id="loid" value="<%=dto.getOid()%>">
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -45,7 +42,7 @@ JSONArray data = MeetingHelper.manager.jsonArrayAui(oid);
 	<tr>
 		<th class="req lb">회의록 제목</th>
 		<td class="indent5">
-			<input type="text" name="name" id="name" class="AXInput width-500"value="<%=dto.getName()%>">
+			<input type="text" name="name" id="name" class="width-500" value="<%=dto.getName()%>">
 		</td>
 		<th>회의록 템플릿 선택</th>
 		<td class="indent5">
@@ -55,15 +52,9 @@ JSONArray data = MeetingHelper.manager.jsonArrayAui(oid);
 				for (Map<String, String> map : list) {
 					String value = map.get("oid");
 					String name = map.get("name");
-					if(dto.getT_name().equals(map.get("name"))){
-						%>
-						<option value="<%=value%>"  selected="selected"><%=name%></option>
-						<%
-					}else{
-						%>
-						<option value="<%=value%>" ><%=name%></option>
-						<%
-					}
+				%>
+				<option value="<%=value%>" <%if(dto.getToid().equals(value)){ %> selected="selected" <%} %>><%=name%></option>
+				<%
 				}
 				%>
 			</select>
@@ -72,27 +63,24 @@ JSONArray data = MeetingHelper.manager.jsonArrayAui(oid);
 	<tr>
 		<th class="req lb">KEK 작번</th>
 
- 		<td class="indent5" colspan="3">
- 			<jsp:include page="/extcore/include/project-include.jsp">
- 				<jsp:param value="<%=dto.getOid()%>" name="oid" />
+		<td class="indent5" colspan="3">
+			<jsp:include page="/extcore/jsp/common/project-include.jsp">
+				<jsp:param value="<%=dto.getOid() %>" name="oid" />
 				<jsp:param value="update" name="mode" />
- 				<jsp:param value="true" name="multi" />
- 				<jsp:param value="meeting" name="obj" />
- 				<jsp:param value="150" name="height" />
- 			</jsp:include>
- 		</td>
+			</jsp:include>
+		</td>
 	</tr>
 	<tr>
 		<th class="req lb">내용</th>
 		<td class="indent5" colspan="3">
-			<textarea name="description" id="description" rows="8"><%=dto.getContent()%></textarea>
+			<textarea name="description" id="description" rows="8"><%=dto.getContent() %></textarea>
 		</td>
 	</tr>
 	<tr>
 		<th class="lb">첨부파일</th>
 		<td class="indent5" colspan="3">
-			<jsp:include page="/extcore/include/secondary-include.jsp">
-				<jsp:param value="<%=dto.getOid()%>" name="oid" />
+			<jsp:include page="/extcore/jsp/common/attach-secondary.jsp">
+				<jsp:param value="<%=dto.getOid() %>" name="oid" />
 				<jsp:param value="create" name="mode" />
 			</jsp:include>
 		</td>
@@ -100,50 +88,48 @@ JSONArray data = MeetingHelper.manager.jsonArrayAui(oid);
 </table>
 
 <script type="text/javascript">
-
 	// 등록
 	function modify() {
 
 		const params = new Object();
-		const url = getCallUrl("/meeting/meetingModify");
-		const oid = document.getElementById("poid").value;
+		const url = getCallUrl("/meeting/update");
+		const oid = document.getElementById("oid").value;
 		const content = tinymce.activeEditor.getContent();
-		const _addRows = AUIGrid.getAddedRowItems(_myGridID);
-		const _removeRows = AUIGrid.getRemoveRowItems(_myGridID);
+		const addRows9 = AUIGrid.getGridData(myGridID9);
 		params.name = document.getElementById("name").value;
+		params.oid = oid;
 		params.content = content;
 		params.tiny = document.getElementById("tiny").value;
-		params._addRows = _addRows;
-		params._removeRows = _removeRows;
+		params.addRows9 = addRows9;
 		params.secondarys = toArray("secondarys");
-		
+
 		if (isNull(params.name)) {
 			alert("회의록 제목은 공백을 입력할 수 없습니다.");
 			document.getElementById("name").focus();
 			return false;
 		}
-		if (_addRows.length === 0) {
-			alert("KEK 작번은 공백을 입력할 수 없습니다.");
+		
+		if (addRows9.length === 0) {
+			alert("프로젝트는 하나 이상 선택해야 합니다.");
 			return false;
 		}
-		_addRows.sort(function(a, b) {
-			return a.sort - b.sort;
-		});
+
 		if (isNull(params.content)) {
 			alert("내용은 공백을 입력할 수 없습니다.");
 			tinymce.activeEditor.focus();
 			return fasle;
 		}
-		if (!confirm("등록 하시겠습니까?")) {
+		if (!confirm("수정 하시겠습니까?")) {
 			return false;
 		}
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
-			console.log(data);
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}
@@ -164,21 +150,23 @@ JSONArray data = MeetingHelper.manager.jsonArrayAui(oid);
 		const tinyBox = document.getElementById("tiny");
 		$('#tiny').change(function() {
 			const value = tinyBox.value;
- 			const url = getCallUrl("/meeting/getContent?oid=" + value);
+			const url = getCallUrl("/meeting/getContent?oid=" + value);
+			openLayer();
 			call(url, null, function(data) {
 				if (data.result) {
 					tinymce.activeEditor.setContent(data.content);
 				} else {
 					alert(data.msg);
 				}
+				closeLayer();
 			}, "GET");
 		});
-		_createAUIGrid(_columns);
-		AUIGrid.resize(_myGridID);
+		createAUIGrid9(columns9);
+		AUIGrid.resize(myGridID9);
 		selectbox("tiny");
 	});
 
 	window.addEventListener("resize", function() {
-		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(myGridID9);
 	});
 </script>

@@ -62,13 +62,10 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			</tr>
 			<tr>
 				<th class="lb">KEK 작번</th>
-				<td class="indent5" colspan="3">
-					<jsp:include page="/extcore/include/project-include.jsp">
-						<jsp:param value="<%=dto.getOid()%>" name="oid" />
-						<jsp:param value="view" name="mode" />
-						<jsp:param value="false" name="multi" />
-						<jsp:param value="project" name="obj" />
-						<jsp:param value="400" name="height" />
+				<td>
+					<jsp:include page="/extcore/jsp/common/project-include.jsp">
+						<jsp:param value="" name="oid" />
+						<jsp:param value="create" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
