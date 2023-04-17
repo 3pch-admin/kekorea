@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
+import e3ps.common.util.ContentUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import net.sf.json.JSONArray;
@@ -214,6 +215,7 @@ public class CommonContentHelper {
 
 		CachedContentDescriptor ccd = CommonContentHelper.service.doUpload(localCacheDescriptor, file);
 		JSONObject json = new JSONObject();
+		json.put("icon", ContentUtils.getFileIcon(name));
 		json.put("name", origin);
 		json.put("type", type);
 		json.put("saveName", name);

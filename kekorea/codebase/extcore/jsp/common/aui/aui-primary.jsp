@@ -64,16 +64,6 @@ String method = (String) request.getAttribute("method");
 				el.parentNode.removeChild(el);
 			}
 		})
-		
-		new AXReq("/Windchill/plm/content/list", {
-			pars : "oid=<%=oid%>&roleType=primary",
-			onsucc : function(res) {
-				if (!res.e) {
-					primary.setUploadedList(res.primaryFile);
-					data = res.primaryFile;
-				}
-			}
-		});
 	}
 
 	primaryUploader();

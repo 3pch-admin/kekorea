@@ -548,12 +548,15 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				params.addRows = addRows;
 				params.removeRows = removeRows;
 				params.editRows = editRows;
+				console.log(params);
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
 					parent.closeLayer();
 					if (data.result) {
 						loadGridData();
+					} else {
+						parent.closeLayer();
 					}
 				});
 			}
@@ -582,11 +585,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			function attach(data) {
-				const template = "<img src='" + data.icon + "' style='position: relative; top: 2px;'>";
+				const template = "<img src='" + data[0].icon + "' style='position: relative; top: 2px;'>";
 				AUIGrid.updateRowsById(myGridID, {
 					_$uid : recentGridItem._$uid,
 					primary : template,
-					cacheId : data.cacheId
+					cacheId : data[0].cacheId
 				});
 			}
 
