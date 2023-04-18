@@ -27,6 +27,7 @@ import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.WTUser;
 import wt.part.WTPart;
+import wt.part.WTPartMaster;
 import wt.query.QuerySpec;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
@@ -776,5 +777,10 @@ public class WorkspaceHelper {
 			prefix = "수배표";
 		}
 		return prefix;
+	}
+
+	public JSONArray jsonArrayHistory(WTPartMaster master) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -18,27 +18,27 @@ if ("primary".equals(mode)) {
 	</a>
 </div>
 <%
-}
+	}
 } else if ("secondary".equals(mode)) {
-Vector<String[]> secondarys = ContentUtils.getSecondary(oid);
-for (String[] secondary : secondarys) {
+	Vector<Map<String, Object>> secondarys = ContentUtils.getSecondary(oid);
+	for (Map secondary : secondarys) {
 %>
 <div>
 	<p>
-		<a href="<%=secondary[5]%>">
-			<span style="position: relative; bottom: 2px;"><%=secondary[2]%></span>
-			<img src="<%=secondary[4]%>" style="position: relative; top: 1px;">
+		<a href="<%=secondary.get("url")%>">
+			<span style="position: relative; bottom: 2px;"><%=secondary.get("fileIcon")%></span>
+			<img src="<%=secondary.get("aoid")%>" style="position: relative; top: 1px;">
 		</a>
 	</p>
 </div>
 <%
-}
-if (secondarys.size() == 0) {
+	}
+	if (secondarys.size() == 0) {
 %>
 <font color="red">
 	<b>등록된 첨부파일이 없습니다.</b>
 </font>
 <%
-}
+	}
 }
 %>

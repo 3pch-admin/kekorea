@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@page import="e3ps.part.beans.PartDTO"%>
+<%@page import="e3ps.part.dto.PartDTO"%>
 <%@page import="e3ps.common.util.ContentUtils"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%
@@ -195,7 +195,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				<th class="lb">MATERIAL</th>
 				<td class="indent5"><%=dto.getMaterial()%></td>
 				<th class="lb">REMARKS</th>
-				<td class="indent5"><%=dto.getRemark()%></td>
+				<td class="indent5"><%=dto.getRemarks()%></td>
 			</tr>
 			<tr>
 				<th class="lb">PART_CODE</th>

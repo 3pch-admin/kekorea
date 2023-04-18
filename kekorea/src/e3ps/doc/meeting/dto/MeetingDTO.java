@@ -21,11 +21,8 @@ public class MeetingDTO {
 	private String poid;
 	private String loid;
 	private String name;
-<<<<<<< .merge_file_a07448
-=======
 	private String tname;
 	private String toid;
->>>>>>> .merge_file_a03820
 	private String number;
 	private String projectType_name;
 	private String content;
