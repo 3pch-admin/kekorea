@@ -12,6 +12,8 @@ import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.dto.RequestDocumentDTO;
 import e3ps.epm.dto.EpmDTO;
+import e3ps.epm.keDrawing.KeDrawing;
+import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.korea.cip.Cip;
 import e3ps.korea.cip.dto.CipDTO;
 import e3ps.part.dto.PartDTO;
@@ -70,23 +72,47 @@ public class ColumnParseUtils {
 				PartListMasterProjectLink link = (PartListMasterProjectLink) obj[1];
 				PartListDTO data = parse(link);
 				list.add(data);
+				// ke 도면
+			} else if (per instanceof KeDrawing) {
+				KeDrawing keDrawing = (KeDrawing) per;
+				KeDrawingDTO data = parse(keDrawing);
+				list.add(data);
 			}
 		}
 		return list;
 	}
 
+	/**
+	 * KE 도면 LAZY 로드
+	 */
+	private static KeDrawingDTO parse(KeDrawing keDrawing) throws Exception {
+		return new KeDrawingDTO(keDrawing);
+	}
+
+	/**
+	 * 수배표 LAZY 로드
+	 */
 	private static PartListDTO parse(PartListMasterProjectLink per) throws Exception {
 		return new PartListDTO(per);
 	}
 
+	/**
+	 * 부품 LAZY 로드
+	 */
 	private static PartDTO parse(WTPart per) throws Exception {
 		return new PartDTO(per);
 	}
 
+	/**
+	 * 도면 LAZY 로드
+	 */
 	private static EpmDTO parse(EPMDocument per) throws Exception {
 		return new EpmDTO(per);
 	}
 
+	/**
+	 * KE 부품 LAZY 로드
+	 */
 	private static KePartDTO parse(KePart per) throws Exception {
 		return new KePartDTO(per);
 	}

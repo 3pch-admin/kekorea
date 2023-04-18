@@ -24,6 +24,7 @@ import e3ps.project.ProjectUserLink;
 import e3ps.project.task.Task;
 import e3ps.project.task.variable.TaskStateVariable;
 import e3ps.project.variable.ProjectStateVariable;
+import e3ps.project.variable.ProjectUserTypeVariable;
 import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.ApprovalLine;
@@ -187,8 +188,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 
 			// 객체 상태 변경
 			if (persistable instanceof LifeCycleManaged) {
-				LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) persistable,
-						State.toState("INWORK"));
+				LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) persistable, State.toState("INWORK"));
 				// 일괄결재..
 			} else if (persistable instanceof ApprovalContract) {
 
@@ -408,7 +408,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 
 			Timestamp time = new Timestamp(new Date().getTime());
 			project.setStartDate(time);
-			project.setKekState("설계중");
+			project.setKekState(ProjectStateVariable.KEK_DESIGN_INWORK);
 			project.setState(ProjectStateVariable.INWORK);
 			project = (Project) PersistenceHelper.manager.modify(project);
 
@@ -438,15 +438,18 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 
 					if ("기계설계".equals(name)) {
 						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, user);
-						userLink.setUserType(CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE"));
+						userLink.setUserType(
+								CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.MACHINE, "USER_TYPE"));
 						PersistenceHelper.manager.save(userLink);
 					} else if ("전기설계".equals(name)) {
 						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, user);
-						userLink.setUserType(CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE"));
+						userLink.setUserType(
+								CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.ELEC, "USER_TYPE"));
 						PersistenceHelper.manager.save(userLink);
 					} else if ("SW설계".equals(name)) {
 						ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, user);
-						userLink.setUserType(CommonCodeHelper.manager.getCommonCode("SOFT", "USER_TYPE"));
+						userLink.setUserType(
+								CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.SOFT, "USER_TYPE"));
 						PersistenceHelper.manager.save(userLink);
 					}
 				}

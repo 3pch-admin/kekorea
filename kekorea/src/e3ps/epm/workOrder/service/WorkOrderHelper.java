@@ -310,7 +310,7 @@ public class WorkOrderHelper {
 			EPMDocument epm = (EPMDocument) obj[0];
 			map.put("number", number);
 			map.put("name", IBAUtils.getStringValue(epm, "NAME_OF_PARTS"));
-			map.put("rev", epm.getVersionIdentifier().getSeries().getValue());
+			map.put("rev", Integer.parseInt(epm.getVersionIdentifier().getSeries().getValue()));
 			map.put("lotNo", "");
 			map.put("current", epm.getVersionIdentifier().getSeries().getValue());
 			map.put("ok", true);

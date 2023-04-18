@@ -134,7 +134,7 @@ public class WorkspaceHelper {
 			}
 		} else if (per instanceof WorkOrder) {
 			WorkOrder workOrder = (WorkOrder) per;
-			return workOrder.getName();
+			return workOrder.getMaster().getName();
 		} else if (per instanceof ConfigSheet) {
 			ConfigSheet configSheet = (ConfigSheet) per;
 			return configSheet.getName();

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
+import e3ps.common.Constants;
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
@@ -156,6 +157,7 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				latest.setLatest(true);
 				latest.setVersion(next);
 				latest.setMaster(pre.getMaster());
+				latest.setState(Constants.KeState.USE);
 				latest.setOwnership(CommonUtils.sessionOwner());
 				latest.setNote(note);
 				PersistenceHelper.manager.save(latest);

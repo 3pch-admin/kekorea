@@ -76,6 +76,14 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				</td>
 			</tr>
 			<tr>
+				<th class="lb">표지파일</th>
+				<td class="indent5" colspan="3">
+					<jsp:include page="/extcore/jsp/common/primary-view.jsp">
+						<jsp:param value="<%=dto.getOid()%>" name="oid" />
+					</jsp:include>
+				</td>
+			</tr>
+			<tr>
 				<th class="lb">첨부파일</th>
 				<td class="indent5" colspan="3">
 					<jsp:include page="/extcore/jsp/common/secondary-view.jsp">

@@ -28,8 +28,10 @@ public class RequestDocumentHelper {
 	public static final RequestDocumentHelper manager = new RequestDocumentHelper();
 	public static final RequestDocumentService service = ServiceFactory.getService(RequestDocumentService.class);
 
-	// 의뢰서 저장폴더
-	public static final String REQUEST_DOCUMENT_ROOT = "/Default/프로젝트/의뢰서";
+	/**
+	 * 의뢰서 저장 폴더 변수
+	 */
+	public static final String DEFAULT_ROOT = "/Default/프로젝트/의뢰서";
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();

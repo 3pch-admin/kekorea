@@ -134,7 +134,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						rowNumHeaderText : "번호",
 						editable : true,
 						enableSorting : false,
-						selectionMode : "singleRow",
+						selectionMode : "multipleCells",
 						displayTreeOpen : true,
 						forceTreeView : true,
 						useContextMenu : true,
@@ -245,6 +245,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						alert(data.msg);
 						if (data.result) {
 							readyHandler();
+						} else {
+							closeLayer();
 						}
 					})
 				}
@@ -328,6 +330,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			alert(data.msg);
 			if (data.result) {
 				document.location.reload();
+			} else {
+				closeLayer();
 			}
 		})
 	}
