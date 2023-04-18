@@ -40,10 +40,6 @@ public class WorkOrderDTO {
 	private String createdDate_txt;
 	private String primary;
 
-	// 트리구현
-	private String id = "";
-	private String parent;
-
 	// 변수용
 	private ArrayList<Map<String, Object>> addRows = new ArrayList<>(); // 도면 일람표
 
@@ -67,7 +63,7 @@ public class WorkOrderDTO {
 
 	public WorkOrderDTO(WorkOrder workOrder) throws Exception {
 		setOid(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
-		setName(workOrder.getName());
+		setName(workOrder.getMaster().getName());
 		setState(workOrder.getState());
 		setCreator(workOrder.getOwnership().getOwner().getFullName());
 		setCreatedDate(workOrder.getCreateTimestamp());
@@ -85,7 +81,7 @@ public class WorkOrderDTO {
 			setProjectType_name(project.getProjectType().getName());
 		}
 
-		setName(workOrder.getName());
+		setName(workOrder.getMaster().getName());
 		setContent(StringUtils.replaceToValue(workOrder.getDescription()));
 		if (project.getCustomer() != null) {
 			setCustomer_name(project.getCustomer().getName());

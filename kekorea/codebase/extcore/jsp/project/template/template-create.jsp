@@ -75,6 +75,8 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}

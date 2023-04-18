@@ -22,8 +22,6 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "sort", type = Integer.class, constraints = @PropertyConstraints(required = true), initialValue = "1"),
 
-				@GeneratedProperty(name = "dataType", type = String.class, constraints = @PropertyConstraints(required = true)),
-
 				@GeneratedProperty(name = "lotNo", type = Integer.class, constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "note", type = String.class, constraints = @PropertyConstraints(upperLimit = 2000))

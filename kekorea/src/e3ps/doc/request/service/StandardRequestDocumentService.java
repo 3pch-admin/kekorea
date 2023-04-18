@@ -1,5 +1,6 @@
 package e3ps.doc.request.service;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.StringUtils;
@@ -24,8 +26,11 @@ import e3ps.project.output.OutputDocumentLink;
 import e3ps.project.service.ProjectHelper;
 import e3ps.project.task.Task;
 import e3ps.project.task.variable.TaskStateVariable;
+import e3ps.project.task.variable.TaskTypeVariable;
 import e3ps.project.template.Template;
 import e3ps.project.template.service.TemplateHelper;
+import e3ps.project.variable.ProjectStateVariable;
+import e3ps.project.variable.ProjectUserTypeVariable;
 import e3ps.workspace.service.WorkspaceHelper;
 import wt.clients.folder.FolderTaskLogic;
 import wt.content.ApplicationData;
@@ -41,6 +46,7 @@ import wt.org.OrganizationServicesHelper;
 import wt.org.WTUser;
 import wt.ownership.Ownership;
 import wt.pom.Transaction;
+import wt.projmgmt.admin.ProjectState;
 import wt.services.StandardManager;
 import wt.util.WTException;
 
@@ -110,14 +116,15 @@ public class StandardRequestDocumentService extends StandardManager implements R
 			requestDocument.setOwnership(CommonUtils.sessionOwner());
 			requestDocument.setDocType(DocumentType.toDocumentType("$$Request"));
 
-			Folder folder = FolderTaskLogic.getFolder(RequestDocumentHelper.REQUEST_DOCUMENT_ROOT,
-					CommonUtils.getContainer());
+			Folder folder = FolderTaskLogic.getFolder(RequestDocumentHelper.DEFAULT_ROOT,
+					CommonUtils.getPDMLinkProductContainer());
 			FolderHelper.assignLocation((FolderEntry) requestDocument, folder);
 
 			PersistenceHelper.manager.save(requestDocument);
 
 			for (int i = 0; i < primarys.size(); i++) {
-				String primary = (String) primarys.get(i);
+				String cacheId = (String) primarys.get(i);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
 				ApplicationData applicationData = ApplicationData.newApplicationData(requestDocument);
 				if (i == 0) {
 					applicationData.setRole(ContentRoleType.PRIMARY);
@@ -125,7 +132,7 @@ public class StandardRequestDocumentService extends StandardManager implements R
 					applicationData.setRole(ContentRoleType.SECONDARY);
 				}
 				PersistenceHelper.manager.save(applicationData);
-				ContentServerHelper.service.updateContent(requestDocument, applicationData, primary);
+				ContentServerHelper.service.updateContent(requestDocument, applicationData, vault.getPath());
 			}
 
 			if (!connect) {
@@ -237,7 +244,8 @@ public class StandardRequestDocumentService extends StandardManager implements R
 				project.setDescription(description);
 				project.setModel(model);
 				project.setPDate(DateUtils.convertDate(pdate));
-				project.setKekState("준비");
+				project.setState(ProjectStateVariable.READY);
+				project.setKekState(ProjectStateVariable.KEK_READY);
 				project.setOwnership(ownership);
 				project.setPlanStartDate(start);
 				project.setPlanEndDate(end);
@@ -251,21 +259,24 @@ public class StandardRequestDocumentService extends StandardManager implements R
 				if (!StringUtils.isNull(machine)) {
 					machineUser = (WTUser) CommonUtils.getObject(machine);
 					ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, machineUser);
-					userLink.setUserType(CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE"));
+					userLink.setUserType(
+							CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.MACHINE, "USER_TYPE"));
 					PersistenceHelper.manager.save(userLink);
 				}
 
 				if (!StringUtils.isNull(elec)) {
 					elecUser = (WTUser) CommonUtils.getObject(elec);
 					ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, elecUser);
-					userLink.setUserType(CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE"));
+					userLink.setUserType(
+							CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.ELEC, "USER_TYPE"));
 					PersistenceHelper.manager.save(userLink);
 				}
 
 				if (!StringUtils.isNull(soft)) {
 					softUser = (WTUser) CommonUtils.getObject(soft);
 					ProjectUserLink userLink = ProjectUserLink.newProjectUserLink(project, softUser);
-					userLink.setUserType(CommonCodeHelper.manager.getCommonCode("SOFT", "USER_TYPE"));
+					userLink.setUserType(
+							CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.SOFT, "USER_TYPE"));
 					PersistenceHelper.manager.save(userLink);
 				}
 
@@ -279,24 +290,28 @@ public class StandardRequestDocumentService extends StandardManager implements R
 					WTUser pm = TemplateHelper.manager.getUserType(copy, "PM");
 					if (pm != null) {
 						ProjectUserLink link = ProjectUserLink.newProjectUserLink(project, pm);
-						link.setUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
+						link.setUserType(
+								CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.PM, "USER_TYPE"));
 						PersistenceHelper.manager.save(link);
 					} else {
 						pm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectHelper.PM_ID);
 						ProjectUserLink link = ProjectUserLink.newProjectUserLink(project, pm);
-						link.setUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
+						link.setUserType(
+								CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.PM, "USER_TYPE"));
 						PersistenceHelper.manager.save(link);
 					}
 
 					WTUser subPm = TemplateHelper.manager.getUserType(copy, "SUB_PM");
 					if (subPm != null) {
 						ProjectUserLink link = ProjectUserLink.newProjectUserLink(project, subPm);
-						link.setUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
+						link.setUserType(
+								CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.SUB_PM, "USER_TYPE"));
 						PersistenceHelper.manager.save(link);
 					} else {
 						subPm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectHelper.SUB_PM_ID);
 						ProjectUserLink link = ProjectUserLink.newProjectUserLink(project, subPm);
-						link.setUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
+						link.setUserType(
+								CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.SUB_PM, "USER_TYPE"));
 						PersistenceHelper.manager.save(link);
 					}
 
@@ -316,10 +331,10 @@ public class StandardRequestDocumentService extends StandardManager implements R
 					task.setStartDate(start);
 					task.setEndDate(null);
 					task.setDuration(1);
-					task.setTaskType(CommonCodeHelper.manager.getCommonCode("NORMAL", "TASK_TYPE"));
+					task.setTaskType(CommonCodeHelper.manager.getCommonCode(TaskTypeVariable.NORMAL, "TASK_TYPE"));
 					task.setOwnership(ownership);
 					task.setProgress(0);
-					task.setState("작업 중");
+					task.setState(TaskStateVariable.INWORK);
 					task.setAllocate(0);
 					task = (Task) PersistenceHelper.manager.save(task);
 
@@ -334,12 +349,13 @@ public class StandardRequestDocumentService extends StandardManager implements R
 
 					WTUser pm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectHelper.PM_ID);
 					ProjectUserLink pmLink = ProjectUserLink.newProjectUserLink(project, pm);
-					pmLink.setUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
+					pmLink.setUserType(CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.PM, "USER_TYPE"));
 					PersistenceHelper.manager.save(pmLink);
 
 					WTUser subPm = OrganizationServicesHelper.manager.getAuthenticatedUser(ProjectHelper.SUB_PM_ID);
 					ProjectUserLink subPmLink = ProjectUserLink.newProjectUserLink(project, subPm);
-					subPmLink.setUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
+					subPmLink.setUserType(
+							CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.SUB_PM, "USER_TYPE"));
 					PersistenceHelper.manager.save(subPmLink);
 				}
 

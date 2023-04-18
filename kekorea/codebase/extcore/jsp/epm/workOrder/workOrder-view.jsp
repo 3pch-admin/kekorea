@@ -76,6 +76,14 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				</td>
 			</tr>
 			<tr>
+				<th class="lb">표지파일</th>
+				<td class="indent5" colspan="3">
+					<jsp:include page="/extcore/jsp/common/primary-view.jsp">
+						<jsp:param value="<%=dto.getOid()%>" name="oid" />
+					</jsp:include>
+				</td>
+			</tr>
+			<tr>
 				<th class="lb">첨부파일</th>
 				<td class="indent5" colspan="3">
 					<jsp:include page="/extcore/jsp/common/secondary-view.jsp">
@@ -141,7 +149,9 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				width : 130,
 				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
 					const rev = item.rev;
-					if (value !== rev) {
+					if (Number(value) !== Number(rev)) {
+						console.log(rev);
+						console.log(value);
 						return "compare";
 					}
 					return "";
@@ -215,7 +225,8 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 		<!-- 결재이력 -->
 		<jsp:include page="/extcore/jsp/common/approval-history.jsp">
 			<jsp:param value="<%=dto.getOid()%>" name="oid" />
-		</jsp:include></div>
+		</jsp:include>
+	</div>
 </div>
 <script type="text/javascript">
 	function zip() {
@@ -277,6 +288,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 		createAUIGrid(columns);
 		createAUIGrid100(columns100);
 		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID100);
 	})
 

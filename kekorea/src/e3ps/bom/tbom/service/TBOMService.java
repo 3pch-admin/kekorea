@@ -28,4 +28,9 @@ public interface TBOMService {
 	 * T-BOM 수정
 	 */
 	public abstract void modify(TBOMDTO dto)  throws Exception;
+
+	/**
+	 * T-BOM 삭제
+	 */
+	public abstract void delete(String oid) throws Exception;
 }

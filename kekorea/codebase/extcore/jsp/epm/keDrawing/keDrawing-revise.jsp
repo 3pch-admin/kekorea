@@ -60,6 +60,7 @@
 		dataField : "note",
 		headerText : "개정사유",
 		dataType : "string",
+		style : "aui-left",
 	}, {
 		dataField : "primary",
 		headerText : "개정도면",
@@ -86,7 +87,6 @@
 	function createAUIGrid(columnLayout) {
 		const props = {
 			headerHeight : 30,
-			rowHeight : 30,
 			showRowNumColumn : true,
 			showStateColumn : true,
 			rowNumHeaderText : "번호",
@@ -106,8 +106,8 @@
 
 	function attach(data) {
 		const name = data.name;
-		if (name.length !== 17) {
-			alert("도면파일 이름명을 체크하세요. \nDWG NO : 9자리, 버전 3자리의 양식을 맞춰주세요.");
+		if (name.length !== 18) {
+			alert("도면파일 이름명을 체크하세요. \nDWG NO : 10자리, 버전 3자리의 양식을 맞춰주세요.");
 			return false;
 		}
 
@@ -130,8 +130,8 @@
 		}
 
 		const number = name.substring(0, start);
-		if (number.length !== 9) {
-			alert("도면파일의 DWG NO의 자리수를 확인해주세요. 등록가능한 도번의 자리수는 9자리여야 합니다.");
+		if (number.length !== 10) {
+			alert("도면파일의 DWG NO의 자리수를 확인해주세요. 등록가능한 도번의 자리수는 10자리여야 합니다.");
 			return false;
 		}
 
@@ -148,7 +148,7 @@
 			next : Number(next),
 			file : name,
 			primary : template,
-			primaryPath : data.fullPath
+			cacheId : data.cacheId
 		});
 	}
 

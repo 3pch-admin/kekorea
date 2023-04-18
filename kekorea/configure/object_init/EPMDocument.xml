@@ -1,0 +1,62 @@
+            <AttributeValues objType="wt.epm.EPMDocument">
+
+               <!-- set the folder -->
+               <AttrValue id="folder.id" algorithm="com.ptc.core.foundation.folder.server.impl.FolderPathAttributeAlgorithm">
+                  <Arg>/Default</Arg>
+               </AttrValue>
+
+               <!-- set the lifecycle -->
+               <AttrValue id="lifeCycle.id" algorithm="com.ptc.core.foundation.lifecycle.server.impl.LifeCycleTemplateAttributeAlgorithm">
+                  <Arg>
+                     <!-- Translation of the word "Basic" must be the same as the translation done in commonLifeCycles.xml -->
+                     <?loc-begin key="BASIC_LIFECYCLE_NAME" maxlen="30" match="commonLifeCycles.xml:BASIC_LIFECYCLE_NAME"?>기초<?loc-end?>
+                  </Arg>
+               </AttrValue>
+
+               <!-- set the team template -->
+               <AttrValue id="teamTemplate.id" algorithm="com.ptc.core.foundation.team.server.impl.TeamTemplateAttributeAlgorithm">
+                  <Arg>Default</Arg>
+               </AttrValue>
+
+               <!-- set the number to a generated number -->
+               <AttrValue id="number" algorithm="com.ptc.windchill.enterprise.revisionControlled.server.impl.NumberGenerator">
+                  <Arg>{GEN:wt.enterprise.SequenceGenerator:EPM_seq:10:0}</Arg>
+               </AttrValue>
+
+               <!-- set the version info to a generated version info -->
+               <AttrValue id="MBA|versionInfo" algorithm="com.ptc.core.foundation.vc.server.impl.VersionInfoGenerator">
+                  <Arg>wt.series.HarvardSeries.InSpec</Arg>
+               </AttrValue>
+               
+               <!-- specify AttrConstraint tag -->
+               <AttrConstraint id="lifeCycle.id" algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">  	         
+	       	   <Value algorithm="com.ptc.core.rule.server.impl.GetServerAssignedConstraint"/>
+	       	   <Value algorithm="com.ptc.core.rule.server.impl.GetImmutableConstraint"/>
+	       </AttrConstraint>
+	       <AttrConstraint id="lifeCycle" algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">
+	       	   <Value algorithm="com.ptc.core.rule.server.impl.GetServerAssignedConstraint"/>      
+	       	   <Value algorithm="com.ptc.core.rule.server.impl.GetImmutableConstraint"/>
+	       </AttrConstraint>
+	       <AttrConstraint id="folder.id" algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">
+	       	    <Value algorithm="com.ptc.core.rule.server.impl.GetServerPreGeneratedValue"/>	      
+	       </AttrConstraint>
+	       <AttrConstraint id="number" algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">
+	       	    <Value algorithm="com.ptc.core.rule.server.impl.GetServerAssignedConstraint"/>
+	       	    <Value algorithm="com.ptc.core.rule.server.impl.GetImmutableConstraint"/>
+	       </AttrConstraint>
+	       <AttrConstraint id="teamTemplate.id" algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">  	         
+	       	    <Value algorithm="com.ptc.core.rule.server.impl.GetServerAssignedConstraint"/>                         
+	       	    <Value algorithm="com.ptc.core.rule.server.impl.GetImmutableConstraint"/>
+	       </AttrConstraint>
+	       <AttrConstraint id="teamTemplate" algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">
+	       	    <Value algorithm="com.ptc.core.rule.server.impl.GetServerAssignedConstraint"/>      
+	       	    <Value algorithm="com.ptc.core.rule.server.impl.GetImmutableConstraint"/>
+	       </AttrConstraint>  
+	       <AttrConstraint id="organization.id" algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">
+	       	    <Value algorithm="com.ptc.core.rule.server.impl.GetServerPreGeneratedValue"> 
+	       	      <Value algorithm="com.ptc.windchill.enterprise.org.server.impl.OwningOrgDefaultAlgorithm"/> 
+	       	    </Value> 
+	       </AttrConstraint>
+            </AttributeValues>
+
+               

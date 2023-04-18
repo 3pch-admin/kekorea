@@ -4,7 +4,6 @@
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
-Timestamp time = (Timestamp) request.getAttribute("time");
 %>
 <!DOCTYPE html>
 <html>
@@ -27,7 +26,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
-		<input type="hidden" name="time" id="time" value="<%=time%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
@@ -165,6 +163,9 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
+							if (oid === undefined) {
+								return false;
+							}
 							const moid = item.moid;
 							const url = getCallUrl("/keDrawing/view?oid=" + oid);
 							popup(url, 1400, 700);
@@ -185,6 +186,9 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
+							if (oid === undefined) {
+								return false;
+							}
 							const moid = item.moid;
 							const url = getCallUrl("/keDrawing/view?oid=" + oid);
 							popup(url, 1400, 700);
@@ -358,6 +362,10 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						showIcon : true,
 						inline : true
 					},
+				}, {
+					dataField : "isNew",
+					dataType : "boolean",
+					visible : false
 				} ]
 			}
 
@@ -377,7 +385,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					editable : true
+					editable : true,
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
@@ -390,8 +398,18 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					hideContextMenu();
 				});
 				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRowHandler);
-				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinishHandler);
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+				AUIGrid.bind(myGridID, "pasteEnd", auiPasteEnd);
+			}
+
+			function auiPasteEnd(event) {
+				const clipboardData = event.clipboardData;
+				for (let i = 0; i < clipboardData.length; i++) {
+					AUIGrid.setCellValue(myGridID, i, "latest", true);
+					AUIGrid.setCellValue(myGridID, i, "state", "사용");
+					AUIGrid.setCellValue(myGridID, i, "version", 1);
+					AUIGrid.setCellValue(myGridID, i, "isNew", true);
+				}
 			}
 
 			function auiCellClickHandler(event) {
@@ -408,23 +426,13 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				}
 			}
 
-			function auiAddRowFinishHandler(event) {
-				const selected = AUIGrid.getSelectedIndex(myGridID);
-				if (selected.length <= 0) {
-					return false;
-				}
-
-				const rowIndex = selected[0];
-				const colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "lotNo");
-				AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex);
-				AUIGrid.openInputer(myGridID);
-			}
 
 			function auiBeforeRemoveRowHandler(event) {
 				const items = event.items;
 				for (let i = 0; i < items.length; i++) {
 					const latest = items[i].latest;
-					if (!latest) {
+					const isNew = items[i].isNew;
+					if (!latest && !isNull(isNew)) {
 						alert("최신버전의 도면이 아닌 데이터가 있습니다.\n" + i + "행 데이터");
 						return false;
 					}
@@ -482,19 +490,19 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				const sessionId = document.getElementById("sessionId").value;
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
 					const item = checkedItems[i].item;
-					if (!checker(sessionId, item.creatorId)) {
-						alert("데이터 작성자가 아닙니다.");
+					const rowIndex = checkedItems[i].rowIndex;
+					if ((!isNull(item.creatorId) && !checker(sessionId, item.creatorId)) || (!isNull(item.modifierId) && !checker(sessionId, item.modifierId))) {
+						alert(rowIndex + "행 데이터의 작성자 혹은 수정자가 아닙니다.");
 						return false;
 					}
-					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
 			}
 
 			function attach(data) {
 				const name = data.name;
-				if (name.length !== 17) {
-					alert("도면파일 이름명을 체크하세요. \nDWG NO : 9자리, 버전 3자리의 양식을 맞춰주세요.");
+				if (name.length !== 18) {
+					alert("도면파일 이름명을 체크하세요. \nDWG NO : 10자리, 버전 3자리의 양식을 맞춰주세요.");
 					return false;
 				}
 				const start = name.indexOf("-");
@@ -513,8 +521,8 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					return false;
 				}
 				const number = name.substring(0, start);
-				if (number.length !== 9) {
-					alert("도면파일의 DWG NO의 자리수를 확인해주세요. 등록가능한 도번의 자리수는 9자리여야 합니다.");
+				if (number.length !== 10) {
+					alert("도면파일의 DWG NO의 자리수를 확인해주세요. 등록가능한 도번의 자리수는 10자리여야 합니다.");
 					return false;
 				}
 				const version = name.substring(start + 1, end);
@@ -530,7 +538,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					version : Number(version),
 					file : name,
 					primary : template,
-					primaryPath : data.fullPath
+					cacheId : data.cacheId
 				});
 			}
 
@@ -609,6 +617,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					const latest = checkedItems[i].item.latest;
 					const rowIndex = checkedItems[i].rowIndex;
 					checkedItems[i].item.note = "";
+					checkedItems[i].item.primary = "";
 					if (!latest) {
 						alert("최신버전이 아닌 도면이 포함되어있습니다.\n" + (rowIndex + 1) + "행 데이터");
 						return false;

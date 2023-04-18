@@ -19,13 +19,12 @@ String oid = request.getParameter("oid");
 Persistable per = (Persistable) CommonUtils.getObject(oid);
 %>
 
-
 <!-- 일괄결재 문서 & 도면 -->
 <%
 if (per instanceof PartListMaster) {
 	PartListMaster mm = (PartListMaster) per;
 	String _oid = mm.getPersistInfo().getObjectIdentifier().getStringValue();
-	Vector<String[]> secondarys = ContentUtils.getSecondary(mm);
+	// 	Vector<String[]> secondarys = ContentUtils.getSecondary(mm);
 %>
 <!-- 수배표 -->
 <table class="button-table">
@@ -64,17 +63,7 @@ if (per instanceof PartListMaster) {
 		</td>
 		<td class="center"><%=mm.getCreatorFullName()%></td>
 		<td class="center"><%=CommonUtils.getPersistableTime(mm.getCreateTimestamp())%></td>
-		<td class="center">
-			<%
-			for (String[] secondary : secondarys) {
-			%>
-			<a href="<%=secondary[5]%>">
-				<img src="<%=secondary[4]%>" class="pos2">
-			</a>
-			<%
-			}
-			%>
-		</td>
+		<td class="center"></td>
 	</tr>
 </table>
 
@@ -91,9 +80,9 @@ if (per instanceof PartListMaster) {
 
 <table class="view-table">
 	<colgroup>
+		<col width="100">
+		<col width="100">
 		<col width="80">
-		<col width="100">
-		<col width="100">
 		<col width="120">
 		<col width="120">
 		<col width="120">
@@ -101,10 +90,10 @@ if (per instanceof PartListMaster) {
 		<col width="*">
 	</colgroup>
 	<tr>
-		<th class="lb">작번유형</th>
 		<th class="lb">KEK 작번</th>
 		<th class="lb">KE 작번</th>
-		<th class="lb">고객사</th>
+		<th class="lb">작번유형</th>
+		<th class="lb">거래처</th>
 		<th class="lb">설치장소</th>
 		<th class="lb">막종</th>
 		<th class="lb">막종상세</th>
@@ -116,9 +105,9 @@ if (per instanceof PartListMaster) {
 		Project project = link.getProject();
 	%>
 	<tr>
-		<td class="center"><%=project.getProjectType().getName()%></td>
 		<td class="center"><%=project.getKekNumber()%></td>
 		<td class="center"><%=project.getKeNumber()%></td>
+		<td class="center"><%=project.getProjectType().getName()%></td>
 		<td class="center"><%=project.getCustomer().getName()%></td>
 		<td class="center"><%=project.getInstall().getName()%></td>
 		<td class="center"><%=project.getMak().getName()%></td>
@@ -163,7 +152,7 @@ Map<String, Object> primary = ContentUtils.getPrimary(requestDocument);
 		<th class="lb">첨부파일</th>
 	</tr>
 	<tr>
-		<td class="indent5"><%=requestDocument.getName()%></td>
+		<td class="indent5"><a href="javascript:detail();"><%=requestDocument.getName()%></a></td>
 		<td class="center"><%=requestDocument.getLifeCycleState().getDisplay()%></td>
 		<td class="center"><%=requestDocument.getCreatorFullName()%></td>
 		<td class="center"><%=CommonUtils.getPersistableTime(requestDocument.getCreateTimestamp())%></td>
@@ -188,9 +177,9 @@ Map<String, Object> primary = ContentUtils.getPrimary(requestDocument);
 
 <table class="view-table">
 	<colgroup>
+		<col width="100">
+		<col width="100">
 		<col width="80">
-		<col width="100">
-		<col width="100">
 		<col width="120">
 		<col width="120">
 		<col width="120">
@@ -198,10 +187,10 @@ Map<String, Object> primary = ContentUtils.getPrimary(requestDocument);
 		<col width="*">
 	</colgroup>
 	<tr>
-		<th class="lb">작번유형</th>
 		<th class="lb">KEK 작번</th>
 		<th class="lb">KE 작번</th>
-		<th class="lb">고객사</th>
+		<th class="lb">작번유형</th>
+		<th class="lb">거래처</th>
 		<th class="lb">설치장소</th>
 		<th class="lb">막종</th>
 		<th class="lb">막종상세</th>
@@ -213,9 +202,9 @@ Map<String, Object> primary = ContentUtils.getPrimary(requestDocument);
 		Project project = link.getProject();
 	%>
 	<tr>
+		<td class="center"><a href="javascript:detail();"><%=project.getKekNumber()%></a></td>
+		<td class="center"><a href="javascript:detail();"><%=project.getKeNumber()%></a></td>
 		<td class="center"><%=project.getProjectType().getName()%></td>
-		<td class="center"><%=project.getKekNumber()%></td>
-		<td class="center"><%=project.getKeNumber()%></td>
 		<td class="center"><%=project.getCustomer().getName()%></td>
 		<td class="center"><%=project.getInstall().getName()%></td>
 		<td class="center"><%=project.getMak().getName()%></td>

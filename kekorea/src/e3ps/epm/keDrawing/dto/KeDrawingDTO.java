@@ -32,9 +32,10 @@ public class KeDrawingDTO {
 	private String note;
 	private String preView;
 	private String state;
+	private boolean isNew;
 
 	// 변수 담기용
-	private String primaryPath;
+	private String cacheId;
 	private int next;
 
 	public KeDrawingDTO() {
@@ -61,5 +62,6 @@ public class KeDrawingDTO {
 		setPreView(ContentUtils.getPreViewBase64(keDrawing));
 		setNote(keDrawing.getNote());
 		setState(keDrawing.getState());
+		setNew(false);
 	}
 }

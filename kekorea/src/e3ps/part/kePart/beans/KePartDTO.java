@@ -33,9 +33,10 @@ public class KePartDTO {
 	private boolean latest;
 	private String primary;
 	private String note;
+	private boolean isNew;
 
 	// 변수 담기용
-	private String primaryPath;
+	private String cacheId;
 	private int next;
 
 	public KePartDTO() {
@@ -64,5 +65,6 @@ public class KePartDTO {
 		setLatest(kePart.getLatest());
 		setPrimary(AUIGridUtils.primaryTemplate(kePart));
 		setNote(kePart.getNote());
+		setNew(false);
 	}
 }

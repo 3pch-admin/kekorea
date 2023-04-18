@@ -80,17 +80,16 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			<tr>
 				<th class="lb">첨부파일</th>
 				<td class="indent5" colspan="3">
-					<jsp:include page="/extcore/include/primary-include.jsp">
-						<jsp:param value="primary" name="oid" />
-						<jsp:param value="create" name="mode" />
-					</jsp:include>
-				</td>
+					<jsp:include page="/extcore/jsp/common/attach-primary.jsp">
+						<jsp:param value="" name="oid" />
+					</jsp:include></td>
 			</tr>
 			<tr>
 				<th class="req lb">결재</th>
 				<td colspan="3">
-					<jsp:include page="/extcore/include/register-include.jsp">
-						<jsp:param value="250" name="height" />
+					<jsp:include page="/extcore/jsp/common/approval-register.jsp">
+						<jsp:param value="" name="oid" />
+						<jsp:param value="create" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
@@ -398,7 +397,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			dataField : "kekNumber",
 			headerText : "KEK 작번",
 			dataType : "string",
-			width : 130,
+			width : 100,
 			editRenderer : {
 				type : "InputEditRenderer",
 				regExp : "^[a-zA-Z0-9]+$",
@@ -408,10 +407,10 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			dataField : "keNumber",
 			headerText : "KE 작번",
 			dataType : "string",
-			width : 130,
+			width : 100,
 			editRenderer : {
 				type : "InputEditRenderer",
-				regExp : "^[a-zA-Z0-9]+$",
+				regExp : "^[a-zA-Z0-9-]+$",
 				autoUpperCase : true
 			},
 		}, {
@@ -429,7 +428,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			dataType : "date",
 			dateInputFormat : "yyyy-mm-dd",
 			formatString : "yyyy년 mm월 dd일",
-			width : 130,
+			width : 150,
 			renderer : {
 				type : "IconRenderer",
 				iconWidth : 16,
@@ -475,7 +474,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			dataType : "date",
 			dateInputFormat : "yyyy-mm-dd",
 			formatString : "yyyy년 mm월 dd일",
-			width : 130,
+			width : 150,
 			renderer : {
 				type : "IconRenderer",
 				iconWidth : 16,
@@ -753,7 +752,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			const name = document.getElementById("name");
 			const template = document.getElementById("template");
 			const addRows = AUIGrid.getAddedRowItems(myGridID);
-			const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
+			const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
 			if (isNull(name.value)) {
 				alert("의뢰서 제목을 입력하세요.");
 				name.focus();
@@ -765,7 +764,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				return false;
 			}
 
-			if (_addRows_.length === 0) {
+			if (addRows8.length === 0) {
 				alert("결재선을 지정하세요.");
 				_register();
 				return false;
@@ -777,10 +776,9 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 
 			params.name = name.value;
 			params.addRows = addRows;
-			params._addRows_ = _addRows_;
 			params.primarys = toArray("primarys");
 			params.template = template.value;
-			toRegister(params, _addRows_);
+			toRegister(params, addRows8);
 			openLayer();
 			console.log(params);
 			call(url, params, function(data) {
@@ -788,6 +786,8 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				if (data.result) {
 					opener.loadGridData();
 					self.close();
+				} else {
+					closeLayer();
 				}
 			})
 		}
@@ -797,28 +797,15 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs({
 			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					_createAUIGrid_(_columns_);
-					AUIGrid.resize(_myGridID_);
-					break;
-				case "tabs-2":
-					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
-					break;
-				}
-			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
-					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated_) {
-						AUIGrid.resize(_myGridID_);
+					const isCreated8 = AUIGrid.isCreated(myGridID8); // 결재
+					if (isCreated8) {
+						AUIGrid.resize(myGridID8);
 					} else {
-						_createAUIGrid_(_columns_);
+						createAUIGrid8(columns8);
 					}
 					break;
 				case "tabs-2":
@@ -832,12 +819,16 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				}
 			}
 		});
+		createAUIGrid8(columns8);
+		createAUIGrid(columns)
+		AUIGrid.resize(myGridID8);
+		AUIGrid.resize(myGridID);
 		document.getElementById("name").focus();
 		selectbox("template");
 	})
 
 	window.addEventListener("resize", function() {
-		AUIGrid.resize(_myGridID_);
+		AUIGrid.resize(myGridID8);
 		AUIGrid.resize(myGridID);
 	});
 </script>

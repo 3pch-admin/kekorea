@@ -11,9 +11,9 @@ import e3ps.common.Constants;
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
-import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
+import e3ps.epm.workOrder.WorkOrderMaster;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.project.Project;
@@ -50,12 +50,18 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 		try {
 			trs.start();
 
+			WorkOrderMaster master = WorkOrderMaster.newWorkOrderMaster();
+			master.setName(name);
+			master.setWorkOrderNumber(WorkOrderHelper.manager.getNextNumber("WORK-"));
+			PersistenceHelper.manager.save(master);
+
 			WorkOrder workOrder = WorkOrder.newWorkOrder();
-			workOrder.setName(name);
 			workOrder.setDescription(description);
-			workOrder.setNumber(WorkOrderHelper.manager.getNextNumber("WORK-"));
+			workOrder.setMaster(master);
+			workOrder.setVersion(1);
+			workOrder.setLatest(true);
 			workOrder.setOwnership(CommonUtils.sessionOwner());
-			workOrder.setState(Constants.State.INWORK);
+			workOrder.setState(Constants.KeState.USE);
 			PersistenceHelper.manager.save(workOrder);
 
 			for (Map<String, String> addRow9 : addRows9) {
@@ -72,16 +78,10 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 				String oid = (String) addRow.get("oid");
 				int rev = (int) addRow.get("rev");
 				int lotNo = (int) addRow.get("lotNo");
-				String dataType = (String) addRow.get("dataType");
 				String note = (String) addRow.get("note");
 				Persistable persistable = (Persistable) CommonUtils.getObject(oid);
-				if (persistable instanceof KeDrawing) {
-					KeDrawing k = (KeDrawing) persistable;
-
-				}
 				WorkOrderDataLink link = WorkOrderDataLink.newWorkOrderDataLink(workOrder, persistable);
 				link.setSort(sort);
-				link.setDataType(dataType);
 				link.setLotNo(lotNo);
 				link.setNote(note);
 				link.setRev(rev);
@@ -100,7 +100,7 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			}
 
 			Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
-			File tempFile = ContentUtils.getTempFile(workOrder.getName() + "_도면일람표.xlsx");
+			File tempFile = ContentUtils.getTempFile(workOrder.getMaster().getName() + "_도면일람표.xlsx");
 			FileOutputStream fos = new FileOutputStream(tempFile);
 			cover.write(fos);
 
@@ -172,6 +172,8 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			}
 
 			PersistenceHelper.manager.delete(workOrder);
+			
+			// 버전 되돌려야함..
 
 			trs.commit();
 			trs = null;

@@ -26,3 +26,6 @@
 	
 7. IBA 로더
 	- Shell -> Windchill wt.load.LoadFromFile -d "D:\ptc\Windchill_11.1\Windchill\loadFiles\AttributeDefinitions.xml" -u wcadmin -p 패스워드
+	
+8. EDRLoader
+	- Shell -> move com/ptc/wvs/util -> javac -classpath %CLASSPATH%;%WT_HOME%\srclib\tool\Annotations.jar -d %wt_home%\codebase AfterEDRloader.java 실행		

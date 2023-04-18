@@ -1,8 +1,11 @@
 package e3ps.epm.keDrawing.service;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
+import e3ps.common.Constants;
+import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.keDrawing.KeDrawing;
@@ -44,7 +47,7 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				String state = dto.getState();
 				int version = dto.getVersion();
 				int lotNo = dto.getLotNo();
-				String primaryPath = dto.getPrimaryPath();
+				String cacheId = dto.getCacheId();
 
 				KeDrawingMaster master = KeDrawingMaster.newKeDrawingMaster();
 				master.setKeNumber(keNumber);
@@ -62,12 +65,13 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				PersistenceHelper.manager.save(keDrawing);
 
 				ApplicationData dd = ApplicationData.newApplicationData(keDrawing);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
 				dd.setRole(ContentRoleType.PRIMARY);
 				PersistenceHelper.manager.save(dd);
-				ContentServerHelper.service.updateContent(keDrawing, dd, primaryPath);
+				ContentServerHelper.service.updateContent(keDrawing, dd, vault.getPath());
 
 				KeDrawingHelper.manager.postAfterAction(
-						keDrawing.getPersistInfo().getObjectIdentifier().getStringValue(), primaryPath);
+						keDrawing.getPersistInfo().getObjectIdentifier().getStringValue(), vault.getPath());
 			}
 
 			for (KeDrawingDTO dto : removeRows) {
@@ -91,7 +95,7 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				String name = dto.getName();
 				String state = dto.getState();
 				int lotNo = dto.getLotNo();
-				String primaryPath = dto.getPrimaryPath();
+				String cacheId = dto.getCacheId();
 				KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
 				KeDrawingMaster master = keDrawing.getMaster();
 				keDrawing.setState(state);
@@ -101,7 +105,7 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				PersistenceHelper.manager.modify(master);
 
 				// 단순 텍스트 내용 변경건 확인이 필요..
-				if (!StringUtils.isNull(primaryPath)) {
+				if (!StringUtils.isNull(cacheId)) {
 					QueryResult result = ContentHelper.service.getContentsByRole(keDrawing, ContentRoleType.PRIMARY);
 					if (result.hasMoreElements()) {
 						ApplicationData data = (ApplicationData) result.nextElement();
@@ -109,11 +113,12 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 					}
 
 					ApplicationData dd = ApplicationData.newApplicationData(keDrawing);
+					File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
 					dd.setRole(ContentRoleType.PRIMARY);
-					dd = (ApplicationData) ContentServerHelper.service.updateContent(keDrawing, dd, primaryPath);
+					dd = (ApplicationData) ContentServerHelper.service.updateContent(keDrawing, dd, vault.getPath());
 
 					KeDrawingHelper.manager.postAfterAction(
-							keDrawing.getPersistInfo().getObjectIdentifier().getStringValue(), primaryPath);
+							keDrawing.getPersistInfo().getObjectIdentifier().getStringValue(), vault.getPath());
 				}
 			}
 
@@ -140,7 +145,7 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 			for (KeDrawingDTO dto : addRows) {
 				String oid = dto.getOid();
 				int next = dto.getNext();
-				String primaryPath = dto.getPrimaryPath();
+				String cacheId = dto.getCacheId();
 				String note = dto.getNote();
 
 				KeDrawing pre = (KeDrawing) CommonUtils.getObject(oid);
@@ -152,16 +157,18 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 				latest.setLatest(true);
 				latest.setVersion(next);
 				latest.setMaster(pre.getMaster());
+				latest.setState(Constants.KeState.USE);
 				latest.setOwnership(CommonUtils.sessionOwner());
 				latest.setNote(note);
 				PersistenceHelper.manager.save(latest);
 
 				ApplicationData dd = ApplicationData.newApplicationData(latest);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
 				dd.setRole(ContentRoleType.PRIMARY);
-				dd = (ApplicationData) ContentServerHelper.service.updateContent(latest, dd, primaryPath);
+				dd = (ApplicationData) ContentServerHelper.service.updateContent(latest, dd, vault.getPath());
 
 				KeDrawingHelper.manager.postAfterAction(latest.getPersistInfo().getObjectIdentifier().getStringValue(),
-						primaryPath);
+						vault.getPath());
 			}
 
 			trs.commit();

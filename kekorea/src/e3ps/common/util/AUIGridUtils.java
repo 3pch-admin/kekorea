@@ -1,13 +1,5 @@
 package e3ps.common.util;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.oreilly.servlet.MultipartRequest;
-import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import com.ptc.wvs.server.util.FileHelper;
 import com.ptc.wvs.server.util.PublishUtils;
 
@@ -19,23 +11,8 @@ import wt.epm.EPMDocument;
 import wt.fc.QueryResult;
 import wt.part.WTPart;
 import wt.util.FileUtil;
-import wt.util.WTProperties;
 
 public class AUIGridUtils {
-
-	private static String TEMP;
-	static {
-		try {
-			TEMP = WTProperties.getLocalProperties().getProperty("wt.home") + File.separator + "temp" + File.separator
-					+ "upload";
-			File dir = new File(TEMP);
-			if (!dir.exists()) {
-				dir.mkdirs();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	private AUIGridUtils() {
 
@@ -51,7 +28,8 @@ public class AUIGridUtils {
 			ApplicationData data = (ApplicationData) result.nextElement();
 			String ext = FileUtil.getExtension(data.getFileName());
 			String icon = getAUIGridFileIcon(ext);
-			String url = ContentHelper.getDownloadURL(holder, data, false, data.getFileName()).toString();
+			String url = "/Windchill/plm/content/download?oid="
+					+ data.getPersistInfo().getObjectIdentifier().getStringValue();
 			template += "<a href=" + url + "><img src=" + icon + " style='position: relative; top: 2px;'></a>";
 		}
 		return template;
@@ -67,7 +45,8 @@ public class AUIGridUtils {
 			ApplicationData data = (ApplicationData) result.nextElement();
 			String ext = FileUtil.getExtension(data.getFileName());
 			String icon = getAUIGridFileIcon(ext);
-			String url = ContentHelper.getDownloadURL(holder, data, false, data.getFileName()).toString();
+			String url = "/Windchill/plm/content/download?oid="
+					+ data.getPersistInfo().getObjectIdentifier().getStringValue();
 			template += "<a href=" + url + "><img src=" + icon + " style='position: relative; top: 2px;'></a>&nbsp;";
 		}
 		return template;
@@ -95,35 +74,6 @@ public class AUIGridUtils {
 			thumnail_mini = "/Windchill/extcore/images/productview_publish_24.png";
 		}
 		return thumnail_mini;
-	}
-
-	/**
-	 * 그리드 상에서 첨부 파일 올리는 경우 호출하는 함수
-	 */
-	public static Map<String, Object> upload(HttpServletRequest request) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-		try {
-
-			int limit = 1024 * 1024 * 1024;
-			MultipartRequest multi = new MultipartRequest(request, TEMP, limit, "UTF-8", new DefaultFileRenamePolicy());
-
-			String roleType = multi.getParameter("roleType");
-			String origin = multi.getOriginalFileName(roleType);
-			String name = multi.getFilesystemName(roleType);
-
-			String ext = FileUtil.getExtension(origin);
-			String fullPath = TEMP + File.separator + name;
-
-			map.put("name", origin);
-			map.put("fullPath", fullPath);
-			map.put("icon", getAUIGridFileIcon(ext));
-			map.put("base64", ContentUtils.imageToBase64(new File(fullPath), ext));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
-		return map;
 	}
 
 	/**

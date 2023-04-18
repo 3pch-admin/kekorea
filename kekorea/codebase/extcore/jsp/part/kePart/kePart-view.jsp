@@ -1,10 +1,11 @@
+<%@page import="java.util.Map"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.part.kePart.beans.KePartDTO"%>
 <%@page import="e3ps.common.util.ContentUtils"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 KePartDTO dto = (KePartDTO) request.getAttribute("dto");
-String[] primarys = (String[]) request.getAttribute("primarys");
+Map<String, Object> primarys = (Map) request.getAttribute("primarys");
 JSONArray list = (JSONArray) request.getAttribute("list");
 JSONArray data = (JSONArray) request.getAttribute("data");
 %>
@@ -66,10 +67,14 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				<td class="indent5"><%=dto.getCreatedDate_txt()%></td>
 				<th>도면파일</th>
 				<td class="indent5">
-					<a href="<%=primarys[5]%>">
-						<span style="position: relative; bottom: 2px;"><%=primarys[2]%></span>
-						<img src="<%=primarys[4]%>" style="position: relative; top: 1px;">
-					</a>
+					<jsp:include page="/extcore/jsp/common/primary-view.jsp">
+						<jsp:param value="<%=dto.getOid()%>" name="oid" />
+					</jsp:include>
+					<%-- 				<%=primarys.get("link") %> --%>
+					<%-- 					<a href="<%=primarys[5]%>"> --%>
+					<%-- 						<span style="position: relative; bottom: 2px;"><%=primarys[2]%></span> --%>
+					<%-- 						<img src="<%=primarys[4]%>" style="position: relative; top: 1px;"> --%>
+					<!-- 					</a> -->
 				</td>
 			</tr>
 			<tr>
@@ -103,10 +108,10 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 							width : 40,
 							renderer : {
 								type : "IconRenderer",
-								iconWidth : 16, 
+								iconWidth : 16,
 								iconHeight : 16,
-								iconTableRef : { 
-									"default" : "/Windchill/extcore/images/details.gif" 
+								iconTableRef : {
+									"default" : "/Windchill/extcore/images/details.gif"
 								},
 								onClick : function(event) {
 									const oid = event.item.loid;

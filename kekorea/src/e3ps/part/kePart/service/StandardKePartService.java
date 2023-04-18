@@ -1,20 +1,15 @@
 package e3ps.part.kePart.service;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import e3ps.part.kePart.beans.KePartDTO;
-import e3ps.workspace.ApprovalContract;
-import e3ps.workspace.ApprovalContractPersistableLink;
-import e3ps.workspace.service.WorkspaceHelper;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
 import wt.content.ContentRoleType;
@@ -53,7 +48,7 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				String state = dto.getState();
 				String model = dto.getModel();
 				String code = dto.getCode();
-				String primaryPath = dto.getPrimaryPath();
+				String cacheId = dto.getCacheId();
 
 				KePartMaster master = KePartMaster.newKePartMaster();
 				master.setKeNumber(keNumber);
@@ -72,10 +67,14 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				kePart.setOwnership(ownership);
 				PersistenceHelper.manager.save(kePart);
 
-				ApplicationData dd = ApplicationData.newApplicationData(kePart);
-				dd.setRole(ContentRoleType.PRIMARY);
-				PersistenceHelper.manager.save(dd);
-				ContentServerHelper.service.updateContent(kePart, dd, primaryPath);
+				System.out.println("cacheId=" + cacheId);
+				if (!StringUtils.isNull(cacheId)) {
+					ApplicationData dd = ApplicationData.newApplicationData(kePart);
+					File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
+					dd.setRole(ContentRoleType.PRIMARY);
+					PersistenceHelper.manager.save(dd);
+					ContentServerHelper.service.updateContent(kePart, dd, vault.getPath());
+				}
 			}
 
 			for (KePartDTO dto : removeRows) {
@@ -102,7 +101,7 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				String code = dto.getCode();
 				String state = dto.getState();
 				int lotNo = dto.getLotNo();
-				String primaryPath = dto.getPrimaryPath();
+				String cacheId = dto.getCacheId();
 				KePart kePart = (KePart) CommonUtils.getObject(oid);
 				KePartMaster master = kePart.getMaster();
 				kePart.setState(state);
@@ -115,7 +114,7 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				PersistenceHelper.manager.modify(master);
 
 				// 단순 텍스트 내용 변경건 확인이 필요..
-				if (!StringUtils.isNull(primaryPath)) {
+				if (!StringUtils.isNull(cacheId)) {
 					QueryResult result = ContentHelper.service.getContentsByRole(kePart, ContentRoleType.PRIMARY);
 					if (result.hasMoreElements()) {
 						ApplicationData data = (ApplicationData) result.nextElement();
@@ -123,8 +122,9 @@ public class StandardKePartService extends StandardManager implements KePartServ
 					}
 
 					ApplicationData dd = ApplicationData.newApplicationData(kePart);
+					File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
 					dd.setRole(ContentRoleType.PRIMARY);
-					dd = (ApplicationData) ContentServerHelper.service.updateContent(kePart, dd, primaryPath);
+					dd = (ApplicationData) ContentServerHelper.service.updateContent(kePart, dd, vault.getPath());
 				}
 			}
 
@@ -150,7 +150,7 @@ public class StandardKePartService extends StandardManager implements KePartServ
 			for (KePartDTO dto : addRows) {
 				String oid = dto.getOid();
 				int next = dto.getNext();
-				String primaryPath = dto.getPrimaryPath();
+				String cacheId = dto.getCacheId();
 				String note = dto.getNote();
 
 				KePart pre = (KePart) CommonUtils.getObject(oid);
@@ -168,8 +168,9 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				PersistenceHelper.manager.save(latest);
 
 				ApplicationData dd = ApplicationData.newApplicationData(latest);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
 				dd.setRole(ContentRoleType.PRIMARY);
-				dd = (ApplicationData) ContentServerHelper.service.updateContent(latest, dd, primaryPath);
+				dd = (ApplicationData) ContentServerHelper.service.updateContent(latest, dd, vault.getPath());
 			}
 
 			trs.commit();

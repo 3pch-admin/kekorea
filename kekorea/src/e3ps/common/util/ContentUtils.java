@@ -111,7 +111,7 @@ public class ContentUtils {
 	/**
 	 * 파일확장자로 파일 아이콘 경로 리턴
 	 */
-	private static String getFileIcon(String name) {
+	public static String getFileIcon(String name) {
 		String ext = FileUtil.getExtension(name);
 
 		String icon = "/Windchill/extcore/images/fileicon/file_notepad.gif";

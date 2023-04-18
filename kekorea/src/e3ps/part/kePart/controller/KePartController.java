@@ -1,8 +1,6 @@
 package e3ps.part.kePart.controller;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,8 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
-import e3ps.doc.service.DocumentHelper;
-import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import e3ps.part.kePart.beans.KePartDTO;
@@ -43,8 +39,6 @@ public class KePartController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = CommonUtils.sessionUser();
 		boolean isAdmin = CommonUtils.isAdmin();
-		Timestamp time = new Timestamp(new Date().getTime());
-		model.addObject("time", time);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/part/kePart/kePart-list.jsp");
@@ -102,6 +96,12 @@ public class KePartController extends BaseController {
 			dataMap.put("addRows", addRow);
 			dataMap.put("editRows", editRow);
 			dataMap.put("removeRows", removeRow);
+
+			result = KePartHelper.manager.isTBOM(removeRow);
+			if ((boolean) result.get("tbom")) {
+				result.put("result", FAIL);
+				return result;
+			}
 
 			result = KePartHelper.manager.isValid(addRow, editRow);
 			if ((boolean) result.get("isExist")) {

@@ -17,7 +17,6 @@ import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.epm.dto.EpmDTO;
 import e3ps.epm.service.EpmHelper;
-import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.epm.EPMDocument;
 import wt.org.WTUser;

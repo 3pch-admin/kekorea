@@ -34,7 +34,7 @@ String method = (String) request.getAttribute("method");
 			uploadFileName : "primary",
 			buttonTxt : "파일 선택",
 			uploadMaxFileSize : (1024 * 1024 * 1024),
-			uploadUrl : getCallUrl("/aui/upload"),
+			uploadUrl : getCallUrl("/content/upload"),
 			dropBoxID : "uploadQueueBox",
 			queueBoxID : "uploadQueueBox",
 			uploadPars : {
@@ -42,13 +42,26 @@ String method = (String) request.getAttribute("method");
 			},
 			uploadMaxFileCount : 1,
 			deleteUrl : getCallUrl("/content/delete"),
-			fileKeys : {},
+			fileKeys : {
+				name : "name",
+				type : "type",
+				saveName : "saveName",
+				fileSize : "fileSize",
+				uploadedPath : "uploadedPath",
+				roleType : "roleType",
+				cacheId : "cacheId",
+			},
+			onStart : function() {
+				openLayer();
+			},
 			onComplete : function() {
 				data = this[0];
+				closeLayer();
 			},
-			onError : function() {
-				alert("하나의 첨부파일만 업로드가 가능합니다.");
-				document.location.reload();
+			onDelete : function() {
+				const key = this.file.tagId;
+				const el = document.getElementById(key);
+				el.parentNode.removeChild(el);
 			}
 		})
 	}
@@ -56,9 +69,11 @@ String method = (String) request.getAttribute("method");
 	primaryUploader();
 
 	function save() {
-		opener.
-<%=method%>
-	(data);
+		if(data === undefined) {
+			alert("첨부파일을 추가하세요.");
+			return false;
+		}
+		opener.<%=method%>(data);
 		self.close();
 	}
 </script>

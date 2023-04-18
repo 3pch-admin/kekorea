@@ -169,6 +169,7 @@
 			rowNumHeaderText : "번호",
 			showDragKnobColumn : true,
 			enableDrag : true,
+			selectionMode : "multipleCells",
 			enableMultipleDrag : true,
 			enableDrop : true,
 			$compaEventOnPaste : true,
@@ -272,7 +273,6 @@
 						current : data.current,
 						lotNo : data.lotNo,
 						oid : data.oid,
-						dataType : "KE도면",
 						sort : event.rowIndex,
 						createdDate : new Date(),
 						preView : data.preView
@@ -330,6 +330,10 @@
 		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
 		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
 		const url = getCallUrl("/workOrder/create");
+
+		addRows.sort(function(a, b) {
+			return a.sort - b.sort;
+		});
 
 		if (isNull(name.value)) {
 			alert("도면일람표 제목을 입력하세요.");

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +20,6 @@ import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.project.Project;
-import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -123,13 +120,11 @@ public class TBOMController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
 		TBOMDTO dto = new TBOMDTO(master);
-		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(master);
 		JSONArray list = TBOMHelper.manager.jsonAuiProject(oid);
 		JSONArray data = TBOMHelper.manager.getData(master);
 		model.addObject("data", data);
 		model.addObject("list", list);
 		model.addObject("dto", dto);
-		model.addObject("history", history);
 		model.setViewName("popup:/bom/tbom/tbom-view");
 		return model;
 	}
@@ -192,14 +187,14 @@ public class TBOMController extends BaseController {
 	@GetMapping(value = "/compare")
 	public ModelAndView compare(@RequestParam String oid, @RequestParam String compareArr) throws Exception {
 		ModelAndView model = new ModelAndView();
-		
+
 		String[] compareOids = compareArr.split(",");
 		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
-		for(String _oid : compareOids) {
-			Project project = (Project)CommonUtils.getObject(_oid);
+		for (String _oid : compareOids) {
+			Project project = (Project) CommonUtils.getObject(_oid);
 			destList.add(project);
 		}
-		
+
 		Project p1 = (Project) CommonUtils.getObject(oid);
 		ArrayList<Map<String, Object>> data = TBOMHelper.manager.compare(p1, destList);
 		model.addObject("p1", p1);
@@ -210,7 +205,7 @@ public class TBOMController extends BaseController {
 		model.setViewName("popup:/bom/tbom/tbom-compare");
 		return model;
 	}
-	
+
 	@Description(value = "T-BOM 수정 페이지")
 	@GetMapping(value = "/modify")
 	public ModelAndView modify(@RequestParam String oid) throws Exception {
@@ -234,6 +229,23 @@ public class TBOMController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+		}
+		return result;
+	}
+
+	@Description(value = "T-BOM 삭제 함수")
+	@ResponseBody
+	@PostMapping(value = "/delete")
+	public Map<String, Object> delete(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			TBOMHelper.service.delete(oid);
+			result.put("msg", DELETE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}

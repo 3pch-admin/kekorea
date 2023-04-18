@@ -60,10 +60,21 @@
              value="wt.series.IntegerSeries"/>
 	<Property name="wt.series.HarvardSeries.seriesNames" overridable="true"
              targetFile="codebase/wt.properties"
-             value="MilSpec, InSpec"/>
+             value="InSpec"/>
              
 	<!-- wvs.properties -->
 	<Property name="publish.usesPublishRules" overridable="true"
              targetFile="codebase/WEB-INF/wvs/wvs.properties"
-             value="ARBORTEXT PROE"/>	                                                    		
+             value="ARBORTEXT PROE"/>
+             
+	<!-- after loader -->
+   <Property name="publish.afterloadermethod" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="com.ptc.wvs.util.AfterEDRloader/copyToEPM"/>
+   <Property name="publish.afterloadermethod.copyToEPM.Filext" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="dwg zip"/>
+   <Property name="publish.afterloadermethod.copyToEPM.downloadToLocal" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="true"/>	             	                                                    		
 </Configuration>
