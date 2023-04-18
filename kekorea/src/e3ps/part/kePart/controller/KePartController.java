@@ -177,7 +177,6 @@ public class KePartController extends BaseController {
 		KePart kePart = (KePart) CommonUtils.getObject(oid);
 		KePartDTO dto = new KePartDTO(kePart);
 		Map<String, Object> primary = ContentUtils.getPrimary(dto.getOid());
-		System.out.println("@@@@@@@@@@@@@PRI" + primary);
 		JSONArray list = KePartHelper.manager.history(kePart.getMaster());
 		JSONArray data = KePartHelper.manager.jsonArrayAui(oid);
 		model.addObject("data", data);

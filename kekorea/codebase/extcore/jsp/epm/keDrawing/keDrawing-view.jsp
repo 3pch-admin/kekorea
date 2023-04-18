@@ -6,7 +6,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 KeDrawingDTO dto = (KeDrawingDTO) request.getAttribute("dto");
-Map<String, Object> primary = (String[]) request.getAttribute("primary");
+Map<String, Object> primary = (Map) request.getAttribute("primary");
 JSONArray list = (JSONArray) request.getAttribute("list");
 JSONArray data = (JSONArray) request.getAttribute("data");
 JSONArray history = (JSONArray) request.getAttribute("history");
@@ -82,7 +82,8 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			</tr>
 			<tr>
 				<th class="lb">도면파일</th>
-				<td class="indent5"><%=primary.get("link") %>
+				<td class="indent5">
+				<%=primary.get("link") %>
 <%-- 					<a href="<%=primarys[5]%>"> --%>
 <%-- 						<span style="position: relative; bottom: 2px;"><%=primarys[2]%></span> --%>
 <%-- 						<img src="<%=primarys[4]%>" style="position: relative; top: 1px;"> --%>
