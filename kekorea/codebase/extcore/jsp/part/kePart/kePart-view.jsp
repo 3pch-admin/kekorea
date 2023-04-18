@@ -113,14 +113,14 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				dataField : "name",
 				headerText : "DRAWING TITLE",
 				dataType : "string",
-				style : "left indent10",
+// 				style : "aui-left",
 				renderer : {
 					type : "LinkRenderer",
 					baseUrl : "javascript",
 					jsCallback : function(rowIndex, columnIndex, value, item) {
 						const oid = item.oid;
 						const url = getCallUrl("/kePart/view?oid=" + oid);
-						popup(url, 1100, 600);
+						popup(url, 1400, 700);
 					}
 				},
 				filter : {
@@ -138,7 +138,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					jsCallback : function(rowIndex, columnIndex, value, item) {
 						const oid = item.oid;
 						const url = getCallUrl("/kePart/view?oid=" + oid);
-						popup(url, 1100, 600);
+						popup(url, 1400, 700);
 					}
 				},
 				filter : {

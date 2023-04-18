@@ -651,10 +651,6 @@ public class PartlistHelper {
 			mergedData.put("maker", data.get("maker"));
 			mergedData.put("customer", data.get("customer"));
 			mergedData.put("quantity1", data.get("quantity"));
-			// 작번 개수 만큼 입력..
-//				for (int i = 0; i < destList.size(); i++) {
-//					mergedData.put("quantity" + (2 + i), 0);
-//				}
 			mergedData.put("unit", data.get("unit"));
 			mergedData.put("price", data.get("price"));
 			mergedData.put("currency", data.get("currency"));
@@ -901,7 +897,6 @@ public class PartlistHelper {
 			PartListMasterProjectLink link = (PartListMasterProjectLink) result.nextElement();
 			list.add(link);
 		}
-
 		return list;
 	}
 }

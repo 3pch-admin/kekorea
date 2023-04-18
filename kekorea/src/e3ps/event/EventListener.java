@@ -2,6 +2,7 @@ package e3ps.event;
 
 import com.ptc.wvs.server.publish.PublishServiceEvent;
 
+import e3ps.common.convert.AutoCADConverter;
 import e3ps.org.service.OrgHelper;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
@@ -51,8 +52,13 @@ public class EventListener extends ServiceEventListenerAdapter {
 
 			if (POST_CHECKIN.equals(type)) {
 				EPMDocument epm = (EPMDocument) target;
-				System.out.println("변경후 라이프 사이클 체인지...");
-				EventHelper.service.replaceLifeCycle((Workable) epm);
+				if(epm.getAuthoringApplication().toString().equals("ACAD")) {
+					// AUTOCAD TO PDF
+					AutoCADConverter converter = new AutoCADConverter();
+					
+				}
+//				System.out.println("변경후 라이프 사이클 체인지...");
+//				EventHelper.service.replaceLifeCycle((Workable) epm);
 			}
 		}
 

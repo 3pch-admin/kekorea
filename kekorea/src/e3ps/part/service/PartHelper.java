@@ -2121,7 +2121,7 @@ public class PartHelper {
 		Map<String, Object> map = new HashMap<String, Object>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTPart.class, true);
-		QuerySpecUtils.toIBAEquals(query, idx, WTPart.class, "PART_CODE", number);
+		QuerySpecUtils.toIBAEqualsAnd(query, WTPart.class, idx, "PART_CODE", number);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {
 			map.put("ycode_check", "NG(YCODE)");

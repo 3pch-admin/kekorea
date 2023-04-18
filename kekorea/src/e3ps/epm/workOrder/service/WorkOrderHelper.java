@@ -2,8 +2,10 @@ package e3ps.epm.workOrder.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -483,6 +485,7 @@ public class WorkOrderHelper {
 	 * 도면 일람표 비교 기능
 	 */
 	public ArrayList<Map<String, Object>> compare(Project p1, ArrayList<Project> destList) throws Exception {
+		System.out.println("도면 일람표 비교 START = " + new Timestamp(new Date().getTime()));
 		ArrayList<Map<String, Object>> list = integratedData(p1);
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
 
@@ -492,6 +495,8 @@ public class WorkOrderHelper {
 			mergedData.put("lotNo", data.get("lotNo"));
 			mergedData.put("name", data.get("name"));
 			mergedData.put("number", data.get("number"));
+			mergedData.put("version", data.get("version"));
+			mergedData.put("oid", data.get("doid"));
 			mergedData.put("rev1", data.get("rev"));
 			mergedList.add(mergedData);
 		}
@@ -502,16 +507,16 @@ public class WorkOrderHelper {
 			for (Map<String, Object> data : _list) {
 				String partNo = (String) data.get("partNo");
 				String lotNo = (String) data.get("lotNo");
-				String rev = (String) data.get("rev");
-				String key = partNo + "-" + lotNo + "-" + rev;
+				String version = (String) data.get("version");
+				String key = partNo + "-" + lotNo + "-" + version;
 				boolean isExist = false;
 
 				// mergedList에 partNo가 동일한 데이터가 있는지 확인
 				for (Map<String, Object> mergedData : mergedList) {
 					String mergedPartNo = (String) mergedData.get("partNo");
 					String mergedLotNo = (String) mergedData.get("lotNo");
-					String mergedRev = (String) mergedData.get("rev1");
-					String _key = mergedPartNo + "-" + mergedLotNo + "-" + mergedRev;
+					String mergedVersion = (String) mergedData.get("version");
+					String _key = mergedPartNo + "-" + mergedLotNo + "-" + mergedVersion;
 
 					if (key.equals(_key)) {
 						// partNo가 동일한 데이터가 있으면 데이터를 업데이트하고 isExist를 true로 변경
@@ -528,10 +533,13 @@ public class WorkOrderHelper {
 					mergedData.put("lotNo", data.get("lotNo"));
 					mergedData.put("name", data.get("name"));
 					mergedData.put("number", data.get("number"));
+					mergedData.put("version", data.get("version"));
+					mergedData.put("oid", data.get("doid"));
 					mergedList.add(mergedData);
 				}
 			}
 		}
+		System.out.println("도면 일람표비교 END = " + new Timestamp(new Date().getTime()));
 		return mergedList;
 	}
 
@@ -564,7 +572,7 @@ public class WorkOrderHelper {
 			QuerySpecUtils.toInnerJoin(_query, WorkOrder.class, WorkOrderDataLink.class, WTAttributeNameIfc.ID_NAME,
 					"roleAObjectRef.key.id", _idx, _idx_link);
 			QuerySpecUtils.toEqualsAnd(_query, _idx_link, WorkOrderDataLink.class, "roleAObjectRef.key.id", workOrder);
-			QuerySpecUtils.toOrderBy(_query, _idx_link, WorkOrderDataLink.class, WorkOrderDataLink.SORT, true);
+			QuerySpecUtils.toOrderBy(_query, _idx_link, WorkOrderDataLink.class, WorkOrderDataLink.SORT, false);
 			QueryResult qr = PersistenceHelper.manager.find(_query);
 			while (qr.hasMoreElements()) {
 				Object[] oo = (Object[]) qr.nextElement();
@@ -574,6 +582,7 @@ public class WorkOrderHelper {
 				map.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("lotNo", String.valueOf(link.getLotNo()));
 				map.put("rev", String.valueOf(link.getRev())); // 등록당시
+				map.put("version", String.valueOf(link.getRev()));
 				map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
 				map.put("note", link.getNote());
 
@@ -586,12 +595,14 @@ public class WorkOrderHelper {
 					map.put("current", latest.getVersion()); // 최신버전
 					map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
 					map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
+					map.put("doid", keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
 				} else if (per instanceof EPMDocument) {
 					EPMDocument epm = (EPMDocument) per;
 					map.put("name", IBAUtils.getStringValue(epm, "NAME_OF_PARTS"));
 					map.put("number", IBAUtils.getStringValue(epm, "DWG_NO"));
 					map.put("current", epm.getVersionIdentifier().getSeries().getValue());
 					map.put("preView", ContentUtils.getPreViewBase64(epm));
+					map.put("doid", epm.getPersistInfo().getObjectIdentifier().getStringValue());
 //					map.put("primary", AUIGridUtils.primaryTemplate(keDrawing)); // pdf...
 				}
 				list.add(map);

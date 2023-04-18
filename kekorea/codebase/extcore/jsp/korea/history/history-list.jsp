@@ -60,7 +60,7 @@ String end = (String) request.getAttribute("end");
 				<td class="indent5">
 					<input type="text" name="pdateFrom" id="pdateFrom" class="width-100" value="<%=before%>">
 					~
-					<input type="text" name="pdateTo" id="pdateTo" class="width-100" value="<%=end %>">
+					<input type="text" name="pdateTo" id="pdateTo" class="width-100" value="<%=end%>">
 				</td>
 				<th>USER ID</th>
 				<td class="indent5">
@@ -335,66 +335,14 @@ String end = (String) request.getAttribute("end");
 						inline : true
 					},
 				},
-			<%
-			for (Map<String, String> header : headers) {
-				String key = header.get("key");
-				String value = header.get("value");
-				ArrayList<Map<String, String>> data = list.get(key);
-				JSONArray array =  JSONArray.fromObject(new ArrayList()); 
-				if(data != null && !data.isEmpty()) {
-					array = JSONArray.fromObject(data);
-				}
-			%>
+			<%for (Map<String, String> header : headers) {
+	String key = header.get("key");
+	String value = header.get("value");%>
 				{
 					dataField : "<%=key%>",
 					headerText : "<%=value%>",
 					dataType : "string",
 					width : 130,
-					renderer : {
-						type : "IconRenderer",
-						iconWidth : 16, 
-						iconHeight : 16,
-						iconPosition : "aisleRight",
-						iconTableRef : { 
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png" 
-						},
-						onClick : function(event) {
-							AUIGrid.openInputer(event.pid);
-						}
-					},
-					editRenderer : {
-						type : "ComboBoxRenderer",
-						autoCompleteMode : true,
-						autoEasyMode : true,
-						matchFromFirst : false, 
-						showEditorBtnOver : false,
-						keyField : "key", 
-						valueField : "value",
-						list : <%=array%>,
-						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
-							let isValid = false;
-							for (let i = 0, len = <%=array%>.length; i < len; i++) { 
-								if (<%=array%>[i]["value"] == newValue) {
-									isValid = true;
-									break;
-								}
-							}
-							return {
-								"validate" : isValid,
-								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
-							};
-						}						
-					},			
-					labelFunction : function(rowIndex, columnIndex, value, headerText, item) { 
-						let retStr = ""; 
-						for (let i = 0, len = <%=array%>.length; i < len; i++) {
-							if (<%=array%>[i]["key"] == value) {
-								retStr = <%=array%>[i]["value"];
-								break;
-							}
-						}
-						return retStr == "" ? value : retStr;
-					},				
 					filter : {
 						showIcon : true,
 						inline : true
@@ -411,7 +359,7 @@ String end = (String) request.getAttribute("end");
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "singleRow",
+					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -448,11 +396,14 @@ String end = (String) request.getAttribute("end");
 
 				params.editRows = editRows;
 				params.removeRows = removeRows;
+				console.log(params);
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
 					if (data.result) {
 						loadGridData();
+					} else {
+						parent.closeLayer();
 					}
 				})
 			}

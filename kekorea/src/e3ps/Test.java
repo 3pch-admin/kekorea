@@ -17,21 +17,10 @@ public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-		Connection conn = DBCPManager.getConnection("erp");
-		
-		
-		Map<String, Object> param = new HashMap<>();
-		param.put("lotNo", "222");
-		param.put("index", 1);
-		
-		Map<String, Object> result = ErpHelper.manager.validate("Y2000725771");
-		
-		System.out.println(result);
-		System.out.println(conn);
-		
-		
-		
-		
+		String s = "asd'.prt";
+
+		System.out.println(s.substring(0, s.lastIndexOf(".")));
+
 		System.exit(0);
 	}
 }

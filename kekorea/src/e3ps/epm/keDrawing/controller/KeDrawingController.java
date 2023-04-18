@@ -107,8 +107,7 @@ public class KeDrawingController extends BaseController {
 			}
 
 			result = KeDrawingHelper.manager.numberValidate(addRow, editRow);
-			
-			
+
 			result = KeDrawingHelper.manager.isValid(addRow, editRow);
 			// true 중복있음
 			if ((boolean) result.get("isExist")) {
@@ -183,12 +182,8 @@ public class KeDrawingController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
 		KeDrawingDTO dto = new KeDrawingDTO(keDrawing);
-		Map<String, Object> primary = ContentUtils.getPrimary(dto.getOid());
-		JSONArray list = KeDrawingHelper.manager.history(keDrawing.getMaster());
-		JSONArray data = KeDrawingHelper.manager.jsonArrayAui(oid);
-		model.addObject("data", data);
-		model.addObject("list", list);
-		model.addObject("primarys", primary);
+		JSONArray history = KeDrawingHelper.manager.history(keDrawing.getMaster());
+		model.addObject("history", history);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/epm/keDrawing/keDrawing-view");
 		return model;
@@ -200,15 +195,9 @@ public class KeDrawingController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		KeDrawing keDrawing = KeDrawingHelper.manager.getKeDrawingByNumberAndRev(number, rev);
 		KeDrawingDTO dto = new KeDrawingDTO(keDrawing);
-		Map<String, Object> primary = ContentUtils.getPrimary(dto.getOid());
-		JSONArray list = KeDrawingHelper.manager.history(keDrawing.getMaster());
-		JSONArray data = KeDrawingHelper.manager
-				.jsonArrayAui(keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
-		model.addObject("data", data);
-		model.addObject("list", list);
-		model.addObject("primarys", primary);
+		JSONArray history = KeDrawingHelper.manager.history(keDrawing.getMaster());
+		model.addObject("history", history);
 		model.addObject("dto", dto);
-		model.setViewName("popup:/epm/keDrawing/keDrawing-view");
 		model.setViewName("popup:/epm/keDrawing/keDrawing-view");
 		return model;
 	}

@@ -69,94 +69,10 @@ String engType = (String) request.getAttribute("engType");
 				<th class="req lb">KEK 작번</th>
 				<td colspan="5">
 					<div class="include">
-						<input type="button" value="작번 추가" title="작번 추가" class="blue" onclick="_insert();">
-						<input type="button" value="작번 삭제" title="작번 삭제" class="red" onclick="_deleteRow();">
-						<div id="_grid_wrap" style="height: 150px; border-top: 1px solid #3180c3; margin: 5px;"></div>
-						<script type="text/javascript">
-							let _myGridID;
-							const _columns = [ {
-								dataField : "projectType_name",
-								headerText : "작번유형",
-								dataType : "string",
-								width : 80,
-							}, {
-								dataField : "customer_name",
-								headerText : "거래처",
-								dataType : "string",
-								width : 120,
-							}, {
-								dataField : "mak_name",
-								headerText : "막종",
-								dataType : "string",
-								width : 120,
-							}, {
-								dataField : "detail_name",
-								headerText : "막종상세",
-								dataType : "string",
-								width : 120,
-							}, {
-								dataField : "kekNumber",
-								headerText : "KEK 작번",
-								dataType : "string",
-								width : 100,
-							}, {
-								dataField : "keNumber",
-								headerText : "KE 작번",
-								dataType : "string",
-								width : 100,
-							}, {
-								dataField : "description",
-								headerText : "작업 내용",
-								dataType : "string",
-								style : "aui-left",
-							}, {
-								dataField : "oid",
-								headerText : "",
-								visible : false
-							} ]
-							function _createAUIGrid(columnLayout) {
-								const props = {
-									headerHeight : 30,
-									showRowNumColumn : true,
-									showRowCheckColumn : true,
-									showStateColumn : true,
-									rowNumHeaderText : "번호",
-									showAutoNoDataMessage : false,
-									selectionMode : "singleRow",
-									enableSorting : false
-								}
-								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-							}
-
-							function _insert() {
-								const url = getCallUrl("/project/popup?method=append&multi=true");
-								popup(url, 1500, 700);
-							}
-
-							function append(data, callBack) {
-								for (let i = 0; i < data.length; i++) {
-									const item = data[i].item;
-									const isUnique = AUIGrid.isUniqueValue(_myGridID, "oid", item.oid);
-									if (isUnique) {
-										AUIGrid.addRow(_myGridID, item, "first");
-									}
-								}
-								callBack(true);
-							}
-
-							function _deleteRow() {
-								const checked = AUIGrid.getCheckedRowItems(_myGridID);
-								if (checked.length === 0) {
-									alert("삭제할 행을 선택하세요.");
-									return false;
-								}
-
-								for (let i = checked.length - 1; i >= 0; i--) {
-									const rowIndex = checked[i].rowIndex;
-									AUIGrid.removeRow(_myGridID, rowIndex);
-								}
-							}
-						</script>
+						<jsp:include page="/extcore/jsp/common/project-include.jsp">
+							<jsp:param value="" name="oid" />
+							<jsp:param value="create" name="mode" />
+						</jsp:include>
 					</div>
 				</td>
 			</tr>
@@ -169,15 +85,17 @@ String engType = (String) request.getAttribute("engType");
 			<tr>
 				<th class="req lb">결재</th>
 				<td colspan="5">
-					<jsp:include page="/extcore/include/register-include.jsp"></jsp:include>
+					<jsp:include page="/extcore/jsp/common/approval-register.jsp">
+						<jsp:param value="" name="oid" />
+						<jsp:param value="create" name="mode" />
+					</jsp:include>
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">첨부파일</th>
 				<td class="indent5" colspan="5">
-					<jsp:include page="/extcore/include/secondary-include.jsp">
+					<jsp:include page="/extcore/jsp/common/attach-secondary.jsp">
 						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
@@ -203,7 +121,7 @@ String engType = (String) request.getAttribute("engType");
 				width : 80,
 				editable : false,
 				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-					if (value === "NG")  {
+					if (value === "NG") {
 						return "ng";
 					}
 					return "";
@@ -650,18 +568,17 @@ String engType = (String) request.getAttribute("engType");
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
-					const _isCreated = AUIGrid.isCreated(_myGridID);
-					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated) {
-						AUIGrid.resize(_myGridID);
+					const isCreated9 = AUIGrid.isCreated(myGridID9);
+					if (isCreated9) {
+						AUIGrid.resize(myGridID9);
 					} else {
-						_createAUIGrid(_columns);
+						createAUIGrid9(columns9);
 					}
-
-					if (_isCreated_) {
-						AUIGrid.resize(_myGridID_);
+					const isCreated8 = AUIGrid.isCreated(myGridID8);
+					if (isCreated8) {
+						AUIGrid.resize(myGridID8);
 					} else {
-						_createAUIGrid_(_columns_);
+						createAUIGrid8(columns8);
 					}
 					selectbox("engType");
 					$("#engType").bindSelectDisabled(true);
@@ -680,14 +597,16 @@ String engType = (String) request.getAttribute("engType");
 		selectbox("engType");
 		$("#engType").bindSelectSetValue("<%=engType%>");
 		$("#engType").bindSelectDisabled(true);
-		_createAUIGrid(_columns);
-		_createAUIGrid_(_columns_);
+		createAUIGrid9(columns9);
+		createAUIGrid8(columns8);
+		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID8);
 		createAUIGrid(columns);
 	});
 
 	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID8);
 		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID_);
-		AUIGrid.resize(_myGridID);
 	});
 </script>

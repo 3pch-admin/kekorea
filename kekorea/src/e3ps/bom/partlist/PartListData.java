@@ -2,11 +2,16 @@ package e3ps.bom.partlist;
 
 import java.sql.Timestamp;
 
+import com.ptc.windchill.annotations.metadata.Cardinality;
+import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
+import com.ptc.windchill.annotations.metadata.GeneratedForeignKey;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
+import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import wt.fc.WTObject;
+import wt.part.WTPart;
 import wt.util.WTException;
 
 @GenAsPersistable(superClass = WTObject.class,
@@ -34,7 +39,7 @@ import wt.util.WTException;
 				@GeneratedProperty(name = "price", type = Integer.class, javaDoc = "단가"),
 
 				@GeneratedProperty(name = "currency", type = String.class, javaDoc = "화폐"),
-				
+
 				@GeneratedProperty(name = "won", type = Integer.class, javaDoc = "원화금액"),
 
 				@GeneratedProperty(name = "partListDate", type = Timestamp.class, javaDoc = "수배일자"),
@@ -48,6 +53,18 @@ import wt.util.WTException;
 				@GeneratedProperty(name = "note", type = String.class, javaDoc = "비고"),
 
 				@GeneratedProperty(name = "sort", type = Integer.class, javaDoc = "정렬")
+
+		},
+
+		foreignKeys = {
+
+				@GeneratedForeignKey(name = "PartListWTPartLink",
+
+						foreignKeyRole = @ForeignKeyRole(name = "wtPart", type = WTPart.class,
+
+								constraints = @PropertyConstraints(required = false)),
+
+						myRole = @MyRole(name = "data", cardinality = Cardinality.ONE)),
 
 		}
 

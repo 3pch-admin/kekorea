@@ -244,11 +244,8 @@ public class TBOMHelper {
 			mergedData.put("unit", data.get("unit"));
 			mergedData.put("provide", data.get("provide"));
 			mergedData.put("discontinue", data.get("discontinue"));
-
-			// 작번 개수 만큼 입력..
-//			for (int i = 0; i < destList.size(); i++) {
-//				mergedData.put("qty" + (2 + i), 0);
-//			}
+			mergedData.put("oid", data.get("oid"));
+			mergedData.put("moid", data.get("moid"));
 			mergedList.add(mergedData);
 		}
 
@@ -281,7 +278,6 @@ public class TBOMHelper {
 				if (!isExist) {
 					// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
 					Map<String, Object> mergedData = new HashMap<>();
-//					mergedData.put("qty1", 0);
 					mergedData.put("lotNo", data.get("lotNo"));
 					mergedData.put("name", data.get("name"));
 					mergedData.put("code", data.get("code"));
@@ -291,6 +287,8 @@ public class TBOMHelper {
 					mergedData.put("unit", data.get("unit"));
 					mergedData.put("provide", data.get("provide"));
 					mergedData.put("discontinue", data.get("discontinue"));
+					mergedData.put("oid", data.get("oid"));
+					mergedData.put("moid", data.get("moid"));
 					mergedList.add(mergedData);
 				}
 			}
@@ -337,6 +335,8 @@ public class TBOMHelper {
 				TBOMMasterDataLink link = (TBOMMasterDataLink) oo[0];
 				TBOMData data = link.getData();
 				Map<String, Object> map = new HashMap<>();
+				map.put("oid", data.getKePart().getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("moid", master.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("lotNo", String.valueOf(data.getLotNo()));
 				map.put("code", data.getKePart().getMaster().getCode());
 				map.put("name", data.getKePart().getMaster().getName());

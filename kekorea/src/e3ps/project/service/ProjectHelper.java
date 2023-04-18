@@ -24,10 +24,10 @@ import e3ps.doc.meeting.service.MeetingHelper;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.service.RequestDocumentHelper;
+import e3ps.epm.keDrawing.KeDrawing;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
-import e3ps.org.Department;
-import e3ps.org.People;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.service.KePartHelper;
 import e3ps.project.Project;
@@ -3841,8 +3841,10 @@ public class ProjectHelper {
 	public JSONArray jsonAuiReferenceProject(String oid) throws Exception {
 		Persistable per = CommonUtils.getObject(oid);
 
-		if(per instanceof KePart) {
+		if (per instanceof KePart) {
 			return KePartHelper.manager.jsonAuiReferenceProject(oid);
+		} else if (per instanceof KeDrawing) {
+			return KeDrawingHelper.manager.jsonAuiReferenceProject(oid);
 		}
 		return new JSONArray();
 	}

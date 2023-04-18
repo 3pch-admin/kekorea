@@ -202,7 +202,7 @@ public class KeDrawingHelper {
 	/**
 	 * KE 도면과 관련된 도면일람표 정보를 가져온다
 	 */
-	public JSONArray jsonArrayAui(String oid) throws Exception {
+	public JSONArray jsonAuiReferenceProject(String oid) throws Exception {
 		KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
 		ArrayList<WorkOrderDTO> list = new ArrayList<>();
 

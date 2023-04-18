@@ -494,32 +494,6 @@ public class QuerySpecUtils {
 	}
 
 	/**
-	 * 부품, 도면등 기타 IBA값을 사용하는곳에 잇어서 equals (and) 조건 추가
-	 */
-	public static void toIBAEquals(QuerySpec query, int idx, Class clazz, String name, String value) throws Exception {
-		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath(name);
-		if (aview != null) {
-			if (query.getConditionCount() > 0) {
-				query.appendAnd();
-			}
-
-			int _idx = query.appendClassList(StringValue.class, false);
-			SearchCondition sc = new SearchCondition(
-					new ClassAttribute(StringValue.class, "theIBAHolderReference.key.id"), "=",
-					new ClassAttribute(clazz, "thePersistInfo.theObjectIdentifier.id"));
-			sc.setFromIndicies(new int[] { _idx, idx }, 0);
-			sc.setOuterJoin(0);
-			query.appendWhere(sc, new int[] { _idx, idx });
-			query.appendAnd();
-			sc = new SearchCondition(StringValue.class, "definitionReference.key.id", "=", aview.getObjectID().getId());
-			query.appendWhere(sc, new int[] { _idx });
-			query.appendAnd();
-			sc = new SearchCondition(StringValue.class, StringValue.VALUE, "=", value);
-			query.appendWhere(sc, new int[] { _idx });
-		}
-	}
-
-	/**
 	 * Ownable.class 인터페이스를 구현한 객체에 대해서만 사용할 수 있는 작성사 검색 쿼리
 	 */
 	public static void toCreator(QuerySpec query, int idx, Class clazz, String oid) throws Exception {

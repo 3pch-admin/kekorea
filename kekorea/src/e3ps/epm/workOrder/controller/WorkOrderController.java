@@ -39,16 +39,10 @@ public class WorkOrderController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.MONTH, -4);
-		Timestamp date = new Timestamp(calendar.getTime().getTime());
-
 		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
 		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
 		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
 		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
-
 		model.addObject("list", list);
 		model.addObject("customers", customers);
 		model.addObject("projectTypes", projectTypes);
@@ -137,8 +131,8 @@ public class WorkOrderController extends BaseController {
 	@GetMapping(value = "/compare")
 	public ModelAndView compare(@RequestParam String oid, @RequestParam String compareArr) throws Exception {
 		ModelAndView model = new ModelAndView();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		Project p1 = (Project) CommonUtils.getObject(oid);
-
 		String[] compareOids = compareArr.split(",");
 		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
 		for (String _oid : compareOids) {
@@ -147,6 +141,7 @@ public class WorkOrderController extends BaseController {
 		}
 
 		ArrayList<Map<String, Object>> data = WorkOrderHelper.manager.compare(p1, destList);
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("p1", p1);
 		model.addObject("oid", oid);
 		model.addObject("destList", destList);

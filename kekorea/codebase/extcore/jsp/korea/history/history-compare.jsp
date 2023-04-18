@@ -8,7 +8,6 @@
 JSONArray data = (JSONArray) request.getAttribute("data");
 Project p1 = (Project) request.getAttribute("p1");
 ArrayList<Project> destList = (ArrayList<Project>) request.getAttribute("destList");
-destList.add(0, p1);
 String oid = (String) request.getAttribute("oid");
 String compareArr = (String) request.getAttribute("compareArr");
 ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) request.getAttribute("fixedList");
@@ -27,8 +26,9 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('tbom-compare');">
-			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('tbom-compare');">
+			<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+			<!-- 			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('partlist-compare');"> -->
+			<!-- 			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('partlist-compare');"> -->
 		</td>
 		<td class="right">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
@@ -54,11 +54,9 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 				inline : true
 			},
 		}, 
-		<%
-			int i = 1;
-			for (Project project : destList) {
-				String dataField = String.valueOf(project.getPersistInfo().getObjectIdentifier().getId());
-		%>
+		<%int i = 1;
+for (Project project : destList) {
+	String dataField = String.valueOf(project.getPersistInfo().getObjectIdentifier().getId());%>
 		{
 			headerText : "<%=project.getKekNumber()%>",
 			dataField : "<%=dataField%>",
@@ -72,10 +70,8 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 				inline : true
 			},
 		}, 
-		<%
-				i++;
-			}	
-		%>
+		<%i++;
+}%>
 		 ]
 	}
 
@@ -91,6 +87,7 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 			showInlineFilter : true,
 			useContextMenu : true,
 			enableRightDownFocus : true,
+			fixedColumnCount : 1,
 // 			autoGridHeight : true
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
