@@ -288,6 +288,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 		createAUIGrid(columns);
 		createAUIGrid100(columns100);
 		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID100);
 	})
 

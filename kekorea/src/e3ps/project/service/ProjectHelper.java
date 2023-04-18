@@ -3,6 +3,7 @@ package e3ps.project.service;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import e3ps.doc.meeting.Meeting;
 import e3ps.doc.meeting.service.MeetingHelper;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
+import e3ps.doc.request.service.RequestDocumentHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.org.Department;
@@ -3133,6 +3135,7 @@ public class ProjectHelper {
 	 * 작번 조회 함수
 	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
+		System.out.println("작번검색 START = " + new Timestamp(new Date().getTime()));
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<ProjectDTO> list = new ArrayList<ProjectDTO>();
 
@@ -3252,6 +3255,7 @@ public class ProjectHelper {
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
+		System.out.println("작번검색 END = " + new Timestamp(new Date().getTime()));
 		return map;
 	}
 
@@ -3823,6 +3827,8 @@ public class ProjectHelper {
 			// TBOM
 		} else if (per instanceof TBOMMaster) {
 			return TBOMHelper.manager.jsonAuiProject(oid);
+		} else if (per instanceof RequestDocument) {
+			return RequestDocumentHelper.manager.jsonAuiProject(oid);
 		}
 		return new JSONArray();
 	}

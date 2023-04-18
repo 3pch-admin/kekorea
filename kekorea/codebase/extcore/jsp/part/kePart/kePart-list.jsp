@@ -401,6 +401,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						showIcon : true,
 						inline : true
 					},
+				}, {
+					dataField : "isNew",
+					dataType : "boolean",
+					visible : false
 				} ]
 			}
 
@@ -432,16 +436,32 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu();
 				});
-// 				AUIGrid.bind(myGridID, "pasteEnd", auiPasteEnd);
+				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRowHandler);
+				AUIGrid.bind(myGridID, "pasteEnd", auiPasteEnd);
 			}
 
-// 			function auiPasteEnd(event) {
-// 				const clipboardData = event.clipboardData;
-// 				for (let i = 0; i < clipboardData.length; i++) {
-// 					AUIGrid.setCellValue(myGridID, i, "latest", true);
-// 					AUIGrid.setCellValue(myGridID, i, "state", "사용");
-// 				}
-// 			}
+			function auiBeforeRemoveRowHandler(event) {
+				const items = event.items;
+				for (let i = 0; i < items.length; i++) {
+					const latest = items[i].latest;
+					const isNew = items[i].isNew;
+					if (!latest && !isNull(isNew)) {
+						alert("최신버전의 부품이 아닌 데이터가 있습니다.\n" + i + "행 데이터");
+						return false;
+					}
+				}
+				return true;
+			}
+
+			function auiPasteEnd(event) {
+				const clipboardData = event.clipboardData;
+				for (let i = 0; i < clipboardData.length; i++) {
+					AUIGrid.setCellValue(myGridID, i, "latest", true);
+					AUIGrid.setCellValue(myGridID, i, "state", "사용");
+					AUIGrid.setCellValue(myGridID, i, "version", 1);
+					AUIGrid.setCellValue(myGridID, i, "isNew", true);
+				}
+			}
 
 			function loadGridData() {
 				const params = new Object();
@@ -501,10 +521,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						return false;
 					}
 
-					if (isNull(item.primary)) {
-						AUIGrid.showToastMessage(myGridID, rowIndex, 11, "첨부파일을 선택하세요.");
-						return false;
-					}
+					// 					if (isNull(item.primary)) {
+					// 						AUIGrid.showToastMessage(myGridID, rowIndex, 12, "첨부파일을 선택하세요.");
+					// 						return false;
+					// 					}
 				}
 
 				for (let i = 0; i < editRows.length; i++) {
@@ -535,10 +555,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						return false;
 					}
 
-					if (isNull(item.primary)) {
-						AUIGrid.showToastMessage(myGridID, rowIndex, 11, "첨부파일을 선택하세요.");
-						return false;
-					}
+					// 					if (isNull(item.primary)) {
+					// 						AUIGrid.showToastMessage(myGridID, rowIndex, 12, "첨부파일을 선택하세요.");
+					// 						return false;
+					// 					}
 				}
 
 				if (!confirm("저장 하시겠습니까?")) {
@@ -576,7 +596,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
 					const item = checkedItems[i].item;
 					const rowIndex = checkedItems[i].rowIndex;
-					if (!checker(sessionId, item.creatorId) || !checker(sessionId, item.modifierId)) {
+					if ((!isNull(item.creatorId) && !checker(sessionId, item.creatorId)) || (!isNull(item.modifierId) && !checker(sessionId, item.modifierId))) {
 						alert(rowIndex + "행 데이터의 작성자 혹은 수정자가 아닙니다.");
 						return false;
 					}

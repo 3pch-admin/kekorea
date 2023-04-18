@@ -168,14 +168,11 @@ public class RequestDocumentHelper {
 			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
 			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("install_name", project.getInstall() != null ? project.getInstall().getName() : "");
 			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
 			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
 			map.put("kekNumber", project.getKekNumber());
 			map.put("keNumber", project.getKeNumber());
-			map.put("userId", project.getUserId());
-			map.put("customDate_txt", CommonUtils.getPersistableTime(project.getCustomDate()));
-			map.put("model", project.getModel());
-			map.put("pdate_txt", CommonUtils.getPersistableTime(project.getPDate()));
 			map.put("description", project.getDescription());
 			list.add(map);
 		}

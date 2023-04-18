@@ -410,7 +410,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			width : 100,
 			editRenderer : {
 				type : "InputEditRenderer",
-				regExp : "^[a-zA-Z0-9]+$",
+				regExp : "^[a-zA-Z0-9-]+$",
 				autoUpperCase : true
 			},
 		}, {
@@ -428,7 +428,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			dataType : "date",
 			dateInputFormat : "yyyy-mm-dd",
 			formatString : "yyyy년 mm월 dd일",
-			width : 130,
+			width : 150,
 			renderer : {
 				type : "IconRenderer",
 				iconWidth : 16,
@@ -474,7 +474,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			dataType : "date",
 			dateInputFormat : "yyyy-mm-dd",
 			formatString : "yyyy년 mm월 dd일",
-			width : 130,
+			width : 150,
 			renderer : {
 				type : "IconRenderer",
 				iconWidth : 16,

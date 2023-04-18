@@ -362,6 +362,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
+				}, {
+					dataField : "isNew",
+					dataType : "boolean",
+					visible : false
 				} ]
 			}
 
@@ -381,7 +385,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					editable : true
+					editable : true,
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
@@ -394,7 +398,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					hideContextMenu();
 				});
 				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRowHandler);
-				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinishHandler);
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 				AUIGrid.bind(myGridID, "pasteEnd", auiPasteEnd);
 			}
@@ -405,6 +408,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					AUIGrid.setCellValue(myGridID, i, "latest", true);
 					AUIGrid.setCellValue(myGridID, i, "state", "사용");
 					AUIGrid.setCellValue(myGridID, i, "version", 1);
+					AUIGrid.setCellValue(myGridID, i, "isNew", true);
 				}
 			}
 
@@ -422,24 +426,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				}
 			}
 
-			function auiAddRowFinishHandler(event) {
-				const selected = AUIGrid.getSelectedIndex(myGridID);
-				if (selected.length <= 0) {
-					return false;
-				}
-
-				const rowIndex = selected[0];
-				const colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "lotNo");
-				AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex);
-				AUIGrid.openInputer(myGridID);
-			}
 
 			function auiBeforeRemoveRowHandler(event) {
 				const items = event.items;
 				for (let i = 0; i < items.length; i++) {
-					console.log(items[i]);
 					const latest = items[i].latest;
-					if (!latest) {
+					const isNew = items[i].isNew;
+					if (!latest && !isNull(isNew)) {
 						alert("최신버전의 도면이 아닌 데이터가 있습니다.\n" + i + "행 데이터");
 						return false;
 					}
@@ -497,11 +490,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const sessionId = document.getElementById("sessionId").value;
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
 					const item = checkedItems[i].item;
-					if (!isNull(item.creatorId) && !checker(sessionId, item.creatorId)) {
-						alert("데이터 작성자가 아닙니다.");
+					const rowIndex = checkedItems[i].rowIndex;
+					if ((!isNull(item.creatorId) && !checker(sessionId, item.creatorId)) || (!isNull(item.modifierId) && !checker(sessionId, item.modifierId))) {
+						alert(rowIndex + "행 데이터의 작성자 혹은 수정자가 아닙니다.");
 						return false;
 					}
-					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
 			}
@@ -624,6 +617,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					const latest = checkedItems[i].item.latest;
 					const rowIndex = checkedItems[i].rowIndex;
 					checkedItems[i].item.note = "";
+					checkedItems[i].item.primary = "";
 					if (!latest) {
 						alert("최신버전이 아닌 도면이 포함되어있습니다.\n" + (rowIndex + 1) + "행 데이터");
 						return false;
