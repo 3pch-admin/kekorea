@@ -110,7 +110,7 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 				// 시작이 된 흔적이 없을 경우
 				if (project.getStartDate() == null) {
 					project.setStartDate(DateUtils.getCurrentTimestamp());
-					project.setKekState(ProjectStateVariable.KEK_INWORK);
+					project.setKekState(ProjectStateVariable.KEK_DESIGN_INWORK);
 					project.setState(ProjectStateVariable.INWORK);
 					project = (Project) PersistenceHelper.manager.modify(project);
 				}
@@ -272,6 +272,26 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
+
+			TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
+
+			QueryResult result = PersistenceHelper.manager.navigate(master, "project", TBOMMasterProjectLink.class,
+					false);
+			while (result.hasMoreElements()) {
+				TBOMMasterProjectLink link = (TBOMMasterProjectLink) result.nextElement();
+				PersistenceHelper.manager.delete(link);
+			}
+
+			result.reset();
+			result = PersistenceHelper.manager.navigate(master, "data", TBOMMasterDataLink.class, false);
+			while (result.hasMoreElements()) {
+				TBOMMasterDataLink link = (TBOMMasterDataLink) result.nextElement();
+				TBOMData data = link.getData();
+				PersistenceHelper.manager.delete(data);
+				PersistenceHelper.manager.delete(link);
+			}
+
+			PersistenceHelper.manager.delete(master);
 
 			trs.commit();
 			trs = null;

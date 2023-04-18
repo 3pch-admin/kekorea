@@ -75,6 +75,7 @@
 		dataField : "note",
 		headerText : "개정사유",
 		dateType : "string",
+		style : "aui-left",
 	}, {
 		dataField : "primary",
 		headerText : "첨부파일",
@@ -101,7 +102,6 @@
 	function createAUIGrid(columnLayout) {
 		const props = {
 			headerHeight : 30, 
-			rowHeight : 30, 
 			showRowNumColumn : true, 
 			showStateColumn : true, 
 			rowNumHeaderText : "번호", 
@@ -124,7 +124,7 @@
 		AUIGrid.updateRowsById(myGridID, {
 			_$uid : recentGridItem._$uid,
 			primary : template,
-			primaryPath : data.fullPath
+			cacheId : data.cacheId
 		});
 	}
 
@@ -144,11 +144,6 @@
 			const version = item.version;
 			const next = item.next;
 
-			if (isNull(item.primary)) {
-				AUIGrid.showToastMessage(myGridID, i, 9, "첨부 파일을 선택하세요.");
-				return false;
-			}
-
 			if (version >= next) {
 				AUIGrid.showToastMessage(myGridID, i, 6, "개정후 부품의 버전이 개정전 부품의 버전과 같거나 혹은 더 낮습니다.");
 				return false;
@@ -159,10 +154,10 @@
 				return false;
 			}
 
-			if (isNull(item.primary)) {
-				AUIGrid.showToastMessage(myGridID, i, 8, "첨부파일 선택하세요.");
-				return false;
-			}
+// 			if (isNull(item.primary)) {
+// 				AUIGrid.showToastMessage(myGridID, i, 9, "첨부파일 선택하세요.");
+// 				return false;
+// 			}
 		}
 
 		if (!confirm("개정 하시겠습니까?")) {
@@ -172,11 +167,14 @@
 		const params = new Object();
 		const url = getCallUrl("/kePart/revise");
 		params.addRows = addRows;
+		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		}); 
 	}

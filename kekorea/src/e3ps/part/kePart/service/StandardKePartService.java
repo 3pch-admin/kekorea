@@ -167,10 +167,12 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				latest.setState("작업중");
 				PersistenceHelper.manager.save(latest);
 
-				ApplicationData dd = ApplicationData.newApplicationData(latest);
-				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
-				dd.setRole(ContentRoleType.PRIMARY);
-				dd = (ApplicationData) ContentServerHelper.service.updateContent(latest, dd, vault.getPath());
+				if (!StringUtils.isNull(cacheId)) {
+					ApplicationData dd = ApplicationData.newApplicationData(latest);
+					File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
+					dd.setRole(ContentRoleType.PRIMARY);
+					dd = (ApplicationData) ContentServerHelper.service.updateContent(latest, dd, vault.getPath());
+				}
 			}
 
 			trs.commit();

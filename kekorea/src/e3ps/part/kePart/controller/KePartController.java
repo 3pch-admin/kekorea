@@ -178,8 +178,6 @@ public class KePartController extends BaseController {
 		KePartDTO dto = new KePartDTO(kePart);
 		Map<String, Object> primary = ContentUtils.getPrimary(dto.getOid());
 		JSONArray list = KePartHelper.manager.history(kePart.getMaster());
-		JSONArray data = KePartHelper.manager.jsonArrayAui(oid);
-		model.addObject("data", data);
 		model.addObject("list", list);
 		model.addObject("primarys", primary);
 		model.addObject("dto", dto);

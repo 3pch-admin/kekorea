@@ -155,7 +155,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<!-- 						<a href="projects.html">UNIT BOM 조회</a> -->
 					<!-- 					</li> -->
 					<li>
-						<a onclick="moveToPage(this, '/kePart/list');">KE 부품 조회</a>
+						<a onclick="moveToPage(this, '/kePart/list', '부품 관리 > KE 부품 조회');">KE 부품 조회</a>
 					</li>
 					<!-- 					<li> -->
 					<!-- 						<a href="project_detail.html">UNIT BOM 등록</a> -->

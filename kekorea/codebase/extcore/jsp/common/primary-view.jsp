@@ -7,6 +7,7 @@
 // 주 첨부 파일은 무조건 있어야 한다.
 String oid = request.getParameter("oid");
 Map<String, Object> primary = ContentUtils.getPrimary(oid);
+if (primary != null) {
 %>
 <div>
 	<a href="<%=primary.get("url")%>">
@@ -14,3 +15,12 @@ Map<String, Object> primary = ContentUtils.getPrimary(oid);
 		<img src="<%=primary.get("fileIcon")%>" style="position: relative; top: 1px;">
 	</a>
 </div>
+<%
+} else {
+%>
+<font color="red">
+	<b>등록된 첨부파일이 없습니다.</b>
+</font>
+<%
+}
+%>

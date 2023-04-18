@@ -235,7 +235,7 @@ public class TBOMController extends BaseController {
 
 	@Description(value = "T-BOM 삭제 함수")
 	@ResponseBody
-	@PostMapping(value = "/delete")
+	@GetMapping(value = "/delete")
 	public Map<String, Object> delete(@RequestParam String oid) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {

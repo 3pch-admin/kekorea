@@ -7,7 +7,6 @@
 KePartDTO dto = (KePartDTO) request.getAttribute("dto");
 Map<String, Object> primarys = (Map) request.getAttribute("primarys");
 JSONArray list = (JSONArray) request.getAttribute("list");
-JSONArray data = (JSONArray) request.getAttribute("data");
 %>
 <!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
@@ -70,11 +69,6 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 					<jsp:include page="/extcore/jsp/common/primary-view.jsp">
 						<jsp:param value="<%=dto.getOid()%>" name="oid" />
 					</jsp:include>
-					<%-- 				<%=primarys.get("link") %> --%>
-					<%-- 					<a href="<%=primarys[5]%>"> --%>
-					<%-- 						<span style="position: relative; bottom: 2px;"><%=primarys[2]%></span> --%>
-					<%-- 						<img src="<%=primarys[4]%>" style="position: relative; top: 1px;"> --%>
-					<!-- 					</a> -->
 				</td>
 			</tr>
 			<tr>
@@ -88,225 +82,10 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			<tr>
 				<th class="lb">관련 T-BOM</th>
 				<td class="indent5" colspan="5">
-					<div id="_grid_wrap" style="height: 350px; border-top: 1px solid #3180c3; margin: 5px 5px 5px 5px;"></div>
-					<script type="text/javascript">
-						let _myGridID;
-						const _columns = [ {
-							dataField : "name",
-							headerText : "T-BOM 제목",
-							dataType : "string",
-							width : 300,
-							style : "underline",
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-							cellMerge : true
-						}, {
-							dataField : "info",
-							headerText : "",
-							width : 40,
-							renderer : {
-								type : "IconRenderer",
-								iconWidth : 16,
-								iconHeight : 16,
-								iconTableRef : {
-									"default" : "/Windchill/extcore/images/details.gif"
-								},
-								onClick : function(event) {
-									const oid = event.item.loid;
-									const url = getCallUrl("/partlist/info?oid=" + oid);
-									popup(url);
-								}
-							},
-							filter : {
-								showIcon : false,
-								inline : false
-							},
-							cellMerge : true,
-							mergeRef : "name",
-							mergePolicy : "restrict"
-						}, {
-							dataField : "projectType_name",
-							headerText : "설계구분",
-							dataType : "string",
-							width : 80,
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-						}, {
-							dataField : "mak_name",
-							headerText : "막종",
-							dataType : "string",
-							width : 100,
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-						}, {
-							dataField : "detail_name",
-							headerText : "막종상세",
-							dataType : "string",
-							width : 100,
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-						}, {
-							dataField : "kekNumber",
-							headerText : "KEK 작번",
-							dataType : "string",
-							width : 100,
-							renderer : {
-								type : "LinkRenderer",
-								baseUrl : "javascript",
-								jsCallback : function(rowIndex, columnIndex, value, item) {
-									alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
-								}
-							},
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-						}, {
-							dataField : "keNumber",
-							headerText : "KE 작번",
-							dataType : "string",
-							style : "underline",
-							width : 100,
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-						}, {
-							dataField : "userId",
-							headerText : "USER ID",
-							dataType : "string",
-							width : 100,
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-						}, {
-							dataField : "description",
-							headerText : "작업내용",
-							dataType : "string",
-							width : 300,
-							style : "left",
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-						}, {
-							dataField : "customer_name",
-							headerText : "거래처",
-							dataType : "string",
-							width : 100,
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-						}, {
-							dataField : "install_name",
-							headerText : "설치 장소",
-							dataType : "string",
-							width : 100,
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-						}, {
-							dataField : "pdate_txt",
-							headerText : "발행일",
-							dataType : "string",
-							width : 100,
-							filter : {
-								showIcon : true,
-								inline : true,
-							},
-						}, {
-							dataField : "model",
-							headerText : "모델",
-							dataType : "string",
-							width : 100,
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-						}, {
-							dataField : "creator",
-							headerText : "작성자",
-							dataType : "string",
-							width : 100,
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-							cellMerge : true,
-							mergeRef : "name",
-							mergePolicy : "restrict"
-						}, {
-							dataField : "createdDate_txt",
-							headerText : "작성일",
-							dataType : "string",
-							width : 100,
-							filter : {
-								showIcon : true,
-								inline : true,
-							},
-							cellMerge : true,
-							mergeRef : "name",
-							mergePolicy : "restrict"
-						}, {
-							dataField : "modifiedDate_txt",
-							headerText : "수정일",
-							dataType : "string",
-							width : 100,
-							filter : {
-								showIcon : true,
-								inline : true,
-							},
-							cellMerge : true,
-							mergeRef : "name",
-							mergePolicy : "restrict"
-						}, {
-							dataField : "state",
-							headerText : "상태",
-							dataType : "string",
-							width : 100,
-							filter : {
-								showIcon : true,
-								inline : true
-							},
-							cellMerge : true,
-							mergeRef : "name",
-							mergePolicy : "restrict"
-						} ]
-
-						function _createAUIGrid(columnLayout) {
-							const props = {
-								headerHeight : 30,
-								rowHeight : 30,
-								showRowNumColumn : true,
-								showStateColumn : true,
-								rowNumHeaderText : "번호",
-								noDataMessage : "관련된 T-BOM이 없습니다.",
-								enableFilter : true,
-								selectionMode : "multipleCells",
-								showInlineFilter : true,
-								filterLayerWidth : 320,
-								filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-								fixedColumnCount : 1,
-								cellMergePolicy : "withNull",
-								enableCellMerge : true,
-							}
-							_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-							AUIGrid.setGridData(_myGridID,
-					<%=data%>
-						);
-						}
-					</script>
+					<jsp:include page="/extcore/jsp/common/project-reference.jsp">
+						<jsp:param value="<%=dto.getOid()%>" name="oid" />
+						<jsp:param value="T-BOM 제목" name="header" />
+					</jsp:include>
 				</td>
 			</tr>
 		</table>
@@ -437,10 +216,10 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
 					selectionMode : "multipleCells",
 					showInlineFilter : true,
@@ -460,28 +239,15 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs({
 			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					_createAUIGrid(_columns);
-					AUIGrid.resize(_myGridID);
-					break;
-				case "tabs-2":
-					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
-					break;
-				}
-			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
-					const _isCreated = AUIGrid.isCreated(_myGridID);
-					if (_isCreated) {
-						AUIGrid.resize(_myGridID);
+					const isCreated50 = AUIGrid.isCreated(myGridID50);
+					if (isCreated50) {
+						AUIGrid.resize(myGridID50);
 					} else {
-						_createAUIGrid(_columns);
+						createAUIGrid50(columns50);
 					}
 					break;
 				case "tabs-2":
@@ -495,10 +261,14 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				}
 			}
 		});
+		createAUIGrid(columns);
+		createAUIGrid50(columns50);
+		AUIGrid.resize(myGridID);
+		AUIGrid.resize(myGridID50);
 	})
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(myGridID50);
 	});
 </script>

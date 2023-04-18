@@ -3,7 +3,6 @@ package e3ps.bom.tbom.service;
 import java.util.Map;
 
 import e3ps.bom.tbom.dto.TBOMDTO;
-import e3ps.workspace.notice.dto.NoticeDTO;
 import wt.method.RemoteInterface;
 
 @RemoteInterface
