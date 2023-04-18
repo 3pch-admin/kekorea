@@ -163,6 +163,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
+							if (oid === undefined) {
+								return false;
+							}
 							const moid = item.moid;
 							const url = getCallUrl("/keDrawing/view?oid=" + oid);
 							popup(url, 1400, 700);
@@ -183,6 +186,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
+							if (oid === undefined) {
+								return false;
+							}
 							const moid = item.moid;
 							const url = getCallUrl("/keDrawing/view?oid=" + oid);
 							popup(url, 1400, 700);
@@ -390,6 +396,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRowHandler);
 				AUIGrid.bind(myGridID, "addRowFinish", auiAddRowFinishHandler);
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+				AUIGrid.bind(myGridID, "pasteEnd", auiPasteEnd);
+			}
+
+			function auiPasteEnd(event) {
+				const clipboardData = event.clipboardData;
+				for (let i = 0; i < clipboardData.length; i++) {
+					AUIGrid.setCellValue(myGridID, i, "latest", true);
+					AUIGrid.setCellValue(myGridID, i, "state", "사용");
+					AUIGrid.setCellValue(myGridID, i, "version", 1);
+				}
 			}
 
 			function auiCellClickHandler(event) {
@@ -421,6 +437,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function auiBeforeRemoveRowHandler(event) {
 				const items = event.items;
 				for (let i = 0; i < items.length; i++) {
+					console.log(items[i]);
 					const latest = items[i].latest;
 					if (!latest) {
 						alert("최신버전의 도면이 아닌 데이터가 있습니다.\n" + i + "행 데이터");
@@ -480,7 +497,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const sessionId = document.getElementById("sessionId").value;
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
 					const item = checkedItems[i].item;
-					if (!checker(sessionId, item.creatorId)) {
+					if (!isNull(item.creatorId) && !checker(sessionId, item.creatorId)) {
 						alert("데이터 작성자가 아닙니다.");
 						return false;
 					}
