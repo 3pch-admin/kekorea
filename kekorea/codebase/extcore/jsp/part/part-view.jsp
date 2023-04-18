@@ -189,7 +189,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				<th class="lb">NAME_OF_PARTS</th>
 				<td class="indent5"><%=dto.getName_of_parts()%></td>
 				<th class="lb">DWG_NO</th>
-				<td class="indent5"><%=dto.getNumber()%></td>
+				<td class="indent5"><%=dto.getDwg_no()%></td>
 			</tr>
 			<tr>
 				<th class="lb">MATERIAL</th>
