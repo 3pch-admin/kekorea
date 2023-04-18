@@ -141,7 +141,9 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				width : 130,
 				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
 					const rev = item.rev;
-					if (value !== rev) {
+					if (Number(value) !== Number(rev)) {
+						console.log(rev);
+						console.log(value);
 						return "compare";
 					}
 					return "";

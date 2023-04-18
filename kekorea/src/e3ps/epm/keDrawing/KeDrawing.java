@@ -37,7 +37,9 @@ import wt.util.WTException;
 
 						myRole = @MyRole(name = "iteration", cardinality = Cardinality.ONE)
 
-				) }
+				)
+
+		}
 
 )
 public class KeDrawing extends _KeDrawing {

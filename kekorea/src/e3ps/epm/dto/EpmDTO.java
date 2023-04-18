@@ -3,6 +3,7 @@ package e3ps.epm.dto;
 import java.sql.Timestamp;
 import java.util.HashMap;
 
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.IBAUtils;
 import lombok.Getter;
@@ -54,7 +55,7 @@ public class EpmDTO {
 		setOid(epm.getPersistInfo().getObjectIdentifier().getStringValue());
 		setCadType(epm.getDocType().getDisplay());
 		setApplicationType(epm.getAuthoringApplication().getDisplay());
-//		setThumnail(AUIGridUtils.getThumnailSmall(epm));
+		setThumnail(AUIGridUtils.getThumnailSmall(epm));
 		setName(epm.getName());
 		setVersion(CommonUtils.getFullVersion(epm));
 		setModifier(epm.getModifierFullName());
@@ -66,8 +67,6 @@ public class EpmDTO {
 		setState(epm.getLifeCycleState().getDisplay());
 		setLocation(epm.getLocation());
 		setDescription(epm.getDescription());
-//		setPreView(ContentUtils.getPreViewBase64(epm));
-
 		putAttr(epm);
 	}
 

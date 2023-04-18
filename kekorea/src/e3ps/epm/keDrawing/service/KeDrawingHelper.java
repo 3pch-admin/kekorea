@@ -8,6 +8,7 @@ import java.util.Map;
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
+import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.epm.keDrawing.KeDrawing;
@@ -19,6 +20,7 @@ import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.project.Project;
 import net.sf.json.JSONArray;
+import wt.epm.EPMDocument;
 import wt.fc.PagingQueryResult;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
@@ -302,7 +304,6 @@ public class KeDrawingHelper {
 			Map<String, Object> map = new HashMap();
 
 			map.put("oid", order.getPersistInfo().getObjectIdentifier().getStringValue());
-			map.put("dataType", link.getDataType());
 			map.put("lotNo", link.getLotNo());
 			map.put("rev", link.getRev());
 			map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
@@ -317,6 +318,16 @@ public class KeDrawingHelper {
 				map.put("current", latest.getVersion());
 				map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
 				map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
+			} else if (per instanceof EPMDocument) {
+				EPMDocument epm = (EPMDocument) per;
+				map.put("doid", epm.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("name", IBAUtils.getStringValue(epm, "NAME_OF_PARTS"));
+				map.put("number", IBAUtils.getStringValue(epm, "DWG_NO"));
+				map.put("current", epm.getVersionIdentifier().getSeries().getValue());
+				map.put("preView", ContentUtils.getPreViewBase64(epm));
+//				map.put("primary", AUIGridUtils.primaryTemplate(keDrawing)); // pdf...
+
+				System.out.println(epm.getVersionIdentifier().getSeries().getValue().getClass());
 			}
 			list.add(map);
 		}
@@ -406,7 +417,6 @@ public class KeDrawingHelper {
 			WorkOrderDataLink link = (WorkOrderDataLink) oo[1];
 			Map<String, Object> map = new HashMap();
 
-			map.put("dataType", link.getDataType());
 			map.put("lotNo", link.getLotNo());
 			map.put("rev", link.getRev());
 			map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));

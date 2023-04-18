@@ -25,6 +25,7 @@ import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
+import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
@@ -33,6 +34,7 @@ import e3ps.epm.keDrawing.KeDrawingMaster;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
+import e3ps.epm.workOrder.WorkOrderMaster;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.project.Project;
@@ -40,6 +42,8 @@ import e3ps.project.ProjectUserLink;
 import e3ps.project.template.Template;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import wt.epm.EPMDocument;
+import wt.epm.EPMDocumentMaster;
 import wt.fc.PagingQueryResult;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
@@ -89,6 +93,7 @@ public class WorkOrderHelper {
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WorkOrder.class, true);
+		QuerySpecUtils.toBooleanAnd(query, idx, WorkOrder.class, WorkOrder.LATEST, true);
 		QuerySpecUtils.toOrderBy(query, idx, WorkOrder.class, WorkOrder.CREATE_TIMESTAMP, true);
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -203,7 +208,7 @@ public class WorkOrderHelper {
 				WorkOrderProjectLink link = (WorkOrderProjectLink) oo[2];
 				WorkOrderDTO dto = new WorkOrderDTO(link);
 				node.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
-				node.put("name", workOrder.getName());
+				node.put("name", workOrder.getMaster().getName());
 				if (isNode == 1) {
 					node.put("poid", dto.getPoid());
 					node.put("projectType_name", dto.getProjectType_name());
@@ -261,15 +266,16 @@ public class WorkOrderHelper {
 		String preFix = DateUtils.getTodayString();
 		String number = param + "-" + preFix + "-";
 		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(WorkOrder.class, true);
-		QuerySpecUtils.toLikeAnd(query, idx, WorkOrder.class, WorkOrder.NUMBER, number.toUpperCase());
-		QuerySpecUtils.toOrderBy(query, idx, WorkOrder.class, WorkOrder.NUMBER, true);
+		int idx = query.appendClassList(WorkOrderMaster.class, true);
+		QuerySpecUtils.toLikeAnd(query, idx, WorkOrderMaster.class, WorkOrderMaster.WORK_ORDER_NUMBER,
+				number.toUpperCase());
+		QuerySpecUtils.toOrderBy(query, idx, WorkOrderMaster.class, WorkOrderMaster.WORK_ORDER_NUMBER, true);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
-			WorkOrder workOrder = (WorkOrder) obj[0];
+			WorkOrderMaster master = (WorkOrderMaster) obj[0];
 
-			String s = workOrder.getNumber().substring(workOrder.getNumber().lastIndexOf("-") + 1);
+			String s = master.getWorkOrderNumber().substring(master.getWorkOrderNumber().lastIndexOf("-") + 1);
 
 			int ss = Integer.parseInt(s) + 1;
 			DecimalFormat d = new DecimalFormat("0000");
@@ -288,15 +294,32 @@ public class WorkOrderHelper {
 
 		// KEK 도면을 먼저 검색한다
 
-//		QuerySpec first = new QuerySpec();
-//		int idx = first.appendClassList(EPMDocument.class, true);
-//		int idx_m = first.appendClassList(EPMDocumentMaster.class, false);
-//		
-//		QuerySpecUtils.toInnerJoin(first, EPMDocument.class, EPMDocumentMaster.class, "masterReference.key.id", WTAttributeNameIfc.ID_NAME, idx, idx_m);
-//		QuerySpecUtils.toEqualsAnd(first, idx_m, EPMDocumentMaster.class, EPMDocumentMaster.NUMBER, number);
+		QuerySpec first = new QuerySpec();
+
+		int idx1 = first.appendClassList(EPMDocument.class, true);
+		int idx2 = first.appendClassList(EPMDocumentMaster.class, false);
+
+		QuerySpecUtils.toCI(first, idx1, EPMDocument.class);
+		QuerySpecUtils.toInnerJoin(first, EPMDocument.class, EPMDocumentMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx1, idx2);
+		QuerySpecUtils.toLatest(first, idx1, EPMDocument.class);
+		QuerySpecUtils.toIBAEqualsAnd(first, EPMDocument.class, idx1, "DWG_NO", number);
+		QueryResult qr = PersistenceHelper.manager.find(first);
+		if (qr.hasMoreElements()) {
+			Object[] obj = (Object[]) qr.nextElement();
+			EPMDocument epm = (EPMDocument) obj[0];
+			map.put("number", number);
+			map.put("name", IBAUtils.getStringValue(epm, "NAME_OF_PARTS"));
+			map.put("rev", epm.getVersionIdentifier().getSeries().getValue());
+			map.put("lotNo", "");
+			map.put("current", epm.getVersionIdentifier().getSeries().getValue());
+			map.put("ok", true);
+			map.put("preView", ContentUtils.getPreViewBase64(epm));
+			map.put("oid", epm.getPersistInfo().getObjectIdentifier().getStringValue());
+			return map;
+		}
 
 		QuerySpec query = new QuerySpec();
-
 		int idx = query.appendClassList(KeDrawing.class, true);
 		int idx_m = query.appendClassList(KeDrawingMaster.class, true);
 		QuerySpecUtils.toInnerJoin(query, KeDrawing.class, KeDrawingMaster.class, "masterReference.key.id",
@@ -316,10 +339,10 @@ public class WorkOrderHelper {
 			map.put("ok", true);
 			map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
 			map.put("oid", keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
-		} else {
-			map.put("number", "서버에 없는 DWG NO 입니다.");
-			map.put("ok", false);
+			return map;
 		}
+		map.put("number", "서버에 없는 DWG NO 입니다.");
+		map.put("ok", false);
 		return map;
 	}
 
@@ -433,13 +456,12 @@ public class WorkOrderHelper {
 			}
 
 			setCellValue(workbook, sheet.getRow(rowIndex), 0, String.valueOf(rowNum), cellStyle);
-			setCellValue(workbook, sheet.getRow(rowIndex), 1, link.getDataType(), cellStyle);
-			setCellValue(workbook, sheet.getRow(rowIndex), 2, name, nameStyle);
-			setCellValue(workbook, sheet.getRow(rowIndex), 3, number, cellStyle);
-			setCellValue(workbook, sheet.getRow(rowIndex), 4, String.valueOf(link.getRev()), cellStyle);
-			setCellValue(workbook, sheet.getRow(rowIndex), 5, String.valueOf(version), cellStyle);
-			setCellValue(workbook, sheet.getRow(rowIndex), 6, String.valueOf(link.getLotNo()), cellStyle);
-			setCellValue(workbook, sheet.getRow(rowIndex), 7, link.getNote(), cellStyle);
+			setCellValue(workbook, sheet.getRow(rowIndex), 1, name, nameStyle);
+			setCellValue(workbook, sheet.getRow(rowIndex), 2, number, cellStyle);
+			setCellValue(workbook, sheet.getRow(rowIndex), 3, String.valueOf(link.getRev()), cellStyle);
+			setCellValue(workbook, sheet.getRow(rowIndex), 4, String.valueOf(version), cellStyle);
+			setCellValue(workbook, sheet.getRow(rowIndex), 5, String.valueOf(link.getLotNo()), cellStyle);
+			setCellValue(workbook, sheet.getRow(rowIndex), 6, link.getNote(), cellStyle);
 			rowIndex++;
 			rowNum++;
 		}
@@ -550,7 +572,6 @@ public class WorkOrderHelper {
 				Map<String, Object> map = new HashMap();
 
 				map.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
-				map.put("dataType", link.getDataType());
 				map.put("lotNo", String.valueOf(link.getLotNo()));
 				map.put("rev", String.valueOf(link.getRev())); // 등록당시
 				map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
@@ -565,6 +586,13 @@ public class WorkOrderHelper {
 					map.put("current", latest.getVersion()); // 최신버전
 					map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
 					map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
+				} else if (per instanceof EPMDocument) {
+					EPMDocument epm = (EPMDocument) per;
+					map.put("name", IBAUtils.getStringValue(epm, "NAME_OF_PARTS"));
+					map.put("number", IBAUtils.getStringValue(epm, "DWG_NO"));
+					map.put("current", epm.getVersionIdentifier().getSeries().getValue());
+					map.put("preView", ContentUtils.getPreViewBase64(epm));
+//					map.put("primary", AUIGridUtils.primaryTemplate(keDrawing)); // pdf...
 				}
 				list.add(map);
 			}

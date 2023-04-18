@@ -34,7 +34,7 @@ public class KeDrawingDTO {
 	private String state;
 
 	// 변수 담기용
-	private String primaryPath;
+	private String cacheId;
 	private int next;
 
 	public KeDrawingDTO() {

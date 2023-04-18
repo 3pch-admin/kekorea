@@ -528,7 +528,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					version : Number(version),
 					file : name,
 					primary : template,
-					primaryPath : data.fullPath
+					cacheId : data.cacheId
 				});
 			}
 
