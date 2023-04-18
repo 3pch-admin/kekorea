@@ -216,8 +216,6 @@ public class WorkspaceController extends BaseController {
 		ApprovalLine approvalLine = (ApprovalLine) CommonUtils.getObject(oid);
 		ApprovalLineDTO dto = new ApprovalLineDTO(approvalLine, columnType);
 		Persistable per = (Persistable) CommonUtils.getObject(poid);
-		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(per);
-		model.addObject("history", history);
 		model.addObject("per", per);
 		model.addObject("dto", dto);
 		model.addObject("oid", oid);
@@ -233,8 +231,6 @@ public class WorkspaceController extends BaseController {
 		ApprovalMaster master = (ApprovalMaster) CommonUtils.getObject(oid);
 		ApprovalLineDTO dto = new ApprovalLineDTO(master, columnType);
 		Persistable per = (Persistable) CommonUtils.getObject(poid);
-		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(per);
-		model.addObject("history", history);
 		model.addObject("per", per);
 		model.addObject("dto", dto);
 		model.addObject("oid", oid);

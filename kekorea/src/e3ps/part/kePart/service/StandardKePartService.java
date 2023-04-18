@@ -67,11 +67,14 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				kePart.setOwnership(ownership);
 				PersistenceHelper.manager.save(kePart);
 
-				ApplicationData dd = ApplicationData.newApplicationData(kePart);
-				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
-				dd.setRole(ContentRoleType.PRIMARY);
-				PersistenceHelper.manager.save(dd);
-				ContentServerHelper.service.updateContent(kePart, dd, vault.getPath());
+				System.out.println("cacheId=" + cacheId);
+				if (!StringUtils.isNull(cacheId)) {
+					ApplicationData dd = ApplicationData.newApplicationData(kePart);
+					File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
+					dd.setRole(ContentRoleType.PRIMARY);
+					PersistenceHelper.manager.save(dd);
+					ContentServerHelper.service.updateContent(kePart, dd, vault.getPath());
+				}
 			}
 
 			for (KePartDTO dto : removeRows) {

@@ -13,8 +13,6 @@ import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 
-import org.apache.poi.hslf.blip.Bitmap;
-
 import com.aspose.pdf.Document;
 import com.aspose.pdf.License;
 import com.aspose.pdf.Page;
@@ -34,7 +32,6 @@ import wt.content.ContentServerHelper;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
-import wt.pom.Transaction;
 import wt.query.QuerySpec;
 import wt.util.WTAttributeNameIfc;
 import wt.util.WTProperties;
@@ -123,7 +120,7 @@ public class AsposeUtils {
 			pdf.close();
 		}
 
-		String mergePdfPath = mergePath + File.separator + workOrder.getName() + ".pdf";
+		String mergePdfPath = mergePath + File.separator + workOrder.getMaster().getName() + ".pdf";
 		firstPdf.save(mergePdfPath);
 
 		ApplicationData dd = ApplicationData.newApplicationData(workOrder);
@@ -150,7 +147,6 @@ public class AsposeUtils {
 		KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
 
 		Document pdfDocument = null;
-		Transaction trs = new Transaction();
 
 		String thumbnailPath = WTProperties.getLocalProperties().getProperty("wt.temp") + File.separator + "thumbnail";
 		File thumbnailFolder = new File(thumbnailPath);
