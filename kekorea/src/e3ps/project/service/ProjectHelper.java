@@ -28,6 +28,8 @@ import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.org.Department;
 import e3ps.org.People;
+import e3ps.part.kePart.KePart;
+import e3ps.part.kePart.service.KePartHelper;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.dto.ProjectDTO;
@@ -3829,6 +3831,18 @@ public class ProjectHelper {
 			return TBOMHelper.manager.jsonAuiProject(oid);
 		} else if (per instanceof RequestDocument) {
 			return RequestDocumentHelper.manager.jsonAuiProject(oid);
+		}
+		return new JSONArray();
+	}
+
+	/**
+	 * 특정 객체가 사용된 작번 확인
+	 */
+	public JSONArray jsonAuiReferenceProject(String oid) throws Exception {
+		Persistable per = CommonUtils.getObject(oid);
+
+		if(per instanceof KePart) {
+			return KePartHelper.manager.jsonAuiReferenceProject(oid);
 		}
 		return new JSONArray();
 	}

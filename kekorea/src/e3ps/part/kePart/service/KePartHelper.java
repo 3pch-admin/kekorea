@@ -182,7 +182,7 @@ public class KePartHelper {
 	/**
 	 * KE 부품과 관련된 T-BOM 정보를 가져온다
 	 */
-	public JSONArray jsonArrayAui(String oid) throws Exception {
+	public JSONArray jsonAuiReferenceProject(String oid) throws Exception {
 		KePart kePart = (KePart) CommonUtils.getObject(oid);
 		ArrayList<TBOMDTO> list = new ArrayList<>();
 
@@ -206,8 +206,7 @@ public class KePartHelper {
 
 		QuerySpecUtils.toInnerJoin(query, KePart.class, TBOMData.class, WTAttributeNameIfc.ID_NAME,
 				"kePartReference.key.id", idx_k, idx_data);
-		QuerySpecUtils.toEqualsAnd(query, idx_data, TBOMData.class, "kePartReference.key.id",
-				kePart.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx_data, TBOMData.class, "kePartReference.key.id", kePart);
 
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {

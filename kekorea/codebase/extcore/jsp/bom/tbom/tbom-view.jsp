@@ -178,6 +178,12 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 	function _delete() {
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/tbom/delete?oid=" + oid);
+
+		if (!confirm("삭제 하시겠습니까?\nT-BOM과 연결된 작번은 모두 끊어집니다.")) {
+			return false;
+		}
+
+		openLayer();
 		call(url, null, function(data) {
 			alert(data.msg);
 			if (data.result) {

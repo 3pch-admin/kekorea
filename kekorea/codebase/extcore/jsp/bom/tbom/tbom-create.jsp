@@ -157,34 +157,35 @@
 
 			function createAUIGrid(columnLayout) {
 				const props = {
-						headerHeight : 30,
-						showRowNumColumn : true,
-						showRowCheckColumn : true,
-						showStateColumn : true,
-						rowNumHeaderText : "번호",
-						showDragKnobColumn : true,
-						enableDrag : true,
-						enableMultipleDrag : true,
-						enableDrop : true,
-						$compaEventOnPaste : true,
-						editable : true,
-						enableRowCheckShiftKey : true,
-						useContextMenu : true,
-						enableRightDownFocus : true,
-						enableSorting : false,
-						contextMenuItems : [ {
-							label : "선택된 행 이전 추가",
-							callback : contextItemHandler
-						}, {
-							label : "선택된 행 이후 추가",
-							callback : contextItemHandler
-						}, {
-							label : "_$line"
-						}, {
-							label : "선택된 행 삭제",
-							callback : contextItemHandler
-						} ],
-					};
+					headerHeight : 30,
+					showRowNumColumn : true,
+					showRowCheckColumn : true,
+					showStateColumn : true,
+					rowNumHeaderText : "번호",
+					showDragKnobColumn : true,
+					enableDrag : true,
+					enableMultipleDrag : true,
+					enableDrop : true,
+					$compaEventOnPaste : true,
+					editable : true,
+					enableRowCheckShiftKey : true,
+					useContextMenu : true,
+					selectionMode : "multipleCells",
+					enableRightDownFocus : true,
+					enableSorting : false,
+					contextMenuItems : [ {
+						label : "선택된 행 이전 추가",
+						callback : contextItemHandler
+					}, {
+						label : "선택된 행 이후 추가",
+						callback : contextItemHandler
+					}, {
+						label : "_$line"
+					}, {
+						label : "선택된 행 삭제",
+						callback : contextItemHandler
+					} ],
+				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				readyHandler();
 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
@@ -283,17 +284,21 @@
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
 		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
 		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
-	
+
+		addRows.sort(function(a, b) {
+			return a.sort - b.sort;
+		});
+
 		if (isNull(name.value)) {
 			alert("T-BOM 제목을 입력하세요.");
 			name.focus();
 			return false;
 		}
 
-
 		if (!confirm("등록 하시겠습니까?")) {
 			return false;
 		}
+
 		params.name = name.value;
 		params.description = description;
 		params.addRows = addRows;
