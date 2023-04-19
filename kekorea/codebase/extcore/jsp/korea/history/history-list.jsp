@@ -382,6 +382,7 @@ String end = (String) request.getAttribute("end");
 			function save() {
 				const url = getCallUrl("/history/save");
 				const editRows = AUIGrid.getEditedRowItems(myGridID);
+// 				const editRows = AUIGrid.getGridData(myGridID);
 				const removeRows = AUIGrid.getRemovedItems(myGridID);
 				const params = new Object();
 

@@ -1,12 +1,16 @@
 package e3ps.part.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import e3ps.bom.partlist.PartListData;
+import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.IBAUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.erp.service.ErpHelper;
@@ -16,12 +20,14 @@ import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.doc.WTDocument;
 import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.fc.ReferenceFactory;
 import wt.folder.Folder;
 import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
 import wt.part.WTPart;
 import wt.pom.Transaction;
+import wt.query.QuerySpec;
 import wt.services.StandardManager;
 import wt.util.WTException;
 import wt.vc.views.View;
@@ -138,7 +144,7 @@ public class StandardPartService extends StandardManager implements PartService 
 			WTPart part = null;
 			for (int i = 0; i < addRows.size(); i++) {
 				Map<String, Object> addRow = addRows.get(i);
-				String path = secondarys.get(i);
+				String cacheId = secondarys.get(i);
 				String number = (String) addRow.get("number");
 				String name = (String) addRow.get("spec");
 				String spec = (String) addRow.get("spec");
@@ -157,9 +163,10 @@ public class StandardPartService extends StandardManager implements PartService 
 
 				Folder folder = null;
 				if (erp) {
-					folder = FolderTaskLogic.getFolder(PartHelper.COMMON_PART, CommonUtils.getContainer());
+					folder = FolderTaskLogic.getFolder(PartHelper.COMMON_PART,
+							CommonUtils.getPDMLinkProductContainer());
 				} else {
-					folder = FolderTaskLogic.getFolder(PartHelper.NEW_PART, CommonUtils.getContainer());
+					folder = FolderTaskLogic.getFolder(PartHelper.NEW_PART, CommonUtils.getPDMLinkProductContainer());
 				}
 				FolderHelper.assignLocation((FolderEntry) part, folder);
 
@@ -175,13 +182,26 @@ public class StandardPartService extends StandardManager implements PartService 
 				IBAUtils.createIBA(part, "s", "CUSTNAME", customer);
 
 				ApplicationData data = ApplicationData.newApplicationData(part);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
 				data.setRole(ContentRoleType.PRIMARY);
-				data = (ApplicationData) ContentServerHelper.service.updateContent(part, data, path);
+				data = (ApplicationData) ContentServerHelper.service.updateContent(part, data, vault.getPath());
 
 				if (erp) {
 					part = (WTPart) PersistenceHelper.manager.refresh(part);
 					String code = ErpHelper.manager.sendToErp(part);
 					list.add(code);
+				}
+
+				// part <-> partlist data.. connect
+				QuerySpec query = new QuerySpec();
+				int idx = query.appendClassList(PartListData.class, true);
+				QuerySpecUtils.toEqualsAnd(query, idx, PartListData.class, PartListData.PART_NO, number);
+				QueryResult qr = PersistenceHelper.manager.find(query);
+				while (qr.hasMoreElements()) {
+					Object[] obj = (Object[]) qr.nextElement();
+					PartListData dd = (PartListData) obj[0];
+					dd.setWtPart(part);
+					PersistenceHelper.manager.modify(dd);
 				}
 			}
 
@@ -228,7 +248,8 @@ public class StandardPartService extends StandardManager implements PartService 
 				View view = ViewHelper.service.getView("Engineering");
 				ViewHelper.assignToView(part, view);
 
-				Folder folder = FolderTaskLogic.getFolder(PartHelper.SPEC_PART, CommonUtils.getContainer());
+				Folder folder = FolderTaskLogic.getFolder(PartHelper.SPEC_PART,
+						CommonUtils.getPDMLinkProductContainer());
 				FolderHelper.assignLocation((FolderEntry) part, folder);
 
 				part = (WTPart) PersistenceHelper.manager.save(part);

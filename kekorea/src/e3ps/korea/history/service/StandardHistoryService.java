@@ -71,11 +71,26 @@ public class StandardHistoryService extends StandardManager implements HistorySe
 				for (Map<String, String> header : headers) {
 					String dataField = header.get("key");
 					String value = editRow.get(dataField);
-					HistoryValue historyValue = HistoryValue.newHistoryValue();
-					historyValue.setDataField(dataField);
-					historyValue.setValue(value);
-					historyValue.setHistory(history);
-					PersistenceHelper.manager.save(historyValue);
+
+					QuerySpec qs = new QuerySpec();
+					int _idx = qs.appendClassList(HistoryValue.class, true);
+					QuerySpecUtils.toEqualsAnd(qs, _idx, HistoryValue.class, HistoryValue.DATA_FIELD, dataField);
+					QuerySpecUtils.toEqualsAnd(qs, _idx, HistoryValue.class, "historyReference.key.id", history);
+					QueryResult result = PersistenceHelper.manager.find(qs);
+					if (result.hasMoreElements()) {
+						Object[] oo = (Object[]) result.nextElement();
+						HistoryValue historyValue = (HistoryValue) oo[0];
+						historyValue.setDataField(dataField);
+						historyValue.setValue(value);
+						historyValue.setHistory(history);
+						PersistenceHelper.manager.modify(historyValue);
+					} else {
+						HistoryValue historyValue = HistoryValue.newHistoryValue();
+						historyValue.setDataField(dataField);
+						historyValue.setValue(value);
+						historyValue.setHistory(history);
+						PersistenceHelper.manager.save(historyValue);
+					}
 //					String code = editRow.get(header.get("key")); // option value....
 //
 //					if (!StringUtils.isNull(code)) {

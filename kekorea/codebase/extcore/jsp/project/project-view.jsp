@@ -173,9 +173,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<tr>
 						<td class="center"><%=dto.getPm()%></td>
 						<td class="center"><%=dto.getSubPm()%></td>
-						<td class="center"><%=dto.getMachine()%></td>
-						<td class="center"><%=dto.getElec()%></td>
-						<td class="center"><%=dto.getSoft()%></td>
+						<td class="center"><%=dto.getMachine_name()%></td>
+						<td class="center"><%=dto.getElec_name()%></td>
+						<td class="center"><%=dto.getSoft_name()%></td>
 					</tr>
 					<%
 					String outputTotal = String.format("%,.0f", dto.getOutputTotalPrice());

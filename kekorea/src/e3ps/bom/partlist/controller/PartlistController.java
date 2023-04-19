@@ -77,9 +77,7 @@ public class PartlistController extends BaseController {
 		}
 
 		JSONArray list = PartlistHelper.manager.getData(dto.getOid());
-		JSONArray data = PartlistHelper.manager.jsonAuiProject(dto.getOid());
 		model.addObject("isAdmin", isAdmin);
-		model.addObject("data", data);
 		model.addObject("dto", dto);
 		model.addObject("list", list);
 		model.setViewName("popup:/bom/partlist/partlist-view");
@@ -92,15 +90,15 @@ public class PartlistController extends BaseController {
 			throws Exception {
 		ModelAndView model = new ModelAndView();
 		Project p1 = (Project) CommonUtils.getObject(oid);
-
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		String[] compareOids = compareArr.split(",");
 		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
 		for (String _oid : compareOids) {
 			Project project = (Project) CommonUtils.getObject(_oid);
 			destList.add(project);
 		}
-
 		ArrayList<Map<String, Object>> data = PartlistHelper.manager.compare(p1, destList, invoke);
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("p1", p1);
 		model.addObject("oid", oid);
 		model.addObject("destList", destList);

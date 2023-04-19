@@ -52,6 +52,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		</table>
 		<script type="text/javascript">
 			let myGridID;
+			const list = [ "KRW", "JPY" ];
 			const columns = [ {
 				dataField : "dwg_check",
 				headerText : "체크(DWG_NO)",
@@ -108,6 +109,39 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				headerText : "통화",
 				dataType : "string",
 				width : 100,
+				renderer : {
+					type : "IconRenderer",
+					iconWidth : 16,
+					iconHeight : 16,
+					iconPosition : "aisleRight",
+					iconTableRef : {
+						"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+					},
+					onClick : function(event) {
+						AUIGrid.openInputer(event.pid);
+					}
+				},
+				editRenderer : {
+					type : "ComboBoxRenderer",
+					autoCompleteMode : true,
+					autoEasyMode : true,
+					matchFromFirst : false,
+					showEditorBtnOver : false,
+					list : list,
+					validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+						let isValid = false;
+						for (let i = 0, len = list.length; i < len; i++) {
+							if (list[i] == newValue) {
+								isValid = true;
+								break;
+							}
+						}
+						return {
+							"validate" : isValid,
+							"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+						};
+					}
+				},
 			} ]
 
 			let secondary = new AXUpload5();
@@ -118,7 +152,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					uploadFileName : "secondary",
 					buttonTxt : "파일 선택",
 					uploadMaxFileSize : (1024 * 1024 * 1024),
-					uploadUrl : getCallUrl("/aui/upload"),
+					uploadUrl : getCallUrl("/content/upload"),
 					dropBoxID : "uploadQueueBox",
 					queueBoxID : "uploadQueueBox",
 					uploadPars : {
@@ -133,7 +167,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 							let secondaryTag = document.createElement("input");
 							secondaryTag.type = "hidden";
 							secondaryTag.name = "secondarys";
-							secondaryTag.value = this[i].fullPath;
+							secondaryTag.value = this[i].cacheId;
+							secondaryTag.id = this[i].tagId;
 							form.appendChild(secondaryTag);
 						}
 					},
@@ -216,8 +251,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
-					document.location.reload();
-					parent.closeLayer();
+					if (data.result) {
+						document.location.reload();
+						parent.closeLayer();
+					} else {
+						parent.closeLayer();
+					}
 				})
 			}
 
@@ -250,7 +289,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 				// PDM 에 등록 안된 품목이다..
 				if (dataField === "spec" && !isNull(spec)) {
-					console.log(item.ycode);
 					if (item.ycode !== undefined && item.ycode === false) {
 						const url = getCallUrl("/erp/getErpItemBySpec?spec=" + item.spec);
 						call(url, null, function(data) {

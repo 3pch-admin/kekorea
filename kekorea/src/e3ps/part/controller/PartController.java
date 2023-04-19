@@ -38,7 +38,7 @@ public class PartController extends BaseController {
 		model.setViewName("/extcore/jsp/part/part-list.jsp");
 		return model;
 	}
-	
+
 	@Description(value = "부품 조회(라이브러리) 페이지")
 	@GetMapping(value = "/library")
 	public ModelAndView library() throws Exception {
@@ -62,6 +62,7 @@ public class PartController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}
@@ -89,6 +90,7 @@ public class PartController extends BaseController {
 			result.put("msg", SAVE_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;
@@ -104,6 +106,7 @@ public class PartController extends BaseController {
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 			e.printStackTrace();
 		}
 		return result;
@@ -119,6 +122,7 @@ public class PartController extends BaseController {
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 			e.printStackTrace();
 		}
 		return result;
@@ -165,6 +169,7 @@ public class PartController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}

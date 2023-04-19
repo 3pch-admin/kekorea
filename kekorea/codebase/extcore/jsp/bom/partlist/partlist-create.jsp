@@ -119,7 +119,7 @@ String engType = (String) request.getAttribute("engType");
 				headerText : "체크",
 				dataType : "string",
 				width : 80,
-				editable : false,
+// 				editable : false,
 				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
 					if (value === "NG") {
 						return "ng";
@@ -141,7 +141,7 @@ String engType = (String) request.getAttribute("engType");
 				headerText : "UNIT NAME",
 				dataType : "string",
 				width : 120,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "partNo",
 				headerText : "부품번호",
@@ -158,13 +158,13 @@ String engType = (String) request.getAttribute("engType");
 				headerText : "부품명",
 				dataType : "string",
 				width : 200,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "standard",
 				headerText : "규격",
 				dataType : "string",
 				width : 250,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "maker",
 				headerText : "MAKER",
@@ -190,39 +190,39 @@ String engType = (String) request.getAttribute("engType");
 				headerText : "단위",
 				dataType : "string",
 				width : 80,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "price",
 				headerText : "단가",
 				dataType : "numeric",
 				width : 120,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "currency",
 				headerText : "화폐",
 				dataType : "string",
 				width : 60,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "won",
 				headerText : "원화금액",
 				dataType : "numeric",
 				width : 120,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "partListDate",
 				headerText : "수배일자",
 				dataType : "date",
 				formatString : "yyyy-mm-dd",
 				width : 100,
-				editable : false
+// 				editable : false
 			}, {
 				dataField : "exchangeRate",
 				headerText : "환율",
 				dataType : "numeric",
 				width : 80,
 				formatString : "#,##0.0000",
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "referDrawing",
 				headerText : "참고도면",
@@ -273,7 +273,7 @@ String engType = (String) request.getAttribute("engType");
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				readyHandler();
-				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+// 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRow);
 			}
 
@@ -458,13 +458,14 @@ String engType = (String) request.getAttribute("engType");
 
 		const params = new Object();
 		const url = getCallUrl("/partlist/create");
-		const addRows = AUIGrid.getGridData(myGridID);
-		const _addRows = AUIGrid.getGridData(_myGridID);
 		const name = document.getElementById("name");
-		const _addRows_ = AUIGrid.getGridData(_myGridID_);
+		const addRows = AUIGrid.getGridData(myGridID);
+		const addRows9 = AUIGrid.getGridData(myGridID9);
+		const addRows8 = AUIGrid.getGridData(myGridID8);
 		const engType = document.getElementById("engType").value;
 		const description = document.getElementById("description");
 		const progress = document.getElementById("progress").value;
+		
 		if (isNull(name.value)) {
 			alert("수배표 제목을 입력하세요.");
 			name.focus();
@@ -482,9 +483,9 @@ String engType = (String) request.getAttribute("engType");
 			return false;
 		}
 
-		if (_addRows.length === 0) {
+		if (addRows9.length === 0) {
 			alert("최소 하나 이상의 작번을 추가하세요.");
-			_insert();
+			insert9();
 			return false;
 		}
 
@@ -528,13 +529,13 @@ String engType = (String) request.getAttribute("engType");
 			}
 		}
 
-		if (_addRows_.length === 0) {
+		if (addRows8.length === 0) {
 			alert("결재선을 지정하세요.");
 			_register();
 			return false;
 		}
 
-		addRows.sort(function(a, b) {
+		addRows9.sort(function(a, b) {
 			return a.sort - b.sort;
 		});
 
@@ -542,13 +543,13 @@ String engType = (String) request.getAttribute("engType");
 			return false;
 		}
 		params.addRows = addRows;
-		params._addRows = _addRows;
+		params.addRows9 = addRows9;
 		params.name = name.value;
 		params.engType = engType;
 		params.description = description.value;
 		params.progress = Number(progress);
 		params.secondarys = toArray("secondarys");
-		toRegister(params, _addRows_);
+		toRegister(params, addRows8);
 		console.log(params);
 		openLayer();
 		call(url, params, function(data) {
@@ -556,6 +557,8 @@ String engType = (String) request.getAttribute("engType");
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}

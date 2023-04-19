@@ -215,11 +215,14 @@ public class HistoryHelper {
 				QueryResult qr = PersistenceHelper.manager.navigate(project, "history", ProjectHistoryLink.class);
 				if (qr.hasMoreElements()) {
 					history = (History) qr.nextElement();
-					QueryResult result = PersistenceHelper.manager.navigate(history, "value", HistoryValueLink.class,
-							false);
+					QuerySpec qs = new QuerySpec();
+					int _idx = qs.appendClassList(HistoryValue.class, true);
+					QuerySpecUtils.toEqualsAnd(qs, _idx, HistoryValue.class, HistoryValue.DATA_FIELD, fix.getCode());
+					QuerySpecUtils.toEqualsAnd(qs, _idx, HistoryValue.class, "historyReference.key.id", history);
+					QueryResult result = PersistenceHelper.manager.find(qs);
 					if (result.hasMoreElements()) {
-						HistoryValueLink link = (HistoryValueLink) result.nextElement();
-						HistoryValue historyValue = link.getValue();
+						Object[] obj = (Object[]) result.nextElement();
+						HistoryValue historyValue = (HistoryValue) obj[0];
 						mergedList.put(String.valueOf(project.getPersistInfo().getObjectIdentifier().getId()),
 								historyValue.getValue());
 					}

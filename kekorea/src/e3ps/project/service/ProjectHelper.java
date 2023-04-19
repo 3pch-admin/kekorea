@@ -11,6 +11,7 @@ import java.util.Map;
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.util.AUIGridUtils;
@@ -3822,7 +3823,7 @@ public class ProjectHelper {
 			return WorkOrderHelper.manager.jsonAuiProject(oid);
 			// 수배표
 		} else if (per instanceof PartListMaster) {
-
+			return PartlistHelper.manager.jsonAuiProject(oid);
 			// 회의록
 		} else if (per instanceof Meeting) {
 			return MeetingHelper.manager.jsonAuiProject(oid);

@@ -643,6 +643,8 @@ public class PartlistHelper {
 		// list1의 데이터를 먼저 추가
 		for (Map<String, Object> data : list) {
 			Map<String, Object> mergedData = new HashMap<>();
+			mergedData.put("oid", data.get("oid"));
+			mergedData.put("engType", data.get("engType"));
 			mergedData.put("lotNo", data.get("lotNo"));
 			mergedData.put("unitName", data.get("unitName"));
 			mergedData.put("partNo", data.get("partNo"));
@@ -691,6 +693,8 @@ public class PartlistHelper {
 				if (!isExist) {
 					// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
 					Map<String, Object> mergedData = new HashMap<>();
+					mergedData.put("oid", data.get("oid"));
+					mergedData.put("engType", data.get("engType"));
 					mergedData.put("lotNo", data.get("lotNo"));
 					mergedData.put("unitName", data.get("unitName"));
 					mergedData.put("partNo", data.get("partNo"));
@@ -758,7 +762,10 @@ public class PartlistHelper {
 				Object[] oo = (Object[]) qr.nextElement();
 				MasterDataLink link = (MasterDataLink) oo[0];
 				PartListData data = link.getData();
+				WTPart part = data.getWtPart();
 				Map<String, Object> map = new HashMap<>();
+				map.put("oid", part != null ? part.getPersistInfo().getObjectIdentifier().getStringValue() : "");
+				map.put("engType", master.getEngType());
 				map.put("lotNo", String.valueOf(data.getLotNo()));
 				map.put("unitName", data.getUnitName());
 				map.put("partNo", data.getPartNo());

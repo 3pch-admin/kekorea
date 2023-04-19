@@ -186,6 +186,7 @@ public class SpecCodeHelper {
 		int idx = query.appendClassList(SpecCode.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, SpecCode.class, SpecCode.CODE_TYPE, "SPEC");
 		QuerySpecUtils.toBooleanAnd(query, idx, SpecCode.class, SpecCode.ENABLE, true);
+		QuerySpecUtils.toOrderBy(query, idx, SpecCode.class, SpecCode.SORT, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
