@@ -132,10 +132,10 @@ public class WorkspaceHelper {
 			} else if (per instanceof TBOMMaster) {
 				TBOMMaster master = (TBOMMaster) per;
 				return master.getName();
+			} else if (per instanceof WorkOrder) {
+				WorkOrder workOrder = (WorkOrder) per;
+				return workOrder.getName();
 			}
-		} else if (per instanceof WorkOrder) {
-			WorkOrder workOrder = (WorkOrder) per;
-			return workOrder.getMaster().getName();
 		} else if (per instanceof ConfigSheet) {
 			ConfigSheet configSheet = (ConfigSheet) per;
 			return configSheet.getName();

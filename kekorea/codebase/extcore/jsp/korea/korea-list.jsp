@@ -88,8 +88,8 @@ String end = (String) request.getAttribute("end");
 				<td class="left">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('korea-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('korea-list');">
-					<input type="button" value="통합수배표비교" title="통합수배표비교" onclick="partlistCompare('a');">
-					<input type="button" value="P-BOM비교" title="P-BOM비교" class="red" onclick="tbomCompare();">
+					<input type="button" value="통합수배표비교" title="통합수배표비교" onclick="partlistCompare('a-t');">
+					<input type="button" value="P-BOM비교" title="P-BOM비교" class="red" onclick="partlistCompare('a');">
 					<input type="button" value="T-BOM비교" title="T-BOM비교" class="blue" onclick="tbomCompare();">
 					<input type="button" value="기계수배표비교" title="기계수배표비교" class="orange" onclick="partlistCompare('m');">
 					<input type="button" value="전기수배표비교" title="전기수배표비교" onclick="partlistCompare('e');">

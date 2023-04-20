@@ -304,6 +304,7 @@ public class KeDrawingHelper {
 			Map<String, Object> map = new HashMap();
 
 			map.put("oid", order.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("workOrderType", order.getWorkOrderType());
 			map.put("lotNo", link.getLotNo());
 			map.put("rev", link.getRev());
 			map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));

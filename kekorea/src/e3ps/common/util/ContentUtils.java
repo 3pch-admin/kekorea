@@ -288,42 +288,6 @@ public class ContentUtils {
 	}
 
 	/**
-	 * 주 첨부 파일 저장
-	 */
-	public static void savePrimary(ContentHolder holder, String path) throws Exception {
-		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
-		if (result.hasMoreElements()) {
-			ContentItem item = (ContentItem) result.nextElement();
-			ContentServerHelper.service.deleteContent(holder, item);
-		}
-
-		ApplicationData data = ApplicationData.newApplicationData(holder);
-		data.setRole(ContentRoleType.PRIMARY);
-		data = (ApplicationData) ContentServerHelper.service.updateContent(holder, data, path);
-	}
-
-	/**
-	 * 첨부 파일 저장
-	 */
-	public static void saveSecondary(ContentHolder holder, ArrayList<String> secondaryPaths) throws Exception {
-		if (secondaryPaths.isEmpty()) {
-			return;
-		}
-
-		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.SECONDARY);
-		while (result.hasMoreElements()) {
-			ContentItem item = (ContentItem) result.nextElement();
-			ContentServerHelper.service.deleteContent(holder, item);
-		}
-
-		for (String path : secondaryPaths) {
-			ApplicationData data = ApplicationData.newApplicationData(holder);
-			data.setRole(ContentRoleType.SECONDARY);
-			data = (ApplicationData) ContentServerHelper.service.updateContent(holder, data, path);
-		}
-	}
-
-	/**
 	 * 썸네일 보기 위해 base64 형태로 반환
 	 */
 	public static String getPreViewBase64(String oid) throws Exception {

@@ -120,7 +120,7 @@ public class AsposeUtils {
 			pdf.close();
 		}
 
-		String mergePdfPath = mergePath + File.separator + workOrder.getMaster().getName() + ".pdf";
+		String mergePdfPath = mergePath + File.separator + workOrder.getName() + ".pdf";
 		firstPdf.save(mergePdfPath);
 
 		ApplicationData dd = ApplicationData.newApplicationData(workOrder);

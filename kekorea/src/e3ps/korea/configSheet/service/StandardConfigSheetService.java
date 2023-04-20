@@ -21,6 +21,7 @@ import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.fc.PersistenceHelper;
+import wt.method.MethodServerMain;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
 import wt.util.WTException;
@@ -39,7 +40,7 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 		String description = dto.getDescription();
 		ArrayList<String> secondarys = dto.getSecondarys();
 		ArrayList<Map<String, String>> addRows = dto.getAddRows();
-		ArrayList<Map<String, String>> _addRows = dto.get_addRows();
+		ArrayList<Map<String, String>> addRows9 = dto.getAddRows9();
 		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
 		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
 		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
@@ -63,11 +64,11 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 				ContentServerHelper.service.updateContent(configSheet, data, secondary);
 			}
 
-			for (Map<String, String> addRow : _addRows) {
-				String oid = addRow.get("oid");
+			for (Map<String, String> addRow9 : addRows9) {
+				String oid = addRow9.get("oid");
 				Project project = (Project) CommonUtils.getObject(oid);
-				configSheet.setProject(project);
-				PersistenceHelper.manager.modify(configSheet);
+				ConfigSheetProjectLink link = ConfigSheetProjectLink.newConfigSheetProjectLink(configSheet, project);
+				PersistenceHelper.manager.save(link);
 			}
 
 			int sort = 0;

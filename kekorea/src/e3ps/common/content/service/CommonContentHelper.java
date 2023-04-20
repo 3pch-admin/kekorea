@@ -33,6 +33,7 @@ import wt.fv.uploadtocache.UploadToCacheHelper;
 import wt.query.QuerySpec;
 import wt.services.ServiceFactory;
 import wt.util.EncodingConverter;
+import wt.util.FileUtil;
 import wt.util.WTAttributeNameIfc;
 import wt.util.WTProperties;
 
@@ -224,6 +225,7 @@ public class CommonContentHelper {
 		json.put("roleType", roleType);
 		json.put("tagId", UUID.randomUUID().toString());
 		json.put("cacheId", ccd.getEncodedCCD());
+		json.put("base64", ContentUtils.imageToBase64(file, FileUtil.getExtension(origin)));
 		return json;
 	}
 

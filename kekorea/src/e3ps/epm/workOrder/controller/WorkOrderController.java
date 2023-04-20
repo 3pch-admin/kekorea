@@ -21,6 +21,8 @@ import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
+import e3ps.org.Department;
+import e3ps.org.People;
 import e3ps.project.Project;
 import e3ps.project.template.service.TemplateHelper;
 import net.sf.json.JSONArray;
@@ -88,6 +90,15 @@ public class WorkOrderController extends BaseController {
 	@GetMapping(value = "/create")
 	public ModelAndView create() throws Exception {
 		ModelAndView model = new ModelAndView();
+		People people = CommonUtils.sessionPeople();
+		Department department = people.getDepartment();
+		String workOrderType = "";
+		if (department.getCode().equals("MACHINE")) {
+			workOrderType = "기계";
+		} else if (department.getCode().equals("ELEC")) {
+			workOrderType = "전기";
+		}
+		model.addObject("workOrderType", workOrderType);
 		model.setViewName("popup:/epm/workOrder/workOrder-create");
 		return model;
 	}

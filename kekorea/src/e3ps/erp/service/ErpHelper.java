@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -32,8 +33,11 @@ import wt.content.ContentServerHelper;
 import wt.doc.WTDocument;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.org.WTPrincipal;
 import wt.org.WTUser;
 import wt.part.WTPart;
+import wt.queue.ProcessingQueue;
+import wt.queue.QueueHelper;
 import wt.services.ServiceFactory;
 import wt.session.SessionHelper;
 import wt.util.FileUtil;
@@ -78,7 +82,7 @@ public class ErpHelper {
 	 */
 	private static final String processQueueName = "sendToErpProcessQueue";
 	private static final String className = "e3ps.erp.service.ErpHelper";
-	private static final String methodName = "attachMergePdf";
+	private static final String methodName = "sendToErpFromQueue";
 
 	/**
 	 * YCODE 체크 수배표 등록시
@@ -1262,5 +1266,25 @@ public class ErpHelper {
 			ErpConnectionPool.free(con, st, rs);
 		}
 		return partNo;
+	}
+
+	/**
+	 * 큐를 이용한 수배표 ERP 전송
+	 */
+	public void postSendToErp(String oid) throws Exception {
+		WTPrincipal principal = SessionHelper.manager.getPrincipal();
+		ProcessingQueue queue = (ProcessingQueue) QueueHelper.manager.getQueue(processQueueName, ProcessingQueue.class);
+
+		Hashtable<String, String> hash = new Hashtable<>();
+		hash.put("oid", oid);
+
+		Class[] argClasses = { Hashtable.class };
+		Object[] argObjects = { hash };
+
+		queue.addEntry(principal, methodName, className, argClasses, argObjects);
+	}
+	
+	public void sendToErpFromQueue(HashMap<String, String> hash) throws Exception {
+		
 	}
 }

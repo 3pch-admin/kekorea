@@ -41,54 +41,20 @@ public class AutoCADConverter {
 		}
 	}
 
-	public static void main(String[] args) {
-		// DWG 파일 경로 리스트
-		String[] dwgFilePaths = new String[] { "/path/to/dwg/file1.dwg", "/path/to/dwg/file2.dwg",
-				"/path/to/dwg/file3.dwg" };
+	public static void main(String[] args) throws Exception {
+		Runtime runtime = Runtime.getRuntime();
 
-		// 변환 스레드 리스트
-		Thread[] threads = new Thread[dwgFilePaths.length];
+		String outputPath = "D:" + File.separator;
 
-		// 각 DWG 파일을 변환하는 스레드 생성
-		for (int i = 0; i < dwgFilePaths.length; i++) {
-			final String dwgFilePath = dwgFilePaths[i];
-			final String pdfFilePath = dwgFilePath + ".pdf";
-			Thread thread = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					// 명령행 인터페이스 실행
-					try {
-						Process process = Runtime.getRuntime().exec(
-								"C:\\Program Files\\Autodesk\\DWG TrueView 2022 - English\\dwgviewr.exe /nologo /silent /plot /P \"DWG to PDF.pc3\" /T \""
-										+ dwgFilePath + "\" /D \"" + pdfFilePath + "\"");
-						process.waitFor();
-						int exitCode = process.exitValue();
-						if (exitCode == 0) {
-							System.out.println(dwgFilePath + " to " + pdfFilePath + " conversion succeeded.");
-						} else {
-							System.out.println(dwgFilePath + " to " + pdfFilePath + " conversion failed.");
-						}
-					} catch (IOException | InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			});
-			threads[i] = thread;
-		}
+		String exec1 = "C:\\Converter2023\\D2P.exe";
+		String confFile = "C:\\Converter2023\\AutoDWGPdf.ddp";
 
-		// 모든 스레드 실행
-		for (Thread thread : threads) {
-			thread.start();
-		}
-
-		// 모든 스레드 종료 대기
-		for (Thread thread : threads) {
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		String exec = exec1 + " /InFile D:\\NA-AF-STB100-002.dwg /OutFile D:\\NA-AF-STB100-002.dwg /C " + confFile;
+		System.out.println(exec);
+		Process p = runtime.exec(exec);
+		ProcessOutputThread o = new ProcessOutputThread(p.getInputStream(), new StringBuffer());
+		o.start();
+		p.waitFor();
 	}
 
 	public void convert(EPMDocument epm) {
@@ -120,8 +86,7 @@ public class AutoCADConverter {
 	 * 오토캐드 데이터에 PDF 추가
 	 */
 	private void attach(String pdf) throws Exception {
-		
-		
+
 	}
 
 	/**

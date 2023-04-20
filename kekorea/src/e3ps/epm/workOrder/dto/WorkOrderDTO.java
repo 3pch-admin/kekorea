@@ -22,6 +22,7 @@ public class WorkOrderDTO {
 	private String poid;
 	private String projectType_name;
 	private String name;
+	private String workOrderType;
 	private String content;
 	private String customer_name;
 	private String install_name;
@@ -39,6 +40,7 @@ public class WorkOrderDTO {
 	private Timestamp createdDate;
 	private String createdDate_txt;
 	private String primary;
+	private int version;
 
 	// 변수용
 	private ArrayList<Map<String, Object>> addRows = new ArrayList<>(); // 도면 일람표
@@ -55,6 +57,12 @@ public class WorkOrderDTO {
 	 */
 	private ArrayList<Map<String, String>> addRows9 = new ArrayList<>();
 
+	/**
+	 * 태스크 변수
+	 */
+	private String toid;
+	private int progress;
+
 	private ArrayList<String> secondarys = new ArrayList<>();
 
 	public WorkOrderDTO() {
@@ -63,8 +71,10 @@ public class WorkOrderDTO {
 
 	public WorkOrderDTO(WorkOrder workOrder) throws Exception {
 		setOid(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
-		setName(workOrder.getMaster().getName());
-		setState(workOrder.getState());
+		setName(workOrder.getName());
+		setWorkOrderType(workOrder.getWorkOrderType());
+		setState(workOrder.getLifeCycleState().getDisplay());
+		setVersion(workOrder.getVersion());
 		setCreator(workOrder.getOwnership().getOwner().getFullName());
 		setCreatedDate(workOrder.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(workOrder.getCreateTimestamp()));
@@ -81,7 +91,9 @@ public class WorkOrderDTO {
 			setProjectType_name(project.getProjectType().getName());
 		}
 
-		setName(workOrder.getMaster().getName());
+		setName(workOrder.getName());
+		setWorkOrderType(workOrder.getWorkOrderType());
+		setVersion(workOrder.getVersion());
 		setContent(StringUtils.replaceToValue(workOrder.getDescription()));
 		if (project.getCustomer() != null) {
 			setCustomer_name(project.getCustomer().getName());
@@ -103,7 +115,7 @@ public class WorkOrderDTO {
 		setKeNumber(project.getKeNumber());
 		setUserId(project.getUserId());
 		setDescription(StringUtils.replaceToValue(project.getDescription()));
-		setState(workOrder.getState());
+		setState(workOrder.getLifeCycleState().getDisplay());
 		setModel(project.getModel());
 
 		if (project.getPDate() != null) {

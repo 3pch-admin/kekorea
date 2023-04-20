@@ -28,8 +28,7 @@ import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
-import e3ps.epm.keDrawing.service.KeDrawingHelper;
-import e3ps.korea.cip.dto.CipDTO;
+import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.korea.cip.service.CipHelper;
 import e3ps.org.Department;
 import e3ps.org.People;
@@ -43,7 +42,6 @@ import e3ps.project.task.dto.TaskDTO;
 import e3ps.project.template.service.TemplateHelper;
 import e3ps.project.variable.ProjectUserTypeVariable;
 import net.sf.json.JSONArray;
-import wt.fc.PersistenceHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -157,24 +155,6 @@ public class ProjectController extends BaseController {
 		model.setViewName("/extcore/jsp/project/project-my-list.jsp");
 		return model;
 	}
-
-//	@Description(value = "나의 작번")
-//	@ResponseBody
-//	@PostMapping(value = "/my")
-//	public Map<String, Object> my(@RequestBody Map<String, Object> params) throws Exception {
-//		HashMap<String, Object> result = new HashMap<String, Object>();
-//		try {
-//			System.out.println("헬퍼로 가긴 함");
-//			result = ProjectHelper.manager.my(params);
-//			result.put("result", SUCCESS);
-//		} catch (Exception e) {
-//			System.out.println("안감,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
-//			e.printStackTrace();
-//			result.put("result", FAIL);
-//			result.put("msg", e.toString());
-//		}
-//		return result;
-//	}
 
 	@Description(value = "프로젝트 등록 함수")
 	@ResponseBody
@@ -354,67 +334,6 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "막종상세, 거래처, 설치라인 관련 CIP 프로젝트 상세에서 보기")
-	@GetMapping(value = "/cipTab")
-	public ModelAndView cipTab(@RequestParam String mak_oid, @RequestParam String detail_oid,
-			@RequestParam String customer_oid, @RequestParam String install_oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		ArrayList<CipDTO> list = CipHelper.manager.cipTab(mak_oid, detail_oid, customer_oid, install_oid);
-		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-cipTab.jsp");
-		return model;
-	}
-
-	@Description(value = "도면 일람표 프로젝트 상세에서 보기")
-	@GetMapping(value = "/workOrderTab")
-	public ModelAndView workOrderTab(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		JSONArray list = KeDrawingHelper.manager.workOrderTab(oid);
-		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-workOrderTab.jsp");
-		return model;
-	}
-
-	@Description(value = "특이사항 프로젝트 상세에서 보기")
-	@GetMapping(value = "/issueTab")
-	public ModelAndView issueTab(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		JSONArray list = IssueHelper.manager.issueTab(oid);
-		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-issueTab.jsp");
-		return model;
-	}
-
-	@Description(value = "프로젝트 수배표 탭")
-	@GetMapping(value = "/partlistTab")
-	public ModelAndView partlistTab(@RequestParam String oid, @RequestParam String invoke) throws Exception {
-		ModelAndView model = new ModelAndView();
-		ArrayList<Map<String, Object>> list = PartlistHelper.manager.partlistTab(oid, invoke);
-		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-partlistTab.jsp");
-		return model;
-	}
-
-	@Description(value = "프로젝트 T-BOM 탭")
-	@GetMapping(value = "/tbomTab")
-	public ModelAndView tbomTab(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		ArrayList<Map<String, Object>> list = TBOMHelper.manager.tbomTab(oid);
-		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-tbomTab.jsp");
-		return model;
-	}
-
-	@Description(value = "관련작번 프로젝트 상세에서 보기")
-	@GetMapping(value = "/referenceTab")
-	public ModelAndView referenceTab(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		JSONArray list = ProjectHelper.manager.referenceTab(oid);
-		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-referenceTab.jsp");
-		return model;
-	}
-
 	@Description(value = "프로젝트 수배표통합 페이지")
 	@GetMapping(value = "/partlist")
 	public ModelAndView partlist(@RequestParam String oid, @RequestParam String toid) throws Exception {
@@ -498,12 +417,11 @@ public class ProjectController extends BaseController {
 			HashMap<String, List<ProjectDTO>> dataMap = new HashMap<>();
 			dataMap.put("editRows", editRow);
 			ProjectHelper.service.save(dataMap);
-			System.out.println("------------------------------------------" + params);
 			result.put("msg", SAVE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
-			System.out.println("저장실패");
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;
@@ -579,6 +497,60 @@ public class ProjectController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "프로젝트 수배표 탭 페이지")
+	@GetMapping(value = "/partlistTab")
+	public ModelAndView partlistTab(@RequestParam String oid, @RequestParam String invoke) throws Exception {
+		ModelAndView model = new ModelAndView();
+		JSONArray data = PartlistHelper.manager.partlistTab(oid, invoke);
+		model.addObject("data", data);
+		model.setViewName("/extcore/jsp/project/tab/project-partlist-tab.jsp");
+		return model;
+	}
+
+	@Description(value = "프로젝트 T-BOM 탭 페이지")
+	@GetMapping(value = "/tbomTab")
+	public ModelAndView tbomTab(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		JSONArray data = TBOMHelper.manager.tbomTab(oid);
+		model.addObject("data", data);
+		model.setViewName("/extcore/jsp/project/tab/project-tbom-tab.jsp");
+		return model;
+	}
+
+	@Description(value = "프로젝트 도면일람표 탭 페이지")
+	@GetMapping(value = "/workOrderTab")
+	public ModelAndView workOrderTab(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		JSONArray data = WorkOrderHelper.manager.workOrderTab(oid);
+		model.addObject("data", data);
+		model.setViewName("/extcore/jsp/project/tab/project-workOrder-tab.jsp");
+		return model;
+	}
+
+	@Description(value = "프로젝트 CIP 탭 페이지")
+	@GetMapping(value = "/cipTab")
+	public ModelAndView cipTab(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		JSONArray data = CipHelper.manager.cipTab(oid);
+		model.addObject("data", data);
+		model.setViewName("/extcore/jsp/project/tab/project-cip-tab.jsp");
+		return model;
+	}
+
+	@Description(value = "프로젝트 특이사항 탭 페이지")
+	@GetMapping(value = "/issueTab")
+	public ModelAndView issueTab(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		JSONArray data = IssueHelper.manager.issueTab(oid);
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("data", data);
+		model.setViewName("/extcore/jsp/project/tab/project-issue-tab.jsp");
+		return model;
 	}
 
 }

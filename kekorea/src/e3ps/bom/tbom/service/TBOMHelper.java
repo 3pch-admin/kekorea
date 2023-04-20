@@ -390,8 +390,46 @@ public class TBOMHelper {
 		return JSONArray.fromObject(list);
 	}
 
-	public ArrayList<Map<String, Object>> tbomTab(String oid) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * 프로젝트 T-BOM 탭
+	 */
+	public JSONArray tbomTab(String oid) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+
+		Project project = (Project) CommonUtils.getObject(oid);
+
+		QueryResult qr = PersistenceHelper.manager.navigate(project, "master", TBOMMasterProjectLink.class);
+		while (qr.hasMoreElements()) {
+			TBOMMaster master = (TBOMMaster) qr.nextElement();
+			QuerySpec query = new QuerySpec();
+			int idx = query.appendClassList(TBOMMaster.class, false);
+			int idx_link = query.appendClassList(TBOMMasterDataLink.class, true);
+			int idx_data = query.appendClassList(TBOMData.class, false);
+			QuerySpecUtils.toInnerJoin(query, TBOMMaster.class, TBOMMasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleAObjectRef.key.id", idx, idx_link);
+			QuerySpecUtils.toInnerJoin(query, TBOMData.class, TBOMMasterDataLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleBObjectRef.key.id", idx_data, idx_link);
+			QuerySpecUtils.toEqualsAnd(query, idx_link, TBOMMasterDataLink.class, "roleAObjectRef.key.id", master);
+			QuerySpecUtils.toOrderBy(query, idx_data, TBOMData.class, TBOMData.SORT, false);
+			QueryResult result = PersistenceHelper.manager.find(query);
+			while (result.hasMoreElements()) {
+				Object[] obj = (Object[]) result.nextElement();
+				TBOMMasterDataLink link = (TBOMMasterDataLink) obj[0];
+				TBOMData data = link.getData();
+				Map<String, Object> map = new HashMap<>();
+				map.put("oid", data.getKePart().getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("lotNo", String.valueOf(data.getLotNo()));
+				map.put("code", data.getKePart().getMaster().getCode());
+				map.put("name", data.getKePart().getMaster().getName());
+				map.put("model", data.getKePart().getMaster().getModel());
+				map.put("keNumber", data.getKePart().getMaster().getKeNumber());
+				map.put("qty", data.getQty());
+				map.put("unit", data.getUnit());
+				map.put("provide", data.getProvide());
+				map.put("discontinue", data.getDiscontinue());
+				list.add(map);
+			}
+		}
+		return JSONArray.fromObject(list);
 	}
 }

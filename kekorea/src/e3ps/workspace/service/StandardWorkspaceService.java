@@ -14,6 +14,7 @@ import e3ps.common.util.StringUtils;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.epm.keDrawing.KeDrawing;
+import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.erp.service.ErpHelper;
 import e3ps.org.Department;
 import e3ps.org.People;
@@ -467,6 +468,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 		} else if (per instanceof PartListMaster) {
 			PartListMaster mm = (PartListMaster) per;
 			ErpHelper.manager.sendToErp(mm);
+//			ErpHelper.manager.postSendToErp(mm.getPersistInfo().getObjectIdentifier().getStringValue());
 		}
 	}
 

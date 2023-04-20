@@ -47,10 +47,7 @@ public class CipController extends BaseController {
 
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		
-		Timestamp time = new Timestamp(new Date().getTime());
-		
-		model.addObject("time", time);
+
 		model.addObject("mak_list", mak_list);
 		model.addObject("customer_list", customer_list);
 		model.addObject("sessionUser", sessionUser);
@@ -120,6 +117,7 @@ public class CipController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}

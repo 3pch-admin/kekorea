@@ -1,11 +1,13 @@
+<%@page import="e3ps.bom.partlist.service.PartlistHelper"%>
 <%@page import="java.util.Map"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.korea.cip.dto.CipDTO"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-ArrayList<Map<String, Object>> list = (ArrayList<Map<String, Object>>) request.getAttribute("list");
-JSONArray data = JSONArray.fromObject(list);
+String oid = request.getParameter("oid");
+String invoke = request.getParameter("invoke");
+JSONArray data = (JSONArray) request.getAttribute("data");
 %>
 <!DOCTYPE html>
 <html>
@@ -15,15 +17,13 @@ JSONArray data = JSONArray.fromObject(list);
 <%@include file="/extcore/include/css.jsp"%>
 <%@include file="/extcore/include/script.jsp"%>
 <%@include file="/extcore/include/auigrid.jsp"%>
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
 	<form>
 		<div id="grid_wrap4" style="height: 780px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID4;
-			const data =
-		<%=data%>
+			const data = <%=data%>
 			const columns4 = [ {
 				dataField : "engType",
 				headerText : "설계구분",
@@ -167,6 +167,8 @@ JSONArray data = JSONArray.fromObject(list);
 				AUIGrid.setFooter(myGridID4, footerLayout4);
 				AUIGrid.setGridData(myGridID4, data);
 			}
+
+
 
 			document.addEventListener("DOMContentLoaded", function() {
 				createAUIGrid4(columns4);

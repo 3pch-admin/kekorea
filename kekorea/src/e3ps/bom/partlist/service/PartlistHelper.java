@@ -629,7 +629,10 @@ public class PartlistHelper {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
 		String[] t = null;
-		if ("a".equals(invoke)) {
+		if ("a-t".equals(invoke)) {
+			t = new String[] { "기계_1차_수배", "기계_2차_수배", "전기_1차_수배", "전기_2차_수배" };
+			list = integratedData(p1, t);
+		} else if ("a".equals(invoke)) {
 			t = new String[] { "기계_1차_수배", "기계_2차_수배", "전기_1차_수배", "전기_2차_수배" };
 			list = integratedData(p1, t);
 		} else if ("m".equals(invoke)) {
@@ -821,7 +824,8 @@ public class PartlistHelper {
 	/**
 	 * 프로젝트 수배표 탭
 	 */
-	public ArrayList<Map<String, Object>> partlistTab(String oid, String invoke) throws Exception {
+	public JSONArray partlistTab(String oid, String invoke) throws Exception {
+		System.out.println("탭이 출력되나?");
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		Project project = (Project) CommonUtils.getObject(oid);
 		String[] t = null;
@@ -891,7 +895,7 @@ public class PartlistHelper {
 				list.add(map);
 			}
 		}
-		return list;
+		return JSONArray.fromObject(list);
 	}
 
 	/**

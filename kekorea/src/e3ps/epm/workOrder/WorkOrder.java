@@ -1,19 +1,16 @@
 package e3ps.epm.workOrder;
 
-import com.ptc.windchill.annotations.metadata.Cardinality;
-import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
+import com.ptc.windchill.annotations.metadata.ColumnProperties;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
-import com.ptc.windchill.annotations.metadata.GeneratedForeignKey;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
-import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import wt.content.ContentHolder;
-import wt.fc.Item;
+import wt.enterprise.Managed;
 import wt.ownership.Ownable;
 import wt.util.WTException;
 
-@GenAsPersistable(superClass = Item.class, interfaces = { ContentHolder.class, Ownable.class },
+@GenAsPersistable(superClass = Managed.class, interfaces = { ContentHolder.class, Ownable.class },
 
 		properties = {
 
@@ -23,21 +20,11 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "description", type = String.class, javaDoc = "설명", constraints = @PropertyConstraints(upperLimit = 2000)),
 
-				@GeneratedProperty(name = "state", type = String.class, javaDoc = "상태", constraints = @PropertyConstraints(required = true))
+				@GeneratedProperty(name = "name", type = String.class, javaDoc = "도면일람표 명", constraints = @PropertyConstraints(required = true)),
 
-		},
+				@GeneratedProperty(name = "number", type = String.class, constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(columnName = "WorkOrderNumber")),
 
-		foreignKeys = {
-
-				@GeneratedForeignKey(name = "WorkOrderMasterLink",
-
-						foreignKeyRole = @ForeignKeyRole(name = "master", type = WorkOrderMaster.class,
-
-								constraints = @PropertyConstraints(required = true)),
-
-						myRole = @MyRole(name = "iteration", cardinality = Cardinality.ONE)
-
-				)
+				@GeneratedProperty(name = "workOrderType", type = String.class, javaDoc = "도면일람표 타입", constraints = @PropertyConstraints(required = true))
 
 		}
 

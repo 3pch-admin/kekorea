@@ -28,15 +28,7 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "latest", type = Boolean.class, javaDoc = "최신버전여부")
 
-		},
-
-		foreignKeys = { @GeneratedForeignKey(name = "ConfigSheetProjectLink",
-
-				foreignKeyRole = @ForeignKeyRole(name = "project", type = Project.class,
-
-						constraints = @PropertyConstraints(required = true)),
-
-				myRole = @MyRole(name = "configSheet", cardinality = Cardinality.ONE)), }
+		}
 
 )
 public class ConfigSheet extends _ConfigSheet {

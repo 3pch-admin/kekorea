@@ -1,9 +1,12 @@
+<%@page import="e3ps.bom.tbom.service.TBOMHelper"%>
+<%@page import="java.util.Map"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.korea.cip.dto.CipDTO"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-JSONArray list = (JSONArray) request.getAttribute("list");
+String oid = request.getParameter("oid");
+JSONArray data = (JSONArray) request.getAttribute("data");
 %>
 <!DOCTYPE html>
 <html>
@@ -13,109 +16,106 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 <%@include file="/extcore/include/css.jsp"%>
 <%@include file="/extcore/include/script.jsp"%>
 <%@include file="/extcore/include/auigrid.jsp"%>
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
 	<form>
-		<div id="grid_wrap2" style="height: 780px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap9" style="height: 780px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
-			let myGridID2;
-			const columns2 = [ {
+			let myGridID9;
+			const data = <%=data%>
+			const columns9 = [ {
+				dataField : "workOrderType",
+				headerText : "설계구분",
+				width : 100,
+			}, {
 				dataField : "preView",
 				headerText : "미리보기",
 				width : 80,
-				style : "cursor",
 				renderer : {
 					type : "ImageRenderer",
 					altField : null,
 					imgHeight : 34,
-				},
-				filter : {
-					showIcon : false,
-					inline : false,
 				},
 			}, {
 				dataField : "name",
 				headerText : "DRAWING TITLE",
 				dataType : "string",
 				style : "aui-left",
-				filter : {
-					showIcon : true,
-					inline : true,
-				},
 			}, {
 				dataField : "number",
 				headerText : "DWG. NO",
 				dataType : "string",
-				width : 100,
+				width : 200,
 				renderer : {
 					type : "LinkRenderer",
 					baseUrl : "javascript",
 					jsCallback : function(rowIndex, columnIndex, value, item) {
 						const oid = item.oid;
-						const url = getCallUrl("/keDrawing/view?oid=" + oid);
-						popup(url);
+						const doid = item.doid;
+						const number = item.number;
+						const rev = item.rev;
+						let url;
+						if (doid.indexOf("KeDrawing") > -1) {
+							url = getCallUrl("/keDrawing/viewByNumberAndRev?number=" + number + "&rev=" + rev);
+							popup(url, 1400, 700);
+						} else {
+							url = getCallUrl("/project/info?oid=" + oid);
+						}
 					}
-				},
-				filter : {
-					showIcon : true,
-					inline : true,
 				},
 			}, {
 				dataField : "current",
 				headerText : "CURRENT VER",
 				dataType : "string",
-				width : 110,
-				filter : {
-					showIcon : true,
-					inline : true,
+				width : 130,
+				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+					const rev = item.rev;
+					if (Number(value) !== Number(rev)) {
+						console.log(rev);
+						console.log(value);
+						return "compare";
+					}
+					return "";
+				},
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const doid = item.doid;
+						const number = item.number;
+						const current = item.current;
+						let url;
+						if (doid.indexOf("KeDrawing") > -1) {
+							url = getCallUrl("/keDrawing/viewByNumberAndRev?number=" + number + "&rev=" + current);
+							popup(url, 1400, 700);
+						} else {
+							url = getCallUrl("/project/info?oid=" + oid);
+						}
+					}
 				},
 			}, {
 				dataField : "rev",
 				headerText : "REV",
 				dataType : "string",
-				width : 80,
-				filter : {
-					showIcon : true,
-					inline : true,
-				},
-			}, {
-				dataField : "latest",
-				headerText : "REV (최신)",
-				dataType : "string",
-				width : 110,
-				filter : {
-					showIcon : true,
-					inline : true,
-				},
+				width : 130,
+
 			}, {
 				dataField : "lotNo",
 				headerText : "LOT",
 				dataType : "numeric",
 				width : 100,
 				formatString : "###0",
-				filter : {
-					showIcon : true,
-					inline : true,
-				},
 			}, {
 				dataField : "createdData_txt",
 				headerText : "등록일",
 				dataType : "string",
 				width : 100,
-				filter : {
-					showIcon : true,
-					inline : true,
-				},
 			}, {
 				dataField : "note",
 				headerText : "NOTE",
 				dataType : "string",
 				width : 350,
-				filter : {
-					showIcon : true,
-					inline : true,
-				},
 			}, {
 				dataField : "primary",
 				headerText : "도면파일",
@@ -124,49 +124,28 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				renderer : {
 					type : "TemplateRenderer",
 				},
-				filter : {
-					showIcon : false,
-					inline : false,
-				},
 			} ]
 
-			function createAUIGrid2(columnLayout) {
+			function createAUIGrid9(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					showAutoNoDataMessage : false,
-					enableFilter : true,
 					selectionMode : "multipleCells",
-					showInlineFilter : true,
-					filterLayerWidth : 320,
-					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+					showAutoNoDataMessage : false,
 				};
-				myGridID2 = AUIGrid.create("#grid_wrap2", columnLayout, props);
-				AUIGrid.setGridData(myGridID2,
-		<%=list%>
-			);
-				AUIGrid.bind(myGridID2, "cellClick", auiCellClickHandler);
-			}
-
-			function auiCellClickHandler(event) {
-				const dataField = event.dataField;
-				const oid = event.item.oid;
-				if (dataField === "preView") {
-					const url = getCallUrl("/aui/thumbnail?oid=" + oid);
-					popup(url);
-				}
+				myGridID9 = AUIGrid.create("#grid_wrap9", columnLayout, props);
+				AUIGrid.setGridData(myGridID9, data);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
-				createAUIGrid2(columns2);
-				AUIGrid.resize(myGridID2);
+				// 화면 활성화시 불러오게 설정한다 속도 생각 
+				createAUIGrid9(columns9);
+				AUIGrid.resize(myGridID9);
 			})
 
 			window.addEventListener("resize", function() {
-				AUIGrid.resize(myGridID2);
+				AUIGrid.resize(myGridID9);
 			});
 		</script>
 	</form>

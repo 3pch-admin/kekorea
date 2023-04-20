@@ -36,7 +36,6 @@ import e3ps.epm.keDrawing.KeDrawingMaster;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
-import e3ps.epm.workOrder.WorkOrderMaster;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.project.Project;
@@ -210,7 +209,7 @@ public class WorkOrderHelper {
 				WorkOrderProjectLink link = (WorkOrderProjectLink) oo[2];
 				WorkOrderDTO dto = new WorkOrderDTO(link);
 				node.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
-				node.put("name", workOrder.getMaster().getName());
+				node.put("name", workOrder.getName());
 				if (isNode == 1) {
 					node.put("poid", dto.getPoid());
 					node.put("projectType_name", dto.getProjectType_name());
@@ -268,16 +267,15 @@ public class WorkOrderHelper {
 		String preFix = DateUtils.getTodayString();
 		String number = param + "-" + preFix + "-";
 		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(WorkOrderMaster.class, true);
-		QuerySpecUtils.toLikeAnd(query, idx, WorkOrderMaster.class, WorkOrderMaster.WORK_ORDER_NUMBER,
-				number.toUpperCase());
-		QuerySpecUtils.toOrderBy(query, idx, WorkOrderMaster.class, WorkOrderMaster.WORK_ORDER_NUMBER, true);
+		int idx = query.appendClassList(WorkOrder.class, true);
+		QuerySpecUtils.toLikeAnd(query, idx, WorkOrder.class, WorkOrder.NUMBER, number.toUpperCase());
+		QuerySpecUtils.toOrderBy(query, idx, WorkOrder.class, WorkOrder.NUMBER, true);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
-			WorkOrderMaster master = (WorkOrderMaster) obj[0];
+			WorkOrder master = (WorkOrder) obj[0];
 
-			String s = master.getWorkOrderNumber().substring(master.getWorkOrderNumber().lastIndexOf("-") + 1);
+			String s = master.getNumber().substring(master.getNumber().lastIndexOf("-") + 1);
 
 			int ss = Integer.parseInt(s) + 1;
 			DecimalFormat d = new DecimalFormat("0000");
@@ -609,5 +607,63 @@ public class WorkOrderHelper {
 			}
 		}
 		return list;
+	}
+
+	/**
+	 * 프로젝트 도면일람표 탭
+	 */
+	public JSONArray workOrderTab(String oid) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+
+		Project project = (Project) CommonUtils.getObject(oid);
+
+		QueryResult qr = PersistenceHelper.manager.navigate(project, "workOrder", WorkOrderProjectLink.class);
+		while (qr.hasMoreElements()) {
+			WorkOrder workOrder = (WorkOrder) qr.nextElement();
+			QuerySpec query = new QuerySpec();
+			int idx = query.appendClassList(WorkOrder.class, true);
+			int idx_l = query.appendClassList(WorkOrderDataLink.class, true);
+
+			QuerySpecUtils.toInnerJoin(query, WorkOrder.class, WorkOrderDataLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleAObjectRef.key.id", idx, idx_l);
+			QuerySpecUtils.toEqualsAnd(query, idx_l, WorkOrderDataLink.class, "roleAObjectRef.key.id", workOrder);
+			QuerySpecUtils.toOrderBy(query, idx_l, WorkOrderDataLink.class, WorkOrderDataLink.SORT, false);
+			QueryResult result = PersistenceHelper.manager.find(query);
+			while (result.hasMoreElements()) {
+				Object[] obj = (Object[]) result.nextElement();
+				WorkOrder order = (WorkOrder) obj[0];
+				WorkOrderDataLink link = (WorkOrderDataLink) obj[1];
+				Map<String, Object> map = new HashMap();
+
+				map.put("oid", order.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("workOrderType", workOrder.getWorkOrderType());
+				map.put("lotNo", link.getLotNo());
+				map.put("rev", link.getRev());
+				map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
+				map.put("note", link.getNote());
+				Persistable per = link.getData();
+				if (per instanceof KeDrawing) {
+					KeDrawing keDrawing = (KeDrawing) per;
+					KeDrawing latest = KeDrawingHelper.manager.getLatest(keDrawing);
+					map.put("doid", keDrawing.getPersistInfo().getObjectIdentifier().getStringValue());
+					map.put("name", keDrawing.getMaster().getName());
+					map.put("number", keDrawing.getMaster().getKeNumber());
+					map.put("current", latest.getVersion());
+					map.put("preView", ContentUtils.getPreViewBase64(keDrawing));
+					map.put("primary", AUIGridUtils.primaryTemplate(keDrawing));
+				} else if (per instanceof EPMDocument) {
+					EPMDocument epm = (EPMDocument) per;
+					map.put("doid", epm.getPersistInfo().getObjectIdentifier().getStringValue());
+					map.put("name", IBAUtils.getStringValue(epm, "NAME_OF_PARTS"));
+					map.put("number", IBAUtils.getStringValue(epm, "DWG_NO"));
+					map.put("current", epm.getVersionIdentifier().getSeries().getValue());
+					map.put("preView", ContentUtils.getPreViewBase64(epm));
+//					map.put("primary", AUIGridUtils.primaryTemplate(keDrawing)); // pdf...
+				}
+				list.add(map);
+			}
+		}
+
+		return JSONArray.fromObject(list);
 	}
 }
