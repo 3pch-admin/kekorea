@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
+import e3ps.common.Constants;
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
@@ -67,7 +68,6 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				kePart.setOwnership(ownership);
 				PersistenceHelper.manager.save(kePart);
 
-				System.out.println("cacheId=" + cacheId);
 				if (!StringUtils.isNull(cacheId)) {
 					ApplicationData dd = ApplicationData.newApplicationData(kePart);
 					File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
@@ -164,7 +164,7 @@ public class StandardKePartService extends StandardManager implements KePartServ
 				latest.setMaster(pre.getMaster());
 				latest.setOwnership(CommonUtils.sessionOwner());
 				latest.setNote(note);
-				latest.setState("작업중");
+				latest.setState(Constants.KeState.USE);
 				PersistenceHelper.manager.save(latest);
 
 				if (!StringUtils.isNull(cacheId)) {

@@ -88,7 +88,7 @@ public class WorkOrderController extends BaseController {
 
 	@Description(value = "작업지시서 생성 페이지")
 	@GetMapping(value = "/create")
-	public ModelAndView create() throws Exception {
+	public ModelAndView create(@RequestParam(required = false) String toid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		People people = CommonUtils.sessionPeople();
 		Department department = people.getDepartment();
@@ -98,6 +98,7 @@ public class WorkOrderController extends BaseController {
 		} else if (department.getCode().equals("ELEC")) {
 			workOrderType = "전기";
 		}
+		model.addObject("toid", toid);
 		model.addObject("workOrderType", workOrderType);
 		model.setViewName("popup:/epm/workOrder/workOrder-create");
 		return model;
@@ -124,12 +125,17 @@ public class WorkOrderController extends BaseController {
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
+		WorkOrder latest = WorkOrderHelper.manager.getLatest(workOrder);
+		JSONArray history = WorkOrderHelper.manager.history(workOrder);
 		WorkOrderDTO dto = new WorkOrderDTO(workOrder);
 		JSONArray list = KeDrawingHelper.manager.getData(workOrder);
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = CommonUtils.sessionUser();
+		model.addObject("latestVersion", latest.getVersion());
+		model.addObject("loid", latest.getPersistInfo().getObjectIdentifier().getStringValue());
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
+		model.addObject("history", history);
 		model.addObject("list", list);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/epm/workOrder/workOrder-view");
@@ -187,9 +193,42 @@ public class WorkOrderController extends BaseController {
 			result.put("msg", MODIFY_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;
 	}
 
+	@Description(value = "도면 일람표 개정 페이지")
+	@GetMapping(value = "/revise")
+	public ModelAndView revise(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
+		WorkOrderDTO dto = new WorkOrderDTO(workOrder);
+		JSONArray list = KeDrawingHelper.manager.getData(workOrder);
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = CommonUtils.sessionUser();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("list", list);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/epm/workOrder/workOrder-revise");
+		return model;
+	}
+
+	@Description(value = "도면일람표 개정")
+	@PostMapping(value = "/revise")
+	@ResponseBody
+	public Map<String, Object> revise(@RequestBody WorkOrderDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkOrderHelper.service.revise(dto);
+			result.put("result", SUCCESS);
+			result.put("msg", REVISE_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+		}
+		return result;
+	}
 }

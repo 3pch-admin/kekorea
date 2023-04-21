@@ -124,6 +124,7 @@ public class IssueHelper {
 			IssueProjectLink link = (IssueProjectLink) obj[1];
 			Issue issue = link.getIssue();
 			Map<String, String> map = new HashMap();
+			map.put("oid", issue.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("name", issue.getName());
 			map.put("description", issue.getDescription());
 			map.put("creator", issue.getOwnership().getOwner().getFullName());

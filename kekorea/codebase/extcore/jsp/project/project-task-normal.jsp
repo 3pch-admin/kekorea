@@ -82,7 +82,10 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 						<th class="rb">발행일</th>
 						<th class="rb">요구 납기일</th>
 						<td rowspan="4" class="tb-none bb-none" style="width: 30px;">&nbsp;</td>
-						<th rowspan="2">진행률</th>
+						<th rowspan="2">
+							진행률&nbsp;
+							<img src="/Windchill/extcore/images/edit.gif" class="edit" onclick="edit();">
+						</th>
 						<td rowspan="2" class="center"><%=data.getKekProgress()%>%
 						</td>
 					</tr>
@@ -101,7 +104,8 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 						<th class="rb">막종 / 막종상세</th>
 						<th class="rb" colspan="2">작업 내용</th>
 						<th>기계</th>
-						<td class="center"><%=data.getMachineProgress()%>%</td>
+						<td class="center"><%=data.getMachineProgress()%>%
+						</td>
 					</tr>
 					<tr>
 						<td class="center"><%=data.getKeNumber()%></td>
@@ -112,7 +116,8 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 							<%=data.getDetail_name()%></td>
 						<td class="indent5" colspan="2"><%=dto.getDescription()%></td>
 						<th>전기</th>
-						<td class="center"><%=data.getElecProgress()%>%</td>
+						<td class="center"><%=data.getElecProgress()%>%
+						</td>
 					</tr>
 					<%
 					} else {

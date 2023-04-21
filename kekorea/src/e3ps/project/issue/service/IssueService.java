@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import e3ps.project.issue.beans.IssueDTO;
-import e3ps.workspace.notice.dto.NoticeDTO;
 import wt.method.RemoteInterface;
 
 @RemoteInterface

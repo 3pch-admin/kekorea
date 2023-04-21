@@ -1,23 +1,27 @@
-<%@page import="e3ps.common.util.StringUtils"%>
+<%@page import="e3ps.epm.workOrder.dto.WorkOrderDTO"%>
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-String workOrderType = (String) request.getAttribute("workOrderType");
-String toid = (String) request.getAttribute("toid");
+WorkOrderDTO dto = (WorkOrderDTO) request.getAttribute("dto");
+JSONArray list = (JSONArray) request.getAttribute("list");
+String workOrderType = dto.getWorkOrderType();
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid() %>">
 <table class="button-table">
 	<tr>
 		<td class="left">
 			<div class="header">
 				<img src="/Windchill/extcore/images/header.png">
-				도면일람표 등록
+				도면일람표 수정
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="등록" title="등록" onclick="create();">
-			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
+			<input type="button" value="수정" title="수정" onclick="modify();">
+			<input type="button" value="뒤로" title="뒤로" class="blue" onclick="history.go(-1);">
+			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
 	</tr>
 </table>
@@ -35,16 +39,14 @@ String toid = (String) request.getAttribute("toid");
 		<table class="create-table">
 			<colgroup>
 				<col width="150">
-				<col width="350">
+				<col width="500">
 				<col width="150">
-				<col width="350">
-				<col width="150">
-				<col width="350">
+				<col width="500">
 			</colgroup>
 			<tr>
 				<th class="req lb">도면 일람표 명</th>
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-200">
+					<input type="text" name="name" id="name" class="width-400" value="<%=dto.getName()%>">
 				</td>
 				<th>설계구분</th>
 				<td class="indent5">
@@ -54,23 +56,19 @@ String toid = (String) request.getAttribute("toid");
 						<option value="전기">전기</option>
 					</select>
 				</td>
-				<th>진행율</th>
-				<td class="indent5">
-					<input type="number" name="progress" id="progress" class="width-200" value="0">
-				</td>				
 			</tr>
 			<tr>
 				<th class="lb">내용</th>
-				<td class="indent5" colspan="5">
-					<textarea name="description" id="description" rows="5"></textarea>
+				<td class="indent5" colspan="3">
+					<textarea name="description" id="description" rows="5"><%=dto.getContent() != null ? dto.getContent() : ""%></textarea>
 				</td>
 			</tr>
 			<tr>
 				<th class="req lb">KEK 작번</th>
-				<td colspan="5">
+				<td colspan="3">
 					<jsp:include page="/extcore/jsp/common/project-include.jsp">
-						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
+						<jsp:param value="<%=dto.getOid()%>" name="oid" />
+						<jsp:param value="update" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
@@ -78,16 +76,16 @@ String toid = (String) request.getAttribute("toid");
 				<th class="lb">첨부파일</th>
 				<td class="indent5" colspan="5">
 					<jsp:include page="/extcore/jsp/common/attach-secondary.jsp">
-						<jsp:param value="" name="oid" />
+						<jsp:param value="<%=dto.getOid()%>" name="oid" />
 					</jsp:include>
 				</td>
 			</tr>
 			<tr>
 				<th class="req lb">결재</th>
-				<td colspan="5">
+				<td colspan="3">
 					<jsp:include page="/extcore/jsp/common/approval-register.jsp">
-						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
+						<jsp:param value="<%=dto.getOid()%>" name="oid" />
+						<jsp:param value="update" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
@@ -188,6 +186,7 @@ String toid = (String) request.getAttribute("toid");
 			enableDrop : true,
 			$compaEventOnPaste : true,
 			editable : true,
+			softRemoveRowMode : false,
 			enableRowCheckShiftKey : true,
 			useContextMenu : true,
 			enableRightDownFocus : true,
@@ -209,6 +208,7 @@ String toid = (String) request.getAttribute("toid");
 		readyHandler();
 		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+		AUIGrid.setGridData(myGridID, <%=list%>);
 	}
 
 	function auiCellClickHandler(event) {
@@ -335,17 +335,18 @@ String toid = (String) request.getAttribute("toid");
 		AUIGrid.addRow(myGridID, item, rowIndex + 1);
 	}
 
-	function create() {
+	function modify() {
 
 		const params = new Object();
+		const oid = document.getElementById("oid").value;
 		const name = document.getElementById("name");
 		const description = document.getElementById("description").value;
 		const workOrderType = document.getElementById("workOrderType").value;
-		const progress = document.getElementById("progress").value;
-		const addRows = AUIGrid.getAddedRowItems(myGridID);
-		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
-		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
-		const url = getCallUrl("/workOrder/create");
+// 		const progress = document.getElementById("progress").value;
+		const addRows = AUIGrid.getGridData(myGridID);
+		const addRows9 = AUIGrid.getGridData(myGridID9);
+		const addRows8 = AUIGrid.getGridData(myGridID8);
+		const url = getCallUrl("/workOrder/modify");
 
 		addRows.sort(function(a, b) {
 			return a.sort - b.sort;
@@ -374,14 +375,15 @@ String toid = (String) request.getAttribute("toid");
 			return false;
 		}
 
-		if (!confirm("등록 하시겠습니까?")) {
+		if (!confirm("수정 하시겠습니까?")) {
 			return false;
 		}
 
+		params.oid = oid;
 		params.name = name.value;
 		params.description = description;
 		params.workOrderType = workOrderType;
-		params.progress = Number(progress);
+// 		params.progress = Number(progress);
 		params.addRows = addRows;
 		params.addRows9 = addRows9;
 		params.secondarys = toArray("secondarys");

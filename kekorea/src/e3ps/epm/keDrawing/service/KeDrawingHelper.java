@@ -243,7 +243,7 @@ public class KeDrawingHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(KeDrawing.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, KeDrawing.class, "masterReference.key.id",
-				master.getPersistInfo().getObjectIdentifier().getId());
+				master);
 		QuerySpecUtils.toOrderBy(query, idx, KeDrawing.class, KeDrawing.VERSION, true);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
@@ -303,6 +303,7 @@ public class KeDrawingHelper {
 			WorkOrderDataLink link = (WorkOrderDataLink) obj[1];
 			Map<String, Object> map = new HashMap();
 
+			map.put("ok", true);
 			map.put("oid", order.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("workOrderType", order.getWorkOrderType());
 			map.put("lotNo", link.getLotNo());
@@ -342,6 +343,9 @@ public class KeDrawingHelper {
 		return getLatest(keDrawing.getMaster().getKeNumber());
 	}
 
+	/**
+	 * KE 최신 도면 
+	 */
 	public KeDrawing getLatest(String number) throws Exception {
 
 		QuerySpec query = new QuerySpec();

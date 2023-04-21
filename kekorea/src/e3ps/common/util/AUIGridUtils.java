@@ -112,4 +112,21 @@ public class AUIGridUtils {
 		}
 		return icon;
 	}
+
+	/**
+	 * AUIGrid 첨부파일 타입에 의한 템플릿
+	 */
+	public static String thumbnailTemplate(ContentHolder holder) throws Exception {
+		String template = "";
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.THUMBNAIL);
+		if (result.hasMoreElements()) {
+			ApplicationData data = (ApplicationData) result.nextElement();
+			String ext = FileUtil.getExtension(data.getFileName());
+			String icon = getAUIGridFileIcon(ext);
+			String url = "/Windchill/plm/content/download?oid="
+					+ data.getPersistInfo().getObjectIdentifier().getStringValue();
+			template += "<a href=" + url + "><img src=" + icon + " style='position: relative; top: 2px;'></a>";
+		}
+		return template;
+	}
 }

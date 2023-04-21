@@ -124,8 +124,9 @@ public class IssueController extends BaseController {
 
 	@Description(value = "이슈 등록 페이지")
 	@GetMapping(value = "/create")
-	public ModelAndView create() throws Exception {
+	public ModelAndView create(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
+		model.addObject("oid", oid);
 		model.setViewName("popup:/project/issue/issue-create");
 		return model;
 	}

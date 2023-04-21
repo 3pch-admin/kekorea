@@ -1,6 +1,8 @@
 package e3ps.project.issue.beans;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.common.util.CommonUtils;
@@ -28,6 +30,16 @@ public class IssueDTO {
 	private Timestamp createdDate;
 	private String createdDate_txt;
 
+	/**
+	 * 작번 변수
+	 */
+	private ArrayList<Map<String, String>> addRows9 = new ArrayList<>();
+
+	/**
+	 * 첨부파일 변수
+	 */
+	private ArrayList<String> secondarys = new ArrayList<>();
+
 	public IssueDTO() {
 
 	}
@@ -41,18 +53,12 @@ public class IssueDTO {
 		setKekNumber(project.getKekNumber());
 		setKeNumber(project.getKeNumber());
 		setDescription(project.getDescription());
-		if (project.getMak() != null) {
-			setMak_name(project.getMak().getName());
-		}
-		if (project.getDetail() != null) {
-			setDetail_name(project.getDetail().getName());
-		}
+		setMak_name(project.getMak().getName());
+		setDetail_name(project.getDetail().getName());
 		setCreator(issue.getOwnership().getOwner().getFullName());
 		setCreatorId(issue.getOwnership().getOwner().getName());
 		setCreatedDate(issue.getCreateTimestamp());
-		if (project.getProjectType() != null) {
-			setProjectType(project.getProjectType().getName());
-		}
+		setProjectType(project.getProjectType().getName());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(issue.getCreateTimestamp()));
 	}
 }

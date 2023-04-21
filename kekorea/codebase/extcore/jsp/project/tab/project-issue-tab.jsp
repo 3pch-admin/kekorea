@@ -68,11 +68,12 @@ ul, ol {
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
+		<input type="hidden" name="oid" id="oid" value="<%=oid%>">
 		<table class="button-table">
 			<tr>
 				<td class="left">
 					<input type="button" value="저장" title="저장" onclick="save();">
-					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
+					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 				</td>
 			</tr>
@@ -92,56 +93,53 @@ ul, ol {
 		<script type="text/javascript">
 			let myGridID3;
 			let recentGridItem = null;
-			const data = null;
+			const data = <%=data%>
 			const columns3 = [ {
 				dataField : "name",
 				headerText : "특이사항 제목",
 				dataType : "string",
 				width : 300,
-				style : "aui-left"
+				style : "aui-left",
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const url = getCallUrl("/issue/view?oid=" + oid);
+						popup(url, 1400, 700);
+					}
+				},
 			}, {
 				dataField : "description",
 				headerText : "내용",
 				dataType : "string",
+				style : "aui-left",
 				renderer : {
-					type : "TemplateRenderer"
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const url = getCallUrl("/issue/view?oid=" + oid);
+						popup(url, 1400, 700);
+					}
 				},
 			}, {
 				dataField : "icons",
 				headerText : "첨부파일",
 				width : 100,
-				editable : false,
 				renderer : {
-					type : "TemplateRenderer",
-				},
-			}, {
-				dataField : "",
-				headerText : "",
-				width : 100,
-				editable : false,
-				renderer : {
-					type : "ButtonRenderer",
-					labelText : "파일선택",
-					onclick : function(rowIndex, columnIndex, value, item) {
-						recentGridItem = item;
-						const oid = item._$uid;
-						const url = getCallUrl("/aui/secondary?oid=" + oid + "&method=attach");
-						popup(url, 1000, 400);
-					}
+					type : "TemplateRenderer"
 				},
 			}, {
 				dataField : "creator",
 				headerText : "작성자",
 				dataType : "string",
 				width : 100,
-				editable : false,
 			}, {
-				dataField : "createdDate",
+				dataField : "createdDate_txt",
 				headerText : "작성일",
-				dataType : "date",
-				formatString : "yyyy-mm-dd",
+				dataType : "string",
 				width : 100,
-				editable : false,
 			} ]
 
 			function createAUIGrid3(columnLayout) {
@@ -153,8 +151,6 @@ ul, ol {
 					showAutoNoDataMessage : false,
 					showRowCheckColumn : true,
 					showStateColumn : true,
-					editable : true,
-					wordWrap : true
 				};
 				myGridID3 = AUIGrid.create("#grid_wrap3", columnLayout, props);
 				AUIGrid.setGridData(myGridID3, data);
@@ -267,14 +263,6 @@ ul, ol {
 				forceEditngTextArea(this.value, event);
 			});
 
-			function addRow() {
-				const item = new Object();
-				item.latest = true;
-				item.creator = document.getElementById("sessionName").value;
-				item.creatorId = document.getElementById("sessionId").value;
-				AUIGrid.addRow(myGridID3, item, "first");
-			}
-
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID3);
 				// 				const sessionId = document.getElementById("sessionId").value;
@@ -287,6 +275,12 @@ ul, ol {
 					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID3, rowIndex);
 				}
+			}
+
+			function create() {
+				const oid = document.getElementById("oid").value;
+				const url = getCallUrl("/issue/create?oid=" + oid);
+				popup(url, 1400, 700);
 			}
 
 			function attach(data) {

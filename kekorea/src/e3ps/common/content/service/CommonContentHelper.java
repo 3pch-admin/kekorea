@@ -276,7 +276,7 @@ public class CommonContentHelper {
 	}
 
 	/**
-	 * 첨부파일 모두 삭제
+	 * 모든 첨부파일 삭제
 	 */
 	public void clear(ContentHolder holder) throws Exception {
 		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
@@ -287,6 +287,28 @@ public class CommonContentHelper {
 
 		result.reset();
 		result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.SECONDARY);
+		while (result.hasMoreElements()) {
+			ContentItem item = (ContentItem) result.nextElement();
+			ContentServerHelper.service.deleteContent(holder, item);
+		}
+	}
+
+	/**
+	 * 주 첨부파일 모두 삭제
+	 */
+	public void clearP(ContentHolder holder) throws Exception {
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
+		if (result.hasMoreElements()) {
+			ContentItem item = (ContentItem) result.nextElement();
+			ContentServerHelper.service.deleteContent(holder, item);
+		}
+	}
+
+	/**
+	 * 첨부파일 모두 삭제
+	 */
+	public void clearS(ContentHolder holder) throws Exception {
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.SECONDARY);
 		while (result.hasMoreElements()) {
 			ContentItem item = (ContentItem) result.nextElement();
 			ContentServerHelper.service.deleteContent(holder, item);

@@ -111,7 +111,6 @@
 				headerText : "중간코드",
 				dataType : "string",
 				width : 130,
-				editable : false
 			}, {
 				dataField : "keNumber",
 				headerText : "부품번호",
@@ -330,7 +329,7 @@
 						keNumber : data.keNumber,
 						lotNo : data.lotNo,
 						oid : data.oid,
-						code : data.code,
+// 						code : data.code,
 						model : data.model,
 						qty : 1,
 						unit : "EA",

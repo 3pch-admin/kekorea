@@ -161,7 +161,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					editRenderer : {
 						type : "InputEditRenderer",
 						onlyNumeric : true,
-						maxlength : 3,
+						maxlength : 4,
 					},
 					filter : {
 						showIcon : true,

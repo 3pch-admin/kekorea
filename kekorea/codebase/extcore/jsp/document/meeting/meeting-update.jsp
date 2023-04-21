@@ -7,14 +7,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.getAttribute("list");
-%>
-<%
 MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 String oid = dto.getOid();
 %>
-<!-- tinymce -->
 <%@include file="/extcore/include/tinymce.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
@@ -53,7 +49,7 @@ String oid = dto.getOid();
 					String value = map.get("oid");
 					String name = map.get("name");
 				%>
-				<option value="<%=value%>" <%if(dto.getToid().equals(value)){ %> selected="selected" <%} %>><%=name%></option>
+				<option value="<%=value%>" <%if (dto.getToid().equals(value)) {%> selected="selected" <%}%>><%=name%></option>
 				<%
 				}
 				%>
@@ -62,10 +58,9 @@ String oid = dto.getOid();
 	</tr>
 	<tr>
 		<th class="req lb">KEK 작번</th>
-
 		<td class="indent5" colspan="3">
 			<jsp:include page="/extcore/jsp/common/project-include.jsp">
-				<jsp:param value="<%=dto.getOid() %>" name="oid" />
+				<jsp:param value="<%=dto.getOid()%>" name="oid" />
 				<jsp:param value="update" name="mode" />
 			</jsp:include>
 		</td>
@@ -73,14 +68,14 @@ String oid = dto.getOid();
 	<tr>
 		<th class="req lb">내용</th>
 		<td class="indent5" colspan="3">
-			<textarea name="description" id="description" rows="8"><%=dto.getContent() %></textarea>
+			<textarea name="description" id="description" rows="8"><%=dto.getContent()%></textarea>
 		</td>
 	</tr>
 	<tr>
 		<th class="lb">첨부파일</th>
 		<td class="indent5" colspan="3">
 			<jsp:include page="/extcore/jsp/common/attach-secondary.jsp">
-				<jsp:param value="<%=dto.getOid() %>" name="oid" />
+				<jsp:param value="<%=dto.getOid()%>" name="oid" />
 				<jsp:param value="create" name="mode" />
 			</jsp:include>
 		</td>
@@ -108,7 +103,7 @@ String oid = dto.getOid();
 			document.getElementById("name").focus();
 			return false;
 		}
-		
+
 		if (addRows9.length === 0) {
 			alert("최소 하나이상의 작번을 추가하세요.");
 			return false;

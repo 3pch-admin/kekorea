@@ -149,20 +149,26 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<option value="">선택</option>
 					</select>
 				</td>
-				<th>템플릿</th>
-				<td class="indent5">
-					<select name="template" id="template" class="width-200">
-						<option value="">선택</option>
-						<%
-						for (Map<String, String> map : list) {
-							String oid = map.get("key");
-							String name = map.get("value");
-						%>
-						<option value="<%=oid%>"><%=name%></option>
-						<%
-						}
-						%>
-					</select>
+				<th>버전</th>
+				<td>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="latest" value="true" checked="checked">
+						<div class="state p-success">
+							<label>
+								<b>최신버전</b>
+							</label>
+						</div>
+					</div>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="latest" value="">
+						<div class="state p-success">
+							<label>
+								<b>모든버전</b>
+							</label>
+						</div>
+					</div>
 				</td>
 				<th>작업 내용</th>
 				<td colspan="3" class="indent5">
@@ -207,6 +213,33 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						inline : true
 					},
 					cellMerge : true,
+				}, {
+					dataField : "version",
+					headerText : "버전",
+					dataType : "string",
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
+				}, {
+					dataField : "latest",
+					headerText : "최신버전",
+					dataType : "boolean",
+					width : 80,
+					renderer : {
+						type : "CheckBoxEditRenderer"
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
 					dataField : "projectType_name",
 					headerText : "작번유형",
@@ -376,7 +409,23 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					mergeRef : "name",
 					mergePolicy : "restrict"
 				}, {
-					dataField : "primary",
+					dataField : "thumbnail",
+					headerText : "병합PDF",
+					dataType : "string",
+					width : 80,
+					editable : false,
+					renderer : {
+						type : "TemplateRenderer",
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
+				}, {
+					dataField : "icons",
 					headerText : "첨부파일",
 					dataType : "string",
 					width : 80,
@@ -453,8 +502,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const softOid = document.getElementById("softOid").value;
 				const mak_name = document.getElementById("mak_name").value;
 				const detail_name = document.getElementById("detail_name").value;
-				const template = document.getElementById("template").value;
 				const description = document.getElementById("description").value;
+				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				const psize = document.getElementById("psize").value;
 				params.kekNumber = kekNumber;
 				params.keNumber = keNumber;
@@ -471,12 +520,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				params.softOid = softOid;
 				params.mak_name = mak_name;
 				params.detail_name = detail_name;
-				params.template = template;
 				params.description = description;
+				params.latest = latest;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
+					console.log(data);
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
@@ -543,10 +593,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					}
 				})
 				selectbox("detail_name");
-				selectbox("template");
 				selectbox("psize");
 			});
-
 			document.addEventListener("keydown", function(event) {
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {

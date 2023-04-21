@@ -5,11 +5,8 @@
 <%
 ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.getAttribute("list");
 %>
-<!-- tinymce -->
 <%@include file="/extcore/include/tinymce.jsp"%>
-<!-- AUIGrid -->
 <%@include file="/extcore/include/auigrid.jsp"%>
-
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -85,7 +82,8 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 		const url = getCallUrl("/meeting/create");
 		const content = tinymce.activeEditor.getContent();
 		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
-		params.name = document.getElementById("name").value;
+		const name = document.getElementById("name");
+		params.name = name.value;
 		params.content = content;
 		params.tiny = document.getElementById("tiny").value;
 		params.addRows9 = addRows9;
@@ -93,9 +91,10 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 
 		if (isNull(params.name)) {
 			alert("회의록 제목은 공백을 입력할 수 없습니다.");
-			document.getElementById("name").focus();
+			name.focus();
 			return false;
 		}
+		
 		if (addRows9.length === 0) {
 			alert("최소 하나이상의 작번을 추가하세요.");
 			return false;

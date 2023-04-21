@@ -510,6 +510,52 @@ public class QuerySpecUtils {
 	}
 
 	/**
+	 * 일반적인 작성자
+	 */
+	public static void creatorQuery(QuerySpec query, int idx, Class clazz, String oid) throws Exception {
+		if (StringUtils.isNull(oid)) {
+			return;
+		}
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+		WTUser creator = (WTUser) CommonUtils.getObject(oid);
+		SearchCondition sc = new SearchCondition(clazz, "iterationInfo.creator.key.id", "=",
+				creator.getPersistInfo().getObjectIdentifier().getId());
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	/**
+	 * 일반적인 수정자
+	 */
+	public static void modifierQuery(QuerySpec query, int idx, Class clazz, String oid) throws Exception {
+		if (StringUtils.isNull(oid)) {
+			return;
+		}
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+		WTUser modifier = (WTUser) CommonUtils.getObject(oid);
+		SearchCondition sc = new SearchCondition(clazz, "iterationInfo.modifier.key.id", "=",
+				modifier.getPersistInfo().getObjectIdentifier().getId());
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	/**
+	 * 라이프사이클을 사용하는 객체 상태값 검색
+	 */
+	public static void toState(QuerySpec query, int idx, Class clazz, String value) throws Exception {
+		if (StringUtils.isNull(value)) {
+			return;
+		}
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+		SearchCondition sc = new SearchCondition(clazz, "state.state", "=", value);
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	/**
 	 * 객체 작성일 검색 From ~ To
 	 */
 	public static void toTimeGreaterAndLess(QuerySpec query, int idx, Class clazz, String column, String createdFrom,
@@ -547,6 +593,11 @@ public class QuerySpecUtils {
 	 */
 	public static void toIBAEqualsAnd(QuerySpec query, Class clazz, int idx, String attrName, String attrValue)
 			throws Exception {
+
+		if (StringUtils.isNull(attrValue)) {
+			return;
+		}
+
 		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath(attrName);
 		if (aview != null) {
 			if (query.getConditionCount() > 0) {

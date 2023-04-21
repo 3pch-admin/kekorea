@@ -426,7 +426,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				}
 			}
 
-
 			function auiBeforeRemoveRowHandler(event) {
 				const items = event.items;
 				for (let i = 0; i < items.length; i++) {
@@ -493,6 +492,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					const rowIndex = checkedItems[i].rowIndex;
 					if ((!isNull(item.creatorId) && !checker(sessionId, item.creatorId)) || (!isNull(item.modifierId) && !checker(sessionId, item.modifierId))) {
 						alert(rowIndex + "행 데이터의 작성자 혹은 수정자가 아닙니다.");
+						return false;
+					}
+					if (!item.latest) {
+						alert("최신버전의 도면이 아닙니다.");
 						return false;
 					}
 					AUIGrid.removeRow(myGridID, rowIndex);

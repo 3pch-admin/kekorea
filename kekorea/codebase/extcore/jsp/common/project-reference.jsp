@@ -40,7 +40,7 @@ String height = StringUtils.replaceToValue(request.getParameter("height"));
 			type : "LinkRenderer",
 			baseUrl : "javascript",
 			jsCallback : function(rowIndex, columnIndex, value, item) {
-				const oid = item.oid;
+				const oid = item.poid;
 				const url = getCallUrl("/project/info?oid=" + oid);
 				popup(url);
 			}
@@ -55,7 +55,7 @@ String height = StringUtils.replaceToValue(request.getParameter("height"));
 			type : "LinkRenderer",
 			baseUrl : "javascript",
 			jsCallback : function(rowIndex, columnIndex, value, item) {
-				const oid = item.oid;
+				const oid = item.poid;
 				const url = getCallUrl("/project/info?oid=" + oid);
 				popup(url);
 			}

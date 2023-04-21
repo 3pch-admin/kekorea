@@ -1,9 +1,15 @@
+<%@page import="wt.content.ContentHelper"%>
+<%@page import="wt.fc.QueryResult"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.epm.workOrder.dto.WorkOrderDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 WorkOrderDTO dto = (WorkOrderDTO) request.getAttribute("dto");
 JSONArray list = (JSONArray) request.getAttribute("list");
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+int latestVersion = (int) request.getAttribute("latestVersion");
+String loid = (String) request.getAttribute("loid");
+JSONArray history = (JSONArray) request.getAttribute("history");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
 <style type="text/css">
@@ -14,6 +20,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 }
 </style>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
+<input type="hidden" name="loid" id="loid" value="<%=loid%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -23,7 +30,20 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			</div>
 		</td>
 		<td class="right">
+			<%
+			if (isAdmin || dto.isEdit()) {
+			%>
 			<input type="button" value="수정" title="수정" onclick="modify();">
+			<%
+			}
+			%>
+			<%
+			if (isAdmin || dto.isRevise()) {
+			%>
+			<input type="button" value="개정" title="개정" onclick="revise();">
+			<%
+			}
+			%>
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -34,10 +54,13 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			<a href="#tabs-1">기본정보</a>
 		</li>
 		<li>
-			<a href="#tabs-2">도면 일람표</a>
+			<a href="#tabs-2">버전정보</a>
 		</li>
 		<li>
-			<a href="#tabs-3">결재이력</a>
+			<a href="#tabs-3">도면 일람표</a>
+		</li>
+		<li>
+			<a href="#tabs-4">결재이력</a>
 		</li>
 	</ul>
 	<div id="tabs-1">
@@ -51,6 +74,20 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			<tr>
 				<th class="lb">도면 일람표 제목</th>
 				<td class="indent5"><%=dto.getName()%></td>
+				<th>도면 일람표 번호</th>
+				<td class="indent5"><%=dto.getState()%></td>
+			</tr>
+			<tr>
+				<th class="lb">버전</th>
+				<td class="indent5"><%=dto.getVersion()%>
+					(
+					<a href="javascript:view();">
+						<font color="red">
+							<b><%=latestVersion%></b>
+						</font>
+					</a>
+					)
+				</td>
 				<th>상태</th>
 				<td class="indent5"><%=dto.getState()%></td>
 			</tr>
@@ -72,7 +109,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			<tr>
 				<th class="lb">내용</th>
 				<td class="indent5" colspan="3">
-					<textarea rows="5" readonly="readonly"><%=dto.getDescription() != null ? dto.getDescription() : ""%></textarea>
+					<textarea rows="5" readonly="readonly"><%=dto.getContent() != null ? dto.getContent() : ""%></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -94,6 +131,92 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 		</table>
 	</div>
 	<div id="tabs-2">
+	<div id="grid_wrap_" style="height: 500px; border-top: 1px solid #3180c3;"></div>
+		<script type="text/javascript">
+			let myGridID_;
+			const columns_ = [ {
+				dataField : "number",
+				headerText : "도면일람표 번호",
+				dataType : "string",
+				width : 150,
+			}, {
+				dataField : "name",
+				headerText : "도면일람표 제목",
+				dataType : "string",
+				style : "aui-left",
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const url = getCallUrl("/workOrder/view?oid=" + oid);
+						popup(url, 1600, 800);
+					}
+				},
+			}, {
+				dataField : "description",
+				headerText : "내용",
+				dataType : "string",
+				style : "aui-left"
+			}, {
+				dataField : "version",
+				headerText : "버전",
+				dataType : "numeric",
+				width : 80,
+			}, {
+				dataField : "state",
+				headerText : "상태",
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "latest",
+				headerText : "최신버전",
+				dataType : "boolean",
+				width : 80,
+				renderer : {
+					type : "CheckBoxEditRenderer"
+				},
+			}, {
+				dataField : "creator",
+				headerText : "작성자",
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "createdDate_txt",
+				headerText : "작성일",
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "primary",
+				headerText : "표지파일",
+				dataType : "string",
+				width : 80,
+				renderer : {
+					type : "TemplateRenderer",
+				},
+			}, {
+				dataField : "note",
+				headerText : "개정사유",
+				dateType : "string",
+				width : 250,
+				style : "aui-left",
+			} ]
+
+			function createAUIGrid_(columnLayout) {
+				const props = {
+					headerHeight : 30,
+					showRowNumColumn : true,
+					rowNumHeaderText : "번호",
+					selectionMode : "multipleCells",
+					noDataMessage : "결재이력이 없습니다.",
+					enableSorting : false,
+				}
+				myGridID_ = AUIGrid.create("#grid_wrap_", columnLayout, props);
+				AUIGrid.setGridData(myGridID_, <%=history%>);
+			}
+		</script>
+	</div>
+	<div id="tabs-3">
 		<table class="button-table">
 			<tr>
 				<td class="left">
@@ -221,7 +344,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			}
 		</script>
 	</div>
-	<div id="tabs-3">
+	<div id="tabs-4">
 		<!-- 결재이력 -->
 		<jsp:include page="/extcore/jsp/common/approval-history.jsp">
 			<jsp:param value="<%=dto.getOid()%>" name="oid" />
@@ -245,9 +368,20 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 
 	}
 
+	function view() {
+		const url = getCallUrl("/workOrder/view?oid=" + item.oid);
+		popup(url, 1600, 800);
+	}
+
 	function modify() {
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/workOrder/modify?oid=" + oid);
+		document.location.href = url;
+	}
+
+	function revise() {
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/workOrder/revise?oid=" + oid);
 		document.location.href = url;
 	}
 
@@ -266,6 +400,14 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					}
 					break;
 				case "tabs-2":
+					const isCreated_ = AUIGrid.isCreated(myGridID_);
+					if (isCreated_) {
+						AUIGrid.resize(myGridID_);
+					} else {
+						createAUIGrid_(columns_);
+					}
+					break;
+				case "tabs-3":
 					const isCreated = AUIGrid.isCreated(myGridID);
 					if (isCreated) {
 						AUIGrid.resize(myGridID);
@@ -273,7 +415,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 						createAUIGrid(columns);
 					}
 					break;
-				case "tabs-3":
+				case "tabs-4":
 					const isCreated100 = AUIGrid.isCreated(myGridID100);
 					if (isCreated100) {
 						AUIGrid.resize(myGridID100);
@@ -285,15 +427,18 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			}
 		});
 		createAUIGrid9(columns9);
+		createAUIGrid_(columns_);
 		createAUIGrid(columns);
 		createAUIGrid100(columns100);
 		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID_);
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID100);
 	})
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID_);
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID100);
 	});

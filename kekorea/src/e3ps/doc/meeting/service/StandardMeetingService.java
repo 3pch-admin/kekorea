@@ -8,6 +8,7 @@ import java.util.Map;
 
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.DateUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.meeting.Meeting;
 import e3ps.doc.meeting.MeetingProjectLink;
@@ -15,6 +16,12 @@ import e3ps.doc.meeting.MeetingTemplate;
 import e3ps.doc.meeting.dto.MeetingDTO;
 import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.project.Project;
+import e3ps.project.output.Output;
+import e3ps.project.output.OutputDocumentLink;
+import e3ps.project.service.ProjectHelper;
+import e3ps.project.task.Task;
+import e3ps.project.task.variable.TaskStateVariable;
+import e3ps.project.variable.ProjectStateVariable;
 import wt.clients.folder.FolderTaskLogic;
 import wt.clients.vc.CheckInOutTaskLogic;
 import wt.content.ApplicationData;
@@ -114,8 +121,43 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 			for (Map<String, String> addRow9 : addRows9) {
 				String oid = addRow9.get("oid");
 				Project project = (Project) CommonUtils.getObject(oid);
+
+				Task t = ProjectHelper.manager.getTaskByName(project, "회의록");
+				if (t == null) {
+					throw new Exception(project.getKekNumber() + "작번에 회의록 태스크가 존재하지 않습니다.");
+				}
+
 				MeetingProjectLink link = MeetingProjectLink.newMeetingProjectLink(meeting, project);
 				PersistenceHelper.manager.save(link);
+
+				// 산출물
+				Output output = Output.newOutput();
+				output.setName(meeting.getName());
+				output.setLocation(meeting.getLocation());
+				output.setTask(t);
+				output.setProject(project);
+				output.setDocument(meeting);
+				output.setOwnership(CommonUtils.sessionOwner());
+				output = (Output) PersistenceHelper.manager.save(output);
+
+				// 태스크
+				if (t.getStartDate() == null) {
+					// 중복적으로 실제 시작일이 변경 되지 않게
+					t.setStartDate(DateUtils.getCurrentTimestamp());
+					t.setState(TaskStateVariable.INWORK);
+				}
+
+				t = (Task) PersistenceHelper.manager.modify(t);
+
+				// 시작이 된 흔적이 없을 경우
+				if (project.getStartDate() == null) {
+					project.setStartDate(DateUtils.getCurrentTimestamp());
+					project.setKekState(ProjectStateVariable.KEK_DESIGN_INWORK);
+					project.setState(ProjectStateVariable.INWORK);
+					project = (Project) PersistenceHelper.manager.modify(project);
+				}
+				ProjectHelper.service.calculation(project);
+				ProjectHelper.service.commit(project);
 			}
 
 			trs.commit();
@@ -230,6 +272,15 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 				PersistenceHelper.manager.delete(link);
 			}
 
+			// 기존 산출물 연결도 제거 한다..
+			QueryResult qr = PersistenceHelper.manager.navigate(meeting, "output", OutputDocumentLink.class, false);
+			while (qr.hasMoreElements()) {
+				OutputDocumentLink link = (OutputDocumentLink) qr.nextElement();
+				Output output = link.getOutput();
+				PersistenceHelper.manager.delete(output);
+				PersistenceHelper.manager.delete(link);
+			}
+
 			Folder cFolder = CheckInOutTaskLogic.getCheckoutFolder();
 			CheckoutLink clink = WorkInProgressHelper.service.checkout(meeting, cFolder, "회의록 수정 체크 아웃");
 			Meeting newMeeting = (Meeting) clink.getWorkingCopy();
@@ -263,8 +314,43 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 			for (Map<String, String> addRow9 : addRows9) {
 				String poid = addRow9.get("oid");
 				Project project = (Project) CommonUtils.getObject(poid);
-				MeetingProjectLink link = MeetingProjectLink.newMeetingProjectLink(newMeeting, project);
-				PersistenceHelper.manager.modify(link);
+
+				Task t = ProjectHelper.manager.getTaskByName(project, "회의록");
+				if (t == null) {
+					throw new Exception(project.getKekNumber() + "작번에 회의록 태스크가 존재하지 않습니다.");
+				}
+
+				MeetingProjectLink link = MeetingProjectLink.newMeetingProjectLink(meeting, project);
+				PersistenceHelper.manager.save(link);
+
+				// 산출물
+				Output output = Output.newOutput();
+				output.setName(meeting.getName());
+				output.setLocation(meeting.getLocation());
+				output.setTask(t);
+				output.setProject(project);
+				output.setDocument(meeting);
+				output.setOwnership(CommonUtils.sessionOwner());
+				output = (Output) PersistenceHelper.manager.save(output);
+
+				// 태스크
+				if (t.getStartDate() == null) {
+					// 중복적으로 실제 시작일이 변경 되지 않게
+					t.setStartDate(DateUtils.getCurrentTimestamp());
+					t.setState(TaskStateVariable.INWORK);
+				}
+
+				t = (Task) PersistenceHelper.manager.modify(t);
+
+				// 시작이 된 흔적이 없을 경우
+				if (project.getStartDate() == null) {
+					project.setStartDate(DateUtils.getCurrentTimestamp());
+					project.setKekState(ProjectStateVariable.KEK_DESIGN_INWORK);
+					project.setState(ProjectStateVariable.INWORK);
+					project = (Project) PersistenceHelper.manager.modify(project);
+				}
+				ProjectHelper.service.calculation(project);
+				ProjectHelper.service.commit(project);
 			}
 
 			trs.commit();

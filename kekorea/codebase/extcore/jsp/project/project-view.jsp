@@ -117,7 +117,53 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<%
 					} else {
 					%>
-
+	<colgroup>
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="30">
+						<col width="140">
+						<col width="140">
+					</colgroup>
+					<tr>
+						<th class="lb rb">KEK 작번</th>
+						<th class="rb">거래처</th>
+						<th class="rb">설치장소</th>
+						<th class="rb">모델</th>
+						<th class="rb">발행일</th>
+						<th class="rb">요구 납기일</th>
+						<td rowspan="4" class="tb-none bb-none" style="width: 30px;">&nbsp;</td>
+						<th rowspan="4">진행률</th>
+						<td rowspan="4" class="center"><%=dto.getKekProgress()%>%
+						</td>
+					</tr>
+					<tr>
+						<td class="center"><%=dto.getKekNumber()%></td>
+						<td class="center"><%=dto.getCustomer_name()%></td>
+						<td class="center"><%=dto.getInstall_name()%></td>
+						<td class="center"><%=dto.getModel()%></td>
+						<td class="center"><%=dto.getPdate_txt()%></td>
+						<td class="center"><%=dto.getCustomDate_txt()%></td>
+					</tr>
+					<tr>
+						<th class="lb rb">KE 작번</th>
+						<th class="rb">USER ID</th>
+						<th class="rb">작번 유형</th>
+						<th class="rb">막종 / 막종상세</th>
+						<th class="rb" colspan="2">작업 내용</th>
+					</tr>
+					<tr>
+						<td class="center"><%=dto.getKeNumber()%></td>
+						<td class="center"><%=dto.getUserId()%></td>
+						<td class="center"><%=dto.getProjectType_name()%></td>
+						<td class="center"><%=dto.getMak_name()%>
+							/
+							<%=dto.getDetail_name()%></td>
+						<td class="indent5" colspan="2"><%=dto.getDescription()%></td>
+					</tr>
 					<%
 					}
 					%>

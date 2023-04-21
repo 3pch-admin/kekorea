@@ -13,10 +13,14 @@ import wt.util.WTException;
 @GenAsPersistable(superClass = Managed.class, interfaces = { ContentHolder.class, Ownable.class },
 
 		properties = {
+				
+				@GeneratedProperty(name = "version", type = Integer.class, javaDoc = "버전", initialValue = "1", constraints = @PropertyConstraints(required = true)),
+
+				@GeneratedProperty(name = "latest", type = Boolean.class, javaDoc = "최신여부", initialValue = "true", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "name", type = String.class, javaDoc = "T-BOM 이름", constraints = @PropertyConstraints(required = true)),
-
-				@GeneratedProperty(name = "tNumber", type = String.class, javaDoc = "TBOM NUMBER", constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(index = true, unique = true)),
+				
+				@GeneratedProperty(name = "number", type = String.class, constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(columnName = "TBOMNumber", unique = true)),
 
 				@GeneratedProperty(name = "description", type = String.class, javaDoc = "설명", constraints = @PropertyConstraints(upperLimit = 2000))
 

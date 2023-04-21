@@ -7,9 +7,18 @@
 <%
 KeDrawingDTO dto = (KeDrawingDTO) request.getAttribute("dto");
 JSONArray history = (JSONArray) request.getAttribute("history");
+int latestVersion = (int) request.getAttribute("latestVersion");
+String loid = (String) request.getAttribute("loid");
 %>
 <%@include file="/extcore/include/auigrid.jsp"%>
+<input type="hidden" name="loid" id="loid" value="<%=loid %>">
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
+<style type="text/css">
+.preView {
+	background-color: #caf4fd;
+	cursor: pointer;
+}
+</style>
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -63,7 +72,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				<th class="lb">LOT NO</th>
 				<td class="indent5"><%=dto.getLotNo()%></td>
 				<th>버전</th>
-				<td class="indent5"><%=dto.getVersion()%></td>
+				<td class="indent5"><%=dto.getVersion()%> (<a href="javascript:view();"><font color="red"><b><%=latestVersion %></b></font></a>)</td>
 			</tr>
 			<tr>
 				<th class="lb">작성자</th>
@@ -100,7 +109,145 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			</tr>
 		</table>
 	</div>
-	<div id="tabs-2"></div>
+	<div id="tabs-2">
+		<div id="grid_wrap" style="height: 350px; border-top: 1px solid #3180c3;"></div>
+		<script type="text/javascript">
+			let myGridID;
+			const columns = [ {
+				dataField : "lotNo",
+				headerText : "LOT",
+				dataType : "numeric",
+				width : 80,
+			}, {
+				dataField : "name",
+				headerText : "DRAWING TITLE",
+				dataType : "string",
+				style : "aui-left",
+				width : 250,
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						if (oid === undefined) {
+							return false;
+						}
+						const moid = item.moid;
+						const url = getCallUrl("/keDrawing/view?oid=" + oid);
+						popup(url, 1400, 700);
+					}
+				},
+			}, {
+				dataField : "keNumber",
+				headerText : "DWG NO",
+				dataType : "string",
+				width : 100,
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						if (oid === undefined) {
+							return false;
+						}
+						const moid = item.moid;
+						const url = getCallUrl("/keDrawing/view?oid=" + oid);
+						popup(url, 1400, 700);
+					}
+				},
+			}, {
+				dataField : "version",
+				headerText : "버전",
+				dataType : "numeric",
+				width : 80,
+			}, {
+				dataField : "state",
+				headerText : "상태",
+				dataType : "string",
+				width : 80,
+			}, {
+				dataField : "latest",
+				headerText : "최신버전",
+				dataType : "boolean",
+				width : 80,
+				renderer : {
+					type : "CheckBoxEditRenderer"
+				},
+			}, {
+				dataField : "creator",
+				headerText : "작성자",
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "createdDate_txt",
+				headerText : "작성일",
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "modifier",
+				headerText : "수정자",
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "modifiedDate_txt",
+				headerText : "수정일",
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "preView",
+				headerText : "미리보기",
+				width : 80,
+				style : "preView",
+				renderer : {
+					type : "ImageRenderer",
+					altField : null,
+					imgHeight : 34,
+				},
+			}, {
+				dataField : "primary",
+				headerText : "도면파일",
+				dataType : "string",
+				width : 80,
+				renderer : {
+					type : "TemplateRenderer",
+				},
+			}, {
+				dataField : "note",
+				headerText : "개정사유",
+				dateType : "string",
+				width : 250,
+				style : "aui-left",
+			} ]
+
+			function createAUIGrid(columnLayout) {
+				const props = {
+					headerHeight : 30,
+					showRowNumColumn : true,
+					rowNumHeaderText : "번호",
+					selectionMode : "multipleCells",
+					noDataMessage : "결재이력이 없습니다.",
+					enableSorting : false,
+				}
+				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+				AUIGrid.setGridData(myGridID, <%=history%>);
+			}
+
+			function auiCellClickHandler(event) {
+				const dataField = event.dataField;
+				const oid = event.item.oid;
+				const preView = event.item.preView;
+				if (dataField === "preView") {
+					if (preView === null) {
+						alert("미리보기 파일이 생성되어있지 않습니다.");
+						return false;
+					}
+					const url = getCallUrl("/aui/thumbnail?oid=" + oid);
+					popup(url);
+				}
+			}
+		</script>
+	</div>
 	<div id="tabs-3">
 		<!-- 결재이력 -->
 		<jsp:include page="/extcore/jsp/common/approval-history.jsp">
@@ -113,6 +260,12 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/aui/thumbnail?oid=" + oid);
 		popup(url);
+	}
+	
+	function view() {
+		const loid = document.getElementById("loid").value;
+		const url = getCallUrl("/keDrawing/view?oid=" + loid);
+		popup(url, 1400, 700);
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
@@ -130,6 +283,12 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 					}
 					break;
 				case "tabs-2":
+					const isCreated = AUIGrid.isCreated(myGridID);
+					if (isCreated) {
+						AUIGrid.resize(myGridID);
+					} else {
+						createAUIGrid50(columns);
+					}
 					break;
 				case "tabs-3":
 					const isCreated100 = AUIGrid.isCreated(myGridID100);
@@ -142,13 +301,17 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				}
 			}
 		});
+
+		createAUIGrid(columns);
 		createAUIGrid50(columns50);
 		createAUIGrid100(columns100);
+		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID50);
 		AUIGrid.resize(myGridID100);
 	})
 
 	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID50);
 		AUIGrid.resize(myGridID100);
 	});
