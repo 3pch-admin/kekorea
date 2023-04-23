@@ -227,6 +227,7 @@ public class WorkOrderController extends BaseController {
 			result.put("msg", REVISE_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;

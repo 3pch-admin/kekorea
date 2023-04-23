@@ -20,9 +20,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<%@include file="/extcore/include/css.jsp"%>
-<%@include file="/extcore/include/script.jsp"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/css.jsp"%>
+<%@include file="/extcore/jsp/common/script.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -399,10 +399,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const params = new Object();
 				const url = getCallUrl("/epm/list");
 				const container = document.getElementById("psize").value;
+				const fileName = document.getElementById("fileName").value;
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				const oid = document.getElementById("oid").value;
 				const psize = document.getElementById("psize").value;
 				params.container = container;
+				params.fileName = fileName;
 				params.latest = latest;
 				params.oid = oid;
 				params.psize = psize;
@@ -423,7 +425,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				exportToExcel("공지사항 리스트, 공지사항, 공지사항 리스트", exceptColumnFields, sessionName);
 			}
 
-			function toggle(container) {
+			function toggle() {
 				const iframe = parent.document.getElementById("content");
 				iframe.src = getCallUrl("/epm/library");
 			}

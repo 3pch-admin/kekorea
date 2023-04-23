@@ -10,10 +10,12 @@ import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.TBOMMasterDataLink;
 import e3ps.bom.tbom.TBOMMasterProjectLink;
 import e3ps.bom.tbom.dto.TBOMDTO;
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.epm.workOrder.WorkOrder;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import e3ps.project.Project;
@@ -40,8 +42,22 @@ public class TBOMHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 
+		boolean latest = (boolean) params.get("latest");
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(TBOMMaster.class, true);
+		if (latest) {
+			QuerySpecUtils.toBooleanAnd(query, idx, TBOMMaster.class, TBOMMaster.LATEST, true);
+		} else {
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+			query.appendOpenParen();
+			SearchCondition sc = new SearchCondition(TBOMMaster.class, TBOMMaster.LATEST, SearchCondition.IS_TRUE);
+			query.appendWhere(sc, new int[] { idx });
+			QuerySpecUtils.toBooleanOr(query, idx, TBOMMaster.class, TBOMMaster.LATEST, false);
+			query.appendCloseParen();
+		}
+
 		QuerySpecUtils.toOrderBy(query, idx, TBOMMaster.class, TBOMMaster.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
@@ -81,6 +97,8 @@ public class TBOMHelper {
 					node.put("creator", dto.getCreator());
 					node.put("createdDate_txt", dto.getCreatedDate_txt());
 					node.put("modifiedDate_txt", dto.getModifiedDate_txt());
+					node.put("version", dto.getVersion());
+					node.put("latest", dto.isLatest());
 				} else {
 					JSONObject data = new JSONObject();
 					data.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
@@ -102,12 +120,16 @@ public class TBOMHelper {
 					data.put("creator", dto.getCreator());
 					data.put("createdDate_txt", dto.getCreatedDate_txt());
 					data.put("modifiedDate_txt", dto.getModifiedDate_txt());
+					data.put("version", dto.getVersion());
+					data.put("latest", dto.isLatest());
 					children.add(data);
 				}
 				isNode++;
 			}
 			node.put("children", children);
-			list.add(node);
+			if (group.size() > 0) {
+				list.add(node);
+			}
 		}
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
@@ -121,11 +143,11 @@ public class TBOMHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(TBOMMaster.class, true);
 
-		SearchCondition sc = new SearchCondition(TBOMMaster.class, TBOMMaster.T_NUMBER, "LIKE",
+		SearchCondition sc = new SearchCondition(TBOMMaster.class, TBOMMaster.NUMBER, "LIKE",
 				number.toUpperCase() + "%");
 		query.appendWhere(sc, new int[] { idx });
 
-		ClassAttribute attr = new ClassAttribute(TBOMMaster.class, TBOMMaster.T_NUMBER);
+		ClassAttribute attr = new ClassAttribute(TBOMMaster.class, TBOMMaster.NUMBER);
 		OrderBy orderBy = new OrderBy(attr, true);
 		query.appendOrderBy(orderBy, new int[] { idx });
 
@@ -134,7 +156,7 @@ public class TBOMHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			TBOMMaster master = (TBOMMaster) obj[0];
 
-			String s = master.getTNumber().substring(master.getTNumber().lastIndexOf("-") + 1);
+			String s = master.getNumber().substring(master.getNumber().lastIndexOf("-") + 1);
 
 			int ss = Integer.parseInt(s) + 1;
 			DecimalFormat d = new DecimalFormat("0000");
@@ -307,6 +329,7 @@ public class TBOMHelper {
 		int idx_link = query.appendClassList(TBOMMasterProjectLink.class, false);
 		int idx_p = query.appendClassList(Project.class, false);
 
+		QuerySpecUtils.toBooleanAnd(query, idx, TBOMMaster.class, TBOMMaster.LATEST, true);
 		QuerySpecUtils.toInnerJoin(query, TBOMMaster.class, TBOMMasterProjectLink.class, WTAttributeNameIfc.ID_NAME,
 				"roleAObjectRef.key.id", idx, idx_link);
 		QuerySpecUtils.toInnerJoin(query, Project.class, TBOMMasterProjectLink.class, WTAttributeNameIfc.ID_NAME,
@@ -376,7 +399,8 @@ public class TBOMHelper {
 			Map<String, Object> map = new HashMap<>();
 			map.put("oid", data.getKePart().getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("lotNo", String.valueOf(data.getLotNo()));
-			map.put("code", data.getKePart().getMaster().getCode());
+//			map.put("code", data.getKePart().getMaster().getCode());
+			map.put("code", data.getCode());
 			map.put("name", data.getKePart().getMaster().getName());
 			map.put("model", data.getKePart().getMaster().getModel());
 			map.put("keNumber", data.getKePart().getMaster().getKeNumber());
@@ -384,6 +408,7 @@ public class TBOMHelper {
 			map.put("unit", data.getUnit());
 			map.put("provide", data.getProvide());
 			map.put("discontinue", data.getDiscontinue());
+			map.put("ok", true);
 			list.add(map);
 		}
 
@@ -431,5 +456,69 @@ public class TBOMHelper {
 			}
 		}
 		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 최신버전 T-BOM
+	 */
+	public TBOMMaster getLatest(TBOMMaster master) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(TBOMMaster.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, TBOMMaster.class, TBOMMaster.NUMBER, master.getNumber());
+		QuerySpecUtils.toBooleanAnd(query, idx, TBOMMaster.class, TBOMMaster.LATEST, true);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			TBOMMaster latest = (TBOMMaster) obj[0];
+			return latest;
+		}
+		return null;
+	}
+
+	/**
+	 * 버전정보
+	 */
+	public JSONArray history(TBOMMaster master) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(TBOMMaster.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, TBOMMaster.class, TBOMMaster.NUMBER, master.getNumber());
+		QuerySpecUtils.toOrderBy(query, idx, TBOMMaster.class, TBOMMaster.VERSION, true);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			TBOMMaster mm = (TBOMMaster) obj[0];
+			Map<String, Object> map = new HashMap();
+			map.put("oid", mm.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", mm.getName());
+			map.put("number", mm.getNumber());
+			map.put("description", mm.getDescription());
+			map.put("version", mm.getVersion());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(mm.getCreateTimestamp()));
+			map.put("creator", mm.getCreatorFullName());
+			map.put("state", mm.getLifeCycleState().getDisplay());
+			map.put("latest", mm.getLatest());
+			map.put("secondarys", AUIGridUtils.secondaryTemplate(mm));
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 이전버전의 T-BOM
+	 */
+	public TBOMMaster getPreData(TBOMMaster master) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(TBOMMaster.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, TBOMMaster.class, TBOMMaster.NUMBER, master.getNumber());
+		QuerySpecUtils.toEqualsAnd(query, idx, TBOMMaster.class, TBOMMaster.VERSION, master.getVersion() - 1);
+		QuerySpecUtils.toBooleanAnd(query, idx, TBOMMaster.class, TBOMMaster.LATEST, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			TBOMMaster pre = (TBOMMaster) obj[0];
+			return pre;
+		}
+		return null;
 	}
 }

@@ -1,20 +1,28 @@
+<%@page import="net.sf.json.JSONArray"%>
+<%@page import="e3ps.bom.tbom.dto.TBOMDTO"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.org.Department"%>
 <%@page import="e3ps.doc.service.DocumentHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!-- AUIGrid -->
+<%
+TBOMDTO dto = (TBOMDTO) request.getAttribute("dto");
+JSONArray list = (JSONArray) request.getAttribute("list");
+JSONArray data = (JSONArray) request.getAttribute("data");
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+%>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
 			<div class="header">
 				<img src="/Windchill/extcore/images/header.png">
-				T-BOM 등록
+				T-BOM 개정
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="등록" title="등록" onclick="create();">
-			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
+			<input type="button" value="개정" title="개정" onclick="revise();">
+			<input type="button" value="뒤로" title="뒤로" class="blue" onclick="history.go(-1);">
 		</td>
 	</tr>
 </table>
@@ -37,21 +45,21 @@
 			<tr>
 				<th class="req lb">T-BOM 제목</th>
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-500">
+					<input type="text" name="name" id="name" class="width-500" value="<%=dto.getName() %>">
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">내용</th>
 				<td class="indent5">
-					<textarea name="description" id="description" rows="5"></textarea>
+					<textarea name="description" id="description" rows="5"><%=dto.getContent() != null ? dto.getContent() : "" %></textarea>
 				</td>
 			</tr>
 			<tr>
 				<th class="req lb">KEK 작번</th>
 				<td colspan="3">
 					<jsp:include page="/extcore/jsp/common/project-include.jsp">
-						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
+						<jsp:param value="<%=dto.getOid() %>" name="oid" />
+						<jsp:param value="update" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
@@ -59,7 +67,7 @@
 				<th class="lb">첨부파일</th>
 				<td class="indent5">
 					<jsp:include page="/extcore/jsp/common/attach-secondary.jsp">
-						<jsp:param value="" name="oid" />
+						<jsp:param value="<%=dto.getOid() %>" name="oid" />
 					</jsp:include>
 				</td>
 			</tr>
@@ -67,8 +75,8 @@
 				<th class="req lb">결재</th>
 				<td>
 					<jsp:include page="/extcore/jsp/common/approval-register.jsp">
-						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
+						<jsp:param value="<%=dto.getOid() %>" name="oid" />
+						<jsp:param value="update" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
@@ -188,6 +196,7 @@
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				readyHandler();
 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+				AUIGrid.setGridData(myGridID, <%=data%>);
 			}
 
 			function contextItemHandler(event) {
@@ -205,7 +214,7 @@
 					const selectedItems = AUIGrid.getSelectedItems(myGridID);
 					const rows = AUIGrid.getRowCount(myGridID);
 					if (rows === 1) {
-						alert("최 소 하나의 행이 존재해야합니다.");
+						alert("최소 하나의 행이 존재해야합니다.");
 						return false;
 					}
 					for (let i = selectedItems.length - 1; i >= 0; i--) {
@@ -220,7 +229,7 @@
 				const checked = AUIGrid.getCheckedRowItems(myGridID);
 				const rows = AUIGrid.getRowCount(myGridID);
 				if (rows === 1) {
-					alert("최 소 하나의 행이 존재해야합니다.");
+					alert("최소 하나의 행이 존재해야합니다.");
 					return false;
 				}
 				if (checked.length === 0) {
@@ -275,14 +284,15 @@
 </div>
 
 <script type="text/javascript">
-	function create() {
+	function revise() {
 		const params = new Object();
-		const url = getCallUrl("/tbom/create");
+		const url = getCallUrl("/tbom/revise");
+		const oid = document.getElementById("oid").value;
 		const name = document.getElementById("name");
 		const description = document.getElementById("description").value;
-		const addRows = AUIGrid.getAddedRowItems(myGridID);
-		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
-		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
+		const addRows = AUIGrid.getGridData(myGridID);
+		const addRows9 = AUIGrid.getGridData(myGridID9);
+		const addRows8 = AUIGrid.getGridData(myGridID8);
 
 		addRows.sort(function(a, b) {
 			return a.sort - b.sort;
@@ -299,6 +309,7 @@
 		}
 
 		params.name = name.value;
+		params.oid = oid;
 		params.description = description;
 		params.addRows = addRows;
 		params.addRows9 = addRows9;
@@ -329,7 +340,7 @@
 						keNumber : data.keNumber,
 						lotNo : data.lotNo,
 						oid : data.oid,
-// 						code : data.code,
+						// 						code : data.code,
 						model : data.model,
 						qty : 1,
 						unit : "EA",

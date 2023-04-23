@@ -9,9 +9,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<%@include file="/extcore/include/css.jsp"%>
-<%@include file="/extcore/include/script.jsp"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/css.jsp"%>
+<%@include file="/extcore/jsp/common/script.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -133,6 +133,33 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						inline : true
 					},
 					cellMerge : true
+				}, {
+					dataField : "version",
+					headerText : "버전",
+					dataType : "string",
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
+				}, {
+					dataField : "latest",
+					headerText : "최신버전",
+					dataType : "boolean",
+					width : 80,
+					renderer : {
+						type : "CheckBoxEditRenderer"
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
 					dataField : "projectType_name",
 					headerText : "설계구분",
@@ -301,6 +328,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
+					selectionMode : "multipleCells",
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
@@ -334,8 +362,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/tbom/list");
+				// 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				const psize = document.getElementById("psize").value;
 				params.psize = psize;
+				params.latest = true;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

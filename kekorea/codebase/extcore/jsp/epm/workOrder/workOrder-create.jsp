@@ -6,7 +6,7 @@
 String workOrderType = (String) request.getAttribute("workOrderType");
 String toid = (String) request.getAttribute("toid");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <table class="button-table">
 	<tr>
 		<td class="left">

@@ -8,7 +8,7 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 JSONArray baseData = (JSONArray) request.getAttribute("baseData");
 String oid = (String) request.getAttribute("oid");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <style type="text/css">
 .row1 {
 	background-color: #99CCFF;

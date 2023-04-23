@@ -620,4 +620,238 @@ public class QuerySpecUtils {
 			query.appendWhere(sc, new int[] { idx_ });
 		}
 	}
+
+	/**
+	 * 국제 전용 IBA LIKE 검색
+	 */
+	public static void queryLikeNumber(QuerySpec _query, Class _target, int _idx, String number) throws Exception {
+		if (StringUtils.isNull(number)) {
+			return;
+		}
+		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("DWG_NO");
+		AttributeDefDefaultView aview1 = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("DWG_No");
+
+		if ((aview != null) || (aview1 != null)) {
+			if (_query.getConditionCount() > 0)
+				_query.appendAnd();
+
+			int idx = _query.appendClassList(StringValue.class, false);
+			SearchCondition sc = new SearchCondition(
+					new ClassAttribute(StringValue.class, "theIBAHolderReference.key.id"), "=",
+					new ClassAttribute(_target, "thePersistInfo.theObjectIdentifier.id"));
+			sc.setFromIndicies(new int[] { idx, _idx }, 0);
+			sc.setOuterJoin(0);
+			_query.appendWhere(sc, new int[] { idx, _idx });
+			_query.appendAnd();
+			_query.appendOpenParen();
+			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=",
+					aview1.getHierarchyID());
+
+			_query.appendWhere(sc, new int[] { idx, _idx });
+			_query.appendOr();
+			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=", aview.getHierarchyID());
+
+			_query.appendWhere(sc, new int[] { idx });
+			_query.appendCloseParen();
+
+			_query.appendAnd();
+
+			String[] str = number.split(";");
+			if (str.length == 1) {
+				sc = new SearchCondition(StringValue.class, "value2", SearchCondition.LIKE,
+						"%" + str[0].toUpperCase() + "%");
+				_query.appendWhere(sc, new int[] { idx });
+			} else if (str.length >= 2) {
+				_query.appendOpenParen();
+				sc = new SearchCondition(StringValue.class, "value2", SearchCondition.LIKE,
+						"%" + str[0].toUpperCase() + "%");
+				_query.appendWhere(sc, new int[] { idx });
+				for (int i = 1; i < str.length; i++) {
+					_query.appendOr();
+					sc = new SearchCondition(StringValue.class, "value2", SearchCondition.LIKE,
+							"%" + str[i].toUpperCase() + "%");
+					_query.appendWhere(sc, new int[] { idx });
+				}
+				_query.appendCloseParen();
+			}
+		}
+	}
+
+	/**
+	 * 국제 전용 IBA LIKE 검색
+	 */
+	public static void queryLikeName(QuerySpec _query, Class _target, int _idx, String name) throws Exception {
+		if (StringUtils.isNull(name)) {
+			return;
+		}
+
+		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("TITLE1");
+		AttributeDefDefaultView aview1 = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("TITLE2");
+		AttributeDefDefaultView aview2 = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("NAME_OF_PARTS");
+
+		if ((aview != null) || (aview1 != null) || (aview2 != null)) {
+			if (_query.getConditionCount() > 0)
+				_query.appendAnd();
+
+			int idx = _query.appendClassList(StringValue.class, false);
+			SearchCondition sc = new SearchCondition(
+					new ClassAttribute(StringValue.class, "theIBAHolderReference.key.id"), "=",
+					new ClassAttribute(_target, "thePersistInfo.theObjectIdentifier.id"));
+			sc.setFromIndicies(new int[] { idx, _idx }, 0);
+			sc.setOuterJoin(0);
+			_query.appendWhere(sc, new int[] { idx, _idx });
+			_query.appendAnd();
+			_query.appendOpenParen();
+			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=",
+					aview2.getHierarchyID());
+
+			_query.appendWhere(sc, new int[] { idx, _idx });
+			_query.appendOr();
+
+			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=",
+					aview1.getHierarchyID());
+
+			_query.appendWhere(sc, new int[] { idx, _idx });
+			_query.appendOr();
+			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=", aview.getHierarchyID());
+
+			_query.appendWhere(sc, new int[] { idx });
+			_query.appendCloseParen();
+
+			_query.appendAnd();
+
+			String[] str = name.split(";");
+			if (str.length == 1) {
+				sc = new SearchCondition(StringValue.class, "value2", SearchCondition.LIKE,
+						"%" + str[0].toUpperCase() + "%");
+				_query.appendWhere(sc, new int[] { idx });
+			} else if (str.length >= 2) {
+				_query.appendOpenParen();
+				sc = new SearchCondition(StringValue.class, "value2", SearchCondition.LIKE,
+						"%" + str[0].toUpperCase() + "%");
+				_query.appendWhere(sc, new int[] { idx });
+				for (int i = 1; i < str.length; i++) {
+					_query.appendOr();
+					sc = new SearchCondition(StringValue.class, "value2", SearchCondition.LIKE,
+							"%" + str[i].toUpperCase() + "%");
+					_query.appendWhere(sc, new int[] { idx });
+				}
+				_query.appendCloseParen();
+			}
+		}
+	}
+
+	/**
+	 * 국제 전용 IBA 검색
+	 */
+	public static void queryEqualsNumber(QuerySpec _query, Class _target, int _idx, String number) throws Exception {
+		if (StringUtils.isNull(number)) {
+			return;
+		}
+		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("DWG_NO");
+		AttributeDefDefaultView aview1 = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("DWG_No");
+
+		if ((aview != null) || (aview1 != null)) {
+			if (_query.getConditionCount() > 0)
+				_query.appendAnd();
+
+			int idx = _query.appendClassList(StringValue.class, false);
+			SearchCondition sc = new SearchCondition(
+					new ClassAttribute(StringValue.class, "theIBAHolderReference.key.id"), "=",
+					new ClassAttribute(_target, "thePersistInfo.theObjectIdentifier.id"));
+			sc.setFromIndicies(new int[] { idx, _idx }, 0);
+			sc.setOuterJoin(0);
+			_query.appendWhere(sc, new int[] { idx, _idx });
+			_query.appendAnd();
+			_query.appendOpenParen();
+			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=",
+					aview1.getHierarchyID());
+
+			_query.appendWhere(sc, new int[] { idx, _idx });
+			_query.appendOr();
+			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=", aview.getHierarchyID());
+
+			_query.appendWhere(sc, new int[] { idx });
+			_query.appendCloseParen();
+
+			_query.appendAnd();
+
+			String[] str = number.split(";");
+			if (str.length == 1) {
+				sc = new SearchCondition(StringValue.class, "value2", SearchCondition.EQUAL, str[0].toUpperCase());
+				_query.appendWhere(sc, new int[] { idx });
+			} else if (str.length >= 2) {
+				_query.appendOpenParen();
+				sc = new SearchCondition(StringValue.class, "value2", SearchCondition.EQUAL, str[0].toUpperCase());
+				_query.appendWhere(sc, new int[] { idx });
+				for (int i = 1; i < str.length; i++) {
+					_query.appendOr();
+					sc = new SearchCondition(StringValue.class, "value2", SearchCondition.EQUAL, str[i].toUpperCase());
+					_query.appendWhere(sc, new int[] { idx });
+				}
+				_query.appendCloseParen();
+			}
+		}
+	}
+
+	/**
+	 * 국제 전용 IBA 검색
+	 */
+	public static void queryEqualsName(QuerySpec _query, Class _target, int _idx, String name) throws Exception {
+		if (StringUtils.isNull(name)) {
+			return;
+		}
+
+		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("TITLE1");
+		AttributeDefDefaultView aview1 = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("TITLE2");
+		AttributeDefDefaultView aview2 = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("NAME_OF_PARTS");
+
+		if ((aview != null) || (aview1 != null) || (aview2 != null)) {
+			if (_query.getConditionCount() > 0)
+				_query.appendAnd();
+
+			int idx = _query.appendClassList(StringValue.class, false);
+			SearchCondition sc = new SearchCondition(
+					new ClassAttribute(StringValue.class, "theIBAHolderReference.key.id"), "=",
+					new ClassAttribute(_target, "thePersistInfo.theObjectIdentifier.id"));
+			sc.setFromIndicies(new int[] { idx, _idx }, 0);
+			sc.setOuterJoin(0);
+			_query.appendWhere(sc, new int[] { idx, _idx });
+			_query.appendAnd();
+			_query.appendOpenParen();
+			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=",
+					aview2.getHierarchyID());
+
+			_query.appendWhere(sc, new int[] { idx, _idx });
+			_query.appendOr();
+
+			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=",
+					aview1.getHierarchyID());
+
+			_query.appendWhere(sc, new int[] { idx, _idx });
+			_query.appendOr();
+			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=", aview.getHierarchyID());
+
+			_query.appendWhere(sc, new int[] { idx });
+			_query.appendCloseParen();
+
+			_query.appendAnd();
+
+			String[] str = name.split(";");
+			if (str.length == 1) {
+				sc = new SearchCondition(StringValue.class, "value2", SearchCondition.EQUAL, str[0].toUpperCase());
+				_query.appendWhere(sc, new int[] { idx });
+			} else if (str.length >= 2) {
+				_query.appendOpenParen();
+				sc = new SearchCondition(StringValue.class, "value2", SearchCondition.EQUAL, str[0].toUpperCase());
+				_query.appendWhere(sc, new int[] { idx });
+				for (int i = 1; i < str.length; i++) {
+					_query.appendOr();
+					sc = new SearchCondition(StringValue.class, "value2", SearchCondition.EQUAL, str[i].toUpperCase());
+					_query.appendWhere(sc, new int[] { idx });
+				}
+				_query.appendCloseParen();
+			}
+		}
+	}
 }

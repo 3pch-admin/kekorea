@@ -10,28 +10,20 @@
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 Timestamp time = (Timestamp) request.getAttribute("time");
-ArrayList<NumberRuleCode> sizes = (ArrayList<NumberRuleCode>) request.getAttribute("sizes");
-ArrayList<NumberRuleCode> drawingCompanys = (ArrayList<NumberRuleCode>) request.getAttribute("drawingCompanys");
-ArrayList<NumberRuleCode> writtenDocuments = (ArrayList<NumberRuleCode>) request.getAttribute("writtenDocuments");
-ArrayList<NumberRuleCode> businessSectors = (ArrayList<NumberRuleCode>) request.getAttribute("businessSectors");
-ArrayList<NumberRuleCode> classificationWritingDepartments = (ArrayList<NumberRuleCode>) request
-		.getAttribute("classificationWritingDepartments");
-
-JSONArray businessSector = JSONArray.fromObject(businessSectors);
-JSONArray size = JSONArray.fromObject(sizes);
-JSONArray drawingCompany = JSONArray.fromObject(drawingCompanys);
-JSONArray writtenDocument = JSONArray.fromObject(writtenDocuments);
-JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationWritingDepartments);
-
+JSONArray sizes = (JSONArray) request.getAttribute("sizes");
+JSONArray drawingCompanys = (JSONArray) request.getAttribute("drawingCompanys");
+JSONArray writtenDocuments = (JSONArray) request.getAttribute("writtenDocuments");
+JSONArray businessSectors = (JSONArray) request.getAttribute("businessSectors");
+JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("classificationWritingDepartments");
 %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title></title>
-<%@include file="/extcore/include/css.jsp"%>
-<%@include file="/extcore/include/script.jsp"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/css.jsp"%>
+<%@include file="/extcore/jsp/common/script.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -47,15 +39,6 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 				<td class="indent5">
 					<select name="businessSector" id="businessSector" class="width-200">
 						<option value="">선택</option>
-						<%
-						for (NumberRuleCode numberRuleCode : sizes) {
-							String value = numberRuleCode.getPersistInfo().getObjectIdentifier().getStringValue();
-							String display = numberRuleCode.getName();
-						%>
-						<option value="<%=value%>"><%=display%></option>
-						<%
-						}
-						%>
 					</select>
 				</td>
 				<th>작성기간</th>
@@ -68,15 +51,6 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 				<td class="indent5">
 					<select name="size" id="size" class="width-200">
 						<option value="">선택</option>
-						<%
-						for (NumberRuleCode numberRuleCode : sizes) {
-							String value = numberRuleCode.getPersistInfo().getObjectIdentifier().getStringValue();
-							String display = numberRuleCode.getName();
-						%>
-						<option value="<%=value%>"><%=display%></option>
-						<%
-						}
-						%>
 					</select>
 				</td>
 			</tr>
@@ -85,15 +59,6 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 				<td class="indent5">
 					<select name="size" id="size" class="width-200">
 						<option value="">선택</option>
-						<%
-						for (NumberRuleCode numberRuleCode : sizes) {
-							String value = numberRuleCode.getPersistInfo().getObjectIdentifier().getStringValue();
-							String display = numberRuleCode.getName();
-						%>
-						<option value="<%=value%>"><%=display%></option>
-						<%
-						}
-						%>
 					</select>
 				</td>
 				<th>도면구분</th>
@@ -132,7 +97,7 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('numberRule-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('numberRule-list');">
-					<input type="button" value="저장" title="저장" onclick="create();">
+					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
@@ -150,21 +115,28 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 450px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
-			const businessSector = <%=businessSector%>
-			const drawingCompany = <%=drawingCompany%>
-			const size = <%=size%>
-			const writtenDocument = <%=writtenDocument%>
-			const classificationWritingDepartment = <%=classificationWritingDepartment%>
+			const businessSector =
+		<%=businessSectors%>
+			const drawingCompany =
+		<%=drawingCompanys%>
+			const size =
+		<%=sizes%>
+			const writtenDocuments =
+		<%=writtenDocuments%>
+			const classificationWritingDepartments =
+		<%=classificationWritingDepartments%>
+			const list = [ "사용", "폐기" ];
 			function _layout() {
 				return [ {
 					dataField : "number",
 					headerText : "도면번호",
 					dataType : "string",
 					width : 150,
+					editable : false,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -173,6 +145,7 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 					dataField : "name",
 					headerText : "도면명",
 					dataType : "string",
+					width : 250,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -182,41 +155,42 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 					headerText : "사업부문",
 					dataType : "string",
 					width : 200,
-					renderer : {
-						type : "IconRenderer",
-						iconWidth : 16,
-						iconHeight : 16,
-						iconPosition : "aisleRight",
-						iconTableRef : {
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
-						},
-						onClick : function(event) {
-							AUIGrid.openInputer(event.pid);
-						}
-					},
-					editRenderer : {
-						type : "ComboBoxRenderer",
-						autoCompleteMode : true,
-						autoEasyMode : true,
-						matchFromFirst : false,
-						showEditorBtnOver : false,
-						list : businessSector,
-						keyField : "key",
-						valueField : "value",
-						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
-							let isValid = false;
-							for (let i = 0, len = businessSector.length; i < len; i++) {
-								if (businessSector[i]["value"] == newValue) {
-									isValid = true;
-									break;
-								}
-							}
-							return {
-								"validate" : isValid,
-								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
-							};
-						}
-					},
+					editable : false,
+					// 					renderer : {
+					// 						type : "IconRenderer",
+					// 						iconWidth : 16,
+					// 						iconHeight : 16,
+					// 						iconPosition : "aisleRight",
+					// 						iconTableRef : {
+					// 							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+					// 						},
+					// 						onClick : function(event) {
+					// 							AUIGrid.openInputer(event.pid);
+					// 						}
+					// 					},
+					// 					editRenderer : {
+					// 						type : "ComboBoxRenderer",
+					// 						autoCompleteMode : true,
+					// 						autoEasyMode : true,
+					// 						matchFromFirst : false,
+					// 						showEditorBtnOver : false,
+					// 						list : businessSector,
+					// 						keyField : "key",
+					// 						valueField : "value",
+					// 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+					// 							let isValid = false;
+					// 							for (let i = 0, len = businessSector.length; i < len; i++) {
+					// 								if (businessSector[i]["value"] == newValue) {
+					// 									isValid = true;
+					// 									break;
+					// 								}
+					// 							}
+					// 							return {
+					// 								"validate" : isValid,
+					// 								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+					// 							};
+					// 						}
+					// 					},
 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
 						let retStr = "";
 						for (let i = 0, len = businessSector.length; i < len; i++) {
@@ -226,7 +200,7 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 							}
 						}
 						return retStr == "" ? value : retStr;
-					},					
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -236,41 +210,42 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 					headerText : "도면생성회사",
 					dataType : "string",
 					width : 150,
-					renderer : {
-						type : "IconRenderer",
-						iconWidth : 16,
-						iconHeight : 16,
-						iconPosition : "aisleRight",
-						iconTableRef : {
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
-						},
-						onClick : function(event) {
-							AUIGrid.openInputer(event.pid);
-						}
-					},
-					editRenderer : {
-						type : "ComboBoxRenderer",
-						autoCompleteMode : true,
-						autoEasyMode : true,
-						matchFromFirst : false,
-						showEditorBtnOver : false,
-						list : drawingCompany,
-						keyField : "key",
-						valueField : "value",
-						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
-							let isValid = false;
-							for (let i = 0, len = drawingCompany.length; i < len; i++) {
-								if (drawingCompany[i]["value"] == newValue) {
-									isValid = true;
-									break;
-								}
-							}
-							return {
-								"validate" : isValid,
-								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
-							};
-						}
-					},
+					editable : false,
+					// 					renderer : {
+					// 						type : "IconRenderer",
+					// 						iconWidth : 16,
+					// 						iconHeight : 16,
+					// 						iconPosition : "aisleRight",
+					// 						iconTableRef : {
+					// 							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+					// 						},
+					// 						onClick : function(event) {
+					// 							AUIGrid.openInputer(event.pid);
+					// 						}
+					// 					},
+					// 					editRenderer : {
+					// 						type : "ComboBoxRenderer",
+					// 						autoCompleteMode : true,
+					// 						autoEasyMode : true,
+					// 						matchFromFirst : false,
+					// 						showEditorBtnOver : false,
+					// 						list : drawingCompany,
+					// 						keyField : "key",
+					// 						valueField : "value",
+					// 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+					// 							let isValid = false;
+					// 							for (let i = 0, len = drawingCompany.length; i < len; i++) {
+					// 								if (drawingCompany[i]["value"] == newValue) {
+					// 									isValid = true;
+					// 									break;
+					// 								}
+					// 							}
+					// 							return {
+					// 								"validate" : isValid,
+					// 								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+					// 							};
+					// 						}
+					// 					},
 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
 						let retStr = "";
 						for (let i = 0, len = drawingCompany.length; i < len; i++) {
@@ -280,13 +255,13 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 							}
 						}
 						return retStr == "" ? value : retStr;
-					},						
+					},
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 				}, {
-					dataField : "writtenDocument",
+					dataField : "classificationWritingDepartments",
 					headerText : "작성부서구분",
 					dataType : "string",
 					width : 150,
@@ -308,13 +283,13 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 						autoEasyMode : true,
 						matchFromFirst : false,
 						showEditorBtnOver : false,
-						list : writtenDocument,
+						list : classificationWritingDepartments,
 						keyField : "key",
 						valueField : "value",
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
-							for (let i = 0, len = writtenDocument.length; i < len; i++) {
-								if (writtenDocument[i]["value"] == newValue) {
+							for (let i = 0, len = classificationWritingDepartments.length; i < len; i++) {
+								if (classificationWritingDepartments[i]["value"] == newValue) {
 									isValid = true;
 									break;
 								}
@@ -327,34 +302,121 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 					},
 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
 						let retStr = "";
-						for (let i = 0, len = writtenDocument.length; i < len; i++) {
-							if (writtenDocument[i]["key"] == value) {
-								retStr = writtenDocument[i]["value"];
+						for (let i = 0, len = classificationWritingDepartments.length; i < len; i++) {
+							if (classificationWritingDepartments[i]["key"] == value) {
+								retStr = classificationWritingDepartments[i]["value"];
 								break;
 							}
 						}
 						return retStr == "" ? value : retStr;
-					},								
+					},
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 				}, {
-					dataField : "document",
+					dataField : "writtenDocuments",
 					headerText : "작성문서구분",
 					dataType : "string",
 					width : 150,
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16,
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+						},
+						onClick : function(event) {
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true,
+						autoEasyMode : true,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						list : writtenDocuments,
+						keyField : "key",
+						valueField : "value",
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							let isValid = false;
+							for (let i = 0, len = writtenDocuments.length; i < len; i++) {
+								if (writtenDocuments[i]["value"] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						}
+					},
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
+						for (let i = 0, len = writtenDocuments.length; i < len; i++) {
+							if (writtenDocuments[i]["key"] == value) {
+								retStr = writtenDocuments[i]["value"];
+								break;
+							}
+						}
+						return retStr == "" ? value : retStr;
+					},
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 				}, {
-					dataField : "latest",
-					headerText : "최신버전여부",
-					dataType : "boolean",
-					width : 100,
+					dataField : "size",
+					headerText : "사이즈",
+					dataType : "string",
+					width : 80,
 					renderer : {
-						type : "CheckBoxEditRenderer",
+						type : "IconRenderer",
+						iconWidth : 16,
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+						},
+						onClick : function(event) {
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true,
+						autoEasyMode : true,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						list : size,
+						keyField : "key",
+						valueField : "value",
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							let isValid = false;
+							for (let i = 0, len = size.length; i < len; i++) {
+								if (size[i]["value"] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						}
+					},
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
+						for (let i = 0, len = size.length; i < len; i++) {
+							if (size[i]["key"] == value) {
+								retStr = size[i]["value"];
+								break;
+							}
+						}
+						return retStr == "" ? value : retStr;
 					},
 					filter : {
 						showIcon : true,
@@ -365,6 +427,49 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 					headerText : "버전",
 					dataType : "string",
 					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "state",
+					headerText : "상태",
+					dataType : "string",
+					width : 80,
+					editable : true,
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16,
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+						},
+						onClick : function(event) {
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true,
+						autoEasyMode : true,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						list : list,
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							let isValid = false;
+							for (let i = 0, len = list.length; i < len; i++) {
+								if (list[i] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -412,14 +517,12 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					showRowCheckColumn : true,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -438,6 +541,72 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu();
 				});
+				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
+				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEnd);
+			}
+
+			function auiCellEditEnd(event) {
+				const rowIndex = event.rowIndex;
+				const dataField = event.dataField;
+				const value = event.value;
+				if (dataField === "classificationWritingDepartments") {
+					const newNumber = "K" + value;
+					AUIGrid.setCellValue(myGridID, rowIndex, "number", newNumber);
+				}
+
+				if (dataField === "writtenDocuments") {
+					const value1 = AUIGrid.getCellValue(myGridID, rowIndex, "classificationWritingDepartments");
+					const newNumber = "K" + value1 + value;
+					const url = getCallUrl("/numberRule/last?number=" + newNumber);
+					call(url, null, function(data) {
+						const next = data.next;
+						AUIGrid.setCellValue(myGridID, rowIndex, "number", newNumber + next);
+					}, "GET");
+				}
+			}
+
+			function auiCellEditBegin(event) {
+				const dataField = event.dataField;
+				const rowIndex = event.rowIndex;
+				if (dataField === "writtenDocuments") {
+					const value = AUIGrid.getCellValue(myGridID, rowIndex, "classificationWritingDepartments");
+					if (isNull(value)) {
+						alert("작성부서구분을 먼저 선택하세요.");
+						return false;
+					}
+				}
+				return true;
+			}
+
+			function save() {
+				const url = getCallUrl("/numberRule/save");
+				const params = new Object();
+				const addRows = AUIGrid.getAddedRowItems(myGridID);
+				const removeRows = AUIGrid.getRemovedItems(myGridID);
+				const editRows = AUIGrid.getEditedRowItems(myGridID);
+
+				if (addRows.length === 0 && removeRows.length === 0 && editRows.length === 0) {
+					alert("변경된 내용이 없습니다.");
+					return false;
+				}
+
+				if (!confirm("저장 하시겠습니까?")) {
+					return false;
+				}
+
+				params.addRows = addRows;
+				params.removeRows = removeRows;
+				params.editRows = editRows;
+				parent.openLayer();
+				call(url, params, function(data) {
+					alert(data.msg);
+					parent.closeLayer();
+					if (data.result) {
+						loadGridData();
+					} else {
+						parent.closeLayer();
+					}
+				});
 			}
 
 			function loadGridData() {
@@ -448,6 +617,7 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
+					console.log(data);
 					AUIGrid.removeAjaxLoader(myGridID);
 					$("input[name=sessionid]").val(data.sessionid);
 					$("input[name=curPage]").val(data.curPage);
@@ -456,8 +626,28 @@ JSONArray classificationWritingDepartment = JSONArray.fromObject(classificationW
 				})
 			}
 
+			function deleteRow() {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const sessionId = document.getElementById("sessionId").value;
+				for (let i = checkedItems.length - 1; i >= 0; i--) {
+					const item = checkedItems[i].item;
+					if (!isNull(item.creatorId) && !checker(sessionId, item.creatorId)) {
+						alert("데이터 작성자가 아닙니다.");
+						return false;
+					}
+					const rowIndex = checkedItems[i].rowIndex;
+					AUIGrid.removeRow(myGridID, rowIndex);
+				}
+			}
+
 			function addRow() {
 				const item = new Object();
+				item.version = 1;
+				item.drawingCompany = "K";
+// 				item.businessSector = "국제엘렉트릭코리아(주)";
+				item.businessSector = "K";
+				item.number = "K";
+				item.state = "사용";
 				AUIGrid.addRow(myGridID, item, "first");
 			}
 

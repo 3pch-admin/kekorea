@@ -27,6 +27,7 @@ import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.service.RequestDocumentHelper;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
+import e3ps.epm.service.EpmHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.part.kePart.KePart;
@@ -45,6 +46,7 @@ import e3ps.project.variable.ProjectStateVariable;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.doc.WTDocument;
+import wt.epm.EPMDocument;
 import wt.fc.PagingQueryResult;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
@@ -3832,6 +3834,9 @@ public class ProjectHelper {
 			return TBOMHelper.manager.jsonAuiProject(oid);
 		} else if (per instanceof RequestDocument) {
 			return RequestDocumentHelper.manager.jsonAuiProject(oid);
+			// 도면
+		} else if(per instanceof EPMDocument) {
+			return EpmHelper.manager.jsonAuiProject(oid);
 		}
 		return new JSONArray();
 	}

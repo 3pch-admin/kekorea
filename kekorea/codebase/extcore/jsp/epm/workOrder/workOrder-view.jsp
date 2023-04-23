@@ -11,7 +11,7 @@ int latestVersion = (int) request.getAttribute("latestVersion");
 String loid = (String) request.getAttribute("loid");
 JSONArray history = (JSONArray) request.getAttribute("history");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <style type="text/css">
 .compare {
 	background-color: yellow;
@@ -208,7 +208,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 					showRowNumColumn : true,
 					rowNumHeaderText : "번호",
 					selectionMode : "multipleCells",
-					noDataMessage : "결재이력이 없습니다.",
+					showAutoNoDataMessage : false,
 					enableSorting : false,
 				}
 				myGridID_ = AUIGrid.create("#grid_wrap_", columnLayout, props);

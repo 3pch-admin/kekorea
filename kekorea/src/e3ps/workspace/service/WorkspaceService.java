@@ -44,4 +44,9 @@ public interface WorkspaceService {
 	 * 결재 위임
 	 */
 	public abstract void reassign(Map<String, Object> params) throws Exception;
+
+	/**
+	 * 자가결재
+	 */
+	public abstract void self(Map<String, Object> params) throws Exception;
 }

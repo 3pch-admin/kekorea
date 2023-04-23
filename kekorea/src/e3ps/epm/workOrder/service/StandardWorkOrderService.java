@@ -208,7 +208,6 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
 		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
 		ArrayList<String> secondarys = dto.getSecondarys();
-		String location = "/Default/프로젝트/" + workOrderType + "_도면일람표";
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
@@ -217,10 +216,6 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			workOrder.setName(name);
 			workOrder.setDescription(description);
 			workOrder.setWorkOrderType(workOrderType);
-
-			Folder folder = FolderTaskLogic.getFolder(location, CommonUtils.getPDMLinkProductContainer());
-			FolderHelper.service.changeFolder((FolderEntry) workOrder, folder);
-
 			PersistenceHelper.manager.modify(workOrder);
 
 			// 기존 도면 일람표 링크 모두제거
@@ -275,7 +270,6 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			QueryResult _qr = PersistenceHelper.manager.navigate(workOrder, "project", WorkOrderProjectLink.class,
 					false);
 			while (_qr.hasMoreElements()) {
-				System.out.println("링크 삭제 후 다시 연결!");
 				WorkOrderProjectLink link = (WorkOrderProjectLink) _qr.nextElement();
 				PersistenceHelper.manager.delete(link);
 			}

@@ -4,7 +4,7 @@
 String method = (String) request.getAttribute("method");
 boolean multi = (boolean) request.getAttribute("multi");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="sessionid" id="sessionid">
 <input type="hidden" name="curPage" id="curPage">
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
@@ -72,7 +72,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 	</colgroup>
 	<tr>
 		<td valign="top">
-			<jsp:include page="/extcore/include/folder-include.jsp">
+			<jsp:include page="/extcore/jsp/common/folder-include.jsp">
 				<jsp:param value="<%=DocumentHelper.ROOT%>" name="location" />
 				<jsp:param value="product" name="container" />
 				<jsp:param value="list" name="mode" />

@@ -96,17 +96,17 @@ String height = StringUtils.replaceToValue(request.getParameter("height"));
 		headerText : "작성자",
 		dataType : "string",
 		width : 100,
-		cellMerge : true,
-		mergeRef : "name",
-		mergePolicy : "restrict"
+// 		cellMerge : true,
+// 		mergeRef : "name",
+// 		mergePolicy : "restrict"
 	}, {
 		dataField : "createdDate_txt",
 		headerText : "작성일",
 		dataType : "string",
 		width : 100,
-		cellMerge : true,
-		mergeRef : "name",
-		mergePolicy : "restrict"
+// 		cellMerge : true,
+// 		mergeRef : "name",
+// 		mergePolicy : "restrict"
 	} ]
 
 	function createAUIGrid50(columnLayout) {
@@ -117,8 +117,8 @@ String height = StringUtils.replaceToValue(request.getParameter("height"));
 			showAutoNoDataMessage : false,
 			selectionMode : "multipleCells",
 			fixedColumnCount : 1,
-			cellMergePolicy : "withNull",
-			enableCellMerge : true,
+// 			cellMergePolicy : "withNull",
+// 			enableCellMerge : true,
 		}
 		myGridID50 = AUIGrid.create("#grid_wrap50", columnLayout, props);
 		AUIGrid.setGridData(myGridID50, <%=ProjectHelper.manager.jsonAuiReferenceProject(oid)%>);

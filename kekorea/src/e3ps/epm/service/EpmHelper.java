@@ -14,6 +14,10 @@ import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.dto.EpmDTO;
+import e3ps.epm.workOrder.WorkOrder;
+import e3ps.epm.workOrder.WorkOrderDataLink;
+import e3ps.epm.workOrder.WorkOrderProjectLink;
+import e3ps.project.Project;
 import net.sf.json.JSONArray;
 import wt.clients.folder.FolderTaskLogic;
 import wt.epm.EPMDocument;
@@ -26,9 +30,6 @@ import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.folder.Folder;
 import wt.folder.IteratedFolderMemberLink;
-import wt.iba.definition.litedefinition.AttributeDefDefaultView;
-import wt.iba.definition.service.IBADefinitionHelper;
-import wt.iba.value.StringValue;
 import wt.part.WTPart;
 import wt.query.ClassAttribute;
 import wt.query.QuerySpec;
@@ -137,6 +138,9 @@ public class EpmHelper {
 		return isYcode;
 	}
 
+	/**
+	 * 도면 검색
+	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		System.out.println("검색 START = " + new Timestamp(new Date().getTime()));
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -166,12 +170,12 @@ public class EpmHelper {
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
 
 		// 캐드파일명
-		QuerySpecUtils.toEqualsAnd(query, idx, EPMDocument.class, EPMDocument.NAME, fileName);
+		QuerySpecUtils.toLikeAnd(query, idx, EPMDocument.class, EPMDocument.CADNAME, fileName);
 		QuerySpecUtils.toIBAEqualsAnd(query, EPMDocument.class, idx, "PART_CODE", partCode);
 
 		// 국제 전용 IBA 프로이 오토 캐드 검색용
-		queryNumber(query, EPMDocument.class, idx, number);
-		queryName(query, EPMDocument.class, idx, partName);
+		QuerySpecUtils.queryLikeNumber(query, EPMDocument.class, idx, number);
+		QuerySpecUtils.queryLikeName(query, EPMDocument.class, idx, partName);
 
 		// 캐드타입
 		QuerySpecUtils.toEqualsAnd(query, idx, EPMDocument.class, EPMDocument.DOC_TYPE, cadType);
@@ -236,14 +240,9 @@ public class EpmHelper {
 	// 버전이력
 	public JSONArray history(Mastered master) throws Exception {
 		ArrayList<EpmDTO> list = new ArrayList<>();
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(EPMDocument.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, EPMDocument.class, "masterReference.key.id",
-				master.getPersistInfo().getObjectIdentifier().getId());
-		QueryResult result = PersistenceHelper.manager.find(query);
+		QueryResult result = VersionControlHelper.service.allIterationsOf(master);
 		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			EPMDocument epm = (EPMDocument) obj[0];
+			EPMDocument epm = (EPMDocument) result.nextElement();
 			EpmDTO dto = new EpmDTO(epm);
 			list.add(dto);
 		}
@@ -251,130 +250,41 @@ public class EpmHelper {
 	}
 
 	/**
-	 * 관련 작번 CONFIG SHEET 랑 연결..
+	 * 관련 작번 도면과 연결된 - 도면일람표에 사용된 도면들..
 	 */
 	public JSONArray jsonAuiProject(String oid) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		EPMDocument epm = (EPMDocument) CommonUtils.getObject(oid);
 
-	/**
-	 * 국제 전용 IBA 검색
-	 */
-	private void queryNumber(QuerySpec _query, Class _target, int _idx, String number) throws Exception {
-		if (StringUtils.isNull(number)) {
-			return;
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Project.class, true);
+		int idx_l = query.appendClassList(WorkOrderProjectLink.class, false);
+		int idx_w = query.appendClassList(WorkOrder.class, false);
+		int idx_d = query.appendClassList(WorkOrderDataLink.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, Project.class, WorkOrderProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleBObjectRef.key.id", idx, idx_l);
+		QuerySpecUtils.toInnerJoin(query, WorkOrder.class, WorkOrderProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx_w, idx_l);
+		QuerySpecUtils.toInnerJoin(query, WorkOrder.class, WorkOrderDataLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx_w, idx_d);
+		QuerySpecUtils.toEqualsAnd(query, idx_d, WorkOrderDataLink.class, "roleBObjectRef.key.id", epm);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Project project = (Project) obj[0];
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
+			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("install_name", project.getInstall() != null ? project.getInstall().getName() : "");
+			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("description", project.getDescription());
+			list.add(map);
 		}
-		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("DWG_NO");
-		AttributeDefDefaultView aview1 = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("DWG_No");
-
-		if ((aview != null) || (aview1 != null)) {
-			if (_query.getConditionCount() > 0)
-				_query.appendAnd();
-
-			int idx = _query.appendClassList(StringValue.class, false);
-			SearchCondition sc = new SearchCondition(
-					new ClassAttribute(StringValue.class, "theIBAHolderReference.key.id"), "=",
-					new ClassAttribute(_target, "thePersistInfo.theObjectIdentifier.id"));
-			sc.setFromIndicies(new int[] { idx, _idx }, 0);
-			sc.setOuterJoin(0);
-			_query.appendWhere(sc, new int[] { idx, _idx });
-			_query.appendAnd();
-			_query.appendOpenParen();
-			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=",
-					aview1.getHierarchyID());
-
-			_query.appendWhere(sc, new int[] { idx, _idx });
-			_query.appendOr();
-			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=", aview.getHierarchyID());
-
-			_query.appendWhere(sc, new int[] { idx });
-			_query.appendCloseParen();
-
-			_query.appendAnd();
-
-			String[] str = number.split(";");
-			if (str.length == 1) {
-				sc = new SearchCondition(StringValue.class, "value2", SearchCondition.LIKE,
-						"%" + str[0].toUpperCase() + "%");
-				_query.appendWhere(sc, new int[] { idx });
-			} else if (str.length >= 2) {
-				_query.appendOpenParen();
-				sc = new SearchCondition(StringValue.class, "value2", SearchCondition.LIKE,
-						"%" + str[0].toUpperCase() + "%");
-				_query.appendWhere(sc, new int[] { idx });
-				for (int i = 1; i < str.length; i++) {
-					_query.appendOr();
-					sc = new SearchCondition(StringValue.class, "value2", SearchCondition.LIKE,
-							"%" + str[i].toUpperCase() + "%");
-					_query.appendWhere(sc, new int[] { idx });
-				}
-				_query.appendCloseParen();
-			}
-		}
-	}
-
-	/**
-	 * 국제 전용 IBA 검색
-	 */
-	private void queryName(QuerySpec _query, Class _target, int _idx, String name) throws Exception {
-		if (StringUtils.isNull(name)) {
-			return;
-		}
-
-		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("TITLE1");
-		AttributeDefDefaultView aview1 = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("TITLE2");
-		AttributeDefDefaultView aview2 = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath("NAME_OF_PARTS");
-
-		if ((aview != null) || (aview1 != null) || (aview2 != null)) {
-			if (_query.getConditionCount() > 0)
-				_query.appendAnd();
-
-			int idx = _query.appendClassList(StringValue.class, false);
-			SearchCondition sc = new SearchCondition(
-					new ClassAttribute(StringValue.class, "theIBAHolderReference.key.id"), "=",
-					new ClassAttribute(_target, "thePersistInfo.theObjectIdentifier.id"));
-			sc.setFromIndicies(new int[] { idx, _idx }, 0);
-			sc.setOuterJoin(0);
-			_query.appendWhere(sc, new int[] { idx, _idx });
-			_query.appendAnd();
-			_query.appendOpenParen();
-			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=",
-					aview2.getHierarchyID());
-
-			_query.appendWhere(sc, new int[] { idx, _idx });
-			_query.appendOr();
-
-			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=",
-					aview1.getHierarchyID());
-
-			_query.appendWhere(sc, new int[] { idx, _idx });
-			_query.appendOr();
-			sc = new SearchCondition(StringValue.class, "definitionReference.hierarchyID", "=", aview.getHierarchyID());
-
-			_query.appendWhere(sc, new int[] { idx });
-			_query.appendCloseParen();
-
-			_query.appendAnd();
-
-			String[] str = name.split(";");
-			if (str.length == 1) {
-				sc = new SearchCondition(StringValue.class, "value2", SearchCondition.LIKE,
-						"%" + str[0].toUpperCase() + "%");
-				_query.appendWhere(sc, new int[] { idx });
-			} else if (str.length >= 2) {
-				_query.appendOpenParen();
-				sc = new SearchCondition(StringValue.class, "value2", SearchCondition.LIKE,
-						"%" + str[0].toUpperCase() + "%");
-				_query.appendWhere(sc, new int[] { idx });
-				for (int i = 1; i < str.length; i++) {
-					_query.appendOr();
-					sc = new SearchCondition(StringValue.class, "value2", SearchCondition.LIKE,
-							"%" + str[i].toUpperCase() + "%");
-					_query.appendWhere(sc, new int[] { idx });
-				}
-				_query.appendCloseParen();
-			}
-		}
+		return JSONArray.fromObject(list);
 	}
 }

@@ -7,7 +7,6 @@ import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import wt.content.ContentHolder;
 import wt.enterprise.Managed;
-import wt.ownership.Ownable;
 import wt.util.WTException;
 
 @GenAsPersistable(superClass = Managed.class, interfaces = { ContentHolder.class },
@@ -19,12 +18,12 @@ import wt.util.WTException;
 				@GeneratedProperty(name = "latest", type = Boolean.class, javaDoc = "최신여부", initialValue = "true", constraints = @PropertyConstraints(required = true)),
 
 				@GeneratedProperty(name = "description", type = String.class, javaDoc = "설명", constraints = @PropertyConstraints(upperLimit = 2000)),
-				
+
 				@GeneratedProperty(name = "note", type = String.class, javaDoc = "개정사유", constraints = @PropertyConstraints(upperLimit = 2000)),
 
 				@GeneratedProperty(name = "name", type = String.class, javaDoc = "도면일람표 명", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "number", type = String.class, constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(columnName = "WorkOrderNumber", unique = true)),
+				@GeneratedProperty(name = "number", type = String.class, constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(columnName = "WorkOrderNumber")),
 
 				@GeneratedProperty(name = "workOrderType", type = String.class, javaDoc = "도면일람표 타입", constraints = @PropertyConstraints(required = true))
 

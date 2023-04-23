@@ -37,6 +37,7 @@ public class StandardCommonCodeService extends StandardManager implements Common
 				String description = (String) addRow.get("description");
 				boolean enable = (boolean) addRow.get("enable");
 				String poid = (String) addRow.get("poid");
+				int sort = (int) addRow.get("sort");
 
 				CommonCode commonCode = CommonCode.newCommonCode();
 				commonCode.setName(name);
@@ -44,6 +45,7 @@ public class StandardCommonCodeService extends StandardManager implements Common
 				commonCode.setCodeType(CommonCodeType.toCommonCodeType(codeType));
 				commonCode.setDescription(description);
 				commonCode.setEnable(enable);
+				commonCode.setSort(sort);
 				if (!StringUtils.isNull(poid)) {
 					CommonCode parent = (CommonCode) CommonUtils.getObject(poid);
 					commonCode.setParent(parent);
@@ -65,6 +67,7 @@ public class StandardCommonCodeService extends StandardManager implements Common
 				boolean enable = (boolean) editRow.get("enable");
 				String poid = (String) editRow.get("poid");
 				String oid = (String) editRow.get("oid");
+				int sort = (int) editRow.get("sort");
 
 				CommonCode commonCode = (CommonCode) CommonUtils.getObject(oid);
 				commonCode.setName(name);
@@ -72,6 +75,7 @@ public class StandardCommonCodeService extends StandardManager implements Common
 				commonCode.setCodeType(CommonCodeType.toCommonCodeType(codeType));
 				commonCode.setDescription(description);
 				commonCode.setEnable(enable);
+				commonCode.setSort(sort);
 				if (!StringUtils.isNull(poid)) {
 					CommonCode parent = (CommonCode) CommonUtils.getObject(poid);
 					commonCode.setParent(parent);

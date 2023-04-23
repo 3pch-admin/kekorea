@@ -10,9 +10,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<%@include file="/extcore/include/css.jsp"%>
-<%@include file="/extcore/include/script.jsp"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/css.jsp"%>
+<%@include file="/extcore/jsp/common/script.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -38,8 +38,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>문서 분류</th>
 				<td colspan="7" class="indent5">
-					<input type="hidden" name="location" value="<%=DocumentHelper.ROOT%>">
-					<span id="location"><%=DocumentHelper.ROOT%></span>
+					<input type="hidden" name="location" id="location" value="<%=DocumentHelper.DOCUMENT_ROOT%>">
+					<span id="locationText"><%=DocumentHelper.DOCUMENT_ROOT%></span>
 				</td>
 			</tr>
 			<tr>
@@ -126,15 +126,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</colgroup>
 			<tr>
 				<td valign="top">
-					<jsp:include page="/extcore/include/folder-include.jsp">
-						<jsp:param value="<%=DocumentHelper.ROOT%>" name="location" />
+					<jsp:include page="/extcore/jsp/common/folder-include.jsp">
+						<jsp:param value="<%=DocumentHelper.DOCUMENT_ROOT%>" name="location" />
 						<jsp:param value="product" name="container" />
 						<jsp:param value="list" name="mode" />
 						<jsp:param value="670" name="height" />
 					</jsp:include>
 				</td>
-				<td>&nbsp;</td>
-				<td>
+				<td valign="top">&nbsp;</td>
+				<td valign="top">
 					<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
 					<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 				</td>
@@ -307,7 +307,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function loadGridData() {
-				const url = getCallUrl("/document/list");
+				const url = getCallUrl("/doc/list");
 				// 				const url = getCallUrl("/doc/list");
 				const params = new Object();
 				const psize = document.getElementById("psize").value;
@@ -325,7 +325,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function create() {
-				const url = getCallUrl("/document/create");
+				const url = getCallUrl("/doc/create");
 				// 				const url = getCallUrl("/doc/create");
 				popup(url);
 			}

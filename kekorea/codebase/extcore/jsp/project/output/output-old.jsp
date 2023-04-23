@@ -1,19 +1,13 @@
-<%@page import="wt.org.WTUser"%>
-<%@page import="e3ps.org.service.OrgHelper"%>
-<%@page import="wt.epm.EPMDocumentType"%>
-<%@page import="e3ps.epm.service.EpmHelper"%>
-<%@page import="e3ps.part.service.PartHelper"%>
+<%@page import="java.util.Map"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="java.util.HashMap"%>
-<%@page import="wt.doc.WTDocument"%>
-<%@page import="e3ps.common.util.StringUtils"%>
-<%@page import="e3ps.common.util.CommonUtils"%>
-<%@page import="wt.fc.PagingQueryResult"%>
-<%@page import="e3ps.common.util.PageQueryUtils"%>
+<%@page import="e3ps.project.output.service.OutputHelper"%>
+<%@page import="e3ps.doc.service.DocumentHelper"%>
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.getAttribute("maks");
 %>
 <!DOCTYPE html>
 <html>
@@ -32,6 +26,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
+		<input type="hidden" name="oid" id="oid">
+		<input type="hidden" name="type" id="type" value="new">
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -44,31 +40,58 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<col width="*">
 			</colgroup>
 			<tr>
-				<th>특이사항 제목</th>
-				<td class="indent5">
-					<input type="text" name="issueName" id="issueName">
-				</td>
-				<th>설명</th>
-				<td class="indent5">
-					<input type="text" name="description" id="description">
-				</td>
-				<th>KEK 작번</th>
-				<td class="indent5">
-					<input type="text" name="partName">
-				</td>
-				<th>KE 작번</th>
-				<td class="indent5">
-					<input type="text" name="number">
+				<th>문서 분류</th>
+				<td colspan="7" class="indent5">
+					<input type="hidden" name="location" id="location" value="<%=OutputHelper.OUTPUT_OLD_ROOT%>">
+					<span id="locationText"><%=OutputHelper.OUTPUT_OLD_ROOT%></span>
 				</td>
 			</tr>
 			<tr>
+				<th>산출물 제목</th>
+				<td class="indent5">
+					<input type="text" name="name" id="name" class="width-200">
+				</td>
+				<th>산출물 번호</th>
+				<td class="indent5">
+					<input type="text" name="number" id="number" class="width-200">
+				</td>
+				<th>설명</th>
+				<td class="indent5">
+					<input type="text" name="description" id="description" class="width-200">
+				</td>
+				<th>KE 작번</th>
+				<td class="indent5">
+					<input type="text" name="keNumber" id="keNumber" class="width-200">
+				</td>
+			</tr>
+			<tr>
+				<th>KEK 작번</th>
+				<td class="indent5">
+					<input type="text" name="kekNumber" id="kekNumber" class="width-200">
+				</td>
 				<th>막종</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<select name="mak" id="mak" class="width-200">
+						<option value="">선택</option>
+						<%
+						for (Map<String, String> mak : maks) {
+						%>
+						<option value="<%=mak.get("key")%>"><%=mak.get("value")%></option>
+						<%
+						}
+						%>
+					</select>
 				</td>
+				<th>작업내용</th>
+				<td class="indent5" colspan="3">
+					<input type="text" name="description" id="description" class="width-400">
+				</td>
+			</tr>
+			<tr>
 				<th>작성자</th>
 				<td class="indent5">
 					<input type="text" name="creator" id="creator">
+					<input type="hidden" name="creatorOid" id="creatorOid">
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
@@ -76,9 +99,37 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					~
 					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
-				<th>작업 내용</th>
+				<th>버전</th>
+				<td>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="latest" value="true" checked="checked">
+						<div class="state p-success">
+							<label>
+								<b>죄신버전</b>
+							</label>
+						</div>
+					</div>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="latest" value="">
+						<div class="state p-success">
+							<label>
+								<b>모든버전</b>
+							</label>
+						</div>
+					</div>
+				</td>
+				<th>상태</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<select name="state" id="state" class="width-200">
+						<option value="">선택</option>
+						<option value="INWORK">작업 중</option>
+						<option value="UNDERAPPROVAL">승인 중</option>
+						<option value="RELEASED">승인됨</option>
+						<option value="RETURN">반려됨</option>
+						<option value="WITHDRAWN">폐기</option>
+					</select>
 				</td>
 			</tr>
 		</table>
@@ -87,16 +138,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<td class="left">
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
-					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('issue-list');">
-					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('issue-list');">
-					<%
-					if (isAdmin) {
-					%>
-					<input type="button" value="저장" title="저장" onclick="save();">
-					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
-					<%
-					}
-					%>
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('document-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('document-list');">
+					<!-- 					<input type="button" value="등록" title="등록" class="blue" onclick="create();"> -->
+					<input type="button" value="NEW" title="NEW" onclick="toggle();">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -111,33 +156,34 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
-		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
+		<table>
+			<colgroup>
+				<col width="230">
+				<col width="10">
+				<col width="*">
+			</colgroup>
+			<tr>
+				<td valign="top">
+					<jsp:include page="/extcore/jsp/common/folder-include.jsp">
+						<jsp:param value="<%=OutputHelper.OUTPUT_OLD_ROOT%>" name="location" />
+						<jsp:param value="product" name="container" />
+						<jsp:param value="list" name="mode" />
+						<jsp:param value="635" name="height" />
+					</jsp:include>
+				</td>
+				<td valign="top">&nbsp;</td>
+				<td valign="top">
+					<div id="grid_wrap" style="height: 635px; border-top: 1px solid #3180c3;"></div>
+					<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
+				</td>
+			</tr>
+		</table>
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
 				return [ {
 					dataField : "name",
-					headerText : "특이사항 제목",
-					dataType : "string",
-					style : "aui-left",
-					renderer : {
-						type : "LinkRenderer",
-						baseUrl : "javascript",
-						jsCallback : function(rowIndex, columnIndex, value, item) {
-							const oid = item.oid;
-							const url = getCallUrl("/issue/view?oid=" + oid);
-							popup(url, 1400, 600);
-						}
-					},
-					cellMerge : true,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "content",
-					headerText : "설명",
+					headerText : "문서제목",
 					dataType : "string",
 					width : 350,
 					style : "aui-left",
@@ -146,41 +192,26 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/issue/view?oid=" + oid);
+							const url = getCallUrl("/document/view?oid=" + oid);
 							popup(url, 1400, 600);
 						}
 					},
-					cellMerge : true,
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 				}, {
-					dataField : "kekNumber",
-					headerText : "KEK 작번",
+					dataField : "number",
+					headerText : "문서번호",
 					dataType : "string",
-					width : 100,
+					width : 120,
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
-						}
-					},
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "keNumber",
-					headerText : "KE 작번",
-					dataType : "string",
-					width : 100,
-					renderer : {
-						type : "LinkRenderer",
-						baseUrl : "javascript",
-						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.oid;
+							const url = getCallUrl("/document/view?oid=" + oid);
+							popup(url, 1400, 600);
 						}
 					},
 					filter : {
@@ -189,17 +220,27 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 				}, {
 					dataField : "description",
-					headerText : "작업내용",
+					headerText : "설명",
 					dataType : "string",
+					style : "aui-left",
 					width : 350,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "location",
+					headerText : "문서분류",
+					dataType : "string",
+					width : 250,
 					style : "aui-left",
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 				}, {
-					dataField : "mak_name",
-					headerText : "막종",
+					dataField : "docType",
+					headerText : "문서타입",
 					dataType : "string",
 					width : 100,
 					filter : {
@@ -207,10 +248,19 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						inline : true
 					},
 				}, {
-					dataField : "detail_name",
-					headerText : "막종상세",
+					dataField : "state",
+					headerText : "상태",
 					dataType : "string",
 					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "version",
+					headerText : "버전",
+					dataType : "string",
+					width : 80,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -228,26 +278,56 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "createdDate",
 					headerText : "작성일",
 					dataType : "date",
-					formatString : "yyyy-mm-dd",
 					width : 100,
+					formatString : "yyyy-mm-dd",
 					filter : {
 						showIcon : true,
 						inline : true,
 						displayFormatValues : true
 					},
+				}, {
+					dataField : "modifier",
+					headerText : "수정자",
+					dataType : "string",
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "modifiedDate",
+					headerText : "수정일",
+					dataType : "date",
+					width : 100,
+					formatString : "yyyy-mm-dd",
+					filter : {
+						showIcon : true,
+						inline : true,
+						displayFormatValues : true
+					},
+				}, {
+					dataField : "primary",
+					headerText : "첨부파일",
+					width : 100,
+					renderer : {
+						type : "TemplateRenderer"
+					},
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				} ]
 			}
 
-			function createAUIGrid(columns) {
+			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					showStateColumn : true,
-					showRowCheckColumn : true,
 					showRowNumColumn : true,
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
 					enableFilter : true,
 					selectionMode : "singleRow",
+					enableFilter : true,
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -255,7 +335,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
-				myGridID = AUIGrid.create("#grid_wrap", columns, props);
+				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
@@ -268,77 +348,57 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function loadGridData() {
+				const url = getCallUrl("/output/list");
 				const params = new Object();
-				const url = getCallUrl("/issue/list");
-				const issueName = document.getElementById("issueName").value;
-				const description = document.getElementById("description").value;
+				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				const psize = document.getElementById("psize").value;
-				params.issueName = issueName;
-				params.description = description;
+				params.latest = true;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
+					AUIGrid.setGridData(myGridID, data.list);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
-					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
 			}
 
-			function deleteRow() {
-				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				const sessionId = document.getElementById("sessionId").value;
-				for (let i = checkedItems.length - 1; i >= 0; i--) {
-					const item = checkedItems[i].item;
-					if (!checker(sessionId, item.creatorId)) {
-						alert("데이터 작성자가 아닙니다.");
-						return false;
-					}
-					const rowIndex = checkedItems[i].rowIndex;
-					AUIGrid.removeRow(myGridID, rowIndex);
-				}
-			}
-
-			function save() {
-				const url = getCallUrl("/issue/delete");
-				const params = new Object();
-				const removeRows = AUIGrid.getRemovedItems(myGridID);
-				if (removeRows.length === 0) {
-					alert("변경된 내용이 없습니다.");
-					return false;
-				}
-
-				params.removeRows = removeRows;
-
-				if (!confirm("저장 하시겠습니까?")) {
-					return false;
-				}
-				
-				parent.openLayer();
-				call(url, params, function(data) {
-					alert(data.msg);
-					parent.closeLayer();
-					if (data.result) {
-						loadGridData();
-					}
-				});
+			function create() {
+				const url = getCallUrl("/document/create");
+				// 				const url = getCallUrl("/doc/create");
+				popup(url);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
-				const columns = loadColumnLayout("issue-list");
+				const columns = loadColumnLayout("document-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns);
+				_createAUIGrid(_columns);
 				AUIGrid.resize(myGridID);
+				AUIGrid.resize(_myGridID);
+				selectbox("mak");
+				selectbox("state");
 				finderUser("creator");
 				twindate("created");
 				selectbox("psize");
 			});
+
+			function toggle() {
+				const iframe = parent.document.getElementById("content");
+				iframe.src = getCallUrl("/output/list");
+			}
+
+			function exportExcel() {
+				const exceptColumnFields = [ "primary" ];
+				const sessionName = document.getElementById("sessionName").value;
+				exportToExcel("공지사항 리스트", "공지사항", "공지사항 리스트", exceptColumnFields, sessionName);
+			}
 
 			document.addEventListener("keydown", function(event) {
 				const keyCode = event.keyCode || event.which;
@@ -353,6 +413,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(myGridID);
+				AUIGrid.resize(_myGridID);
 			});
 		</script>
 	</form>

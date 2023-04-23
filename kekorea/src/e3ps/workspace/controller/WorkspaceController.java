@@ -21,7 +21,6 @@ import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
 import e3ps.workspace.dto.ApprovalLineDTO;
 import e3ps.workspace.service.WorkspaceHelper;
-import net.sf.json.JSONArray;
 import wt.fc.Persistable;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -331,6 +330,23 @@ public class WorkspaceController extends BaseController {
 		try {
 			WorkspaceHelper.service.reassign(params);
 			result.put("msg", "결재가 위임 되었습니다.");
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+	
+	@Description(value = "자가 결재 함수")
+	@ResponseBody
+	@PostMapping(value = "/self")
+	public Map<String, Object> self(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkspaceHelper.service.self(params);
+			result.put("msg", APPROVAL_SUCCESS);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();

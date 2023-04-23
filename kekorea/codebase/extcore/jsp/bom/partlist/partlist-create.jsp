@@ -5,7 +5,7 @@
 <%
 String engType = (String) request.getAttribute("engType");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <style type="text/css">
 .ng {
 	background-color: yellow;

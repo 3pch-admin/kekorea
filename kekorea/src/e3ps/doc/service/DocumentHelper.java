@@ -57,21 +57,11 @@ import wt.vc.Mastered;
 import wt.vc.VersionControlHelper;
 import wt.vc.wip.WorkInProgressHelper;
 
-/**
- * 
- * @author JunHo
- * @since 2018-11-28
- * @version 1.0
- */
 public class DocumentHelper {
-
-	public static final String[] DOC_STATE_DISPLAY = new String[] { "작업 중", "승인 중", "승인됨", "반려됨" };
-
-	public static final String[] DOC_STATE_VALUE = new String[] { "INWORK", "UNDERAPPROVAL", "RELEASED", "RETURN" };
 
 	public static final String DEFAULT = "/Default";
 
-	public static final String ROOT = "/Default/문서";
+	public static final String DOCUMENT_ROOT = "/Default/문서";
 
 	public static final String OLDOUTPUT_ROOT = "/Default/문서/프로젝트";
 
@@ -2400,6 +2390,9 @@ public class DocumentHelper {
 		return map;
 	}
 
+	/**
+	 * 문서 검색
+	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<>();
 		ArrayList<DocumentDTO> list = new ArrayList<>();
@@ -2411,20 +2404,42 @@ public class DocumentHelper {
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTDocument.class, true);
-		int idx_master = query.appendClassList(WTDocumentMaster.class, false);
+		int idx_m = query.appendClassList(WTDocumentMaster.class, false);
 
 		QuerySpecUtils.toInnerJoin(query, WTDocument.class, WTDocumentMaster.class, "masterReference.key.id",
-				WTAttributeNameIfc.ID_NAME, idx, idx_master);
+				WTAttributeNameIfc.ID_NAME, idx, idx_m);
 
+		Folder folder = null;
 		if (!StringUtils.isNull(oid)) {
+			folder = (Folder) CommonUtils.getObject(oid);
+		} else {
+			folder = FolderTaskLogic.getFolder(DOCUMENT_ROOT, CommonUtils.getPDMLinkProductContainer());
+		}
 
+		if (folder != null) {
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+			int f_idx = query.appendClassList(IteratedFolderMemberLink.class, false);
+			ClassAttribute fca = new ClassAttribute(IteratedFolderMemberLink.class, "roleBObjectRef.key.branchId");
+			SearchCondition fsc = new SearchCondition(fca, "=",
+					new ClassAttribute(WTDocument.class, "iterationInfo.branchId"));
+			fsc.setFromIndicies(new int[] { f_idx, idx }, 0);
+			fsc.setOuterJoin(0);
+			query.appendWhere(fsc, new int[] { f_idx, idx });
+			query.appendAnd();
+			long fid = folder.getPersistInfo().getObjectIdentifier().getId();
+			query.appendWhere(new SearchCondition(IteratedFolderMemberLink.class, "roleAObjectRef.key.id", "=", fid),
+					new int[] { f_idx });
 		}
 
 		// 최신 이터레이션.
 		if (latest) {
-			QuerySpecUtils.toIteration(query, idx, WTDocument.class);
 			QuerySpecUtils.toLatest(query, idx, WTDocument.class);
 		}
+
+		QuerySpecUtils.toOrderBy(query, idx, WTDocument.class, WTDocument.MODIFY_TIMESTAMP, true);
+		System.out.println(query);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -2505,7 +2520,7 @@ public class DocumentHelper {
 				master.getPersistInfo().getObjectIdentifier().getId());
 //		QuerySpecUtils.toOrderBy(query, idx, WTDocument.class, CommonUtils.getFullVersion(null), true);
 		QueryResult result = PersistenceHelper.manager.find(query);
-		while(result.hasMoreElements()) {
+		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			WTDocument document = (WTDocument) obj[0];
 			DocumentDTO dto = new DocumentDTO(document);
@@ -2513,7 +2528,7 @@ public class DocumentHelper {
 		}
 		return JSONArray.fromObject(list);
 	}
-	
+
 //	public JSONArray jsonArrayAui(String oid) throws Exception {
 //		ArrayList<Map<String, String>> list = new ArrayList<>();
 //		WTDocument document = (WTDocument) CommonUtils.getObject(oid);

@@ -66,8 +66,8 @@ public class KeDrawingController extends BaseController {
 
 	@Description(value = "KE 등록 함수")
 	@ResponseBody
-	@PostMapping(value = "/create")
-	public Map<String, Object> create(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
+	@PostMapping(value = "/save")
+	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
 			throws Exception {
 		ArrayList<LinkedHashMap<String, Object>> addRows = params.get("addRows");
 		ArrayList<LinkedHashMap<String, Object>> editRows = params.get("editRows");
@@ -107,6 +107,10 @@ public class KeDrawingController extends BaseController {
 			}
 
 			result = KeDrawingHelper.manager.numberValidate(addRow, editRow);
+			if ((boolean) result.get("isExist")) {
+				result.put("result", FAIL);
+				return result;
+			}
 
 			result = KeDrawingHelper.manager.isValid(addRow, editRow);
 			// true 중복있음
@@ -115,7 +119,7 @@ public class KeDrawingController extends BaseController {
 				return result;
 			}
 
-			KeDrawingHelper.service.create(dataMap);
+			KeDrawingHelper.service.save(dataMap);
 			result.put("msg", SAVE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

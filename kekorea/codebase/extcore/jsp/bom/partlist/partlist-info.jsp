@@ -12,7 +12,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
 <!-- AUIGrid -->
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <table class="button-table">
 	<tr>
 		<td class="right">

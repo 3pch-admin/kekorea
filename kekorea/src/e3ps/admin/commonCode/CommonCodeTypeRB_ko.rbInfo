@@ -41,58 +41,14 @@ PROJECT_TYPE.sort=4
 MAK.value=\ub9c9\uc885
 MAK.sort=5
 
-#사이즈
-SIZE.value=\uc0ac\uc774\uc988
-SIZE.sort=6
-
-#년도
-YEAR.value=\ub144\ub3c4
-YEAR.sort=7
-
-#도면생성회사
-DRAWING_COMPANY.value=\ub3c4\uba74\uc0dd\uc131\ud68c\uc0ac
-DRAWING_COMPANY.sort=8
-
-#작성문서구분
-WRITTEN_DOCUMENT.value=\uc791\uc131\ubb38\uc11c
-WRITTEN_DOCUMENT.sort=9
-
-#사업부문
-BUSINESS_SECTOR.value=\uc0ac\uc5c5\ubd80\ubb38
-BUSINESS_SECTOR.sort=10
-
-#작성부서구분
-CLASSIFICATION_WRITING_DEPARTMENT.value=\uc791\uc131\ubd80\uc11c\uad6c\ubd84
-CLASSIFICATION_WRITING_DEPARTMENT.sort=11
-
 #태스크 타입
 TASK_TYPE.value=\ud0dc\uc2a4\ud06c\ud0c0\uc785
-TASK_TYPE.sort=12
+TASK_TYPE.sort=6
 
 #막종상세
 MAK_DETAIL.value=\ub9c9\uc885\uc0c1\uc138
-MAK_DETAIL.sort=13
+MAK_DETAIL.sort=7
 
 #프로젝트유저타입
 USER_TYPE.value=\ud504\ub85c\uc81d\ud2b8\uc720\uc800\ud0c0\uc785
-USER_TYPE.sort=14
-
-#사양
-SPEC.value=\uc0ac\uc591
-SPEC.sort=15
-
-#사양에 따른 옵션
-OPTION.value=\uc635\uc158
-OPTION.sort=16
-
-#CONFIG SHEET 카테고리
-CATEGORY.value=\uce74\ud14c\uace0\ub9ac
-CATEGORY.sort=17
-
-#CONFIG SHEET 아이템
-CATEGORY_ITEM.value=\uce74\ud14c\uace0\ub9ac\u0020\uc544\uc774\ud15c
-CATEGORY_ITEM.sort=18
-
-#CONFIG SHEET 사양
-CATEGORY_SPEC.value=\uce74\ud14c\uace0\ub9ac\u0020\uc0ac\uc591
-CATEGORY_SPEC.sort=19
+USER_TYPE.sort=8

@@ -9,7 +9,7 @@ Map<String, Object> primarys = (Map) request.getAttribute("primarys");
 JSONArray list = (JSONArray) request.getAttribute("list");
 %>
 <!-- AUIGrid -->
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
@@ -64,7 +64,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				<td class="indent5"><%=dto.getCreator()%></td>
 				<th>작성일</th>
 				<td class="indent5"><%=dto.getCreatedDate_txt()%></td>
-				<th>도면파일</th>
+				<th>첨부파일</th>
 				<td class="indent5">
 					<jsp:include page="/extcore/jsp/common/primary-view.jsp">
 						<jsp:param value="<%=dto.getOid()%>" name="oid" />

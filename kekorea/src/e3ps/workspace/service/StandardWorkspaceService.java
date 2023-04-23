@@ -101,7 +101,6 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			submitLine.setState(WorkspaceHelper.STATE_SUBMIT_COMPLETE);
 			PersistenceHelper.manager.save(submitLine);
 
-			System.out.println("isAgree=" + isAgree);
 			int sort = 0;
 			if (isAgree) {
 				sort = 1;
@@ -391,7 +390,6 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			trs.rollback();
 			throw e;
 		} finally {
-			System.out.println("롤백 안하나?" + trs);
 			if (trs != null)
 				trs.rollback();
 		}
@@ -581,5 +579,111 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 				trs.rollback();
 		}
 
+	}
+
+	@Override
+	public void self(Map<String, Object> params) throws Exception {
+		String oid = (String) params.get("oid"); // 객체 OID
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Persistable persistable = CommonUtils.getObject(oid);
+			WTUser sessionUser = CommonUtils.sessionUser();
+			Timestamp startTime = new Timestamp(new Date().getTime());
+			Ownership ownership = CommonUtils.sessionOwner();
+			String name = WorkspaceHelper.manager.getName(persistable);
+
+			// 마스터 생성..
+			ApprovalMaster master = ApprovalMaster.newApprovalMaster();
+			master.setName(name);
+			master.setCompleteTime(null);
+			master.setOwnership(ownership);
+			master.setPersist(persistable);
+			master.setStartTime(startTime);
+			master.setState(WorkspaceHelper.STATE_APPROVAL_COMPLETE);
+			master.setCompleteUserID(sessionUser.getName());
+			master = (ApprovalMaster) PersistenceHelper.manager.save(master);
+
+			// 기안 라인
+			ApprovalLine submitLine = ApprovalLine.newApprovalLine();
+			submitLine.setName(name);
+			submitLine.setOwnership(ownership);
+			submitLine.setMaster(master);
+			submitLine.setReads(true);
+			submitLine.setSort(-50);
+			submitLine.setStartTime(startTime);
+			submitLine.setType(WorkspaceHelper.SUBMIT_LINE);
+			submitLine.setRole(WorkspaceHelper.WORKING_SUBMIT);
+			submitLine.setDescription("자가결재 입니다.");
+			submitLine.setCompleteUserID(sessionUser.getName());
+			submitLine.setCompleteTime(startTime);
+			submitLine.setState(WorkspaceHelper.STATE_SUBMIT_COMPLETE);
+			PersistenceHelper.manager.save(submitLine);
+
+			Timestamp completeTime = new Timestamp(new Date().getTime());
+			ApprovalLine line = ApprovalLine.newApprovalLine();
+			line.setMaster(master);
+			line.setReads(true);
+			line.setOwnership(ownership);
+			line.setSort(0);
+			line.setStartTime(startTime);
+			line.setType(WorkspaceHelper.APPROVAL_LINE);
+			line.setRole(WorkspaceHelper.WORKING_APPROVAL);
+			line.setDescription("자가결재 입니다.");
+			line.setCompleteTime(startTime);
+			line.setCompleteUserID(sessionUser.getName());
+			line.setState(WorkspaceHelper.STATE_APPROVAL_COMPLETE);
+			line = (ApprovalLine) PersistenceHelper.manager.save(line);
+
+			if (persistable instanceof LifeCycleManaged) {
+				State state = State.toState("APPROVED");
+				persistable = (Persistable) LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) persistable,
+						state);
+
+				if (persistable instanceof RequestDocument) {
+					RequestDocument requestDocument = (RequestDocument) persistable;
+					settingUser(requestDocument, master);
+				}
+
+				// 최종 결재자 세팅
+				if (persistable instanceof PartListMaster) {
+					PartListMaster mm = (PartListMaster) persistable;
+					mm.setLast(sessionUser.getName());
+					PersistenceHelper.manager.modify(mm);
+					mm = (PartListMaster) PersistenceHelper.manager.refresh(mm);
+				}
+
+//					if (per instanceof RequestDocument) {
+//						RequestDocument req = (RequestDocument) per;
+//						setProjectRoleUser(req, master);
+//					} else if (per instanceof WTDocument) {
+//						setTaskStateCheck(per);
+//					}
+				sendToERP(persistable);
+			} else if (persistable instanceof ApprovalContract) {
+				ApprovalContract contract = (ApprovalContract) persistable;
+//					approvalContract(contract);
+			} else if (persistable instanceof KePart) {
+				KePart kePart = (KePart) persistable;
+				kePart.setState(Constants.State.APPROVED);
+				PersistenceHelper.manager.modify(kePart);
+			} else if (persistable instanceof KeDrawing) {
+				KeDrawing keDrawing = (KeDrawing) persistable;
+				keDrawing.setState(Constants.State.APPROVED);
+				PersistenceHelper.manager.modify(keDrawing);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			System.out.println("롤백 안하나?" + trs);
+			if (trs != null)
+				trs.rollback();
+		}
 	}
 }

@@ -3,7 +3,7 @@
 String oid = (String) request.getAttribute("oid");
 %>
 <link rel="stylesheet" href="/Windchill/extcore/css/approval.css?v=1">
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
 <table class="button-table">
 	<tr>

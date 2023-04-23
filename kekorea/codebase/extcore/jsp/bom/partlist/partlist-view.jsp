@@ -6,7 +6,7 @@ PartListDTO dto = (PartListDTO) request.getAttribute("dto");
 JSONArray list = (JSONArray) request.getAttribute("list");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <input type="hidden" name="loid" id="loid" value="<%=dto.getLoid()%>">
 <table class="button-table">

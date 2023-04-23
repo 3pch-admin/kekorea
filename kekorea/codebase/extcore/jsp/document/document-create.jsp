@@ -1,7 +1,7 @@
 <%@page import="e3ps.doc.service.DocumentHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!-- AUIGrid -->
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="location" id="location">
 <table class="button-table">
 	<tr>
@@ -20,26 +20,26 @@
 		<col width="700">
 	</colgroup>
 	<tr>
-		<th class="req">저장위치</th>
+		<th class="req lb">저장위치</th>
 		<td colspan="3" class="indent5">
-			<span id="loc"><%=DocumentHelper.ROOT%></span>
+			<span id="loc"><%=DocumentHelper.DOCUMENT_ROOT%></span>
 			<input type="button" value="폴더선택" title="폴더선택" class="blue" onclick="folder();">
 		</td>
 	</tr>
 	<tr>
 		<th class="req lb">문서제목</th>
 		<td class="indent5">
-			<input type="text" name="name" id="name" class="AXInput width-500">
+			<input type="text" name="name" id="name" class="width-500">
 		</td>
-		<th class="req lb">문서번호</th>
+		<th class="req">문서번호</th>
 		<td class="indent5">
-			<input type="text" name="number" id="number" class="AXInput width-500" readonly="readonly">
+			<input type="text" name="number" id="number" class="width-500" readonly="readonly">
 		</td>
 	</tr>
 	<tr>
 		<th class="lb">설명</th>
 		<td colspan="3" class="indent5">
-			<textarea name="description" id="description" rows="6" cols=""></textarea>
+			<textarea name="description" id="description" rows="6"></textarea>
 		</td>
 	</tr>
 	<tr>
@@ -57,17 +57,17 @@
 	<tr>
 		<th class="req lb">첨부파일</th>
 		<td class="indent5" colspan="3">
-			<jsp:include page="/extcore/include/secondary-include.jsp">
+			<jsp:include page="/extcore/jsp/common/attach-secondary.jsp">
 				<jsp:param value="" name="oid" />
-				<jsp:param value="create" name="mode" />
 			</jsp:include>
 		</td>
 	</tr>
 	<tr>
 		<th class="req lb">결재</th>
-		<td colspan="3">
-			<jsp:include page="/extcore/include/register-include.jsp">
-				<jsp:param value="200" name="height" />
+		<td colspan="5">
+			<jsp:include page="/extcore/jsp/common/approval-register.jsp">
+				<jsp:param value="" name="oid" />
+				<jsp:param value="create" name="mode" />
 			</jsp:include>
 		</td>
 	</tr>
@@ -80,8 +80,7 @@
 	}
 
 	function setNumber(item) {
-		const url = getCallUrl("/document/setNumber");
-// 		const url = getCallUrl("/doc/setNumber");
+		const url = getCallUrl("/doc/setNumber");
 		const params = new Object();
 		params.oid = item.oid;
 		call(url, params, function(data) {
@@ -90,38 +89,33 @@
 			document.getElementById("number").value = data.number;
 		})
 	}
-	
+
 	function create() {
 		if (!confirm("등록 하시겠습니까?")) {
 			return false;
 		}
-		
+
 		const params = new Object();
-		const url = getCallUrl("/document/create");
-// 		const url = getCallUrl("/doc/create");
+		const url = getCallUrl("/doc/create");
 		call(url, params, function(data) {
 			alert(data.msg);
-			if(data.result) {
+			if (data.result) {
 				opener.loadGridData();
 				self.close();
 			} else {
-				
+				closeLayer();
 			}
 		});
 	};
-	
 
 	// jquery 삭제를 해가는 쪽으로 한다..
 	document.addEventListener("DOMContentLoaded", function() {
 		// DOM이 로드된 후 실행할 코드 작성
-		_createAUIGrid(_columns);
-		_createAUIGrid_(_columns_);
-		AUIGrid.resize(_myGridID);
-		AUIGrid.resize(_myGridID_);
+		createAUIGrid8(columns8);
+		AUIGrid.resize(myGridID8);
 	});
 
 	window.addEventListener("resize", function() {
-		AUIGrid.resize(_myGridID);
-		AUIGrid.resize(_myGridID_);
+		AUIGrid.resize(myGridID8);
 	});
 </script>

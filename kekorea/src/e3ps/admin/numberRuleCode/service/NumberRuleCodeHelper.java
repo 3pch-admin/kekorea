@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.numberRuleCode.NumberRuleCode;
 import e3ps.admin.numberRuleCode.NumberRuleCodeType;
 import e3ps.admin.numberRuleCode.dto.NumberRuleCodeDTO;
@@ -27,11 +28,20 @@ public class NumberRuleCodeHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<NumberRuleCodeDTO> list = new ArrayList<>();
+		String name = (String) params.get("name");
+		String code = (String) params.get("code");
+		String codeType = (String) params.get("codeType");
+		String description = (String) params.get("description");
+		boolean enable = (boolean) params.get("enable");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(NumberRuleCode.class, true);
-
-		QuerySpecUtils.toBooleanAnd(query, idx, NumberRuleCode.class, NumberRuleCode.ENABLE, true);
+		QuerySpecUtils.toLikeAnd(query, idx, NumberRuleCode.class, NumberRuleCode.NAME, name);
+		QuerySpecUtils.toLikeAnd(query, idx, NumberRuleCode.class, NumberRuleCode.CODE, code);
+		QuerySpecUtils.toLikeAnd(query, idx, NumberRuleCode.class, NumberRuleCode.DESCRIPTION, description);
+		QuerySpecUtils.toLikeAnd(query, idx, NumberRuleCode.class, NumberRuleCode.CODE_TYPE, codeType);
+		QuerySpecUtils.toBooleanAnd(query, idx, NumberRuleCode.class, NumberRuleCode.ENABLE, enable);
+		QuerySpecUtils.toOrderBy(query, idx, NumberRuleCode.class, NumberRuleCode.CODE_TYPE, false);
 		QuerySpecUtils.toOrderBy(query, idx, NumberRuleCode.class, NumberRuleCode.SORT, false);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
@@ -83,5 +93,45 @@ public class NumberRuleCodeHelper {
 			list.add(map);
 		}
 		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * NumberRuleCodeType 과 일치하는 데이터 JSONArray 로 변경 후리턴
+	 */
+	public JSONArray parseJson(String numberRuleCodeType) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(NumberRuleCode.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, NumberRuleCode.class, NumberRuleCode.CODE_TYPE, numberRuleCodeType);
+		QuerySpecUtils.toBooleanAnd(query, idx, NumberRuleCode.class, NumberRuleCode.ENABLE, true);
+		QuerySpecUtils.toOrderBy(query, idx, NumberRuleCode.class, NumberRuleCode.SORT, false);
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			NumberRuleCode numberRuleCode = (NumberRuleCode) obj[0];
+			Map<String, String> map = new HashMap<>();
+			map.put("key", numberRuleCode.getCode());
+			map.put("value", numberRuleCode.getName());
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 코드타입과 코드가 일치하는 NumberRuleCode 가져오기
+	 */
+	public NumberRuleCode getNumberRuleCode(String numberRuleCodeType, String code) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(NumberRuleCode.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, NumberRuleCode.class, NumberRuleCode.CODE_TYPE, numberRuleCodeType);
+		QuerySpecUtils.toEqualsAnd(query, idx, NumberRuleCode.class, NumberRuleCode.CODE, code);
+		QuerySpecUtils.toBooleanAnd(query, idx, NumberRuleCode.class, NumberRuleCode.ENABLE, true);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			NumberRuleCode numberRuleCode = (NumberRuleCode) obj[0];
+			return numberRuleCode;
+		}
+		return null;
 	}
 }

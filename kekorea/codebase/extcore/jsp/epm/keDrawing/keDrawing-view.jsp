@@ -10,7 +10,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 int latestVersion = (int) request.getAttribute("latestVersion");
 String loid = (String) request.getAttribute("loid");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="loid" id="loid" value="<%=loid %>">
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <style type="text/css">

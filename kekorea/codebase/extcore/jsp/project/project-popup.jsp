@@ -15,7 +15,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 String before = (String)request.getAttribute("before");
 String end = (String)request.getAttribute("end");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 <input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 <input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
