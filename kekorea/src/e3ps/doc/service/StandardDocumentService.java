@@ -27,7 +27,7 @@ public class StandardDocumentService extends StandardManager implements Document
 	public void register(Map<String, Object> params) throws Exception {
 		String name = (String) params.get("name"); // 제목
 		String description = (String) params.get("description"); // 의견
-		ArrayList<Map<String, String>> _addRows = (ArrayList<Map<String, String>>) params.get("_addRows"); // 결재문서
+		ArrayList<Map<String, String>> addRows = (ArrayList<Map<String, String>>) params.get("addRows"); // 결재문서
 		ArrayList<Map<String, String>> agreeRows = (ArrayList<Map<String, String>>) params.get("agreeRows"); // 검토
 		ArrayList<Map<String, String>> approvalRows = (ArrayList<Map<String, String>>) params.get("approvalRows"); // 결재
 		ArrayList<Map<String, String>> receiveRows = (ArrayList<Map<String, String>>) params.get("receiveRows"); // 수신
@@ -44,8 +44,8 @@ public class StandardDocumentService extends StandardManager implements Document
 			contract.setContractType("DOCUMENT");
 			contract = (ApprovalContract) PersistenceHelper.manager.save(contract);
 
-			for (Map<String, String> _addRow : _addRows) {
-				String oid = _addRow.get("oid"); // document oid
+			for (Map<String, String> addRow : addRows) {
+				String oid = addRow.get("oid"); // document oid
 				WTDocument document = (WTDocument) CommonUtils.getObject(oid);
 				ApprovalContractPersistableLink aLink = ApprovalContractPersistableLink
 						.newApprovalContractPersistableLink(contract, document);

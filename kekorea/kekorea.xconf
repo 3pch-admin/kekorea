@@ -76,5 +76,39 @@
              value="dwg zip"/>
    <Property name="publish.afterloadermethod.copyToEPM.downloadToLocal" overridable="true"
              targetFile="codebase/WEB-INF/conf/wvs.properties"
-             value="true"/>	             	                                                    		
+             value="true"/>	             	   
+             
+	<!-- KEK PROJECT SCHEDULE -->
+   <Property name="jobTypes6" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="kekJob"/>      
+   <Property name="kekJob.icon" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="netmarkets/images/repair_failure.gif"/>   
+   <Property name="kekJob.resourceBase" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="com.ptc.wvs.common.util.JobTypeResource"/>   
+   <Property name="kekJob.scheduledProcessorClass" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="e3ps.project.schedule.KEKScheduleProcessor"/>
+             
+   <!-- Add Schedule List -->
+   <Property name="schedulejobs30" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="KEK_PROJECT_SCHEDULE_BATCH"/>   
+   <Property name="KEK_PROJECT_SCHEDULE_BATCH.class" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="e3ps.project.schedule.KEKScheduleJobs"/>
+   <Property name="KEK_PROJECT_SCHEDULE_BATCH.description" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="KEK_PROJECT_SCHEDULE_BATCH"/>
+   <Property name="KEK_PROJECT_SCHEDULE_BATCH.enableOnContainers" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="true"/>
+   <Property name="KEK_PROJECT_SCHEDULE_BATCH.jobType" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="kekJob"/>   
+   <Property name="KEK_PROJECT_SCHEDULE_BATCH.method" overridable="true"
+             targetFile="codebase/WEB-INF/conf/wvs.properties"
+             value="startBatch"/>                                                                            		
 </Configuration>

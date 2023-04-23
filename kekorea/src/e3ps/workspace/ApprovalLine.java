@@ -9,7 +9,6 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
-import lombok.Getter;
 import wt.fc.WTObject;
 import wt.util.WTException;
 

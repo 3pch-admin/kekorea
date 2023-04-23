@@ -184,74 +184,44 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 					type : "LinkRenderer",
 					baseUrl : "javascript",
 				},
-				filter : {
-					showIcon : true,
-					inline : true
-				},
 			}, {
 				dataField : "version",
 				headerText : "버전",
 				dataType : "string",
 				width : 80,
-				filter : {
-					showIcon : false,
-					inline : false
-				},
 			}, {
 				dataField : "creator",
 				headerText : "작성자",
 				dataType : "string",
 				width : 100,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
 			}, {
 				dataField : "createdDate_txt",
 				headerText : "작성일",
 				dataType : "string",
 				width : 130,
-				filter : {
-					showIcon : true,
-					inline : true,
-				},
 			}, {
 				dataField : "modifier",
 				headerText : "수정자",
 				dataType : "string",
 				width : 100,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
 			}, {
 				dataField : "modifiedDate_txt",
 				headerText : "수정일",
 				dataType : "string",
 				width : 130,
-				filter : {
-					showIcon : true,
-					inline : true,
-				}
 			} ]
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
 					showRowNumColumn : true,
 					rowNumHeaderText : "번호",
-					enableFilter : true,
 					selectionMode : "multipleCells",
-					showInlineFilter : true,
-					filterLayerWidth : 320,
-					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 					showAutoNoDataMessage : false,
 					enableSorting : false,
 					autoGridHeight : true,
 				}
 				myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-				AUIGrid.setGridData(myGridID,
-		<%=list%>
-			);
+				AUIGrid.setGridData(myGridID, <%=list%>);
 			}
 		</script>
 	</div>

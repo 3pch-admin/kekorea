@@ -22,7 +22,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -371,7 +371,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const props = {
 					headerHeight : 30,
 					showRowNumColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
 					enableFilter : true,

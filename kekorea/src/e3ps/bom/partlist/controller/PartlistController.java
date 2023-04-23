@@ -23,7 +23,6 @@ import e3ps.common.util.CommonUtils;
 import e3ps.org.Department;
 import e3ps.org.People;
 import e3ps.project.Project;
-import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.fc.Persistable;
 import wt.org.WTUser;
@@ -55,7 +54,7 @@ public class PartlistController extends BaseController {
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
-			result.put("result", false);
+			result.put("result", FAIL);
 			result.put("msg", e.toString());
 		}
 		return result;
@@ -254,21 +253,5 @@ public class PartlistController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
-	}
-
-	@Description(value = "수배된 통합 페이지")
-	@GetMapping(value = "/integrated")
-	public ModelAndView integrated(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		boolean isAdmin = CommonUtils.isAdmin();
-		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		Project project = (Project) CommonUtils.getObject(oid);
-		ArrayList<Map<String, Object>> list = PartlistHelper.manager.integratedData(project);
-		model.addObject("project", project);
-		model.addObject("sessionUser", sessionUser);
-		model.addObject("isAdmin", isAdmin);
-		model.addObject("integratedData", JSONArray.fromObject(list));
-		model.setViewName("popup:/bom/partlist/partlist-integrated");
-		return model;
 	}
 }

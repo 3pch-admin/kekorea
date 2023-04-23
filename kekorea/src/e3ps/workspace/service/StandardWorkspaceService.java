@@ -14,7 +14,6 @@ import e3ps.common.util.StringUtils;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.epm.keDrawing.KeDrawing;
-import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.erp.service.ErpHelper;
 import e3ps.org.Department;
 import e3ps.org.People;
@@ -32,6 +31,7 @@ import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
 import e3ps.workspace.notification.service.NotificationHelper;
 import wt.doc.WTDocument;
+import wt.epm.EPMDocument;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -40,6 +40,7 @@ import wt.lifecycle.LifeCycleManaged;
 import wt.lifecycle.State;
 import wt.org.WTUser;
 import wt.ownership.Ownership;
+import wt.part.WTPart;
 import wt.pom.Transaction;
 import wt.query.QuerySpec;
 import wt.services.StandardManager;
@@ -67,8 +68,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			Timestamp startTime = new Timestamp(new Date().getTime());
 			Ownership ownership = CommonUtils.sessionOwner();
 			String name = WorkspaceHelper.manager.getName(persistable);
-//			String description = WorkspaceHelper.manager.getDescription(persistable);
-			String description = "";
+			String description = WorkspaceHelper.manager.getDescription(persistable);
 
 			// 마스터 생성..
 			ApprovalMaster master = ApprovalMaster.newApprovalMaster();
@@ -370,7 +370,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 					sendToERP(per);
 				} else if (per instanceof ApprovalContract) {
 					ApprovalContract contract = (ApprovalContract) per;
-//					approvalContract(contract);
+					setApprovalContractState(contract);
 				} else if (per instanceof KePart) {
 					KePart kePart = (KePart) per;
 					kePart.setState(Constants.State.APPROVED);
@@ -392,6 +392,43 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 		} finally {
 			if (trs != null)
 				trs.rollback();
+		}
+	}
+
+	/**
+	 * 일괄결재 객체 상태값 설정
+	 */
+	private void setApprovalContractState(ApprovalContract contract) throws Exception {
+		QueryResult result = PersistenceHelper.manager.navigate(contract, "persist",
+				ApprovalContractPersistableLink.class, false);
+		while (result.hasMoreElements()) {
+			ApprovalContractPersistableLink link = (ApprovalContractPersistableLink) result.nextElement();
+			Persistable per = link.getPersist();
+
+			if (per instanceof WTPart) {
+				WTPart part = (WTPart) per;
+//				part = (WTPart) CommonUtils.getLatestVersion(part); // 다시 생각해봐야할거..같은데
+				State s = State.toState("APPROVED");
+				LifeCycleHelper.service.setLifeCycleState(part, s);
+			} else if (per instanceof EPMDocument) {
+				EPMDocument epm = (EPMDocument) per;
+//				epm = (EPMDocument) CommonUtils.getLatestVersion(epm);
+				State s = State.toState("APPROVED");
+				LifeCycleHelper.service.setLifeCycleState(epm, s);
+
+//				WTPart part = EpmHelper.manager.getPart(epm);
+//				if (part != null) {
+//					part = (WTPart) CommonUtils.getLatestVersion(part);
+//					LifeCycleHelper.service.setLifeCycleState(part, s);
+//				}
+
+			} else if (per instanceof WTDocument) {
+				WTDocument doc = (WTDocument) per;
+//				doc = (WTDocument) CommonUtils.getLatestVersion(doc);
+				State s = State.toState("APPROVED");
+				LifeCycleHelper.service.setLifeCycleState(doc, s);
+				sendToERP(per); // erp 전송을 산출물만 있을듯.
+			}
 		}
 	}
 

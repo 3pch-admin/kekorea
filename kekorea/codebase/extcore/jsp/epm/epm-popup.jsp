@@ -1,87 +1,109 @@
+<%@page import="e3ps.org.service.OrgHelper"%>
+<%@page import="wt.epm.EPMDocumentType"%>
 <%@page import="e3ps.epm.service.EpmHelper"%>
+<%@page import="e3ps.part.service.PartHelper"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="wt.doc.WTDocument"%>
+<%@page import="e3ps.common.util.StringUtils"%>
+<%@page import="e3ps.common.util.CommonUtils"%>
+<%@page import="wt.fc.PagingQueryResult"%>
+<%@page import="e3ps.common.util.PageQueryUtils"%>
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-String method = (String) request.getAttribute("method");
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 boolean multi = (boolean) request.getAttribute("multi");
+String method = (String) request.getAttribute("method");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
+<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 <input type="hidden" name="sessionid" id="sessionid">
 <input type="hidden" name="curPage" id="curPage">
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
-<table class="button-table">
-	<tr>
-		<td class="left">
-			<div class="header">
-				<img src="/Windchill/extcore/images/header.png">
-				도면 조회
-			</div>
-		</td>
-	</tr>
-</table>
+<input type="hidden" name="oid" id="oid">
+<!-- 폴더 OID -->
 
-<table class="search-table">
+<table class="search-table" id="product-table">
 	<colgroup>
-		<col width="250">
-		<col width="400">
-		<col width="250">
-		<col width="400">
-		<col width="250">
-		<col width="400">
-		<col width="250">
-		<col width="400">
+		<col width="130">
+		<col width="*">
+		<col width="130">
+		<col width="*">
+		<col width="130">
+		<col width="*">
+		<col width="130">
+		<col width="*">
 	</colgroup>
 	<tr>
-		<th class="lb">부품분류</th>
-		<td class="indent5" colspan="7"><%=EpmHelper.PRODUCT_ROOT%></td>
-	</tr>
-	<tr>
-		<th class="lb">규격</th>
-		<td class="indent5">
-			<input type="text" name="standard" id="standard">
-		</td>
-		<th class="lb">품번</th>
-		<td class="indent5">
-			<input type="text" name="partNumber">
-		</td>
-		<th class="lb">품명</th>
-		<td class="indent5">
-			<input type="text" name="partName">
-		</td>
-		<th class="lb">REFERENCE 도면</th>
-		<td class="indent5">
-			<input type="text" name="partName">
+		<th>도면분류</th>
+		<td colspan="7" class="indent5">
+			<input type="hidden" name="location" id="location" value="<%=EpmHelper.DEFAULT_ROOT%>">
+			<span id="locationText"><%=EpmHelper.DEFAULT_ROOT%></span>
 		</td>
 	</tr>
 	<tr>
-		<th class="lb">MATERIAL</th>
+		<th>파일이름</th>
 		<td class="indent5">
-			<input type="text" name="partName">
+			<input type="text" name="fileName" id="fileName">
 		</td>
-		<th class="lb">REMARK</th>
+		<th>품번</th>
 		<td class="indent5">
-			<input type="text" name="partName">
+			<input type="text" name="partCode" id="partCode">
 		</td>
-		<th class="lb">파일이름</th>
-		<td class="indent5" colspan="3">
-			<input type="text" name="partName">
+		<th>품명</th>
+		<td class="indent5">
+			<input type="text" name="partName" id="partName">
+		</td>
+		<th>규격</th>
+		<td class="indent5">
+			<input type="text" name="number" id="number">
 		</td>
 	</tr>
 	<tr>
-		<th class="lb">작성자</th>
+		<th>캐드타입</th>
+		<td class="indent5">
+			<select name="cadType" id="cadType" class="width-200">
+				<option value="">선택</option>
+				<option value="CADASSEMBLY">어셈블리 (ASSEMBLY)</option>
+				<option value="CADCOMPONENT">파트 (PART)</option>
+				<option value="CADDRAWING">도면 (DRAWING)</option>
+			</select>
+		</td>
+		<th>MATERIAL</th>
+		<td class="indent5">
+			<input type="text" name="material" id="material">
+		</td>
+		<th>REMARK</th>
+		<td class="indent5">
+			<input type="text" name="remark" id="remark">
+		</td>
+		<th>REFERENCE 도면´</th>
+		<td class="indent5">
+			<input type="text" name="reference" id="reference">
+		</td>
+	</tr>
+	<tr>
+		<th>작성자</th>
 		<td class="indent5">
 			<input type="text" name="creator" id="creator">
+			<input type="hidden" name="creatorOid" id="creatorOid">
 		</td>
-		<th class="lb">작성일</th>
+		<th>작성일</th>
 		<td class="indent5">
 			<input type="text" name="createdFrom" id="createdFrom" class="width-100">
 			~
 			<input type="text" name="createdTo" id="createdTo" class="width-100">
 		</td>
-		<th class="lb">수정자</th>
+		<th>수정자</th>
 		<td class="indent5">
 			<input type="text" name="modifier" id="modifier">
+			<input type="hidden" name="modifierOid" id="modifierOid">
 		</td>
-		<th class="lb">수정일</th>
+		<th>수정일</th>
 		<td class="indent5">
 			<input type="text" name="modifiedFrom" id="modifiedFrom" class="width-100">
 			~
@@ -89,13 +111,18 @@ boolean multi = (boolean) request.getAttribute("multi");
 		</td>
 	</tr>
 	<tr>
-		<th class="lb">상태</th>
+		<th>상태</th>
 		<td class="indent5">
 			<select name="state" id="state" class="width-200">
-				<option value="">선택</option>
+				<option value="">선택</option>
+				<option value="INWORK">작업 중</option>
+				<option value="UNDERAPPROVAL">승인 중</option>
+				<option value="RELEASED">승인됨</option>
+				<option value="RETURN">반려됨</option>
+				<option value="WITHDRAWN">폐기</option>
 			</select>
 		</td>
-		<th class="lb">버전</th>
+		<th>버전</th>
 		<td colspan="5">
 			&nbsp;
 			<div class="pretty p-switch">
@@ -111,7 +138,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 				<input type="radio" name="latest" value="">
 				<div class="state p-success">
 					<label>
-						<b>모든버전</b>
+						<b>모든버전</b>
 					</label>
 				</div>
 			</div>
@@ -124,6 +151,9 @@ boolean multi = (boolean) request.getAttribute("multi");
 		<td class="left">
 			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('epm-popup');">
 			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('epm-popup');">
+			<input type="button" value="추가" title="추가" class="blue" onclick="<%=method%>();">
+			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
+			<!-- 					<input type="button" value="라이브러리" title="라이브러리" class="blue" onclick="toggle('library');"> -->
 		</td>
 		<td class="right">
 			<select name="psize" id="psize">
@@ -133,10 +163,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 				<option value="200">200</option>
 				<option value="300">300</option>
 			</select>
-			<input type="button" value="추가" title="추가" class="red" onclick="<%=method%>();">
-			<input type="button" value="조회" title="조회" class="blue" onclick="loadGridData();">
-			<input type="button" value="초기화" title="초기화" class="green">
-			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
+			<input type="button" value="조회" title="조회" onclick="loadGridData();">
 		</td>
 	</tr>
 </table>
@@ -150,197 +177,272 @@ boolean multi = (boolean) request.getAttribute("multi");
 	<tr>
 		<td valign="top">
 			<jsp:include page="/extcore/jsp/common/folder-include.jsp">
-				<jsp:param value="<%=EpmHelper.PRODUCT_ROOT%>" name="location" />
+				<jsp:param value="<%=EpmHelper.DEFAULT_ROOT%>" name="location" />
 				<jsp:param value="product" name="container" />
 				<jsp:param value="list" name="mode" />
-				<jsp:param value="600" name="height" />
+				<jsp:param value="455" name="height" />
 			</jsp:include>
 		</td>
 		<td>&nbsp;</td>
 		<td>
-			<div id="grid_wrap" style="height: 600px; border-top: 1px solid #3180c3;"></div>
+			<div id="grid_wrap" style="height: 455px; border-top: 1px solid #3180c3;"></div>
 			<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
-			<script type="text/javascript">
-				let myGridID;
-				function _layout() {
-					return [ {
-						dataField : "part_code",
-						headerText : "품번",
-						dataType : "string",
-						width : 130,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "name_of_parts",
-						headerText : "품명",
-						dataType : "string",
-						width : 350,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "dwg_no",
-						headerText : "규격",
-						dataType : "string",
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "material",
-						headerText : "MATERIAL",
-						dataType : "string",
-						width : 130,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "remark",
-						headerText : "REMARK",
-						dataType : "string",
-						width : 150,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "reference",
-						headerText : "REFERENCE 도면",
-						dataType : "string",
-						width : 150,
-						filter : {
-							showIcon : true,
-							inline : true
-						},
-					}, {
-						dataField : "version",
-						headerText : "버전",
-						dataType : "string",
-						width : 80,
-						filter : {
-							showIcon : false,
-							inline : false
-						},
-					} ]
-				}
-
-				function createAUIGrid(columnLayout) {
-					const props = {
-							headerHeight : 30,
-							showRowNumColumn : true,
-							showRowCheckColumn : true,
-							rowNumHeaderText : "번호",
-							showAutoNoDataMessage : false,
-							enableFilter : true,
-							selectionMode : "multipleCells",
-							enableMovingColumn : true,
-							showInlineFilter : true,
-							useContextMenu : true,
-							enableRowCheckShiftKey : true,
-							enableRightDownFocus : true,
-							filterLayerWidth : 320,
-							filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-						};
-
-					myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-					loadGridData();
-
-					// 컨텍스트 메뉴 이벤트 바인딩
-					AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
-
-					// 스크롤 체인지 핸들러.
-					AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-						hideContextMenu(); // 컨텍스트 메뉴 감추기
-						vScrollChangeHandler(event); // lazy loading
-					});
-
-					AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-						hideContextMenu(); // 컨텍스트 메뉴 감추기
-					});
-					AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
-				}
-
-				function loadGridData() {
-					const url = getCallUrl("/epm/list");
-					const params = new Object();
-					const psize = document.getElementById("psize").value;
-					params.latest = true;
-					params.psize = psize;
-					AUIGrid.showAjaxLoader(myGridID);
-					openLayer();
-					call(url, params, function(data) {
-						AUIGrid.removeAjaxLoader(myGridID);
-						AUIGrid.setGridData(myGridID, data.list);
-						document.getElementById("sessionid").value = data.sessionid;
-						document.getElementById("curPage").value = data.curPage;
-						closeLayer();
-					});
-				}
-				
-				function <%=method%>() {
-					const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-					if (checkedItems.length == 0) {
-						alert("추가할 문서를 선택하세요.");
-						return false;
-					}
-					opener.<%=method%>(checkedItems);
-					self.close();
-				}
-				
-				function auiCellClickHandler(event) {
-					const item = event.item;
-					rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); // rowIdField 얻기
-					rowId = item[rowIdField];
-					
-					// 이미 체크 선택되었는지 검사
-					if(AUIGrid.isCheckedRowById(event.pid, rowId)) {
-						// 엑스트라 체크박스 체크해제 추가
-						AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
-					} else {
-						// 엑스트라 체크박스 체크 추가
-						AUIGrid.addCheckedRowsByIds(event.pid, rowId);
-					}
-				}
-				
-				document.addEventListener("DOMContentLoaded", function() {
-					document.getElementById("standard").focus();
-					const columns = loadColumnLayout("epm-popup");
-					const contenxtHeader = genColumnHtml(columns);
-					$("#h_item_ul").append(contenxtHeader);
-					$("#headerMenu").menu({
-						select : headerMenuSelectHandler
-					});
-					createAUIGrid(columns);
-					_createAUIGrid(_columns); // 트리
-					
-					selectbox("state");
-					selectbox("psize");
-					finderUser("creator");
-					finderUser("modifier");
-					twindate("created");
-					twindate("modified");
-				});
-
-				document.addEventListener("keydown", function(event) {
-					const keyCode = event.keyCode || event.which;
-					if (keyCode === 13) {
-						loadGridData();
-					}
-				})
-
-							document.addEventListener("click", function(event) {
-				hideContextMenu();
-			})
-
-				window.addEventListener("resize", function() {
-					AUIGrid.resize(myGridID);
-					AUIGrid.resize(_myGridID);
-				});
-			</script>
 		</td>
 	</tr>
 </table>
+<script type="text/javascript">
+let myGridID;
+function _layout() {
+	return [ {
+		dataField : "thumnail",
+		headerText : "",
+		dataType : "string",
+		width : 60,
+		renderer : {
+			type : "ImageRenderer",
+			altField : null,
+			onClick : function(event) {
+			}
+		},
+		filter : {
+			showIcon : false,
+			inline : false
+		},
+	}, {
+		dataField : "name",
+		headerText : "파일이름",
+		dataType : "string",
+		width : 350,
+		style : "aui-left",
+		filter : {
+			showIcon : true,
+			inline : true
+		},
+	}, {
+		dataField : "part_code",
+		headerText : "품번",
+		dataType : "string",
+		width : 130,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
+	}, {
+		dataField : "name_of_parts",
+		headerText : "품명",
+		dataType : "string",
+		width : 350,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
+	}, {
+		dataField : "dwg_no",
+		headerText : "규격",
+		dataType : "string",
+		width : 130,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
+	}, {
+		dataField : "material",
+		headerText : "MATERIAL",
+		dataType : "string",
+		width : 130,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
+	}, {
+		dataField : "remarks",
+		headerText : "REMARK",
+		dataType : "string",
+		width : 150,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
+	}, {
+		dataField : "reference",
+		headerText : "REFERENCE 도면",
+		dataType : "string",
+		width : 150,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
+	}, {
+		dataField : "version",
+		headerText : "버전",
+		dataType : "string",
+		width : 80,
+		filter : {
+			showIcon : false,
+			inline : false
+		},
+	}, {
+		dataField : "modifier",
+		headerText : "수정자",
+		dataType : "string",
+		width : 100,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
+	}, {
+		dataField : "modifiedDate",
+		headerText : "수정일",
+		dataType : "date",
+		formatString : "yyyy-mm-dd",
+		width : 100,
+		filter : {
+			showIcon : true,
+			inline : true,
+			displayFormatValues : true
+		},
+	}, {
+		dataField : "creator",
+		headerText : "작성자",
+		dataType : "string",
+		width : 100,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
+	}, {
+		dataField : "createdDate",
+		headerText : "작성일",
+		dataType : "date",
+		formatString : "yyyy-mm-dd",
+		width : 100,
+		filter : {
+			showIcon : true,
+			inline : true,
+			displayFormatValues : true
+		},
+	}, {
+		dataField : "state",
+		headerText : "상태",
+		dataType : "string",
+		width : 100,
+		filter : {
+			showIcon : true,
+			inline : true
+		},
+	}, {
+		dataField : "location",
+		headerText : "FOLDER",
+		dataType : "string",
+		width : 100,
+		filter : {
+			showIcon : false,
+			inline : false
+		},
+	} ]
+}
+
+function createAUIGrid(columns) {
+	const props = {
+		headerHeight : 30,
+		showRowNumColumn : true,
+		rowNumHeaderText : "번호",
+		showAutoNoDataMessage : false,
+		enableFilter : true,
+		selectionMode : "multipleCells",
+		enableMovingColumn : true,
+		showInlineFilter : true,
+		useContextMenu : true,
+		enableRightDownFocus : true,
+		filterLayerWidth : 320,
+		filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+		showRowCheckColumn : true,
+	};
+	myGridID = AUIGrid.create("#grid_wrap", columns, props);
+	// 				loadGridData();
+	AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+	AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+		hideContextMenu();
+		vScrollChangeHandler(event);
+	});
+	AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+		hideContextMenu();
+	});
+}
+
+function <%=method%>() {
+const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+if (checkedItems.length == 0) {
+	alert("추가할 도면을 선택하세요.");
+	return false;
+}
+openLayer();
+opener.<%=method%>(checkedItems, function(result) {
+		if(result) {
+			setTimeout(function() {
+				closeLayer();
+			}, 500);
+		}
+	});
+}
+
+function loadGridData() {
+	const params = new Object();
+	const url = getCallUrl("/epm/list");
+	const container = document.getElementById("psize").value;
+	const fileName = document.getElementById("fileName").value;
+	const latest = !!document.querySelector("input[name=latest]:checked").value;
+	const oid = document.getElementById("oid").value;
+	const psize = document.getElementById("psize").value;
+	params.container = container;
+	params.fileName = fileName;
+	params.latest = latest;
+	params.oid = oid;
+	params.psize = psize;
+	AUIGrid.showAjaxLoader(myGridID);
+	parent.openLayer();
+	call(url, params, function(data) {
+		AUIGrid.removeAjaxLoader(myGridID);
+		document.getElementById("sessionid").value = data.sessionid;
+		document.getElementById("curPage").value = data.curPage;
+		AUIGrid.setGridData(myGridID, data.list);
+		parent.closeLayer();
+	});
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+	const columns = loadColumnLayout("epm-popup");
+	const contenxtHeader = genColumnHtml(columns);
+	$("#h_item_ul").append(contenxtHeader);
+	$("#headerMenu").menu({
+		select : headerMenuSelectHandler
+	});
+	createAUIGrid(columns);
+	_createAUIGrid(_columns);
+	AUIGrid.resize(myGridID);
+	AUIGrid.resize(_myGridID);
+	selectbox("psize");
+	selectbox("state");
+	selectbox("cadType");
+	finderUser("creator");
+	finderUser("modifier");
+	twindate("created");
+	twindate("modified");
+});
+
+document.addEventListener("keydown", function(event) {
+	const keyCode = event.keyCode || event.which;
+	if (keyCode === 13) {
+		loadGridData();
+	}
+})
+
+document.addEventListener("click", function(event) {
+	hideContextMenu();
+})
+
+window.addEventListener("resize", function() {
+	AUIGrid.resize(myGridID);
+	AUIGrid.resize(_myGridID);
+});
+</script>

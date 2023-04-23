@@ -1,9 +1,6 @@
 package e3ps.project.output.service;
 
 import java.sql.Timestamp;
-import java.sql.Timestamp;
-
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
@@ -43,7 +40,7 @@ public class StandardOutputService extends StandardManager implements OutputServ
 		String location = dto.getLocation();
 		String description = dto.getDescription();
 		int progress = dto.getProgress();
-		ArrayList<Map<String, String>> _addRows = dto.get_addRows();
+		ArrayList<Map<String, String>> addRows9 = dto.getAddRows9();
 		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
 		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
 		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
@@ -61,7 +58,7 @@ public class StandardOutputService extends StandardManager implements OutputServ
 			document.setNumber(DocumentHelper.manager.getNextNumber("PJ-"));
 			document.setDescription(description);
 
-			Folder folder = FolderHelper.service.getFolder(location, CommonUtils.getContainer());
+			Folder folder = FolderHelper.service.getFolder(location, CommonUtils.getPDMLinkProductContainer());
 			FolderHelper.assignLocation((FolderEntry) document, folder);
 			document = (WTDocument) PersistenceHelper.manager.save(document);
 
@@ -78,8 +75,8 @@ public class StandardOutputService extends StandardManager implements OutputServ
 			}
 
 			// 프로젝트
-			for (Map<String, String> _addRow : _addRows) {
-				String oid = _addRow.get("oid");
+			for (Map<String, String> addRow9 : addRows9) {
+				String oid = addRow9.get("oid");
 				Project project = (Project) CommonUtils.getObject(oid);
 				Task t = ProjectHelper.manager.getTaskByName(project, task.getName());
 

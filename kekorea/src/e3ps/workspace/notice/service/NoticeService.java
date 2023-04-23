@@ -11,11 +11,6 @@ import wt.method.RemoteInterface;
 public interface NoticeService {
 
 	/**
-	 * AUIGrid 데이터 저장
-	 */
-	public abstract void save(Map<String, Object> params) throws Exception;
-
-	/**
 	 * 공지사항 등록
 	 */
 	public abstract void create(NoticeDTO dto) throws Exception;

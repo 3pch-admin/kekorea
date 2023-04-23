@@ -2,7 +2,6 @@ package e3ps.project;
 
 import java.sql.Timestamp;
 
-import com.ptc.windchill.annotations.metadata.ColumnProperties;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;

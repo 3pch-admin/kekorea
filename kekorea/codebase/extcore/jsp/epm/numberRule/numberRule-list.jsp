@@ -143,7 +143,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					},
 				}, {
 					dataField : "name",
-					headerText : "도면명",
+					headerText : "도번명",
 					dataType : "string",
 					width : 250,
 					filter : {
@@ -578,6 +578,33 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 				return true;
 			}
 
+			function revise() {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+
+				if (checkedItems.length == 0) {
+					alert("개정할 도번을 선택하세요.");
+					return false;
+				}
+
+				for (let i = 0; i < checkedItems.length; i++) {
+					const oid = checkedItems[i].item.oid;
+// 					const latest = checkedItems[i].item.latest;
+					const rowIndex = checkedItems[i].rowIndex;
+// 					if (!latest) {
+// 						alert("최신버전이 아닌 도면이 포함되어있습니다.\n" + (rowIndex + 1) + "행 데이터");
+// 						return false;
+// 					}
+
+					if (oid === undefined) {
+						alert("신규로 작성한 데이터가 존재합니다.\n" + (rowIndex + 1) + "행 데이터");
+						return false;
+					}
+				}
+				const url = getCallUrl("/numberRule/revise");
+				const p = popup(url, 1600, 550);
+				p.list = checkedItems;
+			}
+			
 			function save() {
 				const url = getCallUrl("/numberRule/save");
 				const params = new Object();
