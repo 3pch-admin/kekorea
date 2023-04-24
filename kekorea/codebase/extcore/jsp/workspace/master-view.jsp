@@ -11,7 +11,7 @@ ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
 Persistable per = (Persistable) request.getAttribute("per");
 String poid = (String) request.getAttribute("poid");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <input type="hidden" name="poid" id="poid" value="<%=poid%>">
 <table class="button-table">

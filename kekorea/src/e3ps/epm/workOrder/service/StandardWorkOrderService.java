@@ -7,23 +7,33 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
 
-import e3ps.common.Constants;
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
+import e3ps.common.util.DateUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
-import e3ps.epm.workOrder.WorkOrderMaster;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.project.Project;
+import e3ps.project.output.Output;
+import e3ps.project.output.OutputDocumentLink;
+import e3ps.project.service.ProjectHelper;
+import e3ps.project.task.Task;
+import e3ps.project.task.variable.TaskStateVariable;
+import e3ps.project.variable.ProjectStateVariable;
 import e3ps.workspace.service.WorkspaceHelper;
+import wt.clients.folder.FolderTaskLogic;
 import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.folder.Folder;
+import wt.folder.FolderEntry;
+import wt.folder.FolderHelper;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
 import wt.util.WTException;
@@ -38,44 +48,40 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 
 	@Override
 	public void create(WorkOrderDTO dto) throws Exception {
+		String toid = dto.getToid();
 		String name = dto.getName();
 		String description = dto.getDescription();
+		int progress = dto.getProgress();
+		String workOrderType = dto.getWorkOrderType();
 		ArrayList<Map<String, Object>> addRows = dto.getAddRows(); // 도면 일람표
 		ArrayList<Map<String, String>> addRows9 = dto.getAddRows9();
 		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
 		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
 		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
 		ArrayList<String> secondarys = dto.getSecondarys();
+		String location = "/Default/프로젝트/" + workOrderType + "_도면일람표";
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			WorkOrderMaster master = WorkOrderMaster.newWorkOrderMaster();
-			master.setName(name);
-			master.setWorkOrderNumber(WorkOrderHelper.manager.getNextNumber("WORK-"));
-			PersistenceHelper.manager.save(master);
-
 			WorkOrder workOrder = WorkOrder.newWorkOrder();
 			workOrder.setDescription(description);
-			workOrder.setMaster(master);
+			workOrder.setName(name);
+			workOrder.setWorkOrderType(workOrderType);
+			workOrder.setNumber(WorkOrderHelper.manager.getNextNumber("WORK-"));
 			workOrder.setVersion(1);
 			workOrder.setLatest(true);
-			workOrder.setOwnership(CommonUtils.sessionOwner());
-			workOrder.setState(Constants.KeState.USE);
-			PersistenceHelper.manager.save(workOrder);
 
-			for (Map<String, String> addRow9 : addRows9) {
-				String oid = addRow9.get("oid");
-				Project project = (Project) CommonUtils.getObject(oid);
-				WorkOrderProjectLink link = WorkOrderProjectLink.newWorkOrderProjectLink(workOrder, project);
-				PersistenceHelper.manager.save(link);
-			}
+			Folder folder = FolderTaskLogic.getFolder(location, CommonUtils.getPDMLinkProductContainer());
+			FolderHelper.assignLocation((FolderEntry) workOrder, folder);
+
+			PersistenceHelper.manager.save(workOrder);
 
 			int sort = 0;
 			ArrayList<WorkOrderDataLink> list = new ArrayList<>();
-			for (int i = addRows.size() - 1; i >= 0; i--) {
+			for (int i = 0; i < addRows.size(); i++) {
 				Map<String, Object> addRow = addRows.get(i);
-				String oid = (String) addRow.get("oid");
+				String oid = (String) addRow.get("doid");
 				int rev = (int) addRow.get("rev");
 				int lotNo = (int) addRow.get("lotNo");
 				String note = (String) addRow.get("note");
@@ -100,7 +106,7 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			}
 
 			Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
-			File tempFile = ContentUtils.getTempFile(workOrder.getMaster().getName() + "_도면일람표.xlsx");
+			File tempFile = ContentUtils.getTempFile(workOrder.getName() + "_표지.xlsx");
 			FileOutputStream fos = new FileOutputStream(tempFile);
 			cover.write(fos);
 
@@ -108,6 +114,68 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			data.setRole(ContentRoleType.PRIMARY);
 			PersistenceHelper.manager.save(data);
 			ContentServerHelper.service.updateContent(workOrder, data, tempFile.getAbsolutePath());
+
+			for (Map<String, String> addRow9 : addRows9) {
+				String oid = addRow9.get("oid");
+				Project project = (Project) CommonUtils.getObject(oid);
+
+				String taskName = "";
+				if (!StringUtils.isNull(toid)) {
+					Task task = (Task) CommonUtils.getObject(toid);
+					taskName = task.getName();
+				} else {
+					if ("기계".equals(workOrderType)) {
+						taskName = "기계_도면일람표";
+					} else if ("전기".equals(workOrderType)) {
+						taskName = "전기_도면일람표";
+					}
+				}
+
+				// 기계_수배표 전기_수배표
+				Task t = ProjectHelper.manager.getTaskByName(project, taskName);
+				if (t == null) {
+					throw new Exception(project.getKekNumber() + "작번에 " + taskName + " 태스크가 존재하지 않습니다.");
+				}
+
+				WorkOrderProjectLink link = WorkOrderProjectLink.newWorkOrderProjectLink(workOrder, project);
+				PersistenceHelper.manager.save(link);
+
+				// 산출물
+				Output output = Output.newOutput();
+				output.setName(workOrder.getName());
+				output.setLocation(workOrder.getLocation());
+				output.setTask(t);
+				output.setProject(project);
+				output.setDocument(workOrder);
+				output.setOwnership(CommonUtils.sessionOwner());
+				output = (Output) PersistenceHelper.manager.save(output);
+
+				// 태스크
+				if (t.getStartDate() == null) {
+					// 중복적으로 실제 시작일이 변경 되지 않게
+					t.setStartDate(DateUtils.getCurrentTimestamp());
+				}
+
+				if (progress >= 100) {
+					t.setEndDate(DateUtils.getCurrentTimestamp());
+					t.setState(TaskStateVariable.COMPLETE);
+					t.setProgress(100);
+				} else {
+					t.setState(TaskStateVariable.INWORK);
+					t.setProgress(progress);
+				}
+				t = (Task) PersistenceHelper.manager.modify(t);
+
+				// 시작이 된 흔적이 없을 경우
+				if (project.getStartDate() == null) {
+					project.setStartDate(DateUtils.getCurrentTimestamp());
+					project.setKekState(ProjectStateVariable.KEK_DESIGN_INWORK);
+					project.setState(ProjectStateVariable.INWORK);
+					project = (Project) PersistenceHelper.manager.modify(project);
+				}
+				ProjectHelper.service.calculation(project);
+				ProjectHelper.service.commit(project);
+			}
 
 			WorkOrderHelper.manager.postAfterAction(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
 
@@ -130,12 +198,154 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 
 	@Override
 	public void modify(WorkOrderDTO dto) throws Exception {
-		String oid = dto.getOid();
+		String name = dto.getName();
+		String description = dto.getDescription();
+		int progress = dto.getProgress();
+		String workOrderType = dto.getWorkOrderType();
+		ArrayList<Map<String, Object>> addRows = dto.getAddRows(); // 도면 일람표
+		ArrayList<Map<String, String>> addRows9 = dto.getAddRows9();
+		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
+		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
+		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
+		ArrayList<String> secondarys = dto.getSecondarys();
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
+			WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(dto.getOid());
+			workOrder.setName(name);
+			workOrder.setDescription(description);
+			workOrder.setWorkOrderType(workOrderType);
+			PersistenceHelper.manager.modify(workOrder);
+
+			// 기존 도면 일람표 링크 모두제거
+			QueryResult qr = PersistenceHelper.manager.navigate(workOrder, "data", WorkOrderDataLink.class, false);
+			while (qr.hasMoreElements()) {
+				WorkOrderDataLink link = (WorkOrderDataLink) qr.nextElement();
+				PersistenceHelper.manager.delete(link);
+			}
+
+			int sort = 0;
+			ArrayList<WorkOrderDataLink> list = new ArrayList<>();
+			for (int i = 0; i < addRows.size(); i++) {
+				Map<String, Object> addRow = addRows.get(i);
+				String oid = (String) addRow.get("doid"); // 객체 링크 OID...
+				int rev = (int) addRow.get("rev");
+				int lotNo = (int) addRow.get("lotNo");
+				String note = (String) addRow.get("note");
+				Persistable persistable = (Persistable) CommonUtils.getObject(oid);
+				WorkOrderDataLink link = WorkOrderDataLink.newWorkOrderDataLink(workOrder, persistable);
+				link.setSort(sort);
+				link.setLotNo(lotNo);
+				link.setNote(note);
+				link.setRev(rev);
+				PersistenceHelper.manager.save(link);
+				sort++;
+				list.add(link);
+			}
+
+			// 표지 파일도 다시 생성해야함..
+			CommonContentHelper.manager.clear(workOrder);
+
+			for (int i = 0; secondarys != null && i < secondarys.size(); i++) {
+				String cacheId = (String) secondarys.get(i);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
+				ApplicationData applicationData = ApplicationData.newApplicationData(workOrder);
+				applicationData.setRole(ContentRoleType.SECONDARY);
+				PersistenceHelper.manager.save(applicationData);
+				ContentServerHelper.service.updateContent(workOrder, applicationData, vault.getPath());
+			}
+
+			Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
+			File tempFile = ContentUtils.getTempFile(workOrder.getName() + "_표지.xlsx");
+			FileOutputStream fos = new FileOutputStream(tempFile);
+			cover.write(fos);
+
+			ApplicationData data = ApplicationData.newApplicationData(workOrder);
+			data.setRole(ContentRoleType.PRIMARY);
+			PersistenceHelper.manager.save(data);
+			ContentServerHelper.service.updateContent(workOrder, data, tempFile.getAbsolutePath());
+
+			// 기존 작번과 도면일람표 링크 제거
+			QueryResult _qr = PersistenceHelper.manager.navigate(workOrder, "project", WorkOrderProjectLink.class,
+					false);
+			while (_qr.hasMoreElements()) {
+				WorkOrderProjectLink link = (WorkOrderProjectLink) _qr.nextElement();
+				PersistenceHelper.manager.delete(link);
+			}
+
+			// 기존 산출물 링크도 제거 후 다시 연결
+			QueryResult navi = PersistenceHelper.manager.navigate(workOrder, "output", OutputDocumentLink.class);
+			while (navi.hasMoreElements()) {
+				Output output = (Output) navi.nextElement();
+				PersistenceHelper.manager.delete(output);
+			}
+
+			for (Map<String, String> addRow9 : addRows9) {
+				String oid = addRow9.get("oid");
+				Project project = (Project) CommonUtils.getObject(oid);
+
+				String taskName = "";
+				if ("기계".equals(workOrderType)) {
+					taskName = "기계_도면일람표";
+				} else if ("전기".equals(workOrderType)) {
+					taskName = "전기_도면일람표";
+				}
+
+				// 기계_수배표 전기_수배표
+				Task t = ProjectHelper.manager.getTaskByName(project, taskName);
+				if (t == null) {
+					throw new Exception(project.getKekNumber() + "작번에 " + taskName + " 태스크가 존재하지 않습니다.");
+				}
+
+				WorkOrderProjectLink link = WorkOrderProjectLink.newWorkOrderProjectLink(workOrder, project);
+				PersistenceHelper.manager.save(link);
+
+				// 산출물
+				Output output = Output.newOutput();
+				output.setName(workOrder.getName());
+				output.setLocation(workOrder.getLocation());
+				output.setTask(t);
+				output.setProject(project);
+				output.setDocument(workOrder);
+				output.setOwnership(CommonUtils.sessionOwner());
+				output = (Output) PersistenceHelper.manager.save(output);
+
+				// 태스크
+				if (t.getStartDate() == null) {
+					// 중복적으로 실제 시작일이 변경 되지 않게
+					t.setStartDate(DateUtils.getCurrentTimestamp());
+				}
+
+				if (progress >= 100) {
+					t.setEndDate(DateUtils.getCurrentTimestamp());
+					t.setState(TaskStateVariable.COMPLETE);
+					t.setProgress(100);
+				} else {
+					t.setState(TaskStateVariable.INWORK);
+					t.setProgress(progress);
+				}
+				t = (Task) PersistenceHelper.manager.modify(t);
+
+				// 시작이 된 흔적이 없을 경우
+				if (project.getStartDate() == null) {
+					project.setStartDate(DateUtils.getCurrentTimestamp());
+					project.setKekState(ProjectStateVariable.KEK_DESIGN_INWORK);
+					project.setState(ProjectStateVariable.INWORK);
+					project = (Project) PersistenceHelper.manager.modify(project);
+				}
+				ProjectHelper.service.calculation(project);
+				ProjectHelper.service.commit(project);
+			}
+
+			// PDF 병합
+			WorkOrderHelper.manager.postAfterAction(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
+
+			// 결재시작
+			if (approvalRows.size() > 0) {
+				WorkspaceHelper.manager.deleteAllLines(workOrder); // 기존결재 잇으면 삭제 후 작업
+				WorkspaceHelper.service.register(workOrder, agreeRows, approvalRows, receiveRows);
+			}
 
 			trs.commit();
 			trs = null;
@@ -172,8 +382,157 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			}
 
 			PersistenceHelper.manager.delete(workOrder);
-			
+
 			// 버전 되돌려야함..
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void revise(WorkOrderDTO dto) throws Exception {
+		String name = dto.getName();
+		String description = dto.getDescription();
+		int progress = dto.getProgress();
+		String workOrderType = dto.getWorkOrderType();
+		ArrayList<Map<String, Object>> addRows = dto.getAddRows(); // 도면 일람표
+		ArrayList<Map<String, String>> addRows9 = dto.getAddRows9();
+		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
+		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
+		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
+		ArrayList<String> secondarys = dto.getSecondarys();
+		String location = "/Default/프로젝트/" + workOrderType + "_도면일람표";
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			WorkOrder pre = (WorkOrder) CommonUtils.getObject(dto.getOid());
+			pre.setLatest(false);
+			PersistenceHelper.manager.modify(pre);
+
+			WorkOrder workOrder = WorkOrder.newWorkOrder();
+			workOrder.setDescription(description);
+			workOrder.setName(name);
+			workOrder.setWorkOrderType(workOrderType);
+			workOrder.setNumber(pre.getNumber());
+			workOrder.setVersion(pre.getVersion() + 1);
+			workOrder.setLatest(true);
+			workOrder.setNote(dto.getNote());
+
+			Folder folder = FolderTaskLogic.getFolder(location, CommonUtils.getPDMLinkProductContainer());
+			FolderHelper.assignLocation((FolderEntry) workOrder, folder);
+
+			PersistenceHelper.manager.save(workOrder);
+
+			int sort = 0;
+			ArrayList<WorkOrderDataLink> list = new ArrayList<>();
+			for (int i = 0; i < addRows.size(); i++) {
+				Map<String, Object> addRow = addRows.get(i);
+				String oid = (String) addRow.get("doid");
+				int rev = (int) addRow.get("rev");
+				int lotNo = (int) addRow.get("lotNo");
+				String note = (String) addRow.get("note");
+				Persistable persistable = (Persistable) CommonUtils.getObject(oid);
+				WorkOrderDataLink link = WorkOrderDataLink.newWorkOrderDataLink(workOrder, persistable);
+				link.setSort(sort);
+				link.setLotNo(lotNo);
+				link.setNote(note);
+				link.setRev(rev);
+				PersistenceHelper.manager.save(link);
+				sort++;
+				list.add(link);
+			}
+
+			for (int i = 0; secondarys != null && i < secondarys.size(); i++) {
+				String cacheId = (String) secondarys.get(i);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
+				ApplicationData applicationData = ApplicationData.newApplicationData(workOrder);
+				applicationData.setRole(ContentRoleType.SECONDARY);
+				PersistenceHelper.manager.save(applicationData);
+				ContentServerHelper.service.updateContent(workOrder, applicationData, vault.getPath());
+			}
+
+			Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
+			File tempFile = ContentUtils.getTempFile(workOrder.getName() + "_도면일람표.xlsx");
+			FileOutputStream fos = new FileOutputStream(tempFile);
+			cover.write(fos);
+
+			ApplicationData data = ApplicationData.newApplicationData(workOrder);
+			data.setRole(ContentRoleType.PRIMARY);
+			PersistenceHelper.manager.save(data);
+			ContentServerHelper.service.updateContent(workOrder, data, tempFile.getAbsolutePath());
+
+			for (Map<String, String> addRow9 : addRows9) {
+				String oid = addRow9.get("oid");
+				Project project = (Project) CommonUtils.getObject(oid);
+
+				String taskName = "";
+				if ("기계".equals(workOrderType)) {
+					taskName = "기계_도면일람표";
+				} else if ("전기".equals(workOrderType)) {
+					taskName = "전기_도면일람표";
+				}
+
+				// 기계_수배표 전기_수배표
+				Task t = ProjectHelper.manager.getTaskByName(project, taskName);
+				if (t == null) {
+					throw new Exception(project.getKekNumber() + "작번에 " + taskName + " 태스크가 존재하지 않습니다.");
+				}
+
+				WorkOrderProjectLink link = WorkOrderProjectLink.newWorkOrderProjectLink(workOrder, project);
+				PersistenceHelper.manager.save(link);
+
+				// 산출물
+				Output output = Output.newOutput();
+				output.setName(workOrder.getName());
+				output.setLocation(workOrder.getLocation());
+				output.setTask(t);
+				output.setProject(project);
+				output.setDocument(workOrder);
+				output.setOwnership(CommonUtils.sessionOwner());
+				output = (Output) PersistenceHelper.manager.save(output);
+
+				// 태스크
+				if (t.getStartDate() == null) {
+					// 중복적으로 실제 시작일이 변경 되지 않게
+					t.setStartDate(DateUtils.getCurrentTimestamp());
+				}
+
+				if (progress >= 100) {
+					t.setEndDate(DateUtils.getCurrentTimestamp());
+					t.setState(TaskStateVariable.COMPLETE);
+					t.setProgress(100);
+				} else {
+					t.setState(TaskStateVariable.INWORK);
+					t.setProgress(progress);
+				}
+				t = (Task) PersistenceHelper.manager.modify(t);
+
+				// 시작이 된 흔적이 없을 경우
+				if (project.getStartDate() == null) {
+					project.setStartDate(DateUtils.getCurrentTimestamp());
+					project.setKekState(ProjectStateVariable.KEK_DESIGN_INWORK);
+					project.setState(ProjectStateVariable.INWORK);
+					project = (Project) PersistenceHelper.manager.modify(project);
+				}
+				ProjectHelper.service.calculation(project);
+				ProjectHelper.service.commit(project);
+			}
+
+			WorkOrderHelper.manager.postAfterAction(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
+
+			// 결재시작
+			if (approvalRows.size() > 0) {
+				WorkspaceHelper.service.register(workOrder, agreeRows, approvalRows, receiveRows);
+			}
 
 			trs.commit();
 			trs = null;

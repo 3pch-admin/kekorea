@@ -8,7 +8,7 @@
 MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 %>
 <%@include file="/extcore/include/tinymce.jsp"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <input type="hidden" name="poid" id="poid" value="<%=dto.getPoid()%>">
 <input type="hidden" name="loid" id="loid" value="<%=dto.getLoid()%>">

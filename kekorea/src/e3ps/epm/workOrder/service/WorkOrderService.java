@@ -21,4 +21,9 @@ public interface WorkOrderService {
 	 */
 	public abstract void delete(String oid) throws Exception;
 
+	/**
+	 * 도면일람표 개정
+	 */
+	public abstract void revise(WorkOrderDTO dto) throws Exception;
+
 }

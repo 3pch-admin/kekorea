@@ -11,7 +11,7 @@ String poid = (String) request.getAttribute("poid");
 String toid = (String) request.getAttribute("toid");
 JSONArray list = (JSONArray) request.getAttribute("list");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="toid" id="toid" value="<%=toid%>">
 <input type="hidden" name="poid" id="poid" value="<%=poid%>">
 <table class="button-table">

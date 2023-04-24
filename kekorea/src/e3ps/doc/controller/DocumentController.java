@@ -24,7 +24,7 @@ import wt.org.WTUser;
 import wt.session.SessionHelper;
 
 @Controller
-@RequestMapping(value = "/document/**")
+@RequestMapping(value = "/doc/**")
 public class DocumentController extends BaseController {
 
 	@Description(value = "문서 조회 페이지")
@@ -75,8 +75,12 @@ public class DocumentController extends BaseController {
 	@GetMapping(value = "/popup")
 	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser)SessionHelper.manager.getPrincipal();
 		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.addObject("method", method);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
 		model.setViewName("popup:/document/document-popup");
 		return model;
 	}
@@ -110,6 +114,7 @@ public class DocumentController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}
@@ -122,11 +127,11 @@ public class DocumentController extends BaseController {
 		DocumentDTO dto = new DocumentDTO(document);
 		boolean isAdmin = CommonUtils.isAdmin();
 		JSONArray list = DocumentHelper.manager.history(document.getMaster());
-		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(document.getMaster());
+//		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(document.getMaster());
 		model.addObject("dto", dto);
 		model.addObject("list", list);
 		model.addObject("isAdmin", isAdmin);
-		model.addObject("history", history);
+//		model.addObject("history", history);
 		model.setViewName("popup:/document/document-view");
 		return model;
 	}

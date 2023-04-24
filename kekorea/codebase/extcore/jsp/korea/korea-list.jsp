@@ -15,9 +15,9 @@ String end = (String) request.getAttribute("end");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<%@include file="/extcore/include/css.jsp"%>
-<%@include file="/extcore/include/script.jsp"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/css.jsp"%>
+<%@include file="/extcore/jsp/common/script.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
 </head>
 <body>
@@ -88,14 +88,14 @@ String end = (String) request.getAttribute("end");
 				<td class="left">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('korea-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('korea-list');">
-					<input type="button" value="통합수배표비교" title="통합수배표비교" onclick="loadGridData();">
-					<input type="button" value="P-BOM비교" title="P-BOM비교" class="red" onclick="loadGridData();">
-					<input type="button" value="T-BOM비교" title="T-BOM비교" class="blue" onclick="loadGridData();">
-					<input type="button" value="기계수배표비교" title="기계수배표비교" class="orange" onclick="loadGridData();">
-					<input type="button" value="전기수배표비교" title="전기수배표비교" onclick="loadGridData();">
-					<input type="button" value="도면일람표비교" title="도면일람표비교" class="blue" onclick="loadGridData();">
+					<input type="button" value="통합수배표비교" title="통합수배표비교" onclick="partlistCompare('a-t');">
+					<input type="button" value="P-BOM비교" title="P-BOM비교" class="red" onclick="partlistCompare('a');">
+					<input type="button" value="T-BOM비교" title="T-BOM비교" class="blue" onclick="tbomCompare();">
+					<input type="button" value="기계수배표비교" title="기계수배표비교" class="orange" onclick="partlistCompare('m');">
+					<input type="button" value="전기수배표비교" title="전기수배표비교" onclick="partlistCompare('e');">
+					<input type="button" value="도면일람표비교" title="도면일람표비교" class="blue" onclick="workOrderCompare();">
 					<input type="button" value="CONFIG SHEET비교" title="CONFIG SHEET비교" class="red" onclick="loadGridData();">
-					<input type="button" value="이력비교" title="이력비교" class="orange" onclick="loadGridData();">
+					<input type="button" value="이력비교" title="이력비교" class="orange" onclick="historyCompare();">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -143,11 +143,29 @@ String end = (String) request.getAttribute("end");
 				headerText : "KEK 작번",
 				dataType : "string",
 				width : 100,
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const url = getCallUrl("/project/info?oid=" + oid);
+						popup(url);
+					}
+				},
 			}, {
 				dataField : "keNumber",
 				headerText : "KE 작번",
 				dataType : "string",
 				width : 100,
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const url = getCallUrl("/project/info?oid=" + oid);
+						popup(url);
+					}
+				},
 			}, {
 				dataField : "userId",
 				headerText : "USER ID",
@@ -309,6 +327,62 @@ String end = (String) request.getAttribute("end");
 					popup(url6);
 					break;
 				}
+			}
+
+			function partlistCompare(invoke) {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const arr = [];
+				if (checkedItems.length <= 1) {
+					alert("데이터 비교를 위해선 최소 2개 이상의 데이터를 선택해야 합니다.");
+					return false;
+				}
+				for (let i = 1; i < checkedItems.length; i++) {
+					arr.push(checkedItems[i].item.oid);
+				}
+				const url = getCallUrl("/partlist/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(",") + "&invoke=" + invoke);
+				popup(url);
+			}
+
+			function historyCompare() {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const arr = [];
+				if (checkedItems.length <= 1) {
+					alert("데이터 비교를 위해선 최소 2개 이상의 데이터를 선택해야 합니다.");
+					return false;
+				}
+				for (let i = 1; i < checkedItems.length; i++) {
+					arr.push(checkedItems[i].item.oid);
+				}
+				const url = getCallUrl("/history/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
+				popup(url);
+			}
+
+			function tbomCompare() {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const arr = [];
+				if (checkedItems.length <= 1) {
+					alert("데이터 비교를 위해선 최소 2개 이상의 데이터를 선택해야 합니다.");
+					return false;
+				}
+				for (let i = 1; i < checkedItems.length; i++) {
+					arr.push(checkedItems[i].item.oid);
+				}
+				const url = getCallUrl("/tbom/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
+				popup(url);
+			}
+
+			function workOrderCompare() {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const arr = [];
+				if (checkedItems.length <= 1) {
+					alert("데이터 비교를 위해선 최소 2개 이상의 데이터를 선택해야 합니다.");
+					return false;
+				}
+				for (let i = 1; i < checkedItems.length; i++) {
+					arr.push(checkedItems[i].item.oid);
+				}
+				const url = getCallUrl("/workOrder/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
+				popup(url);
 			}
 
 			function loadGridData() {

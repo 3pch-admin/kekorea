@@ -9,9 +9,7 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
-import e3ps.admin.commonCode.CommonCode;
-import e3ps.epm.jDrawing._JDrawingMaster;
-import e3ps.epm.keDrawing.KeDrawingMaster;
+import e3ps.admin.numberRuleCode.NumberRuleCode;
 import wt.fc.WTObject;
 import wt.ownership.Ownable;
 import wt.util.WTException;
@@ -21,7 +19,7 @@ import wt.util.WTException;
 		properties = {
 				@GeneratedProperty(name = "number", type = String.class, javaDoc = "KEK 도면번호", constraints = @PropertyConstraints(required = true),
 
-						columnProperties = @ColumnProperties(columnName = "drawingNumber", unique = true)),
+						columnProperties = @ColumnProperties(columnName = "KekNumber", unique = true)),
 
 				@GeneratedProperty(name = "name", type = String.class, javaDoc = "KEK 도면명", constraints = @PropertyConstraints(required = true))
 
@@ -31,7 +29,7 @@ import wt.util.WTException;
 
 				@GeneratedForeignKey(name = "MasterSizeLink",
 
-						foreignKeyRole = @ForeignKeyRole(name = "size", type = CommonCode.class,
+						foreignKeyRole = @ForeignKeyRole(name = "size", type = NumberRuleCode.class,
 
 								constraints = @PropertyConstraints(required = true)),
 
@@ -39,7 +37,7 @@ import wt.util.WTException;
 
 				@GeneratedForeignKey(name = "MasterSectorLink",
 
-						foreignKeyRole = @ForeignKeyRole(name = "sector", type = CommonCode.class,
+						foreignKeyRole = @ForeignKeyRole(name = "sector", type = NumberRuleCode.class,
 
 								constraints = @PropertyConstraints(required = true)),
 
@@ -47,7 +45,7 @@ import wt.util.WTException;
 
 				@GeneratedForeignKey(name = "MasterCompanyLink",
 
-						foreignKeyRole = @ForeignKeyRole(name = "company", type = CommonCode.class,
+						foreignKeyRole = @ForeignKeyRole(name = "company", type = NumberRuleCode.class,
 
 								constraints = @PropertyConstraints(required = true)),
 
@@ -55,7 +53,7 @@ import wt.util.WTException;
 
 				@GeneratedForeignKey(name = "MasterDepartmentLink",
 
-						foreignKeyRole = @ForeignKeyRole(name = "department", type = CommonCode.class,
+						foreignKeyRole = @ForeignKeyRole(name = "department", type = NumberRuleCode.class,
 
 								constraints = @PropertyConstraints(required = true)),
 
@@ -63,7 +61,7 @@ import wt.util.WTException;
 
 				@GeneratedForeignKey(name = "MasterDocumentLink",
 
-						foreignKeyRole = @ForeignKeyRole(name = "document", type = CommonCode.class,
+						foreignKeyRole = @ForeignKeyRole(name = "document", type = NumberRuleCode.class,
 
 								constraints = @PropertyConstraints(required = true)),
 

@@ -12,7 +12,6 @@ import e3ps.bom.tbom.dto.TBOMDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import e3ps.part.kePart.beans.KePartDTO;
@@ -49,13 +48,11 @@ public class KePartHelper {
 		if (latest) {
 			QuerySpecUtils.toBooleanAnd(query, idx, KePart.class, KePart.LATEST, true);
 		} else {
-
 			if (query.getConditionCount() > 0) {
 				query.appendAnd();
 			}
-
 			query.appendOpenParen();
-			SearchCondition sc = new SearchCondition(KeDrawing.class, KeDrawing.LATEST, SearchCondition.IS_TRUE);
+			SearchCondition sc = new SearchCondition(KePart.class, KePart.LATEST, SearchCondition.IS_TRUE);
 			query.appendWhere(sc, new int[] { idx });
 			QuerySpecUtils.toBooleanOr(query, idx, KePart.class, KePart.LATEST, false);
 			query.appendCloseParen();

@@ -12,7 +12,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 boolean isAutoCad = (boolean) request.getAttribute("isAutoCad");
 boolean isCreo = (boolean) request.getAttribute("isCreo");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
@@ -168,103 +168,68 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 		<jsp:include page="/extcore/jsp/common/project-include.jsp">
 			<jsp:param value="<%=dto.getOid()%>" name="oid" />
 			<jsp:param value="view" name="mode" />
+			<jsp:param value="350" name="height" />
 		</jsp:include>
 	</div>
 	<div id="tabs-4">
-		<div id="_grid_wrap" style="height: 460px; border-top: 1px solid #3180c3;"></div>
+		<div id="_grid_wrap" style="height: 460px; border-top: 1px solid #3180c3; margin: 5px;"></div>
 		<script type="text/javascript">
-			let _myGridID;
-			const _columns = [ {
+			let myGridID;
+			const columns = [ {
 				dataField : "name",
 				headerText : "파일이름",
 				dataType : "string",
-				width : 500,
 				style : "aui-left",
 				renderer : {
 					type : "LinkRenderer",
 					baseUrl : "javascript",
-				},
-				filter : {
-					showIcon : true,
-					inline : true
 				},
 			}, {
 				dataField : "version",
 				headerText : "버전",
 				dataType : "string",
 				width : 80,
-				filter : {
-					showIcon : false,
-					inline : false
-				},
 			}, {
 				dataField : "creator",
 				headerText : "작성자",
 				dataType : "string",
 				width : 100,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
 			}, {
 				dataField : "createdDate_txt",
 				headerText : "작성일",
-				dataType : "date",
-				formatString : "yyyy-mm-dd",
+				dataType : "string",
 				width : 130,
-				filter : {
-					showIcon : true,
-					inline : true,
-					displayFormatValues : true
-				},
 			}, {
 				dataField : "modifier",
 				headerText : "수정자",
 				dataType : "string",
 				width : 100,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
 			}, {
 				dataField : "modifiedDate_txt",
 				headerText : "수정일",
-				dataType : "date",
-				formatString : "yyyy-mm-dd",
+				dataType : "string",
 				width : 130,
-				filter : {
-					showIcon : true,
-					inline : true,
-					displayFormatValues : true
-				}
 			} ]
-			function _createAUIGrid(columnLayout) {
+			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
-					enableFilter : true,
 					selectionMode : "multipleCells",
-					enableMovingColumn : true,
-					showInlineFilter : true,
-					enableRightDownFocus : true,
-					filterLayerWidth : 320,
-					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+					showAutoNoDataMessage : false,
+					enableSorting : false,
+					autoGridHeight : true,
 				}
-				_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-				AUIGrid.setGridData(_myGridID,
-		<%=list%>
-			);
+				myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
+				AUIGrid.setGridData(myGridID, <%=list%>);
 			}
 		</script>
 	</div>
 	<div id="tabs-5">
 		<jsp:include page="/extcore/jsp/common/approval-history.jsp">
 			<jsp:param value="<%=dto.getOid()%>" name="oid" />
-		</jsp:include></div>
+		</jsp:include>
+	</div>
 </div>
 <script type="text/javascript">
 	function preView() {
@@ -275,40 +240,23 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs({
 			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-3":
-					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
-					break;
-				case "tabs-4":
-					_createAUIGrid(_columns);
-					AUIGrid.resize(_myGridID);
-					break;
-				case "tabs-5":
-					_createAUIGrid_(columns100);
-					AUIGrid.resize(myGridID100);
-					break;
-				}
-			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-3":
-					const isCreated = AUIGrid.isCreated(myGridID9);
-					if (isCreated) {
+					const isCreated9 = AUIGrid.isCreated(myGridID9);
+					if (isCreated9) {
 						AUIGrid.resize(myGridID9);
 					} else {
-						createAUIGrid(columns9);
+						createAUIGrid9(columns9);
 					}
 					break;
 				case "tabs-4":
-					const _isCreated = AUIGrid.isCreated(_myGridID);
-					if (_isCreated) {
-						AUIGrid.resize(_myGridID);
+					const isCreated = AUIGrid.isCreated(myGridID);
+					if (isCreated) {
+						AUIGrid.resize(myGridID);
 					} else {
-						_createAUIGrid(_columns);
+						createAUIGrid(columns);
 					}
 					break;
 				case "tabs-5":
@@ -322,15 +270,17 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 				}
 			}
 		});
+		createAUIGrid(columns);
 		createAUIGrid9(columns9);
 		createAUIGrid100(columns100);
+		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID100);
 	});
 
 	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID9);
-		AUIGrid.resize(_myGridID);
 		AUIGrid.resize(myGridID100);
 	});
 </script>

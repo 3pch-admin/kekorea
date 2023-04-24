@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!-- AUIGrid -->
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <%
 String location = (String) request.getAttribute("location");
 String container = (String) request.getAttribute("container");

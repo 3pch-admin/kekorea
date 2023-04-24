@@ -10,7 +10,7 @@ ArrayList<Project> destList = (ArrayList<Project>) request.getAttribute("destLis
 String oid = (String) request.getAttribute("oid");
 String compareArr = (String) request.getAttribute("compareArr");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=11210"></script>
 <style type="text/css">
 .compare {
@@ -24,24 +24,18 @@ String compareArr = (String) request.getAttribute("compareArr");
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('tbom-compare');">
-			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('tbom-compare');">
+			<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+			<!-- 			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('partlist-compare');"> -->
+			<!-- 			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('partlist-compare');"> -->
 		</td>
 		<td class="right">
-			<select name="sort" id="sort" class="width-200">
-				<option value="">선택</option>
-				<option value="sort">등록순</option>
-				<option value="partNo">부품번호</option>
-				<option value="lotNo">LOT</option>
-			</select>
-			<input type="button" value="비교" title="비교" class="red" onclick="_compare('');">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
 </table>
 
 
-<div id="grid_wrap" style="height: 730px; border-top: 1px solid #3180c3;"></div>
+<div id="grid_wrap" style="height: 100px; border-top: 1px solid #3180c3;"></div>
 <%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
 	let myGridID;
@@ -71,6 +65,15 @@ String compareArr = (String) request.getAttribute("compareArr");
 			headerText : "부품번호",
 			dataType : "string",
 			width : 120,
+			renderer : {
+				type : "LinkRenderer",
+				baseUrl : "javascript",
+				jsCallback : function(rowIndex, columnIndex, value, item) {
+					const oid = item.oid;
+					const url = getCallUrl("/kePart/view?oid=" + oid);
+					popup(url, 1400, 700);
+				}
+			},			
 			filter : {
 				showIcon : true,
 				inline : true
@@ -82,6 +85,15 @@ String compareArr = (String) request.getAttribute("compareArr");
 				headerText : "수량",
 				dataType : "numeric",
 				width : 100,
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.moid;
+						const url = getCallUrl("/tbom/view?oid=" + oid);
+						popup(url, 1500, 700);
+					}
+				},	
 				labelFunction : function(rowIndex, columnIndex, value, headerText, item, dataField, cItem) {
 					if(item.qty1 === undefined) {
 						return 0;
@@ -103,6 +115,15 @@ for (Project project : destList) {%>
 				headerText : "수량",
 				dataType : "numeric",
 				width : 100,
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.moid;
+						const url = getCallUrl("/tbom/view?oid=" + oid);
+						popup(url, 1500, 700);
+					}
+				},	'
 				labelFunction : function(rowIndex, columnIndex, value, headerText, item, dataField, cItem) {
 					if(item.qty<%=i%> === undefined) {
 						return 0;
@@ -202,6 +223,7 @@ for (Project project : destList) {%>
 			showInlineFilter : true,
 			useContextMenu : true,
 			enableRightDownFocus : true,
+			autoGridHeight : true
 // 			footerPosition : "top",
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);

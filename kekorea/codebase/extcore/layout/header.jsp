@@ -173,7 +173,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/document/list', '문서 관리 > 문서 조회');">문서 조회</a>
+						<a onclick="moveToPage(this, '/doc/list', '문서 관리 > 문서 조회');">문서 조회</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/output/list', '문서 관리 > 산출물 조회');">산출물 조회</a>
@@ -185,7 +185,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						<a onclick="moveToPage(this, '/meeting/list', '문서 관리 > 회의록 조회');">회의록 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/document/register', '문서 관리 > 문서 결재');">문서 결재</a>
+						<a onclick="moveToPage(this, '/doc/register', '문서 관리 > 문서 결재');">문서 결재</a>
 					</li>
 				</ul>
 			</li>

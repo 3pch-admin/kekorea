@@ -12,7 +12,8 @@ import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.korea.history.History;
-import e3ps.korea.history.HistoryOptionLink;
+import e3ps.korea.history.HistoryValue;
+import e3ps.korea.history.HistoryValueLink;
 import e3ps.korea.history.ProjectHistoryLink;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
@@ -72,20 +73,17 @@ public class HistoryHelper {
 
 		if (!StringUtils.isNull(customer_name)) {
 			CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer_name);
-			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "customerReference.key.id",
-					customerCode.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "customerReference.key.id", customerCode);
 		}
 
 		if (!StringUtils.isNull(install_name)) {
 			CommonCode installCode = (CommonCode) CommonUtils.getObject(install_name);
-			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "installReference.key.id",
-					installCode.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "installReference.key.id", installCode);
 		}
 
 		if (!StringUtils.isNull(projectType)) {
 			CommonCode projectTypeCode = (CommonCode) CommonUtils.getObject(projectType);
-			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "projectTypeReference.key.id",
-					projectTypeCode.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "projectTypeReference.key.id", projectTypeCode);
 		}
 
 		if (!StringUtils.isNull(machineOid)) {
@@ -98,10 +96,9 @@ public class HistoryHelper {
 					"roleAObjectRef.key.id", idx_p, idx_plink);
 			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 					"roleBObjectRef.key.id", idx_u, idx_plink);
-			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
-					machine.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", machine);
 			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
-					machineCode.getPersistInfo().getObjectIdentifier().getId());
+					machineCode);
 		}
 
 		if (!StringUtils.isNull(elecOid)) {
@@ -114,10 +111,9 @@ public class HistoryHelper {
 					"roleAObjectRef.key.id", idx_p, idx_plink);
 			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 					"roleBObjectRef.key.id", idx_u, idx_plink);
-			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
-					elec.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", elec);
 			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
-					elecCode.getPersistInfo().getObjectIdentifier().getId());
+					elecCode);
 		}
 
 		if (!StringUtils.isNull(softOid)) {
@@ -130,28 +126,24 @@ public class HistoryHelper {
 					"roleAObjectRef.key.id", idx_p, idx_plink);
 			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 					"roleBObjectRef.key.id", idx_u, idx_plink);
-			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id",
-					soft.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", soft);
 			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
-					softCode.getPersistInfo().getObjectIdentifier().getId());
+					softCode);
 		}
 
 		if (!StringUtils.isNull(mak_name)) {
 			CommonCode makCode = (CommonCode) CommonUtils.getObject(mak_name);
-			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "makReference.key.id",
-					makCode.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "makReference.key.id", makCode);
 		}
 
 		if (!StringUtils.isNull(detail_name)) {
 			CommonCode detailCode = (CommonCode) CommonUtils.getObject(detail_name);
-			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "detailReference.key.id",
-					detailCode.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "detailReference.key.id", detailCode);
 		}
 
 		if (!StringUtils.isNull(template)) {
 			Template t = (Template) CommonUtils.getObject(template);
-			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "templateReference.key.id",
-					t.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "templateReference.key.id", t);
 		}
 
 		QuerySpecUtils.toLikeAnd(query, idx_p, Project.class, Project.DESCRIPTION, description);
@@ -163,7 +155,7 @@ public class HistoryHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			History history = (History) obj[0];
 			Project project = (Project) obj[1];
-			ArrayList<HistoryOptionLink> data = getLinks(history);
+			ArrayList<HistoryValueLink> data = getValues(history);
 			Map<String, Object> dataMap = new HashMap<>();
 			dataMap.put("kekNumber", project.getKekNumber());
 			dataMap.put("keNumber", project.getKeNumber());
@@ -175,9 +167,10 @@ public class HistoryHelper {
 			dataMap.put("tuv", history != null ? history.getTuv() : "");
 			dataMap.put("poid", project.getPersistInfo().getObjectIdentifier().getStringValue());
 			dataMap.put("oid", history != null ? history.getPersistInfo().getObjectIdentifier().getStringValue() : "");
-			for (HistoryOptionLink link : data) {
-				String dataField = link.getDataField();
-				String value = link.getOption().getCode();
+			for (HistoryValueLink link : data) {
+				HistoryValue historyValue = link.getValue();
+				String dataField = historyValue.getDataField();
+				String value = historyValue.getValue();
 				dataMap.put(dataField, value);
 			}
 			dataList.add(dataMap);
@@ -191,15 +184,15 @@ public class HistoryHelper {
 	/**
 	 * 이력 옵션 링크 가져오기
 	 */
-	public ArrayList<HistoryOptionLink> getLinks(History history) throws Exception {
-		ArrayList<HistoryOptionLink> list = new ArrayList<HistoryOptionLink>();
+	public ArrayList<HistoryValueLink> getValues(History history) throws Exception {
+		ArrayList<HistoryValueLink> list = new ArrayList<HistoryValueLink>();
 		if (history == null) {
 			return list;
 		}
 
-		QueryResult result = PersistenceHelper.manager.navigate(history, "option", HistoryOptionLink.class, false);
+		QueryResult result = PersistenceHelper.manager.navigate(history, "value", HistoryValueLink.class, false);
 		while (result.hasMoreElements()) {
-			HistoryOptionLink link = (HistoryOptionLink) result.nextElement();
+			HistoryValueLink link = (HistoryValueLink) result.nextElement();
 			list.add(link);
 		}
 		return list;
@@ -216,30 +209,28 @@ public class HistoryHelper {
 		for (SpecCode fix : fixedList) {
 			Map<String, Object> mergedList = new HashMap<>();
 			for (int i = 0; i < destList.size(); i++) {
-
 				mergedList.put("key", fix.getName());
 				Project project = (Project) destList.get(i);
 				History history = null;
 				QueryResult qr = PersistenceHelper.manager.navigate(project, "history", ProjectHistoryLink.class);
 				if (qr.hasMoreElements()) {
 					history = (History) qr.nextElement();
-					QuerySpec query = new QuerySpec();
-					int idx = query.appendClassList(HistoryOptionLink.class, true);
-					QuerySpecUtils.toEqualsAnd(query, idx, HistoryOptionLink.class, "roleAObjectRef.key.id", history);
-					QuerySpecUtils.toEqualsAnd(query, idx, HistoryOptionLink.class, HistoryOptionLink.DATA_FIELD,
-							fix.getCode());
-					QueryResult result = PersistenceHelper.manager.find(query);
+					QuerySpec qs = new QuerySpec();
+					int _idx = qs.appendClassList(HistoryValue.class, true);
+					QuerySpecUtils.toEqualsAnd(qs, _idx, HistoryValue.class, HistoryValue.DATA_FIELD, fix.getCode());
+					QuerySpecUtils.toEqualsAnd(qs, _idx, HistoryValue.class, "historyReference.key.id", history);
+					QueryResult result = PersistenceHelper.manager.find(qs);
 					if (result.hasMoreElements()) {
 						Object[] obj = (Object[]) result.nextElement();
-						HistoryOptionLink link = (HistoryOptionLink) obj[0];
-						SpecCode option = link.getOption();
+						HistoryValue historyValue = (HistoryValue) obj[0];
 						mergedList.put(String.valueOf(project.getPersistInfo().getObjectIdentifier().getId()),
-								option.getName());
+								historyValue.getValue());
 					}
 				}
 			}
 			list.add(mergedList);
 		}
+		destList.remove(0);
 		return list;
 	}
 }

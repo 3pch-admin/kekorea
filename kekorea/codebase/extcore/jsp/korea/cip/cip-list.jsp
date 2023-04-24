@@ -13,16 +13,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 ArrayList<Map<String, String>> customer_list = (ArrayList<Map<String, String>>) request.getAttribute("customer_list");
 ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) request.getAttribute("mak_list");
-Timestamp time = (Timestamp) request.getAttribute("time");
 %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title></title>
-<%@include file="/extcore/include/css.jsp"%>
-<%@include file="/extcore/include/script.jsp"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/css.jsp"%>
+<%@include file="/extcore/jsp/common/script.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -30,7 +29,6 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
-		<input type="hidden" name="time" id="time" value="<%=time%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 
@@ -526,7 +524,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						inline : false
 					},
 				}, {
-					dataField : "preViewBtn",
+					dataField : "preViewCacheId",
 					headerText : "",
 					width : 100,
 					editable : false,
@@ -557,7 +555,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						inline : false
 					},
 				}, {
-					dataField : "iconsBtn",
+					dataField : "",
 					headerText : "",
 					width : 100,
 					editable : false,
@@ -567,7 +565,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 						onclick : function(rowIndex, columnIndex, value, item) {
 							recentGridItem = item;
 							const oid = item._$uid;
-							const url = getCallUrl("/aui/secondary?oid=" + oid + "&method=setSecondary");
+							const url = getCallUrl("/aui/secondary?oid=" + oid + "&method=attach");
 							popup(url, 1000, 400);
 						}
 					},
@@ -609,7 +607,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "singleRow",
+					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					filterLayerWidth : 320,
@@ -667,7 +665,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				const oid = event.item.oid;
 				const preView = event.item.preView;
 				if (dataField === "preView") {
-					if (preView !== null && preView !== undefined) {
+					if (!isNull(preView) && !isNull(oid)) {
 						const url = getCallUrl("/aui/thumbnail?oid=" + oid);
 						popup(url);
 					}
@@ -720,6 +718,7 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				parent.openLayer();
 				console.log(params);
 				call(url, params, function(data) {
+					console.log(data);
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
@@ -730,25 +729,24 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 
 			function preView(data) {
 				const preView = data.base64;
-				const preViewPath = data.fullPath;
 				AUIGrid.updateRowsById(myGridID, {
 					_$uid : recentGridItem._$uid,
 					preView : preView,
-					preViewPath : preViewPath
+					preViewCacheId : data.cacheId
 				});
 			}
 
-			function setSecondary(data) {
+			function attach(data) {
 				let template = "";
 				const arr = new Array();
 				for (let i = 0; i < data.length; i++) {
 					template += "<img style='position: relative; top: 2px' src='" + data[i].icon + "'>&nbsp;";
-					arr.push(data[i].fullPath);
+					arr.push(data[i].cacheId);
 				}
 
 				AUIGrid.updateRowsById(myGridID, {
 					_$uid : recentGridItem._$uid,
-					secondaryPaths : arr,
+					secondarys : arr,
 					icons : template
 				});
 			}
@@ -884,10 +882,14 @@ Timestamp time = (Timestamp) request.getAttribute("time");
 				params.addRows = addRows;
 				params.removeRows = removeRows;
 				params.editRows = editRows;
+				parent.openLayer();
+				console.log(params);
 				call(url, params, function(data) {
 					alert(data.msg);
 					if (data.result) {
 						loadGridData();
+					} else {
+						parent.closeLayer();
 					}
 				});
 			}

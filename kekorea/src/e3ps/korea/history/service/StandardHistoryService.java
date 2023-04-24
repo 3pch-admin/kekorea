@@ -3,13 +3,11 @@ package e3ps.korea.history.service;
 import java.util.ArrayList;
 import java.util.Map;
 
-import e3ps.admin.specCode.SpecCode;
 import e3ps.admin.specCode.service.SpecCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.common.util.StringUtils;
 import e3ps.korea.history.History;
-import e3ps.korea.history.HistoryOptionLink;
+import e3ps.korea.history.HistoryValue;
 import e3ps.project.Project;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -72,36 +70,57 @@ public class StandardHistoryService extends StandardManager implements HistorySe
 				ArrayList<Map<String, String>> headers = SpecCodeHelper.manager.getArrayKeyValueMap("SPEC");
 				for (Map<String, String> header : headers) {
 					String dataField = header.get("key");
-					String code = editRow.get(header.get("key")); // option value....
+					String value = editRow.get(dataField);
 
-					if (!StringUtils.isNull(code)) {
-						SpecCode optionCode = SpecCodeHelper.manager.getSpecCode(code, "OPTION");
-
-						QuerySpec qs = new QuerySpec();
-						int idx_link = qs.appendClassList(HistoryOptionLink.class, true);
-						int _idx = qs.appendClassList(History.class, false);
-						QuerySpecUtils.toInnerJoin(qs, HistoryOptionLink.class, History.class, "roleAObjectRef.key.id",
-								WTAttributeNameIfc.ID_NAME, idx_link, _idx);
-						QuerySpecUtils.toEqualsAnd(qs, idx_link, HistoryOptionLink.class, "roleAObjectRef.key.id",
-								history);
-						QuerySpecUtils.toEqualsAnd(qs, idx_link, HistoryOptionLink.class, "roleBObjectRef.key.id",
-								optionCode);
-						QueryResult result = PersistenceHelper.manager.find(qs);
-
-						if (result.hasMoreElements()) {
-							Object[] obj = (Object[]) result.nextElement();
-							HistoryOptionLink link = (HistoryOptionLink) obj[0];
-							PersistenceHelper.manager.delete(link);
-							// 기존꺼지우고 새로 생성
-							HistoryOptionLink newLink = HistoryOptionLink.newHistoryOptionLink(history, optionCode);
-							newLink.setDataField(dataField);
-							PersistenceHelper.manager.save(newLink);
-						} else {
-							HistoryOptionLink link = HistoryOptionLink.newHistoryOptionLink(history, optionCode);
-							link.setDataField(dataField);
-							PersistenceHelper.manager.save(link);
-						}
+					QuerySpec qs = new QuerySpec();
+					int _idx = qs.appendClassList(HistoryValue.class, true);
+					QuerySpecUtils.toEqualsAnd(qs, _idx, HistoryValue.class, HistoryValue.DATA_FIELD, dataField);
+					QuerySpecUtils.toEqualsAnd(qs, _idx, HistoryValue.class, "historyReference.key.id", history);
+					QueryResult result = PersistenceHelper.manager.find(qs);
+					if (result.hasMoreElements()) {
+						Object[] oo = (Object[]) result.nextElement();
+						HistoryValue historyValue = (HistoryValue) oo[0];
+						historyValue.setDataField(dataField);
+						historyValue.setValue(value);
+						historyValue.setHistory(history);
+						PersistenceHelper.manager.modify(historyValue);
+					} else {
+						HistoryValue historyValue = HistoryValue.newHistoryValue();
+						historyValue.setDataField(dataField);
+						historyValue.setValue(value);
+						historyValue.setHistory(history);
+						PersistenceHelper.manager.save(historyValue);
 					}
+//					String code = editRow.get(header.get("key")); // option value....
+//
+//					if (!StringUtils.isNull(code)) {
+//						SpecCode optionCode = SpecCodeHelper.manager.getSpecCode(code, "OPTION");
+//
+//						QuerySpec qs = new QuerySpec();
+//						int idx_link = qs.appendClassList(HistoryOptionLink.class, true);
+//						int _idx = qs.appendClassList(History.class, false);
+//						QuerySpecUtils.toInnerJoin(qs, HistoryOptionLink.class, History.class, "roleAObjectRef.key.id",
+//								WTAttributeNameIfc.ID_NAME, idx_link, _idx);
+//						QuerySpecUtils.toEqualsAnd(qs, idx_link, HistoryOptionLink.class, "roleAObjectRef.key.id",
+//								history);
+//						QuerySpecUtils.toEqualsAnd(qs, idx_link, HistoryOptionLink.class, "roleBObjectRef.key.id",
+//								optionCode);
+//						QueryResult result = PersistenceHelper.manager.find(qs);
+//
+//						if (result.hasMoreElements()) {
+//							Object[] obj = (Object[]) result.nextElement();
+//							HistoryOptionLink link = (HistoryOptionLink) obj[0];
+//							PersistenceHelper.manager.delete(link);
+//							// 기존꺼지우고 새로 생성
+//							HistoryOptionLink newLink = HistoryOptionLink.newHistoryOptionLink(history, optionCode);
+//							newLink.setDataField(dataField);
+//							PersistenceHelper.manager.save(newLink);
+//						} else {
+//							HistoryOptionLink link = HistoryOptionLink.newHistoryOptionLink(history, optionCode);
+//							link.setDataField(dataField);
+//							PersistenceHelper.manager.save(link);
+//						}
+//					}
 				}
 			}
 

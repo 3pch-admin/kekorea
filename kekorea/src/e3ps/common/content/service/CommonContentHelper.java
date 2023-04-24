@@ -33,6 +33,7 @@ import wt.fv.uploadtocache.UploadToCacheHelper;
 import wt.query.QuerySpec;
 import wt.services.ServiceFactory;
 import wt.util.EncodingConverter;
+import wt.util.FileUtil;
 import wt.util.WTAttributeNameIfc;
 import wt.util.WTProperties;
 
@@ -224,6 +225,7 @@ public class CommonContentHelper {
 		json.put("roleType", roleType);
 		json.put("tagId", UUID.randomUUID().toString());
 		json.put("cacheId", ccd.getEncodedCCD());
+		json.put("base64", ContentUtils.imageToBase64(file, FileUtil.getExtension(origin)));
 		return json;
 	}
 
@@ -274,7 +276,7 @@ public class CommonContentHelper {
 	}
 
 	/**
-	 * 첨부파일 모두 삭제
+	 * 모든 첨부파일 삭제
 	 */
 	public void clear(ContentHolder holder) throws Exception {
 		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
@@ -285,6 +287,28 @@ public class CommonContentHelper {
 
 		result.reset();
 		result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.SECONDARY);
+		while (result.hasMoreElements()) {
+			ContentItem item = (ContentItem) result.nextElement();
+			ContentServerHelper.service.deleteContent(holder, item);
+		}
+	}
+
+	/**
+	 * 주 첨부파일 모두 삭제
+	 */
+	public void clearP(ContentHolder holder) throws Exception {
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.PRIMARY);
+		if (result.hasMoreElements()) {
+			ContentItem item = (ContentItem) result.nextElement();
+			ContentServerHelper.service.deleteContent(holder, item);
+		}
+	}
+
+	/**
+	 * 첨부파일 모두 삭제
+	 */
+	public void clearS(ContentHolder holder) throws Exception {
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.SECONDARY);
 		while (result.hasMoreElements()) {
 			ContentItem item = (ContentItem) result.nextElement();
 			ContentServerHelper.service.deleteContent(holder, item);

@@ -5,29 +5,37 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.epm.keDrawing.KeDrawingMaster;
 import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.numberRule.NumberRuleMaster;
-import e3ps.epm.numberRule.beans.NumberRuleColumnData;
+import e3ps.epm.numberRule.dto.NumberRuleDTO;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.query.QuerySpec;
-import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
+import wt.util.WTAttributeNameIfc;
 
 public class NumberRuleHelper {
 
 	public static final NumberRuleHelper manager = new NumberRuleHelper();
 	public static final NumberRuleService service = ServiceFactory.getService(NumberRuleService.class);
 
+	public static HashMap<String, String> numberCache = null;
 	public static final String[] alphabet = new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
 			"M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+	static {
+		if (numberCache == null) {
+			numberCache = new HashMap<>();
+		}
+	}
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		ArrayList<NumberRuleColumnData> list = new ArrayList<NumberRuleColumnData>();
+		ArrayList<NumberRuleDTO> list = new ArrayList<NumberRuleDTO>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(NumberRule.class, true);
 
@@ -39,7 +47,7 @@ public class NumberRuleHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			NumberRule numberRule = (NumberRule) obj[0];
-			NumberRuleColumnData column = new NumberRuleColumnData(numberRule);
+			NumberRuleDTO column = new NumberRuleDTO(numberRule);
 			list.add(column);
 		}
 
@@ -81,4 +89,84 @@ public class NumberRuleHelper {
 		map.put("last", number + seq1 + seq2);
 		return map;
 	}
+
+	/**
+	 * 마지막 KEK 도번인지 확인 하는 함수
+	 */
+	public boolean isLast(NumberRuleMaster master) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(NumberRule.class, true);
+		int idx_m = query.appendClassList(NumberRuleMaster.class, false);
+		QuerySpecUtils.toInnerJoin(query, NumberRule.class, NumberRuleMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_m);
+		QuerySpecUtils.toEqualsAnd(query, idx, NumberRule.class, "masterReference.key.id", master);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		return result.size() == 1 ? true : false;
+	}
+
+	/**
+	 * 현재버전의 KEK 도번의 이전 버전의 도면을 가져오는 함수
+	 */
+	public NumberRule predecessor(NumberRule latest) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(NumberRule.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, NumberRule.class, NumberRule.VERSION, latest.getVersion() - 1);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			return (NumberRule) obj[0];
+		}
+		return null;
+	}
+
+	/**
+	 * 등록된 KEK 도번이 있는지
+	 */
+	public Map<String, Object> isValid(ArrayList<NumberRuleDTO> addRow, ArrayList<NumberRuleDTO> editRow)
+			throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		for (NumberRuleDTO dto : addRow) {
+			String number = dto.getNumber();
+			boolean isExist = exist(number);
+			if (isExist) {
+				result.put("isExist", true); // 존재하는거 true
+				result.put("msg", "도번이 = " + number + "가 이미 존재합니다.");
+				return result;
+			}
+		}
+
+		for (NumberRuleDTO dto : editRow) {
+			KeDrawingMaster master = (KeDrawingMaster) CommonUtils.getObject(dto.getMoid());
+			String number = master.getKeNumber();
+			String diffNumber = dto.getNumber();
+
+			// 원본 도면의 번호 혹은 LON NO 가 변경 될시 체크만한다...
+			if (!number.equals(diffNumber)) {
+				boolean isExist = exist(diffNumber);
+				if (isExist) {
+					result.put("isExist", true); // 존재하는거 true
+					result.put("msg", "도번이 = " + diffNumber + "가 이미 존재합니다.");
+					return result;
+				}
+			}
+		}
+		// 아무것도 없다면 false
+		result.put("isExist", false);
+		return result;
+	}
+
+	/**
+	 * KEK 도번이 존재하는지
+	 */
+	private boolean exist(String number) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx_m = query.appendClassList(NumberRuleMaster.class, true);
+		int idx = query.appendClassList(NumberRule.class, true);
+		QuerySpecUtils.toInnerJoin(query, NumberRuleMaster.class, NumberRule.class, WTAttributeNameIfc.ID_NAME,
+				"masterReference.key.id", idx_m, idx);
+		QuerySpecUtils.toEqualsAnd(query, idx_m, NumberRuleMaster.class, NumberRuleMaster.NUMBER, number);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		return result.size() > 0 ? true : false;
+	}
+
 }

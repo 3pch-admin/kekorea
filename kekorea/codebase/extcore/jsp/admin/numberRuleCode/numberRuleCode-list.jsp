@@ -11,9 +11,9 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<%@include file="/extcore/include/css.jsp"%>
-<%@include file="/extcore/include/script.jsp"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/css.jsp"%>
+<%@include file="/extcore/jsp/common/script.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -95,12 +95,18 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		dataField : "name",
 		headerText : "코드 명",
 		dataType : "string",
+		style : "aui-left",
 		width : 300
 	}, {
 		dataField : "code",
 		headerText : "코드",
 		dataType : "string",
-		width : 150
+		width : 150,
+		editRenderer : {
+			type : "InputEditRenderer",
+			regExp : "^[a-zA-Z0-9]+$",
+			autoUpperCase : true,
+		},
 	}, {
 		dataField : "codeType",
 		headerText : "코드 타입",
@@ -181,18 +187,20 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 
 	function createAUIGrid(columnLayout) {
 		const props = {
-			rowIdField : "oid",
 			headerHeight : 30,
 			showRowNumColumn : true,
-			showAutoNoDataMessage : false,
-			rowNumHeaderText : "번호",
 			showRowCheckColumn : true,
-			editable : true,
 			showStateColumn : true,
-			selectionMode : "multipleCells",
-			enableRowCheckShiftKey : true,
+			rowNumHeaderText : "번호",
+			showAutoNoDataMessage : false,
+			enableFilter : true,
+			enableMovingColumn : true,
+			showInlineFilter : true,
 			useContextMenu : true,
 			enableRightDownFocus : true,
+			filterLayerWidth : 320,
+			filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+			editable : true,
 			contextMenuItems : [ {
 				label : "선택된 행 이전 추가",
 				callback : contextItemHandler
@@ -290,7 +298,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 
 	function save() {
 
-		const url = getCallUrl("/numberRuleCode/create");
+		const url = getCallUrl("/numberRuleCode/save");
 		const params = new Object();
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
 		const removeRows = AUIGrid.getRemovedItems(myGridID);

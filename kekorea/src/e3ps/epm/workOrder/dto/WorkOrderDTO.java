@@ -22,6 +22,8 @@ public class WorkOrderDTO {
 	private String poid;
 	private String projectType_name;
 	private String name;
+	private String number;
+	private String workOrderType;
 	private String content;
 	private String customer_name;
 	private String install_name;
@@ -39,6 +41,14 @@ public class WorkOrderDTO {
 	private Timestamp createdDate;
 	private String createdDate_txt;
 	private String primary;
+	private int version;
+	private String note;
+	private String thumbnail;
+	private String icons;
+	private boolean latest;
+
+	private boolean isEdit = false;
+	private boolean isRevise = false;
 
 	// 변수용
 	private ArrayList<Map<String, Object>> addRows = new ArrayList<>(); // 도면 일람표
@@ -55,6 +65,12 @@ public class WorkOrderDTO {
 	 */
 	private ArrayList<Map<String, String>> addRows9 = new ArrayList<>();
 
+	/**
+	 * 태스크 변수
+	 */
+	private String toid;
+	private int progress;
+
 	private ArrayList<String> secondarys = new ArrayList<>();
 
 	public WorkOrderDTO() {
@@ -63,11 +79,21 @@ public class WorkOrderDTO {
 
 	public WorkOrderDTO(WorkOrder workOrder) throws Exception {
 		setOid(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
-		setName(workOrder.getMaster().getName());
-		setState(workOrder.getState());
-		setCreator(workOrder.getOwnership().getOwner().getFullName());
+		setName(workOrder.getName());
+		setNumber(workOrder.getNumber());
+		setWorkOrderType(workOrder.getWorkOrderType());
+		setState(workOrder.getLifeCycleState().getDisplay());
+		setContent(StringUtils.replaceToValue(workOrder.getDescription()));
+		setVersion(workOrder.getVersion());
+		setCreator(workOrder.getCreatorFullName());
 		setCreatedDate(workOrder.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(workOrder.getCreateTimestamp()));
+		setEdit(workOrder.getLifeCycleState().toString().equals("INWORK"));
+		setRevise(workOrder.getLifeCycleState().toString().equals("APPROVED"));
+		setNote(workOrder.getNote());
+		setThumbnail(AUIGridUtils.thumbnailTemplate(workOrder));
+		setIcons(AUIGridUtils.secondaryTemplate(workOrder));
+		setLatest(workOrder.getLatest());
 	}
 
 	public WorkOrderDTO(WorkOrderProjectLink link) throws Exception {
@@ -81,7 +107,10 @@ public class WorkOrderDTO {
 			setProjectType_name(project.getProjectType().getName());
 		}
 
-		setName(workOrder.getMaster().getName());
+		setName(workOrder.getName());
+		setNumber(workOrder.getNumber());
+		setWorkOrderType(workOrder.getWorkOrderType());
+		setVersion(workOrder.getVersion());
 		setContent(StringUtils.replaceToValue(workOrder.getDescription()));
 		if (project.getCustomer() != null) {
 			setCustomer_name(project.getCustomer().getName());
@@ -103,16 +132,22 @@ public class WorkOrderDTO {
 		setKeNumber(project.getKeNumber());
 		setUserId(project.getUserId());
 		setDescription(StringUtils.replaceToValue(project.getDescription()));
-		setState(workOrder.getState());
+		setState(workOrder.getLifeCycleState().getDisplay());
 		setModel(project.getModel());
 
 		if (project.getPDate() != null) {
 			setPdate(project.getPDate());
 			setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
 		}
-		setCreator(workOrder.getOwnership().getOwner().getFullName());
+		setCreator(workOrder.getCreatorFullName());
 		setPrimary(AUIGridUtils.primaryTemplate(workOrder));
 		setCreatedDate(workOrder.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(workOrder.getCreateTimestamp()));
+		setEdit(workOrder.getLifeCycleState().toString().equals("INWORK"));
+		setRevise(workOrder.getLifeCycleState().toString().equals("APPROVED"));
+		setNote(workOrder.getNote());
+		setThumbnail(AUIGridUtils.thumbnailTemplate(workOrder));
+		setIcons(AUIGridUtils.secondaryTemplate(workOrder));
+		setLatest(workOrder.getLatest());
 	}
 }

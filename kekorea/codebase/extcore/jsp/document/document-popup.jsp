@@ -1,13 +1,20 @@
 <%@page import="e3ps.doc.service.DocumentHelper"%>
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-String method = (String) request.getAttribute("method");
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 boolean multi = (boolean) request.getAttribute("multi");
+String method = (String) request.getAttribute("method");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
+<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 <input type="hidden" name="sessionid" id="sessionid">
 <input type="hidden" name="curPage" id="curPage">
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
+<input type="hidden" name="oid" id="oid">
 
 <table class="search-table">
 	<colgroup>
@@ -21,17 +28,36 @@ boolean multi = (boolean) request.getAttribute("multi");
 		<col width="*">
 	</colgroup>
 	<tr>
-		<th>공지사항 제목</th>
+		<th>문서 분류</th>
+		<td colspan="7" class="indent5">
+			<input type="hidden" name="location" id="location" value="<%=DocumentHelper.DOCUMENT_ROOT%>">
+			<span id="locationText"><%=DocumentHelper.DOCUMENT_ROOT%></span>
+		</td>
+	</tr>
+	<tr>
+		<th>문서 제목</th>
 		<td class="indent5">
-			<input type="text" name="fileName" class="width-150">
+			<input type="text" name="name" class="width-300">
+		</td>
+		<th>문서 번호</th>
+		<td class="indent5">
+			<input type="text" name="number" class="width-200">
 		</td>
 		<th>설명</th>
 		<td class="indent5">
-			<input type="text" name="description" class="width-150">
+			<input type="text" name="description" class="width-300">
 		</td>
+		<th>상태</th>
+		<td class="indent5">
+			<select name="state" id="state" class="width-100">
+				<option value="">선택</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
 		<th>작성자</th>
 		<td class="indent5">
-			<input type="text" name="creator" id="creator" class="width-150">
+			<input type="text" name="creator" id="creator" class="width-200">
 		</td>
 		<th>작성일</th>
 		<td class="indent5">
@@ -39,15 +65,35 @@ boolean multi = (boolean) request.getAttribute("multi");
 			~
 			<input type="text" name="createdTo" id="createdTo" class="width-100">
 		</td>
+		<th>버전</th>
+		<td colspan="3">
+			&nbsp;
+			<div class="pretty p-switch">
+				<input type="radio" name="latest" value="true" checked="checked">
+				<div class="state p-success">
+					<label>
+						<b>죄신버전</b>
+					</label>
+				</div>
+			</div>
+			&nbsp;
+			<div class="pretty p-switch">
+				<input type="radio" name="latest" value="">
+				<div class="state p-success">
+					<label>
+						<b>모든버전</b>
+					</label>
+				</div>
+			</div>
+		</td>
 	</tr>
 </table>
 
-<!-- 버튼 테이블 -->
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('document-popup');">
-			<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('document-popup');">
+			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('document-list');">
+			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('document-list');">
 			<input type="button" value="추가" title="추가" class="blue" onclick="<%=method%>();">
 			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
@@ -63,7 +109,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 		</td>
 	</tr>
 </table>
-<!-- 리스트 테이블 -->
+
 <table>
 	<colgroup>
 		<col width="230">
@@ -72,247 +118,231 @@ boolean multi = (boolean) request.getAttribute("multi");
 	</colgroup>
 	<tr>
 		<td valign="top">
-			<jsp:include page="/extcore/include/folder-include.jsp">
-				<jsp:param value="<%=DocumentHelper.ROOT%>" name="location" />
+			<jsp:include page="/extcore/jsp/common/folder-include.jsp">
+				<jsp:param value="<%=DocumentHelper.DOCUMENT_ROOT%>" name="location" />
 				<jsp:param value="product" name="container" />
 				<jsp:param value="list" name="mode" />
-				<jsp:param value="705" name="height" />
+				<jsp:param value="670" name="height" />
 			</jsp:include>
 		</td>
-		<td>&nbsp;</td>
-		<td>
-			<!-- 그리드 리스트 -->
-			<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">
+			<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
+			<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		</td>
 	</tr>
 </table>
-<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
-<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
-			let myGridID;
-			function _layout() {
-				return [ {
-					dataField : "name",
-					headerText : "문서제목",
-					dataType : "string",
-					width : 350,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "number",
-					headerText : "문서번호",
-					dataType : "string",
-					width : 120,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "description",
-					headerText : "설명",
-					dataType : "string",
-					style : "left indent10",
-					width : 350,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "location",
-					headerText : "문서분류",
-					dataType : "string",
-					width : 250,
-					style : "left indent10",
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "docType",
-					headerText : "문서타입",
-					dataType : "string",
-					width : 100,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "state",
-					headerText : "상태",
-					dataType : "string",
-					width : 100,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "version",
-					headerText : "버전",
-					dataType : "string",
-					width : 80,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "creator",
-					headerText : "작성자",
-					dataType : "string",
-					width : 100,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "createdDate",
-					headerText : "작성일",
-					dataType : "date",
-					width : 100,
-					formatString : "yyyy-mm-dd",
-					filter : {
-						showIcon : true,
-						inline : true,
-						displayFormatValues : true
-					},
-				}, {
-					dataField : "modifier",
-					headerText : "수정자",
-					dataType : "string",
-					width : 100,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "modifiedDate",
-					headerText : "수정일",
-					dataType : "date",
-					width : 100,
-					formatString : "yyyy-mm-dd",
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "primary",
-					headerText : "첨부파일",
-					width : 100,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				} ]
+	let myGridID;
+	function _layout() {
+		return [ {
+			dataField : "name",
+			headerText : "문서제목",
+			dataType : "string",
+			width : 350,
+			style : "aui-left",
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "number",
+			headerText : "문서번호",
+			dataType : "string",
+			width : 120,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "description",
+			headerText : "설명",
+			dataType : "string",
+			style : "aui-left",
+			width : 350,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "location",
+			headerText : "문서분류",
+			dataType : "string",
+			width : 250,
+			style : "aui-left",
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "docType",
+			headerText : "문서타입",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "state",
+			headerText : "상태",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "version",
+			headerText : "버전",
+			dataType : "string",
+			width : 80,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "creator",
+			headerText : "작성자",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "createdDate",
+			headerText : "작성일",
+			dataType : "date",
+			width : 100,
+			formatString : "yyyy-mm-dd",
+			filter : {
+				showIcon : true,
+				inline : true,
+				displayFormatValues : true
+			},
+		}, {
+			dataField : "modifier",
+			headerText : "수정자",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "modifiedDate",
+			headerText : "수정일",
+			dataType : "date",
+			width : 100,
+			formatString : "yyyy-mm-dd",
+			filter : {
+				showIcon : true,
+				inline : true,
+				displayFormatValues : true
+			},
+		}, {
+			dataField : "primary",
+			headerText : "첨부파일",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		} ]
+	}
+
+	function createAUIGrid(columnLayout) {
+		const props = {
+				headerHeight : 30,
+				showRowNumColumn : true,
+				rowNumHeaderText : "번호",
+				showAutoNoDataMessage : false,
+				enableFilter : true,
+				selectionMode : "multipleCells",
+				enableMovingColumn : true,
+				showInlineFilter : true,
+				useContextMenu : true,
+				enableRightDownFocus : true,
+				filterLayerWidth : 320,
+				filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+				showRowCheckColumn : true,
+		};
+		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+		loadGridData();
+		AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+			hideContextMenu();
+			vScrollChangeHandler(event);
+		});
+		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+			hideContextMenu();
+		});
+	}
+
+	function <%=method%>	() {
+		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+		if (checkedItems.length == 0) {
+			alert("추가할 도면을 선택하세요.");
+			return false;
+		}
+		openLayer();
+		opener.<%=method%>(checkedItems, function(result) {
+			if (result) {
+				setTimeout(function() {
+					closeLayer();
+				}, 500);
 			}
+		});
+	}
 
-			// AUIGrid 생성 함수
-			function createAUIGrid(columnLayout) {
-				// 그리드 속성
-				const props = {
-					// 그리드 공통속성 시작
-					headerHeight : 30, // 헤더높이
-					rowHeight : 30, // 행 높이
-					showRowNumColumn : true, // 번호 행 출력 여부
-					showStateColumn : true, // 상태표시 행 출력 여부
-					rowNumHeaderText : "번호", // 번호 행 텍스트 설정
-					noDataMessage : "검색 결과가 없습니다.", // 데이터 없을시 출력할 내용
-					enableFilter : true, // 필터 사용 여부
-					selectionMode : "multipleCells",
-					enableMovingColumn : true,
-					showInlineFilter : true,
-					useContextMenu : true,
-					// 그리드 공통속성 끝
-					showRowCheckColumn : true,
-					<%if (!multi) {%>
-					rowCheckToRadio : true
-					<%}%>
-				};
+	function loadGridData() {
+		const url = getCallUrl("/doc/list");
+		const params = new Object();
+		const psize = document.getElementById("psize").value;
+		params.latest = true;
+		params.psize = psize;
+		AUIGrid.showAjaxLoader(myGridID);
+		parent.openLayer();
+		call(url, params, function(data) {
+			AUIGrid.removeAjaxLoader(myGridID);
+			AUIGrid.setGridData(myGridID, data.list);
+			document.getElementById("sessionid").value = data.sessionid;
+			document.getElementById("curPage").value = data.curPage;
+			parent.closeLayer();
+		});
+	}
 
-				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				//화면 첫 진입시 리스트 호출 함수
-				loadGridData();
-				// 컨텍스트 메뉴 이벤트 바인딩
-				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+	document.addEventListener("DOMContentLoaded", function() {
+		const columns = loadColumnLayout("document-list");
+		const contenxtHeader = genColumnHtml(columns);
+		$("#h_item_ul").append(contenxtHeader);
+		$("#headerMenu").menu({
+			select : headerMenuSelectHandler
+		});
+		createAUIGrid(columns);
+		_createAUIGrid(_columns);
+		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
+		selectbox("state");
+		finderUser("creator");
+		twindate("created");
+		selectbox("psize");
+	});
 
-				// 스크롤 체인지 핸들러.
-				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
-					vScrollChangeHandler(event); // lazy loading
-				});
+	document.addEventListener("keydown", function(event) {
+		const keyCode = event.keyCode || event.which;
+		if (keyCode === 13) {
+			loadGridData();
+		}
+	})
 
-				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-					hideContextMenu(); // 컨텍스트 메뉴 감추기
-				});
-			}
+	document.addEventListener("click", function(event) {
+		hideContextMenu();
+	})
 
-			function loadGridData() {
-				const url = getCallUrl("/document/list");
-				const params = new Object();
-				const psize = document.getElementById("psize").value;
-				params.latest = true;
-				params.psize = psize;
-				AUIGrid.showAjaxLoader(myGridID);
-				call(url, params, function(data) {
-					AUIGrid.removeAjaxLoader(myGridID);
-					AUIGrid.setGridData(myGridID, data.list);
-					document.getElementById("sessionid").value = data.sessionid;
-					document.getElementById("curPage").value = data.curPage;
-				});
-			}
-
-			function <%=method%>() {
-				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				if (checkedItems.length == 0) {
-					alert("추가할 문서를 선택하세요.");
-					return false;
-				}
-				opener.<%=method%>(checkedItems);
-				self.close();
-			}
-			
-			function auiCellClickHandler(event) {
-				const item = event.item;
-				rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); // rowIdField 얻기
-				rowId = item[rowIdField];
-				
-				// 이미 체크 선택되었는지 검사
-				if(AUIGrid.isCheckedRowById(event.pid, rowId)) {
-					// 엑스트라 체크박스 체크해제 추가
-					AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
-				} else {
-					// 엑스트라 체크박스 체크 추가
-					AUIGrid.addCheckedRowsByIds(event.pid, rowId);
-				}
-			}
-			
-			// jquery 삭제를 해가는 쪽으로 한다..
-			document.addEventListener("DOMContentLoaded", function() {
-				// DOM이 로드된 후 실행할 코드 작성
-				const columns = loadColumnLayout("document-popup");
-				let contenxtHeader = genColumnHtml(columns); // see auigrid.js
-				$("#h_item_ul").append(contenxtHeader);
-				$("#headerMenu").menu({
-					select : headerMenuSelectHandler
-				});
-				createAUIGrid(columns);
-				_createAUIGrid(_columns); // 트리
-				
-				finderUser("creator");
-				twindate("created");
-				selectbox("psize");
-			});
-
-			document.addEventListener("keydown", function(event) {
-				// 키보드 이벤트 객체에서 눌린 키의 코드 가져오기
-				const keyCode = event.keyCode || event.which;
-				if (keyCode === 13) {
-					loadGridData();
-				}
-			})
-
-			window.addEventListener("resize", function() {
-				AUIGrid.resize(_myGridID);
-				AUIGrid.resize(myGridID);
-			});
+	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
+	});
 </script>

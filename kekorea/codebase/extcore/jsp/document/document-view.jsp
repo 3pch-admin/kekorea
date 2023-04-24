@@ -3,7 +3,7 @@
 <%@page import="e3ps.doc.dto.DocumentDTO"%>
 <%-- <%@page import="e3ps.project.dto.ProjectDTO"%> --%>
 <%@page import="e3ps.common.util.ContentUtils"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <%@page import="net.sf.json.JSONArray"%>
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");

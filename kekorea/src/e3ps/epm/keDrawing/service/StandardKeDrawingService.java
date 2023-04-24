@@ -31,7 +31,7 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 	}
 
 	@Override
-	public void create(HashMap<String, List<KeDrawingDTO>> dataMap) throws Exception {
+	public void save(HashMap<String, List<KeDrawingDTO>> dataMap) throws Exception {
 		List<KeDrawingDTO> addRows = dataMap.get("addRows");
 		List<KeDrawingDTO> removeRows = dataMap.get("removeRows");
 		List<KeDrawingDTO> editRows = dataMap.get("editRows");
@@ -76,17 +76,17 @@ public class StandardKeDrawingService extends StandardManager implements KeDrawi
 
 			for (KeDrawingDTO dto : removeRows) {
 				String oid = dto.getOid();
-				KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
-				KeDrawingMaster master = keDrawing.getMaster();
+				KeDrawing latest = (KeDrawing) CommonUtils.getObject(oid);
+				KeDrawingMaster master = latest.getMaster();
 				boolean isLast = KeDrawingHelper.manager.isLast(master);
 				if (isLast) {
-					PersistenceHelper.manager.delete(keDrawing);
+					PersistenceHelper.manager.delete(latest);
 					PersistenceHelper.manager.delete(master);
 				} else {
-					KeDrawing pre = KeDrawingHelper.manager.getPreKeDrawing(keDrawing);
+					KeDrawing pre = KeDrawingHelper.manager.predecessor(latest);
 					pre.setLatest(true);
 					PersistenceHelper.manager.modify(pre);
-					PersistenceHelper.manager.delete(keDrawing);
+					PersistenceHelper.manager.delete(latest);
 				}
 			}
 

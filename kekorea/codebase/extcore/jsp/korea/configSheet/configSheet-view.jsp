@@ -9,7 +9,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 JSONArray list = (JSONArray) request.getAttribute("list");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <style type="text/css">
 .row1 {
 	background-color: #99CCFF;

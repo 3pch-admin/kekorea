@@ -1,3 +1,4 @@
+<%@page import="wt.org.WTUser"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.project.Project"%>
@@ -8,12 +9,12 @@
 JSONArray data = (JSONArray) request.getAttribute("data");
 Project p1 = (Project) request.getAttribute("p1");
 ArrayList<Project> destList = (ArrayList<Project>) request.getAttribute("destList");
-destList.add(0, p1);
 String oid = (String) request.getAttribute("oid");
 String compareArr = (String) request.getAttribute("compareArr");
 ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) request.getAttribute("fixedList");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=11210"></script>
 <style type="text/css">
 .compare {
@@ -24,11 +25,14 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 </style>
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
 <input type="hidden" name="compareArr" id="compareArr" value="<%=compareArr%>">
+<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('tbom-compare');">
-			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('tbom-compare');">
+			<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+			<!-- 			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('partlist-compare');"> -->
+			<!-- 			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('partlist-compare');"> -->
 		</td>
 		<td class="right">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
@@ -37,8 +41,8 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 </table>
 
 
-<div id="grid_wrap" style="height: 900px; border-top: 1px solid #3180c3;"></div>
-<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
+<div id="grid_wrap" style="height: 100px; border-top: 1px solid #3180c3;"></div>
+<%-- <%@include file="/extcore/jsp/common/aui/aui-context.jsp"%> --%>
 <script type="text/javascript">
 	let myGridID;
 	const data = <%=data%>
@@ -54,16 +58,14 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 				inline : true
 			},
 		}, 
-		<%
-			int i = 1;
-			for (Project project : destList) {
-				String dataField = String.valueOf(project.getPersistInfo().getObjectIdentifier().getId());
-		%>
+		<%int i = 1;
+for (Project project : destList) {
+	String dataField = String.valueOf(project.getPersistInfo().getObjectIdentifier().getId());%>
 		{
 			headerText : "<%=project.getKekNumber()%>",
 			dataField : "<%=dataField%>",
 			dataType : "string",
-			width : 100,
+			width : 200,
 			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
 				return "";
 			},
@@ -72,10 +74,8 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 				inline : true
 			},
 		}, 
-		<%
-				i++;
-			}	
-		%>
+		<%i++;
+}%>
 		 ]
 	}
 
@@ -91,33 +91,42 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 			showInlineFilter : true,
 			useContextMenu : true,
 			enableRightDownFocus : true,
-// 			autoGridHeight : true
+			fixedColumnCount : 1,
+			autoGridHeight : true
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		AUIGrid.setGridData(myGridID, data);
-		AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
-		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-			hideContextMenu();
-		});
-		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-			hideContextMenu();
-		});
+// 		AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+// 		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+// 			hideContextMenu();
+// 		});
+// 		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+// 			hideContextMenu();
+// 		});
 	}
 
+	
+	function exportExcel() {
+		const exceptColumnFields = [  ];
+		const sessionName = document.getElementById("sessionName").value;
+		exportToExcel("이력관리 비교", "이력관리", "이력관리 비교", exceptColumnFields, sessionName);
+	}
+
+	
 	document.addEventListener("DOMContentLoaded", function() {
 		const columns = loadColumnLayout("tbom-compare");
-		const contenxtHeader = genColumnHtml(columns);
-		$("#h_item_ul").append(contenxtHeader);
-		$("#headerMenu").menu({
-			select : headerMenuSelectHandler
-		});
+// 		const contenxtHeader = genColumnHtml(columns);
+// 		$("#h_item_ul").append(contenxtHeader);
+// 		$("#headerMenu").menu({
+// 			select : headerMenuSelectHandler
+// 		});
 		createAUIGrid(columns);
 		AUIGrid.resize(myGridID);
 	})
 
-	document.addEventListener("click", function(event) {
-		hideContextMenu();
-	})
+// 	document.addEventListener("click", function(event) {
+// 		hideContextMenu();
+// 	})
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);

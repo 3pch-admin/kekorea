@@ -19,6 +19,8 @@ import e3ps.bom.tbom.dto.TBOMDTO;
 import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.epm.workOrder.WorkOrder;
+import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.project.Project;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
@@ -120,11 +122,18 @@ public class TBOMController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
 		TBOMDTO dto = new TBOMDTO(master);
+		TBOMMaster latest = TBOMHelper.manager.getLatest(master);
+		JSONArray history = TBOMHelper.manager.history(master);
 		JSONArray list = TBOMHelper.manager.jsonAuiProject(oid);
 		JSONArray data = TBOMHelper.manager.getData(master);
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("latestVersion", latest.getVersion());
+		model.addObject("loid", latest.getPersistInfo().getObjectIdentifier().getStringValue());
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
 		model.addObject("list", list);
 		model.addObject("dto", dto);
+		model.addObject("history", history);
 		model.setViewName("popup:/bom/tbom/tbom-view");
 		return model;
 	}
@@ -212,6 +221,15 @@ public class TBOMController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
 		TBOMDTO dto = new TBOMDTO(master);
+		JSONArray list = TBOMHelper.manager.jsonAuiProject(oid);
+		JSONArray data = TBOMHelper.manager.getData(master);
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
+		WTUser sessionUser = CommonUtils.sessionUser();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("list", list);
+		model.addObject("data", data);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/bom/tbom/tbom-modify");
 		return model;
@@ -246,6 +264,42 @@ public class TBOMController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "T-BOM 개정 페이지")
+	@GetMapping(value = "/revise")
+	public ModelAndView revise(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
+		TBOMDTO dto = new TBOMDTO(master);
+		JSONArray list = TBOMHelper.manager.jsonAuiProject(oid);
+		JSONArray data = TBOMHelper.manager.getData(master);
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
+		WTUser sessionUser = CommonUtils.sessionUser();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("list", list);
+		model.addObject("data", data);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/bom/tbom/tbom-revise");
+		return model;
+	}
+
+	@Description(value = "T-BOM 개정")
+	@PostMapping(value = "/revise")
+	@ResponseBody
+	public Map<String, Object> revise(@RequestBody TBOMDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			TBOMHelper.service.revise(dto);
+			result.put("result", SUCCESS);
+			result.put("msg", REVISE_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
 		}
 		return result;
 	}

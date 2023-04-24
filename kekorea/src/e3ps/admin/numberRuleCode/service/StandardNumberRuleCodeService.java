@@ -41,6 +41,7 @@ public class StandardNumberRuleCodeService extends StandardManager implements Nu
 				String codeType = dto.getCodeType();
 				String description = dto.getDescription();
 				boolean enable = dto.isEnable();
+				int sort = dto.getSort();
 
 				NumberRuleCode numberRuleCode = NumberRuleCode.newNumberRuleCode();
 				numberRuleCode.setName(name);
@@ -48,6 +49,7 @@ public class StandardNumberRuleCodeService extends StandardManager implements Nu
 				numberRuleCode.setEnable(enable);
 				numberRuleCode.setCodeType(NumberRuleCodeType.toNumberRuleCodeType(codeType));
 				numberRuleCode.setCode(code);
+				numberRuleCode.setSort(sort);
 				PersistenceHelper.manager.save(numberRuleCode);
 			}
 
@@ -64,6 +66,7 @@ public class StandardNumberRuleCodeService extends StandardManager implements Nu
 				String codeType = dto.getCodeType();
 				String description = dto.getDescription();
 				boolean enable = dto.isEnable();
+				int sort = dto.getSort();
 
 				NumberRuleCode numberRuleCode = (NumberRuleCode) CommonUtils.getObject(oid);
 				numberRuleCode.setName(name);
@@ -71,6 +74,7 @@ public class StandardNumberRuleCodeService extends StandardManager implements Nu
 				numberRuleCode.setEnable(enable);
 				numberRuleCode.setCodeType(NumberRuleCodeType.toNumberRuleCodeType(codeType));
 				numberRuleCode.setCode(code);
+				numberRuleCode.setSort(sort);
 				PersistenceHelper.manager.modify(numberRuleCode);
 			}
 

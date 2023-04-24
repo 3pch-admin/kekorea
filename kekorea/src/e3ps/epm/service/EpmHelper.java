@@ -9,25 +9,17 @@ import java.util.List;
 import java.util.Map;
 
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.DateUtils;
-import e3ps.common.util.FolderUtils;
 import e3ps.common.util.IBAUtils;
-import e3ps.common.util.MessageHelper;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.epm.ViewerData;
-import e3ps.epm.column.EpmLibraryColumnData;
-import e3ps.epm.column.EpmProductColumnData;
-import e3ps.epm.column.ViewerColumnData;
 import e3ps.epm.dto.EpmDTO;
-import e3ps.org.People;
-import e3ps.workspace.ApprovalContract;
-import e3ps.workspace.ApprovalContractPersistableLink;
-import e3ps.workspace.service.WorkspaceHelper;
+import e3ps.epm.workOrder.WorkOrder;
+import e3ps.epm.workOrder.WorkOrderDataLink;
+import e3ps.epm.workOrder.WorkOrderProjectLink;
+import e3ps.project.Project;
 import net.sf.json.JSONArray;
 import wt.clients.folder.FolderTaskLogic;
-import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.epm.EPMDocumentMaster;
 import wt.epm.build.EPMBuildHistory;
@@ -36,22 +28,16 @@ import wt.epm.structure.EPMReferenceLink;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
-import wt.fc.ReferenceFactory;
 import wt.folder.Folder;
 import wt.folder.IteratedFolderMemberLink;
 import wt.part.WTPart;
-import wt.pom.Transaction;
 import wt.query.ClassAttribute;
-import wt.query.ColumnExpression;
-import wt.query.OrderBy;
 import wt.query.QuerySpec;
-import wt.query.SQLFunction;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
 import wt.vc.Mastered;
 import wt.vc.VersionControlHelper;
-import wt.vc.wip.WorkInProgressHelper;
 
 public class EpmHelper {
 
@@ -97,83 +83,6 @@ public class EpmHelper {
 		QueryResult result = PersistenceHelper.manager.find(query);
 		boolean isNumber = result.size() > 0 ? true : false;
 		return isNumber;
-	}
-
-	public EPMDocument getLatestEPM(String number) throws Exception {
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(EPMDocument.class, true);
-		SearchCondition sc = new SearchCondition(EPMDocument.class, EPMDocument.NUMBER, "=",
-				number.toUpperCase().trim());
-		query.appendWhere(sc, new int[] { idx });
-		query.appendAnd();
-
-		sc = VersionControlHelper.getSearchCondition(EPMDocument.class, true);
-		query.appendWhere(sc, new int[] { idx });
-
-		CommonUtils.addLastVersionCondition(query, idx);
-
-		QueryResult result = PersistenceHelper.manager.find(query);
-		EPMDocument e = null;
-		if (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			e = (EPMDocument) obj[0];
-		}
-		return e;
-	}
-
-	public EPMDocument getLatestEPMByName(String name) throws Exception {
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(EPMDocument.class, true);
-		SearchCondition sc = new SearchCondition(EPMDocument.class, EPMDocument.NAME, "=", name.toUpperCase().trim());
-		query.appendWhere(sc, new int[] { idx });
-		query.appendAnd();
-
-		sc = VersionControlHelper.getSearchCondition(EPMDocument.class, true);
-		query.appendWhere(sc, new int[] { idx });
-
-		CommonUtils.addLastVersionCondition(query, idx);
-
-		QueryResult result = PersistenceHelper.manager.find(query);
-		EPMDocument e = null;
-		if (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			e = (EPMDocument) obj[0];
-		}
-		return e;
-	}
-
-	public Map<String, Object> checkDrawing(Map<String, Object> param) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		// String oid = (String) param.get("oid");
-
-		List<String> list = (List<String>) param.get("list");
-
-		ReferenceFactory rf = new ReferenceFactory();
-		EPMDocument epm = null;
-		boolean is2D = false;
-		try {
-
-			for (String oid : list) {
-				epm = (EPMDocument) rf.getReference(oid).getObject();
-
-				if (epm.getDocType().toString().equals("CADDRAWING")) {
-					is2D = true;
-					break;
-				}
-			}
-
-			if (is2D) {
-				map.put("msg", "도면 검증에 실패 하였습니다\n시스템 관리자에게 문의하세요.");
-			} else {
-				map.put("msg", "2D 도면 파일이 아니여서 출력이 불가능합니다.");
-			}
-
-			map.put("is2D", is2D);
-		} catch (Exception e) {
-			map.put("msg", "도면 검증에 실패 하였습니다\n시스템 관리자에게 문의하세요.");
-			e.printStackTrace();
-		}
-		return map;
 	}
 
 	public EPMDocument getEPM2D(EPMDocument ee) throws Exception {
@@ -229,15 +138,28 @@ public class EpmHelper {
 		return isYcode;
 	}
 
+	/**
+	 * 도면 검색
+	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		System.out.println("검색 START = " + new Timestamp(new Date().getTime()));
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<EpmDTO> list = new ArrayList<EpmDTO>();
 
+		String fileName = (String) params.get("fileName");
+		String partCode = (String) params.get("partCode");
+		String number = (String) params.get("number");
+		String partName = (String) params.get("partName");
+		String cadType = (String) params.get("cadType");
+		String material = (String) params.get("material");
+		String remark = (String) params.get("remark");
+		String reference = (String) params.get("reference");
+		String state = (String) params.get("state");
 		boolean latest = (boolean) params.get("latest");
 		String oid = (String) params.get("oid"); // 폴더 OID
 		String container = (String) params.get("container");
-
+		String creatorOid = (String) params.get("creatorOid");
+		String modifierOid = (String) params.get("modifierOid");
 		QuerySpec query = new QuerySpec();
 
 		int idx = query.appendClassList(EPMDocument.class, true);
@@ -246,6 +168,24 @@ public class EpmHelper {
 		QuerySpecUtils.toCI(query, idx, EPMDocument.class);
 		QuerySpecUtils.toInnerJoin(query, EPMDocument.class, EPMDocumentMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
+
+		// 캐드파일명
+		QuerySpecUtils.toLikeAnd(query, idx, EPMDocument.class, EPMDocument.CADNAME, fileName);
+		QuerySpecUtils.toIBAEqualsAnd(query, EPMDocument.class, idx, "PART_CODE", partCode);
+
+		// 국제 전용 IBA 프로이 오토 캐드 검색용
+		QuerySpecUtils.queryLikeNumber(query, EPMDocument.class, idx, number);
+		QuerySpecUtils.queryLikeName(query, EPMDocument.class, idx, partName);
+
+		// 캐드타입
+		QuerySpecUtils.toEqualsAnd(query, idx, EPMDocument.class, EPMDocument.DOC_TYPE, cadType);
+
+		QuerySpecUtils.toIBAEqualsAnd(query, EPMDocument.class, idx, "MATERIAL", material);
+		QuerySpecUtils.toIBAEqualsAnd(query, EPMDocument.class, idx, "REMARKS", remark);
+		QuerySpecUtils.toIBAEqualsAnd(query, EPMDocument.class, idx, "REF_NO", reference);
+		QuerySpecUtils.toState(query, idx, EPMDocument.class, state);
+		QuerySpecUtils.creatorQuery(query, idx, EPMDocument.class, creatorOid);
+		QuerySpecUtils.modifierQuery(query, idx, EPMDocument.class, modifierOid);
 
 		Folder folder = null;
 		if (!StringUtils.isNull(oid)) {
@@ -300,14 +240,9 @@ public class EpmHelper {
 	// 버전이력
 	public JSONArray history(Mastered master) throws Exception {
 		ArrayList<EpmDTO> list = new ArrayList<>();
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(EPMDocument.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, EPMDocument.class, "masterReference.key.id",
-				master.getPersistInfo().getObjectIdentifier().getId());
-		QueryResult result = PersistenceHelper.manager.find(query);
+		QueryResult result = VersionControlHelper.service.allIterationsOf(master);
 		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			EPMDocument epm = (EPMDocument) obj[0];
+			EPMDocument epm = (EPMDocument) result.nextElement();
 			EpmDTO dto = new EpmDTO(epm);
 			list.add(dto);
 		}
@@ -315,11 +250,41 @@ public class EpmHelper {
 	}
 
 	/**
-	 * 관련 작번 CONFIG SHEET 랑 연결..
+	 * 관련 작번 도면과 연결된 - 도면일람표에 사용된 도면들..
 	 */
 	public JSONArray jsonAuiProject(String oid) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		EPMDocument epm = (EPMDocument) CommonUtils.getObject(oid);
 
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Project.class, true);
+		int idx_l = query.appendClassList(WorkOrderProjectLink.class, false);
+		int idx_w = query.appendClassList(WorkOrder.class, false);
+		int idx_d = query.appendClassList(WorkOrderDataLink.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, Project.class, WorkOrderProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleBObjectRef.key.id", idx, idx_l);
+		QuerySpecUtils.toInnerJoin(query, WorkOrder.class, WorkOrderProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx_w, idx_l);
+		QuerySpecUtils.toInnerJoin(query, WorkOrder.class, WorkOrderDataLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx_w, idx_d);
+		QuerySpecUtils.toEqualsAnd(query, idx_d, WorkOrderDataLink.class, "roleBObjectRef.key.id", epm);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Project project = (Project) obj[0];
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
+			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("install_name", project.getInstall() != null ? project.getInstall().getName() : "");
+			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("description", project.getDescription());
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
 }

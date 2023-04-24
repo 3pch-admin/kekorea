@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.project.Project;
@@ -21,6 +22,8 @@ import e3ps.project.output.dto.OutputDTO;
 import e3ps.project.output.service.OutputHelper;
 import e3ps.project.task.Task;
 import net.sf.json.JSONArray;
+import wt.org.WTUser;
+import wt.session.SessionHelper;
 
 @Controller
 @RequestMapping(value = "/output/**")
@@ -31,8 +34,26 @@ public class OutputController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
+		model.addObject("maks", maks);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/project/output/output-list.jsp");
+		return model;
+	}
+
+	@Description(value = "산출물(OLD) 리스트 페이지")
+	@GetMapping(value = "/old")
+	public ModelAndView old() throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
+		model.addObject("maks", maks);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.setViewName("/extcore/jsp/project/output/output-old.jsp");
 		return model;
 	}
 

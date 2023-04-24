@@ -10,9 +10,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<%@include file="/extcore/include/css.jsp"%>
-<%@include file="/extcore/include/script.jsp"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/css.jsp"%>
+<%@include file="/extcore/jsp/common/script.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 <style type="text/css">
 .preView {
@@ -107,7 +107,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('keDrawing-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('keDrawing-list');">
 					<input type="button" value="저장" title="저장" onclick="create();">
-					<input type="button" value="개정" title="개정" class="red" onclick="_revise();">
+					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<%
 					if (isAdmin) {
@@ -426,7 +426,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				}
 			}
 
-
 			function auiBeforeRemoveRowHandler(event) {
 				const items = event.items;
 				for (let i = 0; i < items.length; i++) {
@@ -495,6 +494,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						alert(rowIndex + "행 데이터의 작성자 혹은 수정자가 아닙니다.");
 						return false;
 					}
+					if (!item.latest) {
+						alert("최신버전의 도면이 아닙니다.");
+						return false;
+					}
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
 			}
@@ -543,7 +546,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function create() {
-				const url = getCallUrl("/keDrawing/create");
+				const url = getCallUrl("/keDrawing/save");
 				const params = new Object();
 				const addRows = AUIGrid.getAddedRowItems(myGridID);
 				const removeRows = AUIGrid.getRemovedItems(myGridID);
@@ -600,11 +603,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					parent.closeLayer();
 					if (data.result) {
 						loadGridData();
+					} else {
+						parent.closeLayer();
 					}
 				});
 			}
 
-			function _revise() {
+			function revise() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 
 				if (checkedItems.length == 0) {

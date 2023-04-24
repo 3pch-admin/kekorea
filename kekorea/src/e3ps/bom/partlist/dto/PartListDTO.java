@@ -54,7 +54,7 @@ public class PartListDTO {
 	private String content; // 수배표 설명
 
 	// 변수용
-	private ArrayList<Map<String, Object>> _addRows = new ArrayList<>(); // 프로젝트
+	private ArrayList<Map<String, Object>> addRows9 = new ArrayList<>(); // 프로젝트
 	private ArrayList<Map<String, Object>> addRows = new ArrayList<>(); // 수배표
 	private ArrayList<Map<String, String>> agreeRows = new ArrayList<>(); // 검토
 	private ArrayList<Map<String, String>> approvalRows = new ArrayList<>(); // 결재

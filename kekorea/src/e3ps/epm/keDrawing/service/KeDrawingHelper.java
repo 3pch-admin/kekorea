@@ -21,6 +21,7 @@ import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.project.Project;
 import net.sf.json.JSONArray;
 import wt.epm.EPMDocument;
+import wt.epm.EPMDocumentMaster;
 import wt.fc.PagingQueryResult;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
@@ -122,8 +123,7 @@ public class KeDrawingHelper {
 		int idx_m = query.appendClassList(KeDrawingMaster.class, false);
 		QuerySpecUtils.toInnerJoin(query, KeDrawing.class, KeDrawingMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
-		QuerySpecUtils.toEqualsAnd(query, idx, KeDrawing.class, "masterReference.key.id",
-				master.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, KeDrawing.class, "masterReference.key.id", master);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		return result.size() == 1 ? true : false;
 	}
@@ -131,10 +131,10 @@ public class KeDrawingHelper {
 	/**
 	 * 현재버전의 KE 도면의 이전 버전의 도면을 가져오는 함수
 	 */
-	public KeDrawing getPreKeDrawing(KeDrawing keDrawing) throws Exception {
+	public KeDrawing predecessor(KeDrawing latest) throws Exception {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(KeDrawing.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, KeDrawing.class, KeDrawing.VERSION, keDrawing.getVersion() - 1);
+		QuerySpecUtils.toEqualsAnd(query, idx, KeDrawing.class, KeDrawing.VERSION, latest.getVersion() - 1);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		if (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -162,19 +162,18 @@ public class KeDrawingHelper {
 		}
 
 		for (KeDrawingDTO dto : editRow) {
-			String oid = dto.getOid();
 			KeDrawingMaster master = (KeDrawingMaster) CommonUtils.getObject(dto.getMoid());
-			String orgKeNumber = master.getKeNumber();
-			int orgLotNo = master.getLotNo();
-			String keNumber = dto.getKeNumber();
-			int lotNo = dto.getLotNo();
+			String number = master.getKeNumber();
+			int lotNo = master.getLotNo();
+			String diffNumber = dto.getKeNumber();
+			int diffLotNo = dto.getLotNo();
 
 			// 원본 도면의 번호 혹은 LON NO 가 변경 될시 체크만한다...
-			if (!orgKeNumber.equals(keNumber) || orgLotNo != lotNo) {
-				boolean isExist = exist(keNumber, lotNo);
+			if (!number.equals(diffNumber) || lotNo != diffLotNo) {
+				boolean isExist = exist(diffNumber, diffLotNo);
 				if (isExist) {
 					result.put("isExist", true); // 존재하는거 true
-					result.put("msg", "LOT NO가 = " + lotNo + "이고 도번이 = " + keNumber + "가 이미 존재합니다.");
+					result.put("msg", "LOT NO가 = " + diffLotNo + "이고 도번이 = " + diffNumber + "가 이미 존재합니다.");
 					return result;
 				}
 			}
@@ -202,7 +201,7 @@ public class KeDrawingHelper {
 	/**
 	 * KE 도면과 관련된 도면일람표 정보를 가져온다
 	 */
-	public JSONArray jsonArrayAui(String oid) throws Exception {
+	public JSONArray jsonAuiReferenceProject(String oid) throws Exception {
 		KeDrawing keDrawing = (KeDrawing) CommonUtils.getObject(oid);
 		ArrayList<WorkOrderDTO> list = new ArrayList<>();
 
@@ -242,8 +241,7 @@ public class KeDrawingHelper {
 		ArrayList<KeDrawingDTO> list = new ArrayList<>();
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(KeDrawing.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, KeDrawing.class, "masterReference.key.id",
-				master.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, KeDrawing.class, "masterReference.key.id", master);
 		QuerySpecUtils.toOrderBy(query, idx, KeDrawing.class, KeDrawing.VERSION, true);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
@@ -279,6 +277,43 @@ public class KeDrawingHelper {
 			throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 
+		for (KeDrawingDTO dto : addRow) {
+			String keNumber = dto.getKeNumber();
+			int lotNo = dto.getLotNo();
+			QuerySpec query = new QuerySpec();
+			int idx = query.appendClassList(EPMDocument.class, true);
+			int idx_m = query.appendClassList(EPMDocumentMaster.class, false);
+
+			QuerySpecUtils.toCI(query, idx, EPMDocument.class);
+			QuerySpecUtils.toInnerJoin(query, EPMDocument.class, EPMDocumentMaster.class, "masterReference.key.id",
+					WTAttributeNameIfc.ID_NAME, idx, idx_m);
+			QuerySpecUtils.queryEqualsNumber(query, EPMDocument.class, idx, keNumber);
+			QueryResult qr = PersistenceHelper.manager.find(query);
+			if (qr.hasMoreElements()) {
+				result.put("isExist", true); // 존재하는거 true
+				result.put("msg", "도번이 = " + keNumber + "인 CAD (Creo 혹은 AutoCAD) 데이터로 이미 존재합니다.");
+				return result;
+			}
+		}
+
+		for (KeDrawingDTO dto : editRow) {
+			String keNumber = dto.getKeNumber();
+			int lotNo = dto.getLotNo();
+			QuerySpec query = new QuerySpec();
+			int idx = query.appendClassList(EPMDocument.class, true);
+			int idx_m = query.appendClassList(EPMDocumentMaster.class, false);
+
+			QuerySpecUtils.toCI(query, idx, EPMDocument.class);
+			QuerySpecUtils.toInnerJoin(query, EPMDocument.class, EPMDocumentMaster.class, "masterReference.key.id",
+					WTAttributeNameIfc.ID_NAME, idx, idx_m);
+			QuerySpecUtils.queryEqualsNumber(query, EPMDocument.class, idx, keNumber);
+			QueryResult qr = PersistenceHelper.manager.find(query);
+			if (qr.hasMoreElements()) {
+				result.put("isExist", true); // 존재하는거 true
+				result.put("msg", "도번이 = " + keNumber + "인 CAD (Creo 혹은 AutoCAD) 데이터로 이미 존재합니다.");
+				return result;
+			}
+		}
 		result.put("isExist", false);
 		return result;
 	}
@@ -303,7 +338,9 @@ public class KeDrawingHelper {
 			WorkOrderDataLink link = (WorkOrderDataLink) obj[1];
 			Map<String, Object> map = new HashMap();
 
+			map.put("ok", true);
 			map.put("oid", order.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("workOrderType", order.getWorkOrderType());
 			map.put("lotNo", link.getLotNo());
 			map.put("rev", link.getRev());
 			map.put("createdData_txt", CommonUtils.getPersistableTime(link.getCreateTimestamp()));
@@ -341,6 +378,9 @@ public class KeDrawingHelper {
 		return getLatest(keDrawing.getMaster().getKeNumber());
 	}
 
+	/**
+	 * KE 최신 도면
+	 */
 	public KeDrawing getLatest(String number) throws Exception {
 
 		QuerySpec query = new QuerySpec();

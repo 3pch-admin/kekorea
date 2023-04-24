@@ -7,7 +7,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <style type="text/css">
 /* .aui-grid-tree-plus-icon { */
 /* 	background: url("/Windchill/extcore/images/task_ready.gif") no-repeat; */

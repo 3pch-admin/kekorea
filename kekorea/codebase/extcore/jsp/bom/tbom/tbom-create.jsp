@@ -3,7 +3,7 @@
 <%@page import="e3ps.doc.service.DocumentHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!-- AUIGrid -->
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -111,7 +111,6 @@
 				headerText : "중간코드",
 				dataType : "string",
 				width : 130,
-				editable : false
 			}, {
 				dataField : "keNumber",
 				headerText : "부품번호",
@@ -330,7 +329,7 @@
 						keNumber : data.keNumber,
 						lotNo : data.lotNo,
 						oid : data.oid,
-						code : data.code,
+// 						code : data.code,
 						model : data.model,
 						qty : 1,
 						unit : "EA",

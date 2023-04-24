@@ -1,8 +1,6 @@
 package e3ps.epm.workOrder.controller;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +21,8 @@ import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
+import e3ps.org.Department;
+import e3ps.org.People;
 import e3ps.project.Project;
 import e3ps.project.template.service.TemplateHelper;
 import net.sf.json.JSONArray;
@@ -39,16 +39,10 @@ public class WorkOrderController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.MONTH, -4);
-		Timestamp date = new Timestamp(calendar.getTime().getTime());
-
 		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
 		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
 		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
 		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
-
 		model.addObject("list", list);
 		model.addObject("customers", customers);
 		model.addObject("projectTypes", projectTypes);
@@ -94,8 +88,18 @@ public class WorkOrderController extends BaseController {
 
 	@Description(value = "작업지시서 생성 페이지")
 	@GetMapping(value = "/create")
-	public ModelAndView create() throws Exception {
+	public ModelAndView create(@RequestParam(required = false) String toid) throws Exception {
 		ModelAndView model = new ModelAndView();
+		People people = CommonUtils.sessionPeople();
+		Department department = people.getDepartment();
+		String workOrderType = "";
+		if (department.getCode().equals("MACHINE")) {
+			workOrderType = "기계";
+		} else if (department.getCode().equals("ELEC")) {
+			workOrderType = "전기";
+		}
+		model.addObject("toid", toid);
+		model.addObject("workOrderType", workOrderType);
 		model.setViewName("popup:/epm/workOrder/workOrder-create");
 		return model;
 	}
@@ -121,12 +125,17 @@ public class WorkOrderController extends BaseController {
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
+		WorkOrder latest = WorkOrderHelper.manager.getLatest(workOrder);
+		JSONArray history = WorkOrderHelper.manager.history(workOrder);
 		WorkOrderDTO dto = new WorkOrderDTO(workOrder);
 		JSONArray list = KeDrawingHelper.manager.getData(workOrder);
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = CommonUtils.sessionUser();
+		model.addObject("latestVersion", latest.getVersion());
+		model.addObject("loid", latest.getPersistInfo().getObjectIdentifier().getStringValue());
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
+		model.addObject("history", history);
 		model.addObject("list", list);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/epm/workOrder/workOrder-view");
@@ -137,8 +146,8 @@ public class WorkOrderController extends BaseController {
 	@GetMapping(value = "/compare")
 	public ModelAndView compare(@RequestParam String oid, @RequestParam String compareArr) throws Exception {
 		ModelAndView model = new ModelAndView();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		Project p1 = (Project) CommonUtils.getObject(oid);
-
 		String[] compareOids = compareArr.split(",");
 		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
 		for (String _oid : compareOids) {
@@ -147,6 +156,7 @@ public class WorkOrderController extends BaseController {
 		}
 
 		ArrayList<Map<String, Object>> data = WorkOrderHelper.manager.compare(p1, destList);
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("p1", p1);
 		model.addObject("oid", oid);
 		model.addObject("destList", destList);
@@ -183,9 +193,43 @@ public class WorkOrderController extends BaseController {
 			result.put("msg", MODIFY_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;
 	}
 
+	@Description(value = "도면 일람표 개정 페이지")
+	@GetMapping(value = "/revise")
+	public ModelAndView revise(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
+		WorkOrderDTO dto = new WorkOrderDTO(workOrder);
+		JSONArray list = KeDrawingHelper.manager.getData(workOrder);
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = CommonUtils.sessionUser();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("list", list);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/epm/workOrder/workOrder-revise");
+		return model;
+	}
+
+	@Description(value = "도면일람표 개정")
+	@PostMapping(value = "/revise")
+	@ResponseBody
+	public Map<String, Object> revise(@RequestBody WorkOrderDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkOrderHelper.service.revise(dto);
+			result.put("result", SUCCESS);
+			result.put("msg", REVISE_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("msg", e.toString());
+			result.put("result", FAIL);
+		}
+		return result;
+	}
 }

@@ -1,11 +1,9 @@
 package e3ps.bom.partlist.service;
 
-import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import e3ps.bom.partlist.MasterDataLink;
@@ -13,14 +11,9 @@ import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.dto.PartListDTO;
-import e3ps.bom.tbom.dto.TBOMMasterDTO;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.DateUtils;
-import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.common.util.StringUtils;
-import e3ps.org.People;
 import e3ps.part.service.PartHelper;
 import e3ps.project.Project;
 import net.sf.json.JSONArray;
@@ -28,364 +21,15 @@ import net.sf.json.JSONObject;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
-import wt.fc.ReferenceFactory;
 import wt.part.WTPart;
-import wt.part.WTPartMaster;
-import wt.query.ClassAttribute;
-import wt.query.ColumnExpression;
-import wt.query.OrderBy;
 import wt.query.QuerySpec;
-import wt.query.SQLFunction;
-import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
-import wt.util.WTProperties;
-import wt.vc.VersionControlHelper;
-import wt.vc.wip.WorkInProgressHelper;
 
 public class PartlistHelper {
 
 	public static final PartlistService service = ServiceFactory.getService(PartlistService.class);
 	public static final PartlistHelper manager = new PartlistHelper();
-
-	public static String excelFormLoc;
-	static {
-		try {
-			excelFormLoc = WTProperties.getLocalProperties().getProperty("wt.codebase.location") + File.separator
-					+ "jsp" + File.separator + "temp" + File.separator + "pdm" + File.separator + "excelForm";
-
-			File loc = new File(excelFormLoc);
-
-			if (!loc.exists()) {
-				loc.mkdirs();
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public ArrayList<PartListMaster> findPartListByProject(Project project, String engType, String pname)
-			throws Exception {
-
-		ArrayList<PartListMaster> list = new ArrayList<PartListMaster>();
-		QuerySpec query = null;
-
-		try {
-			query = new QuerySpec();
-			int idx = query.appendClassList(PartListMaster.class, true);
-			int idx_link = query.appendClassList(PartListMasterProjectLink.class, false);
-			int idx_p = query.appendClassList(Project.class, false);
-
-			SearchCondition sc = null;
-			ClassAttribute ca = null;
-
-			ClassAttribute roleAca = new ClassAttribute(PartListMaster.class, WTAttributeNameIfc.ID_NAME);
-			ClassAttribute roleBca = new ClassAttribute(Proect.class, WTAttributeNameIfc.ID_NAME);
-
-			sc = new SearchCondition(new ClassAttribute(PartListMasterProjectLink.class, "roleAObjectRef.key.id"), "=",
-					roleAca);
-			query.appendWhere(sc, new int[] { idx_link, idx });
-			query.appendAnd();
-
-			sc = new SearchCondition(new ClassAttribute(PartListMasterProjectLink.class, "roleBObjectRef.key.id"), "=",
-					roleBca);
-			query.appendWhere(sc, new int[] { idx_link, idx_p });
-			query.appendAnd();
-
-			sc = new SearchCondition(PartListMasterProjectLink.class, "roleBObjectRef.key.id", "=",
-					project.getPersistInfo().getObjectIdentifier().getId());
-			query.appendWhere(sc, new int[] { idx_link, idx_p });
-			query.appendAnd();
-
-			if (engType.equals("기계")) {
-				query.appendOpenParen();
-				sc = new SearchCondition(PartListMaster.class, PartListMaster.ENG_TYPE, "=", engType + "_1차_수배");
-				query.appendWhere(sc, new int[] { idx });
-				query.appendOr();
-				sc = new SearchCondition(PartListMaster.class, PartListMaster.ENG_TYPE, "=", engType + "_2차_수배");
-				query.appendWhere(sc, new int[] { idx });
-				query.appendCloseParen();
-			} else if ("전기".equals(engType)) {
-				query.appendOpenParen();
-				sc = new SearchCondition(PartListMaster.class, PartListMaster.ENG_TYPE, "=", engType + "_1차_수배");
-				query.appendWhere(sc, new int[] { idx });
-				query.appendOr();
-				sc = new SearchCondition(PartListMaster.class, PartListMaster.ENG_TYPE, "=", engType + "_2차_수배");
-				query.appendWhere(sc, new int[] { idx });
-				query.appendCloseParen();
-			}
-
-			ca = new ClassAttribute(PartListMaster.class, PartListMaster.MODIFY_TIMESTAMP);
-			OrderBy by = new OrderBy(ca, true);
-			query.appendOrderBy(by, new int[] { idx });
-
-			QueryResult result = PersistenceHelper.manager.find(query);
-			System.out.println("query=" + query);
-			System.out.println("result=" + result.size());
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				PartListMaster master = (PartListMaster) obj[0];
-				list.add(master);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return list;
-	}
-
-	public Map<String, Object> findPartList(Map<String, Object> param) throws Exception {
-
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<TBOMMasterDTO> list = new ArrayList<TBOMMasterDTO>();
-		QuerySpec query = null;
-
-		// search param
-		String kekNumber = (String) param.get("kekNumber");
-		String keNumber = (String) param.get("keNumber");
-		String description = (String) param.get("description");
-		String engType = (String) param.get("engType");
-		String mak = (String) param.get("mak");
-		String pDescription = (String) param.get("pDescription");
-		String creatorsOid = (String) param.get("creatorsOid");
-
-		String name = (String) param.get("name");
-
-		String predate = (String) param.get("predate");
-		String postdate = (String) param.get("postdate");
-
-		String modifierOid = (String) param.get("modifierOid");
-
-		String predate_m = (String) param.get("predate_m");
-		String postdate_m = (String) param.get("postdate_m");
-
-		String statesDoc = (String) param.get("statesDoc");
-
-		ReferenceFactory rf = new ReferenceFactory();
-
-		try {
-			query = new QuerySpec();
-			int idx = query.appendClassList(PartListMaster.class, true);
-			int idx_link = query.appendClassList(PartListMasterProjectLink.class, true);
-			int idx_p = query.appendClassList(Project.class, true);
-
-			SearchCondition sc = null;
-			ClassAttribute ca = null;
-
-			ClassAttribute roleAca = new ClassAttribute(PartListMaster.class, WTAttributeNameIfc.ID_NAME);
-			ClassAttribute roleBca = new ClassAttribute(Project.class, WTAttributeNameIfc.ID_NAME);
-
-			sc = new SearchCondition(new ClassAttribute(PartListMasterProjectLink.class, "roleAObjectRef.key.id"), "=",
-					roleAca);
-			query.appendWhere(sc, new int[] { idx_link, idx });
-			query.appendAnd();
-			sc = new SearchCondition(new ClassAttribute(PartListMasterProjectLink.class, "roleBObjectRef.key.id"), "=",
-					roleBca);
-			query.appendWhere(sc, new int[] { idx_link, idx_p });
-
-			if (!StringUtils.isNull(name)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ca = new ClassAttribute(PartListMaster.class, PartListMaster.NAME);
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(name);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(description)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ca = new ClassAttribute(PartListMaster.class, PartListMaster.DESCRIPTION);
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(description);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(creatorsOid)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				People user = (People) rf.getReference(creatorsOid).getObject();
-				long ids = user.getUser().getPersistInfo().getObjectIdentifier().getId();
-				sc = new SearchCondition(PartListMaster.class, "creator.key.id", SearchCondition.EQUAL, ids);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			// 수정자
-			if (!StringUtils.isNull(modifierOid)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				People user = (People) rf.getReference(modifierOid).getObject();
-				long ids = user.getUser().getPersistInfo().getObjectIdentifier().getId();
-				sc = new SearchCondition(PartListMaster.class, "ownership.owner.key.id", SearchCondition.EQUAL, ids);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(statesDoc)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				sc = new SearchCondition(PartListMaster.class, "state.state", SearchCondition.EQUAL, statesDoc);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(predate)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp start = DateUtils.convertStartDate(predate);
-				sc = new SearchCondition(PartListMaster.class, WTAttributeNameIfc.CREATE_STAMP_NAME,
-						SearchCondition.GREATER_THAN_OR_EQUAL, start);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(postdate)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp end = DateUtils.convertEndDate(postdate);
-				sc = new SearchCondition(PartListMaster.class, WTAttributeNameIfc.CREATE_STAMP_NAME,
-						SearchCondition.LESS_THAN_OR_EQUAL, end);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			// 수정일
-			if (!StringUtils.isNull(predate_m)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp start = DateUtils.convertStartDate(predate_m);
-				sc = new SearchCondition(PartListMaster.class, WTAttributeNameIfc.MODIFY_STAMP_NAME,
-						SearchCondition.GREATER_THAN_OR_EQUAL, start);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(postdate_m)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				Timestamp end = DateUtils.convertEndDate(postdate_m);
-				sc = new SearchCondition(PartListMaster.class, WTAttributeNameIfc.MODIFY_STAMP_NAME,
-						SearchCondition.LESS_THAN_OR_EQUAL, end);
-				query.appendWhere(sc, new int[] { idx });
-			}
-
-			if (!StringUtils.isNull(kekNumber)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				ca = new ClassAttribute(Project.class, Project.KEK_NUMBER);
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(kekNumber);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx_p });
-			}
-
-			if (!StringUtils.isNull(pDescription)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				ca = new ClassAttribute(Project.class, Project.DESCRIPTION);
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(pDescription);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx_p });
-			}
-
-			if (!StringUtils.isNull(mak)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				ca = new ClassAttribute(Project.class, Project.MAK);
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(mak);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx_p });
-			}
-
-			if (!StringUtils.isNull(keNumber)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-				ca = new ClassAttribute(Project.class, Project.KE_NUMBER);
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(keNumber);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx_p });
-			}
-
-			if (!StringUtils.isNull(engType)) {
-				if (query.getConditionCount() > 0)
-					query.appendAnd();
-
-				ca = new ClassAttribute(Project.class, Project.P_TYPE);
-				ColumnExpression ce = StringUtils.getUpperColumnExpression(engType);
-				SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-				sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-				query.appendWhere(sc, new int[] { idx_p });
-			}
-
-			ca = new ClassAttribute(PartListMaster.class, PartListMaster.MODIFY_TIMESTAMP);
-			OrderBy by = new OrderBy(ca, true);
-			query.appendOrderBy(by, new int[] { idx });
-
-			PageQueryUtils pager = new PageQueryUtils(param, query);
-			PagingQueryResult result = pager.find();
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				PartListMaster master = (PartListMaster) obj[0];
-				Project project = (Project) obj[2];
-				TBOMMasterDTO data = new TBOMMasterDTO(master, project);
-				list.add(data);
-			}
-			map.put("list", list);
-			map.put("lastPage", pager.getLastPage());
-			map.put("topListCount", pager.getTotal());
-			map.put("sessionid", pager.getSessionId());
-			map.put("curPage", pager.getCpage());
-			map.put("total", pager.getTotalSize());
-			map.put("result", "SUCCESS");
-		} catch (Exception e) {
-			map.put("result", "FAIL");
-			e.printStackTrace();
-		}
-		return map;
-	}
-
-	public WTPart getPartByYCode(Map<String, Object> param) throws Exception {
-		String yCode = (String) param.get("yCode");
-		WTPart part = null;
-
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(WTPart.class, true);
-		int master = query.appendClassList(WTPartMaster.class, false);
-
-		SearchCondition sc = null;
-//		ClassAttribute ca = null;
-
-		sc = WorkInProgressHelper.getSearchCondition_CI(WTPart.class);
-		query.appendWhere(sc, new int[] { idx });
-		query.appendAnd();
-
-		sc = new SearchCondition(WTPart.class, "masterReference.key.id", WTPartMaster.class,
-				"thePersistInfo.theObjectIdentifier.id");
-		query.appendWhere(sc, new int[] { idx, master });
-
-		if (!StringUtils.isNull(yCode)) {
-			IBAUtils.addIBAConditionLike(query, WTPart.class, idx, "PART_CODE", yCode);
-		}
-
-		if (query.getConditionCount() > 0)
-			query.appendAnd();
-		sc = VersionControlHelper.getSearchCondition(WTPart.class, true);
-		query.appendWhere(sc, new int[] { idx });
-
-		CommonUtils.addLastVersionCondition(query, idx);
-
-		QueryResult result = PersistenceHelper.manager.find(query);
-
-		System.out.println("query=" + query);
-		if (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			part = (WTPart) obj[0];
-		}
-		return part;
-	}
 
 	/**
 	 * 수배표 가져오는 함수
@@ -629,7 +273,10 @@ public class PartlistHelper {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
 		String[] t = null;
-		if ("a".equals(invoke)) {
+		if ("a-t".equals(invoke)) {
+			t = new String[] { "기계_1차_수배", "기계_2차_수배", "전기_1차_수배", "전기_2차_수배" };
+			list = integratedData(p1, t);
+		} else if ("a".equals(invoke)) {
 			t = new String[] { "기계_1차_수배", "기계_2차_수배", "전기_1차_수배", "전기_2차_수배" };
 			list = integratedData(p1, t);
 		} else if ("m".equals(invoke)) {
@@ -643,6 +290,8 @@ public class PartlistHelper {
 		// list1의 데이터를 먼저 추가
 		for (Map<String, Object> data : list) {
 			Map<String, Object> mergedData = new HashMap<>();
+			mergedData.put("oid", data.get("oid"));
+			mergedData.put("engType", data.get("engType"));
 			mergedData.put("lotNo", data.get("lotNo"));
 			mergedData.put("unitName", data.get("unitName"));
 			mergedData.put("partNo", data.get("partNo"));
@@ -651,10 +300,6 @@ public class PartlistHelper {
 			mergedData.put("maker", data.get("maker"));
 			mergedData.put("customer", data.get("customer"));
 			mergedData.put("quantity1", data.get("quantity"));
-			// 작번 개수 만큼 입력..
-//				for (int i = 0; i < destList.size(); i++) {
-//					mergedData.put("quantity" + (2 + i), 0);
-//				}
 			mergedData.put("unit", data.get("unit"));
 			mergedData.put("price", data.get("price"));
 			mergedData.put("currency", data.get("currency"));
@@ -695,6 +340,8 @@ public class PartlistHelper {
 				if (!isExist) {
 					// partNo가 동일한 데이터가 없으면 mergedList에 데이터를 추가
 					Map<String, Object> mergedData = new HashMap<>();
+					mergedData.put("oid", data.get("oid"));
+					mergedData.put("engType", data.get("engType"));
 					mergedData.put("lotNo", data.get("lotNo"));
 					mergedData.put("unitName", data.get("unitName"));
 					mergedData.put("partNo", data.get("partNo"));
@@ -762,7 +409,10 @@ public class PartlistHelper {
 				Object[] oo = (Object[]) qr.nextElement();
 				MasterDataLink link = (MasterDataLink) oo[0];
 				PartListData data = link.getData();
+				WTPart part = data.getWtPart();
 				Map<String, Object> map = new HashMap<>();
+				map.put("oid", part != null ? part.getPersistInfo().getObjectIdentifier().getStringValue() : "");
+				map.put("engType", master.getEngType());
 				map.put("lotNo", String.valueOf(data.getLotNo()));
 				map.put("unitName", data.getUnitName());
 				map.put("partNo", data.getPartNo());
@@ -818,7 +468,8 @@ public class PartlistHelper {
 	/**
 	 * 프로젝트 수배표 탭
 	 */
-	public ArrayList<Map<String, Object>> partlistTab(String oid, String invoke) throws Exception {
+	public JSONArray partlistTab(String oid, String invoke) throws Exception {
+		System.out.println("탭이 출력되나?");
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		Project project = (Project) CommonUtils.getObject(oid);
 		String[] t = null;
@@ -888,7 +539,7 @@ public class PartlistHelper {
 				list.add(map);
 			}
 		}
-		return list;
+		return JSONArray.fromObject(list);
 	}
 
 	/**
@@ -901,7 +552,6 @@ public class PartlistHelper {
 			PartListMasterProjectLink link = (PartListMasterProjectLink) result.nextElement();
 			list.add(link);
 		}
-
 		return list;
 	}
 }

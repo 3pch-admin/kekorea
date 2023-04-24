@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
@@ -98,7 +99,7 @@ public class IssueHelper {
 	}
 
 	/**
-	 * 프로젝트 상세보기서 특이사항 목록
+	 * 프로젝트 상세보기서 특이사항 탭
 	 */
 	public JSONArray issueTab(String oid) throws Exception {
 		Project project = (Project) CommonUtils.getObject(oid);
@@ -123,10 +124,12 @@ public class IssueHelper {
 			IssueProjectLink link = (IssueProjectLink) obj[1];
 			Issue issue = link.getIssue();
 			Map<String, String> map = new HashMap();
+			map.put("oid", issue.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("name", issue.getName());
 			map.put("description", issue.getDescription());
 			map.put("creator", issue.getOwnership().getOwner().getFullName());
 			map.put("createdDate_txt", CommonUtils.getPersistableTime(issue.getCreateTimestamp()));
+			map.put("icons", AUIGridUtils.secondaryTemplate(issue));
 			list.add(map);
 		}
 		return JSONArray.fromObject(list);

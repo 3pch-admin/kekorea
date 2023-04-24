@@ -11,6 +11,7 @@ import java.util.Map;
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.util.AUIGridUtils;
@@ -24,10 +25,11 @@ import e3ps.doc.meeting.service.MeetingHelper;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.service.RequestDocumentHelper;
+import e3ps.epm.keDrawing.KeDrawing;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
+import e3ps.epm.service.EpmHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
-import e3ps.org.Department;
-import e3ps.org.People;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.service.KePartHelper;
 import e3ps.project.Project;
@@ -44,6 +46,7 @@ import e3ps.project.variable.ProjectStateVariable;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.doc.WTDocument;
+import wt.epm.EPMDocument;
 import wt.fc.PagingQueryResult;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
@@ -3822,7 +3825,7 @@ public class ProjectHelper {
 			return WorkOrderHelper.manager.jsonAuiProject(oid);
 			// 수배표
 		} else if (per instanceof PartListMaster) {
-
+			return PartlistHelper.manager.jsonAuiProject(oid);
 			// 회의록
 		} else if (per instanceof Meeting) {
 			return MeetingHelper.manager.jsonAuiProject(oid);
@@ -3831,6 +3834,9 @@ public class ProjectHelper {
 			return TBOMHelper.manager.jsonAuiProject(oid);
 		} else if (per instanceof RequestDocument) {
 			return RequestDocumentHelper.manager.jsonAuiProject(oid);
+			// 도면
+		} else if(per instanceof EPMDocument) {
+			return EpmHelper.manager.jsonAuiProject(oid);
 		}
 		return new JSONArray();
 	}
@@ -3841,8 +3847,10 @@ public class ProjectHelper {
 	public JSONArray jsonAuiReferenceProject(String oid) throws Exception {
 		Persistable per = CommonUtils.getObject(oid);
 
-		if(per instanceof KePart) {
+		if (per instanceof KePart) {
 			return KePartHelper.manager.jsonAuiReferenceProject(oid);
+		} else if (per instanceof KeDrawing) {
+			return KeDrawingHelper.manager.jsonAuiReferenceProject(oid);
 		}
 		return new JSONArray();
 	}

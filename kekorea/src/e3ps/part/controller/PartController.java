@@ -38,7 +38,7 @@ public class PartController extends BaseController {
 		model.setViewName("/extcore/jsp/part/part-list.jsp");
 		return model;
 	}
-	
+
 	@Description(value = "부품 조회(라이브러리) 페이지")
 	@GetMapping(value = "/library")
 	public ModelAndView library() throws Exception {
@@ -56,14 +56,15 @@ public class PartController extends BaseController {
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
-		try {System.out.println("컨트롤러에 들어오는 거니??????????????????????????????"+params);
+		try {
 			result = PartHelper.manager.list(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
-		}System.out.println("결과 출력 좀 해주려무나아아아아아~~~~~~~~~~~~~~~~~~~"+result);
-		return result;
+		}
+	return result;
 	}
 
 	@Description(value = "부품 일괄 등록 리스트 페이지")
@@ -89,6 +90,7 @@ public class PartController extends BaseController {
 			result.put("msg", SAVE_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;
@@ -104,6 +106,7 @@ public class PartController extends BaseController {
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 			e.printStackTrace();
 		}
 		return result;
@@ -119,6 +122,7 @@ public class PartController extends BaseController {
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 			e.printStackTrace();
 		}
 		return result;
@@ -165,6 +169,7 @@ public class PartController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}

@@ -17,6 +17,8 @@ public class TBOMMasterDTO {
 	private String projectType_name;
 	private String projectType_oid;
 	private String name;
+	private boolean latest;
+	private int version;
 	private String mak_code;
 	private String mak_name;
 	private String mak_oid;
@@ -43,35 +45,27 @@ public class TBOMMasterDTO {
 		setOid(master.getPersistInfo().getObjectIdentifier().getStringValue());
 		setPoid(project.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(master.getName());
-		if (project.getProjectType() != null) {
-			setProjectType_code(project.getProjectType().getCode());
-			setProjectType_name(project.getProjectType().getName());
-			setProjectType_oid(project.getProjectType().getPersistInfo().getObjectIdentifier().getStringValue());
-		}
-		if (project.getMak() != null) {
-			setMak_code(project.getMak().getCode());
-			setMak_name(project.getMak().getName());
-			setMak_oid(project.getMak().getPersistInfo().getObjectIdentifier().getStringValue());
-		}
-		if (project.getDetail() != null) {
-			setDetail_code(project.getDetail().getCode());
-			setDetail_name(project.getDetail().getName());
-			setDetail_oid(project.getDetail().getPersistInfo().getObjectIdentifier().getStringValue());
-		}
+		setVersion(master.getVersion());
+		setLatest(master.getLatest());
+		setProjectType_code(project.getProjectType().getCode());
+		setProjectType_name(project.getProjectType().getName());
+		setProjectType_oid(project.getProjectType().getPersistInfo().getObjectIdentifier().getStringValue());
+		setMak_code(project.getMak().getCode());
+		setMak_name(project.getMak().getName());
+		setMak_oid(project.getMak().getPersistInfo().getObjectIdentifier().getStringValue());
+		setDetail_code(project.getDetail().getCode());
+		setDetail_name(project.getDetail().getName());
+		setDetail_oid(project.getDetail().getPersistInfo().getObjectIdentifier().getStringValue());
 		setKekNumber(project.getKekNumber());
 		setKeNumber(project.getKeNumber());
 		setUserId(project.getUserId());
 		setDescription(project.getDescription());
-		if (project.getCustomer() != null) {
-			setCustomer_code(project.getCustomer().getCode());
-			setCustomer_name(project.getCustomer().getName());
-			setCustomer_oid(project.getCustomer().getPersistInfo().getObjectIdentifier().getStringValue());
-		}
-		if (project.getInstall() != null) {
-			setInstall_code(project.getInstall().getCode());
-			setInstall_name(project.getInstall().getName());
-			setInstall_oid(project.getInstall().getPersistInfo().getObjectIdentifier().getStringValue());
-		}
+		setCustomer_code(project.getCustomer().getCode());
+		setCustomer_name(project.getCustomer().getName());
+		setCustomer_oid(project.getCustomer().getPersistInfo().getObjectIdentifier().getStringValue());
+		setInstall_code(project.getInstall().getCode());
+		setInstall_name(project.getInstall().getName());
+		setInstall_oid(project.getInstall().getPersistInfo().getObjectIdentifier().getStringValue());
 		setPdate(project.getPDate());
 		setModel(project.getModel());
 		setState(master.getLifeCycleState().getDisplay());

@@ -1,3 +1,4 @@
+<%@page import="wt.org.WTUser"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.project.Project"%>
 <%@page import="net.sf.json.JSONArray"%>
@@ -9,23 +10,27 @@ Project p1 = (Project) request.getAttribute("p1");
 ArrayList<Project> destList = (ArrayList<Project>) request.getAttribute("destList");
 String oid = (String) request.getAttribute("oid");
 String compareArr = (String) request.getAttribute("compareArr");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 <style type="text/css">
 .compare {
-	background-color: yellow;
-	color: red;
+	background: #FFFF00;
+	color: #FF0000;
 	font-weight: bold;
 }
 </style>
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
 <input type="hidden" name="compareArr" id="compareArr" value="<%=compareArr%>">
+<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('partlist-compare');">
-			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('partlist-compare');">
+			<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+			<!-- 			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('partlist-compare');"> -->
+			<!-- 			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('partlist-compare');"> -->
 		</td>
 		<td class="right">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
@@ -33,7 +38,7 @@ String compareArr = (String) request.getAttribute("compareArr");
 	</tr>
 </table>
 
-<div id="grid_wrap" style="height: 800px; border-top: 1px solid #3180c3;"></div>
+<div id="grid_wrap" style="height: 900px; border-top: 1px solid #3180c3;"></div>
 <script type="text/javascript">
 	let myGridID;
 	const data =
@@ -62,6 +67,13 @@ String compareArr = (String) request.getAttribute("compareArr");
 			headerText : "부품번호",
 			dataType : "string",
 			width : 100,
+			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+				const oid = item.oid;
+				if (oid !== "") {
+					return "underline";
+				}
+				return "";
+			},
 			filter : {
 				showIcon : true,
 				inline : true
@@ -264,9 +276,29 @@ for (Project project : destList) {%>
 			enableMovingColumn : true,
 			showInlineFilter : true,
 			enableRightDownFocus : true,
+			fixedColumnCount : 4,
+// 			autoGridHeight : true
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 		AUIGrid.setGridData(myGridID, data);
+	}
+	
+	function auiCellClickHandler(event) {
+		const dataField = event.dataField;
+		const item = event.item;
+		if(dataField === "partNo" && !isNull(item.oid)) {
+			const oid = item.oid;
+			const url = getCallUrl("/part/view?oid=" + oid);
+			popup(url, 1500, 800);
+		}
+	}
+	
+	
+	function exportExcel() {
+		const exceptColumnFields = [  ];
+		const sessionName = document.getElementById("sessionName").value;
+		exportToExcel("수배표 비교", "수배표", "수배표 비교", exceptColumnFields, sessionName);
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {

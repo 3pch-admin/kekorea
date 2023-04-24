@@ -1,3 +1,4 @@
+<%@page import="e3ps.workspace.ApprovalContract"%>
 <%@page import="e3ps.bom.partlist.service.PartlistHelper"%>
 <%@page import="e3ps.bom.partlist.PartListMasterProjectLink"%>
 <%@page import="e3ps.project.Project"%>
@@ -20,6 +21,65 @@ Persistable per = (Persistable) CommonUtils.getObject(oid);
 %>
 
 <!-- 일괄결재 문서 & 도면 -->
+<%
+if (per instanceof ApprovalContract) {
+	ApprovalContract contract = (ApprovalContract) per;
+	ArrayList<Map<String, String>> list = WorkspaceHelper.manager.contractData(contract);
+%>
+<!-- 일괄결재 -->
+<table class="button-table">
+	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				도면 결재
+			</div>
+		</td>
+	</tr>
+</table>
+
+<table class="view-table">
+	<colgroup>
+		<col width="250">
+		<col width="250">
+		<col width="*">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+	</colgroup>
+	<tr>
+		<th class="lb">파일이름</th>
+		<th class="lb">품명</th>
+		<th class="lb">규격</th>
+		<th class="lb">상태</th>
+		<th class="lb">버전</th>
+		<th class="lb">작성자</th>
+		<th class="lb">작성일</th>
+	</tr>
+	<%
+		for(Map<String, String> map : list) {
+	%>
+	<tr>
+	<td class="indent5"><%=map.get("name")%></td>
+	<td class="indent5"><%=map.get("nameOfParts")%></td>
+	<td class="indent5"><%=map.get("dwgNo")%></td>
+	<td class="center"><%=map.get("state")%></td>
+	<td class="center"><%=map.get("version")%></td>
+	<td class="center"><%=map.get("creator")%></td>
+	<td class="center"><%=map.get("createdDate_txt")%></td>
+	</tr>
+	<%
+		}
+	%>
+</table>
+<%
+}
+%>
+
+
+
+
 <%
 if (per instanceof PartListMaster) {
 	PartListMaster mm = (PartListMaster) per;
@@ -152,7 +212,9 @@ Map<String, Object> primary = ContentUtils.getPrimary(requestDocument);
 		<th class="lb">첨부파일</th>
 	</tr>
 	<tr>
-		<td class="indent5"><a href="javascript:detail();"><%=requestDocument.getName()%></a></td>
+		<td class="indent5">
+			<a href="javascript:detail();"><%=requestDocument.getName()%></a>
+		</td>
 		<td class="center"><%=requestDocument.getLifeCycleState().getDisplay()%></td>
 		<td class="center"><%=requestDocument.getCreatorFullName()%></td>
 		<td class="center"><%=CommonUtils.getPersistableTime(requestDocument.getCreateTimestamp())%></td>
@@ -202,8 +264,12 @@ Map<String, Object> primary = ContentUtils.getPrimary(requestDocument);
 		Project project = link.getProject();
 	%>
 	<tr>
-		<td class="center"><a href="javascript:detail();"><%=project.getKekNumber()%></a></td>
-		<td class="center"><a href="javascript:detail();"><%=project.getKeNumber()%></a></td>
+		<td class="center">
+			<a href="javascript:detail();"><%=project.getKekNumber()%></a>
+		</td>
+		<td class="center">
+			<a href="javascript:detail();"><%=project.getKeNumber()%></a>
+		</td>
 		<td class="center"><%=project.getProjectType().getName()%></td>
 		<td class="center"><%=project.getCustomer().getName()%></td>
 		<td class="center"><%=project.getInstall().getName()%></td>

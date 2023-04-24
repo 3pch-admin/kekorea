@@ -20,7 +20,7 @@ String toid = (String) request.getAttribute("toid");
 String poid = (String) request.getAttribute("poid");
 boolean connect = !StringUtils.isNull(toid) && !StringUtils.isNull(poid);
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="toid" id="toid" value="<%=toid%>">
 <input type="hidden" name="poid" id="poid" value="<%=poid%>">
 <input type="hidden" name="connect" id="connect" value="<%=connect%>">

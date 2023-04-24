@@ -25,7 +25,7 @@ String method = (String) request.getAttribute("method");
 	</tr>
 </table>
 <script type="text/javascript">
-const secondary = new AXUpload5();
+	const secondary = new AXUpload5();
 	let data;
 	function secondaryUploader() {
 		secondary.setConfig({
@@ -34,7 +34,7 @@ const secondary = new AXUpload5();
 			uploadFileName : "secondary",
 			buttonTxt : "파일 선택",
 			uploadMaxFileSize : (1024 * 1024 * 1024),
-			uploadUrl : getCallUrl("/aui/upload"),
+			uploadUrl : getCallUrl("/content/upload"),
 			dropBoxID : "uploadQueueBox",
 			queueBoxID : "uploadQueueBox",
 			uploadPars : {
@@ -42,16 +42,37 @@ const secondary = new AXUpload5();
 			},
 			uploadMaxFileCount : 100,
 			deleteUrl : getCallUrl("/content/delete"),
-			fileKeys : {},
+			fileKeys : {
+				name : "name",
+				type : "type",
+				saveName : "saveName",
+				fileSize : "fileSize",
+				uploadedPath : "uploadedPath",
+				roleType : "roleType",
+				cacheId : "cacheId",
+			},
+			onStart : function() {
+				openLayer();
+			},
 			onComplete : function() {
 				data = this;
+				closeLayer();
 			},
+			onDelete : function() {
+				const key = this.file.tagId;
+				const el = document.getElementById(key);
+				el.parentNode.removeChild(el);
+			}
 		})
 	}
 
 	secondaryUploader();
 
 	function save() {
+		if(data === undefined) {
+			alert("첨부파일을 추가하세요.");
+			return false;
+		}
 		opener.<%=method%>(data);
 		self.close();
 	}

@@ -29,3 +29,6 @@
 	
 8. EDRLoader
 	- Shell -> move com/ptc/wvs/util -> javac -classpath %CLASSPATH%;%WT_HOME%\srclib\tool\Annotations.jar -d %wt_home%\codebase AfterEDRloader.java 실행		
+	
+9. WTPart 번호 길이 증가
+	- Shell -> ant -f bin\tools.xml custom_column -Dgen.input=wt.part

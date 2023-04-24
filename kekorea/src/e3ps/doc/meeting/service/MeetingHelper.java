@@ -66,10 +66,11 @@ public class MeetingHelper {
 	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-
+		String description = (String) params.get("description");
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Meeting.class, true);
 
+		QuerySpecUtils.toLikeAnd(query, idx, Meeting.class, Meeting.CONTENT, description);
 		QuerySpecUtils.toOrderBy(query, idx, Meeting.class, Meeting.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);

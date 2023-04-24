@@ -7,7 +7,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 <input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 <input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">

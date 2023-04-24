@@ -6,13 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
-import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.korea.cip.Cip;
 import e3ps.korea.cip.dto.CipDTO;
+import e3ps.project.Project;
+import net.sf.json.JSONArray;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -87,13 +88,13 @@ public class CipHelper {
 		return map;
 	}
 
-	public ArrayList<CipDTO> cipTab(String mak_oid, String detail_oid, String customer_oid, String install_oid)
-			throws Exception {
+	public JSONArray cipTab(String oid) throws Exception {
 		ArrayList<CipDTO> list = new ArrayList<>();
-		CommonCode mak = (CommonCode) CommonUtils.getObject(mak_oid);
-		CommonCode detail = (CommonCode) CommonUtils.getObject(detail_oid);
-		CommonCode customer = (CommonCode) CommonUtils.getObject(customer_oid);
-		CommonCode install = (CommonCode) CommonUtils.getObject(install_oid);
+		Project project = (Project) CommonUtils.getObject(oid);
+		CommonCode mak = project.getMak();
+		CommonCode detail = project.getDetail();
+		CommonCode customer = project.getCustomer();
+		CommonCode install = project.getInstall();
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Cip.class, true);
@@ -112,7 +113,6 @@ public class CipHelper {
 			Cip cip = (Cip) obj[0];
 			list.add(new CipDTO(cip));
 		}
-
-		return list;
+		return JSONArray.fromObject(list);
 	}
 }

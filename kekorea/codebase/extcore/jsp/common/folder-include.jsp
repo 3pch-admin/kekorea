@@ -5,7 +5,6 @@ String container = request.getParameter("container");
 String mode = request.getParameter("mode");
 String height = request.getParameter("height");
 %>
-<input type="hidden" name="container" id="container" value="<%=container %>">
 <!-- 폴더 그리드 리스트 -->
 <div id="_grid_wrap" style="height: <%=height%>px; border-top: 1px solid #3180c3;"></div>
 <script type="text/javascript">
@@ -36,6 +35,16 @@ String height = request.getParameter("height");
 		loadFolderTree();
 // 		AUIGrid.bind(_myGridID, "selectionChange", auiGridSelectionChangeHandler);
 		AUIGrid.bind(_myGridID, "cellDoubleClick", auiCellDoubleClick);
+		AUIGrid.bind(_myGridID, "cellClick", auiCellClick);
+	}
+	
+	function auiCellClick(event) {
+		const item = event.item;
+		const oid = item.oid;
+		const location = item.location;
+		document.getElementById("oid").value = oid;
+		document.getElementById("location").value = oid;
+		document.getElementById("locationText").innerText = location;
 	}
 	
 	let timerId = null;
@@ -49,10 +58,10 @@ String height = request.getParameter("height");
 		timerId = setTimeout(function () {
 			const primeCell = event.item;
 			const oid = primeCell.oid;
-			console.log(primeCell);
+			const location = primeCell.location;
 			document.getElementById("oid").value = oid;
-			document.getElementById("locationText").innerHTML = primeCell.location;
-			document.getElementById("location").value = primeCell.location;
+			document.getElementById("location").value = oid;
+			document.getElementById("locationText").innerText = location;
 			loadGridData();
 		}, 500);  
 		<%}%>

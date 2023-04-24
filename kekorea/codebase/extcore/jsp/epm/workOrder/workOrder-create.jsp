@@ -1,7 +1,12 @@
+<%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%
+String workOrderType = (String) request.getAttribute("workOrderType");
+String toid = (String) request.getAttribute("toid");
+%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -29,24 +34,40 @@
 	<div id="tabs-1">
 		<table class="create-table">
 			<colgroup>
-				<col width="160">
-				<col width="*">
+				<col width="150">
+				<col width="350">
+				<col width="150">
+				<col width="350">
+				<col width="150">
+				<col width="350">
 			</colgroup>
 			<tr>
 				<th class="req lb">도면 일람표 명</th>
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-500">
+					<input type="text" name="name" id="name" class="width-200">
 				</td>
+				<th>설계구분</th>
+				<td class="indent5">
+					<select name="workOrderType" id="workOrderType" class="width-100">
+						<option value="">선택</option>
+						<option value="기계">기계</option>
+						<option value="전기">전기</option>
+					</select>
+				</td>
+				<th>진행율</th>
+				<td class="indent5">
+					<input type="number" name="progress" id="progress" class="width-200" value="0">
+				</td>				
 			</tr>
 			<tr>
 				<th class="lb">내용</th>
-				<td class="indent5">
+				<td class="indent5" colspan="5">
 					<textarea name="description" id="description" rows="5"></textarea>
 				</td>
 			</tr>
 			<tr>
 				<th class="req lb">KEK 작번</th>
-				<td>
+				<td colspan="5">
 					<jsp:include page="/extcore/jsp/common/project-include.jsp">
 						<jsp:param value="" name="oid" />
 						<jsp:param value="create" name="mode" />
@@ -55,7 +76,7 @@
 			</tr>
 			<tr>
 				<th class="lb">첨부파일</th>
-				<td class="indent5">
+				<td class="indent5" colspan="5">
 					<jsp:include page="/extcore/jsp/common/attach-secondary.jsp">
 						<jsp:param value="" name="oid" />
 					</jsp:include>
@@ -63,7 +84,7 @@
 			</tr>
 			<tr>
 				<th class="req lb">결재</th>
-				<td>
+				<td colspan="5">
 					<jsp:include page="/extcore/jsp/common/approval-register.jsp">
 						<jsp:param value="" name="oid" />
 						<jsp:param value="create" name="mode" />
@@ -111,7 +132,7 @@
 		headerText : "DRAWING TITLE",
 		dataType : "string",
 		editable : false,
-		style : "left indent10"
+		style : "aui-left"
 	}, {
 		dataField : "number",
 		headerText : "DWG. NO",
@@ -146,13 +167,6 @@
 			onlyNumeric : true,
 			maxlength : 3,
 		},
-	}, {
-		dataField : "createdDate",
-		headerText : "등록일",
-		dataType : "date",
-		formatString : "yyyy-mm-dd",
-		width : 100,
-		editable : false
 	}, {
 		dataField : "note",
 		headerText : "NOTE",
@@ -272,7 +286,7 @@
 						rev : data.rev,
 						current : data.current,
 						lotNo : data.lotNo,
-						oid : data.oid,
+						doid : data.doid,
 						sort : event.rowIndex,
 						createdDate : new Date(),
 						preView : data.preView
@@ -326,6 +340,8 @@
 		const params = new Object();
 		const name = document.getElementById("name");
 		const description = document.getElementById("description").value;
+		const workOrderType = document.getElementById("workOrderType").value;
+		const progress = document.getElementById("progress").value;
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
 		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
 		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
@@ -358,20 +374,14 @@
 			return false;
 		}
 
-		// 		_addRows.sort(function(a, b) {
-		// 			return a.sort - b.sort;
-		// 		});
-
-		// 		addRows.sort(function(a, b) {
-		// 			return a.sort - b.sort;
-		// 		});
-
 		if (!confirm("등록 하시겠습니까?")) {
 			return false;
 		}
 
 		params.name = name.value;
 		params.description = description;
+		params.workOrderType = workOrderType;
+		params.progress = Number(progress);
 		params.addRows = addRows;
 		params.addRows9 = addRows9;
 		params.secondarys = toArray("secondarys");
@@ -408,6 +418,8 @@
 					} else {
 						createAUIGrid8(columns8);
 					}
+					selectbox("workOrderType");
+					$("#workOrderType").bindSelectDisabled(true);
 					break;
 				case "tabs-2":
 					const isCreated = AUIGrid.isCreated(myGridID);
@@ -420,7 +432,10 @@
 				}
 			}
 		});
-
+		selectbox("workOrderType");
+		$("#workOrderType").bindSelectSetValue("<%=workOrderType%>");
+		$("#workOrderType").bindSelectDisabled(true);
+		createAUIGrid(columns);
 		createAUIGrid9(columns9);
 		createAUIGrid8(columns8);
 		AUIGrid.resize(myGridID9);
@@ -428,6 +443,7 @@
 	})
 
 	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
 	});

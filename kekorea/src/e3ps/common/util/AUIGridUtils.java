@@ -80,7 +80,7 @@ public class AUIGridUtils {
 	 * AUIGrid 에서 사용할 파일 아이콘 가져 오는 함수
 	 */
 	private static String getAUIGridFileIcon(String ext) {
-		String icon = "";
+		String icon = "/Windchill/extcore/jsp/images/file_generic.gif";
 		if (ext.equalsIgnoreCase("pdf")) {
 			icon = "/Windchill/extcore/images/fileicon/file_pdf.gif";
 		} else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx")) {
@@ -111,5 +111,22 @@ public class AUIGridUtils {
 			icon = "/Windchill/extcore/images/fileicon/file_xml.png";
 		}
 		return icon;
+	}
+
+	/**
+	 * AUIGrid 첨부파일 타입에 의한 템플릿
+	 */
+	public static String thumbnailTemplate(ContentHolder holder) throws Exception {
+		String template = "";
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.THUMBNAIL);
+		if (result.hasMoreElements()) {
+			ApplicationData data = (ApplicationData) result.nextElement();
+			String ext = FileUtil.getExtension(data.getFileName());
+			String icon = getAUIGridFileIcon(ext);
+			String url = "/Windchill/plm/content/download?oid="
+					+ data.getPersistInfo().getObjectIdentifier().getStringValue();
+			template += "<a href=" + url + "><img src=" + icon + " style='position: relative; top: 2px;'></a>";
+		}
+		return template;
 	}
 }

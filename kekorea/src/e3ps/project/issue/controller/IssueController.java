@@ -1,6 +1,9 @@
 package e3ps.project.issue.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.annotation.Description;
@@ -13,11 +16,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.korea.cip.dto.CipDTO;
+import e3ps.korea.cip.service.CipHelper;
 import e3ps.project.issue.IssueProjectLink;
 import e3ps.project.issue.beans.IssueDTO;
 import e3ps.project.issue.service.IssueHelper;
+import e3ps.workspace.notice.dto.NoticeDTO;
+import e3ps.workspace.notice.service.NoticeHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -48,10 +58,11 @@ public class IssueController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
 		}
 		return result;
 	}
-	
+
 	@Description(value = "특이사항 뷰 페이지")
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
@@ -61,5 +72,79 @@ public class IssueController extends BaseController {
 		model.addObject("dto", dto);
 		model.setViewName("popup:/project/issue/issue-view");
 		return model;
+	}
+
+	@Description(value = "특이사항 등록")
+	@PostMapping(value = "/save")
+	@ResponseBody
+	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
+			throws Exception {
+		ArrayList<LinkedHashMap<String, Object>> addRows = params.get("addRows");
+		ArrayList<LinkedHashMap<String, Object>> editRows = params.get("editRows");
+		ArrayList<LinkedHashMap<String, Object>> removeRows = params.get("removeRows");
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+			ArrayList<IssueDTO> addRow = new ArrayList<>();
+			for (LinkedHashMap<String, Object> add : addRows) {
+				IssueDTO dto = mapper.convertValue(add, IssueDTO.class);
+				addRow.add(dto);
+			}
+
+			ArrayList<IssueDTO> editRow = new ArrayList<>();
+			for (LinkedHashMap<String, Object> edit : editRows) {
+				IssueDTO dto = mapper.convertValue(edit, IssueDTO.class);
+				editRow.add(dto);
+			}
+
+			ArrayList<IssueDTO> removeRow = new ArrayList<>();
+			for (LinkedHashMap<String, Object> remove : removeRows) {
+				IssueDTO dto = mapper.convertValue(remove, IssueDTO.class);
+				removeRow.add(dto);
+			}
+
+			HashMap<String, List<IssueDTO>> dataMap = new HashMap<>();
+			dataMap.put("addRows", addRow); // 삭제행
+			dataMap.put("editRows", editRow); // 삭제행
+			dataMap.put("removeRows", removeRow); // 삭제행
+
+			IssueHelper.service.save(dataMap);
+			result.put("result", SUCCESS);
+			result.put("msg", SAVE_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "이슈 등록 페이지")
+	@GetMapping(value = "/create")
+	public ModelAndView create(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.addObject("oid", oid);
+		model.setViewName("popup:/project/issue/issue-create");
+		return model;
+	}
+
+	@Description(value = "이슈 등록")
+	@PostMapping(value = "/create")
+	@ResponseBody
+	public Map<String, Object> create(@RequestBody IssueDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			IssueHelper.service.create(dto);
+			result.put("result", SUCCESS);
+			result.put("msg", SAVE_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
 	}
 }

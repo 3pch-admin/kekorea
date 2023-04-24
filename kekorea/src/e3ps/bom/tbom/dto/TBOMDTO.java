@@ -22,6 +22,9 @@ public class TBOMDTO {
 	private String projectType_name;
 	private String projectType_oid;
 	private String name;
+	private String number;
+	private boolean latest;
+	private int version;
 	private String mak_code;
 	private String mak_name;
 	private String mak_oid;
@@ -48,6 +51,7 @@ public class TBOMDTO {
 	private String modifiedDate_txt;
 	private String state;
 	private String content;
+	private String note;
 
 	// 변수용
 	private ArrayList<Map<String, Object>> addRows = new ArrayList<>(); // 도면 일람표
@@ -56,8 +60,10 @@ public class TBOMDTO {
 	private ArrayList<Map<String, String>> approvalRows = new ArrayList<>(); // 결재
 	private ArrayList<Map<String, String>> receiveRows = new ArrayList<>(); // 수신
 	private ArrayList<String> secondarys = new ArrayList<>();
-	private int progress = 0;
 	private String toid;
+
+	private boolean isEdit = false;
+	private boolean isRevise = false;
 
 	public TBOMDTO() {
 
@@ -66,6 +72,9 @@ public class TBOMDTO {
 	public TBOMDTO(TBOMMaster master) throws Exception {
 		setOid(master.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(master.getName());
+		setNumber(master.getNumber());
+		setVersion(master.getVersion());
+		setLatest(true);
 		setContent(master.getDescription());
 		setState(master.getLifeCycleState().getDisplay());
 		setCreator(master.getCreatorFullName());
@@ -73,6 +82,9 @@ public class TBOMDTO {
 		setCreatedDate_txt(CommonUtils.getPersistableTime(master.getCreateTimestamp()));
 		setModifiedDate(master.getModifyTimestamp());
 		setModifiedDate_txt(CommonUtils.getPersistableTime(master.getModifyTimestamp()));
+		setEdit(master.getLifeCycleState().toString().equals("INWORK"));
+		setRevise(master.getLifeCycleState().toString().equals("APPROVED"));
+		setNote(master.getNote());
 	}
 
 	public TBOMDTO(TBOMMasterProjectLink link) throws Exception {
@@ -82,6 +94,9 @@ public class TBOMDTO {
 		setLoid(link.getPersistInfo().getObjectIdentifier().getStringValue());
 		setPoid(project.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(master.getName());
+		setNumber(master.getNumber());
+		setVersion(master.getVersion());
+		setLatest(true);
 		setContent(master.getDescription());
 		if (project.getProjectType() != null) {
 			setProjectType_code(project.getProjectType().getCode());
@@ -123,5 +138,8 @@ public class TBOMDTO {
 		setCreatedDate_txt(CommonUtils.getPersistableTime(master.getCreateTimestamp()));
 		setModifiedDate(master.getModifyTimestamp());
 		setModifiedDate_txt(CommonUtils.getPersistableTime(master.getModifyTimestamp()));
+		setEdit(master.getLifeCycleState().toString().equals("INWORK"));
+		setRevise(master.getLifeCycleState().toString().equals("APPROVED"));
+		setNote(master.getNote());
 	}
 }

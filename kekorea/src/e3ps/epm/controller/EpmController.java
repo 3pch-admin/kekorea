@@ -113,8 +113,12 @@ public class EpmController extends BaseController {
 	@GetMapping(value = "/popup")
 	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.addObject("method", method);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
 		model.setViewName("popup:/epm/epm-popup");
 		return model;
 	}

@@ -1,9 +1,11 @@
 
 package e3ps.bom.partlist.service;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import e3ps.bom.partlist.MasterDataLink;
@@ -11,12 +13,12 @@ import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.dto.PartListDTO;
+import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.service.DocumentHelper;
-import e3ps.erp.service.ErpHelper;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputDocumentLink;
@@ -34,6 +36,8 @@ import wt.fc.QueryResult;
 import wt.folder.Folder;
 import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
+import wt.part.WTPart;
+import wt.part.WTPartMaster;
 import wt.pom.Transaction;
 import wt.query.QuerySpec;
 import wt.services.StandardManager;
@@ -41,6 +45,16 @@ import wt.util.WTAttributeNameIfc;
 import wt.util.WTException;
 
 public class StandardPartlistService extends StandardManager implements PartlistService {
+
+	/**
+	 * 캐시 처리
+	 */
+	public static HashMap<String, WTPart> partCache = null;
+	static {
+		if (partCache == null) {
+			partCache = new HashMap<>();
+		}
+	}
 
 	public static StandardPartlistService newStandardPartlistService() throws WTException {
 		StandardPartlistService instance = new StandardPartlistService();
@@ -104,7 +118,7 @@ public class StandardPartlistService extends StandardManager implements Partlist
 		String engType = dto.getEngType();
 		String description = dto.getDescription();
 		ArrayList<String> secondarys = dto.getSecondarys();
-		ArrayList<Map<String, Object>> _addRows = dto.get_addRows();
+		ArrayList<Map<String, Object>> addRows9 = dto.getAddRows9();
 		ArrayList<Map<String, Object>> addRows = dto.getAddRows();
 		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
 		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
@@ -127,17 +141,18 @@ public class StandardPartlistService extends StandardManager implements Partlist
 			master.setOwnership(CommonUtils.sessionOwner());
 
 			// 위치는 기계 수배표 전기 수배표로 몰빵..
-			Folder folder = FolderTaskLogic.getFolder(location, CommonUtils.getContainer());
+			Folder folder = FolderTaskLogic.getFolder(location, CommonUtils.getPDMLinkProductContainer());
 			FolderHelper.assignLocation((FolderEntry) master, folder);
 
 			master = (PartListMaster) PersistenceHelper.manager.save(master);
 
-			for (int i = 0; i < secondarys.size(); i++) {
-				String secondary = (String) secondarys.get(i);
+			for (int i = 0; secondarys != null && i < secondarys.size(); i++) {
+				String cacheId = (String) secondarys.get(i);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
 				ApplicationData applicationData = ApplicationData.newApplicationData(master);
 				applicationData.setRole(ContentRoleType.SECONDARY);
 				PersistenceHelper.manager.save(applicationData);
-				ContentServerHelper.service.updateContent(master, applicationData, secondary);
+				ContentServerHelper.service.updateContent(master, applicationData, vault.getPath());
 			}
 
 			double totalPrice = 0D;
@@ -162,6 +177,26 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				String referDrawing = (String) addRow.get("referDrawing");
 				String classification = (String) addRow.get("classification");
 				String note = (String) addRow.get("note");
+				
+				System.out.println("문제 발생 체크 = " + partNo + " 행 = " + sort);
+
+				WTPart part = partCache.get(partNo);
+				if (part == null) {
+					QuerySpec query = new QuerySpec();
+					int idx = query.appendClassList(WTPart.class, true);
+					int idx_m = query.appendClassList(WTPartMaster.class, false);
+					QuerySpecUtils.toCI(query, idx, WTPart.class);
+					QuerySpecUtils.toInnerJoin(query, WTPart.class, WTPartMaster.class, "masterReference.key.id",
+							WTAttributeNameIfc.ID_NAME, idx, idx_m);
+
+					QuerySpecUtils.toLatest(query, idx, WTPart.class);
+					QuerySpecUtils.toIBAEqualsAnd(query, WTPart.class, idx, "PART_CODE", partNo);
+					QueryResult result = PersistenceHelper.manager.find(query);
+					if (result.hasMoreElements()) {
+						Object[] obj = (Object[]) result.nextElement();
+						part = (WTPart) obj[0];
+					}
+				}
 
 				data.setLotNo(lotNo);
 				data.setUnitName(unitName);
@@ -175,6 +210,8 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				data.setPrice(price);
 				data.setCurrency(currency);
 				data.setWon(won);
+				// part connect
+				data.setWtPart(part);
 
 				if (exchangeRate instanceof Double) {
 					double value = (double) exchangeRate;
@@ -199,8 +236,8 @@ public class StandardPartlistService extends StandardManager implements Partlist
 
 			}
 
-			for (Map<String, Object> _addRow : _addRows) {
-				String oid = (String) _addRow.get("oid");
+			for (Map<String, Object> addRow9 : addRows9) {
+				String oid = (String) addRow9.get("oid");
 				Project project = (Project) CommonUtils.getObject(oid);
 
 				if ("기계".equals(engType)) {
@@ -278,7 +315,7 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				// 시작이 된 흔적이 없을 경우
 				if (project.getStartDate() == null) {
 					project.setStartDate(DateUtils.getCurrentTimestamp());
-					project.setKekState(ProjectStateVariable.KEK_INWORK);
+					project.setKekState(ProjectStateVariable.KEK_DESIGN_INWORK);
 					project.setState(ProjectStateVariable.INWORK);
 					project = (Project) PersistenceHelper.manager.modify(project);
 				}
@@ -302,14 +339,6 @@ public class StandardPartlistService extends StandardManager implements Partlist
 			trs.rollback();
 			throw e;
 		} finally {
-
-			System.out.println("==" + ErpHelper.cacheManager);
-			System.out.println("==1" + ErpHelper.unitCache);
-			System.out.println("==2" + ErpHelper.validateCache);
-
-			ErpHelper.validateCache.clear();
-			ErpHelper.unitCache.clear();
-			ErpHelper.validateCache.clear();
 			if (trs != null)
 				trs.rollback();
 		}
@@ -322,7 +351,7 @@ public class StandardPartlistService extends StandardManager implements Partlist
 		String engType = dto.getEngType();
 		String description = dto.getDescription();
 		ArrayList<String> secondarys = dto.getSecondarys();
-		ArrayList<Map<String, Object>> _addRows = dto.get_addRows();
+		ArrayList<Map<String, Object>> addRows9 = dto.getAddRows9();
 		ArrayList<Map<String, Object>> addRows = dto.getAddRows();
 		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
 		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
@@ -422,8 +451,8 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				totalPrice += data.getWon();
 			}
 
-			for (Map<String, Object> _addRow : _addRows) {
-				Project project = (Project) CommonUtils.getObject((String) _addRow.get("oid"));
+			for (Map<String, Object> addRow9 : addRows9) {
+				Project project = (Project) CommonUtils.getObject((String) addRow9.get("oid"));
 
 				if ("기계".equals(engType)) {
 					double outputMachinePrice = project.getOutputMachinePrice() != null
@@ -500,7 +529,7 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				// 시작이 된 흔적이 없을 경우
 				if (project.getStartDate() == null) {
 					project.setStartDate(DateUtils.getCurrentTimestamp());
-					project.setKekState(ProjectStateVariable.KEK_INWORK);
+					project.setKekState(ProjectStateVariable.KEK_DESIGN_INWORK);
 					project.setState(ProjectStateVariable.INWORK);
 					project = (Project) PersistenceHelper.manager.modify(project);
 				}
@@ -511,6 +540,19 @@ public class StandardPartlistService extends StandardManager implements Partlist
 
 			master.setTotalPrice(totalPrice);
 			PersistenceHelper.manager.modify(master);
+			
+			
+			CommonContentHelper.manager.clear(master);
+			
+			for (int i = 0; secondarys != null && i < secondarys.size(); i++) {
+				String cacheId = (String) secondarys.get(i);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
+				ApplicationData applicationData = ApplicationData.newApplicationData(master);
+				applicationData.setRole(ContentRoleType.SECONDARY);
+				PersistenceHelper.manager.save(applicationData);
+				ContentServerHelper.service.updateContent(master, applicationData, vault.getPath());
+			}
+
 
 			// 결재시작
 			if (approvalRows.size() > 0) {

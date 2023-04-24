@@ -75,8 +75,7 @@ public class AsposeUtils {
 
 		QuerySpecUtils.toInnerJoin(query, WorkOrder.class, WorkOrderDataLink.class, WTAttributeNameIfc.ID_NAME,
 				"roleAObjectRef.key.id", idx, idx_link);
-		QuerySpecUtils.toEqualsAnd(query, idx_link, WorkOrderDataLink.class, "roleAObjectRef.key.id",
-				workOrder.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx_link, WorkOrderDataLink.class, "roleAObjectRef.key.id", workOrder);
 		QuerySpecUtils.toOrderBy(query, idx_link, WorkOrderDataLink.class, WorkOrderDataLink.SORT, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
@@ -120,7 +119,7 @@ public class AsposeUtils {
 			pdf.close();
 		}
 
-		String mergePdfPath = mergePath + File.separator + workOrder.getMaster().getName() + ".pdf";
+		String mergePdfPath = mergePath + File.separator + workOrder.getName() + ".pdf";
 		firstPdf.save(mergePdfPath);
 
 		ApplicationData dd = ApplicationData.newApplicationData(workOrder);

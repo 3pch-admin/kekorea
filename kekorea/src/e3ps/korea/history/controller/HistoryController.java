@@ -105,7 +105,7 @@ public class HistoryController extends BaseController {
 	public ModelAndView compare(@RequestParam String oid, @RequestParam String compareArr) throws Exception {
 		ModelAndView model = new ModelAndView();
 		Project p1 = (Project) CommonUtils.getObject(oid);
-
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		String[] compareOids = compareArr.split(",");
 		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
 		for (String _oid : compareOids) {
@@ -115,6 +115,7 @@ public class HistoryController extends BaseController {
 
 		ArrayList<SpecCode> fixedList = SpecCodeHelper.manager.getSpecCode();
 		ArrayList<Map<String, Object>> data = HistoryHelper.manager.compare(p1, destList, fixedList);
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("p1", p1);
 		model.addObject("oid", oid);
 		model.addObject("fixedList", fixedList);

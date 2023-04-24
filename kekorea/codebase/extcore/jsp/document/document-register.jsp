@@ -5,9 +5,9 @@
 <head>
 <meta charset="UTF-8">
 <title></title>
-<%@include file="/extcore/include/css.jsp"%>
-<%@include file="/extcore/include/script.jsp"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/css.jsp"%>
+<%@include file="/extcore/jsp/common/script.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -40,19 +40,19 @@
 			<tr>
 				<th class="req lb">결재 의견</th>
 				<td class="indent5">
-					<textarea name="description" id="description" rows="6"></textarea>
+					<textarea name="description" id="description" rows="5"></textarea>
 				</td>
 			</tr>
 			<tr>
 				<th class="req lb">결재 문서</th>
 				<td>
 					<div class="include">
-						<input type="button" value="문서 추가" title="문서 추가" class="blue" onclick="_insert();">
-						<input type="button" value="문서 삭제" title="문서 삭제" class="red" onclick="_deleteRow();">
-						<div id="_grid_wrap" style="height: 250px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+						<input type="button" value="문서 추가" title="문서 추가" class="blue" onclick="insert();">
+						<input type="button" value="문서 삭제" title="문서 삭제" class="red" onclick="deleteRow();">
+						<div id="grid_wrap" style="height: 300px; border-top: 1px solid #3180c3; margin: 5px;"></div>
 						<script type="text/javascript">
-							let _myGridID;
-							const _columns = [ {
+							let myGridID;
+							const columns = [ {
 								dataField : "number",
 								headerText : "문서번호",
 								dataType : "string",
@@ -99,37 +99,39 @@
 								dataType : "string"
 							} ]
 
-							function _insert() {
-								const url = getCallUrl("/document/popup?method=append&multi=true");
-								popup(url, 1400, 600);
+							function insert() {
+								const url = getCallUrl("/doc/popup?method=append&multi=true");
+								popup(url, 1600, 700);
 							}
 
-							function append(data) {
+							function append(data, callBack) {
 								for (let i = 0; i < data.length; i++) {
-									let item = data[i].item;
-									let isUnique = AUIGrid.isUniqueValue(_myGridID, "oid", item.oid);
+									const item = data[i].item;
+									const isUnique = AUIGrid.isUniqueValue(myGridID, "oid", item.oid);
 									if (isUnique) {
-										AUIGrid.addRow(_myGridID, item, "first");
+										AUIGrid.addRow(myGridID, item, "first");
 									}
 								}
+								callBack(true);
 							}
 
-							function _createAUIGrid(columnLayout) {
+							function createAUIGrid(columnLayout) {
 								const props = {
 									headerHeight : 30,
 									showRowNumColumn : true,
 									rowNumHeaderText : "번호",
 									showStateColumn : true,
 									showRowCheckColumn : true,
+									enableSorting : false
 								}
-								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
+								myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 							}
 
-							function _deleteRow() {
-								const checked = AUIGrid.getCheckedRowItems(_myGridID);
+							function deleteRow() {
+								const checked = AUIGrid.getCheckedRowItems(myGridID);
 								for (let i = checked.length - 1; i >= 0; i--) {
 									const rowIndex = checked[i].rowIndex;
-									AUIGrid.removeRow(_myGridID, rowIndex);
+									AUIGrid.removeRow(myGridID, rowIndex);
 								}
 							}
 						</script>
@@ -139,16 +141,19 @@
 			<tr>
 				<th class="req lb">결재</th>
 				<td>
-					<jsp:include page="/extcore/include/register-include.jsp"></jsp:include>
+					<jsp:include page="/extcore/jsp/common/approval-register.jsp">
+						<jsp:param value="" name="oid" />
+						<jsp:param value="create" name="mode" />
+					</jsp:include>
 				</td>
 			</tr>
 		</table>
 		<script type="text/javascript">
 			function save() {
-				const url = getCallUrl("/document/register");
+				const url = getCallUrl("/doc/register");
 				const params = new Object();
-				const _addRows = AUIGrid.getAddedRowItems(_myGridID);
-				const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
+				const addRows = AUIGrid.getAddedRowItems(myGridID);
+				const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
 				const name = document.getElementById("name");
 				const description = document.getElementById("description");
 
@@ -164,26 +169,25 @@
 					return false;
 				}
 
-				if (_addRows.length === 0) {
+				if (addRows.length === 0) {
 					alert("결재할 문서를 추가하세요.");
 					_insert();
 					return false;
 				}
 
-				if (_addRows_.length === 0) {
+				if (addRows8.length === 0) {
 					alert("결재선을 지정하세요.");
 					_register();
 					return false;
 				}
 
-				if (!confirm("문서결재를 등록하시겠습니까?")) {
+				if (!confirm("문서 결재를 등록하시겠습니까?")) {
 					return false;
 				}
 				params.name = name.value;
 				params.description = description.value;
-				params._addRows = _addRows; //문서
-				toRegister(params, _addRows_);
-				console.log(params);
+				params.addRows = addRows; //문서
+				toRegister(params, addRows8);
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
@@ -197,15 +201,15 @@
 
 			document.addEventListener("DOMContentLoaded", function() {
 				document.getElementById("name").focus();
-				_createAUIGrid(_columns);
-				_createAUIGrid_(_columns_);
-				AUIGrid.resize(_myGridID);
-				AUIGrid.resize(_myGridID_);
+				createAUIGrid(columns);
+				createAUIGrid8(columns8);
+				AUIGrid.resize(myGridID);
+				AUIGrid.resize(myGridID8);
 			});
 
 			window.addEventListener("resize", function() {
-				AUIGrid.resize(_myGridID);
-				AUIGrid.resize(_myGridID_);
+				AUIGrid.resize(myGridID);
+				AUIGrid.resize(myGridID8);
 			});
 		</script>
 	</form>

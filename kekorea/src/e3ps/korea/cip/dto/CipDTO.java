@@ -42,8 +42,8 @@ public class CipDTO {
 	private String icons;
 
 	// 변수 담기용
-	private String preViewPath;
-	private ArrayList<String> secondaryPaths = new ArrayList<>();
+	private String preViewCacheId;
+	private ArrayList<String> secondarys = new ArrayList<>();
 
 	public CipDTO() {
 

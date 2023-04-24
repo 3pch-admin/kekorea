@@ -7,9 +7,9 @@
 <head>
 <meta charset="UTF-8">
 <title></title>
-<%@include file="/extcore/include/css.jsp"%>
-<%@include file="/extcore/include/script.jsp"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/css.jsp"%>
+<%@include file="/extcore/jsp/common/script.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -39,15 +39,21 @@
 				</td>
 			</tr>
 			<tr>
+				<th class="req lb">결재 의견</th>
+				<td class="indent5">
+					<textarea id="description" name="description" rows=""></textarea>
+				</td>
+			</tr>
+			<tr>
 				<th class="req lb">결재 도면</th>
 				<td>
 					<div class="include">
-						<input type="button" value="도면 추가" title="도면 추가" class="blue" onclick="_insert();">
-						<input type="button" value="도면 삭제" title="도면 삭제" class="red" onclick="_deleteRow();">
-						<div id="_grid_wrap" style="height: 200px; border-top: 1px solid #3180c3; margin: 3px 5px 3px 5px;"></div>
+						<input type="button" value="도면 추가" title="도면 추가" class="blue" onclick="insert();">
+						<input type="button" value="도면 삭제" title="도면 삭제" class="red" onclick="deleteRow();">
+						<div id="grid_wrap" style="height: 300px; border-top: 1px solid #3180c3; margin: 3px 5px 3px 5px;"></div>
 						<script type="text/javascript">
-							let _myGridID;
-							const _columns = [ {
+							let myGridID;
+							const columns = [ {
 								dataField : "name",
 								headerText : "NAME",
 								dataType : "string",
@@ -77,44 +83,50 @@
 								dataType : "date",
 								width : 100
 							}, {
-								dataField : "createdDate",
+								dataField : "createdDate_txt",
 								headerText : "작성일",
 								dataType : "string",
 								width : 100
+							}, {
+								dataField : "oid",
+								visible : false,
+								dataType : "string"
 							} ]
 
-							function _createAUIGrid(columnLayout) {
+							function createAUIGrid(columnLayout) {
 								const props = {
-										headerHeight : 30,
-										showRowNumColumn : true,
-										rowNumHeaderText : "번호",
-										showStateColumn : true,
-										showRowCheckColumn : true,
-									}
-								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
+									headerHeight : 30,
+									showRowNumColumn : true,
+									rowNumHeaderText : "번호",
+									showStateColumn : true,
+									showRowCheckColumn : true,
+									enableSorting : false
+								}
+								myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 							}
 
-							function _insert() {
+							function insert() {
 								const url = getCallUrl("/epm/popup?method=append&multi=false");
-								popup(url, 1400, 600);
+								popup(url, 1600, 700);
 							}
-							function append(data) {
-								// 			rowIdField : "oid",
+
+							function append(data, callBack) {
 								for (let i = 0; i < data.length; i++) {
-									let item = data[i].item;
-									let isUnique = AUIGrid.isUniqueValue(_myGridID, "oid", item.oid);
-									// 				alert(isUnique);
+									const item = data[i].item;
+									const isUnique = AUIGrid.isUniqueValue(myGridID, "oid", item.oid);
 									if (isUnique) {
-										AUIGrid.addRow(_myGridID, item, "first");
+										AUIGrid.addRow(myGridID, item, "first");
 									}
 								}
+								callBack(true);
 							}
+
 							// 행 삭제
-							function _deleteRow() {
-								let checked = AUIGrid.getCheckedRowItems(_myGridID);
+							function deleteRow() {
+								const checked = AUIGrid.getCheckedRowItems(myGridID);
 								for (let i = checked.length - 1; i >= 0; i--) {
-									let rowIndex = checked[i].rowIndex;
-									AUIGrid.removeRow(_myGridID, rowIndex);
+									const rowIndex = checked[i].rowIndex;
+									AUIGrid.removeRow(myGridID, rowIndex);
 								}
 							}
 						</script>
@@ -124,7 +136,10 @@
 			<tr>
 				<th class="req lb">결재</th>
 				<td>
-					<jsp:include page="/extcore/include/register-include.jsp"></jsp:include>
+					<jsp:include page="/extcore/jsp/common/approval-register.jsp">
+						<jsp:param value="" name="oid" />
+						<jsp:param value="create" name="mode" />
+					</jsp:include>
 				</td>
 			</tr>
 		</table>
@@ -132,9 +147,10 @@
 			function registerLine() {
 				const url = getCallUrl("/epm/register");
 				const params = new Object();
-				const _addRows = AUIGrid.getAddedRowItems(_myGridID); // 문서
-				const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_); // 결재
+				const addRows = AUIGrid.getAddedRowItems(myGridID); // 문서
+				const addRows8 = AUIGrid.getAddedRowItems(myGridID8); // 결재
 				const name = document.getElementById("name");
+				const description = document.getElementById("description").value;
 
 				if (isNull(name.value)) {
 					alert("결재 제목을 입력하세요.");
@@ -142,15 +158,15 @@
 					return false;
 				}
 
-				if (_addRows_.length === 0) {
+				if (addRows8.length === 0) {
 					alert("결재선을 지정하세요.");
 					_register();
 					return false;
 				}
 
-				if (_addRows.length === 0) {
+				if (addRows.length === 0) {
 					alert("결재할 도면을 추가하세요.");
-					_insert();
+					insert();
 					return false;
 				}
 
@@ -158,30 +174,31 @@
 					return false;
 				}
 				params.name = name.value;
-				params._addRows = _addRows;
-				params._addRows_ = _addRows_;
-				toRegister(params, _addRows_);
+				params.description = description;
+				params.addRows = addRows;
+				toRegister(params, addRows8);
 				parent.openLayer();
 				call(url, params, function(data) {
+					alert(data.msg);
 					if (data.result) {
 						document.location.href = getCallUrl("/workspace/approval");
 					} else {
-						closeLayer();
+						parent.closeLayer();
 					}
 				})
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
 				document.getElementById("name").focus();
-				_createAUIGrid(_columns);
-				_createAUIGrid_(_columns_);
-				AUIGrid.resize(_myGridID);
-				AUIGrid.resize(_myGridID_);
+				createAUIGrid(columns);
+				createAUIGrid8(columns8);
+				AUIGrid.resize(myGridID);
+				AUIGrid.resize(myGridID8);
 			});
 
 			window.addEventListener("resize", function() {
-				AUIGrid.bind(_myGridID);
-				AUIGrid.bind(_myGridID_);
+				AUIGrid.bind(myGridID);
+				AUIGrid.resize(myGridID8);
 			});
 		</script>
 	</form>

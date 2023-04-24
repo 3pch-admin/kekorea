@@ -8,7 +8,7 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 JSONArray baseData = (JSONArray) request.getAttribute("baseData");
 String oid = (String) request.getAttribute("oid");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <style type="text/css">
 .row1 {
 	background-color: #99CCFF;
@@ -97,124 +97,10 @@ String oid = (String) request.getAttribute("oid");
 			<tr>
 				<th class="req lb">KEK 작번</th>
 				<td>
-					<div class="include">
-						<input type="button" value="작번 추가" title="작번 추가" class="blue" onclick="_insert();">
-						<input type="button" value="작번 삭제" title="작번 삭제" class="red" onclick="_deleteRow();">
-						<div id="_grid_wrap" style="height: 150px; border-top: 1px solid #3180c3; margin: 5px;"></div>
-						<script type="text/javascript">
-							let _myGridID;
-							const _columns = [ {
-								dataField : "projectType_name",
-								headerText : "작번유형",
-								dataType : "string",
-								width : 80,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "customer_name",
-								headerText : "거래처",
-								dataType : "string",
-								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "mak_name",
-								headerText : "막종",
-								dataType : "string",
-								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "detail_name",
-								headerText : "막종상세",
-								dataType : "string",
-								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "kekNumber",
-								headerText : "KEK 작번",
-								dataType : "string",
-								width : 100,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "keNumber",
-								headerText : "KE 작번",
-								dataType : "string",
-								width : 100,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "description",
-								headerText : "작업 내용",
-								dataType : "string",
-								style : "aui-left",
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "oid",
-								headerText : "",
-								visible : false
-							} ]
-							function _createAUIGrid(columnLayout) {
-								const props = {
-									headerHeight : 30,
-									showRowNumColumn : true,
-									showRowCheckColumn : true,
-									showStateColumn : true,
-									rowNumHeaderText : "번호",
-									showAutoNoDataMessage : false,
-									selectionMode : "singleRow",
-									enableSorting : false
-								}
-								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-							}
-
-							function _insert() {
-								const url = getCallUrl("/project/popup?method=append&multi=true");
-								popup(url, 1500, 700);
-							}
-							
-							function append(data, callBack) {
-								for (let i = 0; i < data.length; i++) {
-									const item = data[i].item;
-									const isUnique = AUIGrid.isUniqueValue(_myGridID, "oid", item.oid);
-									if (isUnique) {
-										AUIGrid.addRow(_myGridID, item, "first");
-									}
-								}
-								callBack(true);
-							}
-
-							function _deleteRow() {
-								const checked = AUIGrid.getCheckedRowItems(_myGridID);
-								if (checked.length === 0) {
-									alert("삭제할 행을 선택하세요.");
-									return false;
-								}
-
-								for (let i = checked.length - 1; i >= 0; i--) {
-									const rowIndex = checked[i].rowIndex;
-									AUIGrid.removeRow(_myGridID, rowIndex);
-								}
-							}
-						</script>
-					</div>
+					<jsp:include page="/extcore/jsp/common/project-include.jsp">
+						<jsp:param value="" name="oid" />
+						<jsp:param value="create" name="mode" />
+					</jsp:include>
 				</td>
 			</tr>
 			<tr>
@@ -226,17 +112,17 @@ String oid = (String) request.getAttribute("oid");
 			<tr>
 				<th class="lb">첨부파일</th>
 				<td class="indent5">
-					<jsp:include page="/extcore/include/secondary-include.jsp">
+					<jsp:include page="/extcore/jsp/common/attach-secondary.jsp">
 						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
 			<tr>
 				<th class="req lb">결재</th>
 				<td>
-					<jsp:include page="/extcore/include/register-include.jsp">
-						<jsp:param value="200" name="height" />
+					<jsp:include page="/extcore/jsp/common/approval-register.jsp">
+						<jsp:param value="" name="oid" />
+						<jsp:param value="create" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
@@ -246,7 +132,6 @@ String oid = (String) request.getAttribute("oid");
 		<table class="button-table">
 			<tr>
 				<td class="left">
-<!-- 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();"> -->
 					<input type="button" value="불러오기" title="불러오기" class="blue" onclick="load();">
 				</td>
 			</tr>
@@ -475,24 +360,24 @@ String oid = (String) request.getAttribute("oid");
 		const props = {
 			headerHeight : 30,
 			showRowNumColumn : true,
-// 			showStateColumn : true,
+			// 			showStateColumn : true,
 			rowNumHeaderText : "번호",
 			selectionMode : "multipleCells",
 			enableSorting : false,
-// 			showRowCheckColumn : true,
+			// 			showRowCheckColumn : true,
 			enableCellMerge : true,
 			showDragKnobColumn : true,
-// 			enableDrag : true,
-// 			enableMultipleDrag : true,
-// 			enableDrop : true,
+			// 			enableDrag : true,
+			// 			enableMultipleDrag : true,
+			// 			enableDrop : true,
 			editable : true,
 			enableRowCheckShiftKey : true,
-// 			useContextMenu : true,
-// 			enableRightDownFocus : true,
-// 			contextMenuItems : [ {
-// 				label : "선택된 행 삭제",
-// 				callback : contextItemHandler
-// 			} ],
+			// 			useContextMenu : true,
+			// 			enableRightDownFocus : true,
+			// 			contextMenuItems : [ {
+			// 				label : "선택된 행 삭제",
+			// 				callback : contextItemHandler
+			// 			} ],
 			rowStyleFunction : function(rowIndex, item) {
 				const value = item.category_code;
 				if (value === "CATEGORY_2") {
@@ -532,7 +417,6 @@ String oid = (String) request.getAttribute("oid");
 		auiReadyHandler();
 	}
 
-	
 	function load() {
 		const url = getCallUrl("/configSheet/copy?method=copy&multi=false");
 		popup(url, 1500, 700);
@@ -555,7 +439,7 @@ String oid = (String) request.getAttribute("oid");
 			closeLayer();
 		})
 	}
-	
+
 	function auiCellEditBegin(event) {
 		const dataField = event.dataField;
 		if (dataField === "category_code") {
@@ -678,14 +562,17 @@ String oid = (String) request.getAttribute("oid");
 				const tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
-					const _isCreated = AUIGrid.isCreated(_myGridID);
-					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated && _isCreated_) {
-						AUIGrid.resize(_myGridID);
-						AUIGrid.resize(_myGridID_);
+					const isCreated9 = AUIGrid.isCreated(myGridID9);
+					if (isCreated9) {
+						AUIGrid.resize(myGridID9);
 					} else {
-						_createAUIGrid(_columns);
-						_createAUIGrid_(_columns_);
+						createAUIGrid9(columns9);
+					}
+					const isCreated8 = AUIGrid.isCreated(myGridID8);
+					if (isCreated8) {
+						AUIGrid.resize(myGridID8);
+					} else {
+						createAUIGrid8(columns8);
 					}
 					break;
 				case "tabs-2":
@@ -704,17 +591,17 @@ String oid = (String) request.getAttribute("oid");
 				}
 			}
 		});
-		_createAUIGrid(_columns);
-		_createAUIGrid_(_columns_);
+		createAUIGrid9(columns9);
+		createAUIGrid8(columns8);
 		createAUIGrid(columns);
-		AUIGrid.resize(_myGridID);
-		AUIGrid.resize(_myGridID_);
+		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID8);
 		AUIGrid.resize(myGridID);
 	});
 
 	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID8);
 		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID);
-		AUIGrid.resize(_myGridID_);
 	});
 </script>

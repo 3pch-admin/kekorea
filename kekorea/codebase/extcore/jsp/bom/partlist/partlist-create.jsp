@@ -5,7 +5,7 @@
 <%
 String engType = (String) request.getAttribute("engType");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <style type="text/css">
 .ng {
 	background-color: yellow;
@@ -69,94 +69,10 @@ String engType = (String) request.getAttribute("engType");
 				<th class="req lb">KEK 작번</th>
 				<td colspan="5">
 					<div class="include">
-						<input type="button" value="작번 추가" title="작번 추가" class="blue" onclick="_insert();">
-						<input type="button" value="작번 삭제" title="작번 삭제" class="red" onclick="_deleteRow();">
-						<div id="_grid_wrap" style="height: 150px; border-top: 1px solid #3180c3; margin: 5px;"></div>
-						<script type="text/javascript">
-							let _myGridID;
-							const _columns = [ {
-								dataField : "projectType_name",
-								headerText : "작번유형",
-								dataType : "string",
-								width : 80,
-							}, {
-								dataField : "customer_name",
-								headerText : "거래처",
-								dataType : "string",
-								width : 120,
-							}, {
-								dataField : "mak_name",
-								headerText : "막종",
-								dataType : "string",
-								width : 120,
-							}, {
-								dataField : "detail_name",
-								headerText : "막종상세",
-								dataType : "string",
-								width : 120,
-							}, {
-								dataField : "kekNumber",
-								headerText : "KEK 작번",
-								dataType : "string",
-								width : 100,
-							}, {
-								dataField : "keNumber",
-								headerText : "KE 작번",
-								dataType : "string",
-								width : 100,
-							}, {
-								dataField : "description",
-								headerText : "작업 내용",
-								dataType : "string",
-								style : "aui-left",
-							}, {
-								dataField : "oid",
-								headerText : "",
-								visible : false
-							} ]
-							function _createAUIGrid(columnLayout) {
-								const props = {
-									headerHeight : 30,
-									showRowNumColumn : true,
-									showRowCheckColumn : true,
-									showStateColumn : true,
-									rowNumHeaderText : "번호",
-									showAutoNoDataMessage : false,
-									selectionMode : "singleRow",
-									enableSorting : false
-								}
-								_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-							}
-
-							function _insert() {
-								const url = getCallUrl("/project/popup?method=append&multi=true");
-								popup(url, 1500, 700);
-							}
-
-							function append(data, callBack) {
-								for (let i = 0; i < data.length; i++) {
-									const item = data[i].item;
-									const isUnique = AUIGrid.isUniqueValue(_myGridID, "oid", item.oid);
-									if (isUnique) {
-										AUIGrid.addRow(_myGridID, item, "first");
-									}
-								}
-								callBack(true);
-							}
-
-							function _deleteRow() {
-								const checked = AUIGrid.getCheckedRowItems(_myGridID);
-								if (checked.length === 0) {
-									alert("삭제할 행을 선택하세요.");
-									return false;
-								}
-
-								for (let i = checked.length - 1; i >= 0; i--) {
-									const rowIndex = checked[i].rowIndex;
-									AUIGrid.removeRow(_myGridID, rowIndex);
-								}
-							}
-						</script>
+						<jsp:include page="/extcore/jsp/common/project-include.jsp">
+							<jsp:param value="" name="oid" />
+							<jsp:param value="create" name="mode" />
+						</jsp:include>
 					</div>
 				</td>
 			</tr>
@@ -169,15 +85,17 @@ String engType = (String) request.getAttribute("engType");
 			<tr>
 				<th class="req lb">결재</th>
 				<td colspan="5">
-					<jsp:include page="/extcore/include/register-include.jsp"></jsp:include>
+					<jsp:include page="/extcore/jsp/common/approval-register.jsp">
+						<jsp:param value="" name="oid" />
+						<jsp:param value="create" name="mode" />
+					</jsp:include>
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">첨부파일</th>
 				<td class="indent5" colspan="5">
-					<jsp:include page="/extcore/include/secondary-include.jsp">
+					<jsp:include page="/extcore/jsp/common/attach-secondary.jsp">
 						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
@@ -201,9 +119,9 @@ String engType = (String) request.getAttribute("engType");
 				headerText : "체크",
 				dataType : "string",
 				width : 80,
-				editable : false,
+// 				editable : false,
 				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-					if (value === "NG")  {
+					if (value === "NG") {
 						return "ng";
 					}
 					return "";
@@ -223,7 +141,7 @@ String engType = (String) request.getAttribute("engType");
 				headerText : "UNIT NAME",
 				dataType : "string",
 				width : 120,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "partNo",
 				headerText : "부품번호",
@@ -240,13 +158,13 @@ String engType = (String) request.getAttribute("engType");
 				headerText : "부품명",
 				dataType : "string",
 				width : 200,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "standard",
 				headerText : "규격",
 				dataType : "string",
 				width : 250,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "maker",
 				headerText : "MAKER",
@@ -272,39 +190,39 @@ String engType = (String) request.getAttribute("engType");
 				headerText : "단위",
 				dataType : "string",
 				width : 80,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "price",
 				headerText : "단가",
 				dataType : "numeric",
 				width : 120,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "currency",
 				headerText : "화폐",
 				dataType : "string",
 				width : 60,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "won",
 				headerText : "원화금액",
 				dataType : "numeric",
 				width : 120,
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "partListDate",
 				headerText : "수배일자",
 				dataType : "date",
 				formatString : "yyyy-mm-dd",
 				width : 100,
-				editable : false
+// 				editable : false
 			}, {
 				dataField : "exchangeRate",
 				headerText : "환율",
 				dataType : "numeric",
 				width : 80,
 				formatString : "#,##0.0000",
-				editable : false,
+// 				editable : false,
 			}, {
 				dataField : "referDrawing",
 				headerText : "참고도면",
@@ -355,7 +273,7 @@ String engType = (String) request.getAttribute("engType");
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				readyHandler();
-				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+// 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRow);
 			}
 
@@ -540,13 +458,14 @@ String engType = (String) request.getAttribute("engType");
 
 		const params = new Object();
 		const url = getCallUrl("/partlist/create");
-		const addRows = AUIGrid.getGridData(myGridID);
-		const _addRows = AUIGrid.getGridData(_myGridID);
 		const name = document.getElementById("name");
-		const _addRows_ = AUIGrid.getGridData(_myGridID_);
+		const addRows = AUIGrid.getGridData(myGridID);
+		const addRows9 = AUIGrid.getGridData(myGridID9);
+		const addRows8 = AUIGrid.getGridData(myGridID8);
 		const engType = document.getElementById("engType").value;
 		const description = document.getElementById("description");
 		const progress = document.getElementById("progress").value;
+		
 		if (isNull(name.value)) {
 			alert("수배표 제목을 입력하세요.");
 			name.focus();
@@ -564,9 +483,9 @@ String engType = (String) request.getAttribute("engType");
 			return false;
 		}
 
-		if (_addRows.length === 0) {
+		if (addRows9.length === 0) {
 			alert("최소 하나 이상의 작번을 추가하세요.");
-			_insert();
+			insert9();
 			return false;
 		}
 
@@ -610,13 +529,13 @@ String engType = (String) request.getAttribute("engType");
 			}
 		}
 
-		if (_addRows_.length === 0) {
+		if (addRows8.length === 0) {
 			alert("결재선을 지정하세요.");
 			_register();
 			return false;
 		}
 
-		addRows.sort(function(a, b) {
+		addRows9.sort(function(a, b) {
 			return a.sort - b.sort;
 		});
 
@@ -624,13 +543,13 @@ String engType = (String) request.getAttribute("engType");
 			return false;
 		}
 		params.addRows = addRows;
-		params._addRows = _addRows;
+		params.addRows9 = addRows9;
 		params.name = name.value;
 		params.engType = engType;
 		params.description = description.value;
 		params.progress = Number(progress);
 		params.secondarys = toArray("secondarys");
-		toRegister(params, _addRows_);
+		toRegister(params, addRows8);
 		console.log(params);
 		openLayer();
 		call(url, params, function(data) {
@@ -638,6 +557,8 @@ String engType = (String) request.getAttribute("engType");
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}
@@ -650,18 +571,17 @@ String engType = (String) request.getAttribute("engType");
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
-					const _isCreated = AUIGrid.isCreated(_myGridID);
-					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated) {
-						AUIGrid.resize(_myGridID);
+					const isCreated9 = AUIGrid.isCreated(myGridID9);
+					if (isCreated9) {
+						AUIGrid.resize(myGridID9);
 					} else {
-						_createAUIGrid(_columns);
+						createAUIGrid9(columns9);
 					}
-
-					if (_isCreated_) {
-						AUIGrid.resize(_myGridID_);
+					const isCreated8 = AUIGrid.isCreated(myGridID8);
+					if (isCreated8) {
+						AUIGrid.resize(myGridID8);
 					} else {
-						_createAUIGrid_(_columns_);
+						createAUIGrid8(columns8);
 					}
 					selectbox("engType");
 					$("#engType").bindSelectDisabled(true);
@@ -680,14 +600,16 @@ String engType = (String) request.getAttribute("engType");
 		selectbox("engType");
 		$("#engType").bindSelectSetValue("<%=engType%>");
 		$("#engType").bindSelectDisabled(true);
-		_createAUIGrid(_columns);
-		_createAUIGrid_(_columns_);
+		createAUIGrid9(columns9);
+		createAUIGrid8(columns8);
+		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID8);
 		createAUIGrid(columns);
 	});
 
 	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID8);
 		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID_);
-		AUIGrid.resize(_myGridID);
 	});
 </script>

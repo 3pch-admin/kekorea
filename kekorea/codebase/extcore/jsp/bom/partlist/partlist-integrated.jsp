@@ -7,7 +7,7 @@ Project project = (Project) request.getAttribute("project");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 JSONArray integratedData = (JSONArray) request.getAttribute("integratedData");
 %>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <table class="button-table">
 	<tr>
 		<td class="left">

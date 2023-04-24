@@ -51,8 +51,6 @@ public class TaskHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			BigDecimal next = (BigDecimal) obj[0];
 
-			System.out.println("next=" + next);
-
 			if (next != null) {
 				sort = next.intValue() + 1;
 			}
@@ -141,7 +139,6 @@ public class TaskHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			Task task = (Task) obj[0];
-			System.out.println("트리 로드..." + task.getName() + ",==" + task.getSort());
 			list.add(task);
 		}
 		return list;

@@ -5,13 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import e3ps.workspace.notice.dto.NoticeDTO;
+import wt.method.RemoteInterface;
 
+@RemoteInterface
 public interface NoticeService {
-
-	/**
-	 * AUIGrid 데이터 저장
-	 */
-	public abstract void save(Map<String, Object> params) throws Exception;
 
 	/**
 	 * 공지사항 등록

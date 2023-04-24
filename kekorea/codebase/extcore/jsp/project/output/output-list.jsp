@@ -1,25 +1,33 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.Map"%>
 <%@page import="e3ps.project.output.service.OutputHelper"%>
 <%@page import="e3ps.doc.service.DocumentHelper"%>
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.getAttribute("maks");
 %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title></title>
-<%@include file="/extcore/include/css.jsp"%>
-<%@include file="/extcore/include/script.jsp"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
-<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
+<%@include file="/extcore/jsp/common/css.jsp"%>
+<%@include file="/extcore/jsp/common/script.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
 	<form>
+		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<input type="hidden" name="oid" id="oid">
+		<input type="hidden" name="type" id="type" value="new">
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -34,47 +42,56 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			<tr>
 				<th>문서 분류</th>
 				<td colspan="7" class="indent5">
-					<input type="hidden" name="location" value="<%=DocumentHelper.ROOT%>">
-					<span id="location"><%=DocumentHelper.ROOT%></span>
+					<input type="hidden" name="location" id="location" value="<%=OutputHelper.OUTPUT_NEW_ROOT%>">
+					<span id="locationText"><%=OutputHelper.OUTPUT_NEW_ROOT%></span>
 				</td>
 			</tr>
 			<tr>
-			<tr>
 				<th>산출물 제목</th>
 				<td class="indent5">
-					<input type="text" name="name" class="width-200">
+					<input type="text" name="name" id="name" class="width-200">
 				</td>
 				<th>산출물 번호</th>
 				<td class="indent5">
-					<input type="text" name="description" class="width-200">
+					<input type="text" name="number" id="number" class="width-200">
 				</td>
 				<th>설명</th>
 				<td class="indent5">
-					<input type="text" name="creator" class="width-200">
+					<input type="text" name="description" id="description" class="width-200">
 				</td>
 				<th>KE 작번</th>
 				<td class="indent5">
-					<input type="text" name="number" class="width-200">
+					<input type="text" name="keNumber" id="keNumber" class="width-200">
 				</td>
 			</tr>
 			<tr>
 				<th>KEK 작번</th>
 				<td class="indent5">
-					<input type="text" name="name" class="width-200">
+					<input type="text" name="kekNumber" id="kekNumber" class="width-200">
 				</td>
 				<th>막종</th>
 				<td class="indent5">
-					<input type="text" name="description" class="width-200">
+					<select name="mak" id="mak" class="width-200">
+						<option value="">선택</option>
+						<%
+						for (Map<String, String> mak : maks) {
+						%>
+						<option value="<%=mak.get("key")%>"><%=mak.get("value")%></option>
+						<%
+						}
+						%>
+					</select>
 				</td>
 				<th>작업내용</th>
-				<td colspan="3" class="indent5">
-					<input type="text" name="creator" class="width-300">
+				<td class="indent5" colspan="3">
+					<input type="text" name="description" id="description" class="width-400">
 				</td>
 			</tr>
 			<tr>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="creator" id="creator" class="width-200">
+					<input type="text" name="creator" id="creator">
+					<input type="hidden" name="creatorOid" id="creatorOid">
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
@@ -83,7 +100,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
 				<th>버전</th>
-				<td colspan="3" class="indent5">
+				<td>
+					&nbsp;
 					<div class="pretty p-switch">
 						<input type="radio" name="latest" value="true" checked="checked">
 						<div class="state p-success">
@@ -92,6 +110,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 							</label>
 						</div>
 					</div>
+					&nbsp;
 					<div class="pretty p-switch">
 						<input type="radio" name="latest" value="">
 						<div class="state p-success">
@@ -102,36 +121,41 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					</div>
 				</td>
 				<th>상태</th>
-				<td>
-					<select name="state" id="state" class="width-100">
+				<td class="indent5">
+					<select name="state" id="state" class="width-200">
 						<option value="">선택</option>
+						<option value="INWORK">작업 중</option>
+						<option value="UNDERAPPROVAL">승인 중</option>
+						<option value="RELEASED">승인됨</option>
+						<option value="RETURN">반려됨</option>
+						<option value="WITHDRAWN">폐기</option>
 					</select>
 				</td>
 			</tr>
 		</table>
 
-		<!-- 버튼 테이블 -->
 		<table class="button-table">
 			<tr>
 				<td class="left">
-					<input type="button" value="테이블 저장" title="테이블 저장" class="orange" onclick="saveColumnLayout('document-list');">
-					<input type="button" value="테이블 초기화" title="테이블 초기화" onclick="resetColumnLayout('document-list');">
+					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('document-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('document-list');">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
-					<%
-					if (isAdmin) {
-					%>
-					<input type="button" value="저장" title="저장" onclick="save();">
-					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
-					<%
-					}
-					%>
+					<input type="button" value="OLD" title="OLD" onclick="toggle();">
 				</td>
 				<td class="right">
+					<select name="psize" id="psize">
+						<option value="30">30</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+						<option value="300">300</option>
+					</select>
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
 		</table>
-		<!-- 리스트 테이블 -->
+
 		<table>
 			<colgroup>
 				<col width="230">
@@ -140,18 +164,16 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			</colgroup>
 			<tr>
 				<td valign="top">
-					<jsp:include page="/extcore/include/folder-include.jsp">
-						<jsp:param value="<%=OutputHelper.OUTPUT_ROOT%>" name="location" />
+					<jsp:include page="/extcore/jsp/common/folder-include.jsp">
+						<jsp:param value="<%=OutputHelper.OUTPUT_NEW_ROOT%>" name="location" />
 						<jsp:param value="product" name="container" />
 						<jsp:param value="list" name="mode" />
-						<jsp:param value="665" name="height" />
+						<jsp:param value="635" name="height" />
 					</jsp:include>
 				</td>
-				<td>&nbsp;</td>
-				<td>
-					<!-- 그리드 리스트 -->
-					<div id="grid_wrap" style="height: 600px; border-top: 1px solid #3180c3;"></div>
-					<!-- 컨텍스트 메뉴 사용시 반드시 넣을 부분 -->
+				<td valign="top">&nbsp;</td>
+				<td valign="top">
+					<div id="grid_wrap" style="height: 635px; border-top: 1px solid #3180c3;"></div>
 					<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 				</td>
 			</tr>
@@ -164,6 +186,16 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					headerText : "문서제목",
 					dataType : "string",
 					width : 350,
+					style : "aui-left",
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.oid;
+							const url = getCallUrl("/document/view?oid=" + oid);
+							popup(url, 1400, 600);
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -173,6 +205,15 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					headerText : "문서번호",
 					dataType : "string",
 					width : 120,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.oid;
+							const url = getCallUrl("/document/view?oid=" + oid);
+							popup(url, 1400, 600);
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -181,7 +222,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					dataField : "description",
 					headerText : "설명",
 					dataType : "string",
-					style : "left indent10",
+					style : "aui-left",
 					width : 350,
 					filter : {
 						showIcon : true,
@@ -192,7 +233,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					headerText : "문서분류",
 					dataType : "string",
 					width : 250,
-					style : "left indent10",
+					style : "aui-left",
 					filter : {
 						showIcon : true,
 						inline : true
@@ -261,12 +302,16 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					formatString : "yyyy-mm-dd",
 					filter : {
 						showIcon : true,
-						inline : true
+						inline : true,
+						displayFormatValues : true
 					},
 				}, {
 					dataField : "primary",
 					headerText : "첨부파일",
 					width : 100,
+					renderer : {
+						type : "TemplateRenderer"
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -276,42 +321,40 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function createAUIGrid(columnLayout) {
 				const props = {
-						headerHeight : 30,
-						rowHeight : 30,
-						showRowNumColumn : true,
-						showRowCheckColumn : true,
-						showStateColumn : true,
-						rowNumHeaderText : "번호",
-						noDataMessage : "검색 결과가 없습니다.",
-						enableFilter : true,
-						selectionMode : "multipleCells",
-						enableMovingColumn : true,
-						showInlineFilter : true,
-						useContextMenu : true,
-						enableRightDownFocus : true,
-						filterLayerWidth : 320,
-						filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+					headerHeight : 30,
+					showRowNumColumn : true,
+					rowNumHeaderText : "번호",
+					showAutoNoDataMessage : false,
+					enableFilter : true,
+					selectionMode : "singleRow",
+					enableFilter : true,
+					enableMovingColumn : true,
+					showInlineFilter : true,
+					useContextMenu : true,
+					enableRightDownFocus : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
-
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
-
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
-
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
-					hideContextMenu(); 
-					vScrollChangeHandler(event); 
+					hideContextMenu();
+					vScrollChangeHandler(event);
 				});
-
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
-					hideContextMenu(); 
+					hideContextMenu();
 				});
 			}
 
 			function loadGridData() {
-				const url = getCallUrl("/document/list");
+				const url = getCallUrl("/output/list");
 				const params = new Object();
+				const latest = !!document.querySelector("input[name=latest]:checked").value;
+				const psize = document.getElementById("psize").value;
 				params.latest = true;
+				params.psize = psize;
+				params.type = "new";
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -325,53 +368,38 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function create() {
 				const url = getCallUrl("/document/create");
+				// 				const url = getCallUrl("/doc/create");
 				popup(url);
-			}
-
-			function save() {
-
-				if (!confirm("저장 하시겠습니까?")) {
-					return false;
-				}
-
-				const url = getCallUrl("/meeting/delete");
-				const params = new Object();
-				const removeRows = AUIGrid.getRemovedItems(myGridID);
-				params.removeRows = removeRows;
-				parent.openLayer();
-				call(url, params, function(data) {
-					alert(data.msg);
-					parent.closeLayer();
-					if (data.result) {
-						loadGridData();
-					}
-				});
-			}
-
-			function deleteRow() {
-				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				for (let i = checkedItems.length - 1; i >= 0; i--) {
-					const rowIndex = checkedItems[i].rowIndex;
-					AUIGrid.removeRow(myGridID, rowIndex);
-				}
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("document-list");
-				let contenxtHeader = genColumnHtml(columns); 
+				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns);
 				_createAUIGrid(_columns);
-				
+				AUIGrid.resize(myGridID);
+				AUIGrid.resize(_myGridID);
+				selectbox("mak");
 				selectbox("state");
-				
 				finderUser("creator");
-				
 				twindate("created");
+				selectbox("psize");
 			});
+
+			function toggle() {
+				const iframe = parent.document.getElementById("content");
+				iframe.src = getCallUrl("/output/old");
+			}
+
+			function exportExcel() {
+				const exceptColumnFields = [ "primary" ];
+				const sessionName = document.getElementById("sessionName").value;
+				exportToExcel("공지사항 리스트", "공지사항", "공지사항 리스트", exceptColumnFields, sessionName);
+			}
 
 			document.addEventListener("keydown", function(event) {
 				const keyCode = event.keyCode || event.which;
@@ -385,8 +413,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			})
 
 			window.addEventListener("resize", function() {
-				AUIGrid.resize(_myGridID);
 				AUIGrid.resize(myGridID);
+				AUIGrid.resize(_myGridID);
 			});
 		</script>
 	</form>

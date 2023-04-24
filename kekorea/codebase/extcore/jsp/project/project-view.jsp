@@ -14,9 +14,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<%@include file="/extcore/include/css.jsp"%>
-<%@include file="/extcore/include/script.jsp"%>
-<%@include file="/extcore/include/auigrid.jsp"%>
+<%@include file="/extcore/jsp/common/css.jsp"%>
+<%@include file="/extcore/jsp/common/script.jsp"%>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <%@include file="/extcore/include/highchart.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
@@ -47,7 +47,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<a href="#tabs-6">T-BOM</a>
 				</li>
 				<li>
-					<a href="#tabs-7">수배표 통합</a>
+					<a href="#tabs-7">통합 수배표</a>
 				</li>
 				<li>
 					<a href="#tabs-8">CIP</a>
@@ -117,7 +117,53 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<%
 					} else {
 					%>
-
+	<colgroup>
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="30">
+						<col width="140">
+						<col width="140">
+					</colgroup>
+					<tr>
+						<th class="lb rb">KEK 작번</th>
+						<th class="rb">거래처</th>
+						<th class="rb">설치장소</th>
+						<th class="rb">모델</th>
+						<th class="rb">발행일</th>
+						<th class="rb">요구 납기일</th>
+						<td rowspan="4" class="tb-none bb-none" style="width: 30px;">&nbsp;</td>
+						<th rowspan="4">진행률</th>
+						<td rowspan="4" class="center"><%=dto.getKekProgress()%>%
+						</td>
+					</tr>
+					<tr>
+						<td class="center"><%=dto.getKekNumber()%></td>
+						<td class="center"><%=dto.getCustomer_name()%></td>
+						<td class="center"><%=dto.getInstall_name()%></td>
+						<td class="center"><%=dto.getModel()%></td>
+						<td class="center"><%=dto.getPdate_txt()%></td>
+						<td class="center"><%=dto.getCustomDate_txt()%></td>
+					</tr>
+					<tr>
+						<th class="lb rb">KE 작번</th>
+						<th class="rb">USER ID</th>
+						<th class="rb">작번 유형</th>
+						<th class="rb">막종 / 막종상세</th>
+						<th class="rb" colspan="2">작업 내용</th>
+					</tr>
+					<tr>
+						<td class="center"><%=dto.getKeNumber()%></td>
+						<td class="center"><%=dto.getUserId()%></td>
+						<td class="center"><%=dto.getProjectType_name()%></td>
+						<td class="center"><%=dto.getMak_name()%>
+							/
+							<%=dto.getDetail_name()%></td>
+						<td class="indent5" colspan="2"><%=dto.getDescription()%></td>
+					</tr>
 					<%
 					}
 					%>
@@ -173,9 +219,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<tr>
 						<td class="center"><%=dto.getPm()%></td>
 						<td class="center"><%=dto.getSubPm()%></td>
-						<td class="center"><%=dto.getMachine()%></td>
-						<td class="center"><%=dto.getElec()%></td>
-						<td class="center"><%=dto.getSoft()%></td>
+						<td class="center"><%=dto.getMachine_name() != null ? dto.getMachine_name() : "지정안됨"%></td>
+						<td class="center"><%=dto.getElec_name() != null ? dto.getElec_name() : "지정안됨"%></td>
+						<td class="center"><%=dto.getSoft_name() != null ? dto.getSoft_name() : "지정안됨"%></td>
 					</tr>
 					<%
 					String outputTotal = String.format("%,.0f", dto.getOutputTotalPrice());
@@ -296,7 +342,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 							type : 'column'
 						},
 						title : {
-							text : '작번 견적 금액 차트',
+							text : '작번 견적 금액 차트(수배표/입력)',
+						},
+						subtitle : {
+							text : "<%=dto.getKekNumber()%> / <%=dto.getKeNumber()%>",
 						},
 						tooltip : {
 							headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
@@ -306,7 +355,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 							useHTML : true
 						},
 						xAxis : {
-							categories : [ '작번 견적 금액', '기계 견적 금액', '전기 견적 금액', ],
+							categories : [ '작번 견적 금액(수배표)', '작번 견적 금액(입력)' ],
 							crosshair : true
 						},
 						yAxis : {
@@ -364,19 +413,23 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<iframe style="height: 800px;" src="/Windchill/plm/project/partlistTab?oid=<%=dto.getOid()%>&invoke=e"></iframe>
 			</div>
 			<div id="tabs-6">
-				<iframe style="height: 800px;" src="/Windchill/plm/project/tbomTab?oid=<%=dto.getOid()%>"></iframe>
+				<iframe style="height: 800px;" src="/Windchill/plm/project/tbomTab?oid=<%=dto.getOid()%>" onload="hide();"></iframe>
 			</div>
 			<div id="tabs-7">
 				<iframe style="height: 800px;" src="/Windchill/plm/project/partlistTab?oid=<%=dto.getOid()%>&invoke=a"></iframe>
 			</div>
 			<div id="tabs-8">
-				<iframe style="height: 800px;" src="/Windchill/plm/project/cipTab?mak_oid=<%=dto.getMak_oid()%>&detail_oid=<%=dto.getDetail_oid()%>&customer_oid=<%=dto.getCustomer_oid()%>&install_oid=<%=dto.getInstall_oid()%>"></iframe>
+				<iframe style="height: 800px;" src="/Windchill/plm/project/cipTab?oid=<%=dto.getOid()%>&invoke=a"></iframe>
 			</div>
 			<div id="tabs-9">
-				<iframe style="height: 800px;" src="/Windchill/plm/project/workOrderTab?oid=<%=dto.getOid()%>"></iframe>
+				<iframe style="height: 800px;" src="/Windchill/plm/project/workOrderTab?oid=<%=dto.getOid()%>&invoke=a"></iframe>
 			</div>
 		</div>
 		<script type="text/javascript">
+			function hide() {
+				// 				parent.parent.closeLayer();
+			}
+
 			function money(money, type) {
 				const oid = document.getElementById("oid").value;
 				const url = getCallUrl("/project/money?oid=" + oid + "&money=" + money + "&type=" + type);
@@ -391,8 +444,27 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			document.addEventListener("DOMContentLoaded", function() {
 				$("#tabs").tabs({
-					heightStyle : "content"
-				});
+				// 					activate : function(event, ui) {
+				// 						var tabId = ui.newPanel.prop("id");
+				// 						switch (tabId) {
+				// 						case "tabs-2":
+				// 							parent.parent.openLayer();
+				// 							break;
+				// 						case "tabs-3":
+				// 							parent.parent.openLayer();
+				// 							break;
+				// 						case "tabs-4":
+				// 							parent.parent.openLayer();
+				// 							break;
+				// 						case "tabs-5":
+				// 							parent.parent.openLayer();
+				// 							break;
+				// 						case "tabs-6":
+				// 							parent.parent.openLayer();
+				// 							break;
+				// 						}
+				// 					}
+				})
 				parent.parent.closeLayer();
 			})
 		</script>

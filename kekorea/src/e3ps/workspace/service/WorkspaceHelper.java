@@ -7,12 +7,14 @@ import java.util.Map;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.tbom.TBOMMaster;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.org.dto.UserDTO;
 import e3ps.workspace.ApprovalContract;
+import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
 import e3ps.workspace.PersistableLineMasterLink;
@@ -132,10 +134,10 @@ public class WorkspaceHelper {
 			} else if (per instanceof TBOMMaster) {
 				TBOMMaster master = (TBOMMaster) per;
 				return master.getName();
+			} else if (per instanceof WorkOrder) {
+				WorkOrder workOrder = (WorkOrder) per;
+				return workOrder.getName();
 			}
-		} else if (per instanceof WorkOrder) {
-			WorkOrder workOrder = (WorkOrder) per;
-			return workOrder.getMaster().getName();
 		} else if (per instanceof ConfigSheet) {
 			ConfigSheet configSheet = (ConfigSheet) per;
 			return configSheet.getName();
@@ -782,5 +784,44 @@ public class WorkspaceHelper {
 	public JSONArray jsonArrayHistory(WTPartMaster master) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * 결재 의견 가져오기
+	 */
+	public String getDescription(Persistable persistable) {
+		String description = "";
+		if (persistable instanceof ApprovalContract) {
+			ApprovalContract contract = (ApprovalContract) persistable;
+			description = contract.getDescription();
+		}
+		return description;
+	}
+
+	/**
+	 * 일괄격채 데이터 가져오기
+	 */
+	public ArrayList<Map<String, String>> contractData(ApprovalContract contract) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		QueryResult result = PersistenceHelper.manager.navigate(contract, "persist",
+				ApprovalContractPersistableLink.class);
+		while (result.hasMoreElements()) {
+			Persistable per = (Persistable) result.nextElement();
+			if (per instanceof EPMDocument) {
+				EPMDocument epm = (EPMDocument) per;
+				Map<String, String> map = new HashMap<>();
+				map.put("oid", epm.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("name", epm.getName());
+				map.put("nameOfParts", IBAUtils.getStringValue(epm, "NAME_OF_PARTS"));
+				map.put("dwgNo", IBAUtils.getStringValue(epm, "DWG_NO"));
+				map.put("state", epm.getLifeCycleState().getDisplay());
+				map.put("version", epm.getVersionIdentifier().getSeries().getValue() + "."
+						+ epm.getIterationIdentifier().getSeries().getValue());
+				map.put("creator", epm.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(epm.getCreateTimestamp()));
+				list.add(map);
+			}
+		}
+		return list;
 	}
 }

@@ -1,0 +1,120 @@
+            <AttributeValues objType="wt.part.WTPart">
+
+               <!-- set the folder -->
+               <AttrValue id="folder.id" algorithm="com.ptc.core.foundation.folder.server.impl.FolderPathAttributeAlgorithm">
+                  <Arg>/Default</Arg>
+               </AttrValue>
+
+               <!-- set the lifecycle -->
+               <AttrValue id="lifeCycle.id" algorithm="com.ptc.core.foundation.lifecycle.server.impl.LifeCycleTemplateAttributeAlgorithm">
+                  <Arg>
+                     <!-- Translation of the word "Basic" must be the same as the translation done in commonLifeCycles.xml -->
+                     <?loc-begin key="BASIC_LIFECYCLE_NAME" maxlen="30" match="commonLifeCycles.xml:BASIC_LIFECYCLE_NAME"?>기초<?loc-end?>
+                  </Arg>
+               </AttrValue>
+
+               <!-- set the team template -->
+               <AttrValue id="teamTemplate.id" algorithm="com.ptc.core.foundation.team.server.impl.TeamTemplateAttributeAlgorithm">
+                  <Arg>Default</Arg>
+               </AttrValue>
+
+               <!-- set the number to a generated number -->
+               <AttrValue id="number" algorithm="com.ptc.windchill.enterprise.revisionControlled.server.impl.NumberGenerator"> 
+                  <!-- add a V prefix for variant parts -->
+                  <Value algorithm="wt.rule.algorithm.BooleanBranch">
+                     <Value algorithm="wt.rule.algorithm.EqualsTest">
+                        <Attr id="genericType"/>
+                        <Arg>variant</Arg>	
+                     </Value>
+                     <Arg>V</Arg>
+                     <Arg></Arg>
+                  </Value>
+                  <!-- the sequence -->
+                  <Arg>{GEN:wt.enterprise.SequenceGenerator:WTPARTID_seq:10:0}</Arg>
+               </AttrValue>
+               
+               <!-- set the version info to a generated version info -->
+               <AttrValue id="MBA|versionInfo" algorithm="com.ptc.core.foundation.vc.server.impl.VersionInfoGenerator">
+                  <Arg>wt.series.HarvardSeries.InSpec</Arg>
+               </AttrValue>
+               
+               <!-- name of variant parts -->
+               <AttrValue id="name" algorithm="wt.rule.algorithm.BooleanBranch">
+                  <Value algorithm="wt.rule.algorithm.EqualsTest">
+                     <Attr id="genericType"/>
+                     <Arg>variant</Arg> 
+                  </Value>
+                  <!-- assign a name only for variant parts. for others return null. 
+                       name should be assigned by the client -->
+                  <Value algorithm="wt.generic.rule.VariantNameGenerator">
+                     <Arg>{GEN:wt.enterprise.SequenceGenerator:variantnameseq:10:0}</Arg>
+                  </Value>
+                  <Value algorithm="wt.rule.algorithm.StringConstant">
+                     <Arg/>
+                  </Value>
+               </AttrValue>
+               <AttrValue id="organization.id" algorithm="com.ptc.windchill.enterprise.org.server.impl.OwningOrgDefaultAlgorithm"> 
+               </AttrValue>
+			   
+              
+               <!-- specify AttrConstraint tag -->
+               <AttrConstraint id="name" algorithm="wt.rule.algorithm.BooleanBranch">
+                  <Value algorithm="wt.rule.algorithm.EqualsTest">
+                     <Attr id="genericType"/>
+                     <Arg>variant</Arg> 
+                  </Value>
+                  <Value algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">
+                     <Value algorithm="com.ptc.core.rule.server.impl.GetServerAssignedConstraint"/>
+                     <Value algorithm="com.ptc.core.rule.server.impl.GetImmutableConstraint"/>
+                  </Value>
+                  <Value algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">
+                  </Value>
+               </AttrConstraint>
+               <AttrConstraint id="lifeCycle.id" algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">  	         
+	       	      <Value algorithm="com.ptc.core.rule.server.impl.GetServerAssignedConstraint"/>
+	       	      <Value algorithm="com.ptc.core.rule.server.impl.GetImmutableConstraint"/>
+	           </AttrConstraint>
+	           <AttrConstraint id="lifeCycle" algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">
+	       	      <Value algorithm="com.ptc.core.rule.server.impl.GetServerAssignedConstraint"/>      
+	       	      <Value algorithm="com.ptc.core.rule.server.impl.GetImmutableConstraint"/>
+	           </AttrConstraint>
+	           <AttrConstraint id="folder.id" algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">
+	       	      <Value algorithm="com.ptc.core.rule.server.impl.GetServerPreGeneratedValue"/>	      
+	           </AttrConstraint>
+	           <!-- Add handling for ProjectLink and PdmLink differently OOTB for wt.part.WTPart object number field
+	                For end items in PDMLink context, turn the autonumbering off -->
+                   <AttrConstraint id="number" algorithm="wt.rule.algorithm.BooleanBranch">        
+                      <Value algorithm="com.ptc.core.rule.server.impl.IfContainerTypeEqualsProjectTest"/>       
+                      
+                      <Value algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">
+                         <Value algorithm="com.ptc.core.rule.server.impl.GetServerAssignedConstraint"/>                              
+                      </Value>        
+                      
+                      <Value algorithm="wt.rule.algorithm.BooleanBranch">  
+                           <Value algorithm="wt.rule.algorithm.StringEqualsTest">
+                              <Attr id="endItem"/>
+                              <Arg>true</Arg> 
+                           </Value>
+                           
+                           <Value algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints"/>
+                           
+                           <Value algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">
+                               <Value algorithm="com.ptc.core.rule.server.impl.GetServerAssignedConstraint"/> 
+                               <Value algorithm="com.ptc.core.rule.server.impl.GetImmutableConstraint"/>        
+                           </Value>        
+                       </Value>       
+                   </AttrConstraint>  
+        
+	           <AttrConstraint id="teamTemplate.id" algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">  	         
+	       	      <Value algorithm="com.ptc.core.rule.server.impl.GetServerAssignedConstraint"/>                         
+	       	      <Value algorithm="com.ptc.core.rule.server.impl.GetImmutableConstraint"/>
+	           </AttrConstraint>
+	           <AttrConstraint id="teamTemplate" algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">
+	       	      <Value algorithm="com.ptc.core.rule.server.impl.GetServerAssignedConstraint"/>      
+	       	      <Value algorithm="com.ptc.core.rule.server.impl.GetImmutableConstraint"/>
+	           </AttrConstraint>  
+               <AttrConstraint id="organization.id" algorithm="com.ptc.core.rule.server.impl.GatherAttributeConstraints">
+                  <Value algorithm="com.ptc.core.rule.server.impl.GetServerPreGeneratedValue"/> 
+               </AttrConstraint>
+            </AttributeValues>
+               
