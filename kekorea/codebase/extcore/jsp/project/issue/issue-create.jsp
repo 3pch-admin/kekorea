@@ -1,3 +1,4 @@
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="java.util.Map"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
@@ -5,7 +6,7 @@
 <%
 String oid = (String) request.getAttribute("oid");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
 <table class="button-table">
 	<tr>
@@ -65,6 +66,15 @@ String oid = (String) request.getAttribute("oid");
 		const name = document.getElementById("name");
 		const description = document.getElementById("description");
 		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
+
+		for (let i = 0; i < addRows9.length; i++) {
+			const comp = addRows9[i].oid;
+			if (oid === comp) {
+				alert("선택한 작번 중 중복 데이터가 존재합니다. 작번 = " + addRows9[i].kekNumber);
+				return false;
+			}
+		}
+
 		params.name = name.value;
 		params.description = description.value;
 		params.oid = oid;

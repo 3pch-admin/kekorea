@@ -21,7 +21,6 @@ import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.erp.ErpConnectionPool;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
@@ -1162,7 +1161,7 @@ public class ErpHelper {
 	/**
 	 * ERP 자재 전송
 	 */
-	public String sendToErpItem(WTPart part) throws Exception {
+	public String sendToErpItem(WTPart part, WTDocument document) throws Exception {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -1179,11 +1178,13 @@ public class ErpHelper {
 					"INSERT INTO KEK_TDAITEM_IF (SEQ, PART_NAME, PART_SPEC, UNITSEQ, MAKERSEQ, USERID, PRICE, CURRSEQ, CUSTSEQ, ");
 			sql.append("CREATE_DATE,");
 
-			QueryResult result = PersistenceHelper.manager.navigate(part, "document", WTDocumentWTPartLink.class);
-			while (result.hasMoreElements()) {
-				WTDocument doc = (WTDocument) result.nextElement();
-				list.add(doc);
-			}
+//			QueryResult result = PersistenceHelper.manager.navigate(part, "document", WTDocumentWTPartLink.class);
+//			while (result.hasMoreElements()) {
+//				WTDocument doc = (WTDocument) result.nextElement();
+//				list.add(doc);
+//			}
+			
+			list.add(document);
 
 			for (int i = 0; i < list.size(); i++) {
 				String addName = "ADDFILENAME" + keyIdx;
@@ -1221,7 +1222,7 @@ public class ErpHelper {
 				ApplicationData data = null;
 				QueryResult qr = ContentHelper.service.getContentsByRole(doc, ContentRoleType.PRIMARY);
 				if (qr.hasMoreElements()) {
-					data = (ApplicationData) result.nextElement();
+					data = (ApplicationData) qr.nextElement();
 				}
 				sql.append("'" + data.getFileName() + "', ");
 				sql.append("'" + FileUtil.getExtension(data.getFileName()) + "', ");

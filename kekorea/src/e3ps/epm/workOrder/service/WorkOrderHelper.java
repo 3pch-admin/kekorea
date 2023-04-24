@@ -530,16 +530,16 @@ public class WorkOrderHelper {
 			for (Map<String, Object> data : _list) {
 				String partNo = (String) data.get("partNo");
 				String lotNo = (String) data.get("lotNo");
-				String version = (String) data.get("version");
-				String key = partNo + "-" + lotNo + "-" + version;
+//				String version = (String) data.get("version");
+				String key = partNo + "-" + lotNo;
 				boolean isExist = false;
 
 				// mergedList에 partNo가 동일한 데이터가 있는지 확인
 				for (Map<String, Object> mergedData : mergedList) {
 					String mergedPartNo = (String) mergedData.get("partNo");
 					String mergedLotNo = (String) mergedData.get("lotNo");
-					String mergedVersion = (String) mergedData.get("version");
-					String _key = mergedPartNo + "-" + mergedLotNo + "-" + mergedVersion;
+//					String mergedVersion = (String) mergedData.get("version");
+					String _key = mergedPartNo + "-" + mergedLotNo;
 
 					if (key.equals(_key)) {
 						// partNo가 동일한 데이터가 있으면 데이터를 업데이트하고 isExist를 true로 변경

@@ -41,6 +41,10 @@ JSONArray departments = JSONArray.fromObject(list);
 				<col width="600">
 			</colgroup>
 			<tr>
+				<th>부서</th>
+				<td class="indent5" colspan="5"><%=OrgHelper.DEPARTMENT_ROOT %></td>
+			</tr>
+			<tr>
 				<th>이름</th>
 				<td class="indent5">
 					<input type="text" name="userName" id="userName">
@@ -102,14 +106,14 @@ JSONArray departments = JSONArray.fromObject(list);
 			</colgroup>
 			<tr>
 				<td valign="top">
-					<jsp:include page="/extcore/include/department-include.jsp">
+					<jsp:include page="/extcore/jsp/common/department-include.jsp">
 						<jsp:param value="list" name="mode" />
-						<jsp:param value="740" name="height" />
+						<jsp:param value="705" name="height" />
 					</jsp:include>
 				</td>
 				<td>&nbsp;</td>
 				<td>
-					<div id="grid_wrap" style="height: 740px; border-top: 1px solid #3180c3;"></div>
+					<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 				</td>
 			</tr>
 		</table>
@@ -303,9 +307,8 @@ JSONArray departments = JSONArray.fromObject(list);
 					headerHeight : 30,
 					showRowNumColumn : true,
 					showRowCheckColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
+					showAutoNoDataMessage : false,
 					enableFilter : true,
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,
@@ -404,7 +407,9 @@ JSONArray departments = JSONArray.fromObject(list);
 					select : headerMenuSelectHandler
 				});
 				createAUIGrid(columns);
+				_createAUIGrid(_columns); // 트리
 				AUIGrid.resize(myGridID);
+				AUIGrid.resize(_myGridID); // 트리
 				selectbox("psize");
 			});
 
@@ -421,6 +426,7 @@ JSONArray departments = JSONArray.fromObject(list);
 
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(myGridID);
+				AUIGrid.resize(_myGridID); // 트리
 			});
 		</script>
 	</form>

@@ -12,7 +12,7 @@ String oid = (String) request.getAttribute("oid");
 String compareArr = (String) request.getAttribute("compareArr");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 <style type="text/css">
 .compare {
@@ -45,6 +45,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <%=data%>
 	function _layout() {
 		return [ {
+			dataField : "engType",
+			headerText : "수배표 타입",
+			dataType : "string",
+			width : 120,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		},{
 			dataField : "lotNo",
 			headerText : "LOT_NO",
 			dataType : "numeric",
@@ -248,23 +257,6 @@ for (Project project : destList) {%>
 		} ]
 	}
 
-	// 	const footerLayout = [ {
-	// 		labelText : "∑",
-	// 		positionField : "#base",
-	// 	}, {
-	// 		dataField : "qty1",
-	// 		positionField : "qty1",
-	// 		operation : "SUM",
-	// 		dataType : "numeric",
-	// 		postfix : "개"
-	// 	}, {
-	// 		dataField : "qty2",
-	// 		positionField : "qty2",
-	// 		operation : "SUM",
-	// 		dataType : "numeric",
-	// 		postfix : "개"
-	// 	}, ];
-
 	function createAUIGrid(columnLayout) {
 		const props = {
 			headerHeight : 30,
@@ -276,7 +268,7 @@ for (Project project : destList) {%>
 			enableMovingColumn : true,
 			showInlineFilter : true,
 			enableRightDownFocus : true,
-			fixedColumnCount : 4,
+			fixedColumnCount : 5,
 // 			autoGridHeight : true
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);

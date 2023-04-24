@@ -22,7 +22,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -46,7 +46,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>특이사항 제목</th>
 				<td class="indent5">
-					<input type="text" name="issueName" id="issueName">
+					<input type="text" name="name" id="name">
 				</td>
 				<th>설명</th>
 				<td class="indent5">
@@ -89,6 +89,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('issue-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('issue-list');">
+					<input type="button" value="확장" title="확장" class="red" onclick="expand();">
 					<%
 					if (isAdmin) {
 					%>
@@ -118,39 +119,51 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function _layout() {
 				return [ {
 					dataField : "name",
-					headerText : "특이사항 제목",
+					headerText : "수배표 제목",
 					dataType : "string",
+					width : 300,
+					style : "underline",
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+					cellMerge : true
+				}, {
+					dataField : "content",
+					headerText : "특이사항 내용",
+					dataType : "string",
+					width : 350,
 					style : "aui-left",
-					renderer : {
-						type : "LinkRenderer",
-						baseUrl : "javascript",
-						jsCallback : function(rowIndex, columnIndex, value, item) {
-							const oid = item.oid;
-							const url = getCallUrl("/issue/view?oid=" + oid);
-							popup(url, 1400, 600);
-						}
+					filter : {
+						showIcon : true,
+						inline : true
 					},
 					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
+				}, {
+					dataField : "projectType_name",
+					headerText : "설계구분",
+					dataType : "string",
+					width : 80,
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 				}, {
-					dataField : "content",
-					headerText : "설명",
+					dataField : "mak_name",
+					headerText : "막종",
 					dataType : "string",
-					width : 350,
-					style : "aui-left",
-					renderer : {
-						type : "LinkRenderer",
-						baseUrl : "javascript",
-						jsCallback : function(rowIndex, columnIndex, value, item) {
-							const oid = item.oid;
-							const url = getCallUrl("/issue/view?oid=" + oid);
-							popup(url, 1400, 600);
-						}
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
 					},
-					cellMerge : true,
+				}, {
+					dataField : "detail_name",
+					headerText : "막종상세",
+					dataType : "string",
+					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -175,14 +188,17 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "keNumber",
 					headerText : "KE 작번",
 					dataType : "string",
+					style : "underline",
 					width : 100,
-					renderer : {
-						type : "LinkRenderer",
-						baseUrl : "javascript",
-						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
-						}
+					filter : {
+						showIcon : true,
+						inline : true
 					},
+				}, {
+					dataField : "userId",
+					headerText : "USER ID",
+					dataType : "string",
+					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -191,15 +207,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "description",
 					headerText : "작업내용",
 					dataType : "string",
-					width : 350,
-					style : "aui-left",
+					width : 300,
+					style : "auit-left",
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 				}, {
-					dataField : "mak_name",
-					headerText : "막종",
+					dataField : "customer_name",
+					headerText : "거래처",
 					dataType : "string",
 					width : 100,
 					filter : {
@@ -207,8 +223,26 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						inline : true
 					},
 				}, {
-					dataField : "detail_name",
-					headerText : "막종상세",
+					dataField : "install_name",
+					headerText : "설치 장소",
+					dataType : "string",
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "pdate_txt",
+					headerText : "발행일",
+					dataType : "string",
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true,
+					},
+				}, {
+					dataField : "model",
+					headerText : "모델",
 					dataType : "string",
 					width : 100,
 					filter : {
@@ -224,19 +258,35 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				}, {
-					dataField : "createdDate",
+					dataField : "createdDate_txt",
 					headerText : "작성일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
+					dataType : "string",
 					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true,
-						displayFormatValues : true
 					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
+				}, {
+					dataField : "modifiedDate_txt",
+					headerText : "수정일",
+					dataType : "string",
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true,
+					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
 				} ]
-			}
+			};
 
 			function createAUIGrid(columns) {
 				const props = {
@@ -254,6 +304,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+					enableCellMerge : true,
+					forceTreeView : true
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columns, props);
 				loadGridData();
@@ -270,10 +322,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/issue/list");
-				const issueName = document.getElementById("issueName").value;
 				const description = document.getElementById("description").value;
 				const psize = document.getElementById("psize").value;
-				params.issueName = issueName;
 				params.description = description;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
@@ -315,7 +365,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
 				}
-				
+
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
@@ -333,6 +383,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("name").focus();
 				const columns = loadColumnLayout("issue-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

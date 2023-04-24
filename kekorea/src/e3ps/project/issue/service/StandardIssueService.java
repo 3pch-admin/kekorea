@@ -8,7 +8,6 @@ import java.util.Map;
 
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
-import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.project.Project;
 import e3ps.project.issue.Issue;
 import e3ps.project.issue.IssueProjectLink;
@@ -19,7 +18,6 @@ import wt.content.ContentServerHelper;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.pom.Transaction;
-import wt.query.QuerySpec;
 import wt.services.StandardManager;
 import wt.util.WTException;
 

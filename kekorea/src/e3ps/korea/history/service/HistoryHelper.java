@@ -206,8 +206,40 @@ public class HistoryHelper {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		destList.add(0, p1);
 
+		// 막종 고객사 KE 작번 발행일
+		Map<String, Object> makList = new HashMap<>();
+		Map<String, Object> customerList = new HashMap<>();
+		Map<String, Object> keList = new HashMap<>();
+		Map<String, Object> pdateList = new HashMap<>();
+
+		
+		for (int i = 0; i < destList.size(); i++) {
+			Project project = (Project) destList.get(i);
+			makList.put("key", "막종 / 막종상세");
+			makList.put(String.valueOf(project.getPersistInfo().getObjectIdentifier().getId()),
+					project.getMak().getName() + " / " + project.getDetail().getName());
+
+			customerList.put("key", "고객사 / 설치장소");
+			customerList.put(String.valueOf(project.getPersistInfo().getObjectIdentifier().getId()),
+					project.getCustomer().getName() + " / " + project.getInstall().getName());
+
+			keList.put("key", "KE 작번");
+			keList.put(String.valueOf(project.getPersistInfo().getObjectIdentifier().getId()),
+					project.getKeNumber());
+
+			pdateList.put("key", "발행일");
+			pdateList.put(String.valueOf(project.getPersistInfo().getObjectIdentifier().getId()),
+					CommonUtils.getPersistableTime(project.getPDate()));
+		}
+		
+		list.add(makList);
+		list.add(customerList);
+		list.add(keList);
+		list.add(pdateList);
+		
 		for (SpecCode fix : fixedList) {
 			Map<String, Object> mergedList = new HashMap<>();
+
 			for (int i = 0; i < destList.size(); i++) {
 				mergedList.put("key", fix.getName());
 				Project project = (Project) destList.get(i);
@@ -230,7 +262,6 @@ public class HistoryHelper {
 			}
 			list.add(mergedList);
 		}
-		destList.remove(0);
 		return list;
 	}
 }
