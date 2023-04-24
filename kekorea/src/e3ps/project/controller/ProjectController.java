@@ -285,6 +285,8 @@ public class ProjectController extends BaseController {
 		ProjectDTO dto = new ProjectDTO(project);
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		ArrayList<Project> list = ProjectHelper.manager.getReferenceBy(project);
+		model.addObject("list", list);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("dto", dto);

@@ -15,7 +15,7 @@ String compareArr = (String) request.getAttribute("compareArr");
 <style type="text/css">
 .compare {
 	background-color: yellow;
-	color: red;
+	color: red !important;
 	font-weight: bold;
 }
 </style>
@@ -123,7 +123,7 @@ for (Project project : destList) {%>
 						const url = getCallUrl("/tbom/view?oid=" + oid);
 						popup(url, 1500, 700);
 					}
-				},	'
+				},
 				labelFunction : function(rowIndex, columnIndex, value, headerText, item, dataField, cItem) {
 					if(item.qty<%=i%> === undefined) {
 						return 0;

@@ -1,3 +1,6 @@
+<%@page import="e3ps.common.util.CommonUtils"%>
+<%@page import="e3ps.project.Project"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="java.math.RoundingMode"%>
 <%@page import="java.math.BigDecimal"%>
 <%@page import="e3ps.project.dto.ProjectDTO"%>
@@ -8,6 +11,7 @@
 ProjectDTO dto = (ProjectDTO) request.getAttribute("dto");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 %>
 <!DOCTYPE html>
 <html>
@@ -16,7 +20,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <%@include file="/extcore/include/highchart.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
@@ -30,9 +34,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<ul>
 				<li>
 					<a href="#tabs-1">기본정보</a>
-				</li>
-				<li>
-					<a href="#tabs-2">참조작번</a>
 				</li>
 				<li>
 					<a href="#tabs-3">특이사항</a>
@@ -117,7 +118,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<%
 					} else {
 					%>
-	<colgroup>
+					<colgroup>
 						<col width="140">
 						<col width="140">
 						<col width="140">
@@ -167,9 +168,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<%
 					}
 					%>
-
 				</table>
-
 
 				<div class="info-header">
 					<img src="/Windchill/extcore/images/header.png">
@@ -334,8 +333,49 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						%>
 					</tr>
 				</table>
+
+				<div class="info-header">
+					<img src="/Windchill/extcore/images/header.png">
+					참조 작번 정보
+				</div>
+
+
+				<table class="view-table">
+					<tr>
+						<th class="lb rb">KEK 작번</th>
+						<th class="rb">작번유형</th>
+						<th class="rb">작업내용</th>
+						<th class="rb">막종 / 막종상세</th>
+						<th class="rb">거래처 / 설치장소</th>
+						<th class="rb">발행일</th>
+						<th class="rb">요청납기일</th>
+					</tr>
+					<%
+						for(Project p : list) {
+					%>
+					<tr>
+						<td class="center"><%=p.getKekNumber() %></td>
+						<td class="center"><%=p.getProjectType().getName() %></td>
+						<td class="center"><%=p.getDescription() %></td>
+						<td class="center"><%=p.getMak().getName() %> / <%=p.getDetail().getName() %></td>
+						<td class="center"><%=p.getCustomer().getName() %> / <%=p.getInstall().getName() %></td>
+						<td class="center"><%=CommonUtils.getPersistableTime(p.getPDate()) %></td>
+						<td class="center"><%=CommonUtils.getPersistableTime(p.getCustomDate()) %></td>
+					</tr>
+					<%
+						}
+						if(list.size() == 0) {
+					%>
+					<tr>
+						<td class="center" colspan="7"><font color="red"><b>참조 작번이 없습니다.</b></font></td>
+					</tr>
+					<%
+						}
+					%>
+				</table>
+
 				<br>
-				<div id="_chart" style="height: 410px;"></div>
+				<div id="_chart" style="height: 340px;"></div>
 				<script type="text/javascript">
 					Highcharts.chart('_chart', {
 						chart : {
@@ -402,7 +442,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					});
 				</script>
 			</div>
-			<div id="tabs-2"></div>
 			<div id="tabs-3">
 				<iframe style="height: 800px;" src="/Windchill/plm/project/issueTab?oid=<%=dto.getOid()%>"></iframe>
 			</div>

@@ -163,7 +163,7 @@ public class PartController extends BaseController {
 	public Map<String, Object> spec(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			PartHelper.service.spec(params);
+			result = PartHelper.service.spec(params);
 			result.put("result", SUCCESS);
 			result.put("msg", SAVE_MSG);
 		} catch (Exception e) {

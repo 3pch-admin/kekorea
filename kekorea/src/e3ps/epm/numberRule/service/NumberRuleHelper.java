@@ -40,6 +40,7 @@ public class NumberRuleHelper {
 		int idx = query.appendClassList(NumberRule.class, true);
 
 		QuerySpecUtils.toBooleanAnd(query, idx, NumberRule.class, NumberRule.LATEST, true);
+		QuerySpecUtils.toOrderBy(query, idx, NumberRule.class, NumberRule.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();

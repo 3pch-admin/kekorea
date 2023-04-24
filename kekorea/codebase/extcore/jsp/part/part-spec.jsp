@@ -243,8 +243,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
-					document.location.reload();
-					parent.closeLayer();
+					if (data.result) {
+						const list = data.list;
+						for (let i = 0; i < list.length; i++) {
+							const code = list[i];
+							AUIGrid.setCellValue(myGridID, i, 2, code);
+						}
+						parent.closeLayer();
+					} else {
+						parent.closeLayer();
+					}
 				})
 			}
 
@@ -374,12 +382,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				item.createdDate = new Date();
 				AUIGrid.addRow(myGridID, item, rowIndex + 1);
 			}
-			
+
 			function only(isNew) {
-				const url = getCallUrl("/doc/only?method=append&multi=true&isNew="+isNew);
+				const url = getCallUrl("/doc/only?method=append&multi=true&isNew=" + isNew);
 				popup(url, 1600, 700);
 			}
-			
+
 			function append(data, callBack) {
 				for (let i = 0; i < data.length; i++) {
 					const item = data[i].item;
@@ -390,7 +398,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				}
 				callBack(true);
 			}
-			
 
 			document.addEventListener("DOMContentLoaded", function() {
 				createAUIGrid(columns);

@@ -111,7 +111,7 @@ public class ConfigSheetController extends BaseController {
 		ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
 		JSONArray data = ConfigSheetHelper.manager.loadBaseGridData(oid);
 		JSONArray list = ConfigSheetHelper.manager.jsonAuiProject(configSheet);
-		JSONArray history = WorkspaceHelper.manager.jsonAuiHistory(configSheet);
+//		JSONArray history = WorkspaceHelper.manager.jsonAuiHistory(configSheet);
 		ConfigSheetDTO dto = new ConfigSheetDTO(configSheet);
 		boolean isAdmin = CommonUtils.isAdmin();
 		model.addObject("isAdmin", isAdmin);
@@ -119,7 +119,7 @@ public class ConfigSheetController extends BaseController {
 		model.addObject("data", data);
 		model.addObject("dto", dto);
 		model.addObject("list", list);
-		model.addObject("history", history);
+//		model.addObject("history", history);
 		model.setViewName("popup:/korea/configSheet/configSheet-view");
 		return model;
 	}

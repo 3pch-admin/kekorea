@@ -132,7 +132,7 @@ public class StandardPartService extends StandardManager implements PartService 
 	public Map<String, Object> spec(Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<>();
 		ArrayList<Map<String, Object>> addRows = (ArrayList<Map<String, Object>>) params.get("addRows");
-		ArrayList<Map<String, Object>> _addRows = (ArrayList<Map<String, Object>>) params.get("_addRows");
+		ArrayList<Map<String, Object>> addRows2 = (ArrayList<Map<String, Object>>) params.get("addRows2");
 		ArrayList<String> list = new ArrayList<>();
 		Transaction trs = new Transaction();
 		try {
@@ -172,14 +172,15 @@ public class StandardPartService extends StandardManager implements PartService 
 				IBAUtils.createIBA(part, "s", "CURRNAME", currency);
 				IBAUtils.createIBA(part, "s", "CUSTNAME", customer);
 
-				Map<String, Object> _addRow = _addRows.get(i);
-				String oid = (String) _addRow.get("oid");
+				Map<String, Object> addRow2 = addRows2.get(i);
+				String oid = (String) addRow2.get("oid");
 				WTDocument document = (WTDocument) CommonUtils.getObject(oid);
 				WTDocumentWTPartLink link = WTDocumentWTPartLink.newWTDocumentWTPartLink(document, part);
 				PersistenceHelper.manager.save(link);
 
 				part = (WTPart) PersistenceHelper.manager.refresh(part);
-				String code = ErpHelper.manager.sendToErpItem(part);
+//				String code = ErpHelper.manager.sendToErpItem(part, document);
+				String code = "TEST";
 				list.add(code);
 			}
 

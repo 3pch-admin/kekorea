@@ -56,15 +56,6 @@ public class PartlistHelper {
 			QueryResult group = PersistenceHelper.manager.navigate(master, "project", PartListMasterProjectLink.class,
 					false);
 
-//			QuerySpec qs = new QuerySpec();
-//			int idx_m = qs.appendClassList(PartListMaster.class, true);
-//			int idx_link = qs.appendClassList(PartListMasterProjectLink.class, true);
-//			QuerySpecUtils.toInnerJoin(qs, PartListMaster.class, PartListMasterProjectLink.class,
-//					WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx_m, idx_link);
-//			QuerySpecUtils.toEqualsAnd(qs, idx_link, PartListMasterProjectLink.class, "roleAObjectRef.key.id",
-//					master.getPersistInfo().getObjectIdentifier().getId());
-//			QueryResult group = PersistenceHelper.manager.find(qs);
-
 			int isNode = 1;
 			JSONArray children = new JSONArray();
 			while (group.hasMoreElements()) {
@@ -114,7 +105,9 @@ public class PartlistHelper {
 				isNode++;
 			}
 			node.put("children", children);
-			list.add(node);
+			if (group.size() > 0) {
+				list.add(node);
+			}
 		}
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
