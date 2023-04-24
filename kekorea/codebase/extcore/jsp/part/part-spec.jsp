@@ -11,7 +11,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -27,28 +27,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<td class="left">
 					<input type="button" value="행 추가(이전)" title="행 추가(이전)" class="blue" onclick="addBeforeRow();">
 					<input type="button" value="행 추가(이후)" title="행 추가(이후)" class="orange" onclick="addAfterRow();">
+				</td>
+				<td class="right">
 					<input type="button" value="저장" title="저장" class="red" onclick="save('')">
-					<input type="button" value="저장(ERP)" title="저장(ERP)" onclick="save('true')">
 				</td>
 			</tr>
 		</table>
 
-		<table class="create-table">
-			<colgroup>
-				<col width="150">
-				<col width="*">
-			</colgroup>
-			<tr>
-				<td colspan="2">
-					<div id="grid_wrap" style="height: 400px; border-top: 1px solid #3180c3; margin: 5px 5px 5px 5px;"></div>
-				</td>
-			</tr>
-			<tr>
-				<th class="lb">제작사양서</th>
-				<td class="indent5">
-					
-				</td>
-		</table>
+		<div id="grid_wrap" style="height: 350px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			const columns = [ {
@@ -109,36 +95,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				width : 100,
 			} ]
 
-			let secondary = new AXUpload5();
-			function load() {
-				secondary.setConfig({
-					isSingleUpload : false,
-					targetID : "secondary_layer",
-					uploadFileName : "secondary",
-					buttonTxt : "파일 선택",
-					uploadMaxFileSize : (1024 * 1024 * 1024),
-					uploadUrl : getCallUrl("/aui/upload"),
-					dropBoxID : "uploadQueueBox",
-					queueBoxID : "uploadQueueBox",
-					uploadPars : {
-						roleType : "secondary"
-					},
-					uploadMaxFileCount : 100,
-					deleteUrl : getCallUrl("/content/delete"),
-					fileKeys : {},
-					onComplete : function() {
-						let form = document.querySelector("form");
-						for (let i = 0; i < this.length; i++) {
-							let secondaryTag = document.createElement("input");
-							secondaryTag.type = "hidden";
-							secondaryTag.name = "secondarys";
-							secondaryTag.value = this[i].fullPath;
-							form.appendChild(secondaryTag);
-						}
-					},
-				})
-			}
-
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
@@ -174,10 +130,83 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				readyHandler();
 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 			}
+		</script>
 
-			function save(erp) {
+		<table class="button-table">
+			<tr>
+				<td class="left">
+					<input type="button" value="제작사양서추가(NEW)" title="제작사양서추가(NEW)" class="blue" onclick="only('true');">
+					<input type="button" value="제작사양서추가(OLD)" title="제작사양서추가(OLD)" onclick="only('false');">
+					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
+				</td>
+			</tr>
+		</table>
+		<div id="grid_wrap2" style="height: 350px; border-top: 1px solid #3180c3;"></div>
+		<script type="text/javascript">
+			let myGridID2;
+			const columns2 = [ {
+				dataField : "number",
+				headerText : "문서번호",
+				dataType : "string",
+				width : 140
+			}, {
+				dataField : "name",
+				headerText : "문서제목",
+				dataType : "string",
+			}, {
+				dataField : "version",
+				headerText : "버전",
+				dataType : "string",
+				width : 80
+			}, {
+				dataField : "state",
+				headerText : "상태",
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "creator",
+				headerText : "작성자",
+				dataType : "string",
+				width : 100
+			}, {
+				dataField : "createdDate",
+				headerText : "작성일",
+				dataType : "date",
+				formatString : "yyyy-mm-dd",
+				width : 100
+			}, {
+				dataField : "modifier",
+				headerText : "수정자",
+				dataType : "string",
+				width : 100
+			}, {
+				dataField : "modifiedDate",
+				headerText : "수정일",
+				dataType : "date",
+				formatString : "yyyy-mm-dd",
+				width : 100
+			}, {
+				dataField : "oid",
+				visible : false,
+				dataType : "string"
+			} ]
+
+			function createAUIGrid2(columnLayout) {
+				const props = {
+					headerHeight : 30,
+					showRowNumColumn : true,
+					rowNumHeaderText : "번호",
+					showStateColumn : true,
+					showRowCheckColumn : true,
+					selectionMode : "multipleCells",
+				}
+				myGridID2 = AUIGrid.create("#grid_wrap2", columnLayout, props);
+			}
+		</script>
+		<script type="text/javascript">
+			function save() {
 				const addRows = AUIGrid.getAddedRowItems(myGridID);
-				const secondarys = toArray("secondarys");
+				const addRows2 = AUIGrid.getAddedRowItems(myGridID2);
 
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
@@ -195,8 +224,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					item.rowIndex = rowIndex;
 				}
 
-				if (addRows.length !== secondarys.length) {
-					alert("등록하려는 데이터와 제작사양서의 개수가 일치하지 않습니다.\n데이터 개수 : " + addRows.length + ", 제작사양서 개수 : " + secondarys.length);
+				if (addRows.length !== addRows2.length) {
+					alert("등록하려는 데이터와 제작사양서의 개수가 일치하지 않습니다.\n데이터 개수 : " + addRows.length + ", 제작사양서 개수 : " + addRows2.length);
 					return false;
 				}
 
@@ -210,8 +239,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const params = new Object();
 				const url = getCallUrl("/part/spec");
 				params.addRows = addRows;
-				params.secondarys = secondarys;
-				params.erp = Boolean(erp);
+				params.addRows2 = addRows2;
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
@@ -346,15 +374,34 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				item.createdDate = new Date();
 				AUIGrid.addRow(myGridID, item, rowIndex + 1);
 			}
+			
+			function only(isNew) {
+				const url = getCallUrl("/doc/only?method=append&multi=true&isNew="+isNew);
+				popup(url, 1600, 700);
+			}
+			
+			function append(data, callBack) {
+				for (let i = 0; i < data.length; i++) {
+					const item = data[i].item;
+					const isUnique = AUIGrid.isUniqueValue(myGridID2, "oid", item.oid);
+					if (isUnique) {
+						AUIGrid.addRow(myGridID2, item, "first");
+					}
+				}
+				callBack(true);
+			}
+			
 
 			document.addEventListener("DOMContentLoaded", function() {
 				createAUIGrid(columns);
+				createAUIGrid2(columns2);
 				AUIGrid.resize(myGridID);
-				load();
+				AUIGrid.resize(myGridID2);
 			});
 
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(myGridID);
+				AUIGrid.resize(myGridID2);
 			});
 		</script>
 	</form>

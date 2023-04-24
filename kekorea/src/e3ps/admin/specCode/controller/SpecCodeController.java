@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -104,21 +103,4 @@ public class SpecCodeController extends BaseController {
 		}
 		return result;
 	}
-
-	@Description(value = "사양 관리 다음 코드 자동으로 가져오기")
-	@ResponseBody
-	@GetMapping(value = "/getNextValue")
-	public Map<String, Object> getNextValue(@RequestParam String codeType) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			result = SpecCodeHelper.manager.getNextValue(codeType);
-			result.put("result", SUCCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("result", FAIL);
-			result.put("msg", e.toString());
-		}
-		return result;
-	}
-
 }

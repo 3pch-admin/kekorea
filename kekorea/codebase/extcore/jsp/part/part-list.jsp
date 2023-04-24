@@ -50,11 +50,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				</td>
 				<th>품번</th>
 				<td class="indent5">
-					<input type="text" name="part_code" id="part_code">
+					<input type="text" name="partCode" id="partCode">
 				</td>
 				<th>품명</th>
 				<td class="indent5">
-					<input type="text" name="name_of_parts" id="name_of_parts">
+					<input type="text" name="partName" id="partName">
 				</td>
 				<th>규격</th>
 				<td class="indent5">
@@ -389,16 +389,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				const oid = document.getElementById("oid").value;
 				const name = document.getElementById("name").value;
-				const part_code = document.getElementById("part_code").value;
-				const name_of_part = document.getElementById("name_of_parts").value;
+				const partCode = document.getElementById("partCode").value;
+				const partName = document.getElementById("partName").value;
 				const number = document.getElementById("number").value;
 				const material = document.getElementById("material").value;
 				const remarks = document.getElementById("remarks").value;
 				const maker = document.getElementById("maker").value;
-				const creator = document.getElementById("creatorOid").value;
+				const creatorOid = document.getElementById("creatorOid").value;
 				const createdFrom = document.getElementById("createdFrom").value;
 				const createdTo = document.getElementById("createdTo").value;
-				const modifier = document.getElementById("modifierOid").value;
+				const modifierOid = document.getElementById("modifierOid").value;
 				const modifiedFrom = document.getElementById("modifiedFrom").value;
 				const modifiedTo = document.getElementById("modifiedTo").value;
 				const state = document.getElementById("state").value;
@@ -407,16 +407,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				params.latest = latest;
 				params.psize = psize;
 				params.name = name;
-				params.part_code = part_code;
-				params.name_of_part = name_of_part;
+				params.partCode = partCode;
+				params.partName = partName;
 				params.number = number;
 				params.material = material;
 				params.remarks = remarks;
 				params.maker = maker;
-				params.creator = creator;
+				params.creatorOid = creatorOid;
 				params.createdFrom = createdFrom;
 				params.createdTo = createdTo;
-				params.modifier = modifier;
+				params.modifierOid = modifierOid;
 				params.modifiedFrom = modifiedFrom;
 				params.modifiedTo = modifiedTo;
 				params.state = state;

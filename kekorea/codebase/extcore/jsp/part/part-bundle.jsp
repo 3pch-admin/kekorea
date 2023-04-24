@@ -27,7 +27,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<td class="left">
 					<input type="button" value="행 추가(이전)" title="행 추가(이전)" class="blue" onclick="addBeforeRow();">
 					<input type="button" value="행 추가(이후)" title="행 추가(이후)" class="orange" onclick="addAfterRow();">
-					<input type="button" value="저장" title="저장" class="red" onclick="save('')">
+				</td>
+				<td class="right">
+				<input type="button" value="저장" title="저장" class="red" onclick="save('')">
 					<input type="button" value="저장(ERP)" title="저장(ERP)" onclick="save('true')">
 				</td>
 			</tr>

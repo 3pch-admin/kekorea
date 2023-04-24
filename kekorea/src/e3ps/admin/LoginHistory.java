@@ -16,11 +16,7 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "id", type = String.class, javaDoc = "접속 아이디")
 
-		},
-
-		iconProperties = @IconProperties(standardIcon = "/jsp/images/user.gif", openIcon = "/jsp/images/user.gif"),
-
-		tableProperties = @TableProperties(tableName = "J_LOGINHISTORY")
+		}
 
 )
 public class LoginHistory extends _LoginHistory {

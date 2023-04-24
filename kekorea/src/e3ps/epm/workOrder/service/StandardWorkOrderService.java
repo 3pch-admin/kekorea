@@ -426,6 +426,7 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			workOrder.setVersion(pre.getVersion() + 1);
 			workOrder.setLatest(true);
 			workOrder.setNote(dto.getNote());
+			workOrder.setNote(dto.getNote());
 
 			Folder folder = FolderTaskLogic.getFolder(location, CommonUtils.getPDMLinkProductContainer());
 			FolderHelper.assignLocation((FolderEntry) workOrder, folder);

@@ -171,7 +171,7 @@ public class EpmHelper {
 
 		// 캐드파일명
 		QuerySpecUtils.toLikeAnd(query, idx, EPMDocument.class, EPMDocument.CADNAME, fileName);
-		QuerySpecUtils.toIBAEqualsAnd(query, EPMDocument.class, idx, "PART_CODE", partCode);
+		QuerySpecUtils.toIBALikeAnd(query, EPMDocument.class, idx, "PART_CODE", partCode);
 
 		// 국제 전용 IBA 프로이 오토 캐드 검색용
 		QuerySpecUtils.queryLikeNumber(query, EPMDocument.class, idx, number);
@@ -180,9 +180,9 @@ public class EpmHelper {
 		// 캐드타입
 		QuerySpecUtils.toEqualsAnd(query, idx, EPMDocument.class, EPMDocument.DOC_TYPE, cadType);
 
-		QuerySpecUtils.toIBAEqualsAnd(query, EPMDocument.class, idx, "MATERIAL", material);
-		QuerySpecUtils.toIBAEqualsAnd(query, EPMDocument.class, idx, "REMARKS", remark);
-		QuerySpecUtils.toIBAEqualsAnd(query, EPMDocument.class, idx, "REF_NO", reference);
+		QuerySpecUtils.toIBALikeAnd(query, EPMDocument.class, idx, "MATERIAL", material);
+		QuerySpecUtils.toIBALikeAnd(query, EPMDocument.class, idx, "REMARKS", remark);
+		QuerySpecUtils.toIBALikeAnd(query, EPMDocument.class, idx, "REF_NO", reference);
 		QuerySpecUtils.toState(query, idx, EPMDocument.class, state);
 		QuerySpecUtils.creatorQuery(query, idx, EPMDocument.class, creatorOid);
 		QuerySpecUtils.modifierQuery(query, idx, EPMDocument.class, modifierOid);

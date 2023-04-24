@@ -19,7 +19,9 @@ import e3ps.doc.dto.DocumentDTO;
 import e3ps.doc.service.DocumentHelper;
 import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
+import wt.clients.folder.FolderTaskLogic;
 import wt.doc.WTDocument;
+import wt.folder.Folder;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -76,7 +78,7 @@ public class DocumentController extends BaseController {
 	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
-		WTUser sessionUser = (WTUser)SessionHelper.manager.getPrincipal();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.addObject("method", method);
 		model.addObject("isAdmin", isAdmin);
@@ -133,6 +135,32 @@ public class DocumentController extends BaseController {
 		model.addObject("isAdmin", isAdmin);
 //		model.addObject("history", history);
 		model.setViewName("popup:/document/document-view");
+		return model;
+	}
+
+	@Description(value = "제작사양서 선택페이지.")
+	@GetMapping(value = "/only")
+	public ModelAndView only(@RequestParam String method, @RequestParam String multi, @RequestParam String isNew)
+			throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+
+		Folder folder = null;
+		if (Boolean.parseBoolean(isNew)) {
+			folder = FolderTaskLogic.getFolder(DocumentHelper.SPEC_NEW_ROOT, CommonUtils.getPDMLinkProductContainer());
+			model.addObject("loc", DocumentHelper.SPEC_NEW_ROOT);
+		} else {
+			folder = FolderTaskLogic.getFolder(DocumentHelper.SPEC_OLD_ROOT, CommonUtils.getPDMLinkProductContainer());
+			model.addObject("loc", DocumentHelper.SPEC_OLD_ROOT);
+		}
+
+		model.addObject("oid", folder.getPersistInfo().getObjectIdentifier().getStringValue());
+		model.addObject("multi", Boolean.parseBoolean(multi));
+		model.addObject("method", method);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.setViewName("popup:/document/document-only");
 		return model;
 	}
 }

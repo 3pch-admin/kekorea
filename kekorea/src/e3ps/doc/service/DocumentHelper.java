@@ -31,7 +31,20 @@ import wt.vc.Mastered;
 
 public class DocumentHelper {
 
+	/**
+	 * 문서 기본 위치
+	 */
 	public static final String DOCUMENT_ROOT = "/Default/문서";
+
+	/**
+	 * 신규 제작 사양서 위치
+	 */
+	public static final String SPEC_NEW_ROOT = "/Default/프로젝트/제작사양서";
+
+	/**
+	 * PDM업그레이드 제작사양서 위치
+	 */
+	public static final String SPEC_OLD_ROOT = "/Default/문서/프로젝트/제작사양서";
 
 	public static final DocumentService service = ServiceFactory.getService(DocumentService.class);
 	public static final DocumentHelper manager = new DocumentHelper();

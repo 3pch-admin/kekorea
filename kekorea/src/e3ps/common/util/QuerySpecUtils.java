@@ -589,7 +589,7 @@ public class QuerySpecUtils {
 	}
 
 	/**
-	 * IBA 검색 조건 추가
+	 * IBA 검색 조건 추가 Equals
 	 */
 	public static void toIBAEqualsAnd(QuerySpec query, Class clazz, int idx, String attrName, String attrValue)
 			throws Exception {
@@ -616,7 +616,41 @@ public class QuerySpecUtils {
 			query.appendWhere(sc, new int[] { idx_ });
 			query.appendAnd();
 
-			sc = new SearchCondition(StringValue.class, StringValue.VALUE, "=", attrValue);
+			sc = new SearchCondition(StringValue.class, "value2", "=", attrValue);
+			query.appendWhere(sc, new int[] { idx_ });
+		}
+	}
+
+	/**
+	 * IBA 검색 조건 추가 Like
+	 */
+	public static void toIBALikeAnd(QuerySpec query, Class clazz, int idx, String attrName, String attrValue)
+			throws Exception {
+
+		if (StringUtils.isNull(attrValue)) {
+			return;
+		}
+
+		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath(attrName);
+		if (aview != null) {
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+
+			int idx_ = query.appendClassList(StringValue.class, false);
+			SearchCondition sc = new SearchCondition(
+					new ClassAttribute(StringValue.class, "theIBAHolderReference.key.id"), "=",
+					new ClassAttribute(clazz, "thePersistInfo.theObjectIdentifier.id"));
+			sc.setFromIndicies(new int[] { idx_, idx }, 0);
+			sc.setOuterJoin(0);
+			query.appendWhere(sc, new int[] { idx_, idx });
+			query.appendAnd();
+			sc = new SearchCondition(StringValue.class, "definitionReference.key.id", "=", aview.getObjectID().getId());
+			query.appendWhere(sc, new int[] { idx_ });
+			query.appendAnd();
+
+			sc = new SearchCondition(StringValue.class, "value2", SearchCondition.LIKE,
+					"%" + attrValue.toUpperCase() + "%");
 			query.appendWhere(sc, new int[] { idx_ });
 		}
 	}
