@@ -4,6 +4,8 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
+import wt.query.ColumnExpression;
+
 public class StringUtils {
 
 	// 공백 상수 변수
@@ -175,5 +177,10 @@ public class StringUtils {
 			return defaultValue;
 		}
 		return Long.parseLong(value);
+	}
+
+	public static ColumnExpression getUpperColumnExpression(String ibaValue) {
+
+		return null;
 	}
 }

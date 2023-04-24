@@ -46,39 +46,40 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>파일 이름</th>
 				<td class="indent5">
-					<input type="text" name="partCode">
+					<input type="text" name="name" id="name">
 				</td>
 				<th>품번</th>
 				<td class="indent5">
-					<input type="text" name="partName">
+					<input type="text" name="part_code" id="part_code">
 				</td>
 				<th>품명</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<input type="text" name="name_of_parts" id="name_of_parts">
 				</td>
 				<th>규격</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<input type="text" name="number" id="number">
 				</td>
 			</tr>
 			<tr>
 				<th>MATERIAL</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<input type="text" name="material" id="material">
 				</td>
 				<th>REMARK</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<input type="text" name="remarkSs" id="remarks">
 				</td>
 				<th>MAKER</th>
 				<td colspan="3" class="indent5">
-					<input type="text" name="number">
+					<input type="text" name="maker" id="maker">
 				</td>
 			</tr>
 			<tr>
 				<th>작성자</th>
 				<td class="indent5">
 					<input type="text" name="creator" id="creator">
+					<input type="hidden" name="creatorOid" id="creatorOid">
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
@@ -89,6 +90,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<th>수정자</th>
 				<td class="indent5">
 					<input type="text" name="modifier" id="modifier">
+					<input type="hidden" name="modifierOId" id="modifierOid">
 				</td>
 				<th>수정일</th>
 				<td class="indent5">
@@ -100,8 +102,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>상태</th>
 				<td class="indent5">
-					<select name="template" id="template" class="width-200">
+					<select name="stare" id="state" class="width-200">
 						<option value="">선택</option>
+						<option value="inwork">작업 중1</option>
+						<option value="done">완료</option>
+						<option value="작업 중">작업 중2</option>
+						<option value="완료">완료</option>
 					</select>
 				</td>
 				<th>버전</th>
@@ -111,7 +117,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<input type="radio" name="latest" value="true" checked="checked">
 						<div class="state p-success">
 							<label>
-								<b>죄신버전</b>
+								<b>최신버전</b>
 							</label>
 						</div>
 					</div>
@@ -257,8 +263,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						inline : true
 					},
 				}, {
-					dataField : "remark",
-					headerText : "REMARK",
+					dataField : "remarks",
+					headerText : "REMARKS",
 					dataType : "string",
 					width : 150,
 					filter : {
@@ -362,7 +368,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-// 				loadGridData();
+				loadGridData();
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
@@ -376,25 +382,54 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function loadGridData() {
-				parent.openLayer();
 				const params = new Object();
 				const url = getCallUrl("/part/list");
 				const psize = document.getElementById("psize").value;
 				const container = document.getElementById("psize").value;
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				const oid = document.getElementById("oid").value;
+				const name = document.getElementById("name").value;
+				const part_code = document.getElementById("part_code").value;
+				const name_of_part = document.getElementById("name_of_parts").value;
+				const number = document.getElementById("number").value;
+				const material = document.getElementById("material").value;
+				const remarks = document.getElementById("remarks").value;
+				const maker = document.getElementById("maker").value;
+				const creator = document.getElementById("creatorOid").value;
+				const createdFrom = document.getElementById("createdFrom").value;
+				const createdTo = document.getElementById("createdTo").value;
+				const modifier = document.getElementById("modifierOid").value;
+				const modifiedFrom = document.getElementById("modifiedFrom").value;
+				const modifiedTo = document.getElementById("modifiedTo").value;
+				const state = document.getElementById("state").value;
 				params.container = container;
 				params.oid = oid;
 				params.latest = latest;
 				params.psize = psize;
+				params.name = name;
+				params.part_code = part_code;
+				params.name_of_part = name_of_part;
+				params.number = number;
+				params.material = material;
+				params.remarks = remarks;
+				params.maker = maker;
+				params.creator = creator;
+				params.createdFrom = createdFrom;
+				params.createdTo = createdTo;
+				params.modifier = modifier;
+				params.modifiedFrom = modifiedFrom;
+				params.modifiedTo = modifiedTo;
+				params.state = state;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
+				console.log(params);
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
+					console.log(data);
 				});
 			}
 			
@@ -416,6 +451,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				AUIGrid.resize(_myGridID);
 				selectbox("state");
 				selectbox("psize");
+				selectbox("state");
 				finderUser("creator");
 				finderUser("modifier");
 				twindate("created");

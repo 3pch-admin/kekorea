@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import e3ps.admin.commonCode.CommonCode;
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.bom.partlist.MasterDataLink;
 import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
@@ -22,6 +24,7 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.doc.column.DocumentColumnData;
+import e3ps.korea.cip.Cip;
 import e3ps.org.People;
 import e3ps.part.UnitBom;
 import e3ps.part.UnitBomPartLink;
@@ -38,6 +41,7 @@ import e3ps.part.column.PartProductColumnData;
 import e3ps.part.column.UnitBomColumnData;
 import e3ps.part.dto.PartDTO;
 import e3ps.project.Project;
+import e3ps.project.ProjectUserLink;
 import jxl.Workbook;
 import jxl.format.Alignment;
 import jxl.format.Border;
@@ -65,6 +69,7 @@ import wt.fc.ReferenceFactory;
 import wt.folder.Folder;
 import wt.folder.IteratedFolderMemberLink;
 import wt.lifecycle.State;
+import wt.org.WTUser;
 import wt.part.WTPart;
 import wt.part.WTPartHelper;
 import wt.part.WTPartMaster;
@@ -263,7 +268,7 @@ public class PartHelper {
 				if (query.getConditionCount() > 0)
 					query.appendAnd();
 				People user = (People) rf.getReference(creatorsOid).getObject();
-				long ids = user.getUser().getPersistInfo().getObjectIdentifier().getId();
+				long ids = user.getWtUser().getPersistInfo().getObjectIdentifier().getId();
 				sc = new SearchCondition(WTDocument.class, "iterationInfo.creator.key.id", SearchCondition.EQUAL, ids);
 				query.appendWhere(sc, new int[] { idx });
 			}
@@ -273,7 +278,7 @@ public class PartHelper {
 				if (query.getConditionCount() > 0)
 					query.appendAnd();
 				People user = (People) rf.getReference(modifierOid).getObject();
-				long ids = user.getUser().getPersistInfo().getObjectIdentifier().getId();
+				long ids = user.getWtUser().getPersistInfo().getObjectIdentifier().getId();
 				sc = new SearchCondition(WTDocument.class, "iterationInfo.modifier.key.id", SearchCondition.EQUAL, ids);
 				query.appendWhere(sc, new int[] { idx });
 			}
@@ -685,7 +690,7 @@ public class PartHelper {
 					query.appendAnd();
 
 				People user = (People) rf.getReference(creatorsOid).getObject();
-				long ids = user.getUser().getPersistInfo().getObjectIdentifier().getId();
+				long ids = user.getWtUser().getPersistInfo().getObjectIdentifier().getId();
 				System.out.println("ids=" + ids);
 				sc = new SearchCondition(WTPart.class, "iterationInfo.creator.key.id", SearchCondition.EQUAL, ids);
 				query.appendWhere(sc, new int[] { idx });
@@ -696,7 +701,7 @@ public class PartHelper {
 				if (query.getConditionCount() > 0)
 					query.appendAnd();
 				People user = (People) rf.getReference(modifierOid).getObject();
-				long ids = user.getUser().getPersistInfo().getObjectIdentifier().getId();
+				long ids = user.getWtUser().getPersistInfo().getObjectIdentifier().getId();
 				sc = new SearchCondition(WTPart.class, "iterationInfo.modifier.key.id", SearchCondition.EQUAL, ids);
 				query.appendWhere(sc, new int[] { idx });
 			}
@@ -2159,20 +2164,83 @@ public class PartHelper {
 	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		ArrayList<PartDTO> list = new ArrayList<>();
-
+		ArrayList<PartDTO> list = new ArrayList<PartDTO>();
+System.out.println("헬퍼에 들어오니이이이이이이이이이???????????????????????"+params);
 		boolean latest = (boolean) params.get("latest");
 		String oid = (String) params.get("oid"); // 폴더 OID
 		String container = (String) params.get("container");
-
+		String name = (String) params.get("name");
+		String part_code = (String) params.get("part_code");
+		String name_of_part = (String) params.get("name_of_part");
+		String number = (String) params.get("number");
+		String material = (String) params.get("material");
+		String remarks = (String) params.get("remarks");
+		String maker = (String) params.get("maker");
+		String creator = (String) params.get("creator");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
+		String modifier = (String) params.get("modifier");
+		String modifiedFrom = (String) params.get("modifiedFrom");
+		String modifiedTo = (String) params.get("modifiedTo");
+		String state = (String) params.get("state");
+		
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTPart.class, true);
 		int idx_m = query.appendClassList(WTPartMaster.class, false);
-
+		int idx_u = query.appendClassList(WTUser.class, false);
+		
 		QuerySpecUtils.toCI(query, idx, WTPart.class);
+
 		QuerySpecUtils.toInnerJoin(query, WTPart.class, WTPartMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
+		QuerySpecUtils.toLikeAnd(query, idx, WTPart.class, WTPart.NAME, name);
+		QuerySpecUtils.toLikeAnd(query, idx, WTPart.class, WTPart.NUMBER, number);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, WTPart.class, WTPart.CREATE_TIMESTAMP , createdFrom, createdTo);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, WTPart.class, WTPart.MODIFY_TIMESTAMP, modifiedFrom, modifiedTo);
+		QuerySpecUtils.toLikeAnd(query, idx, WTPart.class, WTPart.LIFE_CYCLE_STATE, state);
+		
+		if (!StringUtils.isNull(creator)) {
+			WTUser creators = (WTUser) CommonUtils.getObject(creator);
+			CommonCode creatorCode = CommonCodeHelper.manager.getCommonCode("CREATOR", "USER_TYPE");
 
+			QuerySpecUtils.toInnerJoin(query, WTUser.class, WTPart.class, WTAttributeNameIfc.ID_NAME,
+					"iterationInfo.creator.key.id", idx_u, idx);
+			QuerySpecUtils.toEqualsAnd(query, idx, WTPart.class, "iterationInfo.creator.key.id", creators);
+			QuerySpecUtils.toEqualsAnd(query, idx, WTPart.class, "userTypeReference.key.id",
+					creatorCode);
+		}
+		if (!StringUtils.isNull(modifier)) {
+			WTUser modifiers = (WTUser) CommonUtils.getObject(modifier);
+			CommonCode modifierCode = CommonCodeHelper.manager.getCommonCode("MODIFIER", "USER_TYPE");
+
+			QuerySpecUtils.toInnerJoin(query, WTUser.class, WTPart.class, WTAttributeNameIfc.ID_NAME,
+					"iterationInfo.modifier.key.id", idx_u, idx);
+			QuerySpecUtils.toEqualsAnd(query, idx, WTPart.class, "iterationInfo.modifier.key.id", modifiers);
+			QuerySpecUtils.toEqualsAnd(query, idx, WTPart.class, "userTypeReference.key.id",
+					modifierCode);
+		}
+		
+		// iba
+		if (!StringUtils.isNull(remarks)) {
+			IBAUtils.addIBAConditionEquals(query, WTPart.class, idx, "REMARKS", remarks);
+		}
+
+		if (!StringUtils.isNull(material)) {
+			IBAUtils.addIBAConditionEquals(query, WTPart.class, idx, "MATERIAL", material);
+		}
+
+		if (!StringUtils.isNull(part_code)) {
+			IBAUtils.addIBAConditionEquals(query, WTPart.class, idx, "PART_CODE", part_code);
+		}
+
+		if (!StringUtils.isNull(maker)) {
+			IBAUtils.addIBAConditionEquals(query, WTPart.class, idx, "MAKER", maker);
+		}
+
+		if (!StringUtils.isNull(name_of_part)) {
+			IBAUtils.addIBAConditionEquals(query, WTPart.class, idx, "NAME_OF_PARTS", name_of_part);
+		}
+		
 		Folder folder = null;
 		if (!StringUtils.isNull(oid)) {
 			folder = (Folder) CommonUtils.getObject(oid);

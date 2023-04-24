@@ -56,13 +56,13 @@ public class PartController extends BaseController {
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
-		try {
+		try {System.out.println("컨트롤러에 들어오는 거니??????????????????????????????"+params);
 			result = PartHelper.manager.list(params);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
-		}
+		}System.out.println("결과 출력 좀 해주려무나아아아아아~~~~~~~~~~~~~~~~~~~"+result);
 		return result;
 	}
 
