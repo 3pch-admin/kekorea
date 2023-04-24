@@ -236,7 +236,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					params.json = json;
 					params.removeRows = removeRows;
 					openLayer();
-					console.log(params);
 					call(url, params, function(data) {
 						alert(data.msg);
 						if (data.result) {

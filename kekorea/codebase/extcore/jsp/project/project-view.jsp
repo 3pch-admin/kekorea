@@ -109,7 +109,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<td class="center"><%=dto.getMak_name()%>
 							/
 							<%=dto.getDetail_name()%></td>
-						<td class="indent5" colspan="2"><%=dto.getDescription()%></td>
+						<td class="center" colspan="2"><%=dto.getDescription()%></td>
 						<th>전기</th>
 						<td class="center"><%=dto.getElecProgress()%>%
 						</td>

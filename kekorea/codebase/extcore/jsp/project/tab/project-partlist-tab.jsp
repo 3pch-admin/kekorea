@@ -29,92 +29,167 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				headerText : "설계구분",
 				dataType : "string",
 				width : 100,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "lotNo",
 				headerText : "LOT_NO",
 				dataType : "numeric",
 				width : 80,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "unitName",
 				headerText : "UNIT NAME",
 				dataType : "string",
-				width : 120
+				width : 120,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "partNo",
 				headerText : "부품번호",
 				dataType : "string",
 				width : 100,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "partName",
 				headerText : "부품명",
 				dataType : "string",
 				width : 200,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "standard",
 				headerText : "규격",
 				dataType : "string",
 				width : 250,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "maker",
 				headerText : "MAKER",
 				dataType : "string",
 				width : 130,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "customer",
 				headerText : "거래처",
 				dataType : "string",
 				width : 130,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "quantity",
 				headerText : "수량",
 				dataType : "numeric",
 				width : 60,
+				filter : {
+					showIcon : true,
+					inline : false,
+					type : "numeric"
+				},
 			}, {
 				dataField : "unit",
 				headerText : "단위",
 				dataType : "string",
 				width : 80,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "price",
 				headerText : "단가",
 				dataType : "numeric",
 				width : 120,
+				filter : {
+					showIcon : true,
+					inline : false,
+					type : "numeric"
+				},
 			}, {
 				dataField : "currency",
 				headerText : "화폐",
 				dataType : "string",
 				width : 60,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "won",
 				headerText : "원화금액",
 				dataType : "numeric",
 				width : 120,
+				filter : {
+					showIcon : true,
+					inline : false,
+					type : "numeric"
+				},
 			}, {
 				dataField : "partListDate_txt",
 				headerText : "수배일자",
 				dataType : "string",
 				width : 100,
+				filter : {
+					showIcon : false,
+					inline : false
+				},
 			}, {
 				dataField : "exchangeRate",
 				headerText : "환율",
 				dataType : "numeric",
 				width : 80,
-				formatString : "#,##0.0000"
+				formatString : "#,##0.0000",
+				filter : {
+					showIcon : false,
+					inline : false
+				},
 			}, {
 				dataField : "referDrawing",
 				headerText : "참고도면",
 				dataType : "string",
 				width : 120,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "classification",
 				headerText : "조달구분",
 				dataType : "string",
 				width : 120,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "note",
 				headerText : "비고",
 				dataType : "string",
 				width : 250,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			} ];
 
 			const footerLayout4 = [ {
@@ -162,6 +237,10 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 					selectionMode : "multipleCells",
 					showFooter : true,
 					footerPosition : "top",
+					enableFilter : true,
+					showInlineFilter : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
 				myGridID4 = AUIGrid.create("#grid_wrap4", columnLayout, props);
 				AUIGrid.setFooter(myGridID4, footerLayout4);

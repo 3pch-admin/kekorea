@@ -8,6 +8,7 @@ import java.util.Map;
 
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
+import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.project.Project;
 import e3ps.project.issue.Issue;
 import e3ps.project.issue.IssueProjectLink;
@@ -16,7 +17,9 @@ import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.pom.Transaction;
+import wt.query.QuerySpec;
 import wt.services.StandardManager;
 import wt.util.WTException;
 
@@ -98,9 +101,21 @@ public class StandardIssueService extends StandardManager implements IssueServic
 
 	@Override
 	public void save(HashMap<String, List<IssueDTO>> dataMap) throws Exception {
+		List<IssueDTO> removeRows = dataMap.get("removeRows");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
+
+			for (IssueDTO dto : removeRows) {
+				String oid = dto.getOid();
+				Issue issue = (Issue) CommonUtils.getObject(oid);
+				QueryResult qr = PersistenceHelper.manager.navigate(issue, "project", IssueProjectLink.class, false);
+				while (qr.hasMoreElements()) {
+					IssueProjectLink link = (IssueProjectLink) qr.nextElement();
+					PersistenceHelper.manager.delete(link);
+				}
+				PersistenceHelper.manager.delete(issue);
+			}
 
 			trs.commit();
 			trs = null;

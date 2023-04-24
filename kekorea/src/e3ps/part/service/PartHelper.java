@@ -47,6 +47,9 @@ public class PartHelper {
 	public static final String PRODUCT_CONTAINER = "PRODUCT";
 	public static final String LIBRARY_CONTAINER = "LIBRARY";
 
+	/**
+	 * 특정 부품들 위치
+	 */
 	public static final String COMMON_DEFAULT_ROOT = "/Default/도면/부품/일반부품";
 	public static final String NEW_DEFAULT_ROOT = "/Default/도면/부품/신규부품";
 	public static final String SPEC_DEFAULT_ROOT = "/Default/도면/부품/제작사양서";

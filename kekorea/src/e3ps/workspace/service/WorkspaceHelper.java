@@ -184,6 +184,7 @@ public class WorkspaceHelper {
 			ApprovalLineDTO column = new ApprovalLineDTO(approvalLine, COLUMN_AGREE);
 			list.add(column);
 		}
+		map.put("size", list.size());
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
@@ -234,6 +235,7 @@ public class WorkspaceHelper {
 			ApprovalLineDTO column = new ApprovalLineDTO(approvalLine, COLUMN_APPROVAL);
 			list.add(column);
 		}
+		map.put("size", list.size());
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
@@ -277,6 +279,7 @@ public class WorkspaceHelper {
 			ApprovalLineDTO column = new ApprovalLineDTO(line, COLUMN_RECEIVE);
 			list.add(column);
 		}
+		map.put("size", list.size());
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
@@ -315,6 +318,7 @@ public class WorkspaceHelper {
 			ApprovalLineDTO column = new ApprovalLineDTO(master, COLUMN_PROGRESS);
 			list.add(column);
 		}
+		map.put("size", list.size());
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
@@ -356,6 +360,7 @@ public class WorkspaceHelper {
 			ApprovalLineDTO column = new ApprovalLineDTO(master, COLUMN_COMPLETE);
 			list.add(column);
 		}
+		map.put("size", list.size());
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
@@ -394,6 +399,7 @@ public class WorkspaceHelper {
 			ApprovalLineDTO column = new ApprovalLineDTO(master, COLUMN_REJECT);
 			list.add(column);
 		}
+		map.put("size", list.size());
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
@@ -823,5 +829,28 @@ public class WorkspaceHelper {
 			}
 		}
 		return list;
+	}
+
+	/**
+	 * 결재 내역들 개수 - 접속한 사용자
+	 */
+	public Map<String, Integer> count() throws Exception {
+		Map<String, Object> params = new HashMap<>();
+		Map<String, Object> agree = agree(params);
+		Map<String, Object> approval = approval(params);
+		Map<String, Object> receive = receive(params);
+		Map<String, Object> progress = progress(params);
+		Map<String, Object> complete = complete(params);
+		Map<String, Object> reject = reject(params);
+
+		Map<String, Integer> count = new HashMap<>();
+		count.put("agree", (int) agree.get("size"));
+		count.put("approval", (int) approval.get("size"));
+		count.put("receive", (int) receive.get("size"));
+		count.put("progress", (int) progress.get("size"));
+		count.put("complete", (int) complete.get("size"));
+		count.put("reject", (int) reject.get("size"));
+
+		return count;
 	}
 }

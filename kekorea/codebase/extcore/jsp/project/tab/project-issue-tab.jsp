@@ -18,7 +18,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <style type="text/css">
 #textAreaWrap {
 	font-size: 12px;
@@ -92,7 +92,6 @@ ul, ol {
 		</div>
 		<script type="text/javascript">
 			let myGridID3;
-			let recentGridItem = null;
 			const data = <%=data%>
 			const columns3 = [ {
 				dataField : "name",
@@ -109,6 +108,10 @@ ul, ol {
 						popup(url, 1400, 700);
 					}
 				},
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "description",
 				headerText : "내용",
@@ -123,6 +126,10 @@ ul, ol {
 						popup(url, 1400, 700);
 					}
 				},
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "icons",
 				headerText : "첨부파일",
@@ -130,16 +137,28 @@ ul, ol {
 				renderer : {
 					type : "TemplateRenderer"
 				},
+				filter : {
+					showIcon : false,
+					inline : false
+				},
 			}, {
 				dataField : "creator",
 				headerText : "작성자",
 				dataType : "string",
 				width : 100,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "createdDate_txt",
 				headerText : "작성일",
 				dataType : "string",
 				width : 100,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			} ]
 
 			function createAUIGrid3(columnLayout) {
@@ -151,6 +170,10 @@ ul, ol {
 					showAutoNoDataMessage : false,
 					showRowCheckColumn : true,
 					showStateColumn : true,
+					enableFilter : true,
+					showInlineFilter : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
 				myGridID3 = AUIGrid.create("#grid_wrap3", columnLayout, props);
 				AUIGrid.setGridData(myGridID3, data);
@@ -283,19 +306,30 @@ ul, ol {
 				popup(url, 1400, 700);
 			}
 
-			function attach(data) {
-				let template = "";
-				const arr = new Array();
-				for (let i = 0; i < data.length; i++) {
-					template += "<img style='position: relative; top: 2px' src='" + data[i].icon + "'>&nbsp;";
-					arr.push(data[i].cacheId);
+			function save() {
+				const removeRows = AUIGrid.getRemovedItems(myGridID3);
+				if (removeRows.length === 0) {
+					alert("변경 내용이 없습니다.");
+					return false;
 				}
 
-				AUIGrid.updateRowsById(myGridID3, {
-					_$uid : recentGridItem._$uid,
-					secondarys : arr,
-					icons : template
-				});
+				if (!confirm("저장 하시겠습니까?")) {
+					return false;
+				}
+
+				const url = getCallUrl("/issue/save");
+				const params = new Object();
+				params.removeRows = removeRows;
+				parent.parent.parent.openLayer();
+				call(url, params, function(data) {
+					alert(data.msg);
+					if (data.result) {
+						document.location.reload();
+						parent.parent.parent.closeLayer();
+					} else {
+						parent.parent.parent.closeLayer();
+					}
+				})
 			}
 
 			document.getElementById("cancel").addEventListener("click", function(event) {

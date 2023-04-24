@@ -29,11 +29,19 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				dataType : "numeric",
 				width : 100,
 				formatString : "###0",
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "code",
 				headerText : "중간코드",
 				dataType : "string",
 				width : 130,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "keNumber",
 				headerText : "부품번호",
@@ -48,6 +56,10 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 						popup(url, 1400, 700);
 					}
 				},
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "name",
 				headerText : "부품명",
@@ -61,32 +73,57 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 						popup(url, 1400, 700);
 					}
 				},
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "model",
 				headerText : "KokusaiModel",
 				dataType : "string",
 				width : 200,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "qty",
 				headerText : "QTY",
 				dataType : "numeric",
 				width : 100,
 				formatString : "###0",
+				filter : {
+					showIcon : true,
+					inline : false,
+					type : "numeric"
+				},
 			}, {
 				dataField : "unit",
 				headerText : "UNIT",
 				dataType : "string",
-				width : 130
+				width : 130,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "provide",
 				headerText : "PROVIDE",
 				dataType : "string",
-				width : 130
+				width : 130,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "discontinue",
 				headerText : "DISCONTINUE",
 				dataType : "string",
-				width : 200
+				width : 200,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			} ]
 
 			function createAUIGrid6(columnLayout) {
@@ -96,6 +133,10 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 					rowNumHeaderText : "번호",
 					selectionMode : "multipleCells",
 					showAutoNoDataMessage : false,
+					enableFilter : true,
+					showInlineFilter : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
 				myGridID6 = AUIGrid.create("#grid_wrap6", columnLayout, props);
 				AUIGrid.setGridData(myGridID6, data);

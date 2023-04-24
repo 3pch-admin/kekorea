@@ -15,7 +15,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 </head>
 <body>
 	<form>
@@ -27,6 +27,10 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				dataField : "workOrderType",
 				headerText : "설계구분",
 				width : 100,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "preView",
 				headerText : "미리보기",
@@ -36,11 +40,19 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 					altField : null,
 					imgHeight : 34,
 				},
+				filter : {
+					showIcon : false,
+					inline : false
+				},
 			}, {
 				dataField : "name",
 				headerText : "DRAWING TITLE",
 				dataType : "string",
 				style : "aui-left",
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "number",
 				headerText : "DWG. NO",
@@ -62,6 +74,10 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 							url = getCallUrl("/project/info?oid=" + oid);
 						}
 					}
+				},
+				filter : {
+					showIcon : true,
+					inline : true
 				},
 			}, {
 				dataField : "current",
@@ -94,28 +110,47 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 						}
 					}
 				},
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "rev",
 				headerText : "REV",
 				dataType : "string",
 				width : 130,
-
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "lotNo",
 				headerText : "LOT",
 				dataType : "numeric",
 				width : 100,
 				formatString : "###0",
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "createdData_txt",
 				headerText : "등록일",
 				dataType : "string",
 				width : 100,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "note",
 				headerText : "NOTE",
 				dataType : "string",
 				width : 350,
+				filter : {
+					showIcon : true,
+					inline : true
+				},
 			}, {
 				dataField : "primary",
 				headerText : "도면파일",
@@ -123,6 +158,10 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				width : 80,
 				renderer : {
 					type : "TemplateRenderer",
+				},
+				filter : {
+					showIcon : false,
+					inline : false
 				},
 			} ]
 
@@ -133,6 +172,10 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 					rowNumHeaderText : "번호",
 					selectionMode : "multipleCells",
 					showAutoNoDataMessage : false,
+					enableFilter : true,
+					showInlineFilter : true,
+					filterLayerWidth : 320,
+					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
 				myGridID9 = AUIGrid.create("#grid_wrap9", columnLayout, props);
 				AUIGrid.setGridData(myGridID9, data);

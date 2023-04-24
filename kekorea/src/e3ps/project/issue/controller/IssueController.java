@@ -21,13 +21,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.korea.cip.dto.CipDTO;
-import e3ps.korea.cip.service.CipHelper;
 import e3ps.project.issue.IssueProjectLink;
 import e3ps.project.issue.beans.IssueDTO;
 import e3ps.project.issue.service.IssueHelper;
-import e3ps.workspace.notice.dto.NoticeDTO;
-import e3ps.workspace.notice.service.NoticeHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -79,26 +75,12 @@ public class IssueController extends BaseController {
 	@ResponseBody
 	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
 			throws Exception {
-		ArrayList<LinkedHashMap<String, Object>> addRows = params.get("addRows");
-		ArrayList<LinkedHashMap<String, Object>> editRows = params.get("editRows");
 		ArrayList<LinkedHashMap<String, Object>> removeRows = params.get("removeRows");
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-			ArrayList<IssueDTO> addRow = new ArrayList<>();
-			for (LinkedHashMap<String, Object> add : addRows) {
-				IssueDTO dto = mapper.convertValue(add, IssueDTO.class);
-				addRow.add(dto);
-			}
-
-			ArrayList<IssueDTO> editRow = new ArrayList<>();
-			for (LinkedHashMap<String, Object> edit : editRows) {
-				IssueDTO dto = mapper.convertValue(edit, IssueDTO.class);
-				editRow.add(dto);
-			}
 
 			ArrayList<IssueDTO> removeRow = new ArrayList<>();
 			for (LinkedHashMap<String, Object> remove : removeRows) {
@@ -107,8 +89,6 @@ public class IssueController extends BaseController {
 			}
 
 			HashMap<String, List<IssueDTO>> dataMap = new HashMap<>();
-			dataMap.put("addRows", addRow); // 삭제행
-			dataMap.put("editRows", editRow); // 삭제행
 			dataMap.put("removeRows", removeRow); // 삭제행
 
 			IssueHelper.service.save(dataMap);

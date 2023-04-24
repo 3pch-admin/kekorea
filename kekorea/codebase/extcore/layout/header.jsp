@@ -1,3 +1,4 @@
+<%@page import="java.util.Map"%>
 <%@page import="e3ps.org.dto.UserDTO"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
@@ -7,6 +8,7 @@
 <%
 UserDTO data = (UserDTO) request.getAttribute("data");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count");
 %>
 <nav class="navbar-default navbar-static-side" role="navigation">
 	<div class="sidebar-collapse">
@@ -34,37 +36,37 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<li>
 						<a onclick="moveToPage(this, '/workspace/agree', '나의 업무 > 검토함');">
 							검토함
-							<span class="label label-info float-right">62</span>
+							<span class="label label-info float-right"><%=count.get("agree") %></span>
 						</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/workspace/approval', '나의 업무 > 결재함');">
 							결재함
-							<span class="label label-info float-right">62</span>
+							<span class="label label-info float-right"><%=count.get("approval") %></span>
 						</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/workspace/receive', '나의 업무 > 수신함');">
 							수신함
-							<span class="label label-info float-right">62</span>
+							<span class="label label-info float-right"><%=count.get("receive") %></span>
 						</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/workspace/progress', '나의 업무 > 진행함');">
 							진행함
-							<span class="label label-info float-right">62</span>
+							<span class="label label-info float-right"><%=count.get("progress") %></span>
 						</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/workspace/complete', '나의 업무 > 완료함');">
 							완료함
-							<span class="label label-info float-right">62</span>
+							<span class="label label-info float-right"><%=count.get("complete") %></span>
 						</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/workspace/reject', '나의 업무 > 반려함');">
 							반려함
-							<span class="label label-info float-right">62</span>
+							<span class="label label-info float-right"><%=count.get("reject") %></span>
 						</a>
 					</li>
 					<li>

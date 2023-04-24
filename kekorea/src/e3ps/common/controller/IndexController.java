@@ -55,7 +55,9 @@ public class IndexController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		UserDTO data = new UserDTO(sessionUser);
+		Map<String, Integer> count = WorkspaceHelper.manager.count();
 		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("count", count);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
 		model.setViewName("/extcore/layout/header.jsp");
