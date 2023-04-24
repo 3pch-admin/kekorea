@@ -419,9 +419,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function exportExcel() {
-				const exceptColumnFields = [ "primary" ];
+				const exceptColumnFields = [ "thumnail" ];
 				const sessionName = document.getElementById("sessionName").value;
-				exportToExcel("공지사항 리스트, 공지사항, 공지사항 리스트", exceptColumnFields, sessionName);
+				exportToExcel("KEK 도면 리스트", "KEK 도면", "KEK 도면 리스트", exceptColumnFields, sessionName);
 			}
 
 			function toggle() {

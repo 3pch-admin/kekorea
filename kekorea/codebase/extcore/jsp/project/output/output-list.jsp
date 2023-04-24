@@ -398,7 +398,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 			function exportExcel() {
 				const exceptColumnFields = [ "primary" ];
 				const sessionName = document.getElementById("sessionName").value;
-				exportToExcel("공지사항 리스트", "공지사항", "공지사항 리스트", exceptColumnFields, sessionName);
+				exportToExcel("산출물 리스트", "산출물", "산출물 리스트", exceptColumnFields, sessionName);
 			}
 
 			document.addEventListener("keydown", function(event) {

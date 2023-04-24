@@ -1,0 +1,10 @@
+diff a/kekorea/codebase/extcore/jsp/document/meeting/meeting-update.jsp b/kekorea/codebase/extcore/jsp/document/meeting/meeting-update.jsp	(rejected hunks)
+@@ -121,7 +121,7 @@
+ 		}
+ 		if (!confirm("수정 하시겠습니까?")) {
+ 			return false;
+-		}
++		}console.log(params);
+ 		openLayer();
+ 		call(url, params, function(data) {
+ 			alert(data.msg);

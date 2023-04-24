@@ -646,7 +646,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			function exportExcel() {
-				const exceptColumnFields = [ "button", "primary" ];
+				const exceptColumnFields = [ "button", "primary","latest" ];
 				const sessionName = document.getElementById("sessionName").value;
 				exportToExcel("KE 부품 리스트", "KE 부품", "KE 부품 리스트", exceptColumnFields, sessionName);
 			}

@@ -713,9 +713,9 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 			}
 
 			function exportExcel() {
-				const exceptColumnFields = [ "primary" ];
+				const exceptColumnFields = [ "kekProgress" ];
 				const sessionName = document.getElementById("sessionName").value;
-				exportToExcel("공지사항 리스트", "공지사항", "공지사항 리스트", exceptColumnFields, sessionName);
+				exportToExcel("나의 작번 리스트", "나의 작번", "나의 작번 리스트", exceptColumnFields, sessionName);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {

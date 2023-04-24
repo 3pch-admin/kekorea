@@ -350,7 +350,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function exportExcel() {
 				const exceptColumnFields = [ "primary" ];
 				const sessionName = document.getElementById("sessionName").value;
-				exportToExcel("공지사항 리스트", "공지사항", "공지사항 리스트", exceptColumnFields, sessionName);
+				exportToExcel("문서 리스트", "문서", "문서 리스트", exceptColumnFields, sessionName);
 			}
 
 			document.addEventListener("keydown", function(event) {

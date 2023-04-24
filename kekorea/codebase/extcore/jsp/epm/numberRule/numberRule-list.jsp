@@ -678,6 +678,12 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 				AUIGrid.addRow(myGridID, item, "first");
 			}
 
+			function exportExcel() {
+				const exceptColumnFields = [];
+				const sessionName = document.getElementById("sessionName").value;
+				exportToExcel("KEK 도번 리스트", "KEK 도번", "KEK 도번 리스트", exceptColumnFields, sessionName);
+			}
+			
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("numberRule-list");
 				const contenxtHeader = genColumnHtml(columns);

@@ -438,6 +438,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				iframe.src = getCallUrl("/part/library");
 			}
 			
+			function exportExcel() {
+				const exceptColumnFields = [ "thumnail" ];
+				const sessionName = document.getElementById("sessionName").value;
+				exportToExcel("부품 리스트", "부품", "부품 리스트", exceptColumnFields, sessionName);
+			}
+			
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("part-list");
 				const contenxtHeader = genColumnHtml(columns);

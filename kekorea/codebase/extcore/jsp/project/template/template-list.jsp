@@ -303,9 +303,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			});
 
 			function exportExcel() {
-				const exceptColumnFields = [ "primary" ];
+				const exceptColumnFields = [ "enable" ];
 				const sessionName = document.getElementById("sessionName").value;
-				exportToExcel("공지사항 리스트", "공지사항", "공지사항 리스트", exceptColumnFields, sessionName);
+				exportToExcel("템플릿 리스트", "템플릿", "템플릿 리스트", exceptColumnFields, sessionName);
 			}
 
 			document.addEventListener("keydown", function(event) {

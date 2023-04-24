@@ -701,9 +701,9 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 			}
 			
 			function exportExcel() {
-				const exceptColumnFields = [ "primary" ];
+				const exceptColumnFields = [ "kekProgress" ];
 				const sessionName = document.getElementById("sessionName").value;
-				exportToExcel("공지사항 리스트", "공지사항", "공지사항 리스트", exceptColumnFields, sessionName);
+				exportToExcel("작번 리스트", "작번", "작번 리스트", exceptColumnFields, sessionName);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {

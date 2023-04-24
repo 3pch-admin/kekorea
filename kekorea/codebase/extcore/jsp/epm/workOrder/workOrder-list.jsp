@@ -541,7 +541,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function exportExcel() {
-				const exceptColumnFields = [ "cover", "secondary" ];
+				const exceptColumnFields = [ "cover", "secondary","latest"];
 				const sessionName = document.getElementById("sessionName").value;
 				exportToExcel("도면일람표 리스트", "도면일람표", "도면일람표 리스트", exceptColumnFields, sessionName);
 			}

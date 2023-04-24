@@ -237,6 +237,12 @@ for (Project project : destList) {%>
 			hideContextMenu();
 		});
 	}
+	
+	function exportExcel() {
+		const exceptColumnFields = [ "" ];
+		const sessionName = document.getElementById("sessionName").value;
+		exportToExcel("TBOM 비교 리스트", "TBOM 비교", "TBOM 비교 리스트", exceptColumnFields, sessionName);
+	}
 
 	document.addEventListener("DOMContentLoaded", function() {
 		const columns = loadColumnLayout("tbom-compare");

@@ -381,6 +381,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const url = getCallUrl("/tbom/create");
 				popup(url, 1500, 850);
 			}
+			
+			function exportExcel() {
+				const exceptColumnFields = ["latest"];
+				const sessionName = document.getElementById("sessionName").value;
+				exportToExcel("TBOM 리스트", "TBOM", "TBOM 리스트", exceptColumnFields, sessionName);
+			}
 
 			document.addEventListener("DOMContentLoaded", function() {
 				document.getElementById("name").focus();

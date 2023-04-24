@@ -639,7 +639,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function exportExcel() {
-				const exceptColumnFields = [ "preView", "button", "primary" ];
+				const exceptColumnFields = [ "preView", "button", "primary","latest" ];
 				const sessionName = document.getElementById("sessionName").value;
 				exportToExcel("KE 도면 리스트", "KE 도면", "KE 도면 리스트", exceptColumnFields, sessionName);
 			}

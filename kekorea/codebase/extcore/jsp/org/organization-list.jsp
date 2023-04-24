@@ -388,6 +388,12 @@ JSONArray departments = JSONArray.fromObject(list);
 					}
 				})
 			}
+			
+			function exportExcel() {
+				const exceptColumnFields = ["resign"];
+				const sessionName = document.getElementById("sessionName").value;
+				exportToExcel("조직도 리스트", "조직도", "조직도 리스트", exceptColumnFields, sessionName);
+			}
 
 			document.addEventListener("DOMContentLoaded", function() {
 				document.getElementById("userName").focus();

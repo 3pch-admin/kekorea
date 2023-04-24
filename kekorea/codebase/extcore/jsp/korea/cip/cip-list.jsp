@@ -896,7 +896,7 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 
 			function exportExcel() {
 				const exceptColumnFields = [ "preView", "preViewBtn", "icons", "iconsBtn" ];
-				const sessionName = document.getElementById("name").value;
+				const sessionName = document.getElementById("sessionName").value;
 				exportToExcel("CIP 리스트", "CIP", "CIP 리스트", exceptColumnFields, sessionName);
 			}
 

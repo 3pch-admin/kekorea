@@ -325,6 +325,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					}
 				});
 			}
+			
+			function exportExcel() {
+				const exceptColumnFields = [];
+				const sessionName = document.getElementById("sessionName").value;
+				exportToExcel("특이사항 리스트", "특이사항", "특이사항 리스트", exceptColumnFields, sessionName);
+			}
 
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("issue-list");

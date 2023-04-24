@@ -354,7 +354,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function exportExcel() {
-				const exceptColumnFields = [ "primary" ];
+				const exceptColumnFields = [ "latest" ];
+				const sessionName = document.getElementById("sessionName").value;
+				exportToExcel("CONFIG SHEET 카테고리 리스트", "CONFIG SHEET 카테고리", "CONFIG SHEET 카테고리 리스트", exceptColumnFields, sessionName);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
