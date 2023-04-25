@@ -281,10 +281,11 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 							rowNumHeaderText : "번호",
 							showAutoNoDataMessage : false,
 							selectionMode : "multipleCells",
-							rowCheckToRadio : true,
 						};
 						myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-						AUIGrid.setGridData(myGridID, <%=list%>);
+						AUIGrid.setGridData(myGridID,
+				<%=list%>
+					);
 					}
 
 					function create() {
@@ -293,7 +294,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 						const url = getCallUrl("/output/create?toid=" + toid + "&poid=" + poid);
 						popup(url, 1400, 800);
 					}
-					
+
 					function connect() {
 						const toid = document.getElementById("oid").value;
 						const poid = document.getElementById("poid").value;
@@ -301,7 +302,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 						popup(url, 1600, 700);
 					}
 
-					function append(data, toid, poid, callBack) {
+					function _connect(data, toid, poid, callBack) {
 						const arr = new Array();
 						for (let i = 0; i < data.length; i++) {
 							const item = data[i].item;
@@ -316,28 +317,35 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 							callBack(res);
 						})
 					}
-					
+
 					function _delete() {
 						const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+						const arr = new Array();
 						if (checkedItems.length === 0) {
 							alert("삭제할 산출물을 선택하세요.");
 							return false;
 						}
-						const item = checkedItems[0].item;
-						const oid = item.oid;
-						const url = getCallUrl("/output/disconnect?oid=" + oid);
+
+						for (let i = 0; i < checkedItems.length; i++) {
+							const item = checkedItems[i].item;
+							const oid = item.oid;
+							arr.push(oid);
+						}
+						const url = getCallUrl("/output/disconnect");
+						const params = new Object();
+						params.arr = arr;
 						if (!confirm("삭제 하시겠습니까?\n산출물과 태스크의 연결관계만 삭제 되어집니다.")) {
 							return false;
 						}
 						parent.parent.openLayer();
-						call(url, null, function(data) {
+						call(url, params, function(data) {
 							alert(data.msg);
 							if (data.result) {
 								document.location.reload();
 							} else {
 								parent.parent.closeLayer();
 							}
-						}, "GET");
+						});
 					}
 				</script>
 			</div>
@@ -372,7 +380,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				AUIGrid.resize(myGridID);
 				parent.parent.closeLayer();
 			})
-			
+
 			window.addEventListener("resize", function() {
 				AUIGrid.resize(myGridID);
 			});

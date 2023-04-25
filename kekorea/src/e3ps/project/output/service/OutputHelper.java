@@ -74,6 +74,11 @@ public class OutputHelper {
 		QuerySpecUtils.toLikeAnd(query, idx, WTDocument.class, WTDocument.DESCRIPTION, content);
 
 		if (!StringUtils.isNull(kekNumber) || !StringUtils.isNull(keNumber) || !StringUtils.isNull(description)) {
+
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+
 			int idx_olink = query.appendClassList(OutputDocumentLink.class, false);
 			int idx_plink = query.appendClassList(OutputProjectLink.class, false);
 			int idx_o = query.appendClassList(Output.class, false);
@@ -163,7 +168,6 @@ public class OutputHelper {
 
 		QuerySpecUtils.toOrderBy(query, idx, WTDocument.class, WTDocument.MODIFY_TIMESTAMP, true);
 
-		System.out.println(query);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();

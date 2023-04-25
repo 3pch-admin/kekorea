@@ -353,10 +353,11 @@ String poid = (String) request.getAttribute("poid");
 		}
 		openLayer();
 		opener._connect(checkedItems, toid, poid, function(res) {
-			console.log(res);
 			alert(res.msg);
 			if (res.result) {
 				closeLayer();
+				opener.document.location.reload();
+				self.close();
 			} else {
 				closeLayer();
 			}

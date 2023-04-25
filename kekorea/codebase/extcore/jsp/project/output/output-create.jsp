@@ -44,7 +44,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 		<td class="indent5">
 			<input type="text" name="name" id="name" class="width-300">
 		</td>
-		<th>산출물 번호</th>
+		<th>진행율</th>
 		<td class="indent5">
 			<input type="number" name="progress" id="progress" class="width-300" value="0" maxlength="3">
 		</td>

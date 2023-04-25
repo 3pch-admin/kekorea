@@ -9,6 +9,7 @@ import java.util.Map;
 
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.doc.service.DocumentHelper;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
@@ -28,6 +29,7 @@ import wt.folder.Folder;
 import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
 import wt.pom.Transaction;
+import wt.query.QuerySpec;
 import wt.services.StandardManager;
 import wt.util.WTException;
 
@@ -155,7 +157,8 @@ public class StandardOutputService extends StandardManager implements OutputServ
 
 				QueryResult result = PersistenceHelper.manager.navigate(document, "output", OutputDocumentLink.class);
 				while (result.hasMoreElements()) {
-					Project p = (Project) result.nextElement();
+					Output output = (Output) result.nextElement();
+					Project p = output.getProject();
 
 					if (p.getPersistInfo().getObjectIdentifier().getStringValue().equals(oid)) {
 						map.put("msg",
@@ -175,6 +178,8 @@ public class StandardOutputService extends StandardManager implements OutputServ
 				PersistenceHelper.manager.save(output);
 			}
 
+			map.put("exist", false);
+			
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
@@ -215,5 +220,28 @@ public class StandardOutputService extends StandardManager implements OutputServ
 			if (trs != null)
 				trs.rollback();
 		}
+	}
+
+	@Override
+	public void disconnect(Map<String, Object> params) throws Exception {
+		ArrayList<String> arr = (ArrayList<String>) params.get("arr");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+			for (String oid : arr) {
+				Output output = (Output) CommonUtils.getObject(oid);
+				PersistenceHelper.manager.delete(output);
+			}
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+
 	}
 }
