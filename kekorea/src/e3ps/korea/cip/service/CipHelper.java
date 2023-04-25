@@ -36,6 +36,10 @@ public class CipHelper {
 		String detail = (String) params.get("detail");
 		String install = (String) params.get("install");
 		String customer = (String) params.get("customer");
+		String creatorOid = (String) params.get("creatorOid");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
+		String note = (String) params.get("note");
 
 		List<CipDTO> list = new ArrayList<CipDTO>();
 
@@ -46,6 +50,7 @@ public class CipHelper {
 		QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.IMPROVEMENTS, improvements);
 		QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.IMPROVEMENT, improvement);
 		QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, Cip.APPLY, apply);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, Cip.class, Cip.CREATE_TIMESTAMP, createdFrom, createdTo);
 
 		if (!StringUtils.isNull(mak)) {
 			CommonCode makCode = (CommonCode) CommonUtils.getObject(mak);

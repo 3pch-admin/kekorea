@@ -104,10 +104,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<td class="indent5">
 					<select name="stare" id="state" class="width-200">
 						<option value="">선택</option>
-						<option value="inwork">작업 중1</option>
-						<option value="done">완료</option>
-						<option value="작업 중">작업 중2</option>
-						<option value="완료">완료</option>
+						<option value="작업 중">작업 중</option>
+						<option value="승인 중">승인 중</option>
+						<option value="승인됨">승인됨</option>
+						<option value="반려됨">반려됨</option>
+						<option value="폐기">폐기</option>
 					</select>
 				</td>
 				<th>버전</th>
