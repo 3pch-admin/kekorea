@@ -94,7 +94,6 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 			project.setPlanEndDate(DateUtils.getPlanStartDate());
 			PersistenceHelper.manager.save(project);
 
-			System.out.println("reference=" + reference);
 			if (!StringUtils.isNull(reference)) {
 				Template template = (Template) CommonUtils.getObject(reference);
 
@@ -622,5 +621,54 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				trs.rollback();
 		}
 
+	}
+
+	@Override
+	public void modify(Map<String, Object> params) throws Exception {
+		String oid = (String) params.get("oid");
+		String kekNumber = (String) params.get("kekNumber");
+		String pdate = (String) params.get("pdate");
+		String keNumber = (String) params.get("keNumber");
+		String userId = (String) params.get("userId");
+		String mak = (String) params.get("mak");
+		String detail = (String) params.get("detail");
+		String model = (String) params.get("model");
+		String customer = (String) params.get("customer");
+		String install = (String) params.get("install");
+		String projectType = (String) params.get("projectType");
+		String reference = (String) params.get("reference");
+		String description = (String) params.get("description");
+		String customDate = (String) params.get("customDate");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Project project = (Project) CommonUtils.getObject(oid);
+
+			project.setKekNumber(kekNumber);
+			project.setKeNumber(keNumber);
+			project.setPDate(DateUtils.convertDate(pdate));
+			project.setUserId(userId);
+			project.setMak((CommonCode) CommonUtils.getObject(mak));
+			project.setModel(model);
+			project.setInstall((CommonCode) CommonUtils.getObject(install));
+			project.setProjectType((CommonCode) CommonUtils.getObject(projectType));
+			project.setDetail((CommonCode) CommonUtils.getObject(detail));
+			project.setCustomer((CommonCode) CommonUtils.getObject(customer));
+			project.setDescription(description);
+			project.setCustomDate(DateUtils.convertDate(customDate));
+
+			PersistenceHelper.manager.modify(project);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
 	}
 }

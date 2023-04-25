@@ -15,12 +15,12 @@ public interface IssueService {
 	public abstract void create(IssueDTO dto) throws Exception;
 
 	/**
-	 * 특이사항 삭제 그리드용
-	 */
-	public abstract void delete(HashMap<String, List<IssueDTO>> dataMap) throws Exception;
-
-	/**
-	 * 이슈 그리드 저장 - 프로젝트 탭
+	 * 이슈 그리드 저장
 	 */
 	public abstract void save(HashMap<String, List<IssueDTO>> dataMap) throws Exception;
+
+	/**
+	 * 이슈 삭제
+	 */
+	public abstract void delete(String oid) throws Exception;
 }

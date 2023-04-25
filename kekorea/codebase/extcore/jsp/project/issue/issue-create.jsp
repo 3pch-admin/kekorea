@@ -5,6 +5,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 String oid = (String) request.getAttribute("oid");
+JSONArray list = (JSONArray) request.getAttribute("list");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
@@ -67,14 +68,6 @@ String oid = (String) request.getAttribute("oid");
 		const description = document.getElementById("description");
 		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
 
-		for (let i = 0; i < addRows9.length; i++) {
-			const comp = addRows9[i].oid;
-			if (oid === comp) {
-				alert("선택한 작번 중 중복 데이터가 존재합니다. 작번 = " + addRows9[i].kekNumber);
-				return false;
-			}
-		}
-
 		params.name = name.value;
 		params.description = description.value;
 		params.oid = oid;
@@ -105,9 +98,21 @@ String oid = (String) request.getAttribute("oid");
 		})
 	}
 
+	function auiBeforeRemoveRow(event) {
+		const item = event.items[0];
+		const oid = document.getElementById("oid").value;
+		if (item.oid === oid) {
+			alert("선택된 작번은 제거 할 수 없습니다.");
+			return false;
+		}
+		return true;
+	}
+
 	document.addEventListener("DOMContentLoaded", function() {
 		createAUIGrid9(columns9);
 		AUIGrid.resize(myGridID9);
+		AUIGrid.addRow(myGridID9, <%=list%>);
+		AUIGrid.bind(myGridID9, "beforeRemoveRow", auiBeforeRemoveRow);
 		document.getElementById("name").focus();
 	})
 

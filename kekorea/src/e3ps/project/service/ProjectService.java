@@ -31,6 +31,9 @@ public interface ProjectService {
 	 */
 	public abstract void commit(Project project) throws Exception;
 
+	/**
+	 * 프로젝트 그리드에서 저장 - 담당자, 돈
+	 */
 	public abstract void save(HashMap<String, List<ProjectDTO>> dataMap) throws Exception;
 
 	/**
@@ -42,4 +45,9 @@ public interface ProjectService {
 	 * 프로젝트 금액 수정
 	 */
 	public abstract void money(Map<String, Object> params) throws Exception;
+
+	/**
+	 * 프로젝트 수정
+	 */
+	public abstract void modify(Map<String, Object> params) throws Exception;
 }

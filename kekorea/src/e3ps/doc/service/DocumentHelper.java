@@ -12,6 +12,10 @@ import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.dto.DocumentDTO;
+import e3ps.project.Project;
+import e3ps.project.output.Output;
+import e3ps.project.output.OutputDocumentLink;
+import e3ps.project.output.OutputProjectLink;
 import net.sf.json.JSONArray;
 import wt.clients.folder.FolderTaskLogic;
 import wt.doc.WTDocument;
@@ -292,6 +296,31 @@ public class DocumentHelper {
 			WTDocument document = (WTDocument) obj[0];
 			DocumentDTO dto = new DocumentDTO(document);
 			list.add(dto);
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 산출물과 연결된 프로젝트
+	 */
+	public JSONArray jsonAuiProject(String oid) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		WTDocument document = (WTDocument) CommonUtils.getObject(oid);
+		QueryResult result = PersistenceHelper.manager.navigate(document, "output", OutputDocumentLink.class);
+		while (result.hasMoreElements()) {
+			Output output = (Output) result.nextElement();
+			Project project = output.getProject();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
+			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("install_name", project.getInstall() != null ? project.getInstall().getName() : "");
+			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("description", project.getDescription());
+			list.add(map);
 		}
 		return JSONArray.fromObject(list);
 	}

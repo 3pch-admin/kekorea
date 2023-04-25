@@ -52,7 +52,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th class="lb">설명</th>
 				<td class="indent5" colspan="3">
-					<textarea rows="6" class="description" readonly="readonly"><%=dto.getDescription()%></textarea>
+					<textarea rows="6" class="description"><%=dto.getDescription()%></textarea>
 				</td>
 			</tr>
 		</table>

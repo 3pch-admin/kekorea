@@ -1,12 +1,16 @@
 package e3ps.common.util;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Map;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.clients.folder.FolderTaskLogic;
+import wt.fc.QueryResult;
 import wt.folder.Folder;
+import wt.folder.FolderHelper;
+import wt.folder.SubFolder;
 
 public class FolderUtils {
 
@@ -65,5 +69,18 @@ public class FolderUtils {
 			children.add(node);
 		}
 		parentNode.put("children", children);
+	}
+
+	/**
+	 * 자식 폴더 모두 가져오기
+	 */
+	public static ArrayList<Folder> recurciveFolder(Folder parent, ArrayList<Folder> list) throws Exception {
+		QueryResult result = FolderHelper.service.findSubFolders(parent);
+		while (result.hasMoreElements()) {
+			SubFolder sub = (SubFolder) result.nextElement();
+			list.add(sub);
+			recurciveFolder(sub, list);
+		}
+		return list;
 	}
 }

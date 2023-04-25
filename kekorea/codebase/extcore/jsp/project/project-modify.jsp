@@ -1,23 +1,26 @@
+<%@page import="e3ps.project.dto.ProjectDTO"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
+ProjectDTO dto = (ProjectDTO) request.getAttribute("dto");
 ArrayList<CommonCode> customers = (ArrayList<CommonCode>) request.getAttribute("customers");
 ArrayList<CommonCode> projectTypes = (ArrayList<CommonCode>) request.getAttribute("projectTypes");
 ArrayList<CommonCode> maks = (ArrayList<CommonCode>) request.getAttribute("maks");
 ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) request.getAttribute("list");
 %>
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid() %>">
 <table class="button-table">
 	<tr>
 		<td class="left">
 			<div class="header">
 				<img src="/Windchill/extcore/images/header.png">
-				작번 등록
+				작번 수정
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="등록" title="등록" onclick="create();">
+			<input type="button" value="수정" title="수정" onclick="modify();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -27,31 +30,31 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 	<tr>
 		<th class="req lb">KEK 작번</th>
 		<td class="indent5">
-			<input type="text" name="kekNumber" id="kekNumber" class="width-300">
+			<input type="text" name="kekNumber" id="kekNumber" class="width-300" value="<%=dto.getKekNumber() %>">
 		</td>
 		<th class="req">작번 발행일</th>
 		<td class="indent5">
-			<input type="text" name="pdate" id="pdate">
+			<input type="text" name="pdate" id="pdate" value="<%=dto.getPdate_txt() %>">
 		</td>
 	</tr>
 	<tr>
 		<th class="req lb">KE 작번</th>
 		<td class="indent5">
-			<input type="text" name="keNumber" id="keNumber">
+			<input type="text" name="keNumber" id="keNumber" value="<%=dto.getKeNumber() %>">
 		</td>
 		<th class="req">요구납기일</th>
 		<td class="indent5">
-			<input type="text" name="customDate" id="customDate">
+			<input type="text" name="customDate" id="customDate" value="<%=dto.getCustomDate_txt() %>">
 		</td>
 	</tr>
 	<tr>
 		<th class="req lb">USER ID</th>
 		<td class="indent5">
-			<input type="text" name="userId" id="userId" class="width-300">
+			<input type="text" name="userId" id="userId" class="width-300" value="<%=dto.getUserId() %>">
 		</td>
 		<th class="req">모델</th>
 		<td class="indent5">
-			<input type="text" name="model" id="model" class="width-300">
+			<input type="text" name="model" id="model" class="width-300" value="<%=dto.getModel() %>">
 		</td>
 	</tr>
 	<tr>
@@ -61,8 +64,9 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 				<option value="">선택</option>
 				<%
 				for (CommonCode mak : maks) {
+					String value = mak.getPersistInfo().getObjectIdentifier().getStringValue();
 				%>
-				<option value="<%=mak.getPersistInfo().getObjectIdentifier().getStringValue()%>"><%=mak.getName()%></option>
+				<option value="<%=value%>" <%if(value.equals(dto.getMak_oid())) { %> selected="selected" <%} %>><%=mak.getName()%></option>
 				<%
 				}
 				%>
@@ -82,8 +86,9 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 				<option value="">선택</option>
 				<%
 				for (CommonCode customer : customers) {
+					String value = customer.getPersistInfo().getObjectIdentifier().getStringValue();
 				%>
-				<option value="<%=customer.getPersistInfo().getObjectIdentifier().getStringValue()%>"><%=customer.getName()%></option>
+				<option value="<%=value%>" <%if(value.equals(dto.getCustomer_oid())) { %> selected="selected" <%} %>><%=customer.getName()%></option>
 				<%
 				}
 				%>
@@ -98,28 +103,14 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 	</tr>
 	<tr>
 		<th class="req lb">작번 유형</th>
-		<td class="indent5">
+		<td class="indent5" colspan="3">
 			<select name="projectType" id="projectType" class="width-200">
 				<option value="">선택</option>
 				<%
 				for (CommonCode projectType : projectTypes) {
+					String value = projectType.getPersistInfo().getObjectIdentifier().getStringValue();
 				%>
-				<option value="<%=projectType.getPersistInfo().getObjectIdentifier().getStringValue()%>"><%=projectType.getName()%></option>
-				<%
-				}
-				%>
-			</select>
-		</td>
-		<th>작번 템플릿</th>
-		<td colspan="3" class="indent5">
-			<select name="reference" id="reference" class="width-300">
-				<option value="">선택</option>
-				<%
-				for (HashMap<String, String> map : list) {
-					String key = (String) map.get("key");
-					String value = (String) map.get("value");
-				%>
-				<option value="<%=key%>"><%=value%></option>
+				<option value="<%=value%>" <%if(value.equals(dto.getProjectType_oid())) { %> selected="selected" <%} %>><%=projectType.getName()%></option>
 				<%
 				}
 				%>
@@ -134,7 +125,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 	</tr>
 </table>
 <script type="text/javascript">
-	function create() {
+	function modify() {
 
 		const kekNumber = document.getElementById("kekNumber");
 		const keNumber = document.getElementById("keNumber");
@@ -147,8 +138,8 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 		const customer = document.getElementById("customer");
 		const install = document.getElementById("install");
 		const projectType = document.getElementById("projectType");
-		const reference = document.getElementById("reference");
 		const description = document.getElementById("description");
+		const oid = document.getElementById("oid").value;
 
 		if (isNull(kekNumber.value)) {
 			alert("KEK 작번을 입력하세요.");
@@ -205,8 +196,8 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 			return false;
 		}
 		const params = new Object();
-		const url = getCallUrl("/project/create");
-
+		const url = getCallUrl("/project/modify");
+		params.oid = oid;
 		params.kekNumber = kekNumber.value;
 		params.keNumber = keNumber.value;
 		params.pdate = pdate.value;
@@ -218,7 +209,6 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 		params.customer = customer.value;
 		params.install = install.value;
 		params.projectType = projectType.value;
-		params.reference = reference.value;
 		params.description = description.value;
 		openLayer();
 		call(url, params, function(data) {
@@ -244,7 +234,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 						optionValue : "value",
 						optionText : "name"
 					},
-					setValue : this.optionValue,
+					setValue : "<%=dto.getDetail_oid()%>",
 					alwaysOnChange : true,
 				})
 			}
@@ -260,7 +250,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 						optionValue : "value",
 						optionText : "name"
 					},
-					setValue : this.optionValue,
+					setValue : "<%=dto.getInstall_oid()%>",
 					alwaysOnChange : true,
 				})
 			}
@@ -272,5 +262,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 		selectbox("projectType");
 		date("pdate");
 		date("customDate");
+		$("#mak").bindSelectSetValue("<%=dto.getMak_oid()%>");
+		$("#customer").bindSelectSetValue("<%=dto.getCustomer_oid()%>");
 	})
 </script>

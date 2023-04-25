@@ -44,7 +44,7 @@ public class OutputDTO {
 	public OutputDTO() {
 
 	}
-
+	
 	public OutputDTO(WTDocument output) throws Exception {
 		setOid(output.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(output.getName());

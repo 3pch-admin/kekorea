@@ -74,11 +74,9 @@ public class TaskHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Task.class, true);
 
-		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "templateReference.key.id",
-				template.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "templateReference.key.id", template);
 		if (parentTask != null) {
-			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id",
-					parentTask.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id", parentTask);
 		} else {
 			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id", 0L);
 		}
@@ -103,8 +101,7 @@ public class TaskHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Task.class, true);
 
-		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "templateReference.key.id",
-				template.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "templateReference.key.id", template);
 		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, Task.DEPTH, (depth + 1)); // grid 상 레벨이 하나 더 붙어서 간다..
 		QuerySpecUtils.toOrderBy(query, idx, Task.class, Task.SORT, true);
 		QueryResult result = PersistenceHelper.manager.find(query);

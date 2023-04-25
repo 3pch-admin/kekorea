@@ -287,7 +287,8 @@ ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 						%>
 						<td class="rb center">
 							<font color="blue">
-								<b><%=outputTotal%>원
+								<b>
+									<%=outputTotal%>원
 								</b>
 							</font>
 							/
@@ -300,7 +301,9 @@ ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 						</td>
 						<td class="rb center">
 							<font color="blue">
-								<b><%=outputMachine%>원
+								<b>
+									<a href="javascript:moneyInfo('m');"><%=outputMachine%>원
+									</a>
 								</b>
 							</font>
 							/
@@ -313,7 +316,8 @@ ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 						</td>
 						<td class="rb center">
 							<font color="blue">
-								<b><%=outputElec%>원
+								<b>
+								<a href="javascript:moneyInfo('e');"><%=outputElec%>원</a>
 								</b>
 							</font>
 							/
@@ -351,26 +355,34 @@ ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 						<th class="rb">요청납기일</th>
 					</tr>
 					<%
-						for(Project p : list) {
+					for (Project p : list) {
 					%>
 					<tr>
-						<td class="center"><%=p.getKekNumber() %></td>
-						<td class="center"><%=p.getProjectType().getName() %></td>
-						<td class="center"><%=p.getDescription() %></td>
-						<td class="center"><%=p.getMak().getName() %> / <%=p.getDetail().getName() %></td>
-						<td class="center"><%=p.getCustomer().getName() %> / <%=p.getInstall().getName() %></td>
-						<td class="center"><%=CommonUtils.getPersistableTime(p.getPDate()) %></td>
-						<td class="center"><%=CommonUtils.getPersistableTime(p.getCustomDate()) %></td>
+						<td class="center"><%=p.getKekNumber()%></td>
+						<td class="center"><%=p.getProjectType().getName()%></td>
+						<td class="center"><%=p.getDescription()%></td>
+						<td class="center"><%=p.getMak().getName()%>
+							/
+							<%=p.getDetail().getName()%></td>
+						<td class="center"><%=p.getCustomer().getName()%>
+							/
+							<%=p.getInstall().getName()%></td>
+						<td class="center"><%=CommonUtils.getPersistableTime(p.getPDate())%></td>
+						<td class="center"><%=CommonUtils.getPersistableTime(p.getCustomDate())%></td>
 					</tr>
 					<%
-						}
-						if(list.size() == 0) {
+					}
+					if (list.size() == 0) {
 					%>
 					<tr>
-						<td class="center" colspan="7"><font color="red"><b>참조 작번이 없습니다.</b></font></td>
+						<td class="center" colspan="7">
+							<font color="red">
+								<b>참조 작번이 없습니다.</b>
+							</font>
+						</td>
 					</tr>
 					<%
-						}
+					}
 					%>
 				</table>
 
@@ -452,7 +464,7 @@ ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 				<iframe style="height: 800px;" src="/Windchill/plm/project/partlistTab?oid=<%=dto.getOid()%>&invoke=e"></iframe>
 			</div>
 			<div id="tabs-6">
-				<iframe style="height: 800px;" src="/Windchill/plm/project/tbomTab?oid=<%=dto.getOid()%>" onload="hide();"></iframe>
+				<iframe style="height: 800px;" src="/Windchill/plm/project/tbomTab?oid=<%=dto.getOid()%>"></iframe>
 			</div>
 			<div id="tabs-7">
 				<iframe style="height: 800px;" src="/Windchill/plm/project/partlistTab?oid=<%=dto.getOid()%>&invoke=a"></iframe>
@@ -481,29 +493,14 @@ ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 				popup(url, 500, 300);
 			}
 
+			function moneyInfo(invoke) {
+				const oid = document.getElementById("oid").value;
+				const url = getCallUrl("/partlist/moneyInfo?oid=" + oid + "&invoke=" + invoke);
+				popup(url);
+			}
+
 			document.addEventListener("DOMContentLoaded", function() {
-				$("#tabs").tabs({
-				// 					activate : function(event, ui) {
-				// 						var tabId = ui.newPanel.prop("id");
-				// 						switch (tabId) {
-				// 						case "tabs-2":
-				// 							parent.parent.openLayer();
-				// 							break;
-				// 						case "tabs-3":
-				// 							parent.parent.openLayer();
-				// 							break;
-				// 						case "tabs-4":
-				// 							parent.parent.openLayer();
-				// 							break;
-				// 						case "tabs-5":
-				// 							parent.parent.openLayer();
-				// 							break;
-				// 						case "tabs-6":
-				// 							parent.parent.openLayer();
-				// 							break;
-				// 						}
-				// 					}
-				})
+				$("#tabs").tabs();
 				parent.parent.closeLayer();
 			})
 		</script>

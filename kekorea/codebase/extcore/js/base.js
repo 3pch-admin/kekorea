@@ -43,6 +43,10 @@ function call(url, params, callBack, methodType) {
 			} else if (status == 404) {
 				alert("에러코드 : " + status + ", 호출 URL : " + url + ", 존재하지 않는 호출 주소 !!");
 			}
+
+			if (opener !== undefined) {
+				closeLayer();
+			}
 		}
 	})
 }
@@ -188,7 +192,6 @@ function finderUser(id) {
 			const url = getCallUrl("/org/keyValue");
 			params.value = value;
 			params.obj = obj;
-			console.log(params);
 			call(url, params, function(data) {
 				callBack({
 					options: data.list
@@ -258,14 +261,4 @@ function toRegister(params, rows) {
 	params.agreeRows = agrees;
 	params.approvalRows = approvals;
 	params.receiveRows = receives;
-}
-
-function download(oid) {
-	const url = getCallUrl("/download");
-	const params = new Object();
-	params.aoid = oid;
-	console.log(params);
-	call(url, params, function(data) {
-		console.log(data);
-	})
 }
