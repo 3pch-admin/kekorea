@@ -17,7 +17,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <%@include file="/extcore/include/highchart.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
@@ -34,9 +34,6 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					<a href="#tabs-1">기본정보</a>
 				</li>
 				<li>
-					<a href="#tabs-2">참조작번</a>
-				</li>
-				<li>
 					<a href="#tabs-3">특이사항</a>
 				</li>
 				<li>
@@ -49,7 +46,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					<a href="#tabs-6">T-BOM</a>
 				</li>
 				<li>
-					<a href="#tabs-7">수배표 통합</a>
+					<a href="#tabs-7">통합 수배표</a>
 				</li>
 				<li>
 					<a href="#tabs-8">CIP</a>
@@ -82,10 +79,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 						<th class="rb">발행일</th>
 						<th class="rb">요구 납기일</th>
 						<td rowspan="4" class="tb-none bb-none" style="width: 30px;">&nbsp;</td>
-						<th rowspan="2">
-							진행률&nbsp;
-							<img src="/Windchill/extcore/images/edit.gif" class="edit" onclick="edit();">
-						</th>
+						<th rowspan="2">진행률</th>
 						<td rowspan="2" class="center"><%=data.getKekProgress()%>%
 						</td>
 					</tr>
@@ -114,7 +108,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 						<td class="center"><%=data.getMak_name()%>
 							/
 							<%=data.getDetail_name()%></td>
-						<td class="indent5" colspan="2"><%=dto.getDescription()%></td>
+						<td class="center" colspan="2"><%=data.getDescription()%></td>
 						<th>전기</th>
 						<td class="center"><%=data.getElecProgress()%>%
 						</td>
@@ -122,11 +116,56 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					<%
 					} else {
 					%>
-
+					<colgroup>
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="140">
+						<col width="30">
+						<col width="140">
+						<col width="140">
+					</colgroup>
+					<tr>
+						<th class="lb rb">KEK 작번</th>
+						<th class="rb">거래처</th>
+						<th class="rb">설치장소</th>
+						<th class="rb">모델</th>
+						<th class="rb">발행일</th>
+						<th class="rb">요구 납기일</th>
+						<td rowspan="4" class="tb-none bb-none" style="width: 30px;">&nbsp;</td>
+						<th rowspan="4">진행률</th>
+						<td rowspan="4" class="center"><%=data.getKekProgress()%>%
+						</td>
+					</tr>
+					<tr>
+						<td class="center"><%=data.getKekNumber()%></td>
+						<td class="center"><%=data.getCustomer_name()%></td>
+						<td class="center"><%=data.getInstall_name()%></td>
+						<td class="center"><%=data.getModel()%></td>
+						<td class="center"><%=data.getPdate_txt()%></td>
+						<td class="center"><%=data.getCustomDate_txt()%></td>
+					</tr>
+					<tr>
+						<th class="lb rb">KE 작번</th>
+						<th class="rb">USER ID</th>
+						<th class="rb">작번 유형</th>
+						<th class="rb">막종 / 막종상세</th>
+						<th class="rb" colspan="2">작업 내용</th>
+					</tr>
+					<tr>
+						<td class="center"><%=data.getKeNumber()%></td>
+						<td class="center"><%=data.getUserId()%></td>
+						<td class="center"><%=data.getProjectType_name()%></td>
+						<td class="center"><%=data.getMak_name()%>
+							/
+							<%=data.getDetail_name()%></td>
+						<td class="indent5" colspan="2"><%=data.getDescription()%></td>
+					</tr>
 					<%
 					}
 					%>
-
 				</table>
 
 
@@ -181,7 +220,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					<tr>
 						<td class="left">
 							<input type="button" value="산출물 등록" title="산출물 등록" class="blue" onclick="create();">
-							<input type="button" value="링크 등록" title="링크 등록" class="orange" onclick="addAfterRow();">
+							<input type="button" value="링크 등록" title="링크 등록" class="orange" onclick="connect();">
 							<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
 						</td>
 					</tr>
@@ -194,6 +233,15 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 						headerText : "산출물 제목",
 						dataType : "string",
 						style : "aui-left",
+						renderer : {
+							type : "LinkRenderer",
+							baseUrl : "javascript",
+							jsCallback : function(rowIndex, columnIndex, value, item) {
+								const oid = item.oid;
+								const url = getCallUrl("/output/view?oid=" + oid);
+								popup(url);
+							}
+						},
 					}, {
 						dataField : "version",
 						headerText : "버전",
@@ -232,8 +280,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 							showStateColumn : true,
 							rowNumHeaderText : "번호",
 							showAutoNoDataMessage : false,
-							selectionMode : "singleRow",
-							rowCheckToRadio : true,
+							selectionMode : "multipleCells",
 						};
 						myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 						AUIGrid.setGridData(myGridID,
@@ -244,62 +291,93 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					function create() {
 						const toid = document.getElementById("oid").value;
 						const poid = document.getElementById("poid").value;
-						const url = getCallUrl("/output/connect?toid=" + toid + "&poid=" + poid);
+						const url = getCallUrl("/output/create?toid=" + toid + "&poid=" + poid);
 						popup(url, 1400, 800);
+					}
+
+					function connect() {
+						const toid = document.getElementById("oid").value;
+						const poid = document.getElementById("poid").value;
+						const url = getCallUrl("/output/connect?toid=" + toid + "&poid=" + poid);
+						popup(url, 1600, 700);
+					}
+
+					function _connect(data, toid, poid, callBack) {
+						const arr = new Array();
+						for (let i = 0; i < data.length; i++) {
+							const item = data[i].item;
+							arr.push(item.oid);
+						}
+						const url = getCallUrl("/output/connect");
+						const params = new Object();
+						params.arr = arr;
+						params.toid = toid;
+						params.poid = poid;
+						call(url, params, function(res) {
+							callBack(res);
+						})
 					}
 
 					function _delete() {
 						const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-						if (checkedItems.length <= 0) {
+						const arr = new Array();
+						if (checkedItems.length === 0) {
 							alert("삭제할 산출물을 선택하세요.");
 							return false;
 						}
-						const item = checkedItems[0].item;
-						const oid = item.oid;
-						const url = getCallUrl("/output/disconnect?oid=" + oid);
+
+						for (let i = 0; i < checkedItems.length; i++) {
+							const item = checkedItems[i].item;
+							const oid = item.oid;
+							arr.push(oid);
+						}
+						const url = getCallUrl("/output/disconnect");
+						const params = new Object();
+						params.arr = arr;
 						if (!confirm("삭제 하시겠습니까?\n산출물과 태스크의 연결관계만 삭제 되어집니다.")) {
 							return false;
 						}
 						parent.parent.openLayer();
-						call(url, null, function(data) {
+						call(url, params, function(data) {
 							alert(data.msg);
 							if (data.result) {
 								document.location.reload();
+							} else {
+								parent.parent.closeLayer();
 							}
-						}, "GET");
+						});
 					}
 				</script>
+			</div>
+
+			<div id="tabs-3">
+				<iframe style="height: 800px;" src="/Windchill/plm/project/issueTab?oid=<%=data.getOid()%>"></iframe>
+			</div>
+			<div id="tabs-4">
+				<iframe style="height: 800px;" src="/Windchill/plm/project/partlistTab?oid=<%=data.getOid()%>&invoke=m"></iframe>
+			</div>
+			<div id="tabs-5">
+				<iframe style="height: 800px;" src="/Windchill/plm/project/partlistTab?oid=<%=data.getOid()%>&invoke=e"></iframe>
+			</div>
+			<div id="tabs-6">
+				<iframe style="height: 800px;" src="/Windchill/plm/project/tbomTab?oid=<%=data.getOid()%>"></iframe>
+			</div>
+			<div id="tabs-7">
+				<iframe style="height: 800px;" src="/Windchill/plm/project/partlistTab?oid=<%=data.getOid()%>&invoke=a"></iframe>
+			</div>
+			<div id="tabs-8">
+				<iframe style="height: 800px;" src="/Windchill/plm/project/cipTab?oid=<%=data.getOid()%>&invoke=a"></iframe>
+			</div>
+			<div id="tabs-9">
+				<iframe style="height: 800px;" src="/Windchill/plm/project/workOrderTab?oid=<%=data.getOid()%>&invoke=a"></iframe>
 			</div>
 		</div>
 
 		<script type="text/javascript">
 			document.addEventListener("DOMContentLoaded", function() {
-				$("#tabs").tabs({
-					heightStyle : "content",
-					active : 0,
-					create : function(event, ui) {
-						const tabId = ui.panel.prop("id");
-						switch (tabId) {
-						case "tabs-1":
-							createAUIGrid(columns);
-							AUIGrid.resize(myGridID);
-							break;
-						}
-					},
-					activate : function(event, ui) {
-						var tabId = ui.newPanel.prop("id");
-						switch (tabId) {
-						case "tabs-1":
-							const isCreated = AUIGrid.isCreated(myGridID);
-							if (isCreated) {
-								AUIGrid.resize(myGridID);
-							} else {
-								createAUIGrid(columns);
-							}
-							break;
-						}
-					}
-				});
+				$("#tabs").tabs();
+				createAUIGrid(columns);
+				AUIGrid.resize(myGridID);
 				parent.parent.closeLayer();
 			})
 

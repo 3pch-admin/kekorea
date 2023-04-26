@@ -75,6 +75,9 @@ public class ProjectDTO {
 	private double outputElecPrice = 0D;
 	private double outputTotalPrice = 0D;
 
+	private String template_oid;
+	private String template_txt;
+
 	public ProjectDTO() {
 
 	}
@@ -193,6 +196,11 @@ public class ProjectDTO {
 		setOutputElecPrice(project.getOutputElecPrice() != null ? project.getOutputElecPrice() : 0D);
 		if (project.getOutputMachinePrice() != null || project.getOutputElecPrice() != null) {
 			setOutputTotalPrice(getOutputMachinePrice() + getOutputElecPrice());
+		}
+
+		if (project.getTemplate() != null) {
+			setTemplate_oid(project.getTemplate().getPersistInfo().getObjectIdentifier().getStringValue());
+			setTemplate_txt(project.getTemplate().getName());
 		}
 	}
 }

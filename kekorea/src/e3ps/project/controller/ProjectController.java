@@ -311,7 +311,7 @@ public class ProjectController extends BaseController {
 		model.addObject("data", data);
 		model.addObject("dto", dto);
 		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-task-normal.jsp");
+		model.setViewName("/extcore/jsp/project/task/project-task-normal.jsp");
 		return model;
 	}
 
@@ -332,7 +332,7 @@ public class ProjectController extends BaseController {
 		model.addObject("data", data);
 		model.addObject("dto", dto);
 		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-task-request.jsp");
+		model.setViewName("/extcore/jsp/project/task/project-task-request.jsp");
 		return model;
 	}
 
@@ -353,7 +353,7 @@ public class ProjectController extends BaseController {
 		model.addObject("data", data);
 		model.addObject("dto", dto);
 		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-task-partlist.jsp");
+		model.setViewName("/extcore/jsp/project/task/project-task-partlist.jsp");
 		return model;
 	}
 
@@ -374,7 +374,7 @@ public class ProjectController extends BaseController {
 		model.addObject("data", data);
 		model.addObject("dto", dto);
 		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-task-tbom.jsp");
+		model.setViewName("/extcore/jsp/project/task/project-task-tbom.jsp");
 		return model;
 	}
 
@@ -395,7 +395,7 @@ public class ProjectController extends BaseController {
 		model.addObject("data", data);
 		model.addObject("dto", dto);
 		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/project-task-step.jsp");
+		model.setViewName("/extcore/jsp/project/task/project-task-step.jsp");
 		return model;
 	}
 
@@ -555,4 +555,60 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
+	@Description(value = "프로젝트 수정 페이지")
+	@GetMapping(value = "/modify")
+	public ModelAndView modify(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Project project = (Project) CommonUtils.getObject(oid);
+		ProjectDTO dto = new ProjectDTO(project);
+		ArrayList<CommonCode> customers = CommonCodeHelper.manager.getArrayCodeList("CUSTOMER");
+		ArrayList<CommonCode> projectTypes = CommonCodeHelper.manager.getArrayCodeList("PROJECT_TYPE");
+		ArrayList<CommonCode> maks = CommonCodeHelper.manager.getArrayCodeList("MAK");
+		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
+		model.addObject("dto", dto);
+		model.addObject("list", list);
+		model.addObject("maks", maks);
+		model.addObject("customers", customers);
+		model.addObject("projectTypes", projectTypes);
+		model.setViewName("popup:/project/project-modify");
+		return model;
+	}
+
+	@Description(value = "프로젝트 수정 함수")
+	@ResponseBody
+	@PostMapping(value = "/modify")
+	public Map<String, Object> modify(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ProjectHelper.service.modify(params);
+			result.put("msg", MODIFY_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+	
+	@Description(value = "프로젝트 태스크 회의록 페이지")
+	@GetMapping(value = "/meeting")
+	public ModelAndView meeting(@RequestParam String oid, @RequestParam String toid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Project project = (Project) CommonUtils.getObject(oid);
+		Task task = (Task) CommonUtils.getObject(toid);
+		ProjectDTO data = new ProjectDTO(project);
+		TaskDTO dto = new TaskDTO(task);
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		JSONArray list = ProjectHelper.manager.jsonAuiMeeting(project);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("project", project);
+		model.addObject("data", data);
+		model.addObject("dto", dto);
+		model.addObject("list", list);
+		model.setViewName("/extcore/jsp/project/task/project-task-meeting.jsp");
+		return model;
+	}
 }

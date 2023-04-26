@@ -310,6 +310,7 @@ public class StandardTemplateService extends StandardManager implements Template
 	@Override
 	public void modify(Map<String, Object> params) throws Exception {
 		String oid = (String) params.get("oid");
+		String description = (String) params.get("description");
 		String pmOid = (String) params.get("pmOid");
 		String subPmOid = (String) params.get("subPmOid");
 		Transaction trs = new Transaction();
@@ -317,11 +318,10 @@ public class StandardTemplateService extends StandardManager implements Template
 			trs.start();
 
 			Template template = (Template) CommonUtils.getObject(oid);
-
+			template.setDescription(description);
 			QuerySpec query = new QuerySpec();
 			int idx = query.appendClassList(TemplateUserLink.class, true);
-			QuerySpecUtils.toEqualsAnd(query, idx, TemplateUserLink.class, "roleAObjectRef.key.id",
-					template.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx, TemplateUserLink.class, "roleAObjectRef.key.id", template);
 			QueryResult result = PersistenceHelper.manager.find(query);
 			while (result.hasMoreElements()) {
 				Object[] obj = (Object[]) result.nextElement();
@@ -342,6 +342,51 @@ public class StandardTemplateService extends StandardManager implements Template
 				link.setUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
 				PersistenceHelper.manager.save(link);
 			}
+
+			PersistenceHelper.manager.modify(template);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void delete(String oid) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Template template = (Template) CommonUtils.getObject(oid);
+
+			// 템플릿 담당자들 삭제
+			QuerySpec query = new QuerySpec();
+			int idx = query.appendClassList(TemplateUserLink.class, true);
+			QuerySpecUtils.toEqualsAnd(query, idx, TemplateUserLink.class, "roleAObjectRef.key.id", template);
+			QueryResult result = PersistenceHelper.manager.find(query);
+			while (result.hasMoreElements()) {
+				Object[] obj = (Object[]) result.nextElement();
+				TemplateUserLink link = (TemplateUserLink) obj[0];
+				PersistenceHelper.manager.delete(link);
+			}
+
+			QuerySpec qs = new QuerySpec();
+			int _idx = qs.appendClassList(Task.class, true);
+			QuerySpecUtils.toEqualsAnd(qs, _idx, Task.class, "templateReference.key.id", template);
+			QueryResult qr = PersistenceHelper.manager.find(qs);
+			while (qr.hasMoreElements()) {
+				Object[] obj = (Object[]) qr.nextElement();
+				Task task = (Task) obj[0];
+				PersistenceHelper.manager.delete(task);
+			}
+
+			PersistenceHelper.manager.delete(template);
 
 			trs.commit();
 			trs = null;

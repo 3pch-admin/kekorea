@@ -25,6 +25,7 @@ import e3ps.doc.meeting.service.MeetingHelper;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.service.RequestDocumentHelper;
+import e3ps.doc.service.DocumentHelper;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.service.EpmHelper;
@@ -37,6 +38,7 @@ import e3ps.project.ProjectUserLink;
 import e3ps.project.dto.ProjectDTO;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputTaskLink;
+import e3ps.project.output.service.OutputHelper;
 import e3ps.project.task.ParentTaskChildTaskLink;
 import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
@@ -1013,7 +1015,7 @@ public class ProjectHelper {
 		int idx = query.appendClassList(Output.class, true); // ... inner join 필요 없을..
 		QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "taskReference.key.id", task);
 		QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "projectReference.key.id", project);
-		QuerySpecUtils.toOrderBy(query, idx, Output.class, Output.CREATE_TIMESTAMP, false);
+		QuerySpecUtils.toOrderBy(query, idx, Output.class, Output.CREATE_TIMESTAMP, true);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -1344,6 +1346,10 @@ public class ProjectHelper {
 			// 도면
 		} else if (per instanceof EPMDocument) {
 			return EpmHelper.manager.jsonAuiProject(oid);
+		} else if(per instanceof Output) {
+			return OutputHelper.manager.jsonAuiProject(oid);
+		} else if(per instanceof WTDocument) {
+			return DocumentHelper.manager.jsonAuiProject(oid);
 		}
 		return new JSONArray();
 	}
@@ -1380,5 +1386,13 @@ public class ProjectHelper {
 			list.add(p);
 		}
 		return list;
+	}
+
+	/**
+	 * 프로젝트 회의록 
+	 */
+	public JSONArray jsonAuiMeeting(Project project) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

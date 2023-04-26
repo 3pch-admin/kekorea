@@ -22,4 +22,9 @@ public interface TemplateService {
 	 */
 	public abstract void modify(Map<String, Object> params) throws Exception;
 
+	/**
+	 * 템플릿 삭제
+	 */
+	public abstract void delete(String oid) throws Exception;
+
 }

@@ -93,7 +93,7 @@ boolean isUpdate = "update".equals(mode);
 				showAutoNoDataMessage : false,
 				enableSorting : false,
 				softRemoveRowMode : false,
-				autoGridHeight : true,
+// 				autoGridHeight : true,
 				<%if (isCreate || isUpdate) {%>
 				showRowCheckColumn : true,
 				showStateColumn : true,

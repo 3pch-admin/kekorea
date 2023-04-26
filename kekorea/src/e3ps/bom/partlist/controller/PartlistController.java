@@ -254,4 +254,15 @@ public class PartlistController extends BaseController {
 		}
 		return result;
 	}
+
+	@Description(value = "프로젝트에서 수배표 정보를 볼때")
+	@GetMapping(value = "/moneyInfo")
+	public ModelAndView moneyInfo(@RequestParam String oid, @RequestParam String invoke) throws Exception {
+		ModelAndView model = new ModelAndView();
+		JSONArray data = PartlistHelper.manager.partlistTab(oid, invoke);
+		model.addObject("invoke", invoke);
+		model.addObject("data", data);
+		model.setViewName("popup:/bom/partlist/partlist-moneyInfo");
+		return model;
+	}
 }

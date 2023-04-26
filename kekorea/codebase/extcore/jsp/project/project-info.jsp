@@ -7,12 +7,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
-<style type="text/css">
-/* .aui-grid-tree-plus-icon { */
-/* 	background: url("/Windchill/extcore/images/task_ready.gif") no-repeat; */
-/* } */
-</style>
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 <input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 <input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
@@ -29,7 +24,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<%
 			if (isAdmin) {
 			%>
-			<input type="button" value="수정" title="수정" onclick="create();">
+			<input type="button" value="수정" title="수정" onclick="modify();">
 			<%
 			}
 			%>
@@ -40,7 +35,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 <table>
 	<colgroup>
-		<col width="350">
+		<col width="450">
 		<col width="*">
 	</colgroup>
 	<tr>
@@ -54,7 +49,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "name",
 					headerText : "태스크명",
 					dataType : "string",
-					width : 150,
 				}, {
 					dataField : "duration",
 					headerText : "기간",
@@ -287,6 +281,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 </table>
 
 <script type="text/javascript">
+	function modify() {
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/project/modify?oid=" + oid);
+		popup(url, 1200, 460);
+	}
+
 	function auiGridSelectionChangeHandler(event) {
 		const dataField = event.primeCell.dataField;
 		const item = event.selectedItems[0].item;
@@ -307,6 +307,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					iframe.src = "/Windchill/plm/project/partlist?oid=" + oid + "&toid=" + item.oid;
 				} else if (name === "T-BOM") {
 					iframe.src = "/Windchill/plm/project/tbom?oid=" + oid + "&toid=" + item.oid;
+				} else if(name === "회의록") {
+					iframe.src = "/Windchill/plm/project/meeting?oid=" + oid + "&toid=" + item.oid;
 				} else {
 					iframe.src = "/Windchill/plm/project/normal?oid=" + oid + "&toid=" + item.oid;
 				}

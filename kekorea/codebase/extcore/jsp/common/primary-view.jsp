@@ -19,7 +19,7 @@ if (primary != null) {
 } else {
 %>
 <font color="red">
-	<b>등록된 첨부파일이 없습니다.</b>
+	<b>등록된 주 첨부파일이 없습니다.</b>
 </font>
 <%
 }

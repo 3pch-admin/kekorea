@@ -16,7 +16,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -57,7 +57,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 				</td>
 				<th>설명</th>
 				<td class="indent5">
-					<input type="text" name="description" id="description" class="width-200">
+					<input type="text" name="content" id="content" class="width-200">
 				</td>
 				<th>KE 작번</th>
 				<td class="indent5">
@@ -350,11 +350,34 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 			function loadGridData() {
 				const url = getCallUrl("/output/list");
 				const params = new Object();
+				const oid = document.getElementById("oid").value;
+				const name = document.getElementById("name").value;
+				const number = document.getElementById("number").value;
+				const content = document.getElementById("content").value;
+				const kekNumber = document.getElementById("kekNumber").value;
+				const keNumber = document.getElementById("keNumber").value;
+				const description = document.getElementById("description").value;
+				const creatorOid = document.getElementById("creatorOid").value;
+				const createdFrom = document.getElementById("createdFrom").value;
+				const createdTo = document.getElementById("createdTo").value;
+				const state = document.getElementById("state").value;
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				const psize = document.getElementById("psize").value;
-				params.latest = true;
+				const type = document.getElementById("type").value;
+				params.oid = oid;
+				params.name = name;
+				params.number = number;
+				params.content = content;
+				params.kekNumber = kekNumber;
+				params.keNumber = keNumber;
+				params.description = description;
+				params.creatorOid = creatorOid;
+				params.createdFrom = createdFrom;
+				params.createdTo = createdTo;
+				params.state = state
+				params.latest = latest;
 				params.psize = psize;
-				params.type = "new";
+				params.type = type;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -367,12 +390,12 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 			}
 
 			function create() {
-				const url = getCallUrl("/document/create");
-				// 				const url = getCallUrl("/doc/create");
+				const url = getCallUrl("/doc/create");
 				popup(url);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("name").focus();
 				const columns = loadColumnLayout("document-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

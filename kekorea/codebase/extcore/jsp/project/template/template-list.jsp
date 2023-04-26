@@ -112,7 +112,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/template/info?oid=" + oid);
-							popup(url, 1200, 630);
+							popup(url, 1400, 630);
 						}
 					},
 					filter : {

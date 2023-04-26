@@ -20,12 +20,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.common.controller.BaseController;
-import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.project.Project;
 import e3ps.project.issue.IssueProjectLink;
 import e3ps.project.issue.beans.IssueDTO;
 import e3ps.project.issue.service.IssueHelper;
+import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -108,6 +108,20 @@ public class IssueController extends BaseController {
 	@GetMapping(value = "/create")
 	public ModelAndView create(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
+		Project project = (Project) CommonUtils.getObject(oid);
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		Map<String, String> map = new HashMap<>();
+		map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+		map.put("projectType_name", project.getProjectType().getName());
+		map.put("customer_name", project.getCustomer().getName());
+		map.put("mak_name", project.getMak().getName());
+		map.put("detail_name", project.getDetail().getName());
+		map.put("install_name", project.getInstall().getName());
+		map.put("kekNumber", project.getKekNumber());
+		map.put("keNumber", project.getKeNumber());
+		map.put("description", project.getDescription());
+		list.add(map); // 기본 선택한 작번
+		model.addObject("list", JSONArray.fromObject(list));
 		model.addObject("oid", oid);
 		model.setViewName("popup:/project/issue/issue-create");
 		return model;
@@ -122,6 +136,23 @@ public class IssueController extends BaseController {
 			IssueHelper.service.create(dto);
 			result.put("result", SUCCESS);
 			result.put("msg", SAVE_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "이슈 삭제")
+	@PostMapping(value = "/delete")
+	@ResponseBody
+	public Map<String, Object> delete(String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			IssueHelper.service.delete(oid);
+			result.put("result", SUCCESS);
+			result.put("msg", DELETE_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);

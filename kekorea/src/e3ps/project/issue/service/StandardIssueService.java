@@ -80,24 +80,6 @@ public class StandardIssueService extends StandardManager implements IssueServic
 	}
 
 	@Override
-	public void delete(HashMap<String, List<IssueDTO>> dataMap) throws Exception {
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			trs.rollback();
-			throw e;
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-	}
-
-	@Override
 	public void save(HashMap<String, List<IssueDTO>> dataMap) throws Exception {
 		List<IssueDTO> removeRows = dataMap.get("removeRows");
 		Transaction trs = new Transaction();
@@ -114,6 +96,34 @@ public class StandardIssueService extends StandardManager implements IssueServic
 				}
 				PersistenceHelper.manager.delete(issue);
 			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void delete(String oid) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Issue issue = (Issue) CommonUtils.getObject(oid);
+
+			QueryResult qr = PersistenceHelper.manager.navigate(issue, "project", IssueProjectLink.class, false);
+			while (qr.hasMoreElements()) {
+				IssueProjectLink link = (IssueProjectLink) qr.nextElement();
+				PersistenceHelper.manager.delete(link);
+			}
+
+			PersistenceHelper.manager.delete(issue);
 
 			trs.commit();
 			trs = null;

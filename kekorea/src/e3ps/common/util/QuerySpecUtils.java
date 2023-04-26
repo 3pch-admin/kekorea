@@ -3,6 +3,7 @@ package e3ps.common.util;
 import java.sql.Timestamp;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import wt.enterprise.RevisionControlled;
@@ -584,6 +585,11 @@ public class QuerySpecUtils {
 			query.appendWhere(sc, new int[] { idx });
 		} else if (value instanceof String[]) {
 			sc = new SearchCondition(ca, SearchCondition.IN, new ArrayExpression((String[]) value));
+			query.appendWhere(sc, new int[] { idx });
+		} else if (value instanceof ArrayList) {
+			ArrayList list = (ArrayList) value;
+			String[] s = (String[]) list.toArray(new String[list.size()]);
+			sc = new SearchCondition(ca, SearchCondition.IN, new ArrayExpression(s));
 			query.appendWhere(sc, new int[] { idx });
 		}
 	}

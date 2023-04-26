@@ -7,7 +7,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 <input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 <input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
@@ -25,7 +25,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			if (isAdmin) {
 			%>
 			<input type="button" value="수정" title="수정" onclick="modify();">
-			<input type="button" value="삭제" title="삭제" class="red" onclick="create();">
+			<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
 			<%
 			}
 			%>
@@ -36,7 +36,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 <table>
 	<colgroup>
-		<col width="350">
+		<col width="450">
 		<col width="*">
 	</colgroup>
 	<tr>
@@ -50,7 +50,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "name",
 					headerText : "태스크명",
 					dataType : "string",
-					width : 150,
 				}, {
 					dataField : "duration",
 					headerText : "기간",
@@ -310,6 +309,24 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		}
 	}
 
+	function _delete() {
+		if (!confirm("삭제 하시겠습니까?")) {
+			return false;
+		}
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/template/delete?oid=" + oid);
+		openLayer();
+		call(url, null, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			} else {
+				closeLayer();
+			}
+		}, "GET");
+	}
+
 	function modify() {
 
 		if (!confirm("수정 하시겠습니까?")) {
@@ -320,11 +337,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		const oid = document.getElementById("oid").value;
 		const pmOid = iframe.contentWindow.document.getElementById("pmOid").value;
 		const subPmOid = iframe.contentWindow.document.getElementById("subPmOid").value;
+		const description = iframe.contentWindow.document.getElementById("description").value;
 		const params = new Object();
 		const url = getCallUrl("/template/modify");
 		params.oid = oid;
 		params.pmOid = pmOid;
 		params.subPmOid = subPmOid;
+		params.description = description;
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
