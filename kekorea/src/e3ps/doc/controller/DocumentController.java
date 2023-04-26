@@ -65,6 +65,23 @@ public class DocumentController extends BaseController {
 		return model;
 	}
 
+	@Description(value = "문서 등록")
+	@ResponseBody
+	@PostMapping(value = "/create")
+	public Map<String, Object> create(@RequestBody DocumentDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			DocumentHelper.service.create(dto);
+			result.put("msg", SAVE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
 	@Description(value = "문서 결재 페이지")
 	@GetMapping(value = "/register")
 	public ModelAndView register() throws Exception {

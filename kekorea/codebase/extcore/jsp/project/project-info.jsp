@@ -25,6 +25,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			if (isAdmin) {
 			%>
 			<input type="button" value="수정" title="수정" onclick="modify();">
+			<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
 			<%
 			}
 			%>
@@ -164,10 +165,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					readyHandler();
 					AUIGrid.bind(myGridID, "selectionChange", auiGridSelectionChangeHandler);
 					AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
-					AUIGrid.bind(myGridID, "beforeInsertRow", auiBeforeInsertRow);
-				}
-
-				function auiBeforeInsertRow(event) {
 				}
 
 				function auiCellEditBegin(event) {
@@ -299,22 +296,42 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			if (item.type == "project") {
 				iframe.src = "/Windchill/plm/project/view?oid=" + oid;
 			} else if (item.type == "task" && !item.isNew) {
-				if (name === "의뢰서") {
-					iframe.src = "/Windchill/plm/project/request?oid=" + oid + "&toid=" + item.oid;
-				} else if (name === "1차_수배" || name === "2차_수배") {
-					iframe.src = "/Windchill/plm/project/step?oid=" + oid + "&toid=" + item.oid;
-				} else if (name === "전기_수배표" || name === "기계_수배표") {
-					iframe.src = "/Windchill/plm/project/partlist?oid=" + oid + "&toid=" + item.oid;
-				} else if (name === "T-BOM") {
-					iframe.src = "/Windchill/plm/project/tbom?oid=" + oid + "&toid=" + item.oid;
-				} else if(name === "회의록") {
-					iframe.src = "/Windchill/plm/project/meeting?oid=" + oid + "&toid=" + item.oid;
-				} else {
-					iframe.src = "/Windchill/plm/project/normal?oid=" + oid + "&toid=" + item.oid;
-				}
+				iframe.src = "/Windchill/plm/project/task?oid=" + oid + "&toid=" + item.oid + "&name=" + name;
+				// 				if (name === "의뢰서") {
+				// 					iframe.src = "/Windchill/plm/project/request?oid=" + oid + "&toid=" + item.oid;
+				// 				} else if (name === "1차_수배" || name === "2차_수배") {
+				// 					iframe.src = "/Windchill/plm/project/step?oid=" + oid + "&toid=" + item.oid;
+				// 				} else if (name === "전기_수배표" || name === "기계_수배표") {
+				// 					iframe.src = "/Windchill/plm/project/partlist?oid=" + oid + "&toid=" + item.oid;
+				// 				} else if (name === "T-BOM") {
+				// 					iframe.src = "/Windchill/plm/project/tbom?oid=" + oid + "&toid=" + item.oid;
+				// 				} else if(name === "회의록") {
+				// 					iframe.src = "/Windchill/plm/project/meeting?oid=" + oid + "&toid=" + item.oid;
+				// 				} else {
+				// 					iframe.src = "/Windchill/plm/project/normal?oid=" + oid + "&toid=" + item.oid;
+				// 				}
 			}
 		}
 	}
+
+	function _delete() {
+		if (!confirm("삭제 하시겠습니까?")) {
+			return false;
+		}
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/project/delete?oid=" + oid);
+		openLayer();
+		call(url, null, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			} else {
+				closeLayer();
+			}
+		}, "GET");
+	}
+
 	document.addEventListener("DOMContentLoaded", function() {
 		createAUIGrid(columns);
 	})

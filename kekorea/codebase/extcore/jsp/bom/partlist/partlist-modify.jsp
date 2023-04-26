@@ -172,8 +172,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			<tr>
 				<th class="req lb">결재</th>
 				<td colspan="5">
-					<jsp:include page="/extcore/include/register-include.jsp">
-						<jsp:param value="<%=dto.getOid()%>" name="oid" />
+					<jsp:include page="/extcore/jsp/common/approval-register.jsp">
+						<jsp:param value="<%=dto.getOid() %>" name="oid" />
+						<jsp:param value="update" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>

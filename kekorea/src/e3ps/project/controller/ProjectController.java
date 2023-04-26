@@ -39,6 +39,7 @@ import e3ps.project.issue.service.IssueHelper;
 import e3ps.project.service.ProjectHelper;
 import e3ps.project.task.Task;
 import e3ps.project.task.dto.TaskDTO;
+import e3ps.project.task.service.TaskHelper;
 import e3ps.project.template.service.TemplateHelper;
 import e3ps.project.variable.ProjectUserTypeVariable;
 import net.sf.json.JSONArray;
@@ -294,111 +295,6 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 태스트 일반 페이지")
-	@GetMapping(value = "/normal")
-	public ModelAndView normal(@RequestParam String oid, @RequestParam String toid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		Project project = (Project) CommonUtils.getObject(oid);
-		Task task = (Task) CommonUtils.getObject(toid);
-		ProjectDTO data = new ProjectDTO(project);
-		TaskDTO dto = new TaskDTO(task);
-		boolean isAdmin = CommonUtils.isAdmin();
-		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		JSONArray list = ProjectHelper.manager.jsonAuiNormal(project, task);
-		model.addObject("sessionUser", sessionUser);
-		model.addObject("isAdmin", isAdmin);
-		model.addObject("project", project);
-		model.addObject("data", data);
-		model.addObject("dto", dto);
-		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/task/project-task-normal.jsp");
-		return model;
-	}
-
-	@Description(value = "프로젝트 태스트 의뢰서 페이지")
-	@GetMapping(value = "/request")
-	public ModelAndView request(@RequestParam String oid, @RequestParam String toid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		Project project = (Project) CommonUtils.getObject(oid);
-		Task task = (Task) CommonUtils.getObject(toid);
-		ProjectDTO data = new ProjectDTO(project);
-		TaskDTO dto = new TaskDTO(task);
-		boolean isAdmin = CommonUtils.isAdmin();
-		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		JSONArray list = ProjectHelper.manager.jsonAuiRequest(project);
-		model.addObject("sessionUser", sessionUser);
-		model.addObject("isAdmin", isAdmin);
-		model.addObject("project", project);
-		model.addObject("data", data);
-		model.addObject("dto", dto);
-		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/task/project-task-request.jsp");
-		return model;
-	}
-
-	@Description(value = "프로젝트 수배표통합 페이지")
-	@GetMapping(value = "/partlist")
-	public ModelAndView partlist(@RequestParam String oid, @RequestParam String toid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		Project project = (Project) CommonUtils.getObject(oid);
-		Task task = (Task) CommonUtils.getObject(toid);
-		ProjectDTO data = new ProjectDTO(project);
-		TaskDTO dto = new TaskDTO(task);
-		boolean isAdmin = CommonUtils.isAdmin();
-		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		JSONArray list = ProjectHelper.manager.jsonAuiPartlist(project, task);
-		model.addObject("sessionUser", sessionUser);
-		model.addObject("isAdmin", isAdmin);
-		model.addObject("project", project);
-		model.addObject("data", data);
-		model.addObject("dto", dto);
-		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/task/project-task-partlist.jsp");
-		return model;
-	}
-
-	@Description(value = "프로젝트 T-BOM 페이지")
-	@GetMapping(value = "/tbom")
-	public ModelAndView tbom(@RequestParam String oid, @RequestParam String toid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		Project project = (Project) CommonUtils.getObject(oid);
-		Task task = (Task) CommonUtils.getObject(toid);
-		ProjectDTO data = new ProjectDTO(project);
-		TaskDTO dto = new TaskDTO(task);
-		boolean isAdmin = CommonUtils.isAdmin();
-		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		JSONArray list = ProjectHelper.manager.jsonAuiTbom(project, task);
-		model.addObject("sessionUser", sessionUser);
-		model.addObject("isAdmin", isAdmin);
-		model.addObject("project", project);
-		model.addObject("data", data);
-		model.addObject("dto", dto);
-		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/task/project-task-tbom.jsp");
-		return model;
-	}
-
-	@Description(value = "프로젝트 수배표(1차, 2차) 페이지")
-	@GetMapping(value = "/step")
-	public ModelAndView step(@RequestParam String oid, @RequestParam String toid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		Project project = (Project) CommonUtils.getObject(oid);
-		Task task = (Task) CommonUtils.getObject(toid);
-		ProjectDTO data = new ProjectDTO(project);
-		TaskDTO dto = new TaskDTO(task);
-		boolean isAdmin = CommonUtils.isAdmin();
-		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		JSONArray list = ProjectHelper.manager.jsonAuiStepPartlist(project, task);
-		model.addObject("sessionUser", sessionUser);
-		model.addObject("isAdmin", isAdmin);
-		model.addObject("project", project);
-		model.addObject("data", data);
-		model.addObject("dto", dto);
-		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/task/project-task-step.jsp");
-		return model;
-	}
-
 	@Description(value = "저장")
 	@PostMapping(value = "/save")
 	@ResponseBody
@@ -590,10 +486,28 @@ public class ProjectController extends BaseController {
 		}
 		return result;
 	}
-	
-	@Description(value = "프로젝트 태스크 회의록 페이지")
-	@GetMapping(value = "/meeting")
-	public ModelAndView meeting(@RequestParam String oid, @RequestParam String toid) throws Exception {
+
+	@Description(value = "프로젝트 삭제 함수")
+	@ResponseBody
+	@PostMapping(value = "/delete")
+	public Map<String, Object> delete(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ProjectHelper.service.delete(oid);
+			result.put("msg", DELETE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "프로젝트 태스크 페이지")
+	@GetMapping(value = "/task")
+	public ModelAndView task(@RequestParam String oid, @RequestParam String toid, @RequestParam String name)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
 		Project project = (Project) CommonUtils.getObject(oid);
 		Task task = (Task) CommonUtils.getObject(toid);
@@ -601,14 +515,14 @@ public class ProjectController extends BaseController {
 		TaskDTO dto = new TaskDTO(task);
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		JSONArray list = ProjectHelper.manager.jsonAuiMeeting(project);
+		int taskType = TaskHelper.manager.getTaskType(name);
+		model.addObject("taskType", taskType);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("project", project);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
-		model.addObject("list", list);
-		model.setViewName("/extcore/jsp/project/task/project-task-meeting.jsp");
+		model.setViewName("/extcore/jsp/project/task/project-task-view.jsp");
 		return model;
 	}
 }

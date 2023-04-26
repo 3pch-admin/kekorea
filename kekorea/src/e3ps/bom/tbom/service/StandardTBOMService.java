@@ -2,6 +2,7 @@ package e3ps.bom.tbom.service;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import e3ps.bom.tbom.TBOMData;
@@ -26,6 +27,7 @@ import wt.clients.folder.FolderTaskLogic;
 import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
+import wt.doc.WTDocument;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.folder.Folder;
@@ -549,5 +551,58 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 				trs.rollback();
 		}
 
+	}
+
+	@Override
+	public Map<String, Object> connect(Map<String, Object> params) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		String poid = (String) params.get("poid");
+		String toid = (String) params.get("toid");
+		ArrayList<String> arr = (ArrayList<String>) params.get("arr");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Task task = (Task) CommonUtils.getObject(toid);
+			Project project = (Project) CommonUtils.getObject(poid);
+			for (String oid : arr) {
+				TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
+
+				QueryResult result = PersistenceHelper.manager.navigate(master, "output", OutputDocumentLink.class);
+				while (result.hasMoreElements()) {
+					Output output = (Output) result.nextElement();
+					Project p = output.getProject();
+
+					if (p.getPersistInfo().getObjectIdentifier().getStringValue().equals(oid)) {
+						map.put("msg",
+								"해당 T-BOM이 작번 : " + p.getKekNumber() + "의 태스크 : " + task.getName() + "에 연결이 되어있습니다.");
+						map.put("exist", true);
+						return map;
+					}
+				}
+
+				Output output = Output.newOutput();
+				output.setName(master.getName());
+				output.setLocation(master.getLocation());
+				output.setTask(task);
+				output.setProject(project);
+				output.setDocument(master);
+				output.setOwnership(CommonUtils.sessionOwner());
+				PersistenceHelper.manager.save(output);
+			}
+
+			map.put("exist", false);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+		return map;
 	}
 }

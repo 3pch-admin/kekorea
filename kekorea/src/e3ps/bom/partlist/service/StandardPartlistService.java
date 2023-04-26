@@ -177,7 +177,7 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				String referDrawing = (String) addRow.get("referDrawing");
 				String classification = (String) addRow.get("classification");
 				String note = (String) addRow.get("note");
-				
+
 				System.out.println("문제 발생 체크 = " + partNo + " 행 = " + sort);
 
 				WTPart part = partCache.get(partNo);
@@ -540,10 +540,9 @@ public class StandardPartlistService extends StandardManager implements Partlist
 
 			master.setTotalPrice(totalPrice);
 			PersistenceHelper.manager.modify(master);
-			
-			
+
 			CommonContentHelper.manager.clear(master);
-			
+
 			for (int i = 0; secondarys != null && i < secondarys.size(); i++) {
 				String cacheId = (String) secondarys.get(i);
 				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
@@ -552,7 +551,6 @@ public class StandardPartlistService extends StandardManager implements Partlist
 				PersistenceHelper.manager.save(applicationData);
 				ContentServerHelper.service.updateContent(master, applicationData, vault.getPath());
 			}
-
 
 			// 결재시작
 			if (approvalRows.size() > 0) {
@@ -572,33 +570,36 @@ public class StandardPartlistService extends StandardManager implements Partlist
 	}
 
 	@Override
-	public void disconnect(String oid) throws Exception {
+	public void disconnect(Map<String, Object> params) throws Exception {
+		ArrayList<String> arr = (ArrayList<String>) params.get("arr");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
+			for (String oid : arr) {
 
-			QuerySpec query = new QuerySpec();
-			int idx = query.appendClassList(PartListMaster.class, true);
-			int idx_link = query.appendClassList(PartListMasterProjectLink.class, true);
-			QuerySpecUtils.toInnerJoin(query, PartListMaster.class, PartListMasterProjectLink.class,
-					WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx, idx_link);
-			QuerySpecUtils.toEqualsAnd(query, idx_link, PartListMasterProjectLink.class, "roleAObjectRef.key.id",
-					master);
-			QueryResult qr = PersistenceHelper.manager.find(query);
-			while (qr.hasMoreElements()) {
-				Object[] obj = (Object[]) qr.nextElement();
-				PartListMasterProjectLink link = (PartListMasterProjectLink) obj[1];
-				PersistenceHelper.manager.delete(link);
+				PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
+
+				QuerySpec query = new QuerySpec();
+				int idx = query.appendClassList(PartListMaster.class, true);
+				int idx_link = query.appendClassList(PartListMasterProjectLink.class, true);
+				QuerySpecUtils.toInnerJoin(query, PartListMaster.class, PartListMasterProjectLink.class,
+						WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx, idx_link);
+				QuerySpecUtils.toEqualsAnd(query, idx_link, PartListMasterProjectLink.class, "roleAObjectRef.key.id",
+						master);
+				QueryResult qr = PersistenceHelper.manager.find(query);
+				while (qr.hasMoreElements()) {
+					Object[] obj = (Object[]) qr.nextElement();
+					PartListMasterProjectLink link = (PartListMasterProjectLink) obj[1];
+					PersistenceHelper.manager.delete(link);
+				}
+
+				QueryResult result = PersistenceHelper.manager.navigate(master, "output", OutputDocumentLink.class);
+				while (result.hasMoreElements()) {
+					Output output = (Output) result.nextElement();
+					PersistenceHelper.manager.delete(output);
+				}
 			}
-
-			QueryResult result = PersistenceHelper.manager.navigate(master, "output", OutputDocumentLink.class);
-			while (result.hasMoreElements()) {
-				Output output = (Output) result.nextElement();
-				PersistenceHelper.manager.delete(output);
-			}
-
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {

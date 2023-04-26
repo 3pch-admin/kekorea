@@ -477,10 +477,6 @@ ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 			</div>
 		</div>
 		<script type="text/javascript">
-			function hide() {
-				// 				parent.parent.closeLayer();
-			}
-
 			function money(money, type) {
 				const oid = document.getElementById("oid").value;
 				const url = getCallUrl("/project/money?oid=" + oid + "&money=" + money + "&type=" + type);

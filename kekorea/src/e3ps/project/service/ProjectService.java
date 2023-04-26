@@ -50,4 +50,9 @@ public interface ProjectService {
 	 * 프로젝트 수정
 	 */
 	public abstract void modify(Map<String, Object> params) throws Exception;
+
+	/**
+	 * 프로젝트 삭제
+	 */
+	public abstract void delete(String oid) throws Exception;
 }

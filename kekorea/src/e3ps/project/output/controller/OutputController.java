@@ -119,7 +119,7 @@ public class OutputController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "산출물 태스크에서 연결 페이지")
+	@Description(value = "산출물 태스크에서 기본산출물 연결 페이지")
 	@GetMapping(value = "/connect")
 	public ModelAndView connect(@RequestParam String poid, @RequestParam String toid) throws Exception {
 		ModelAndView model = new ModelAndView();

@@ -141,6 +141,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 		<script type="text/javascript">
 			document.addEventListener("DOMContentLoaded", function() {
+				parent.closeLayer();
 			})
 		</script>
 	</form>

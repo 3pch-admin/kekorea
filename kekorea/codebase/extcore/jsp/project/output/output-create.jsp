@@ -140,7 +140,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 		const item = event.items[0];
 		const oid = document.getElementById("poid").value;
 		if (item.oid === oid) {
-			alert("선택된 작번은 제거 할 수 없습니다.");
+			alert("기준 작번은 제거 할 수 없습니다.");
 			return false;
 		}
 		return true;

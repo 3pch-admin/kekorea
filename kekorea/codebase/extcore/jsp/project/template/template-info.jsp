@@ -199,14 +199,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 							alert("템플릿과 같은 레벨에 행 추가는 불가능합니다.");
 							return false;
 						}
-						addRow(item);
+						addRow(item, "selectionUp");
 						break;
 					case 1:
 						if (_$depth === 1) {
 							alert("템플릿과 같은 레벨에 행 추가는 불가능합니다.");
 							return false;
 						}
-						addRow(item);
+						addRow(item, "selectionDown");
 						break;
 					case 2:
 						addTreeRow(item);
@@ -250,7 +250,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					})
 				}
 
-				function addRow(item) {
+				function addRow(item, selection) {
 					const parentItem = AUIGrid.getParentItemByRowId(myGridID, item._$uid);
 					const parentRowId = parentItem._$uid;
 					const newItem = new Object();
@@ -260,7 +260,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					newItem.allocate = 0;
 					newItem.duration = 1;
 					newItem.taskType = "NORMAL";
-					AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "last");
+					AUIGrid.addTreeRow(myGridID, newItem, parentRowId, selection);
 				}
 
 				function readyHandler() {
@@ -301,6 +301,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		const oid = document.getElementById("oid").value;
 		const iframe = document.getElementById("view");
 		if (dataField === "name") {
+			openLayer();
 			if (item.type == "template") {
 				iframe.src = "/Windchill/plm/template/view?oid=" + oid;
 			} else if (item.type == "task" && !item.isNew) {

@@ -1,6 +1,7 @@
 package e3ps.doc.dto;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
@@ -27,6 +28,9 @@ public class DocumentDTO {
 	private Timestamp modifiedDate;
 	private String modifiedDate_txt;
 //	private String revise;
+
+	// 변수용
+	private ArrayList<String> primarys = new ArrayList<>();
 
 	public DocumentDTO() {
 

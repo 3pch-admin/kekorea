@@ -6,11 +6,17 @@ import java.util.Date;
 import java.util.Map;
 
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.ContentUtils;
+import e3ps.doc.dto.DocumentDTO;
 import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.service.WorkspaceHelper;
+import wt.clients.folder.FolderTaskLogic;
 import wt.doc.WTDocument;
 import wt.fc.PersistenceHelper;
+import wt.folder.Folder;
+import wt.folder.FolderEntry;
+import wt.folder.FolderHelper;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
 import wt.util.WTException;
@@ -35,7 +41,6 @@ public class StandardDocumentService extends StandardManager implements Document
 		try {
 			trs.start();
 
-			
 			ApprovalContract contract = ApprovalContract.newApprovalContract();
 			contract.setName(name);
 			contract.setDescription(description);
@@ -55,6 +60,57 @@ public class StandardDocumentService extends StandardManager implements Document
 			if (approvalRows.size() > 0) {
 				WorkspaceHelper.service.register(contract, agreeRows, approvalRows, receiveRows);
 			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void create(DocumentDTO dto) throws Exception {
+		String number = dto.getNumber();
+		String name = dto.getName();
+		String description = dto.getDescription();
+		String location = dto.getLocation();
+		Arra
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			WTDocument document = WTDocument.newWTDocument();
+			document.setName(name);
+			document.setNumber(number);
+			document.setDescription(description);
+
+			Folder folder = FolderTaskLogic.getFolder(location, CommonUtils.getPDMLinkProductContainer());
+			FolderHelper.assignLocation((FolderEntry) document, folder);
+
+			document = (WTDocument) PersistenceHelper.manager.save(document);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void delete(String oid) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
 
 			trs.commit();
 			trs = null;

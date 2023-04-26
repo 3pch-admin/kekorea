@@ -173,4 +173,27 @@ public class TaskHelper {
 		}
 		return sort;
 	}
+
+	/**
+	 * 프로젝트 태스크 타입
+	 */
+	public int getTaskType(String name) throws Exception {
+		// 일반 0,
+		if (name.indexOf("의뢰서") > -1) {
+			return 1;
+		} else if (name.indexOf("1차_수배") > -1 || name.indexOf("2차_수배") > -1) {
+			return 2;
+		} else if (name.indexOf("기계_수배표") > -1 || name.indexOf("전기_수배표") > -1) {
+			return 3;
+		} else if (name.indexOf("T-BOM") > -1) {
+			return 4;
+		} else if (name.indexOf("회의록") > -1) {
+			return 5;
+		} else if (name.indexOf("사양체크리스트") > -1) {
+			return 6;
+		} else if (name.indexOf("도면일람표") > -1) {
+			return 7;
+		}
+		return 0;
+	}
 }
