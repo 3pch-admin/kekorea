@@ -338,21 +338,4 @@ public class WorkspaceController extends BaseController {
 		}
 		return result;
 	}
-	
-	@Description(value = "자가 결재 함수")
-	@ResponseBody
-	@PostMapping(value = "/self")
-	public Map<String, Object> self(@RequestBody Map<String, Object> params) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			WorkspaceHelper.service.self(params);
-			result.put("msg", APPROVAL_SUCCESS);
-			result.put("result", SUCCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("result", FAIL);
-			result.put("msg", e.toString());
-		}
-		return result;
-	}
 }

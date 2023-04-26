@@ -23,63 +23,39 @@ boolean isUpdate = "update".equals(mode);
 	<script type="text/javascript">
 		let myGridID7;
 		const columns7 = [ {
-			dataField : "kekNumber",
-			headerText : "KEK 작번",
+			dataField : "dwgNo",
+			headerText : "DWG NO",
 			dataType : "string",
-			width : 100,
-			renderer : {
-				type : "LinkRenderer",
-				baseUrl : "javascript",
-				jsCallback : function(rowIndex, columnIndex, value, item) {
-					const oid = item.oid;
-					const url = getCallUrl("/project/info?oid=" + oid);
-					popup(url);
-				}
-			},
+			width : 250,
 		}, {
-			dataField : "keNumber",
-			headerText : "KE 작번",
+			dataField : "name",
+			headerText : "NAME",
 			dataType : "string",
-			width : 100,
-			renderer : {
-				type : "LinkRenderer",
-				baseUrl : "javascript",
-				jsCallback : function(rowIndex, columnIndex, value, item) {
-					const oid = item.oid;
-					const url = getCallUrl("/project/info?oid=" + oid);
-					popup(url);
-				}
-			},
+			width : 250,
 		}, {
-			dataField : "projectType_name",
-			headerText : "작번유형",
+			dataField : "nameOfParts",
+			headerText : "NAME_OF_PARTS",
+			dataType : "string",
+		}, {
+			dataField : "version",
+			headerText : "버전",
 			dataType : "string",
 			width : 80,
 		}, {
-			dataField : "customer_name",
-			headerText : "거래처",
+			dataField : "state",
+			headerText : "상태",
 			dataType : "string",
-			width : 120,
+			width : 80,
 		}, {
-			dataField : "install_name",
-			headerText : "설치장소",
+			dataField : "creator",
+			headerText : "작성자",
 			dataType : "string",
-			width : 120,
+			width : 100
 		}, {
-			dataField : "mak_name",
-			headerText : "막종",
+			dataField : "createdDate_txt",
+			headerText : "작성일",
 			dataType : "string",
-			width : 120,
-		}, {
-			dataField : "detail_name",
-			headerText : "막종상세",
-			dataType : "string",
-			width : 120,
-		}, {
-			dataField : "description",
-			headerText : "작업 내용",
-			dataType : "string",
-			style : "aui-left",
+			width : 100
 		}, {
 			dataField : "oid",
 			visible : false
@@ -93,7 +69,6 @@ boolean isUpdate = "update".equals(mode);
 				showAutoNoDataMessage : false,
 				enableSorting : false,
 				softRemoveRowMode : false,
-// 				autoGridHeight : true,
 				<%if (isCreate || isUpdate) {%>
 				showRowCheckColumn : true,
 				showStateColumn : true,

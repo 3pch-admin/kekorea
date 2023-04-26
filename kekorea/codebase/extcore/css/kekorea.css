@@ -116,7 +116,7 @@ table.search-table td {
 }
 
 table.search-table input[type='text']:read-only {
-	background-color: #dedede;
+	background-color: #dedede !important;
 }
 
 /** 버튼 테이블 CSS **/
@@ -391,7 +391,7 @@ table.view-table th {
 	background-color: #f2f2f2;
 	height: 30px;
 	border-bottom: 1px solid #a6a6a6;
-/* 	padding-bottom: 4px; */
+	/* 	padding-bottom: 4px; */
 }
 
 table.view-table td {
@@ -458,6 +458,10 @@ a:hover {
 	font-size: 14px;
 	/* 	height: 15px; */
 	padding: 5px;
+}
+
+input[type='text']:read-only {
+	background-color: #dedede !important;
 }
 
 .create-table td input[type='number'], .search-table td input[type='number'] {

@@ -619,8 +619,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 	}
 
 	@Override
-	public void self(Map<String, Object> params) throws Exception {
-		String oid = (String) params.get("oid"); // 객체 OID
+	public void self(String oid) throws Exception {
 		Transaction trs = new Transaction();
 		try {
 			trs.start();

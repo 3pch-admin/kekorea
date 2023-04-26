@@ -673,10 +673,10 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 			function auiCellEditBegin(event) {
 				const item = event.item;
 				const sessionId = document.getElementById("sessionId").value;
-				if (!checker(sessionId, item.creatorId)) {
-					alert("데이터 작성자가 아닙니다.");
-					return false;
-				}
+// 				if (!checker(sessionId, item.creatorId)) {
+// 					alert("데이터 작성자가 아닙니다.");
+// 					return false;
+// 				}
 			}
 
 			function auiCellClickHandler(event) {
@@ -744,7 +744,6 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
-					console.log(data);
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
@@ -790,10 +789,10 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 				const sessionId = document.getElementById("sessionId").value;
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
 					const item = checkedItems[i].item;
-					if (!checker(sessionId, item.creatorId)) {
-						alert("데이터 작성자가 아닙니다.");
-						return false;
-					}
+// 					if (!checker(sessionId, item.creatorId)) {
+// 						alert("데이터 작성자가 아닙니다.");
+// 						return false;
+// 					}
 					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
@@ -909,7 +908,6 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 				params.removeRows = removeRows;
 				params.editRows = editRows;
 				parent.openLayer();
-				console.log(params);
 				call(url, params, function(data) {
 					alert(data.msg);
 					if (data.result) {

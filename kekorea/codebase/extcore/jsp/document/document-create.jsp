@@ -1,13 +1,13 @@
 <%@page import="e3ps.doc.service.DocumentHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!-- AUIGrid -->
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="location" id="location">
 <table class="button-table">
 	<tr>
 		<td class="right">
-			<input type="button" value="등록" title="등록" onclick="create();">
-			<input type="button" value="자가결재" title="자가결재" class="blue">
+			<input type="button" value="등록" title="등록" onclick="create('false');">
+			<input type="button" value="자가결재" title="자가결재" class="blue" onclick="create('false')">
 			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
 	</tr>
@@ -45,12 +45,9 @@
 	<tr>
 		<th class="req lb">관련부품</th>
 		<td colspan="3">
-			<jsp:include page="/extcore/include/part-include.jsp">
+			<jsp:include page="/extcore/jsp/common/part-include.jsp">
 				<jsp:param value="" name="oid" />
 				<jsp:param value="create" name="mode" />
-				<jsp:param value="true" name="multi" />
-				<jsp:param value="" name="obj" />
-				<jsp:param value="150" name="height" />
 			</jsp:include>
 		</td>
 	</tr>
@@ -90,13 +87,15 @@
 		})
 	}
 
-	function create() {
+	function create(isSelf) {
+		
 		if (!confirm("등록 하시겠습니까?")) {
 			return false;
 		}
 
 		const params = new Object();
 		const url = getCallUrl("/doc/create");
+		console.log(params);
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
@@ -111,11 +110,14 @@
 	// jquery 삭제를 해가는 쪽으로 한다..
 	document.addEventListener("DOMContentLoaded", function() {
 		// DOM이 로드된 후 실행할 코드 작성
+		createAUIGrid7(columns7);
 		createAUIGrid8(columns8);
+		AUIGrid.resize(myGridID7);
 		AUIGrid.resize(myGridID8);
 	});
 
 	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID7);
 		AUIGrid.resize(myGridID8);
 	});
 </script>

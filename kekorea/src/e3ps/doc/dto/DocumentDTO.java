@@ -2,6 +2,7 @@ package e3ps.doc.dto;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Map;
 
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
@@ -29,8 +30,23 @@ public class DocumentDTO {
 	private String modifiedDate_txt;
 //	private String revise;
 
-	// 변수용
+	/**
+	 * 첨부파일 변수
+	 */
 	private ArrayList<String> primarys = new ArrayList<>();
+	
+	/**
+	 * 결재 변수
+	 */
+	private ArrayList<Map<String, String>> agreeRows = new ArrayList<>(); // 검토
+	private ArrayList<Map<String, String>> approvalRows = new ArrayList<>(); // 결재
+	private ArrayList<Map<String, String>> receiveRows = new ArrayList<>(); // 수신
+	private boolean isSelf = false;
+	
+	/**
+	 * 부품 변수
+	 */
+	private ArrayList<Map<String, String>> addRows7 = new ArrayList<>();
 
 	public DocumentDTO() {
 
