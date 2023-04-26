@@ -17,6 +17,7 @@ import net.sf.json.JSONArray;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.part.WTPart;
 import wt.query.QuerySpec;
 import wt.services.ServiceFactory;
 
@@ -36,7 +37,7 @@ public class CipHelper {
 		String detail = (String) params.get("detail");
 		String install = (String) params.get("install");
 		String customer = (String) params.get("customer");
-		String creatorOid = (String) params.get("creatorOid");
+		String creatorId = (String) params.get("creatorId");
 		String createdFrom = (String) params.get("createdFrom");
 		String createdTo = (String) params.get("createdTo");
 		String note = (String) params.get("note");
@@ -51,7 +52,9 @@ public class CipHelper {
 		QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.IMPROVEMENT, improvement);
 		QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, Cip.APPLY, apply);
 		QuerySpecUtils.toTimeGreaterAndLess(query, idx, Cip.class, Cip.CREATE_TIMESTAMP, createdFrom, createdTo);
-
+		QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.NOTE, note);
+		QuerySpecUtils.creatorQuery(query, idx, Cip.class, creatorId);
+		
 		if (!StringUtils.isNull(mak)) {
 			CommonCode makCode = (CommonCode) CommonUtils.getObject(mak);
 			QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, "makReference.key.id",
