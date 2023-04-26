@@ -53,7 +53,7 @@ public class CipHelper {
 		QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, Cip.APPLY, apply);
 		QuerySpecUtils.toTimeGreaterAndLess(query, idx, Cip.class, Cip.CREATE_TIMESTAMP, createdFrom, createdTo);
 		QuerySpecUtils.toLikeAnd(query, idx, Cip.class, Cip.NOTE, note);
-		QuerySpecUtils.creatorQuery(query, idx, Cip.class, creatorId);
+		QuerySpecUtils.toCreator(query, idx, Cip.class, creatorId);
 		
 		if (!StringUtils.isNull(mak)) {
 			CommonCode makCode = (CommonCode) CommonUtils.getObject(mak);
@@ -63,7 +63,7 @@ public class CipHelper {
 
 		if (!StringUtils.isNull(detail)) {
 			CommonCode detailCode = (CommonCode) CommonUtils.getObject(detail);
-			QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, "installReference.key.id",
+			QuerySpecUtils.toEqualsAnd(query, idx, Cip.class, "detailReference.key.id",
 					detailCode.getPersistInfo().getObjectIdentifier().getId());
 		}
 
