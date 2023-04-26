@@ -58,10 +58,12 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 				</td>
 				<th>적용/미적용</th>
 				<td class="indent5">
-					<select name="apply" id="apply" class="width-200">
+					<select name="apply" id="apply" class="width-200"> 
 						<option value="">선택</option>
-						<option value="">적용</option>
-						<option value="">미적용</option>
+						<option value="적용완료">적용완료</option>
+						<option value="일부적용">일부적용</option>
+						<option value="미적용">미적용</option>
+						<option value="검토중">검토중</option>
 					</select>
 				</td>
 			</tr>
@@ -107,6 +109,23 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 					<select name="install" id="install" class="width-200">
 						<option value="">선택</option>
 					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>비고</th>
+				<td class="indent5">
+					<input type="text" name="note" id="note" class="width-200">
+				</td>
+				<th>작성자</th>
+				<td class="indent5">
+					<input type="text" name="creator" id="creator"  class="width-200">
+					<input type="hidden" name="creatorOid" id="creatorOid">
+				</td>
+				<th>작성일</th>
+				<td class="indent5" colspan="3">
+					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+					~
+					<input type="text" name="createdTo" id="createdTo" class="width-100">
 				</td>
 			</tr>
 		</table>
@@ -704,6 +723,10 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 				const detail = document.getElementById("detail").value;
 				const customer = document.getElementById("customer").value;
 				const install = document.getElementById("install").value;
+				const creatorId = document.getElementById("creatorOid").value;
+				const createdFrom = document.getElementById("createdFrom").value;
+				const createdTo = document.getElementById("createdTo").value;
+				const note = document.getElementById("note").value;
 				const psize = document.getElementById("psize").value;
 				params.item = item;
 				params.improvements = improvements;
@@ -713,10 +736,13 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 				params.detail = detail;
 				params.customer = customer;
 				params.install = install;
+				params.creatorId = creatorId;
+				params.createdFrom = createdFrom;
+				params.createdTo = createdTo;
+				params.note = note;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
-				console.log(params);
 				call(url, params, function(data) {
 					console.log(data);
 					AUIGrid.removeAjaxLoader(myGridID);
@@ -909,6 +935,8 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+				finderUser("creator");
+				twindate("created");
 				selectbox("apply");
 				$("#mak").bindSelect({
 					onchange : function() {

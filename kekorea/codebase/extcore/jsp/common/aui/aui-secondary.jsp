@@ -1,7 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 String oid = (String) request.getAttribute("oid");
-String method = (String) request.getAttribute("method");
+ String method = (String) request.getAttribute("method");
+ if(method.equals("setSecondary")){
+	 method = "attach"; 
+ }
 %>
 <table class="button-table">
 	<tr>
