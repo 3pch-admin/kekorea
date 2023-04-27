@@ -21,9 +21,13 @@
 	</colgroup>
 	<tr>
 		<th class="req lb">저장위치</th>
-		<td colspan="3" class="indent5">
+		<td class="indent5">
 			<span id="loc"><%=DocumentHelper.DOCUMENT_ROOT%></span>
 			<input type="button" value="폴더선택" title="폴더선택" class="blue" onclick="folder();">
+		</td>
+		<th class="req">도번선택</th>
+		<td class="indent5">
+			<input type="text" name="numberRule" id="numberRule" class="width-300" readonly="readonly">
 		</td>
 	</tr>
 	<tr>
@@ -79,7 +83,7 @@
 	function setNumber(item) {
 		const url = getCallUrl("/doc/setNumber");
 		const params = new Object();
-		params.oid = item.oid;
+		params.loc = item.location;
 		call(url, params, function(data) {
 			document.getElementById("loc").innerHTML = item.location;
 			document.getElementById("location").value = item.location;
@@ -88,14 +92,33 @@
 	}
 
 	function create(isSelf) {
-		
+		const name = document.getElementById("name");
+		const number = document.getElementById("number").value;
+		const description = document.getElementById("description").value;
+		const location = document.getElementById("location").value;
+		const addRows7 = AUIGrid.getAddedRowItems(myGridID7);
+		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
+		if (isNull(name.value)) {
+			alert("문서제목을 입력하세요.");
+			name.focus();
+			return false;
+		}
+
 		if (!confirm("등록 하시겠습니까?")) {
 			return false;
 		}
 
 		const params = new Object();
 		const url = getCallUrl("/doc/create");
+		params.name = name.value;
+		params.number = number;
+		params.isSelf = !!isSelf;
+		params.description = description;
+		params.location = location;
+		params.primarys = toArray("primarys");
+		toRegister(params, addRows8);
 		console.log(params);
+		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
@@ -109,6 +132,7 @@
 
 	// jquery 삭제를 해가는 쪽으로 한다..
 	document.addEventListener("DOMContentLoaded", function() {
+		document.getElementById("name").focus();
 		// DOM이 로드된 후 실행할 코드 작성
 		createAUIGrid7(columns7);
 		createAUIGrid8(columns8);

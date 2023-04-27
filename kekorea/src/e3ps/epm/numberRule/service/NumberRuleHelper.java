@@ -73,8 +73,8 @@ public class NumberRuleHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			NumberRuleMaster rule = (NumberRuleMaster) obj[0];
 			seq1 = rule.getNumber().substring(3, 4);
-			seq2 = df.format(Integer.parseInt(rule.getNumber().substring(4, 9))); // 00001
-			next = seq1 + df.format(Integer.parseInt(rule.getNumber().substring(4, 9)) + 1); // 00001
+			seq2 = df.format(Integer.parseInt(rule.getNumber().substring(4, 8))); // 00001
+			next = seq1 + df.format(Integer.parseInt(rule.getNumber().substring(4, 8)) + 1); // 00001
 			int pos = 0;
 			for (int i = 0; i < alphabet.length; i++) {
 				if (seq1.equals(alphabet[i])) {

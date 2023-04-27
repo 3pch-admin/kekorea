@@ -110,6 +110,7 @@ public class WorkOrderHelper {
 			query.appendCloseParen();
 		}
 		QuerySpecUtils.toOrderBy(query, idx, WorkOrder.class, WorkOrder.CREATE_TIMESTAMP, true);
+		QuerySpecUtils.toOrderBy(query, idx, WorkOrder.class, WorkOrder.NAME, false);
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 

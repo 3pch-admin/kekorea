@@ -12,6 +12,8 @@ public class NumberRuleDTO {
 	private String oid;
 	private String moid;
 	private String name;
+	private int lotNo;
+	private String unitName;
 	private String number;
 	private String businessSector;
 	private String drawingCompany;
@@ -28,7 +30,7 @@ public class NumberRuleDTO {
 	private String modifier;
 	private String modifierId;
 	private String modifiedDate_txt;
-	
+
 	/**
 	 * 변수
 	 */
@@ -43,6 +45,8 @@ public class NumberRuleDTO {
 		setMoid(numberRule.getMaster().getPersistInfo().getObjectIdentifier().getStringValue());
 		setNumber(numberRule.getMaster().getNumber());
 		setName(numberRule.getMaster().getName());
+		setLotNo(numberRule.getMaster().getLotNo());
+		setUnitName(numberRule.getMaster().getUnitName());
 		setBusinessSector(numberRule.getMaster().getSector().getCode());
 		setDrawingCompany(numberRule.getMaster().getCompany().getCode());
 		setClassificationWritingDepartments(numberRule.getMaster().getDepartment().getCode());

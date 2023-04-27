@@ -15,7 +15,7 @@ ArrayList<String> list = (ArrayList<String>) request.getAttribute("list");
 <head>
 <meta charset="UTF-8">
 <title></title>
-<%@include file="/extcore/include/highchart.jsp"%>
+<%@include file="/extcore/jsp/common/highchart.jsp"%>
 </head>
 <body>
 	<div id="container" style="height: 340px;"></div>

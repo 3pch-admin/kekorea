@@ -170,9 +170,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				function auiCellEditBegin(event) {
 					const item = event.item;
 					const type = item.type;
+					const taskType = item.taskType
 					if (type === "project") {
 						return false;
 					}
+
+					if (taskType === "NORMAL" || taskType === "T-BOM") {
+						return false;
+					}
+
 					return true;
 				}
 
@@ -186,14 +192,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 							alert("프로젝트와 같은 레벨에 행 추가는 불가능합니다.");
 							return false;
 						}
-						addRow(item);
+						addRow(item, "selectionUp");
 						break;
 					case 1:
 						if (_$depth === 1) {
 							alert("프로젝트와 같은 레벨에 행 추가는 불가능합니다.");
 							return false;
 						}
-						addRow(item);
+						addRow(item, "selectionDown");
 						break;
 					case 2:
 						addTreeRow(item);
@@ -231,11 +237,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						alert(data.msg);
 						if (data.result) {
 							readyHandler();
+						} else {
+							closeLayer();
 						}
 					})
 				}
 
-				function addRow(item) {
+				function addRow(item, selection) {
 					const parentItem = AUIGrid.getParentItemByRowId(myGridID, item._$uid);
 					const parentRowId = parentItem._$uid;
 					const newItem = new Object();
@@ -244,7 +252,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					newItem.isNew = true;
 					newItem.allocate = 0;
 					newItem.taskType = "NORMAL";
-					AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "last");
+					AUIGrid.addTreeRow(myGridID, newItem, parentRowId, selection);
 				}
 
 				function readyHandler() {

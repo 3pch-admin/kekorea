@@ -54,11 +54,15 @@ public class StandardNumberRuleService extends StandardManager implements Number
 				String businessSector = dto.getBusinessSector();
 				String classificationWritingDepartments = dto.getClassificationWritingDepartments();
 				String size = dto.getSize();
+				int lotNo = dto.getLotNo();
+				String unitName = dto.getUnitName();
 
 				NumberRuleMaster master = NumberRuleMaster.newNumberRuleMaster();
 				master.setOwnership(ownership);
 				master.setName(name);
 				master.setNumber(number);
+				master.setLotNo(lotNo);
+				master.setUnitName(unitName);
 				master.setDocument(
 						NumberRuleCodeHelper.manager.getNumberRuleCode("WRITTEN_DOCUMENT", writtenDocuments));
 				master.setSize(NumberRuleCodeHelper.manager.getNumberRuleCode("SIZE", size));
@@ -103,10 +107,14 @@ public class StandardNumberRuleService extends StandardManager implements Number
 				String classificationWritingDepartments = dto.getClassificationWritingDepartments();
 				String size = dto.getSize();
 				String oid = dto.getOid();
+				int lotNo = dto.getLotNo();
+				String unitName = dto.getUnitName();
 
 				NumberRule numberRule = (NumberRule) CommonUtils.getObject(oid);
 				NumberRuleMaster master = numberRule.getMaster();
 				master.setName(name);
+				master.setLotNo(lotNo);
+				master.setUnitName(unitName);
 				master.setNumber(number);
 				master.setDocument(
 						NumberRuleCodeHelper.manager.getNumberRuleCode("WRITTEN_DOCUMENT", writtenDocuments));

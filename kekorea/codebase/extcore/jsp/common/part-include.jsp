@@ -81,7 +81,7 @@ boolean isUpdate = "update".equals(mode);
 		}
 
 		function insert7() {
-			const url = getCallUrl("/project/popup?method=append&multi=true");
+			const url = getCallUrl("/part/popup?method=append&multi=true");
 			popup(url, 1500, 700);
 		}
 

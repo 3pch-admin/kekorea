@@ -233,12 +233,6 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 		try {
 			trs.start();
 
-			for (Map<String, Object> removeRow : removeRows) {
-				String oid = (String) removeRow.get("oid");
-				Task task = (Task) CommonUtils.getObject(oid);
-				PersistenceHelper.manager.delete(task);
-			}
-
 			String parse = new String(DatatypeConverter.parseBase64Binary(json), "UTF-8");
 			Type listType = new TypeToken<ArrayList<TaskTreeNode>>() {
 			}.getType();
@@ -253,9 +247,14 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				treeSave(project, null, childrens);
 			}
 
-			
+			for (Map<String, Object> removeRow : removeRows) {
+				String oid = (String) removeRow.get("oid");
+				Task task = (Task) CommonUtils.getObject(oid);
+				PersistenceHelper.manager.delete(task);
+			}
+
 			commit(project);
-			
+
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {

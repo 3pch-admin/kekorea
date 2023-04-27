@@ -23,7 +23,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -99,6 +99,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('numberRule-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
+					<input type="button" value="결재" title="결재" class="red" onclick="register();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 				</td>
@@ -135,12 +136,88 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					dataField : "number",
 					headerText : "도면번호",
 					dataType : "string",
-					width : 150,
+					width : 100,
 					editable : false,
 					filter : {
 						showIcon : true,
 						inline : true
 					},
+				}, {
+					dataField : "size",
+					headerText : "사이즈",
+					dataType : "string",
+					width : 80,
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16,
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+						},
+						onClick : function(event) {
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true,
+						autoEasyMode : true,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						list : size,
+						keyField : "key",
+						valueField : "value",
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							let isValid = false;
+							for (let i = 0, len = size.length; i < len; i++) {
+								if (size[i]["value"] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						}
+					},
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
+						for (let i = 0, len = size.length; i < len; i++) {
+							if (size[i]["key"] == value) {
+								retStr = size[i]["value"];
+								break;
+							}
+						}
+						return retStr == "" ? value : retStr;
+					},
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+				}, {
+					dataField : "lotNo",
+					headerText : "LOT",
+					dataType : "numeric",
+					width : 80,
+					formatString : "###0",
+					editRenderer : {
+						type : "InputEditRenderer",
+						onlyNumeric : true,
+						maxlength : 4,
+					},
+					filter : {
+						showIcon : true,
+						inline : true,
+						displayFormatValues : true
+					},
+				}, {
+					dataField : "unitName",
+					headerText : "UNIT NAME",
+					dataType : "string",
+					width : 200,
+				// 					editable : false
 				}, {
 					dataField : "name",
 					headerText : "도번명",
@@ -156,41 +233,6 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					dataType : "string",
 					width : 200,
 					editable : false,
-					// 					renderer : {
-					// 						type : "IconRenderer",
-					// 						iconWidth : 16,
-					// 						iconHeight : 16,
-					// 						iconPosition : "aisleRight",
-					// 						iconTableRef : {
-					// 							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
-					// 						},
-					// 						onClick : function(event) {
-					// 							AUIGrid.openInputer(event.pid);
-					// 						}
-					// 					},
-					// 					editRenderer : {
-					// 						type : "ComboBoxRenderer",
-					// 						autoCompleteMode : true,
-					// 						autoEasyMode : true,
-					// 						matchFromFirst : false,
-					// 						showEditorBtnOver : false,
-					// 						list : businessSector,
-					// 						keyField : "key",
-					// 						valueField : "value",
-					// 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
-					// 							let isValid = false;
-					// 							for (let i = 0, len = businessSector.length; i < len; i++) {
-					// 								if (businessSector[i]["value"] == newValue) {
-					// 									isValid = true;
-					// 									break;
-					// 								}
-					// 							}
-					// 							return {
-					// 								"validate" : isValid,
-					// 								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
-					// 							};
-					// 						}
-					// 					},
 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
 						let retStr = "";
 						for (let i = 0, len = businessSector.length; i < len; i++) {
@@ -211,41 +253,6 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					dataType : "string",
 					width : 150,
 					editable : false,
-					// 					renderer : {
-					// 						type : "IconRenderer",
-					// 						iconWidth : 16,
-					// 						iconHeight : 16,
-					// 						iconPosition : "aisleRight",
-					// 						iconTableRef : {
-					// 							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
-					// 						},
-					// 						onClick : function(event) {
-					// 							AUIGrid.openInputer(event.pid);
-					// 						}
-					// 					},
-					// 					editRenderer : {
-					// 						type : "ComboBoxRenderer",
-					// 						autoCompleteMode : true,
-					// 						autoEasyMode : true,
-					// 						matchFromFirst : false,
-					// 						showEditorBtnOver : false,
-					// 						list : drawingCompany,
-					// 						keyField : "key",
-					// 						valueField : "value",
-					// 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
-					// 							let isValid = false;
-					// 							for (let i = 0, len = drawingCompany.length; i < len; i++) {
-					// 								if (drawingCompany[i]["value"] == newValue) {
-					// 									isValid = true;
-					// 									break;
-					// 								}
-					// 							}
-					// 							return {
-					// 								"validate" : isValid,
-					// 								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
-					// 							};
-					// 						}
-					// 					},
 					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
 						let retStr = "";
 						for (let i = 0, len = drawingCompany.length; i < len; i++) {
@@ -369,64 +376,11 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 						inline : true
 					},
 				}, {
-					dataField : "size",
-					headerText : "사이즈",
-					dataType : "string",
-					width : 80,
-					renderer : {
-						type : "IconRenderer",
-						iconWidth : 16,
-						iconHeight : 16,
-						iconPosition : "aisleRight",
-						iconTableRef : {
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
-						},
-						onClick : function(event) {
-							AUIGrid.openInputer(event.pid);
-						}
-					},
-					editRenderer : {
-						type : "ComboBoxRenderer",
-						autoCompleteMode : true,
-						autoEasyMode : true,
-						matchFromFirst : false,
-						showEditorBtnOver : false,
-						list : size,
-						keyField : "key",
-						valueField : "value",
-						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
-							let isValid = false;
-							for (let i = 0, len = size.length; i < len; i++) {
-								if (size[i]["value"] == newValue) {
-									isValid = true;
-									break;
-								}
-							}
-							return {
-								"validate" : isValid,
-								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
-							};
-						}
-					},
-					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
-						let retStr = "";
-						for (let i = 0, len = size.length; i < len; i++) {
-							if (size[i]["key"] == value) {
-								retStr = size[i]["value"];
-								break;
-							}
-						}
-						return retStr == "" ? value : retStr;
-					},
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
 					dataField : "version",
 					headerText : "버전",
 					dataType : "string",
 					width : 100,
+					editable : false,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -502,10 +456,9 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 						inline : true
 					},
 				}, {
-					dataField : "modifiedDate",
+					dataField : "modifiedDate_txt",
 					headerText : "수정일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
+					dataType : "string",
 					width : 100,
 					filter : {
 						showIcon : true,
@@ -541,11 +494,17 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu();
 				});
-				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
-				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEnd);
+				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBeginHandler);
+				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 			}
 
-			function auiCellEditEnd(event) {
+			function register() {
+				const url = getCallUrl("/numberRule/register");
+				popup(url);
+			}
+
+			function auiCellEditEndHandler(event) {
+				const item = event.item;
 				const rowIndex = event.rowIndex;
 				const dataField = event.dataField;
 				const value = event.value;
@@ -559,13 +518,27 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					const newNumber = "K" + value1 + value;
 					const url = getCallUrl("/numberRule/last?number=" + newNumber);
 					call(url, null, function(data) {
+						console.log(data);
 						const next = data.next;
 						AUIGrid.setCellValue(myGridID, rowIndex, "number", newNumber + next);
 					}, "GET");
 				}
+
+				const lotNo = item.lotNo;
+				if (dataField === "lotNo") {
+					const url = getCallUrl("/erp/getUnitName?lotNo=" + lotNo);
+					call(url, null, function(data) {
+						if (data.result) {
+							const newItem = {
+								unitName : data.unitName,
+							};
+							AUIGrid.updateRow(myGridID, newItem, rowIndex);
+						}
+					}, "GET");
+				}
 			}
 
-			function auiCellEditBegin(event) {
+			function auiCellEditBeginHandler(event) {
 				const dataField = event.dataField;
 				const rowIndex = event.rowIndex;
 				if (dataField === "writtenDocuments") {
@@ -588,12 +561,12 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 
 				for (let i = 0; i < checkedItems.length; i++) {
 					const oid = checkedItems[i].item.oid;
-// 					const latest = checkedItems[i].item.latest;
+					// 					const latest = checkedItems[i].item.latest;
 					const rowIndex = checkedItems[i].rowIndex;
-// 					if (!latest) {
-// 						alert("최신버전이 아닌 도면이 포함되어있습니다.\n" + (rowIndex + 1) + "행 데이터");
-// 						return false;
-// 					}
+					// 					if (!latest) {
+					// 						alert("최신버전이 아닌 도면이 포함되어있습니다.\n" + (rowIndex + 1) + "행 데이터");
+					// 						return false;
+					// 					}
 
 					if (oid === undefined) {
 						alert("신규로 작성한 데이터가 존재합니다.\n" + (rowIndex + 1) + "행 데이터");
@@ -604,7 +577,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 				const p = popup(url, 1600, 550);
 				p.list = checkedItems;
 			}
-			
+
 			function save() {
 				const url = getCallUrl("/numberRule/save");
 				const params = new Object();
@@ -671,7 +644,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 				const item = new Object();
 				item.version = 1;
 				item.drawingCompany = "K";
-// 				item.businessSector = "국제엘렉트릭코리아(주)";
+				// 				item.businessSector = "국제엘렉트릭코리아(주)";
 				item.businessSector = "K";
 				item.number = "K";
 				item.state = "사용";
@@ -683,7 +656,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 				const sessionName = document.getElementById("sessionName").value;
 				exportToExcel("KEK 도번 리스트", "KEK 도번", "KEK 도번 리스트", exceptColumnFields, sessionName);
 			}
-			
+
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("numberRule-list");
 				const contenxtHeader = genColumnHtml(columns);

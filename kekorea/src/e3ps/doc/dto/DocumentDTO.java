@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.IBAUtils;
 import e3ps.common.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +29,7 @@ public class DocumentDTO {
 	private String modifier;
 	private Timestamp modifiedDate;
 	private String modifiedDate_txt;
+	private String numberRule;
 //	private String revise;
 
 	/**
@@ -67,6 +69,7 @@ public class DocumentDTO {
 		setModifiedDate(document.getModifyTimestamp());
 		setModifiedDate_txt(CommonUtils.getPersistableTime(document.getModifyTimestamp()));
 		setDocType(document.getDocType().getDisplay());
+		setNumberRule(IBAUtils.getStringValue(document, "NUMBER_RULE"));
 //		setRevise(CommonUtils.getFullVersion(document));
 	}
 }

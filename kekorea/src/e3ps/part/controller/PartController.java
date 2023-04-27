@@ -1,5 +1,8 @@
 package e3ps.part.controller;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,10 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.DateUtils;
+import e3ps.org.service.OrgHelper;
 import e3ps.part.dto.PartDTO;
 import e3ps.part.service.PartHelper;
+import e3ps.project.template.service.TemplateHelper;
 import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
@@ -64,7 +71,7 @@ public class PartController extends BaseController {
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
-	return result;
+		return result;
 	}
 
 	@Description(value = "부품 일괄 등록 리스트 페이지")
@@ -172,5 +179,19 @@ public class PartController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "부품 추가 페이지")
+	@GetMapping(value = "/popup")
+	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("method", method);
+		model.addObject("multi", Boolean.parseBoolean(multi));
+		model.setViewName("popup:/part/part-popup");
+		return model;
 	}
 }

@@ -146,11 +146,9 @@ public class DocumentController extends BaseController {
 		DocumentDTO dto = new DocumentDTO(document);
 		boolean isAdmin = CommonUtils.isAdmin();
 		JSONArray list = DocumentHelper.manager.history(document.getMaster());
-//		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(document.getMaster());
 		model.addObject("dto", dto);
 		model.addObject("list", list);
 		model.addObject("isAdmin", isAdmin);
-//		model.addObject("history", history);
 		model.setViewName("popup:/document/document-view");
 		return model;
 	}

@@ -15,7 +15,6 @@ import e3ps.doc.dto.DocumentDTO;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputDocumentLink;
-import e3ps.project.output.OutputProjectLink;
 import net.sf.json.JSONArray;
 import wt.clients.folder.FolderTaskLogic;
 import wt.doc.WTDocument;
@@ -168,17 +167,33 @@ public class DocumentHelper {
 		Map<String, Object> map = new HashMap<>();
 		ArrayList<DocumentDTO> list = new ArrayList<>();
 
-		// 검색 변수
 		boolean latest = (boolean) params.get("latest");
-		// 폴더 OID
 		String oid = (String) params.get("oid");
+		String name = (String) params.get("name");
+		String number = (String) params.get("number");
+		String description = (String) params.get("description");
+		String creatorOid = (String) params.get("creatorOid");
+		String state = (String) params.get("state");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTDocument.class, true);
 		int idx_m = query.appendClassList(WTDocumentMaster.class, false);
 
+		query.setAdvancedQueryEnabled(true);
+		query.setDescendantQuery(false);
+
 		QuerySpecUtils.toInnerJoin(query, WTDocument.class, WTDocumentMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
+
+		QuerySpecUtils.toLikeAnd(query, idx, WTDocument.class, WTDocument.NAME, name);
+		QuerySpecUtils.toLikeAnd(query, idx, WTDocument.class, WTDocument.NUMBER, number);
+		QuerySpecUtils.toLikeAnd(query, idx, WTDocument.class, WTDocument.DESCRIPTION, description);
+		QuerySpecUtils.toState(query, idx, WTDocument.class, state);
+		QuerySpecUtils.creatorQuery(query, idx, WTDocument.class, creatorOid);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, WTDocument.class, WTDocument.CREATE_TIMESTAMP, createdFrom,
+				createdTo);
 
 		Folder folder = null;
 		if (!StringUtils.isNull(oid)) {
@@ -188,6 +203,7 @@ public class DocumentHelper {
 		}
 
 		if (folder != null) {
+			System.out.println("folder=" + folder.getLocation());
 			if (query.getConditionCount() > 0) {
 				query.appendAnd();
 			}
@@ -210,7 +226,8 @@ public class DocumentHelper {
 		}
 
 		QuerySpecUtils.toOrderBy(query, idx, WTDocument.class, WTDocument.MODIFY_TIMESTAMP, true);
-		System.out.println(query);
+
+		System.out.println("query=" + query);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -228,15 +245,11 @@ public class DocumentHelper {
 	}
 
 	public String setNumber(Map<String, Object> params) throws Exception {
-		String oid = (String) params.get("oid");
-		Folder folder = (Folder) CommonUtils.getObject(oid);
-		String loc = folder.getLocation();
+		String loc = (String) params.get("loc");
 		String preFix = "KEK";
 
 		String[] aa = loc.split("/");
-		System.out.println("===" + loc);
 		for (String nn : aa) {
-			System.out.println("n=" + nn);
 			if ("공용".equals(nn)) {
 				preFix = "CM";
 				break;

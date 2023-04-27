@@ -31,6 +31,8 @@ import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.numberRule.dto.NumberRuleDTO;
 import e3ps.epm.numberRule.service.NumberRuleHelper;
+import e3ps.org.Department;
+import e3ps.org.service.OrgHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -218,5 +220,14 @@ public class NumberRuleController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+	
+	
+	@Description(value = "도번 결재등록 페이지")
+	@GetMapping(value = "/register")
+	public ModelAndView register() throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("popup:/epm/numberRule/register-popup");
+		return model;
 	}
 }

@@ -1027,6 +1027,13 @@ public class ProjectHelper {
 				map.put("creator", workOrder.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(workOrder.getCreateTimestamp()));
 				map.put("secondary", AUIGridUtils.secondaryTemplate(workOrder));
+			} else if (lcm instanceof TBOMMaster) {
+				TBOMMaster master = (TBOMMaster) lcm;
+				map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("name", master.getName());
+				map.put("creator", master.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+				map.put("secondary", AUIGridUtils.secondaryTemplate(master));
 			}
 			list.add(map);
 		}

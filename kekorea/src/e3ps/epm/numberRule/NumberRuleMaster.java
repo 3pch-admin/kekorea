@@ -21,7 +21,11 @@ import wt.util.WTException;
 
 						columnProperties = @ColumnProperties(columnName = "KekNumber", unique = true)),
 
-				@GeneratedProperty(name = "name", type = String.class, javaDoc = "KEK 도면명", constraints = @PropertyConstraints(required = true))
+				@GeneratedProperty(name = "name", type = String.class, javaDoc = "KEK 도면명", constraints = @PropertyConstraints(required = true)),
+				
+				@GeneratedProperty(name = "lotNo", type = Integer.class, javaDoc = "LOT", constraints = @PropertyConstraints(required = true)),
+
+				@GeneratedProperty(name = "unitName", type = String.class, javaDoc = "UNIT NAME", constraints = @PropertyConstraints(required = true))
 
 		},
 

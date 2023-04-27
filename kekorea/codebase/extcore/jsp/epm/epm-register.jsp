@@ -35,13 +35,13 @@
 			<tr>
 				<th class="req lb">결재 제목</th>
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="AXInput width-700">
+					<input type="text" name="name" id="name" class="width-700">
 				</td>
 			</tr>
 			<tr>
 				<th class="req lb">결재 의견</th>
 				<td class="indent5">
-					<textarea id="description" name="description" rows=""></textarea>
+					<textarea id="description" name="description" rows="5"></textarea>
 				</td>
 			</tr>
 			<tr>
