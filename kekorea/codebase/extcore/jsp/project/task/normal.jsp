@@ -89,7 +89,7 @@
 		const toid = document.getElementById("oid").value;
 		const poid = document.getElementById("poid").value;
 		const url = getCallUrl("/output/create?toid=" + toid + "&poid=" + poid);
-		popup(url, 1400, 800);
+		popup(url, 1600, 800);
 	}
 
 	function connect() {

@@ -9,8 +9,9 @@ import java.util.Map;
 
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.QuerySpecUtils;
+import e3ps.common.util.IBAUtils;
 import e3ps.doc.service.DocumentHelper;
+import e3ps.epm.numberRule.NumberRule;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputDocumentLink;
@@ -29,7 +30,6 @@ import wt.folder.Folder;
 import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
 import wt.pom.Transaction;
-import wt.query.QuerySpec;
 import wt.services.StandardManager;
 import wt.util.WTException;
 
@@ -49,6 +49,7 @@ public class StandardOutputService extends StandardManager implements OutputServ
 		int progress = dto.getProgress();
 		String toid = dto.getToid();
 		ArrayList<Map<String, String>> addRows9 = dto.getAddRows9();
+		ArrayList<Map<String, Object>> addRows11 = dto.getAddRows11();
 		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
 		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
 		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
@@ -68,6 +69,16 @@ public class StandardOutputService extends StandardManager implements OutputServ
 			Folder folder = FolderHelper.service.getFolder(location, CommonUtils.getPDMLinkProductContainer());
 			FolderHelper.assignLocation((FolderEntry) document, folder);
 			document = (WTDocument) PersistenceHelper.manager.save(document);
+
+			// 도번 추가
+			for (Map<String, Object> addRow11 : addRows11) {
+				String oid = (String) addRow11.get("oid");
+				NumberRule numberRule = (NumberRule) CommonUtils.getObject(oid);
+				numberRule.setPersist(document);
+				PersistenceHelper.manager.modify(numberRule);
+				IBAUtils.createIBA(document, "s", "NUMBER_RULE", numberRule.getMaster().getNumber());
+				IBAUtils.createIBA(document, "s", "NUMBER_RULE_VERSION", String.valueOf(numberRule.getVersion()));
+			}
 
 			for (int i = 0; i < primarys.size(); i++) {
 				String cacheId = (String) primarys.get(i);
@@ -179,7 +190,7 @@ public class StandardOutputService extends StandardManager implements OutputServ
 			}
 
 			map.put("exist", false);
-			
+
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
@@ -232,6 +243,44 @@ public class StandardOutputService extends StandardManager implements OutputServ
 				Output output = (Output) CommonUtils.getObject(oid);
 				PersistenceHelper.manager.delete(output);
 			}
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+
+	}
+
+	@Override
+	public void modify(OutputDTO dto) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+
+	}
+
+	@Override
+	public void revise(OutputDTO dto) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {

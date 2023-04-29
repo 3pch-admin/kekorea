@@ -17,6 +17,9 @@ import org.springframework.web.servlet.ModelAndView;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.StringUtils;
+import e3ps.doc.dto.DocumentDTO;
+import e3ps.doc.service.DocumentHelper;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
 import e3ps.project.output.dto.OutputDTO;
@@ -24,6 +27,7 @@ import e3ps.project.output.service.OutputHelper;
 import e3ps.project.task.Task;
 import net.sf.json.JSONArray;
 import wt.doc.WTDocument;
+import wt.fc.Persistable;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -77,27 +81,32 @@ public class OutputController extends BaseController {
 
 	@Description(value = "산출물 태스크에서 등록 페이지")
 	@GetMapping(value = "/create")
-	public ModelAndView create(@RequestParam String poid, @RequestParam String toid) throws Exception {
+	public ModelAndView create(@RequestParam(required = false) String poid, @RequestParam(required = false) String toid)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
-		Project project = (Project) CommonUtils.getObject(poid);
-		ArrayList<Map<String, String>> list = new ArrayList<>();
-		Map<String, String> map = new HashMap<>();
-		map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
-		map.put("projectType_name", project.getProjectType().getName());
-		map.put("customer_name", project.getCustomer().getName());
-		map.put("mak_name", project.getMak().getName());
-		map.put("detail_name", project.getDetail().getName());
-		map.put("install_name", project.getInstall().getName());
-		map.put("kekNumber", project.getKekNumber());
-		map.put("keNumber", project.getKeNumber());
-		map.put("description", project.getDescription());
-		list.add(map); // 기본 선택한 작번
+		if (!StringUtils.isNull(poid)) {
+			Project project = (Project) CommonUtils.getObject(poid);
+			ArrayList<Map<String, String>> list = new ArrayList<>();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("projectType_name", project.getProjectType().getName());
+			map.put("customer_name", project.getCustomer().getName());
+			map.put("mak_name", project.getMak().getName());
+			map.put("detail_name", project.getDetail().getName());
+			map.put("install_name", project.getInstall().getName());
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("description", project.getDescription());
+			list.add(map); // 기본 선택한 작번
+			model.addObject("poid", poid);
+			model.addObject("list", JSONArray.fromObject(list));
+		}
 
-		Task task = (Task) CommonUtils.getObject(toid);
-		model.addObject("location", "/Default/프로젝트/" + task.getName());
-		model.addObject("toid", toid);
-		model.addObject("poid", poid);
-		model.addObject("list", JSONArray.fromObject(list));
+		if (!StringUtils.isNull(toid)) {
+			Task task = (Task) CommonUtils.getObject(toid);
+			model.addObject("location", "/Default/프로젝트/" + task.getName());
+			model.addObject("toid", toid);
+		}
 		model.setViewName("popup:/project/output/output-create");
 		return model;
 	}
@@ -165,8 +174,21 @@ public class OutputController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		Output output = (Output) CommonUtils.getObject(oid);
-		OutputDTO dto = new OutputDTO((WTDocument) output.getDocument());
+		Persistable per = CommonUtils.getObject(oid);
+		OutputDTO dto = null;
+		JSONArray versionHistory = null;
+
+		if (per instanceof Output) {
+			Output output = (Output) per;
+			dto = new OutputDTO((WTDocument) output.getDocument());
+			versionHistory = DocumentHelper.manager.versionHistory((WTDocument) output.getDocument());
+		} else if (per instanceof WTDocument) {
+			WTDocument doc = (WTDocument) per;
+			dto = new OutputDTO(doc);
+			versionHistory = DocumentHelper.manager.versionHistory(doc);
+		}
+
+		model.addObject("versionHistory", versionHistory);
 		model.addObject("dto", dto);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
@@ -189,5 +211,28 @@ public class OutputController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "산출물 수정 및 개정")
+	@GetMapping(value = "/update")
+	public ModelAndView update(@RequestParam String oid, @RequestParam String mode) throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		Persistable per = CommonUtils.getObject(oid);
+		OutputDTO dto = null;
+		if (per instanceof Output) {
+			Output output = (Output) per;
+			dto = new OutputDTO((WTDocument) output.getDocument());
+		} else if (per instanceof WTDocument) {
+			WTDocument doc = (WTDocument) per;
+			dto = new OutputDTO(doc);
+		}
+		model.addObject("dto", dto);
+		model.addObject("mode", mode);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.setViewName("popup:/project/output/output-update");
+		return model;
 	}
 }

@@ -1,3 +1,4 @@
+<%@page import="e3ps.project.output.service.OutputHelper"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="java.util.HashMap"%>
@@ -35,10 +36,17 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 <table class="create-table">
 	<colgroup>
 		<col width="150">
-		<col width="500">
+		<col width="600">
 		<col width="150">
-		<col width="500">
+		<col width="600">
 	</colgroup>
+	<tr>
+		<th class="req lb">저장위치</th>
+		<td class="indent5" colspan="3">
+			<span id="loc"><%=OutputHelper.OUTPUT_NEW_ROOT%></span>
+			<input type="button" value="폴더선택" title="폴더선택" class="blue" onclick="folder();">
+		</td>
+	</tr>
 	<tr>
 		<th class="req lb">산출물 제목</th>
 		<td class="indent5">
@@ -49,6 +57,15 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 			<input type="number" name="progress" id="progress" class="width-300" value="0" maxlength="3">
 		</td>
 	</tr>
+	<tr>
+		<th class="req lb">도번</th>
+		<td colspan="3">
+			<jsp:include page="/extcore/jsp/common/numberRule-include.jsp">
+				<jsp:param value="" name="oid" />
+				<jsp:param value="create" name="mode" />
+			</jsp:include>
+		</td>
+	</tr>	
 	<tr>
 		<th class="req lb">KEK 작번</th>
 		<td colspan="5">
@@ -83,6 +100,23 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 	</tr>
 </table>
 <script type="text/javascript">
+	function folder() {
+		const location = decodeURIComponent("/Default/프로젝트");
+		const url = getCallUrl("/folder?location=" + location + "&container=product&method=setNumber&multi=false");
+		popup(url, 500, 600);
+	}
+	
+	function setNumber(item) {
+		const url = getCallUrl("/doc/setNumber");
+		const params = new Object();
+		params.loc = item.location;
+		call(url, params, function(data) {
+			document.getElementById("loc").innerHTML = item.location;
+			document.getElementById("location").value = item.location;
+			document.getElementById("number").value = data.number;
+		})
+	}
+
 	function create() {
 		const params = new Object();
 		const url = getCallUrl("/output/create");
@@ -90,6 +124,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 		const progress = document.getElementById("progress").value;
 		const description = document.getElementById("description").value;
 		const addRows9 = AUIGrid.getGridData(myGridID9);
+		const addRows11 = AUIGrid.getGridData(myGridID11);
 		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
 		const toid = document.getElementById("toid").value;
 		const poid = document.getElementById("poid").value;
@@ -119,6 +154,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 		params.description = description;
 		params.progress = Number(progress);
 		params.addRows9 = addRows9
+		params.addRows11 = addRows11;
 		params.primarys = toArray("primarys");
 		params.location = location;
 		params.toid = toid;
@@ -147,8 +183,10 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
+		createAUIGrid11(columns11);
 		createAUIGrid9(columns9);
 		createAUIGrid8(columns8);
+		AUIGrid.resize(myGridID11);
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
 		AUIGrid.addRow(myGridID9, <%=list%>);
@@ -157,6 +195,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 	})
 
 	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID11);
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
 	});

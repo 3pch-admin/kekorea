@@ -14,6 +14,7 @@
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 OutputDTO dto = (OutputDTO) request.getAttribute("dto");
+JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="oid" value="<%=dto.getOid()%>">
@@ -26,8 +27,16 @@ OutputDTO dto = (OutputDTO) request.getAttribute("dto");
 			</div>
 		</td>
 		<td class="right">
+			<input type="button" value="개정" title="개정" class="blue" onclick="revise();">
 			<input type="button" value="수정" title="수정" onclick="modify();">
-			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
+			<%
+			if (isAdmin) {
+			%>
+			<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
+			<%
+			}
+			%>
+			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
 	</tr>
 </table>
@@ -78,7 +87,22 @@ OutputDTO dto = (OutputDTO) request.getAttribute("dto");
 			</tr>
 			<tr>
 				<th class="lb">저장위치</th>
-				<td class="indent5" colspan="3"><%=dto.getLocation()%></td>
+				<td class="indent5"><%=dto.getLocation()%></td>
+				<th>도번</th>
+				<td class="indent5">
+				<%
+					if(!StringUtils.isNull(dto.getNumberRule())) {
+				%>
+				<%=dto.getNumberRule()%>
+					[
+					<font color="red">
+						<b><%=dto.getNumberRuleVersion()%></b>
+					</font>
+					]
+					<%
+					}
+					%>
+				</td>
 			</tr>
 			<tr>
 				<th class="req lb">KEK 작번</th>
@@ -113,6 +137,84 @@ OutputDTO dto = (OutputDTO) request.getAttribute("dto");
 			</tr>
 		</table>
 	</div>
+	<div id="tabs-2">
+		<!-- 버전이력 쭉 쌓이게 autoGrid 설정 true -->
+		<div id="grid_wrap" style="height: 350px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+		<script type="text/javascript">
+			let myGridID;
+			const columns = [ {
+				dataField : "name",
+				headerText : "산출물 제목",
+				dataType : "string",
+				style : "aui-left",
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const url = getCallUrl("/output/view?oid=" + oid);
+						popup(url, 1600, 800);
+					}
+				},				
+			}, {
+				dataField : "version",
+				headerText : "버전",
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "creator",
+				headerText : "작성자",
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "createdDate_txt",
+				headerText : "거래처",
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "modifier",
+				headerText : "수정자",
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "modifiedDate_txt",
+				headerText : "수정일",
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "primary",
+				headerText : "주 첨부파일",
+				dataType : "string",
+				width : 100,
+				renderer : {
+					type : "TemplateRenderer"
+				}
+			}, {
+				dataField : "secondary",
+				headerText : "첨부파일",
+				dataType : "string",
+				width : 150,
+				renderer : {
+					type : "TemplateRenderer"
+				}
+			}, ]
+
+			function createAUIGrid(columnLayout) {
+				const props = {
+					headerHeight : 30,
+					showRowNumColumn : true,
+					rowNumHeaderText : "번호",
+					showAutoNoDataMessage : false,
+					softRemoveRowMode : false,
+					autoGridHeight : true,
+				}
+				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+				AUIGrid.setGridData(myGridID,
+		<%=versionHistory%>
+			);
+			}
+		</script>
+	</div>
 	<div id="tabs-3">
 		<!-- 결재이력 -->
 		<jsp:include page="/extcore/jsp/common/approval-history.jsp">
@@ -121,10 +223,24 @@ OutputDTO dto = (OutputDTO) request.getAttribute("dto");
 	</div>
 </div>
 <script type="text/javascript">
-	function modify() {
+	function update(mode) {
 		const oid = document.getElementById("oid").value;
-		const url = getCallUrl("/output/modify?oid=" + oid);
+		const url = getCallUrl("/output/update?oid=" + oid + "&mode="+mode);
 		document.location.href = url;
+	}
+	
+	function _delete() {
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/doc/delete?oid=" + oid);
+		call(url, null, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			} else {
+				closeLayer();
+			}
+		}, "GET");
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
@@ -142,11 +258,11 @@ OutputDTO dto = (OutputDTO) request.getAttribute("dto");
 					}
 					break;
 				case "tabs-2":
-					const isCreated_ = AUIGrid.isCreated(myGridID_);
-					if (isCreated_) {
-						AUIGrid.resize(myGridID_);
+					const isCreated = AUIGrid.isCreated(myGridID);
+					if (isCreated) {
+						AUIGrid.resize(myGridID);
 					} else {
-						createAUIGrid_(columns_);
+						createAUIGrid(columns);
 					}
 					break;
 				case "tabs-3":
@@ -161,13 +277,16 @@ OutputDTO dto = (OutputDTO) request.getAttribute("dto");
 			}
 		});
 		createAUIGrid9(columns9);
+		createAUIGrid(columns);
 		createAUIGrid100(columns100);
 		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID100);
 	})
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID9);
+		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID100);
 	});
 </script>

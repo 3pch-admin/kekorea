@@ -15,6 +15,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 <input type="hidden" name="sessionid" id="sessionid">
 <input type="hidden" name="curPage" id="curPage">
+<input type="hidden" name="oid" id="oid">
+
 <table class="search-table">
 	<colgroup>
 		<col width="130">
@@ -29,8 +31,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	<tr>
 		<th>부품 분류</th>
 		<td colspan="7" class="indent5">
-			<input type="hidden" name="location" value="">
-			<span id="location">defaultttttttt</span>
+			<input type="hidden" name="location" id="location" value="<%=PartHelper.DEFAULT_ROOT%>">
+			<span id="locationText"><%=PartHelper.DEFAULT_ROOT%></span>
 		</td>
 	</tr>
 	<tr>
@@ -344,17 +346,17 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		const props = {
 			headerHeight : 30,
 			showRowNumColumn : true,
-			showStateColumn : true,
 			rowNumHeaderText : "번호",
 			showAutoNoDataMessage : false,
 			enableFilter : true,
-			selectionMode : "singleRow",
+			selectionMode : "multipleCells",
 			enableMovingColumn : true,
 			showInlineFilter : true,
 			useContextMenu : true,
 			enableRightDownFocus : true,
 			filterLayerWidth : 320,
 			filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+			showRowCheckColumn : true,
 		};
 
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
@@ -371,6 +373,22 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		});
 	}
 
+	function <%=method%>	() {
+		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+		if (checkedItems.length == 0) {
+			alert("추가할 부품을 선택하세요.");
+			return false;
+		}
+		openLayer();
+		opener.<%=method%>(checkedItems, function(result) {
+			if (result) {
+				setTimeout(function() {
+					closeLayer();
+				}, 500);
+			}
+		});
+	}
+	
 	function loadGridData() {
 		const params = new Object();
 		const url = getCallUrl("/part/list");

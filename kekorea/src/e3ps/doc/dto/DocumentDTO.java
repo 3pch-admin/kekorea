@@ -30,25 +30,31 @@ public class DocumentDTO {
 	private Timestamp modifiedDate;
 	private String modifiedDate_txt;
 	private String numberRule;
+	private String numberRuleVersion;
 //	private String revise;
 
 	/**
 	 * 첨부파일 변수
 	 */
 	private ArrayList<String> primarys = new ArrayList<>();
-	
+
 	/**
 	 * 결재 변수
 	 */
 	private ArrayList<Map<String, String>> agreeRows = new ArrayList<>(); // 검토
 	private ArrayList<Map<String, String>> approvalRows = new ArrayList<>(); // 결재
 	private ArrayList<Map<String, String>> receiveRows = new ArrayList<>(); // 수신
-	private boolean isSelf = false;
-	
+	private boolean self;
+
 	/**
 	 * 부품 변수
 	 */
 	private ArrayList<Map<String, String>> addRows7 = new ArrayList<>();
+	
+	/**
+	 * 도번 변수
+	 */
+	private ArrayList<Map<String, Object>> addRows11 = new ArrayList<>();
 
 	public DocumentDTO() {
 
@@ -70,6 +76,7 @@ public class DocumentDTO {
 		setModifiedDate_txt(CommonUtils.getPersistableTime(document.getModifyTimestamp()));
 		setDocType(document.getDocType().getDisplay());
 		setNumberRule(IBAUtils.getStringValue(document, "NUMBER_RULE"));
+		setNumberRuleVersion(IBAUtils.getStringValue(document, "NUMBER_RULE_VERSION"));
 //		setRevise(CommonUtils.getFullVersion(document));
 	}
 }

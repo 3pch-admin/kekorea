@@ -173,7 +173,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/document/view?oid=" + oid);
+							const url = getCallUrl("/doc/view?oid=" + oid);
 							popup(url, 1600, 800);
 						}
 					},
@@ -197,15 +197,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataType : "string",
 					width : 250,
 					style : "aui-left",
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "docType",
-					headerText : "문서타입",
-					dataType : "string",
-					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -296,7 +287,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				loadGridData();
+// 				loadGridData();
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
@@ -342,8 +333,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function create() {
 				const url = getCallUrl("/doc/create");
-				// 				const url = getCallUrl("/doc/create");
-				popup(url);
+				popup(url, 1600, 800);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {

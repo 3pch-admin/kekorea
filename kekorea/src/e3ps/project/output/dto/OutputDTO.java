@@ -6,6 +6,7 @@ import java.util.Map;
 
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.IBAUtils;
 import e3ps.common.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,8 +31,11 @@ public class OutputDTO {
 	private Timestamp modifiedDate;
 	private String modifiedDate_txt;
 	private String primary;
+	private String numberRule;
+	private String numberRuleVersion;
 	// 변수담기용
 	private ArrayList<Map<String, String>> addRows9 = new ArrayList<>(); // 작번
+	private ArrayList<Map<String, Object>> addRows11 = new ArrayList<>(); // 도번
 	private ArrayList<Map<String, String>> agreeRows = new ArrayList<>(); // 검토
 	private ArrayList<Map<String, String>> approvalRows = new ArrayList<>(); // 결재
 	private ArrayList<Map<String, String>> receiveRows = new ArrayList<>(); // 수신
@@ -44,7 +48,7 @@ public class OutputDTO {
 	public OutputDTO() {
 
 	}
-	
+
 	public OutputDTO(WTDocument output) throws Exception {
 		setOid(output.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(output.getName());
@@ -61,5 +65,7 @@ public class OutputDTO {
 		setModifiedDate_txt(CommonUtils.getPersistableTime(output.getModifyTimestamp()));
 		setDocType(output.getDocType().getDisplay());
 		setPrimary(AUIGridUtils.primaryTemplate(output));
+		setNumberRule(IBAUtils.getStringValue(output, "NUMBER_RULE"));
+		setNumberRuleVersion(IBAUtils.getStringValue(output, "NUMBER_RULE_VERSION"));
 	}
 }

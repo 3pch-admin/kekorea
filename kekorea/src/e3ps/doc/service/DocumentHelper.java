@@ -7,10 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import e3ps.bom.partlist.PartListMaster;
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.doc.dto.DocumentDTO;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
@@ -24,6 +27,7 @@ import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.folder.Folder;
 import wt.folder.IteratedFolderMemberLink;
+import wt.part.WTPart;
 import wt.query.ClassAttribute;
 import wt.query.OrderBy;
 import wt.query.QuerySpec;
@@ -31,6 +35,7 @@ import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
 import wt.vc.Mastered;
+import wt.vc.VersionControlHelper;
 
 public class DocumentHelper {
 
@@ -203,7 +208,6 @@ public class DocumentHelper {
 		}
 
 		if (folder != null) {
-			System.out.println("folder=" + folder.getLocation());
 			if (query.getConditionCount() > 0) {
 				query.appendAnd();
 			}
@@ -227,8 +231,6 @@ public class DocumentHelper {
 
 		QuerySpecUtils.toOrderBy(query, idx, WTDocument.class, WTDocument.MODIFY_TIMESTAMP, true);
 
-		System.out.println("query=" + query);
-
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {
@@ -244,6 +246,9 @@ public class DocumentHelper {
 		return map;
 	}
 
+	/**
+	 * 문서 번호 채번
+	 */
 	public String setNumber(Map<String, Object> params) throws Exception {
 		String loc = (String) params.get("loc");
 		String preFix = "KEK";
@@ -295,20 +300,25 @@ public class DocumentHelper {
 		return number;
 	}
 
-	public JSONArray history(Mastered master) throws Exception {
-
-		ArrayList<DocumentDTO> list = new ArrayList<>();
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(WTDocument.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, WTDocument.class, "masterReference.key.id",
-				master.getPersistInfo().getObjectIdentifier().getId());
-//		QuerySpecUtils.toOrderBy(query, idx, WTDocument.class, CommonUtils.getFullVersion(null), true);
-		QueryResult result = PersistenceHelper.manager.find(query);
+	/**
+	 * 문서 버전 이력
+	 */
+	public JSONArray versionHistory(WTDocument document) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		QueryResult result = VersionControlHelper.service.allIterationsOf(document.getMaster());
 		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			WTDocument document = (WTDocument) obj[0];
-			DocumentDTO dto = new DocumentDTO(document);
-			list.add(dto);
+			Map<String, Object> map = new HashMap<>();
+			WTDocument dd = (WTDocument) result.nextElement();
+			map.put("oid", dd.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", dd.getName());
+			map.put("version", CommonUtils.getFullVersion(dd));
+			map.put("creator", dd.getCreatorFullName());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(dd.getCreateTimestamp()));
+			map.put("modifier", dd.getModifierName());
+			map.put("modifiedDate_txt", dd.getModifierFullName());
+			map.put("primary", AUIGridUtils.primaryTemplate(dd));
+			map.put("secondary", AUIGridUtils.secondaryTemplate(dd));
+			list.add(map);
 		}
 		return JSONArray.fromObject(list);
 	}
@@ -333,6 +343,41 @@ public class DocumentHelper {
 			map.put("kekNumber", project.getKekNumber());
 			map.put("keNumber", project.getKeNumber());
 			map.put("description", project.getDescription());
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 문서와 연결된 부품
+	 */
+	public JSONArray jsonAuiPart(String oid) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		WTDocument document = (WTDocument) CommonUtils.getObject(oid);
+
+//		QuerySpec query = new QuerySpec();
+//		int idx = query.appendClassList(WTDocumentWTPartLink.class, true);
+//		int idx_d = query.appendClassList(WTDocument.class, false);
+//
+//		query.setAdvancedQueryEnabled(true);
+//		query.setDescendantQuery(false);
+//
+//		QuerySpecUtils.toInnerJoin(query, WTDocumentWTPartLink.class, WTDocument.class, "roleAObjectRef.key.id",
+//				WTAttributeNameIfc.ID_NAME, idx, idx_d);
+//		QuerySpecUtils.toEqualsAnd(query, idx, WTDocumentWTPartLink.class, "roleAObjectRef.key.id", document);
+		QueryResult result = PersistenceHelper.manager.navigate(document, "part", WTDocumentWTPartLink.class);
+		while (result.hasMoreElements()) {
+//			Object[] obj = (Object[]) result.nextElement();
+			WTPart part = (WTPart) result.nextElement();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", part.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("dwgNo", IBAUtils.getStringValue(part, "DWG_NO"));
+			map.put("name", part.getName());
+			map.put("nameOfParts", IBAUtils.getStringValue(part, "NAME_OF_PARTS"));
+			map.put("version", CommonUtils.getFullVersion(part));
+			map.put("state", CommonUtils.getFullVersion(part));
+			map.put("creator", part.getCreatorFullName());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(part.getCreateTimestamp()));
 			list.add(map);
 		}
 		return JSONArray.fromObject(list);

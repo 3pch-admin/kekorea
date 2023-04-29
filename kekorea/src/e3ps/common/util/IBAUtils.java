@@ -75,6 +75,9 @@ public class IBAUtils {
 		int jj = query.appendClassList(StringValue.class, false);
 		int kk = query.appendClassList(StringDefinition.class, false);
 
+		query.setAdvancedQueryEnabled(true);
+		query.setDescendantQuery(false);
+		
 		long key = ((Persistable) holder).getPersistInfo().getObjectIdentifier().getId();
 		SearchCondition sc = new SearchCondition(holder.getClass(), "thePersistInfo.theObjectIdentifier.id", "=", key);
 		query.appendWhere(sc, new int[] { ii });

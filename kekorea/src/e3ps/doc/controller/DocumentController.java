@@ -17,7 +17,6 @@ import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.doc.dto.DocumentDTO;
 import e3ps.doc.service.DocumentHelper;
-import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.clients.folder.FolderTaskLogic;
 import wt.doc.WTDocument;
@@ -145,9 +144,9 @@ public class DocumentController extends BaseController {
 		WTDocument document = (WTDocument) CommonUtils.getObject(oid);
 		DocumentDTO dto = new DocumentDTO(document);
 		boolean isAdmin = CommonUtils.isAdmin();
-		JSONArray list = DocumentHelper.manager.history(document.getMaster());
+		JSONArray versionHistory = DocumentHelper.manager.versionHistory(document);
 		model.addObject("dto", dto);
-		model.addObject("list", list);
+		model.addObject("versionHistory", versionHistory);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("popup:/document/document-view");
 		return model;
@@ -177,5 +176,70 @@ public class DocumentController extends BaseController {
 		model.addObject("sessionUser", sessionUser);
 		model.setViewName("popup:/document/document-only");
 		return model;
+	}
+
+	@Description(value = "문서 수정 및 개정")
+	@GetMapping(value = "/update")
+	public ModelAndView update(@RequestParam String oid, @RequestParam String mode) throws Exception {
+		ModelAndView model = new ModelAndView();
+		WTDocument document = (WTDocument) CommonUtils.getObject(oid);
+		DocumentDTO dto = new DocumentDTO(document);
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("dto", dto);
+		model.addObject("mode", mode);
+		model.addObject("isAdmin", isAdmin);
+		model.setViewName("popup:/document/document-update");
+		return model;
+	}
+
+	@Description(value = "문서 수정")
+	@ResponseBody
+	@PostMapping(value = "/modify")
+	public Map<String, Object> modify(@RequestBody DocumentDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			DocumentHelper.service.modify(dto);
+			result.put("msg", MODIFY_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "문서 개정")
+	@ResponseBody
+	@PostMapping(value = "/revise")
+	public Map<String, Object> revise(@RequestBody DocumentDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			DocumentHelper.service.revise(dto);
+			result.put("msg", REVISE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "문서 삭제")
+	@ResponseBody
+	@GetMapping(value = "/delete")
+	public Map<String, Object> delete(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			DocumentHelper.service.delete(oid);
+			result.put("msg", DELETE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
 	}
 }

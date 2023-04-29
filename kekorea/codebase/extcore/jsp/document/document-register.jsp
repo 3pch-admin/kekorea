@@ -62,6 +62,11 @@
 								headerText : "문서제목",
 								dataType : "string",
 							}, {
+								dataField : "numberRule",
+								headerText : "도번",
+								dataType : "string",
+								width : 100
+							}, {
 								dataField : "version",
 								headerText : "버전",
 								dataType : "string",

@@ -65,6 +65,9 @@ public class OutputHelper {
 		int idx = query.appendClassList(WTDocument.class, true);
 		int idx_m = query.appendClassList(WTDocumentMaster.class, false);
 
+		query.setAdvancedQueryEnabled(true);
+		query.setDescendantQuery(false);
+
 		QuerySpecUtils.toCI(query, idx, WTDocument.class);
 		QuerySpecUtils.toInnerJoin(query, WTDocument.class, WTDocumentMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
@@ -167,7 +170,6 @@ public class OutputHelper {
 		QuerySpecUtils.toState(query, idx, WTDocument.class, state);
 
 		QuerySpecUtils.toOrderBy(query, idx, WTDocument.class, WTDocument.MODIFY_TIMESTAMP, true);
-
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();

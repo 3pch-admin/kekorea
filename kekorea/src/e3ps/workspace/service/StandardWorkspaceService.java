@@ -9,11 +9,14 @@ import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.common.Constants;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.IBAUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.epm.keDrawing.KeDrawing;
+import e3ps.epm.numberRule.NumberRule;
+import e3ps.epm.numberRule.NumberRuleMaster;
 import e3ps.erp.service.ErpHelper;
 import e3ps.org.Department;
 import e3ps.org.People;
@@ -44,6 +47,7 @@ import wt.part.WTPart;
 import wt.pom.Transaction;
 import wt.query.QuerySpec;
 import wt.services.StandardManager;
+import wt.util.WTAttributeNameIfc;
 import wt.util.WTException;
 
 public class StandardWorkspaceService extends StandardManager implements WorkspaceService {
@@ -188,7 +192,13 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 
 			// 객체 상태 변경
 			if (persistable instanceof LifeCycleManaged) {
-				LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) persistable, State.toState("INWORK"));
+				LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) persistable, State.toState("UNDERAPPROVAL"));
+
+				if (persistable instanceof WTDocument) {
+					// 도번 결재 상태 변경건
+					observe((WTDocument) persistable, Constants.State.APPROVING);
+				}
+
 				// 일괄결재..
 			} else if (persistable instanceof ApprovalContract) {
 
@@ -348,6 +358,11 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 					State state = State.toState("APPROVED");
 					per = (Persistable) LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) per, state);
 
+					if (per instanceof WTDocument) {
+						System.out.println("객체체크...");
+						observe((WTDocument) per, Constants.State.APPROVED);
+					}
+
 					if (per instanceof RequestDocument) {
 						RequestDocument requestDocument = (RequestDocument) per;
 						settingUser(requestDocument, master);
@@ -392,6 +407,27 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 		} finally {
 			if (trs != null)
 				trs.rollback();
+		}
+	}
+
+	private void observe(WTDocument document, String state) throws Exception {
+
+		String number = IBAUtils.getStringValue(document, "NUMBER_RULE");
+		String version = IBAUtils.getStringValue(document, "NUMBER_RULE_VERSION");
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(NumberRule.class, true);
+		int idx_m = query.appendClassList(NumberRuleMaster.class, false);
+		QuerySpecUtils.toInnerJoin(query, NumberRule.class, NumberRuleMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_m);
+		QuerySpecUtils.toEqualsAnd(query, idx_m, NumberRuleMaster.class, NumberRuleMaster.NUMBER, number);
+		QuerySpecUtils.toEqualsAnd(query, idx, NumberRule.class, NumberRule.VERSION, Integer.parseInt(version));
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			NumberRule numberRule = (NumberRule) obj[0];
+			numberRule.setState(state);
+			PersistenceHelper.manager.modify(numberRule);
 		}
 	}
 
@@ -536,6 +572,11 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			Persistable per = master.getPersist();
 			if (per instanceof LifeCycleManaged) {
 				LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) per, State.toState("RETURN"));
+
+				if(per instanceof WTDocument) {
+					observe((WTDocument)per, Constants.State.REJECT);
+				}
+				
 			} else if (per instanceof ApprovalContract) {
 				ApprovalContract contract = (ApprovalContract) per;
 
@@ -628,6 +669,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			WTUser sessionUser = CommonUtils.sessionUser();
 			Timestamp startTime = new Timestamp(new Date().getTime());
 			Ownership ownership = CommonUtils.sessionOwner();
+
 			String name = WorkspaceHelper.manager.getName(persistable);
 
 			// 마스터 생성..
@@ -651,14 +693,14 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			submitLine.setStartTime(startTime);
 			submitLine.setType(WorkspaceHelper.SUBMIT_LINE);
 			submitLine.setRole(WorkspaceHelper.WORKING_SUBMIT);
-			submitLine.setDescription("자가결재 입니다.");
+			submitLine.setDescription(sessionUser.getFullName() + " 사용자의 자가결재 입니다.");
 			submitLine.setCompleteUserID(sessionUser.getName());
 			submitLine.setCompleteTime(startTime);
 			submitLine.setState(WorkspaceHelper.STATE_SUBMIT_COMPLETE);
 			PersistenceHelper.manager.save(submitLine);
 
-			Timestamp completeTime = new Timestamp(new Date().getTime());
 			ApprovalLine line = ApprovalLine.newApprovalLine();
+			line.setName(name);
 			line.setMaster(master);
 			line.setReads(true);
 			line.setOwnership(ownership);

@@ -1,5 +1,16 @@
+<%@page import="e3ps.doc.dto.DocumentDTO"%>
 <%@page import="e3ps.doc.service.DocumentHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+DocumentDTO dto = (DocumentDTO) request.getAttribute("dto");
+String mode = (String) request.getAttribute("mode");
+String title = "";
+if ("modify".equals(mode)) {
+	title = "수정";
+} else if ("revise".equals(mode)) {
+	title = "개정";
+}
+%>
 <!-- AUIGrid -->
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="location" id="location">
@@ -8,7 +19,7 @@
 		<td class="left">
 			<div class="header">
 				<img src="/Windchill/extcore/images/header.png">
-				문서 등록
+				문서 <%=title %>
 			</div>
 		</td>
 		<td class="right">
@@ -50,7 +61,7 @@
 				<jsp:param value="create" name="mode" />
 			</jsp:include>
 		</td>
-	</tr>	
+	</tr>
 	<tr>
 		<th class="lb">설명</th>
 		<td colspan="3" class="indent5">
@@ -116,8 +127,8 @@
 			name.focus();
 			return false;
 		}
-		
-		if(addRows11.length === 0) {
+
+		if (addRows11.length === 0) {
 			alert("도번을 추가하세요.");
 			return false;
 		}

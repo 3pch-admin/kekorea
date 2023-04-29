@@ -8,6 +8,7 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
+import wt.fc.Persistable;
 import wt.fc.WTObject;
 import wt.ownership.Ownable;
 import wt.util.WTException;
@@ -33,6 +34,14 @@ import wt.util.WTException;
 						foreignKeyRole = @ForeignKeyRole(name = "master", type = NumberRuleMaster.class,
 
 								constraints = @PropertyConstraints(required = true)),
+
+						myRole = @MyRole(name = "numberRule", cardinality = Cardinality.ONE)),
+
+				@GeneratedForeignKey(name = "NumberRulePersistableLink",
+
+						foreignKeyRole = @ForeignKeyRole(name = "persist", type = Persistable.class,
+
+								constraints = @PropertyConstraints(required = false)),
 
 						myRole = @MyRole(name = "numberRule", cardinality = Cardinality.ONE))
 

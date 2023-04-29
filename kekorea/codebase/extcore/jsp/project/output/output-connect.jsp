@@ -405,8 +405,8 @@ String poid = (String) request.getAttribute("poid");
 	});
 
 	function toggle() {
-		const iframe = parent.document.getElementById("content");
-		iframe.src = getCallUrl("/output/old");
+// 		const url = getCallUrl("/output/");
+// 		document.location.href = url;
 	}
 
 	document.addEventListener("keydown", function(event) {

@@ -37,19 +37,19 @@ String method = (String) request.getAttribute("method");
 	<tr>
 		<th>문서 제목</th>
 		<td class="indent5">
-			<input type="text" name="name" class="width-300">
+			<input type="text" name="name" id="name" class="width-300">
 		</td>
 		<th>문서 번호</th>
 		<td class="indent5">
-			<input type="text" name="number" class="width-200">
+			<input type="text" name="number" id="number" class="width-200">
 		</td>
 		<th>설명</th>
 		<td class="indent5">
-			<input type="text" name="description" class="width-300">
+			<input type="text" name="description" id="description" class="width-300">
 		</td>
 		<th>상태</th>
 		<td class="indent5">
-			<select name="state" id="state" class="width-100">
+			<select name="state" id="state" class="width-200">
 				<option value="">선택</option>
 			</select>
 		</td>
@@ -58,6 +58,7 @@ String method = (String) request.getAttribute("method");
 		<th>작성자</th>
 		<td class="indent5">
 			<input type="text" name="creator" id="creator" class="width-200">
+			<input type="hidden" name="creatorOid" id="creatorOid">
 		</td>
 		<th>작성일</th>
 		<td class="indent5">
@@ -92,8 +93,6 @@ String method = (String) request.getAttribute("method");
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('document-list');">
-			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('document-list');">
 			<input type="button" value="추가" title="추가" class="blue" onclick="<%=method%>();">
 			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
@@ -170,15 +169,6 @@ String method = (String) request.getAttribute("method");
 			dataType : "string",
 			width : 250,
 			style : "aui-left",
-			filter : {
-				showIcon : true,
-				inline : true
-			},
-		}, {
-			dataField : "docType",
-			headerText : "문서타입",
-			dataType : "string",
-			width : 100,
 			filter : {
 				showIcon : true,
 				inline : true
@@ -283,9 +273,25 @@ String method = (String) request.getAttribute("method");
 	function <%=method%>	() {
 		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 		if (checkedItems.length == 0) {
-			alert("추가할 도면을 선택하세요.");
+			alert("추가할 문서를 선택하세요.");
 			return false;
 		}
+		
+		for(let i=0; i<checkedItems.length; i++) {
+			const item = checkedItems[i].item;
+			const state = item.state;
+			const numberRule = item.numberRule;
+			if(state !== "작업 중") {
+				alert("작업 중 상태의 문서만 추가 가능합니다.");
+				return false;
+			}
+			
+			if(numberRule === "") {
+				alert("도번이 없는 문서가 있습니다.");
+				return false;
+			}
+		}
+		
 		openLayer();
 		opener.<%=method%>(checkedItems, function(result) {
 			if (result) {
@@ -300,7 +306,23 @@ String method = (String) request.getAttribute("method");
 		const url = getCallUrl("/doc/list");
 		const params = new Object();
 		const psize = document.getElementById("psize").value;
-		params.latest = true;
+		const oid = document.getElementById("oid").value;
+		const name = document.getElementById("name").value;
+		const number = document.getElementById("number").value;
+		const description = document.getElementById("description").value;
+		const state = document.getElementById("state").value;
+		const creatorOid = document.getElementById("creatorOid").value;
+		const createdFrom = document.getElementById("createdFrom").value;
+		const createdTo = document.getElementById("createdTo").value;
+		const latest = !!document.querySelector("input[name=latest]:checked").value;
+		params.name = name;
+		params.number = number;
+		params.oid = oid;
+		params.description = description;
+		params.creatorOid = creatorOid;
+		params.createdFrom = createdFrom;
+		params.createdTo = createdTo;
+		params.latest = latest;
 		params.psize = psize;
 		AUIGrid.showAjaxLoader(myGridID);
 		parent.openLayer();

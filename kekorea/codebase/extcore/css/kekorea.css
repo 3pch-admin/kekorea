@@ -461,7 +461,7 @@ a:hover {
 }
 
 input[type='text']:read-only {
-	background-color: #dedede !important;
+	background-color: #ebebeb !important;
 }
 
 .create-table td input[type='number'], .search-table td input[type='number'] {

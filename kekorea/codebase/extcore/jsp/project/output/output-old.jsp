@@ -27,7 +27,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<input type="hidden" name="oid" id="oid">
-		<input type="hidden" name="type" id="type" value="new">
+		<input type="hidden" name="type" id="type" value="old">
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -183,7 +183,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 			function _layout() {
 				return [ {
 					dataField : "name",
-					headerText : "문서제목",
+					headerText : "산출물 제목",
 					dataType : "string",
 					width : 350,
 					style : "aui-left",
@@ -192,8 +192,8 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/document/view?oid=" + oid);
-							popup(url, 1400, 600);
+							const url = getCallUrl("/output/view?oid=" + oid);
+							popup(url, 1600, 800);
 						}
 					},
 					filter : {
@@ -202,7 +202,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 					},
 				}, {
 					dataField : "number",
-					headerText : "문서번호",
+					headerText : "산출물 번호",
 					dataType : "string",
 					width : 120,
 					renderer : {
@@ -210,8 +210,8 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/document/view?oid=" + oid);
-							popup(url, 1400, 600);
+							const url = getCallUrl("/output/view?oid=" + oid);
+							popup(url, 1600, 800);
 						}
 					},
 					filter : {
@@ -336,7 +336,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				loadGridData();
+// 				loadGridData();
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
@@ -380,6 +380,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 				params.type = type;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
+				console.log(params);
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					AUIGrid.setGridData(myGridID, data.list);
@@ -387,12 +388,6 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 					document.getElementById("curPage").value = data.curPage;
 					parent.closeLayer();
 				});
-			}
-
-			function create() {
-				const url = getCallUrl("/document/create");
-				// 				const url = getCallUrl("/doc/create");
-				popup(url);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {

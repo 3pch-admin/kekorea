@@ -210,5 +210,31 @@
 		<csvlogicalIdentifier>CUSTNAME</csvlogicalIdentifier>
 	</csvAttrDefinizer>
 
-
+	<!-- DOC -->
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>ATTR</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths />
+		<csvdefinitionPaths />
+		<csvdisplay_name>ATTR</csvdisplay_name>
+		<csvdescription />
+		<csvdata_type>org</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>
+		</csvlogicalIdentifier>
+	</csvAttrDefinizer>
+	
+	<csvAttrDefinizer handler="wt.iba.definition.DefinitionLoaderWithCache.createAttrDefinizer">
+		<csvname>NUMBER_RULE</csvname>
+		<csvhierarchyDisplayName />
+		<csvorganizerPaths>DOC</csvorganizerPaths>
+		<csvdefinitionPaths />
+		<csvdisplay_name>NUMBER_RULE</csvdisplay_name>
+		<csvdescription>NUMBER_RULE</csvdescription>
+		<csvdata_type>string</csvdata_type>
+		<csvQoMName />
+		<csvnameValuePairs />
+		<csvlogicalIdentifier>NUMBER_RULE</csvlogicalIdentifier>
+	</csvAttrDefinizer>
 </NmLoader>

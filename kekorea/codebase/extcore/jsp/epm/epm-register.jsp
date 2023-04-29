@@ -45,12 +45,167 @@
 				</td>
 			</tr>
 			<tr>
+				<th class="req lb">도번</th>
+				<td colspan="3">
+					<div class="include">
+						<div id="grid_wrap11" style="height: 200px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+						<script type="text/javascript">
+							let myGridID11;
+							const columns11 = [ {
+								dataField : "number",
+								headerText : "도면번호",
+								dataType : "string",
+								width : 100,
+								editable : false,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "size_txt",
+								headerText : "사이즈",
+								dataType : "string",
+								width : 80,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "lotNo",
+								headerText : "LOT",
+								dataType : "numeric",
+								width : 80,
+								formatString : "###0",
+								filter : {
+									showIcon : true,
+									inline : true,
+									displayFormatValues : true
+								},
+							}, {
+								dataField : "unitName",
+								headerText : "UNIT NAME",
+								dataType : "string",
+								width : 200,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "name",
+								headerText : "도번명",
+								dataType : "string",
+								width : 250,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "businessSector_txt",
+								headerText : "사업부문",
+								dataType : "string",
+								width : 200,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "classificationWritingDepartments_txt",
+								headerText : "작성부서구분",
+								dataType : "string",
+								width : 150,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "writtenDocuments_txt",
+								headerText : "작성문서구분",
+								dataType : "string",
+								width : 150,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "version",
+								headerText : "버전",
+								dataType : "string",
+								width : 100,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "state",
+								headerText : "상태",
+								dataType : "string",
+								width : 80,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "creator",
+								headerText : "작성자",
+								dataType : "string",
+								width : 100,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "createdDate_txt",
+								headerText : "작성일",
+								dataType : "string",
+								width : 100,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "modifier",
+								headerText : "수정자",
+								dataType : "string",
+								width : 100,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "modifiedDate_txt",
+								headerText : "수정일",
+								dataType : "string",
+								width : 100,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							} ]
+
+							function createAUIGrid11(columnLayout) {
+								const props = {
+									headerHeight : 30,
+									showRowNumColumn : true,
+									rowNumHeaderText : "번호",
+									showAutoNoDataMessage : false,
+									enableSorting : false,
+									softRemoveRowMode : false,
+									showRowCheckColumn : true,
+									showStateColumn : true,
+								}
+								myGridID11 = AUIGrid.create("#grid_wrap11", columnLayout, props);
+							}
+						</script>
+					</div>
+				</td>
+			</tr>
+			<tr>
 				<th class="req lb">결재 도면</th>
 				<td>
 					<div class="include">
 						<input type="button" value="도면 추가" title="도면 추가" class="blue" onclick="insert();">
 						<input type="button" value="도면 삭제" title="도면 삭제" class="red" onclick="deleteRow();">
-						<div id="grid_wrap" style="height: 300px; border-top: 1px solid #3180c3; margin: 3px 5px 3px 5px;"></div>
+						<div id="grid_wrap" style="height: 200px; border-top: 1px solid #3180c3; margin: 3px 5px 3px 5px;"></div>
 						<script type="text/javascript">
 							let myGridID;
 							const columns = [ {
@@ -110,14 +265,20 @@
 								popup(url, 1600, 700);
 							}
 
-							function append(data, callBack) {
-								for (let i = 0; i < data.length; i++) {
-									const item = data[i].item;
-									const isUnique = AUIGrid.isUniqueValue(myGridID, "oid", item.oid);
-									if (isUnique) {
-										AUIGrid.addRow(myGridID, item, "first");
-									}
-								}
+							function append(arr, callBack) {
+								
+								const params = new Object();
+								const url = getCallUrl("/epm/append");
+								params.arr = arr;
+								
+								
+// 								for (let i = 0; i < data.length; i++) {
+// 									const item = data[i].item;
+// 									const isUnique = AUIGrid.isUniqueValue(myGridID, "oid", item.oid);
+// 									if (isUnique) {
+// 										AUIGrid.addRow(myGridID, item, "first");
+// 									}
+// 								}
 								callBack(true);
 							}
 
@@ -191,6 +352,7 @@
 			document.addEventListener("DOMContentLoaded", function() {
 				document.getElementById("name").focus();
 				createAUIGrid(columns);
+				createAUIGrid11(columns11);
 				createAUIGrid8(columns8);
 				AUIGrid.resize(myGridID);
 				AUIGrid.resize(myGridID8);

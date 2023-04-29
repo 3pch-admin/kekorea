@@ -287,4 +287,30 @@ public class EpmHelper {
 		}
 		return JSONArray.fromObject(list);
 	}
+
+	/**
+	 * 도면 결재시 도면 추가 - 없다면 FAIL 있으면 TRUE
+	 */
+	public Map<String, Object> append(Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<>();
+		ArrayList<Map<String, Object>> arr = (ArrayList<Map<String, Object>>) params.get("arr");
+
+		for (Map<String, Object> map : arr) {
+			String oid = (String) map.get("oid");
+
+			EPMDocument epm = (EPMDocument) CommonUtils.getObject(oid);
+			String authoringApplication = epm.getAuthoringApplication().getDisplay();
+			String dwgNo = "";
+			if (authoringApplication.equals("CREO")) {
+				dwgNo = IBAUtils.getStringValue(epm, "DWG_NO");
+			} else if (authoringApplication.equals("AUTOCAD")) {
+				dwgNo = IBAUtils.getStringValue(epm, "DWG_No");
+			}
+			String version = epm.getVersionIdentifier().getSeries().getValue(); // 리비전으로만 체크한다..
+
+		}
+
+		return result;
+
+	}
 }

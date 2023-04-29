@@ -23,4 +23,15 @@ public interface DocumentService {
 	 */
 	public abstract void delete(String oid) throws Exception;
 
+	/**
+	 * 문서 수정
+	 */
+	public abstract void modify(DocumentDTO dto) throws Exception;
+
+	
+	/**
+	 * 문서 개정
+	 */
+	public abstract void revise(DocumentDTO dto) throws Exception;
+
 }

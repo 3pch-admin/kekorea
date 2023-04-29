@@ -99,7 +99,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('numberRule-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
-					<input type="button" value="결재" title="결재" class="red" onclick="register();">
+					<input type="button" value="결재" title="결재" onclick="register();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 				</td>
@@ -130,7 +130,6 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 		<%=writtenDocuments%>
 			const classificationWritingDepartments =
 		<%=classificationWritingDepartments%>
-			const list = [ "사용", "폐기" ];
 			function _layout() {
 				return [ {
 					dataField : "number",
@@ -143,7 +142,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 						inline : true
 					},
 				}, {
-					dataField : "size",
+					dataField : "size_code",
 					headerText : "사이즈",
 					dataType : "string",
 					width : 80,
@@ -217,7 +216,10 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					headerText : "UNIT NAME",
 					dataType : "string",
 					width : 200,
-				// 					editable : false
+					filter : {
+						showIcon : true,
+						inline : true
+					},
 				}, {
 					dataField : "name",
 					headerText : "도번명",
@@ -228,7 +230,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 						inline : true
 					},
 				}, {
-					dataField : "businessSector",
+					dataField : "businessSector_code",
 					headerText : "사업부문",
 					dataType : "string",
 					width : 200,
@@ -248,7 +250,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 						inline : true
 					},
 				}, {
-					dataField : "drawingCompany",
+					dataField : "drawingCompany_code",
 					headerText : "도면생성회사",
 					dataType : "string",
 					width : 150,
@@ -268,7 +270,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 						inline : true
 					},
 				}, {
-					dataField : "classificationWritingDepartments",
+					dataField : "classificationWritingDepartments_code",
 					headerText : "작성부서구분",
 					dataType : "string",
 					width : 150,
@@ -322,7 +324,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 						inline : true
 					},
 				}, {
-					dataField : "writtenDocuments",
+					dataField : "writtenDocuments_code",
 					headerText : "작성문서구분",
 					dataType : "string",
 					width : 150,
@@ -390,40 +392,6 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					headerText : "상태",
 					dataType : "string",
 					width : 80,
-					editable : true,
-					renderer : {
-						type : "IconRenderer",
-						iconWidth : 16,
-						iconHeight : 16,
-						iconPosition : "aisleRight",
-						iconTableRef : {
-							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
-						},
-						onClick : function(event) {
-							AUIGrid.openInputer(event.pid);
-						}
-					},
-					editRenderer : {
-						type : "ComboBoxRenderer",
-						autoCompleteMode : true,
-						autoEasyMode : true,
-						matchFromFirst : false,
-						showEditorBtnOver : false,
-						list : list,
-						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
-							let isValid = false;
-							for (let i = 0, len = list.length; i < len; i++) {
-								if (list[i] == newValue) {
-									isValid = true;
-									break;
-								}
-							}
-							return {
-								"validate" : isValid,
-								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
-							};
-						}
-					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -647,7 +615,6 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 				// 				item.businessSector = "국제엘렉트릭코리아(주)";
 				item.businessSector = "K";
 				item.number = "K";
-				item.state = "사용";
 				AUIGrid.addRow(myGridID, item, "first");
 			}
 

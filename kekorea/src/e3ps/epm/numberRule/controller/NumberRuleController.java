@@ -25,14 +25,9 @@ import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.admin.numberRuleCode.service.NumberRuleCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.epm.keDrawing.KeDrawing;
-import e3ps.epm.keDrawing.dto.KeDrawingDTO;
-import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.numberRule.dto.NumberRuleDTO;
 import e3ps.epm.numberRule.service.NumberRuleHelper;
-import e3ps.org.Department;
-import e3ps.org.service.OrgHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -113,20 +108,18 @@ public class NumberRuleController extends BaseController {
 				NumberRuleDTO dto = mapper.convertValue(remove, NumberRuleDTO.class);
 				removeRow.add(dto);
 			}
-			
-			
+
 			result = NumberRuleHelper.manager.isValid(addRow, editRow);
 			// true 중복있음
 			if ((boolean) result.get("isExist")) {
 				result.put("result", FAIL);
 				return result;
 			}
-			
+
 			HashMap<String, List<NumberRuleDTO>> dataMap = new HashMap<>();
 			dataMap.put("addRows", addRow); // 추가행
 			dataMap.put("editRows", editRow); // 수정행
 			dataMap.put("removeRows", removeRow); // 삭제행
-
 
 			NumberRuleHelper.service.save(dataMap);
 			result.put("msg", SAVE_MSG);
@@ -221,13 +214,37 @@ public class NumberRuleController extends BaseController {
 		}
 		return result;
 	}
-	
-	
+
 	@Description(value = "도번 결재등록 페이지")
 	@GetMapping(value = "/register")
 	public ModelAndView register() throws Exception {
 		ModelAndView model = new ModelAndView();
 		model.setViewName("popup:/epm/numberRule/register-popup");
+		return model;
+	}
+
+	@Description(value = "KEK 도번 선택 페이지")
+	@GetMapping(value = "/popup")
+	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
+		ModelAndView model = new ModelAndView();
+		JSONArray sizes = NumberRuleCodeHelper.manager.parseJson("SIZE");
+		JSONArray drawingCompanys = NumberRuleCodeHelper.manager.parseJson("DRAWING_COMPANY");
+		JSONArray writtenDocuments = NumberRuleCodeHelper.manager.parseJson("WRITTEN_DOCUMENT");
+		JSONArray businessSectors = NumberRuleCodeHelper.manager.parseJson("BUSINESS_SECTOR");
+		JSONArray classificationWritingDepartments = NumberRuleCodeHelper.manager
+				.parseJson("CLASSIFICATION_WRITING_DEPARTMENT");
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("drawingCompanys", drawingCompanys);
+		model.addObject("writtenDocuments", writtenDocuments);
+		model.addObject("businessSectors", businessSectors);
+		model.addObject("classificationWritingDepartments", classificationWritingDepartments);
+		model.addObject("sizes", sizes);
+		model.addObject("method", method);
+		model.addObject("multi", Boolean.parseBoolean(multi));
+		model.setViewName("popup:/epm/numberRule/numberRule-popup");
 		return model;
 	}
 }

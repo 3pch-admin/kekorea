@@ -3,6 +3,8 @@ package e3ps.part.dto;
 import java.sql.Timestamp;
 import java.util.HashMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.IBAUtils;
@@ -31,7 +33,9 @@ public class PartDTO {
 	private String location;
 	private String preView;
 
+	@JsonIgnore
 	private HashMap<String, Object> attr = new HashMap<>();
+
 	// cad iba 속성
 	private String part_code;
 	private String name_of_parts;

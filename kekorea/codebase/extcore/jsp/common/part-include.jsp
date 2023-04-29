@@ -1,3 +1,4 @@
+<%@page import="e3ps.doc.service.DocumentHelper"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.project.service.ProjectHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -69,6 +70,7 @@ boolean isUpdate = "update".equals(mode);
 				showAutoNoDataMessage : false,
 				enableSorting : false,
 				softRemoveRowMode : false,
+// 				autoGridHeight : true,
 				<%if (isCreate || isUpdate) {%>
 				showRowCheckColumn : true,
 				showStateColumn : true,
@@ -76,7 +78,7 @@ boolean isUpdate = "update".equals(mode);
 			}
 			myGridID7 = AUIGrid.create("#grid_wrap7", columnLayout, props);
 			<%if (isView || isUpdate) {%>
-			AUIGrid.setGridData(myGridID7, <%=ProjectHelper.manager.jsonAuiProject(oid)%>);
+			AUIGrid.setGridData(myGridID7, <%=DocumentHelper.manager.jsonAuiPart(oid)%>);
 			<%}%>
 		}
 
