@@ -15,6 +15,8 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.doc.dto.DocumentDTO;
+import e3ps.epm.numberRule.NumberRule;
+import e3ps.epm.numberRule.NumberRulePersistableLink;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputDocumentLink;
@@ -354,20 +356,8 @@ public class DocumentHelper {
 	public JSONArray jsonAuiPart(String oid) throws Exception {
 		ArrayList<Map<String, String>> list = new ArrayList<>();
 		WTDocument document = (WTDocument) CommonUtils.getObject(oid);
-
-//		QuerySpec query = new QuerySpec();
-//		int idx = query.appendClassList(WTDocumentWTPartLink.class, true);
-//		int idx_d = query.appendClassList(WTDocument.class, false);
-//
-//		query.setAdvancedQueryEnabled(true);
-//		query.setDescendantQuery(false);
-//
-//		QuerySpecUtils.toInnerJoin(query, WTDocumentWTPartLink.class, WTDocument.class, "roleAObjectRef.key.id",
-//				WTAttributeNameIfc.ID_NAME, idx, idx_d);
-//		QuerySpecUtils.toEqualsAnd(query, idx, WTDocumentWTPartLink.class, "roleAObjectRef.key.id", document);
 		QueryResult result = PersistenceHelper.manager.navigate(document, "part", WTDocumentWTPartLink.class);
 		while (result.hasMoreElements()) {
-//			Object[] obj = (Object[]) result.nextElement();
 			WTPart part = (WTPart) result.nextElement();
 			Map<String, String> map = new HashMap<>();
 			map.put("oid", part.getPersistInfo().getObjectIdentifier().getStringValue());
@@ -383,33 +373,34 @@ public class DocumentHelper {
 		return JSONArray.fromObject(list);
 	}
 
-//	public JSONArray jsonArrayAui(String oid) throws Exception {
-//		ArrayList<Map<String, String>> list = new ArrayList<>();
-//		WTDocument document = (WTDocument) CommonUtils.getObject(oid);
-//
-//		QuerySpec query = new QuerySpec();
-//		int idx = query.appendClassList(WTDocument.class, true);
-//		int idx_link = query.appendClassList(WTDocumentWTPartLink.class, true);
-//		QuerySpecUtils.toInnerJoin(query, WTDocument.class, WTDocumentWTPartLink.class,
-//				WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx, idx_link);
-//		QuerySpecUtils.toEqualsAnd(query, idx_link, WTDocumentWTPartLink.class, "roleAObjectRef.key.id",
-//				document.getPersistInfo().getObjectIdentifier().getId());
-//		QueryResult result = PersistenceHelper.manager.find(query);
-//		while (result.hasMoreElements()) {
-//			Object[] obj = (Object[]) result.nextElement();
-//			WTDocumentWTPartLink link = (WTDocumentWTPartLink) obj[1];
-//			Project project = link.getProject();
-//			Map<String, String> map = new HashMap<>();
-//			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
-//			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
-//			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
-//			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
-//			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
-//			map.put("kekNumber", project.getKekNumber());
-//			map.put("keNumber", project.getKeNumber());
-//			map.put("description", project.getDescription());
-//			list.add(map);
-//		}
-//		return JSONArray.fromObject(list);
-//	}
+	/**
+	 * 문서와 연결된 도먼
+	 */
+	public JSONArray jsonAuiNumberRule(String oid) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		Map<String, Object> map = new HashMap<>();
+		WTDocument document = (WTDocument) CommonUtils.getObject(oid);
+		QueryResult result = PersistenceHelper.manager.navigate(document, "numberRule",
+				NumberRulePersistableLink.class);
+		while (result.hasMoreElements()) {
+			NumberRule numberRule = (NumberRule) result.nextElement();
+			map.put("number", numberRule.getMaster().getNumber());
+			map.put("size_txt", numberRule.getMaster().getSize().getName());
+			map.put("lotNo", numberRule.getMaster().getLotNo());
+			map.put("unitName", numberRule.getMaster().getUnitName());
+			map.put("name", numberRule.getMaster().getName());
+			map.put("businessSector_txt", numberRule.getMaster().getSector().getName());
+			map.put("classificationWritingDepartments_txt", numberRule.getMaster().getDepartment().getName());
+			map.put("writtenDocuments_txt", numberRule.getMaster().getDocument().getName());
+			map.put("version", numberRule.getVersion());
+			map.put("state", numberRule.getState());
+			map.put("creator", numberRule.getMaster().getOwnership().getOwner().getFullName());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(numberRule.getMaster().getCreateTimestamp()));
+			map.put("modifier", numberRule.getOwnership().getOwner().getFullName());
+			map.put("modifiedDate_txt", CommonUtils.getPersistableTime(numberRule.getCreateTimestamp()));
+			map.put("oid", numberRule.getPersistInfo().getObjectIdentifier().getStringValue());
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
 }

@@ -57,6 +57,7 @@ JSONArray jsonAuiHistory = WorkspaceHelper.manager.jsonAuiHistory(oid);
 			rowNumHeaderText : "번호",
 			selectionMode : "multipleCells",
 			enableSorting : false,
+			showAutoNoDataMessage : false,
 		}
 		myGridID100 = AUIGrid.create("#grid_wrap100", columnLayout, props);
 		AUIGrid.setGridData(myGridID100, <%=jsonAuiHistory%>);

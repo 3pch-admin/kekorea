@@ -169,7 +169,7 @@ boolean isUpdate = "update".equals(mode);
 			}
 			myGridID11 = AUIGrid.create("#grid_wrap11", columnLayout, props);
 			<%if (isView || isUpdate) {%>
-			AUIGrid.setGridData(myGridID11, <%=DocumentHelper.manager.jsonAuiPart(oid)%>);
+			AUIGrid.setGridData(myGridID11, <%=DocumentHelper.manager.jsonAuiNumberRule(oid)%>);
 			<%}%>
 		}
 

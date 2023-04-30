@@ -192,7 +192,8 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 
 			// 객체 상태 변경
 			if (persistable instanceof LifeCycleManaged) {
-				LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) persistable, State.toState("UNDERAPPROVAL"));
+				LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) persistable,
+						State.toState("UNDERAPPROVAL"));
 
 				if (persistable instanceof WTDocument) {
 					// 도번 결재 상태 변경건
@@ -201,6 +202,21 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 
 				// 일괄결재..
 			} else if (persistable instanceof ApprovalContract) {
+				ApprovalContract contract = (ApprovalContract) persistable;
+				QueryResult result = PersistenceHelper.manager.navigate(contract, "persist",
+						ApprovalContractPersistableLink.class);
+				while (result.hasMoreElements()) {
+					Persistable per = (Persistable) result.nextElement();
+					if (per instanceof LifeCycleManaged) {
+						LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) persistable,
+								State.toState("UNDERAPPROVAL"));
+					} else if (per instanceof NumberRule) {
+						NumberRule numberRule = (NumberRule) per;
+						numberRule.setState(Constants.State.APPROVING);
+						PersistenceHelper.manager.modify(numberRule);
+					}
+
+				}
 
 			} else if (persistable instanceof KePart) {
 				KePart kePart = (KePart) persistable;
@@ -359,7 +375,6 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 					per = (Persistable) LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) per, state);
 
 					if (per instanceof WTDocument) {
-						System.out.println("객체체크...");
 						observe((WTDocument) per, Constants.State.APPROVED);
 					}
 
@@ -375,13 +390,6 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 						PersistenceHelper.manager.modify(mm);
 						mm = (PartListMaster) PersistenceHelper.manager.refresh(mm);
 					}
-
-//					if (per instanceof RequestDocument) {
-//						RequestDocument req = (RequestDocument) per;
-//						setProjectRoleUser(req, master);
-//					} else if (per instanceof WTDocument) {
-//						setTaskStateCheck(per);
-//					}
 					sendToERP(per);
 				} else if (per instanceof ApprovalContract) {
 					ApprovalContract contract = (ApprovalContract) per;
@@ -443,27 +451,22 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 
 			if (per instanceof WTPart) {
 				WTPart part = (WTPart) per;
-//				part = (WTPart) CommonUtils.getLatestVersion(part); // 다시 생각해봐야할거..같은데
 				State s = State.toState("APPROVED");
 				LifeCycleHelper.service.setLifeCycleState(part, s);
 			} else if (per instanceof EPMDocument) {
 				EPMDocument epm = (EPMDocument) per;
-//				epm = (EPMDocument) CommonUtils.getLatestVersion(epm);
 				State s = State.toState("APPROVED");
 				LifeCycleHelper.service.setLifeCycleState(epm, s);
 
-//				WTPart part = EpmHelper.manager.getPart(epm);
-//				if (part != null) {
-//					part = (WTPart) CommonUtils.getLatestVersion(part);
-//					LifeCycleHelper.service.setLifeCycleState(part, s);
-//				}
-
 			} else if (per instanceof WTDocument) {
 				WTDocument doc = (WTDocument) per;
-//				doc = (WTDocument) CommonUtils.getLatestVersion(doc);
 				State s = State.toState("APPROVED");
 				LifeCycleHelper.service.setLifeCycleState(doc, s);
 				sendToERP(per); // erp 전송을 산출물만 있을듯.
+			} else if (per instanceof NumberRule) {
+				NumberRule numberRule = (NumberRule) per;
+				numberRule.setState(Constants.State.APPROVED);
+				PersistenceHelper.manager.modify(numberRule);
 			}
 		}
 	}
@@ -573,10 +576,10 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			if (per instanceof LifeCycleManaged) {
 				LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) per, State.toState("RETURN"));
 
-				if(per instanceof WTDocument) {
-					observe((WTDocument)per, Constants.State.REJECT);
+				if (per instanceof WTDocument) {
+					observe((WTDocument) per, Constants.State.REJECT);
 				}
-				
+
 			} else if (per instanceof ApprovalContract) {
 				ApprovalContract contract = (ApprovalContract) per;
 

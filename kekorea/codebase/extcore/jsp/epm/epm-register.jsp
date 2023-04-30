@@ -180,6 +180,14 @@
 									showIcon : true,
 									inline : true
 								},
+							}, {
+								dataField : "oid",
+								visible : false,
+								dataType : "string"
+							}, {
+								dataField : "eoid",
+								visible : false,
+								dataType : "string"
 							} ]
 
 							function createAUIGrid11(columnLayout) {
@@ -189,9 +197,6 @@
 									rowNumHeaderText : "번호",
 									showAutoNoDataMessage : false,
 									enableSorting : false,
-									softRemoveRowMode : false,
-									showRowCheckColumn : true,
-									showStateColumn : true,
 								}
 								myGridID11 = AUIGrid.create("#grid_wrap11", columnLayout, props);
 							}
@@ -258,6 +263,7 @@
 									enableSorting : false
 								}
 								myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+								AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRow);
 							}
 
 							function insert() {
@@ -266,20 +272,44 @@
 							}
 
 							function append(arr, callBack) {
-								
+
 								const params = new Object();
 								const url = getCallUrl("/epm/append");
 								params.arr = arr;
-								
-								
-// 								for (let i = 0; i < data.length; i++) {
-// 									const item = data[i].item;
-// 									const isUnique = AUIGrid.isUniqueValue(myGridID, "oid", item.oid);
-// 									if (isUnique) {
-// 										AUIGrid.addRow(myGridID, item, "first");
-// 									}
-// 								}
+								parent.openLayer();
+								call(url, params, function(data) {
+									console.log(data);
+									const list1 = data.list1;
+									const list2 = data.list2;
+									if (data.result) {
+										for (let i = 0; i < list1.length; i++) {
+											const isUnique = AUIGrid.isUniqueValue(myGridID, "oid", list1[i].oid);
+											if (isUnique) {
+												AUIGrid.addRow(myGridID, list1[i]);
+											}
+										}
+
+										for (let i = 0; i < list2.length; i++) {
+											const isUnique = AUIGrid.isUniqueValue(myGridID11, "oid", list2[i].oid);
+											if (isUnique) {
+												AUIGrid.addRow(myGridID11, list2[i]);
+											}
+										}
+									} else {
+										alert(data.msg);
+									}
+									parent.closeLayer();
+								})
 								callBack(true);
+							}
+
+							function auiBeforeRemoveRow(event) {
+								const items = event.items;
+								for (let i = 0; i < items.length; i++) {
+									const item = items[i];
+									const rowIndex = AUIGrid.getRowIndexesByValue(myGridID11, "eoid", item.oid);
+									AUIGrid.removeRow(myGridID11, rowIndex);
+								}
 							}
 
 							// 행 삭제
@@ -309,6 +339,7 @@
 				const url = getCallUrl("/epm/register");
 				const params = new Object();
 				const addRows = AUIGrid.getAddedRowItems(myGridID); // 문서
+				const addRows11 = AUIGrid.getAddedRowItems(myGridID11); // 문서
 				const addRows8 = AUIGrid.getAddedRowItems(myGridID8); // 결재
 				const name = document.getElementById("name");
 				const description = document.getElementById("description").value;
@@ -337,6 +368,7 @@
 				params.name = name.value;
 				params.description = description;
 				params.addRows = addRows;
+				params.addRows11 = addRows11;
 				toRegister(params, addRows8);
 				parent.openLayer();
 				call(url, params, function(data) {

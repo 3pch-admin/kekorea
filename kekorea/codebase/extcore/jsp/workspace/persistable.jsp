@@ -41,8 +41,8 @@ if (per instanceof ApprovalContract) {
 <table class="view-table">
 	<colgroup>
 		<col width="250">
-		<col width="250">
 		<col width="*">
+		<col width="100">
 		<col width="100">
 		<col width="100">
 		<col width="100">
@@ -58,21 +58,76 @@ if (per instanceof ApprovalContract) {
 		<th class="lb">작성일</th>
 	</tr>
 	<%
-		for(Map<String, String> map : list) {
+	for (Map<String, String> map : list) {
+		if (map.get("oid").indexOf("EPMDocument") > -1) {
 	%>
 	<tr>
-	<td class="indent5"><%=map.get("name")%></td>
-	<td class="indent5"><%=map.get("nameOfParts")%></td>
-	<td class="indent5"><%=map.get("dwgNo")%></td>
-	<td class="center"><%=map.get("state")%></td>
-	<td class="center"><%=map.get("version")%></td>
-	<td class="center"><%=map.get("creator")%></td>
-	<td class="center"><%=map.get("createdDate_txt")%></td>
+		<td class="indent5"><%=map.get("name")%></td>
+		<td class="indent5"><%=map.get("nameOfParts")%></td>
+		<td class="center"><%=map.get("dwgNo")%></td>
+		<td class="center"><%=map.get("state")%></td>
+		<td class="center"><%=map.get("version")%></td>
+		<td class="center"><%=map.get("creator")%></td>
+		<td class="center"><%=map.get("createdDate_txt")%></td>
 	</tr>
 	<%
-		}
+	}
+	}
 	%>
 </table>
+
+<table class="button-table">
+	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				도번 결재
+			</div>
+		</td>
+	</tr>
+</table>
+
+<table class="view-table">
+	<colgroup>
+		<col width="80">
+		<col width="250">
+		<col width="100">
+		<col width="*">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+	</colgroup>
+	<tr>
+		<th class="lb">LOT</th>
+		<th class="lb">UNIT NAME</th>
+		<th class="lb">도번</th>
+		<th class="lb">도명</th>
+		<th class="lb">상태</th>
+		<th class="lb">버전</th>
+		<th class="lb">작성자</th>
+		<th class="lb">작성일</th>
+	</tr>
+	<%
+	for (Map<String, String> map : list) {
+		if (map.get("oid").indexOf("NumberRule") > -1) {
+	%>
+	<tr>
+		<td class="center"><%=map.get("lotNo")%></td>
+		<td class="center"><%=map.get("unitName")%></td>
+		<td class="center"><%=map.get("number")%></td>
+		<td class="indent5"><%=map.get("name")%></td>
+		<td class="center"><%=map.get("state")%></td>
+		<td class="center"><%=map.get("version")%></td>
+		<td class="center"><%=map.get("creator")%></td>
+		<td class="center"><%=map.get("createdDate_txt")%></td>
+	</tr>
+	<%
+	}
+	}
+	%>
+</table>
+
 <%
 }
 %>

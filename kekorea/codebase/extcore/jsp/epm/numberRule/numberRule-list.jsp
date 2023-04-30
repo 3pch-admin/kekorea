@@ -450,7 +450,8 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					enableRightDownFocus : true,
 					filterLayerWidth : 320,
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-					editable : true
+					editable : true,
+					fixedColumnCount : 1,
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				loadGridData();
@@ -476,13 +477,13 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 				const rowIndex = event.rowIndex;
 				const dataField = event.dataField;
 				const value = event.value;
-				if (dataField === "classificationWritingDepartments") {
+				if (dataField === "classificationWritingDepartments_code") {
 					const newNumber = "K" + value;
 					AUIGrid.setCellValue(myGridID, rowIndex, "number", newNumber);
 				}
 
-				if (dataField === "writtenDocuments") {
-					const value1 = AUIGrid.getCellValue(myGridID, rowIndex, "classificationWritingDepartments");
+				if (dataField === "writtenDocuments_code") {
+					const value1 = AUIGrid.getCellValue(myGridID, rowIndex, "classificationWritingDepartments_code");
 					const newNumber = "K" + value1 + value;
 					const url = getCallUrl("/numberRule/last?number=" + newNumber);
 					call(url, null, function(data) {
@@ -509,8 +510,13 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 			function auiCellEditBeginHandler(event) {
 				const dataField = event.dataField;
 				const rowIndex = event.rowIndex;
-				if (dataField === "writtenDocuments") {
-					const value = AUIGrid.getCellValue(myGridID, rowIndex, "classificationWritingDepartments");
+				const state = event.item.state;
+				if (state === "승인됨") {
+					return false;
+				}
+
+				if (dataField === "writtenDocuments_code") {
+					const value = AUIGrid.getCellValue(myGridID, rowIndex, "classificationWritingDepartments_code");
 					if (isNull(value)) {
 						alert("작성부서구분을 먼저 선택하세요.");
 						return false;
@@ -611,9 +617,8 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 			function addRow() {
 				const item = new Object();
 				item.version = 1;
-				item.drawingCompany = "K";
-				// 				item.businessSector = "국제엘렉트릭코리아(주)";
-				item.businessSector = "K";
+				item.drawingCompany_code = "K";
+				item.businessSector_code = "K";
 				item.number = "K";
 				AUIGrid.addRow(myGridID, item, "first");
 			}

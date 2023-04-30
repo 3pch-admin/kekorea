@@ -9,10 +9,9 @@
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 DocumentDTO dto = (DocumentDTO) request.getAttribute("dto");
 JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
-String oid = request.getParameter("oid");
 %>
 <input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
-<input type="hidden" name="oid" id="oid">
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -204,10 +203,16 @@ String oid = request.getParameter("oid");
 		const url = getCallUrl("/doc/update?oid=" + oid + "&mode=" + mode);
 		document.location.href = url;
 	}
-	
+
 	function _delete() {
+
+		if (!confirm("삭제 하시겠습니까?")) {
+			return false;
+		}
+
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/doc/delete?oid=" + oid);
+		openLayer();
 		call(url, null, function(data) {
 			alert(data.msg);
 			if (data.result) {

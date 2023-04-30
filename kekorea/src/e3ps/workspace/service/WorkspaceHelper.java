@@ -10,6 +10,9 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.epm.numberRule.NumberRule;
+import e3ps.epm.numberRule.NumberRule;
+import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.org.dto.UserDTO;
@@ -813,9 +816,9 @@ public class WorkspaceHelper {
 				ApprovalContractPersistableLink.class);
 		while (result.hasMoreElements()) {
 			Persistable per = (Persistable) result.nextElement();
+			Map<String, String> map = new HashMap<>();
 			if (per instanceof EPMDocument) {
 				EPMDocument epm = (EPMDocument) per;
-				Map<String, String> map = new HashMap<>();
 				map.put("oid", epm.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("name", epm.getName());
 				map.put("nameOfParts", IBAUtils.getStringValue(epm, "NAME_OF_PARTS"));
@@ -825,6 +828,24 @@ public class WorkspaceHelper {
 						+ epm.getIterationIdentifier().getSeries().getValue());
 				map.put("creator", epm.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(epm.getCreateTimestamp()));
+				list.add(map);
+			} else if (per instanceof NumberRule) {
+				NumberRule numberRule = (NumberRule) per;
+				map.put("number", numberRule.getMaster().getNumber());
+				map.put("size_txt", numberRule.getMaster().getSize().getName());
+				map.put("lotNo", String.valueOf(numberRule.getMaster().getLotNo()));
+				map.put("unitName", numberRule.getMaster().getUnitName());
+				map.put("name", numberRule.getMaster().getName());
+				map.put("businessSector_txt", numberRule.getMaster().getSector().getName());
+				map.put("classificationWritingDepartments_txt", numberRule.getMaster().getDepartment().getName());
+				map.put("writtenDocuments_txt", numberRule.getMaster().getDocument().getName());
+				map.put("version", String.valueOf(numberRule.getVersion()));
+				map.put("state", numberRule.getState());
+				map.put("creator", numberRule.getMaster().getOwnership().getOwner().getFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(numberRule.getMaster().getCreateTimestamp()));
+				map.put("modifier", numberRule.getOwnership().getOwner().getFullName());
+				map.put("modifiedDate_txt", CommonUtils.getPersistableTime(numberRule.getCreateTimestamp()));
+				map.put("oid", numberRule.getPersistInfo().getObjectIdentifier().getStringValue());
 				list.add(map);
 			}
 		}

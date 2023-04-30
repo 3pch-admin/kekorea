@@ -10,6 +10,8 @@ import e3ps.common.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import wt.doc.WTDocument;
+import wt.iba.value.IBAHolder;
+import wt.iba.value.IBAHolder;
 
 @Getter
 @Setter
@@ -50,7 +52,7 @@ public class DocumentDTO {
 	 * 부품 변수
 	 */
 	private ArrayList<Map<String, String>> addRows7 = new ArrayList<>();
-	
+
 	/**
 	 * 도번 변수
 	 */
@@ -75,8 +77,8 @@ public class DocumentDTO {
 		setModifiedDate(document.getModifyTimestamp());
 		setModifiedDate_txt(CommonUtils.getPersistableTime(document.getModifyTimestamp()));
 		setDocType(document.getDocType().getDisplay());
-		setNumberRule(IBAUtils.getStringValue(document, "NUMBER_RULE"));
-		setNumberRuleVersion(IBAUtils.getStringValue(document, "NUMBER_RULE_VERSION"));
+		setNumberRule(IBAUtils.getStringValue((IBAHolder) document.getMaster(), "NUMBER_RULE"));
+		setNumberRuleVersion(IBAUtils.getStringValue((IBAHolder) document.getMaster(), "NUMBER_RULE_VERSION"));
 //		setRevise(CommonUtils.getFullVersion(document));
 	}
 }

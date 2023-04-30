@@ -132,12 +132,10 @@ public class EpmController extends BaseController {
 			result = EpmHelper.manager.append(params);
 
 			// 없을시 FAIL
-			if ((boolean) result.get("exist")) {
-
-			}
-
+//			if ((boolean) result.get("exist")) {
+//
+//			}
 			result.put("result", SUCCESS);
-			result.put("msg", REGISTER_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("msg", e.toString());
