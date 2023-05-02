@@ -23,7 +23,11 @@ import e3ps.common.util.StringUtils;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.dto.ProjectDTO;
+import e3ps.project.issue.IssueProjectLink;
+import e3ps.project.output.Output;
+import e3ps.project.output.OutputProjectLink;
 import e3ps.project.task.Task;
+import e3ps.project.task.TaskProjectLink;
 import e3ps.project.task.dto.TaskTreeNode;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.task.variable.TaskStateVariable;
@@ -229,12 +233,6 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 		try {
 			trs.start();
 
-			for (Map<String, Object> removeRow : removeRows) {
-				String oid = (String) removeRow.get("oid");
-				Task task = (Task) CommonUtils.getObject(oid);
-				PersistenceHelper.manager.delete(task);
-			}
-
 			String parse = new String(DatatypeConverter.parseBase64Binary(json), "UTF-8");
 			Type listType = new TypeToken<ArrayList<TaskTreeNode>>() {
 			}.getType();
@@ -245,11 +243,17 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 			for (TaskTreeNode node : nodes) {
 				String oid = node.getOid();
 				ArrayList<TaskTreeNode> childrens = node.getChildren();
-				String name = node.getName();
-				String d = node.getDescription();
 				project = (Project) CommonUtils.getObject(oid);
 				treeSave(project, null, childrens);
 			}
+
+			for (Map<String, Object> removeRow : removeRows) {
+				String oid = (String) removeRow.get("oid");
+				Task task = (Task) CommonUtils.getObject(oid);
+				PersistenceHelper.manager.delete(task);
+			}
+
+			commit(project);
 
 			trs.commit();
 			trs = null;
@@ -659,6 +663,59 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 			project.setCustomDate(DateUtils.convertDate(customDate));
 
 			PersistenceHelper.manager.modify(project);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void delete(String oid) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Project project = (Project) CommonUtils.getObject(oid);
+
+			// 산출물 정의
+			QueryResult qr = PersistenceHelper.manager.navigate(project, "output", OutputProjectLink.class);
+			while (qr.hasMoreElements()) {
+				Output output = (Output) qr.nextElement();
+				PersistenceHelper.manager.delete(output);
+			}
+
+			// 이슈 링크
+			qr.reset();
+			qr = PersistenceHelper.manager.navigate(project, "issue", IssueProjectLink.class, false);
+			while (qr.hasMoreElements()) {
+				IssueProjectLink link = (IssueProjectLink) qr.nextElement();
+				PersistenceHelper.manager.delete(link);
+			}
+
+			// 태스크
+			qr.reset();
+			qr = PersistenceHelper.manager.navigate(project, "task", TaskProjectLink.class);
+			while (qr.hasMoreElements()) {
+				Task task = (Task) qr.nextElement();
+				PersistenceHelper.manager.delete(task);
+			}
+
+			// 프로젝트 담당자 링크
+			qr.reset();
+			qr = PersistenceHelper.manager.navigate(project, "user", ProjectUserLink.class, false);
+			while (qr.hasMoreElements()) {
+				ProjectUserLink link = (ProjectUserLink) qr.nextElement();
+				PersistenceHelper.manager.delete(link);
+			}
+
+			PersistenceHelper.manager.delete(project);
 
 			trs.commit();
 			trs = null;

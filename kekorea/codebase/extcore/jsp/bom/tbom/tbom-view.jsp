@@ -14,6 +14,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
+<input type="hidden" name="loid" id="loid" value="<%=dto.getLoid() %>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -304,19 +305,22 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 </div>
 <script type="text/javascript">
 	function view() {
-		const url = getCallUrl("/tbom/view?oid=" + item.oid);
+		const oid = document.getElementById("loid").value;
+		const url = getCallUrl("/tbom/view?oid=" + oid);
 		popup(url, 1500, 700);
 	}
 
 	function modify() {
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/tbom/modify?oid=" + oid);
+		openLayer();
 		document.location.href = url;
 	}
 
 	function revise() {
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/tbom/revise?oid=" + oid);
+		openLayer();
 		document.location.href = url;
 	}
 

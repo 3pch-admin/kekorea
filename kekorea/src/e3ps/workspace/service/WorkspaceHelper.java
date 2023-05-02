@@ -1,8 +1,21 @@
 package e3ps.workspace.service;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.tbom.TBOMMaster;
@@ -10,6 +23,8 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.common.util.StringUtils;
+import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.org.dto.UserDTO;
@@ -34,6 +49,7 @@ import wt.query.QuerySpec;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
+import wt.util.WTProperties;
 
 public class WorkspaceHelper {
 
@@ -137,10 +153,10 @@ public class WorkspaceHelper {
 			} else if (per instanceof WorkOrder) {
 				WorkOrder workOrder = (WorkOrder) per;
 				return workOrder.getName();
+			} else if (per instanceof ConfigSheet) {
+				ConfigSheet configSheet = (ConfigSheet) per;
+				return configSheet.getName();
 			}
-		} else if (per instanceof ConfigSheet) {
-			ConfigSheet configSheet = (ConfigSheet) per;
-			return configSheet.getName();
 		}
 		return "";
 	}
@@ -813,9 +829,9 @@ public class WorkspaceHelper {
 				ApprovalContractPersistableLink.class);
 		while (result.hasMoreElements()) {
 			Persistable per = (Persistable) result.nextElement();
+			Map<String, String> map = new HashMap<>();
 			if (per instanceof EPMDocument) {
 				EPMDocument epm = (EPMDocument) per;
-				Map<String, String> map = new HashMap<>();
 				map.put("oid", epm.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("name", epm.getName());
 				map.put("nameOfParts", IBAUtils.getStringValue(epm, "NAME_OF_PARTS"));
@@ -825,6 +841,24 @@ public class WorkspaceHelper {
 						+ epm.getIterationIdentifier().getSeries().getValue());
 				map.put("creator", epm.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(epm.getCreateTimestamp()));
+				list.add(map);
+			} else if (per instanceof NumberRule) {
+				NumberRule numberRule = (NumberRule) per;
+				map.put("number", numberRule.getMaster().getNumber());
+				map.put("size_txt", numberRule.getMaster().getSize().getName());
+				map.put("lotNo", String.valueOf(numberRule.getMaster().getLotNo()));
+				map.put("unitName", numberRule.getMaster().getUnitName());
+				map.put("name", numberRule.getMaster().getName());
+				map.put("businessSector_txt", numberRule.getMaster().getSector().getName());
+				map.put("classificationWritingDepartments_txt", numberRule.getMaster().getDepartment().getName());
+				map.put("writtenDocuments_txt", numberRule.getMaster().getDocument().getName());
+				map.put("version", String.valueOf(numberRule.getVersion()));
+				map.put("state", numberRule.getState());
+				map.put("creator", numberRule.getMaster().getOwnership().getOwner().getFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(numberRule.getMaster().getCreateTimestamp()));
+				map.put("modifier", numberRule.getOwnership().getOwner().getFullName());
+				map.put("modifiedDate_txt", CommonUtils.getPersistableTime(numberRule.getCreateTimestamp()));
+				map.put("oid", numberRule.getPersistInfo().getObjectIdentifier().getStringValue());
 				list.add(map);
 			}
 		}
@@ -853,4 +887,100 @@ public class WorkspaceHelper {
 
 		return count;
 	}
+
+	/**
+	 * 도면 승인 일람표 생성
+	 */
+	public Workbook print(String oid) throws Exception {
+
+		String numberRulePath = WTProperties.getLocalProperties().getProperty("wt.codebase.location") + File.separator
+				+ "extcore" + File.separator + "excelTemplate" + File.separator + "NUMBERRULE-TEMPLATE.xlsx";
+		FileInputStream fis = new FileInputStream(numberRulePath);
+		Workbook workbook = new XSSFWorkbook(fis);
+		Sheet sheet = workbook.getSheetAt(0);
+
+		ApprovalContract contract = (ApprovalContract) CommonUtils.getObject(oid);
+		QueryResult result = PersistenceHelper.manager.navigate(contract, "persist",
+				ApprovalContractPersistableLink.class);
+
+		// cell style
+		CellStyle cellStyle = workbook.createCellStyle();
+		// cell font
+		Font font = workbook.createFont();
+		font.setBold(true);
+		cellStyle.setFont(font);
+		// 정렬 설정
+		cellStyle.setAlignment(HorizontalAlignment.CENTER);
+		cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+		// 경계선 설정
+		cellStyle.setBorderTop(BorderStyle.MEDIUM);
+		cellStyle.setBorderBottom(BorderStyle.MEDIUM);
+		cellStyle.setBorderLeft(BorderStyle.MEDIUM);
+		cellStyle.setBorderRight(BorderStyle.MEDIUM);
+
+		int rowIndex = 11;
+		int rowNum = 1;
+		while (result.hasMoreElements()) {
+			Persistable per = (Persistable) result.nextElement();
+			if (per instanceof NumberRule) {
+				NumberRule numberRule = (NumberRule) per;
+
+				String name = numberRule.getMaster().getName();
+				String number = numberRule.getMaster().getNumber();
+
+				System.out.println("깡ㅂ이 =" + numberRule.getMaster().getLotNo());
+
+				Row row = sheet.createRow(11);
+				Cell cell = row.createCell(0);
+				cell.setCellStyle(cellStyle);
+				cell.setCellValue(String.valueOf(rowNum));
+
+				Row row2 = sheet.createRow(rowIndex);
+				Cell cell2 = row2.createCell(1);
+				cell2.setCellStyle(cellStyle);
+				cell2.setCellValue(numberRule.getMaster().getLotNo() + " / " + numberRule.getMaster().getUnitName());
+//				cell.setCellValue("222");
+//				
+//				row = sheet.createRow(rowIndex);
+//				cell = row.createCell(2);
+//				cell.setCellStyle(cellStyle);
+////				cell.setCellValue(name);
+//				cell.setCellValue("333");
+//				
+//				row = sheet.createRow(rowIndex);
+//				cell = row.createCell(3);
+//				cell.setCellStyle(cellStyle);
+////				cell.setCellValue(number);
+//				cell.setCellValue("444");
+//
+//				row = sheet.createRow(rowIndex);
+//				cell = row.createCell(4);
+//				cell.setCellStyle(cellStyle);
+//				cell.setCellValue(String.valueOf(numberRule.getVersion()));
+//
+//				row = sheet.createRow(rowIndex);
+//				cell = row.createCell(5);
+//				cell.setCellStyle(cellStyle);
+//				cell.setCellValue("");
+
+				rowIndex++;
+				rowNum++;
+			}
+		}
+		return workbook;
+	}
+
+	/**
+	 * 엑셀 데이터 세팅 함수
+	 */
+	private void setCellValue(Sheet sheet, int rowIndex, int cellIndex, String data, CellStyle style) {
+		Row row = sheet.createRow(rowIndex);
+		Cell cell = row.createCell(cellIndex);
+		if (style != null) {
+			cell.setCellStyle(style);
+		}
+		cell.setCellValue(StringUtils.replaceToValue(data));
+	}
+
 }

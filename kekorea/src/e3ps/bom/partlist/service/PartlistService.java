@@ -1,5 +1,7 @@
 package e3ps.bom.partlist.service;
 
+import java.util.Map;
+
 import e3ps.bom.partlist.dto.PartListDTO;
 import wt.method.RemoteInterface;
 
@@ -24,5 +26,5 @@ public interface PartlistService {
 	/**
 	 * 수배표 태스크 연결 제거
 	 */
-	public abstract void disconnect(String oid) throws Exception;
+	public abstract void disconnect(Map<String, Object> params) throws Exception;
 }

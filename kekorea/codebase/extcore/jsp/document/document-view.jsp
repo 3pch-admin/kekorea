@@ -3,18 +3,15 @@
 <%@page import="e3ps.doc.dto.DocumentDTO"%>
 <%-- <%@page import="e3ps.project.dto.ProjectDTO"%> --%>
 <%@page import="e3ps.common.util.ContentUtils"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 DocumentDTO dto = (DocumentDTO) request.getAttribute("dto");
-// ProjectDTO pdto = (ProjectDTO) request.getAttribute("pdto");
-JSONArray list = (JSONArray) request.getAttribute("list");
-String oid = request.getParameter("oid");
-JSONArray history = (JSONArray) request.getAttribute("history");
+JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 %>
 <input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
-<input type="hidden" name="oid" id="oid">
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -24,16 +21,16 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="개정" id="reviseBtn" title="개정" class="blue">
-			<input type="button" value="수정" id="modifyDocBtn" title="수정">
+			<input type="button" value="개정" title="개정" class="blue" onclick="update('revise');">
+			<input type="button" value="수정" title="수정" onclick="update('modify');">
 			<%
 			if (isAdmin) {
 			%>
-			<input type="button" value="삭제" id="deleteDocBtn" title="삭제" class="red">
+			<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
 			<%
 			}
 			%>
-			<input type="button" value="닫기" id="close" title="닫기" class="red" onclick="self.close();">
+			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
 	</tr>
 </table>
@@ -43,315 +40,222 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			<a href="#tabs-1">기본정보</a>
 		</li>
 		<li>
-			<a href="#tabs-2">결재이력</a>
+			<a href="#tabs-2">버전정보</a>
 		</li>
 		<li>
-			<a href="#tabs-3">버전정보</a>
+			<a href="#tabs-3">결재이력</a>
 		</li>
 	</ul>
 	<div id="tabs-1">
 		<table class="view-table">
 			<colgroup>
 				<col width="150">
-				<col width="700">
-				<col width="100">
-				<col width="300">
+				<col width="600">
+				<col width="150">
+				<col width="600">
 			</colgroup>
 			<tr>
 				<th class="lb">문서제목</th>
 				<td class="indent5"><%=dto.getName()%></td>
-				<th class="lb">문서번호</th>
+				<th>문서번호</th>
 				<td class="indent5"><%=dto.getNumber()%></td>
+			</tr>
+			<tr>
+				<th class="lb">저장위치</th>
+				<td class="indent5"><%=dto.getLocation()%></td>
+				<th>도번</th>
+				<td class="indent5"><%=dto.getNumberRule()%>
+					[
+					<font color="red">
+						<b><%=dto.getNumberRuleVersion()%></b>
+					</font>
+					]
+				</td>
 			</tr>
 			<tr>
 				<th class="lb">버전</th>
 				<td class="indent5"><%=dto.getVersion()%></td>
-				<th class="lb">상태</th>
+				<th>상태</th>
 				<td class="indent5"><%=dto.getState()%></td>
 			</tr>
 			<tr>
 				<th class="lb">작성자</th>
 				<td class="indent5"><%=dto.getCreator()%></td>
-				<th class="lb">작성일</th>
-				<%-- 				<td class="indent5"><%=dto.getCreatedDate().toString().substring(0, 10)%></td> --%>
+				<th>작성일</th>
 				<td class="indent5"><%=dto.getCreatedDate_txt()%></td>
 			</tr>
 			<tr>
 				<th class="lb">수정자</th>
 				<td class="indent5"><%=dto.getModifier()%></td>
-				<th class="lb">수정일</th>
-				<%-- 				<td class="indent5"><%=dto.getModifiedDate().toString().substring(0, 10)%></td> --%>
+				<th>수정일</th>
 				<td class="indent5"><%=dto.getModifiedDate_txt()%></td>
-			</tr>
-			<tr>
-				<th class="lb">저장위치</th>
-				<td class="indent5" colspan="3"><%=dto.getLocation()%></td>
 			</tr>
 			<tr>
 				<th class="lb">설명</th>
 				<td colspan="3" class="indent5">
-					<textarea name="descriptionNotice" id="descriptionNotice" rows="12" cols="" readonly="readonly"><%=dto.getDescription()%></textarea>
+					<textarea rows="5" readonly="readonly"><%=dto.getDescription() != null ? dto.getDescription() : ""%></textarea>
 				</td>
 			</tr>
 			<tr>
-				<th class="lb">관련부품</th>
-				<td class="indent5" colspan="3">
-					<%-- 			<jsp:include page="/extcore/include/part-include.jsp"> --%>
-					<%-- 				<jsp:param value="<%=dto.getOid()%>" name="oid" /> --%>
-					<%-- 				<jsp:param value="view" name="mode" /> --%>
-					<%-- 				<jsp:param value="true" name="multi" /> --%>
-					<%-- 				<jsp:param value="part" name="obj" /> --%>
-					<%-- 				<jsp:param value="150" name="height" /> --%>
-					<%-- 			</jsp:include> --%>
-					<%-- <%=dto.getOid() %> --%>
+				<th class="req lb">관련부품</th>
+				<td colspan="3">
+					<jsp:include page="/extcore/jsp/common/part-include.jsp">
+						<jsp:param value="<%=dto.getOid()%>" name="oid" />
+						<jsp:param value="view" name="mode" />
+					</jsp:include>
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">주 첨부파일</th>
 				<td class="indent5" colspan="3">
-					<jsp:include page="/extcore/include/attachment-view.jsp">
+					<jsp:include page="/extcore/jsp/common/primary-view.jsp">
 						<jsp:param value="<%=dto.getOid()%>" name="oid" />
-						<jsp:param value="primary" name="mode" />
-					</jsp:include>
-				</td>
+					</jsp:include></td>
 			</tr>
 			<tr>
 				<th class="lb">첨부파일</th>
 				<td class="indent5" colspan="3">
-					<jsp:include page="/extcore/include/attachment-view.jsp">
+					<jsp:include page="/extcore/jsp/common/secondary-view.jsp">
 						<jsp:param value="<%=dto.getOid()%>" name="oid" />
-						<jsp:param value="secondary" name="mode" />
-					</jsp:include>
-				</td>
-			</tr>
-			<tr>
-				<th class="lb">연관된 프로젝트</th>
-				<td class="indent5" colspan="3">
-					<jsp:include page="/extcore/include/project-include.jsp">
-						<jsp:param value="<%=dto.getOid()%>" name="oid" />
-						<jsp:param value="view" name="mode" />
-						<jsp:param value="true" name="multi" />
-						<jsp:param value="document" name="obj" />
-						<jsp:param value="180" name="height" />
 					</jsp:include>
 				</td>
 			</tr>
 		</table>
 	</div>
 	<div id="tabs-2">
-		<div id="_grid_wrap_" style="height: 565px; border-top: 1px solid #3180c3;"></div>
-		<script type="text/javascript">
-			let _myGridID_;
-			const history =
-		<%=history%>
-			const _columns_ = [ {
-				dataField : "type",
-				headerText : "구분",
-				dataType : "string",
-				width : 80,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			}, {
-				dataField : "role",
-				headerText : "역할",
-				dataType : "string",
-				width : 80,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			}, {
-				dataField : "name",
-				headerText : "결재제목",
-				dataType : "string",
-				style : "aui-left",
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			}, {
-				dataField : "state",
-				headerText : "상태",
-				dataType : "string",
-				width : 80,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			}, {
-				dataField : "owner",
-				headerText : "담당자",
-				dataType : "string",
-				width : 80
-			}, {
-				dataField : "receiveTime",
-				headerText : "수신일",
-				dataType : "date",
-				formatString : "yyyy-mm-dd HH:MM:ss",
-				width : 130,
-				filter : {
-					showIcon : true,
-					inline : true,
-					displayFormatValues : true
-				},
-			}, {
-				dataField : "completeDate_txt",
-				headerText : "완료일",
-				dataType : "date",
-				formatString : "yyyy-mm-dd HH:MM:ss",
-				width : 130,
-				filter : {
-					showIcon : true,
-					inline : true,
-					displayFormatValues : true
-				},
-			}, {
-				dataField : "",
-				headerText : "결재의견",
-				dataType : "string",
-				width : 130,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			} ]
-
-			function _createAUIGrid_(columnLayout) {
-				const props = {
-					headerHeight : 30,
-					rowHeight : 30,
-					showRowNumColumn : true,
-					showStateColumn : true,
-					rowNumHeaderText : "번호",
-					selectionMode : "multipleCells",
-					noDataMessage : "결재이력이 없습니다."
-				};
-				_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
-				AUIGrid.setGridData(_myGridID_, history);
-			}
-		</script>
-	</div>
-	<div id="tabs-3">
-		<%-- 					<td class="indent5"><%=dto.getVersion()%></td> --%>
-		<div id="grid_wrap" style="height: 550px; border-top: 1px solid #3180c3;"></div>
+		<!-- 버전이력 쭉 쌓이게 autoGrid 설정 true -->
+		<div id="grid_wrap" style="height: 350px; border-top: 1px solid #3180c3; margin: 5px;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			const columns = [ {
-				dataField : "name",
-				headerText : "이름",
+				dataField : "number",
+				headerText : "문서번호",
 				dataType : "string",
-				width : 600,
+				width : 120,
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const url = getCallUrl("/doc/view?oid=" + oid);
+						popup(url, 1600, 800);
+					}
+				},
+			}, {
+				dataField : "name",
+				headerText : "문서제목",
+				dataType : "string",
 				style : "aui-left",
-				filter : {
-					showIcon : true,
-					inline : true
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const url = getCallUrl("/doc/view?oid=" + oid);
+						popup(url, 1600, 800);
+					}
 				},
 			}, {
 				dataField : "version",
 				headerText : "버전",
 				dataType : "string",
 				width : 100,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
 			}, {
 				dataField : "creator",
 				headerText : "작성자",
 				dataType : "string",
-				width : 130,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
+				width : 100,
 			}, {
 				dataField : "createdDate_txt",
-				headerText : "작성일",
-				dataType : "date",
-				width : 130,
-				formatString : "yyyy-mm-dd",
-				filter : {
-					showIcon : true,
-					inline : true,
-					displayFormatValues : true
-				},
+				headerText : "거래처",
+				dataType : "string",
+				width : 100,
 			}, {
 				dataField : "modifier",
 				headerText : "수정자",
 				dataType : "string",
-				width : 130,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
+				width : 100,
 			}, {
 				dataField : "modifiedDate_txt",
 				headerText : "수정일",
-				dataType : "date",
-				width : 130,
-				formatString : "yyyy-mm-dd",
-				filter : {
-					showIcon : true,
-					inline : true,
-					displayFormatValues : true
+				dataType : "string",
+				width : 100,
+			}, {
+				dataField : "primary",
+				headerText : "주 첨부파일",
+				dataType : "string",
+				width : 100,
+				renderer : {
+					type : "TemplateRenderer"
 				}
-			} ]
+			}, {
+				dataField : "secondary",
+				headerText : "첨부파일",
+				dataType : "string",
+				width : 150,
+				renderer : {
+					type : "TemplateRenderer"
+				}
+			}, ]
 
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
-					enableFilter : true,
-					selectionMode : "multipleCells",
-					enableMovingColumn : true,
-					showInlineFilter : true,
-					enableRightDownFocus : true,
-					filterLayerWidth : 320,
-					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+					showAutoNoDataMessage : false,
+					softRemoveRowMode : false,
+					autoGridHeight : true,
 				}
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				AUIGrid.setGridData(myGridID,
-		<%=list%>
+		<%=versionHistory%>
 			);
 			}
 		</script>
 	</div>
+	<div id="tabs-3">
+		<!-- 결재이력 -->
+		<jsp:include page="/extcore/jsp/common/approval-history.jsp">
+			<jsp:param value="<%=dto.getOid()%>" name="oid" />
+		</jsp:include>
+	</div>
 </div>
 <script type="text/javascript">
+	function update(mode) {
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/doc/update?oid=" + oid + "&mode=" + mode);
+		openLayer();
+		document.location.href = url;
+	}
+
+	function _delete() {
+
+		if (!confirm("삭제 하시겠습니까?")) {
+			return false;
+		}
+
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/doc/delete?oid=" + oid);
+		openLayer();
+		call(url, null, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			} else {
+				closeLayer();
+			}
+		}, "GET");
+	}
+
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs({
 			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-2":
-					_createAUIGrid_(_columns_);
-					AUIGrid.resize(_myGridID_);
-					break;
-				case "tabs-3":
-					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
-					break;
-				}
-			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-2":
-					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated_) {
-						AUIGrid.resize(_myGridID_);
-					} else {
-						_createAUIGrid_(_columns_);
-					}
-					break;
-				case "tabs-3":
 					const isCreated = AUIGrid.isCreated(myGridID);
 					if (isCreated) {
 						AUIGrid.resize(myGridID);
@@ -359,13 +263,28 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 						createAUIGrid(columns);
 					}
 					break;
+				case "tabs-3":
+					const isCreated100 = AUIGrid.isCreated(myGridID100);
+					if (isCreated100) {
+						AUIGrid.resize(myGridID100);
+					} else {
+						createAUIGrid100(columns100);
+					}
+					break;
 				}
 			},
 		});
+		createAUIGrid7(columns7);
+		createAUIGrid(columns);
+		createAUIGrid100(columns100);
+		AUIGrid.resize(myGridID7);
+		AUIGrid.resize(myGridID);
+		AUIGrid.resize(myGridID100);
 	});
 
 	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID7);
 		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID_);
+		AUIGrid.resize(myGridID100);
 	});
 </script>

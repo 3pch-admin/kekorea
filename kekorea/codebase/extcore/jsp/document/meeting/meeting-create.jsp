@@ -1,12 +1,21 @@
+<%@page import="e3ps.common.util.StringUtils"%>
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="java.util.Map"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.getAttribute("list");
+String toid = (String) request.getAttribute("toid");
+String poid = (String) request.getAttribute("poid");
+String location = (String) request.getAttribute("location");
+JSONArray data = (JSONArray) request.getAttribute("data");
 %>
 <%@include file="/extcore/include/tinymce.jsp"%>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<input type="hidden" name="toid" id="toid" value="<%=toid%>">
+<input type="hidden" name="poid" id="poid" value="<%=poid%>">
+<input type="hidden" name="location" id="location" value="<%=location%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -112,7 +121,17 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
+				<%
+					if(!StringUtils.isNull(poid)) {
+				%>
+				opener._reload();
+				<%
+					} else {
+				%>
 				opener.loadGridData();
+				<%
+					}
+				%>
 				self.close();
 			} else {
 				closeLayer();
@@ -130,8 +149,19 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 			toolbar : 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
 		});
 	}
+	
+	function auiBeforeRemoveRow(event) {
+		const item = event.items[0];
+		const oid = document.getElementById("poid").value;
+		if (item.oid === oid) {
+			alert("기준 작번은 제거 할 수 없습니다.");
+			return false;
+		}
+		return true;
+	}
 
 	document.addEventListener("DOMContentLoaded", function() {
+		document.getElementById("name").focus();
 		loadTinymce();
 		const tinyBox = document.getElementById("tiny");
 		$('#tiny').change(function() {
@@ -149,6 +179,14 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 		});
 		createAUIGrid9(columns9);
 		AUIGrid.resize(myGridID9);
+		<%
+			if(!data.isEmpty()) {
+		%>
+		AUIGrid.bind(myGridID9, "beforeRemoveRow", auiBeforeRemoveRow);
+		AUIGrid.addRow(myGridID9, <%=data%>);
+		<%
+			}
+		%>
 		selectbox("tiny");
 	});
 

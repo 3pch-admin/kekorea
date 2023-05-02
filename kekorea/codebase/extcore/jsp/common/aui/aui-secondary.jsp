@@ -2,9 +2,6 @@
 <%
 String oid = (String) request.getAttribute("oid");
  String method = (String) request.getAttribute("method");
- if(method.equals("setSecondary")){
-	 method = "attach"; 
- }
 %>
 <table class="button-table">
 	<tr>

@@ -131,9 +131,6 @@ String poid = (String) request.getAttribute("poid");
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
-			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('document-list');">
-			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('document-list');">
 			<input type="button" value="추가" title="추가" class="red" onclick="connect();">
 			<input type="button" value="OLD" title="OLD" onclick="toggle();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
@@ -182,15 +179,6 @@ String poid = (String) request.getAttribute("poid");
 			dataType : "string",
 			width : 350,
 			style : "aui-left",
-			renderer : {
-				type : "LinkRenderer",
-				baseUrl : "javascript",
-				jsCallback : function(rowIndex, columnIndex, value, item) {
-					const oid = item.oid;
-					const url = getCallUrl("/document/view?oid=" + oid);
-					popup(url, 1400, 600);
-				}
-			},
 			filter : {
 				showIcon : true,
 				inline : true
@@ -200,15 +188,6 @@ String poid = (String) request.getAttribute("poid");
 			headerText : "문서번호",
 			dataType : "string",
 			width : 120,
-			renderer : {
-				type : "LinkRenderer",
-				baseUrl : "javascript",
-				jsCallback : function(rowIndex, columnIndex, value, item) {
-					const oid = item.oid;
-					const url = getCallUrl("/document/view?oid=" + oid);
-					popup(url, 1400, 600);
-				}
-			},
 			filter : {
 				showIcon : true,
 				inline : true
@@ -321,7 +300,7 @@ String poid = (String) request.getAttribute("poid");
 			rowNumHeaderText : "번호",
 			showAutoNoDataMessage : false,
 			enableFilter : true,
-			selectionMode : "singleRow",
+			selectionMode : "multipleCells",
 			enableFilter : true,
 			enableMovingColumn : true,
 			showInlineFilter : true,
@@ -426,8 +405,8 @@ String poid = (String) request.getAttribute("poid");
 	});
 
 	function toggle() {
-		const iframe = parent.document.getElementById("content");
-		iframe.src = getCallUrl("/output/old");
+// 		const url = getCallUrl("/output/");
+// 		document.location.href = url;
 	}
 
 	document.addEventListener("keydown", function(event) {

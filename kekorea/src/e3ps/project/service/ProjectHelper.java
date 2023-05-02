@@ -53,6 +53,7 @@ import wt.fc.PagingQueryResult;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.lifecycle.LifeCycleManaged;
 import wt.org.WTUser;
 import wt.query.ClassAttribute;
 import wt.query.OrderBy;
@@ -976,41 +977,12 @@ public class ProjectHelper {
 	}
 
 	/**
-	 * 태스크 정보 의뢰서 데이터 가져오기
-	 */
-	public JSONArray jsonAuiRequest(Project project) throws Exception {
-		ArrayList<Map<String, String>> list = new ArrayList<>();
-
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(RequestDocumentProjectLink.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, RequestDocumentProjectLink.class, "roleBObjectRef.key.id", project);
-		QuerySpecUtils.toOrderBy(query, idx, RequestDocumentProjectLink.class,
-				RequestDocumentProjectLink.CREATE_TIMESTAMP, false);
-		QueryResult result = PersistenceHelper.manager.find(query);
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			RequestDocumentProjectLink link = (RequestDocumentProjectLink) obj[0];
-			RequestDocument requestDocument = link.getRequestDocument();
-			Map<String, String> map = new HashMap<>();
-			map.put("oid", requestDocument.getPersistInfo().getObjectIdentifier().getStringValue());
-			map.put("name", requestDocument.getName());
-			map.put("version", requestDocument.getVersionIdentifier().getSeries().getValue() + "."
-					+ requestDocument.getIterationIdentifier().getSeries().getValue());
-			map.put("state", requestDocument.getLifeCycleState().getDisplay());
-			map.put("creator", requestDocument.getCreatorFullName());
-			map.put("createdDate_txt", CommonUtils.getPersistableTime(requestDocument.getCreateTimestamp()));
-			map.put("primary", AUIGridUtils.primaryTemplate(requestDocument));
-			list.add(map);
-		}
-		return JSONArray.fromObject(list);
-	}
-
-	/**
 	 * 작번 기본 산출물
 	 */
-	public JSONArray jsonAuiNormal(Project project, Task task) throws Exception {
+	public JSONArray jsonAuiOutput(String poid, String toid) throws Exception {
+		Project project = (Project) CommonUtils.getObject(poid);
+		Task task = (Task) CommonUtils.getObject(toid);
 		ArrayList<Map<String, String>> list = new ArrayList<>();
-
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Output.class, true); // ... inner join 필요 없을..
 		QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "taskReference.key.id", task);
@@ -1020,16 +992,49 @@ public class ProjectHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			Output output = (Output) obj[0];
-			WTDocument document = (WTDocument) output.getDocument();
+			LifeCycleManaged lcm = output.getDocument();
 			Map<String, String> map = new HashMap<>();
-			map.put("oid", output.getPersistInfo().getObjectIdentifier().getStringValue());
-			map.put("name", document.getName());
-			map.put("version", document.getVersionIdentifier().getSeries().getValue() + "."
-					+ document.getIterationIdentifier().getSeries().getValue());
-			map.put("state", document.getLifeCycleState().getDisplay());
-			map.put("creator", document.getCreatorFullName());
-			map.put("createdDate_txt", CommonUtils.getPersistableTime(document.getCreateTimestamp()));
-			map.put("primary", AUIGridUtils.primaryTemplate(document));
+			map.put("ooid", output.getPersistInfo().getObjectIdentifier().getStringValue());
+
+			System.out.println("class=" + lcm.getClass());
+
+			if (lcm instanceof WTDocument) {
+				WTDocument document = (WTDocument) lcm;
+				map.put("oid", document.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("name", document.getName());
+				map.put("version", document.getVersionIdentifier().getSeries().getValue() + "."
+						+ document.getIterationIdentifier().getSeries().getValue());
+				map.put("state", document.getLifeCycleState().getDisplay());
+				map.put("creator", document.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(document.getCreateTimestamp()));
+				map.put("primary", AUIGridUtils.primaryTemplate(document));
+			} else if (lcm instanceof Meeting) {
+				Meeting meeting = (Meeting) lcm;
+				map.put("oid", meeting.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("name", meeting.getName());
+				map.put("creator", meeting.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(meeting.getCreateTimestamp()));
+				map.put("secondary", AUIGridUtils.secondaryTemplate(meeting));
+			} else if (lcm instanceof PartListMaster) {
+				PartListMaster master = (PartListMaster) lcm;
+
+			} else if (lcm instanceof RequestDocument) {
+				RequestDocument workOrder = (RequestDocument) lcm;
+			} else if (lcm instanceof WorkOrder) {
+				WorkOrder workOrder = (WorkOrder) lcm;
+				map.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("name", workOrder.getName());
+				map.put("creator", workOrder.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(workOrder.getCreateTimestamp()));
+				map.put("secondary", AUIGridUtils.secondaryTemplate(workOrder));
+			} else if (lcm instanceof TBOMMaster) {
+				TBOMMaster master = (TBOMMaster) lcm;
+				map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("name", master.getName());
+				map.put("creator", master.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+				map.put("secondary", AUIGridUtils.secondaryTemplate(master));
+			}
 			list.add(map);
 		}
 		return JSONArray.fromObject(list);
@@ -1146,39 +1151,6 @@ public class ProjectHelper {
 	}
 
 	/**
-	 * 프로젝트 수배표 통합목록
-	 */
-	public JSONArray jsonAuiPartlist(Project project, Task task) throws Exception {
-		ArrayList<Map<String, String>> list = new ArrayList<>();
-
-		QueryResult qr = PersistenceHelper.manager.navigate(task, "childTask", ParentTaskChildTaskLink.class);
-		while (qr.hasMoreElements()) {
-			Task child = (Task) qr.nextElement();
-			QuerySpec query = new QuerySpec();
-			int idx = query.appendClassList(Output.class, true);
-			QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "projectReference.key.id", project);
-			QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "taskReference.key.id", child);
-			QuerySpecUtils.toOrderBy(query, idx, Output.class, Output.CREATE_TIMESTAMP, true);
-			QueryResult result = PersistenceHelper.manager.find(query);
-			while (result.hasMoreElements()) {
-				Object[] obj = (Object[]) result.nextElement();
-				Output output = (Output) obj[0];
-				PartListMaster master = (PartListMaster) output.getDocument();
-				Map<String, String> map = new HashMap<>();
-				map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
-				map.put("name", master.getName());
-				map.put("engType", master.getEngType());
-				map.put("state", master.getLifeCycleState().getDisplay());
-				map.put("creator", master.getCreatorFullName());
-				map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
-				map.put("secondary", AUIGridUtils.secondaryTemplate(master));
-				list.add(map);
-			}
-		}
-		return JSONArray.fromObject(list);
-	}
-
-	/**
 	 * 부모 태스크와 연관된 자식 태스크 가져오기.. 수배표에서만 사용용도
 	 */
 	public Task getTaskByParent(Project project, Task parentTask) throws Exception {
@@ -1245,35 +1217,6 @@ public class ProjectHelper {
 	}
 
 	/**
-	 * 각 태스크와 관련된 수배표 리스트
-	 */
-	public JSONArray jsonAuiStepPartlist(Project project, Task task) throws Exception {
-		ArrayList<Map<String, String>> list = new ArrayList<>();
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(Output.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "projectReference.key.id", project);
-		QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "taskReference.key.id", task);
-		QuerySpecUtils.toOrderBy(query, idx, Output.class, Output.CREATE_TIMESTAMP, false);
-		QueryResult result = PersistenceHelper.manager.find(query);
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			Output output = (Output) obj[0];
-			PartListMaster master = (PartListMaster) output.getDocument();
-			Map<String, String> map = new HashMap<>();
-			map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
-			map.put("name", master.getName());
-			map.put("engType", master.getEngType());
-			map.put("state", master.getLifeCycleState().getDisplay());
-			map.put("creator", master.getCreatorFullName());
-			map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
-			map.put("primary", AUIGridUtils.primaryTemplate(master));
-			list.add(map);
-		}
-
-		return JSONArray.fromObject(list);
-	}
-
-	/**
 	 * 기계 전기 진행율
 	 */
 	public int getTaskProgress(Project project, String taskType) throws Exception {
@@ -1293,34 +1236,6 @@ public class ProjectHelper {
 			progress = sumProgress / sumAllocate;
 		}
 		return progress;
-	}
-
-	/**
-	 * 프로젝트 T-BOM 통합리스트
-	 */
-	public JSONArray jsonAuiTbom(Project project, Task task) throws Exception {
-		ArrayList<Map<String, String>> list = new ArrayList<>();
-
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(Output.class, true); // ... inner join 필요 없을..
-		QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "taskReference.key.id", task);
-		QuerySpecUtils.toEqualsAnd(query, idx, Output.class, "projectReference.key.id", project);
-		QuerySpecUtils.toOrderBy(query, idx, Output.class, Output.CREATE_TIMESTAMP, false);
-		QueryResult result = PersistenceHelper.manager.find(query);
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			Output output = (Output) obj[0];
-			TBOMMaster master = (TBOMMaster) output.getDocument();
-			Map<String, String> map = new HashMap<>();
-			map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
-			map.put("name", master.getName());
-			map.put("state", master.getLifeCycleState().getDisplay());
-			map.put("creator", master.getCreatorFullName());
-			map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
-			map.put("secondary", AUIGridUtils.secondaryTemplate(master));
-			list.add(map);
-		}
-		return JSONArray.fromObject(list);
 	}
 
 	/**
@@ -1346,9 +1261,9 @@ public class ProjectHelper {
 			// 도면
 		} else if (per instanceof EPMDocument) {
 			return EpmHelper.manager.jsonAuiProject(oid);
-		} else if(per instanceof Output) {
+		} else if (per instanceof Output) {
 			return OutputHelper.manager.jsonAuiProject(oid);
-		} else if(per instanceof WTDocument) {
+		} else if (per instanceof WTDocument) {
 			return DocumentHelper.manager.jsonAuiProject(oid);
 		}
 		return new JSONArray();
@@ -1386,13 +1301,5 @@ public class ProjectHelper {
 			list.add(p);
 		}
 		return list;
-	}
-
-	/**
-	 * 프로젝트 회의록 
-	 */
-	public JSONArray jsonAuiMeeting(Project project) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

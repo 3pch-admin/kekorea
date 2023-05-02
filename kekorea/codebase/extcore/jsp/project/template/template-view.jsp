@@ -108,6 +108,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		</table>
 		<script type="text/javascript">
 			document.addEventListener("DOMContentLoaded", function() {
+				parent.closeLayer();
 				finderUser("pm");
 				finderUser("subPm");
 			})

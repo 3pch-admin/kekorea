@@ -122,4 +122,25 @@ public class EpmController extends BaseController {
 		model.setViewName("popup:/epm/epm-popup");
 		return model;
 	}
+
+	@Description(value = "도면 결재시 추가 할때 도번 검증")
+	@PostMapping(value = "/append")
+	@ResponseBody
+	public Map<String, Object> append(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = EpmHelper.manager.append(params);
+
+			// 없을시 FAIL
+//			if ((boolean) result.get("exist")) {
+//
+//			}
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("msg", e.toString());
+			result.put("result", FAIL);
+		}
+		return result;
+	}
 }

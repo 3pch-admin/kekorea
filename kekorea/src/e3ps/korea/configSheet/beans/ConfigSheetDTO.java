@@ -48,7 +48,8 @@ public class ConfigSheetDTO {
 	private ArrayList<Map<String, String>> agreeRows = new ArrayList<>(); // 검토
 	private ArrayList<Map<String, String>> approvalRows = new ArrayList<>(); // 결재
 	private ArrayList<Map<String, String>> receiveRows = new ArrayList<>(); // 수신
-
+	private int progress;
+	
 	public ConfigSheetDTO() {
 
 	}
@@ -57,11 +58,11 @@ public class ConfigSheetDTO {
 		setOid(configSheet.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(configSheet.getName());
 		setContent(StringUtils.replaceToValue(configSheet.getDescription()));
-		setState(configSheet.getState());
-		setCreator(configSheet.getOwnership().getOwner().getFullName());
+		setState(configSheet.getLifeCycleState().getDisplay());
+		setCreator(configSheet.getCreatorFullName());
 		setCreatedDate(configSheet.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(configSheet.getCreateTimestamp()));
-		setCreatorId(configSheet.getOwnership().getOwner().getName());
+		setCreatorId(configSheet.getCreatorName());
 	}
 
 	public ConfigSheetDTO(ConfigSheetProjectLink link) throws Exception {
@@ -70,43 +71,25 @@ public class ConfigSheetDTO {
 		setOid(configSheet.getPersistInfo().getObjectIdentifier().getStringValue());
 		setLoid(link.getPersistInfo().getObjectIdentifier().getStringValue());
 		setPoid(project.getPersistInfo().getObjectIdentifier().getStringValue());
-		if (project.getProjectType() != null) {
-			setProjectType_name(project.getProjectType().getName());
-		}
-
+		setProjectType_name(project.getProjectType().getName());
 		setName(configSheet.getName());
 		setContent(StringUtils.replaceToValue(configSheet.getDescription()));
-		if (project.getCustomer() != null) {
-			setCustomer_name(project.getCustomer().getName());
-		}
-
-		if (project.getInstall() != null) {
-			setInstall_name(project.getInstall().getName());
-		}
-
-		if (project.getMak() != null) {
-			setMak_name(project.getMak().getName());
-		}
-
-		if (project.getDetail() != null) {
-			setDetail_name(project.getDetail().getName());
-		}
-
+		setCustomer_name(project.getCustomer().getName());
+		setInstall_name(project.getInstall().getName());
+		setMak_name(project.getMak().getName());
+		setDetail_name(project.getDetail().getName());
 		setKekNumber(project.getKekNumber());
 		setKeNumber(project.getKeNumber());
 		setUserId(project.getUserId());
 		setDescription(StringUtils.replaceToValue(project.getDescription()));
 		setModel(project.getModel());
-
-		if (project.getPDate() != null) {
-			setPdate(project.getPDate());
-			setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
-		}
-		setState(configSheet.getState());
-		setCreator(configSheet.getOwnership().getOwner().getFullName());
+		setPdate(project.getPDate());
+		setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
+		setState(configSheet.getLifeCycleState().getDisplay());
+		setCreator(configSheet.getCreatorFullName());
 		setCreatedDate(configSheet.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(configSheet.getCreateTimestamp()));
-		setCreatorId(configSheet.getOwnership().getOwner().getName());
+		setCreatorId(configSheet.getCreatorName());
 		setVersion(configSheet.getVersion());
 		setLatest(configSheet.getLatest());
 	}

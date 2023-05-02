@@ -163,6 +163,15 @@ public class PartlistController extends BaseController {
 		PartListDTO dto = new PartListDTO(master);
 		JSONArray list = PartlistHelper.manager.getData(dto.getOid());
 		JSONArray data = PartlistHelper.manager.jsonAuiProject(dto.getOid());
+		People people = CommonUtils.sessionPeople();
+		Department department = people.getDepartment();
+		String engType = "";
+		if (department.getCode().equals("MACHINE")) {
+			engType = "기계";
+		} else if (department.getCode().equals("ELEC")) {
+			engType = "전기";
+		}
+		model.addObject("engType", engType);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
@@ -240,11 +249,11 @@ public class PartlistController extends BaseController {
 
 	@Description(value = "수배표 태스크 연결 제거 함수")
 	@ResponseBody
-	@GetMapping(value = "/disconnect")
-	public Map<String, Object> disconnect(@RequestParam String oid) throws Exception {
+	@PostMapping(value = "/disconnect")
+	public Map<String, Object> disconnect(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			PartlistHelper.service.disconnect(oid);
+			PartlistHelper.service.disconnect(params);
 			result.put("msg", DELETE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

@@ -18,6 +18,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.project.service.ProjectHelper;
 import e3ps.project.task.ParentTaskChildTaskLink;
 import e3ps.project.task.Task;
 import e3ps.project.task.dto.TaskTreeNode;
@@ -145,53 +146,48 @@ public class StandardTemplateService extends StandardManager implements Template
 
 	private void commit(Template template) throws Exception {
 		ArrayList<Task> list = TemplateHelper.manager.recurciveTask(template);
-		sortedTask(list);
-		finalSet(template);
-	}
+		// 자식 태스크 계산하여 날짜 변경
+		TaskHelper.service.calculation(list);
 
-	private void finalSet(Template template) throws Exception {
-
-		System.out.println("최종 작업시작....");
-
-	}
-
-	private void sortedTask(ArrayList<Task> list) throws Exception {
+		// 기간 계산
+		Timestamp start = null;
+		Timestamp end = null;
+		boolean edit = false;
+		int duration = 1;
+		// 태스크 모두 삭제 될 경우
+		if (list.size() == 0) {
+			// 계획 시작일 계획 종료일 동일
+			start = DateUtils.getPlanStartDate();
+			end = DateUtils.getPlanEndDate();
+			template.setPlanStartDate(start);
+			template.setPlanEndDate(end);
+			template.setDuration(1);
+		}
 
 		for (int i = list.size() - 1; i >= 0; i--) {
-			Task task = (Task) list.get(i);
+			Task child = (Task) list.get(i);
 
-			Timestamp start = null;
-			Timestamp end = null;
+			Timestamp cstart = child.getPlanStartDate();
+			Timestamp cend = child.getPlanEndDate();
 
-			boolean edit = false;
-
-			QueryResult result = PersistenceHelper.manager.navigate(task, "childTask", ParentTaskChildTaskLink.class);
-			while (result.hasMoreElements()) {
-				Task child = (Task) result.nextElement();
-
-				Timestamp cstart = child.getPlanStartDate();
-				Timestamp cend = child.getPlanEndDate();
-
-				if (start == null || (start.getTime() > cstart.getTime())) {
-					start = cstart;
-					edit = true;
-				}
-
-				if (end == null || (end.getTime() < cend.getTime())) {
-					end = cend;
-					edit = true;
-				}
+			if (start == null || (start.getTime() > cstart.getTime())) {
+				start = cstart;
+				edit = true;
 			}
 
-			if (edit) {
-				task.setPlanStartDate(start);
-				task.setPlanEndDate(end);
-
-				int duration = DateUtils.getDuration(start, end);
-				task.setDuration(duration);
-				task = (Task) PersistenceHelper.manager.modify(task);
+			if (end == null || (end.getTime() < cend.getTime())) {
+				end = cend;
+				edit = true;
 			}
 		}
+
+		if (edit) {
+			template.setPlanStartDate(start);
+			template.setPlanEndDate(end);
+			duration = DateUtils.getDuration(start, end);
+			template.setDuration(duration);
+		}
+		PersistenceHelper.manager.modify(template);
 	}
 
 	@Override

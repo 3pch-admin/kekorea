@@ -46,19 +46,22 @@ public class StandardNumberRuleService extends StandardManager implements Number
 
 			for (NumberRuleDTO dto : addRows) {
 				int version = dto.getVersion();
-				String state = dto.getState();
 				String number = dto.getNumber();
 				String name = dto.getName();
-				String writtenDocuments = dto.getWrittenDocuments();
-				String drawingCompany = dto.getDrawingCompany();
-				String businessSector = dto.getBusinessSector();
-				String classificationWritingDepartments = dto.getClassificationWritingDepartments();
-				String size = dto.getSize();
+				String writtenDocuments = dto.getWrittenDocuments_code();
+				String drawingCompany = dto.getDrawingCompany_code();
+				String businessSector = dto.getBusinessSector_code();
+				String classificationWritingDepartments = dto.getClassificationWritingDepartments_code();
+				String size = dto.getSize_code();
+				int lotNo = dto.getLotNo();
+				String unitName = dto.getUnitName();
 
 				NumberRuleMaster master = NumberRuleMaster.newNumberRuleMaster();
 				master.setOwnership(ownership);
 				master.setName(name);
 				master.setNumber(number);
+				master.setLotNo(lotNo);
+				master.setUnitName(unitName);
 				master.setDocument(
 						NumberRuleCodeHelper.manager.getNumberRuleCode("WRITTEN_DOCUMENT", writtenDocuments));
 				master.setSize(NumberRuleCodeHelper.manager.getNumberRuleCode("SIZE", size));
@@ -71,7 +74,7 @@ public class StandardNumberRuleService extends StandardManager implements Number
 				NumberRule numberRule = NumberRule.newNumberRule();
 				numberRule.setLatest(true); // 최신이 필요 없을ㄷ...
 				numberRule.setVersion(version);
-				numberRule.setState(state);
+				numberRule.setState(Constants.State.INWORK);
 				numberRule.setMaster(master);
 				numberRule.setOwnership(ownership);
 				PersistenceHelper.manager.save(numberRule);
@@ -94,19 +97,22 @@ public class StandardNumberRuleService extends StandardManager implements Number
 			}
 
 			for (NumberRuleDTO dto : editRows) {
-				String state = dto.getState();
 				String number = dto.getNumber();
 				String name = dto.getName();
-				String writtenDocuments = dto.getWrittenDocuments();
-				String drawingCompany = dto.getDrawingCompany();
-				String businessSector = dto.getBusinessSector();
-				String classificationWritingDepartments = dto.getClassificationWritingDepartments();
-				String size = dto.getSize();
+				String writtenDocuments = dto.getWrittenDocuments_code();
+				String drawingCompany = dto.getDrawingCompany_code();
+				String businessSector = dto.getBusinessSector_code();
+				String classificationWritingDepartments = dto.getClassificationWritingDepartments_code();
+				String size = dto.getSize_code();
 				String oid = dto.getOid();
+				int lotNo = dto.getLotNo();
+				String unitName = dto.getUnitName();
 
 				NumberRule numberRule = (NumberRule) CommonUtils.getObject(oid);
 				NumberRuleMaster master = numberRule.getMaster();
 				master.setName(name);
+				master.setLotNo(lotNo);
+				master.setUnitName(unitName);
 				master.setNumber(number);
 				master.setDocument(
 						NumberRuleCodeHelper.manager.getNumberRuleCode("WRITTEN_DOCUMENT", writtenDocuments));
@@ -117,7 +123,6 @@ public class StandardNumberRuleService extends StandardManager implements Number
 						classificationWritingDepartments));
 				PersistenceHelper.manager.modify(master);
 
-				numberRule.setState(state);
 				PersistenceHelper.manager.modify(numberRule);
 			}
 

@@ -12,7 +12,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -45,19 +45,19 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>문서 제목</th>
 				<td class="indent5">
-					<input type="text" name="name" class="width-300">
+					<input type="text" name="name" id="name" class="width-300">
 				</td>
 				<th>문서 번호</th>
 				<td class="indent5">
-					<input type="text" name="number" class="width-200">
+					<input type="text" name="number" id="number" class="width-200">
 				</td>
 				<th>설명</th>
 				<td class="indent5">
-					<input type="text" name="description" class="width-300">
+					<input type="text" name="description" id="description" class="width-300">
 				</td>
 				<th>상태</th>
 				<td class="indent5">
-					<select name="state" id="state" class="width-100">
+					<select name="state" id="state" class="width-200">
 						<option value="">선택</option>
 					</select>
 				</td>
@@ -66,6 +66,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<th>작성자</th>
 				<td class="indent5">
 					<input type="text" name="creator" id="creator" class="width-200">
+					<input type="hidden" name="creatorOid" id="creatorOid">
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
@@ -154,8 +155,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/document/view?oid=" + oid);
-							popup(url, 1400, 600);
+							const url = getCallUrl("/doc/view?oid=" + oid);
+							popup(url, 1600, 800);
 						}
 					},
 					filter : {
@@ -172,8 +173,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/document/view?oid=" + oid);
-							popup(url, 1400, 600);
+							const url = getCallUrl("/doc/view?oid=" + oid);
+							popup(url, 1600, 800);
 						}
 					},
 					filter : {
@@ -196,15 +197,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataType : "string",
 					width : 250,
 					style : "aui-left",
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "docType",
-					headerText : "문서타입",
-					dataType : "string",
-					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -295,7 +287,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				loadGridData();
+// 				loadGridData();
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
@@ -308,10 +300,25 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function loadGridData() {
 				const url = getCallUrl("/doc/list");
-				// 				const url = getCallUrl("/doc/list");
 				const params = new Object();
 				const psize = document.getElementById("psize").value;
-				params.latest = true;
+				const oid = document.getElementById("oid").value;
+				const name = document.getElementById("name").value;
+				const number = document.getElementById("number").value;
+				const description = document.getElementById("description").value;
+				const state = document.getElementById("state").value;
+				const creatorOid = document.getElementById("creatorOid").value;
+				const createdFrom = document.getElementById("createdFrom").value;
+				const createdTo = document.getElementById("createdTo").value;
+				const latest = !!document.querySelector("input[name=latest]:checked").value;
+				params.name = name;
+				params.number = number;
+				params.oid = oid;
+				params.description = description;
+				params.creatorOid = creatorOid;
+				params.createdFrom = createdFrom;
+				params.createdTo = createdTo;
+				params.latest = latest;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -326,8 +333,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function create() {
 				const url = getCallUrl("/doc/create");
-				// 				const url = getCallUrl("/doc/create");
-				popup(url);
+				popup(url, 1600, 800);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {

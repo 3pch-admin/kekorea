@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.doc.service.DocumentHelper;
 import e3ps.part.dto.PartDTO;
 import e3ps.part.service.PartHelper;
 import e3ps.workspace.service.WorkspaceHelper;
@@ -64,7 +65,7 @@ public class PartController extends BaseController {
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
-	return result;
+		return result;
 	}
 
 	@Description(value = "부품 일괄 등록 리스트 페이지")
@@ -134,13 +135,9 @@ public class PartController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		WTPart part = (WTPart) CommonUtils.getObject(oid);
 		PartDTO dto = new PartDTO(part);
-		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(part.getMaster());
-		JSONArray data = PartHelper.manager.jsonArrayAui(dto.getOid());
-		JSONArray list = PartHelper.manager.list(part.getMaster());
+		JSONArray versionHistory = PartHelper.manager.versionHistory(part);
 		model.addObject("dto", dto);
-		model.addObject("history", history);
-		model.addObject("data", data);
-		model.addObject("list", list);
+		model.addObject("versionHistory", versionHistory);
 		model.setViewName("popup:/part/part-view");
 		return model;
 	}
@@ -172,5 +169,30 @@ public class PartController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "부품 추가 페이지")
+	@GetMapping(value = "/popup")
+	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("method", method);
+		model.addObject("multi", Boolean.parseBoolean(multi));
+		model.setViewName("popup:/part/part-popup");
+		return model;
+	}
+
+	@Description(value = "부품 수정 페이지")
+	@GetMapping(value = "/modify")
+	public ModelAndView modify(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		WTPart part = (WTPart) CommonUtils.getObject(oid);
+		PartDTO dto = new PartDTO(part);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/part/part-modify");
+		return model;
 	}
 }

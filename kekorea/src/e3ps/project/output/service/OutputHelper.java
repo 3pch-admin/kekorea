@@ -1,6 +1,8 @@
 package e3ps.project.output.service;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +26,7 @@ import wt.fc.QueryResult;
 import wt.folder.Folder;
 import wt.folder.IteratedFolderMemberLink;
 import wt.query.ClassAttribute;
+import wt.query.OrderBy;
 import wt.query.QuerySpec;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
@@ -64,6 +67,9 @@ public class OutputHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTDocument.class, true);
 		int idx_m = query.appendClassList(WTDocumentMaster.class, false);
+
+		query.setAdvancedQueryEnabled(true);
+		query.setDescendantQuery(false);
 
 		QuerySpecUtils.toCI(query, idx, WTDocument.class);
 		QuerySpecUtils.toInnerJoin(query, WTDocument.class, WTDocumentMaster.class, "masterReference.key.id",
@@ -168,7 +174,6 @@ public class OutputHelper {
 
 		QuerySpecUtils.toOrderBy(query, idx, WTDocument.class, WTDocument.MODIFY_TIMESTAMP, true);
 
-
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {
@@ -208,4 +213,38 @@ public class OutputHelper {
 		}
 		return JSONArray.fromObject(list);
 	}
+
+	/**
+	 * 산출물 문서 번호
+	 */
+	public String getNextNumber() throws Exception {
+
+		Calendar ca = Calendar.getInstance();
+//		int day = ca.get(Calendar.DATE);
+		int month = ca.get(Calendar.MONTH) + 1;
+		int year = ca.get(Calendar.YEAR);
+		DecimalFormat df = new DecimalFormat("00");
+		String number = "PJ-" + df.format(year).substring(2) + df.format(month) + "-";
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WTDocumentMaster.class, true);
+
+		QuerySpecUtils.toLikeRightAnd(query, idx, WTDocumentMaster.class, WTDocumentMaster.NUMBER, number);
+		QuerySpecUtils.toOrderBy(query, idx, WTDocumentMaster.class, WTDocumentMaster.NUMBER, true);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WTDocumentMaster document = (WTDocumentMaster) obj[0];
+
+			String s = document.getNumber().substring(document.getNumber().lastIndexOf("-") + 1);
+
+			int ss = Integer.parseInt(s) + 1;
+			DecimalFormat d = new DecimalFormat("0000");
+			number += d.format(ss);
+		} else {
+			number += "0001";
+		}
+		return number;
+	}
+
 }

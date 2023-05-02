@@ -1,3 +1,4 @@
+<%@page import="e3ps.project.output.service.OutputHelper"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="java.util.HashMap"%>
@@ -12,6 +13,7 @@ String toid = (String) request.getAttribute("toid");
 String poid = (String) request.getAttribute("poid");
 String location = (String) request.getAttribute("location");
 JSONArray list = (JSONArray) request.getAttribute("list");
+String number = (String)request.getAttribute("number");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="toid" id="toid" value="<%=toid%>">
@@ -35,18 +37,38 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 <table class="create-table">
 	<colgroup>
 		<col width="150">
-		<col width="500">
+		<col width="600">
 		<col width="150">
-		<col width="500">
+		<col width="600">
 	</colgroup>
+	<tr>
+		<th class="req lb">저장위치</th>
+		<td class="indent5">
+			<span id="loc"><%=OutputHelper.OUTPUT_NEW_ROOT%></span>
+			<input type="button" value="폴더선택" title="폴더선택" class="blue" onclick="folder();">
+		</td>
+		<th>진행율</th>
+		<td class="indent5">
+			<input type="number" name="progress" id="progress" class="width-300" value="0" maxlength="3">
+		</td>
+	</tr>
 	<tr>
 		<th class="req lb">산출물 제목</th>
 		<td class="indent5">
 			<input type="text" name="name" id="name" class="width-300">
 		</td>
-		<th>진행율</th>
+		<th>산출물번호</th>
 		<td class="indent5">
-			<input type="number" name="progress" id="progress" class="width-300" value="0" maxlength="3">
+			<input type="text" name="number" id="number" readonly="readonly" class="width-200" value="<%=number%>">
+		</td>
+	</tr>
+	<tr>
+		<th class="req lb">도번</th>
+		<td colspan="3">
+			<jsp:include page="/extcore/jsp/common/numberRule-include.jsp">
+				<jsp:param value="" name="oid" />
+				<jsp:param value="create" name="mode" />
+			</jsp:include>
 		</td>
 	</tr>
 	<tr>
@@ -83,13 +105,26 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 	</tr>
 </table>
 <script type="text/javascript">
+	function folder() {
+		const location = decodeURIComponent("/Default/프로젝트");
+		const url = getCallUrl("/folder?location=" + location + "&container=product&method=setNumber&multi=false");
+		popup(url, 500, 600);
+	}
+
+	function setNumber(item) {
+		document.getElementById("loc").innerHTML = item.location;
+		document.getElementById("location").value = item.location;
+	}
+
 	function create() {
 		const params = new Object();
 		const url = getCallUrl("/output/create");
 		const name = document.getElementById("name");
+		const number = document.getElementById("number").value;
 		const progress = document.getElementById("progress").value;
 		const description = document.getElementById("description").value;
 		const addRows9 = AUIGrid.getGridData(myGridID9);
+		const addRows11 = AUIGrid.getGridData(myGridID11);
 		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
 		const toid = document.getElementById("toid").value;
 		const poid = document.getElementById("poid").value;
@@ -118,7 +153,9 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 		params.name = name.value;
 		params.description = description;
 		params.progress = Number(progress);
+		params.number = number;
 		params.addRows9 = addRows9
+		params.addRows11 = addRows11;
 		params.primarys = toArray("primarys");
 		params.location = location;
 		params.toid = toid;
@@ -140,23 +177,28 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 		const item = event.items[0];
 		const oid = document.getElementById("poid").value;
 		if (item.oid === oid) {
-			alert("선택된 작번은 제거 할 수 없습니다.");
+			alert("기준 작번은 제거 할 수 없습니다.");
 			return false;
 		}
 		return true;
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
+		createAUIGrid11(columns11);
 		createAUIGrid9(columns9);
 		createAUIGrid8(columns8);
+		AUIGrid.resize(myGridID11);
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
-		AUIGrid.addRow(myGridID9, <%=list%>);
+		AUIGrid.addRow(myGridID9,
+<%=list%>
+	);
 		AUIGrid.bind(myGridID9, "beforeRemoveRow", auiBeforeRemoveRow);
 		document.getElementById("name").focus();
 	})
 
 	window.addEventListener("resize", function() {
+		AUIGrid.resize(myGridID11);
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
 	});

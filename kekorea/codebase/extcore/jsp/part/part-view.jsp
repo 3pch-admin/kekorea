@@ -1,14 +1,13 @@
+<%@page import="e3ps.part.service.PartHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="e3ps.part.dto.PartDTO"%>
 <%@page import="e3ps.common.util.ContentUtils"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%
 PartDTO dto = (PartDTO) request.getAttribute("dto");
-JSONArray history = (JSONArray) request.getAttribute("history");
-JSONArray list = (JSONArray) request.getAttribute("list");
-JSONArray data = (JSONArray) request.getAttribute("data");
+JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
@@ -33,10 +32,10 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			<a href="#tabs-2">PROE 속성</a>
 		</li>
 		<li>
-			<a href="#tabs-3">결재이력</a>
+			<a href="#tabs-3">버전정보</a>
 		</li>
 		<li>
-			<a href="#tabs-4">버전정보</a>
+			<a href="#tabs-4">결재이력</a>
 		</li>
 	</ul>
 	<div id="tabs-1">
@@ -86,93 +85,78 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			<tr>
 				<th class="lb">주 첨부파일</th>
 				<td class="indent5" colspan="4">
-					<jsp:include page="/extcore/include/attachment-view.jsp">
+					<jsp:include page="/extcore/jsp/common/primary-view.jsp">
 						<jsp:param value="<%=dto.getOid()%>" name="oid" />
-						<jsp:param value="primary" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">관련문서</th>
 				<td colspan="4">
-					<div class="include">
-						<div id="grid_wrap" style="height: 150px; border-top: 1px solid #3180c3; margin: 5px;"></div>
-						<script type="text/javascript">
-							let myGridID;
-							const data =
-						<%=data%>
-							const columns = [ {
-								dataField : "",
-								headerText : "문서번호",
-								dataType : "string",
-								width : 150,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "",
-								headerText : "문서명",
-								dataType : "string",
-								width : 450,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "",
-								headerText : "버전",
-								dataType : "string",
-								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "",
-								headerText : "상태",
-								dataType : "string",
-								width : 120,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "modifier",
-								headerText : "수정자",
-								dataType : "string",
-								width : 140,
-								filter : {
-									showIcon : true,
-									inline : true
-								},
-							}, {
-								dataField : "modifiedDate_txt",
-								headerText : "수정일",
-								dataType : "date",
-								formatString : "yyyy-mm-dd",
-								width : 130,
-								filter : {
-									showIcon : true,
-									inline : true,
-									displayFormatValues : true
-								}
-							} ]
-							function createAUIGrid(columnLayout) {
-								const props = {
-									headerHeight : 30,
-									rowHeight : 30,
-									showRowNumColumn : true,
-									showStateColumn : true,
-									rowNumHeaderText : "번호",
-									selectionMode : "multipleCells",
-									noDataMessage : "관련문서가 없습니다."
-								}
-								myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-								AUIGrid.setGridData(myGridID, data);
+					<div id="_grid_wrap" style="height: 120px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+					<script type="text/javascript">
+						let _myGridID;
+						const _columns = [ {
+							dataField : "number",
+							headerText : "문서번호",
+							dataType : "string",
+							width : 150,
+						}, {
+							dataField : "name",
+							headerText : "문서 제목",
+							dataType : "string",
+							style : "aui-left",
+						}, {
+							dataField : "version",
+							headerText : "버전",
+							dataType : "string",
+							width : 100,
+						}, {
+							dataField : "state",
+							headerText : "상태",
+							dataType : "string",
+							width : 100,
+						}, {
+							dataField : "creator",
+							headerText : "작성자",
+							dataType : "string",
+							width : 100,
+						}, {
+							dataField : "createdDate_txt",
+							headerText : "작성일",
+							dataType : "string",
+							width : 100,
+						}, {
+							dataField : "primary",
+							headerText : "주 첨부파일",
+							dataType : "string",
+							width : 100,
+							renderer : {
+								type : "TemplateRenderer"
 							}
-						</script>
-					</div>
+						}, {
+							dataField : "secondary",
+							headerText : "첨부파일",
+							dataType : "string",
+							width : 150,
+							renderer : {
+								type : "TemplateRenderer"
+							}
+						} ]
+						function _createAUIGrid(columnLayout) {
+							const props = {
+								headerHeight : 30,
+								showRowNumColumn : true,
+								rowNumHeaderText : "번호",
+								showAutoNoDataMessage : false,
+								enableSorting : false,
+							}
+							_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
+							AUIGrid.setGridData(_myGridID,
+					<%=PartHelper.manager.jsonAuiDocument(dto.getOid())%>
+						);
+						}
+					</script>
 				</td>
 			</tr>
 		</table>
@@ -222,185 +206,96 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		</table>
 	</div>
 	<div id="tabs-3">
-		<div class="include">
-			<div id="_grid_wrap_" style="height: 460px; border-top: 1px solid #3180c3;"></div>
+		<div id="tabs-2">
+			<!-- 버전이력 쭉 쌓이게 autoGrid 설정 true -->
+			<div id="grid_wrap" style="height: 350px; border-top: 1px solid #3180c3; margin: 5px;"></div>
 			<script type="text/javascript">
-				let _myGridID_;
-				const history =
-			<%=history%>
-				const _columns_ = [ {
-					dataField : "type",
-					headerText : "구분",
+				let myGridID;
+				const columns = [ {
+					dataField : "number",
+					headerText : "부품번호",
 					dataType : "string",
-					width : 80,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "role",
-					headerText : "역할",
-					dataType : "string",
-					width : 80,
-					filter : {
-						showIcon : true,
-						inline : true
+					width : 120,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.oid;
+							const url = getCallUrl("/part/view?oid=" + oid);
+							popup(url, 1500, 800);
+						}
 					},
 				}, {
 					dataField : "name",
-					headerText : "결재제목",
+					headerText : "부품명",
 					dataType : "string",
 					style : "aui-left",
-					filter : {
-						showIcon : true,
-						inline : true
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.oid;
+							const url = getCallUrl("/part/view?oid=" + oid);
+							popup(url, 1500, 800);
+						}
 					},
 				}, {
-					dataField : "state",
-					headerText : "상태",
+					dataField : "version",
+					headerText : "버전",
 					dataType : "string",
-					width : 80,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
+					width : 100,
 				}, {
-					dataField : "owner",
-					headerText : "담당자",
+					dataField : "creator",
+					headerText : "작성자",
 					dataType : "string",
-					width : 80
+					width : 100,
 				}, {
-					dataField : "receiveTime",
-					headerText : "수신일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd HH:MM:ss",
-					width : 130,
-					filter : {
-						showIcon : true,
-						inline : true,
-						displayFormatValues : true
-					},
-				}, {
-					dataField : "completeDate_txt",
-					headerText : "완료일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd HH:MM:ss",
-					width : 130,
-					filter : {
-						showIcon : true,
-						inline : true,
-						displayFormatValues : true
-					},
-				}, {
-					dataField : "",
-					headerText : "결재의견",
+					dataField : "createdDate_txt",
+					headerText : "거래처",
 					dataType : "string",
-					width : 130,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				} ]
+					width : 100,
+				}, {
+					dataField : "modifier",
+					headerText : "수정자",
+					dataType : "string",
+					width : 100,
+				}, {
+					dataField : "modifiedDate_txt",
+					headerText : "수정일",
+					dataType : "string",
+					width : 100,
+				}, {
+					dataField : "primary",
+					headerText : "주 첨부파일",
+					dataType : "string",
+					width : 100,
+					renderer : {
+						type : "TemplateRenderer"
+					}
+				}, ]
 
-				function _createAUIGrid_(columnLayout) {
+				function createAUIGrid(columnLayout) {
 					const props = {
 						headerHeight : 30,
-						rowHeight : 30,
 						showRowNumColumn : true,
-						showStateColumn : true,
 						rowNumHeaderText : "번호",
-						selectionMode : "multipleCells",
-						noDataMessage : "결재이력이 없습니다."
-					};
-					_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
-					AUIGrid.setGridData(_myGridID_, history);
+						showAutoNoDataMessage : false,
+						softRemoveRowMode : false,
+						autoGridHeight : true,
+					}
+					myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+					AUIGrid.setGridData(myGridID,
+			<%=versionHistory%>
+				);
 				}
 			</script>
 		</div>
 	</div>
 	<div id="tabs-4">
-		<div id="_grid_wrap" style="height: 460px; border-top: 1px solid #3180c3;"></div>
-		<script type="text/javascript">
-			let _myGridID;
-			const list =
-		<%=list%>
-			const _columns = [ {
-				dataField : "name",
-				headerText : "파일이름",
-				dataType : "string",
-				width : 500,
-				style : "aui-left",
-				renderer : {
-					type : "LinkRenderer",
-					baseUrl : "javascript",
-				},
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			}, {
-				dataField : "version",
-				headerText : "버전",
-				dataType : "string",
-				width : 80,
-				filter : {
-					showIcon : false,
-					inline : false
-				},
-			}, {
-				dataField : "creator",
-				headerText : "작성자",
-				dataType : "string",
-				width : 100,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			}, {
-				dataField : "createdDate_txt",
-				headerText : "작성일",
-				dataType : "date",
-				formatString : "yyyy-mm-dd",
-				width : 130,
-				filter : {
-					showIcon : true,
-					inline : true,
-					displayFormatValues : true
-				},
-			}, {
-				dataField : "modifier",
-				headerText : "수정자",
-				dataType : "string",
-				width : 100,
-				filter : {
-					showIcon : true,
-					inline : true
-				},
-			}, {
-				dataField : "modifiedDate_txt",
-				headerText : "수정일",
-				dataType : "date",
-				formatString : "yyyy-mm-dd",
-				width : 130,
-				filter : {
-					showIcon : true,
-					inline : true,
-					displayFormatValues : true
-				}
-			} ]
-			function _createAUIGrid(columnLayout) {
-				const props = {
-					headerHeight : 30,
-					rowHeight : 30,
-					showRowNumColumn : true,
-					showStateColumn : true,
-					rowNumHeaderText : "번호",
-					selectionMode : "multipleCells",
-				}
-				_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-				AUIGrid.setGridData(_myGridID, list);
-			}
-		</script>
+		<!-- 결재이력 -->
+		<jsp:include page="/extcore/jsp/common/approval-history.jsp">
+			<jsp:param value="<%=dto.getOid()%>" name="oid" />
+		</jsp:include>
 	</div>
 </div>
 <script type="text/javascript">
@@ -411,48 +306,19 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 	}
 
 	function modify() {
-
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/part/modify?oid=" + oid);
+		openLayer();
+		document.location.href = url;
 	}
+
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs({
 			active : 0,
-			create : function(event, ui) {
-				const tabId = ui.panel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					createAUIGrid(columns);
-					AUIGrid.resize(myGridID);
-					break;
-				case "tabs-3":
-					_createAUIGrid_(_columns_);
-					AUIGrid.resize(_myGridID_);
-					break;
-				case "tabs-4":
-					_createAUIGrid(_columns);
-					AUIGrid.resize(_myGridID);
-					break;
-				}
-			},
 			activate : function(event, ui) {
 				var tabId = ui.newPanel.prop("id");
 				switch (tabId) {
 				case "tabs-1":
-					const isCreated = AUIGrid.isCreated(myGridID);
-					if (isCreated) {
-						AUIGrid.resize(myGridID);
-					} else {
-						createAUIGrid(columns);
-					}
-					break;
-				case "tabs-3":
-					const _isCreated_ = AUIGrid.isCreated(_myGridID_);
-					if (_isCreated_) {
-						AUIGrid.resize(_myGridID_);
-					} else {
-						_createAUIGrid_(_columns_);
-					}
-					break;
-				case "tabs-4":
 					const _isCreated = AUIGrid.isCreated(_myGridID);
 					if (_isCreated) {
 						AUIGrid.resize(_myGridID);
@@ -460,13 +326,35 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 						_createAUIGrid(_columns);
 					}
 					break;
+				case "tabs-3":
+					const isCreated = AUIGrid.isCreated(myGridID);
+					if (isCreated) {
+						AUIGrid.resize(myGridID);
+					} else {
+						createAUIGrid(columns);
+					}
+					break;
+				case "tabs-4":
+					const isCreated100 = AUIGrid.isCreated(myGridID100);
+					if (isCreated100) {
+						AUIGrid.resize(myGridID100);
+					} else {
+						createAUIGrid100(columns100);
+					}
+					break;
 				}
 			},
 		});
+		_createAUIGrid(_columns);
+		createAUIGrid(columns);
+		createAUIGrid100(columns100);
+		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(myGridID);
+		AUIGrid.resize(myGridID100);
 	});
 	window.addEventListener("resize", function() {
-		AUIGrid.resize(myGridID);
-		AUIGrid.resize(_myGridID_);
 		AUIGrid.resize(_myGridID);
+		AUIGrid.resize(myGridID);
+		AUIGrid.resize(myGridID100);
 	});
 </script>

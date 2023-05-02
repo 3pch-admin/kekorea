@@ -48,5 +48,5 @@ public interface WorkspaceService {
 	/**
 	 * 자가결재
 	 */
-	public abstract void self(Map<String, Object> params) throws Exception;
+	public abstract void self(String oid) throws Exception;
 }

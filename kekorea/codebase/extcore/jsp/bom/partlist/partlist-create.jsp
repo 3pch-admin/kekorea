@@ -68,12 +68,10 @@ String engType = (String) request.getAttribute("engType");
 			<tr>
 				<th class="req lb">KEK 작번</th>
 				<td colspan="5">
-					<div class="include">
-						<jsp:include page="/extcore/jsp/common/project-include.jsp">
-							<jsp:param value="" name="oid" />
-							<jsp:param value="create" name="mode" />
-						</jsp:include>
-					</div>
+					<jsp:include page="/extcore/jsp/common/project-include.jsp">
+						<jsp:param value="" name="oid" />
+						<jsp:param value="create" name="mode" />
+					</jsp:include>
 				</td>
 			</tr>
 			<tr>
@@ -455,7 +453,6 @@ String engType = (String) request.getAttribute("engType");
 
 <script type="text/javascript">
 	function create() {
-
 		const params = new Object();
 		const url = getCallUrl("/partlist/create");
 		const name = document.getElementById("name");
@@ -602,9 +599,10 @@ String engType = (String) request.getAttribute("engType");
 		$("#engType").bindSelectDisabled(true);
 		createAUIGrid9(columns9);
 		createAUIGrid8(columns8);
+		createAUIGrid(columns);
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
-		createAUIGrid(columns);
+		AUIGrid.resize(myGridID);
 	});
 
 	window.addEventListener("resize", function() {

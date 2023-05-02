@@ -447,6 +447,7 @@ public class ErpHelper {
 
 			con = dataSource.getConnection();
 			st = con.createStatement();
+			con.setAutoCommit(false);
 
 			QueryResult result = PersistenceHelper.manager.navigate(document, "output", OutputDocumentLink.class);
 			while (result.hasMoreElements()) {
@@ -518,25 +519,14 @@ public class ErpHelper {
 				sb.append("EXEC KEK_SPLMOutputRptDOProc ");
 				sb.append("'" + stdNo + "'");
 				st.executeUpdate(sb.toString());
-
-//				ErpSendHistory sendHistory = ErpSendHistory.newErpSendHistory();
-//				sendHistory.setOwnership(CommonUtils.sessionOwner()); // 전송자
-//				sendHistory.setSendQuery(sql.toString());
-//				sendHistory.setSendType("산출물 전송");
-//				sendHistory.setResult(true);
-//				PersistenceHelper.manager.save(sendHistory);
-
 			}
+
+			con.commit();
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			// 실패
-//			ErpSendHistory sendHistory = ErpSendHistory.newErpSendHistory();
-//			sendHistory.setOwnership(CommonUtils.sessionOwner()); // 전송자
-//			sendHistory.setSendQuery(sql.toString());
-//			sendHistory.setSendType("산출물 전송");
-//			sendHistory.setResult(true);
-//			PersistenceHelper.manager.save(sendHistory);
+			con.rollback();
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -1183,7 +1173,7 @@ public class ErpHelper {
 //				WTDocument doc = (WTDocument) result.nextElement();
 //				list.add(doc);
 //			}
-			
+
 			list.add(document);
 
 			for (int i = 0; i < list.size(); i++) {
@@ -1284,8 +1274,8 @@ public class ErpHelper {
 
 		queue.addEntry(principal, methodName, className, argClasses, argObjects);
 	}
-	
+
 	public void sendToErpFromQueue(HashMap<String, String> hash) throws Exception {
-		
+
 	}
 }

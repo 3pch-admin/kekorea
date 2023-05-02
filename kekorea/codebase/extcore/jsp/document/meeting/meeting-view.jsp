@@ -96,6 +96,7 @@ MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 	function modify() {
 		const loid = document.getElementById("loid").value;
 		const url = getCallUrl("/meeting/update?oid=" + loid);
+		openLayer();
 		document.location.href = url;
 	}
 </script>

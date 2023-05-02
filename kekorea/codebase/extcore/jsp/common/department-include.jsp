@@ -24,11 +24,36 @@ String height = request.getParameter("height");
 			selectionMode: "singleRow",
 			displayTreeOpen : true,
 			showAutoNoDataMessage : false,
-			forceTreeView : true
+			forceTreeView : true,
+			useContextMenu : true,
+			enableRightDownFocus : true,
+			contextMenuItems : [ {
+				label : "선택된 행 이전 부서추가",
+				callback : contextItemHandler
+			}, {
+				label : "선택된 행 이후 부서추가",
+				callback : contextItemHandler
+			}, {
+				label : "선택된 자식 부서추가",
+				callback : contextItemHandler
+			}, {
+				label : "선택된 부서 삭제",
+				callback : contextItemHandler
+			}, {
+				label : "_$line"
+			}, {
+				label : "저장",
+				callback : contextItemHandler
+			} ],
 		}
 		_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 		loadDepartmentTree();
 		AUIGrid.bind(_myGridID, "selectionChange", auiGridSelectionChangeHandler);
+	}
+	
+	
+	function contextItemHandler(event) {
+		alert("수정");
 	}
 	
 	let timerId = null;

@@ -27,7 +27,7 @@ public class StringUtils {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * String 변수의 값이 null 인지 체크 후 null 일 경우 공백, 값이 있을 경우 기존의 변수 값을 그대로 리턴하는 함수
 	 * 
@@ -179,8 +179,13 @@ public class StringUtils {
 		return Long.parseLong(value);
 	}
 
-	public static ColumnExpression getUpperColumnExpression(String ibaValue) {
-
-		return null;
+	/**
+	 * String 값을 Boolean 형태로 변경
+	 */
+	public static boolean parseBoolean(String value, boolean defaultValue) {
+		if (!isNull(value)) {
+			return Boolean.parseBoolean(value);
+		}
+		return defaultValue;
 	}
 }

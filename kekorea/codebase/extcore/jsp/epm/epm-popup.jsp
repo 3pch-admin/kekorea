@@ -376,8 +376,15 @@ if (checkedItems.length == 0) {
 	alert("추가할 도면을 선택하세요.");
 	return false;
 }
+
+const arr = new Array();
+for(let i=0; i<checkedItems.length; i++) {
+	const item = checkedItems[i].item;
+	arr.push(item);
+}
+
 openLayer();
-opener.<%=method%>(checkedItems, function(result) {
+opener.<%=method%>(arr, function(result) {
 		if(result) {
 			setTimeout(function() {
 				closeLayer();

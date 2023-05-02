@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Map;
 
 import e3ps.common.util.CommonUtils;
+import e3ps.epm.numberRule.NumberRule;
 import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.service.WorkspaceHelper;
@@ -30,6 +31,7 @@ public class StandardEpmService extends StandardManager implements EpmService {
 		String name = (String) params.get("name"); // 제목
 		String description = (String) params.get("description");
 		ArrayList<Map<String, String>> addRows = (ArrayList<Map<String, String>>) params.get("addRows"); // 결재문서
+		ArrayList<Map<String, String>> addRows11 = (ArrayList<Map<String, String>>) params.get("addRows11"); // 결재문서
 		ArrayList<Map<String, String>> agreeRows = (ArrayList<Map<String, String>>) params.get("agreeRows"); // 검토
 		ArrayList<Map<String, String>> approvalRows = (ArrayList<Map<String, String>>) params.get("approvalRows"); // 결재
 		ArrayList<Map<String, String>> receiveRows = (ArrayList<Map<String, String>>) params.get("receiveRows"); // 수신
@@ -50,6 +52,14 @@ public class StandardEpmService extends StandardManager implements EpmService {
 				EPMDocument epm = (EPMDocument) CommonUtils.getObject(oid);
 				ApprovalContractPersistableLink aLink = ApprovalContractPersistableLink
 						.newApprovalContractPersistableLink(contract, epm);
+				PersistenceHelper.manager.save(aLink);
+			}
+			
+			for (Map<String, String> addRow11 : addRows11) {
+				String oid = addRow11.get("oid");
+				NumberRule numberRule = (NumberRule)CommonUtils.getObject(oid);
+				ApprovalContractPersistableLink aLink = ApprovalContractPersistableLink
+						.newApprovalContractPersistableLink(contract, numberRule);
 				PersistenceHelper.manager.save(aLink);
 			}
 

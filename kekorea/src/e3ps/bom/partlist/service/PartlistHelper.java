@@ -1,7 +1,9 @@
 package e3ps.bom.partlist.service;
 
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -546,5 +548,38 @@ public class PartlistHelper {
 			list.add(link);
 		}
 		return list;
+	}
+
+	/**
+	 * 수배표 번호
+	 */
+	public String getNextNumber() throws Exception {
+
+		Calendar ca = Calendar.getInstance();
+		int month = ca.get(Calendar.MONTH) + 1;
+		int year = ca.get(Calendar.YEAR);
+		DecimalFormat df = new DecimalFormat("00");
+		String number = "PP-" + df.format(year).substring(2) + df.format(month) + "-";
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(PartListMaster.class, true);
+
+		QuerySpecUtils.toLikeRightAnd(query, idx, PartListMaster.class, PartListMaster.NUMBER, number);
+		QuerySpecUtils.toOrderBy(query, idx, PartListMaster.class, PartListMaster.NUMBER, true);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			PartListMaster master = (PartListMaster) obj[0];
+
+			String s = master.getNumber().substring(master.getNumber().lastIndexOf("-") + 1);
+
+			int ss = Integer.parseInt(s) + 1;
+			DecimalFormat d = new DecimalFormat("0000");
+			number += d.format(ss);
+		} else {
+			number += "0001";
+		}
+		return number;
 	}
 }

@@ -167,8 +167,6 @@ String end = (String)request.getAttribute("end");
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('project-popup');">
-			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('project-popup');">
 			<input type="button" value="추가" title="추가" class="blue" onclick="<%=method%>();">
 			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
@@ -390,6 +388,13 @@ String end = (String)request.getAttribute("end");
 			enableRightDownFocus : true,
 			filterLayerWidth : 320,
 			filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+			<%
+				if(!multi) {
+			%>
+			rowCheckToRadio : true
+			<%
+				}
+			%>
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		loadGridData();
@@ -400,20 +405,6 @@ String end = (String)request.getAttribute("end");
 		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 			hideContextMenu(); 
 		});
-		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
-	}
-	
-	function auiCellClickHandler(event) {
-		const item = event.item;
-		rowIdField = AUIGrid.getProp(event.pid, "rowIdField");
-		rowId = item[rowIdField];
-		rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); 
-		rowId = item[rowIdField];
-		if(AUIGrid.isCheckedRowById(event.pid, rowId)) {
-			AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
-		} else {
-			AUIGrid.addCheckedRowsByIds(event.pid, rowId);
-		}
 	}
 	
 	function loadGridData() {

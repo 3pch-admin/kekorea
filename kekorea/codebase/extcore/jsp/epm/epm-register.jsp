@@ -35,13 +35,173 @@
 			<tr>
 				<th class="req lb">결재 제목</th>
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="AXInput width-700">
+					<input type="text" name="name" id="name" class="width-700">
 				</td>
 			</tr>
 			<tr>
 				<th class="req lb">결재 의견</th>
 				<td class="indent5">
-					<textarea id="description" name="description" rows=""></textarea>
+					<textarea id="description" name="description" rows="5"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<th class="req lb">도번</th>
+				<td colspan="3">
+					<div class="include">
+						<div id="grid_wrap11" style="height: 200px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+						<script type="text/javascript">
+							let myGridID11;
+							const columns11 = [ {
+								dataField : "number",
+								headerText : "도면번호",
+								dataType : "string",
+								width : 100,
+								editable : false,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "size_txt",
+								headerText : "사이즈",
+								dataType : "string",
+								width : 80,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "lotNo",
+								headerText : "LOT",
+								dataType : "numeric",
+								width : 80,
+								formatString : "###0",
+								filter : {
+									showIcon : true,
+									inline : true,
+									displayFormatValues : true
+								},
+							}, {
+								dataField : "unitName",
+								headerText : "UNIT NAME",
+								dataType : "string",
+								width : 200,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "name",
+								headerText : "도번명",
+								dataType : "string",
+								width : 250,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "businessSector_txt",
+								headerText : "사업부문",
+								dataType : "string",
+								width : 200,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "classificationWritingDepartments_txt",
+								headerText : "작성부서구분",
+								dataType : "string",
+								width : 150,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "writtenDocuments_txt",
+								headerText : "작성문서구분",
+								dataType : "string",
+								width : 150,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "version",
+								headerText : "버전",
+								dataType : "string",
+								width : 100,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "state",
+								headerText : "상태",
+								dataType : "string",
+								width : 80,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "creator",
+								headerText : "작성자",
+								dataType : "string",
+								width : 100,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "createdDate_txt",
+								headerText : "작성일",
+								dataType : "string",
+								width : 100,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "modifier",
+								headerText : "수정자",
+								dataType : "string",
+								width : 100,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "modifiedDate_txt",
+								headerText : "수정일",
+								dataType : "string",
+								width : 100,
+								filter : {
+									showIcon : true,
+									inline : true
+								},
+							}, {
+								dataField : "oid",
+								visible : false,
+								dataType : "string"
+							}, {
+								dataField : "eoid",
+								visible : false,
+								dataType : "string"
+							} ]
+
+							function createAUIGrid11(columnLayout) {
+								const props = {
+									headerHeight : 30,
+									showRowNumColumn : true,
+									rowNumHeaderText : "번호",
+									showAutoNoDataMessage : false,
+									enableSorting : false,
+								}
+								myGridID11 = AUIGrid.create("#grid_wrap11", columnLayout, props);
+							}
+						</script>
+					</div>
 				</td>
 			</tr>
 			<tr>
@@ -50,7 +210,7 @@
 					<div class="include">
 						<input type="button" value="도면 추가" title="도면 추가" class="blue" onclick="insert();">
 						<input type="button" value="도면 삭제" title="도면 삭제" class="red" onclick="deleteRow();">
-						<div id="grid_wrap" style="height: 300px; border-top: 1px solid #3180c3; margin: 3px 5px 3px 5px;"></div>
+						<div id="grid_wrap" style="height: 200px; border-top: 1px solid #3180c3; margin: 3px 5px 3px 5px;"></div>
 						<script type="text/javascript">
 							let myGridID;
 							const columns = [ {
@@ -103,6 +263,7 @@
 									enableSorting : false
 								}
 								myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+								AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRow);
 							}
 
 							function insert() {
@@ -110,15 +271,45 @@
 								popup(url, 1600, 700);
 							}
 
-							function append(data, callBack) {
-								for (let i = 0; i < data.length; i++) {
-									const item = data[i].item;
-									const isUnique = AUIGrid.isUniqueValue(myGridID, "oid", item.oid);
-									if (isUnique) {
-										AUIGrid.addRow(myGridID, item, "first");
+							function append(arr, callBack) {
+
+								const params = new Object();
+								const url = getCallUrl("/epm/append");
+								params.arr = arr;
+								parent.openLayer();
+								call(url, params, function(data) {
+									console.log(data);
+									const list1 = data.list1;
+									const list2 = data.list2;
+									if (data.result) {
+										for (let i = 0; i < list1.length; i++) {
+											const isUnique = AUIGrid.isUniqueValue(myGridID, "oid", list1[i].oid);
+											if (isUnique) {
+												AUIGrid.addRow(myGridID, list1[i]);
+											}
+										}
+
+										for (let i = 0; i < list2.length; i++) {
+											const isUnique = AUIGrid.isUniqueValue(myGridID11, "oid", list2[i].oid);
+											if (isUnique) {
+												AUIGrid.addRow(myGridID11, list2[i]);
+											}
+										}
+									} else {
+										alert(data.msg);
 									}
-								}
+									parent.closeLayer();
+								})
 								callBack(true);
+							}
+
+							function auiBeforeRemoveRow(event) {
+								const items = event.items;
+								for (let i = 0; i < items.length; i++) {
+									const item = items[i];
+									const rowIndex = AUIGrid.getRowIndexesByValue(myGridID11, "eoid", item.oid);
+									AUIGrid.removeRow(myGridID11, rowIndex);
+								}
 							}
 
 							// 행 삭제
@@ -148,6 +339,7 @@
 				const url = getCallUrl("/epm/register");
 				const params = new Object();
 				const addRows = AUIGrid.getAddedRowItems(myGridID); // 문서
+				const addRows11 = AUIGrid.getAddedRowItems(myGridID11); // 문서
 				const addRows8 = AUIGrid.getAddedRowItems(myGridID8); // 결재
 				const name = document.getElementById("name");
 				const description = document.getElementById("description").value;
@@ -176,6 +368,7 @@
 				params.name = name.value;
 				params.description = description;
 				params.addRows = addRows;
+				params.addRows11 = addRows11;
 				toRegister(params, addRows8);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -191,6 +384,7 @@
 			document.addEventListener("DOMContentLoaded", function() {
 				document.getElementById("name").focus();
 				createAUIGrid(columns);
+				createAUIGrid11(columns11);
 				createAUIGrid8(columns8);
 				AUIGrid.resize(myGridID);
 				AUIGrid.resize(myGridID8);

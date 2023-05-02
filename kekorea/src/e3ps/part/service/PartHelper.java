@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import e3ps.admin.commonCode.CommonCode;
-import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
@@ -24,7 +22,6 @@ import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.folder.Folder;
 import wt.folder.IteratedFolderMemberLink;
-import wt.org.WTUser;
 import wt.part.WTPart;
 import wt.part.WTPartMaster;
 import wt.query.ClassAttribute;
@@ -220,19 +217,25 @@ public class PartHelper {
 		return JSONArray.fromObject(list);
 	}
 
-	// 버전 이력
-	public JSONArray list(WTPartMaster master) throws Exception {
-		ArrayList<PartDTO> list = new ArrayList<>();
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(WTPart.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, WTPart.class, "masterReference.key.id",
-				master.getPersistInfo().getObjectIdentifier().getId());
-		QueryResult result = PersistenceHelper.manager.find(query);
+	/**
+	 * 부품 버전 이력
+	 */
+	public JSONArray versionHistory(WTPart part) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		QueryResult result = VersionControlHelper.service.allIterationsOf(part.getMaster());
 		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			WTPart part = (WTPart) obj[0];
-			PartDTO dto = new PartDTO(part);
-			list.add(dto);
+			Map<String, Object> map = new HashMap<>();
+			WTPart dd = (WTPart) result.nextElement();
+			map.put("oid", dd.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("number", dd.getNumber());
+			map.put("name", dd.getName());
+			map.put("version", CommonUtils.getFullVersion(dd));
+			map.put("creator", dd.getCreatorFullName());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(dd.getCreateTimestamp()));
+			map.put("modifier", dd.getModifierName());
+			map.put("modifiedDate_txt", dd.getModifierFullName());
+			map.put("primary", AUIGridUtils.primaryTemplate(dd));
+			list.add(map);
 		}
 		return JSONArray.fromObject(list);
 	}
@@ -268,5 +271,27 @@ public class PartHelper {
 			epm = (EPMDocument) result.nextElement();
 		}
 		return epm;
+	}
+
+	public JSONArray jsonAuiDocument(String oid) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		WTPart part = (WTPart) CommonUtils.getObject(oid);
+		QueryResult result = PersistenceHelper.manager.navigate(part, "document", WTDocumentWTPartLink.class);
+		while (result.hasMoreElements()) {
+			WTDocument document = (WTDocument) result.nextElement();
+			Map<String, Object> map = new HashMap<>();
+			map.put("oid", document.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", document.getName());
+			map.put("number", document.getNumber());
+			map.put("state", document.getLifeCycleState().getDisplay());
+			map.put("version", CommonUtils.getFullVersion(document));
+			map.put("creator", document.getCreatorFullName());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(document.getCreateTimestamp()));
+			map.put("primary", AUIGridUtils.primaryTemplate(document));
+			map.put("secondary", AUIGridUtils.secondaryTemplate(document));
+			list.add(map);
+
+		}
+		return JSONArray.fromObject(list);
 	}
 }

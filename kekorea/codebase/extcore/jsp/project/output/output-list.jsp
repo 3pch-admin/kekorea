@@ -168,12 +168,12 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 						<jsp:param value="<%=OutputHelper.OUTPUT_NEW_ROOT%>" name="location" />
 						<jsp:param value="product" name="container" />
 						<jsp:param value="list" name="mode" />
-						<jsp:param value="635" name="height" />
+						<jsp:param value="634" name="height" />
 					</jsp:include>
 				</td>
 				<td valign="top">&nbsp;</td>
 				<td valign="top">
-					<div id="grid_wrap" style="height: 635px; border-top: 1px solid #3180c3;"></div>
+					<div id="grid_wrap" style="height: 634px; border-top: 1px solid #3180c3;"></div>
 					<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 				</td>
 			</tr>
@@ -183,7 +183,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 			function _layout() {
 				return [ {
 					dataField : "name",
-					headerText : "문서제목",
+					headerText : "산출물 제목",
 					dataType : "string",
 					width : 350,
 					style : "aui-left",
@@ -192,8 +192,8 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/document/view?oid=" + oid);
-							popup(url, 1400, 600);
+							const url = getCallUrl("/output/view?oid=" + oid);
+							popup(url, 1600, 800);
 						}
 					},
 					filter : {
@@ -202,7 +202,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 					},
 				}, {
 					dataField : "number",
-					headerText : "문서번호",
+					headerText : "산출물 번호",
 					dataType : "string",
 					width : 120,
 					renderer : {
@@ -210,8 +210,8 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							const url = getCallUrl("/document/view?oid=" + oid);
-							popup(url, 1400, 600);
+							const url = getCallUrl("/output/view?oid=" + oid);
+							popup(url, 1600, 800);
 						}
 					},
 					filter : {
@@ -234,15 +234,6 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 					dataType : "string",
 					width : 250,
 					style : "aui-left",
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "docType",
-					headerText : "문서타입",
-					dataType : "string",
-					width : 100,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -336,7 +327,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				loadGridData();
+// 				loadGridData();
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
@@ -390,8 +381,8 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 			}
 
 			function create() {
-				const url = getCallUrl("/doc/create");
-				popup(url);
+				const url = getCallUrl("/output/create");
+				popup(url, 1600, 800);
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
@@ -415,6 +406,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 
 			function toggle() {
 				const iframe = parent.document.getElementById("content");
+				parent.openLayer();
 				iframe.src = getCallUrl("/output/old");
 			}
 

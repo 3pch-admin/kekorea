@@ -68,13 +68,13 @@ public class NumberRuleHelper {
 		QuerySpecUtils.toLikeRightAnd(query, idx, NumberRuleMaster.class, NumberRuleMaster.NUMBER, number);
 		QuerySpecUtils.toOrderBy(query, idx, NumberRuleMaster.class, NumberRuleMaster.NUMBER, true);
 		QueryResult result = PersistenceHelper.manager.find(query);
-		String next = "00001";
+		String next = "A00000";
 		if (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			NumberRuleMaster rule = (NumberRuleMaster) obj[0];
 			seq1 = rule.getNumber().substring(3, 4);
-			seq2 = df.format(Integer.parseInt(rule.getNumber().substring(4, 9))); // 00001
-			next = seq1 + df.format(Integer.parseInt(rule.getNumber().substring(4, 9)) + 1); // 00001
+			seq2 = df.format(Integer.parseInt(rule.getNumber().substring(4, 8))); // 00001
+			next = seq1 + df.format(Integer.parseInt(rule.getNumber().substring(4, 8)) + 1); // 00001
 			int pos = 0;
 			for (int i = 0; i < alphabet.length; i++) {
 				if (seq1.equals(alphabet[i])) {
@@ -168,6 +168,26 @@ public class NumberRuleHelper {
 		QuerySpecUtils.toEqualsAnd(query, idx_m, NumberRuleMaster.class, NumberRuleMaster.NUMBER, number);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		return result.size() > 0 ? true : false;
+	}
+
+	/**
+	 * 도번 가져오기 CREO AUTOCAD DWG AND VERSION
+	 */
+	public NumberRule numberRuleForNumberAndVersion(String dwgNo, String version) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(NumberRule.class, true);
+		int idx_m = query.appendClassList(NumberRuleMaster.class, false);
+		QuerySpecUtils.toInnerJoin(query, NumberRuleMaster.class, NumberRule.class, WTAttributeNameIfc.ID_NAME,
+				"masterReference.key.id", idx_m, idx);
+		QuerySpecUtils.toEqualsAnd(query, idx_m, NumberRuleMaster.class, NumberRuleMaster.NUMBER, dwgNo);
+		QuerySpecUtils.toEqualsAnd(query, idx, NumberRule.class, NumberRule.VERSION, Integer.parseInt(version));
+		QueryResult qr = PersistenceHelper.manager.find(query);
+		if (qr.hasMoreElements()) {
+			Object[] obj = (Object[]) qr.nextElement();
+			NumberRule numberRule = (NumberRule) obj[0];
+			return numberRule;
+		}
+		return null;
 	}
 
 }

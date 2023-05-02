@@ -8,7 +8,7 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
-import e3ps.admin.commonCode.CommonCode;
+import wt.fc.Persistable;
 import wt.fc.WTObject;
 import wt.ownership.Ownable;
 import wt.util.WTException;
@@ -23,7 +23,7 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "note", type = String.class, javaDoc = "개정사유", constraints = @PropertyConstraints(upperLimit = 2000)),
 
-				@GeneratedProperty(name = "state", type = String.class, javaDoc = "상태", constraints = @PropertyConstraints(required = true))
+				@GeneratedProperty(name = "state", type = String.class, javaDoc = "상태", constraints = @PropertyConstraints(required = true)),
 
 		},
 
@@ -34,6 +34,14 @@ import wt.util.WTException;
 						foreignKeyRole = @ForeignKeyRole(name = "master", type = NumberRuleMaster.class,
 
 								constraints = @PropertyConstraints(required = true)),
+
+						myRole = @MyRole(name = "numberRule", cardinality = Cardinality.ONE)),
+
+				@GeneratedForeignKey(name = "NumberRulePersistableLink",
+
+						foreignKeyRole = @ForeignKeyRole(name = "persist", type = Persistable.class,
+
+								constraints = @PropertyConstraints(required = false)),
 
 						myRole = @MyRole(name = "numberRule", cardinality = Cardinality.ONE))
 

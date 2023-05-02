@@ -38,4 +38,9 @@ public interface TBOMService {
 	 */
 	public abstract void revise(TBOMDTO dto) throws Exception;
 
+	/**
+	 * T-BOM 산출물에 연결
+	 */
+	public abstract Map<String, Object> connect(Map<String, Object> params) throws Exception;
+
 }

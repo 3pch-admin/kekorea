@@ -146,7 +146,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					editRenderer : {
 						type : "InputEditRenderer",
 						onlyNumeric : true,
-						maxlength : 3,
+						maxlength : 4,
 					},
 					filter : {
 						showIcon : true,

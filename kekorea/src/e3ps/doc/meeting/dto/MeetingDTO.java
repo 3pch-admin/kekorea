@@ -51,43 +51,43 @@ public class MeetingDTO {
 
 	}
 
+	public MeetingDTO(Meeting meeting) throws Exception {
+		setOid(meeting.getPersistInfo().getObjectIdentifier().getStringValue());
+		setName(meeting.getName());
+		setNumber(meeting.getNumber());
+		setContent(meeting.getContent());
+		setState(meeting.getLifeCycleState().getDisplay());
+		setCreator(meeting.getOwnership().getOwner().getFullName());
+		setCreatedDate(meeting.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(meeting.getCreateTimestamp()));
+
+		if (meeting.getTiny() != null) {
+			setToid(meeting.getTiny().getPersistInfo().getObjectIdentifier().getStringValue());
+			setTname(meeting.getTiny().getName());
+		}
+	}
+
 	public MeetingDTO(MeetingProjectLink link) throws Exception {
 		Meeting meeting = link.getMeeting();
 		Project project = link.getProject();
 		setOid(meeting.getPersistInfo().getObjectIdentifier().getStringValue());
 		setPoid(project.getPersistInfo().getObjectIdentifier().getStringValue());
 		setLoid(link.getPersistInfo().getObjectIdentifier().getStringValue());
-		if (project.getProjectType() != null) {
-			setProjectType_name(project.getProjectType().getName());
-		}
+		setProjectType_name(project.getProjectType().getName());
 		setName(meeting.getName());
 		setNumber(meeting.getNumber());
 		setContent(meeting.getContent());
-
-		if (project.getCustomer() != null) {
-			setCustomer_name(project.getCustomer().getName());
-		}
-
-		if (project.getInstall() != null) {
-			setInstall_name(project.getInstall().getName());
-		}
-
-		if (project.getMak() != null) {
-			setMak_name(project.getMak().getName());
-		}
-
-		if (project.getDetail() != null) {
-			setDetail_name(project.getDetail().getName());
-		}
+		setCustomer_name(project.getCustomer().getName());
+		setInstall_name(project.getInstall().getName());
+		setMak_name(project.getMak().getName());
+		setDetail_name(project.getDetail().getName());
 		setKekNumber(project.getKekNumber());
 		setKeNumber(project.getKeNumber());
 		setUserId(project.getUserId());
 		setDescription(project.getDescription());
 		setModel(project.getModel());
-		if (project.getPDate() != null) {
-			setPdate(project.getPDate());
-			setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
-		}
+		setPdate(project.getPDate());
+		setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
 		setState(meeting.getLifeCycleState().getDisplay());
 		setCreator(meeting.getOwnership().getOwner().getFullName());
 		setCreatedDate(meeting.getCreateTimestamp());

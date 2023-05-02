@@ -25,6 +25,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			if (isAdmin) {
 			%>
 			<input type="button" value="수정" title="수정" onclick="modify();">
+			<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
 			<%
 			}
 			%>
@@ -164,29 +165,20 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					readyHandler();
 					AUIGrid.bind(myGridID, "selectionChange", auiGridSelectionChangeHandler);
 					AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
-					AUIGrid.bind(myGridID, "beforeInsertRow", auiBeforeInsertRow);
-				}
-
-				function auiBeforeInsertRow(event) {
-// 					const newRow = {};
-// 					const cols = event.columnInfoList;
-// 					for (let i = 0, len = cols.length; i < len; i++) {
-// 						const dataField = cols[i]["dataField"];
-// 						newRow["name"] = "새 태스크";
-// 						newRow["duration"] = 1;
-// 						newRow["taskType"] = "NORMAL";
-// 						newRow["allocate"] = 0;
-// 						newRow["isNew"] = true;
-// 					}
-// 					return newRow;
 				}
 
 				function auiCellEditBegin(event) {
 					const item = event.item;
 					const type = item.type;
+					const taskType = item.taskType
 					if (type === "project") {
 						return false;
 					}
+
+					if (taskType === "NORMAL" || taskType === "T-BOM") {
+						return false;
+					}
+
 					return true;
 				}
 
@@ -200,14 +192,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 							alert("프로젝트와 같은 레벨에 행 추가는 불가능합니다.");
 							return false;
 						}
-						addRow(item);
+						addRow(item, "selectionUp");
 						break;
 					case 1:
 						if (_$depth === 1) {
 							alert("프로젝트와 같은 레벨에 행 추가는 불가능합니다.");
 							return false;
 						}
-						addRow(item);
+						addRow(item, "selectionDown");
 						break;
 					case 2:
 						addTreeRow(item);
@@ -245,14 +237,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						alert(data.msg);
 						if (data.result) {
 							readyHandler();
-						} 
-// 						else {
-// 							closeLayer();
-// 						}
+						} else {
+							closeLayer();
+						}
 					})
 				}
 
-				function addRow(item) {
+				function addRow(item, selection) {
 					const parentItem = AUIGrid.getParentItemByRowId(myGridID, item._$uid);
 					const parentRowId = parentItem._$uid;
 					const newItem = new Object();
@@ -260,9 +251,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					newItem.name = "새 태스크";
 					newItem.isNew = true;
 					newItem.allocate = 0;
-// 					newItem.duration = 1;
 					newItem.taskType = "NORMAL";
-					AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "last");
+					AUIGrid.addTreeRow(myGridID, newItem, parentRowId, selection);
 				}
 
 				function readyHandler() {
@@ -284,7 +274,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					newItem.name = "새 태스크";
 					newItem.isNew = true;
 					newItem.allocate = 0;
-// 					newItem.duration = 1;
 					newItem.taskType = "NORMAL";
 					AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "selectionDown");
 				}
@@ -315,22 +304,42 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			if (item.type == "project") {
 				iframe.src = "/Windchill/plm/project/view?oid=" + oid;
 			} else if (item.type == "task" && !item.isNew) {
-				if (name === "의뢰서") {
-					iframe.src = "/Windchill/plm/project/request?oid=" + oid + "&toid=" + item.oid;
-				} else if (name === "1차_수배" || name === "2차_수배") {
-					iframe.src = "/Windchill/plm/project/step?oid=" + oid + "&toid=" + item.oid;
-				} else if (name === "전기_수배표" || name === "기계_수배표") {
-					iframe.src = "/Windchill/plm/project/partlist?oid=" + oid + "&toid=" + item.oid;
-				} else if (name === "T-BOM") {
-					iframe.src = "/Windchill/plm/project/tbom?oid=" + oid + "&toid=" + item.oid;
-				} else if(name === "회의록") {
-					iframe.src = "/Windchill/plm/project/meeting?oid=" + oid + "&toid=" + item.oid;
-				} else {
-					iframe.src = "/Windchill/plm/project/normal?oid=" + oid + "&toid=" + item.oid;
-				}
+				iframe.src = "/Windchill/plm/project/task?oid=" + oid + "&toid=" + item.oid + "&name=" + name;
+				// 				if (name === "의뢰서") {
+				// 					iframe.src = "/Windchill/plm/project/request?oid=" + oid + "&toid=" + item.oid;
+				// 				} else if (name === "1차_수배" || name === "2차_수배") {
+				// 					iframe.src = "/Windchill/plm/project/step?oid=" + oid + "&toid=" + item.oid;
+				// 				} else if (name === "전기_수배표" || name === "기계_수배표") {
+				// 					iframe.src = "/Windchill/plm/project/partlist?oid=" + oid + "&toid=" + item.oid;
+				// 				} else if (name === "T-BOM") {
+				// 					iframe.src = "/Windchill/plm/project/tbom?oid=" + oid + "&toid=" + item.oid;
+				// 				} else if(name === "회의록") {
+				// 					iframe.src = "/Windchill/plm/project/meeting?oid=" + oid + "&toid=" + item.oid;
+				// 				} else {
+				// 					iframe.src = "/Windchill/plm/project/normal?oid=" + oid + "&toid=" + item.oid;
+				// 				}
 			}
 		}
 	}
+
+	function _delete() {
+		if (!confirm("삭제 하시겠습니까?")) {
+			return false;
+		}
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/project/delete?oid=" + oid);
+		openLayer();
+		call(url, null, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			} else {
+				closeLayer();
+			}
+		}, "GET");
+	}
+
 	document.addEventListener("DOMContentLoaded", function() {
 		createAUIGrid(columns);
 	})

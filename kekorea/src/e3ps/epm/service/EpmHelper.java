@@ -14,6 +14,8 @@ import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.dto.EpmDTO;
+import e3ps.epm.numberRule.NumberRule;
+import e3ps.epm.numberRule.service.NumberRuleHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
@@ -286,5 +288,74 @@ public class EpmHelper {
 			list.add(map);
 		}
 		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 도면 결재시 도면 추가 - 없다면 FAIL 있으면 TRUE
+	 */
+	public Map<String, Object> append(Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<>();
+		ArrayList<Map<String, Object>> arr = (ArrayList<Map<String, Object>>) params.get("arr");
+
+		ArrayList<Map<String, Object>> list1 = new ArrayList<>();
+		ArrayList<Map<String, Object>> list2 = new ArrayList<>();
+
+		for (Map<String, Object> map : arr) {
+			String oid = (String) map.get("oid");
+
+			Map<String, Object> map1 = new HashMap<>();
+			Map<String, Object> map2 = new HashMap<>();
+
+			EPMDocument epm = (EPMDocument) CommonUtils.getObject(oid);
+			String authoringApplication = epm.getAuthoringApplication().getDisplay();
+			String dwgNo = "";
+			String nameOfParts = "";
+			if (authoringApplication.equalsIgnoreCase("CREO")) {
+				dwgNo = IBAUtils.getStringValue(epm, "DWG_NO");
+				nameOfParts = IBAUtils.getStringValue(epm, "NAME_OF_PARTS");
+			} else if (authoringApplication.equalsIgnoreCase("AUTOCAD")) {
+				dwgNo = IBAUtils.getStringValue(epm, "DWG_No");
+				nameOfParts = IBAUtils.getStringValue(epm, "TITLE1") + " " + IBAUtils.getStringValue(epm, "TITLE2");
+			}
+			String version = epm.getVersionIdentifier().getSeries().getValue(); // 리비전으로만 체크한다..
+
+			NumberRule numberRule = NumberRuleHelper.manager.numberRuleForNumberAndVersion(dwgNo, version);
+			if (numberRule != null) {
+				map2.put("number", numberRule.getMaster().getNumber());
+				map2.put("size_txt", numberRule.getMaster().getSize().getName());
+				map2.put("lotNo", numberRule.getMaster().getLotNo());
+				map2.put("unitName", numberRule.getMaster().getUnitName());
+				map2.put("name", numberRule.getMaster().getName());
+				map2.put("businessSector_txt", numberRule.getMaster().getSector().getName());
+				map2.put("classificationWritingDepartments_txt", numberRule.getMaster().getDepartment().getName());
+				map2.put("writtenDocuments_txt", numberRule.getMaster().getDocument().getName());
+				map2.put("version", numberRule.getVersion());
+				map2.put("state", numberRule.getState());
+				map2.put("creator", numberRule.getMaster().getOwnership().getOwner().getFullName());
+				map2.put("createdDate_txt",
+						CommonUtils.getPersistableTime(numberRule.getMaster().getCreateTimestamp()));
+				map2.put("modifier", numberRule.getOwnership().getOwner().getFullName());
+				map2.put("modifiedDate_txt", CommonUtils.getPersistableTime(numberRule.getCreateTimestamp()));
+				map2.put("oid", numberRule.getPersistInfo().getObjectIdentifier().getStringValue());
+				map2.put("eoid", epm.getPersistInfo().getObjectIdentifier().getStringValue());
+				list2.add(map2);
+			}
+
+			map1.put("name", epm.getName());
+			map1.put("dwg_no", dwgNo);
+			map1.put("name_of_parts", nameOfParts);
+			map1.put("version", version);
+			map1.put("state", epm.getLifeCycleState().getDisplay());
+			map1.put("creator", epm.getCreatorFullName());
+			map1.put("createdDate_txt", CommonUtils.getPersistableTime(epm.getCreateTimestamp()));
+			map1.put("oid", oid);
+			list1.add(map1);
+		}
+
+		result.put("list1", list1);
+		result.put("list2", list2);
+
+		return result;
+
 	}
 }
