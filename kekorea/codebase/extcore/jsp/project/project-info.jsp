@@ -168,6 +168,17 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				}
 
 				function auiBeforeInsertRow(event) {
+// 					const newRow = {};
+// 					const cols = event.columnInfoList;
+// 					for (let i = 0, len = cols.length; i < len; i++) {
+// 						const dataField = cols[i]["dataField"];
+// 						newRow["name"] = "새 태스크";
+// 						newRow["duration"] = 1;
+// 						newRow["taskType"] = "NORMAL";
+// 						newRow["allocate"] = 0;
+// 						newRow["isNew"] = true;
+// 					}
+// 					return newRow;
 				}
 
 				function auiCellEditBegin(event) {
@@ -234,7 +245,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						alert(data.msg);
 						if (data.result) {
 							readyHandler();
-						}
+						} 
+// 						else {
+// 							closeLayer();
+// 						}
 					})
 				}
 
@@ -246,6 +260,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					newItem.name = "새 태스크";
 					newItem.isNew = true;
 					newItem.allocate = 0;
+// 					newItem.duration = 1;
 					newItem.taskType = "NORMAL";
 					AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "last");
 				}
@@ -269,6 +284,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					newItem.name = "새 태스크";
 					newItem.isNew = true;
 					newItem.allocate = 0;
+// 					newItem.duration = 1;
 					newItem.taskType = "NORMAL";
 					AUIGrid.addTreeRow(myGridID, newItem, parentRowId, "selectionDown");
 				}
