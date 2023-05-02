@@ -80,7 +80,7 @@ public class AUIGridUtils {
 	 * AUIGrid 에서 사용할 파일 아이콘 가져 오는 함수
 	 */
 	private static String getAUIGridFileIcon(String ext) {
-		String icon = "/Windchill/extcore/jsp/images/file_generic.gif";
+		String icon = "/Windchill/extcore/images/fileicon/file_generic.gif";
 		if (ext.equalsIgnoreCase("pdf")) {
 			icon = "/Windchill/extcore/images/fileicon/file_pdf.gif";
 		} else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx")) {

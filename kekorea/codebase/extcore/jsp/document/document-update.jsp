@@ -24,7 +24,7 @@ if ("modify".equals(mode)) {
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="등록" title="등록" onclick="<%=mode %>('false');">
+			<input type="button" value="<%=title %>" title="<%=title %>" onclick="<%=mode %>('false');">
 			<input type="button" value="자가결재" title="자가결재" class="blue" onclick="<%=mode %>('true')">
 			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
@@ -119,9 +119,9 @@ if ("modify".equals(mode)) {
 		const number = document.getElementById("number").value;
 		const description = document.getElementById("description").value;
 		const location = document.getElementById("location").value;
-		const addRows7 = AUIGrid.getAddedRowItems(myGridID7);
-		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
-		const addRows11 = AUIGrid.getAddedRowItems(myGridID11);
+		const addRows7 = AUIGrid.getGridData(myGridID7);
+		const addRows8 = AUIGrid.getGridData(myGridID8);
+		const addRows11 = AUIGrid.getGridData(myGridID11);
 		const oid = document.getElementById("oid").value;
 
 		if (isNull(name.value)) {
@@ -152,6 +152,7 @@ if ("modify".equals(mode)) {
 		params.oid = oid;
 		toRegister(params, addRows8);
 		openLayer();
+		console.log(params);
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {

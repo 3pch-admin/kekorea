@@ -313,12 +313,14 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 	function modify() {
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/tbom/modify?oid=" + oid);
+		openLayer();
 		document.location.href = url;
 	}
 
 	function revise() {
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/tbom/revise?oid=" + oid);
+		openLayer();
 		document.location.href = url;
 	}
 

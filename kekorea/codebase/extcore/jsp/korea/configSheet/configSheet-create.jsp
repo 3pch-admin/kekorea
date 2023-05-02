@@ -8,7 +8,7 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 JSONArray baseData = (JSONArray) request.getAttribute("baseData");
 String oid = (String) request.getAttribute("oid");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <style type="text/css">
 .row1 {
 	background-color: #99CCFF;
@@ -100,6 +100,7 @@ String oid = (String) request.getAttribute("oid");
 					<jsp:include page="/extcore/jsp/common/project-include.jsp">
 						<jsp:param value="" name="oid" />
 						<jsp:param value="create" name="mode" />
+						<jsp:param value="false" name="multi" />
 					</jsp:include>
 				</td>
 			</tr>
@@ -153,38 +154,6 @@ String oid = (String) request.getAttribute("oid");
 		style : "aui-left",
 		width : 250,
 		cellMerge : true,
-		// 		editRenderer : {
-		// 			type : "ComboBoxRenderer",
-		// 			autoCompleteMode : true,
-		// 			autoEasyMode : true,
-		// 			matchFromFirst : false,
-		// 			showEditorBtnOver : false,
-		// 			list : categorys,
-		// 			keyField : "key",
-		// 			valueField : "value",
-		// 			descendants : [ "item_code" ],
-		// 			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
-		// 				let isValid = false;
-		// 				if (fromClipboard) {
-		// 					for (let i = 0; i < categorys.length; i++) {
-		// 						const key = categorys[i]["key"];
-		// 						if (newValue === key) {
-		// 							isValid = true;
-		// 						}
-		// 					}
-		// 				}
-		// 				for (let i = 0, len = categorys.length; i < len; i++) {
-		// 					if (categorys[i]["value"] == newValue) {
-		// 						isValid = true;
-		// 						break;
-		// 					}
-		// 				}
-		// 				return {
-		// 					"validate" : isValid,
-		// 					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
-		// 				};
-		// 			},
-		// 		},
 		labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
 			let retStr = "";
 			for (let i = 0, len = categorys.length; i < len; i++) {
@@ -205,59 +174,6 @@ String oid = (String) request.getAttribute("oid");
 		mergeRef : "category_code",
 		mergePolicy : "restrict",
 		editable : false,
-		// 		renderer : {
-		// 			type : "IconRenderer",
-		// 			iconWidth : 16,
-		// 			iconHeight : 16,
-		// 			iconPosition : "aisleRight",
-		// 			iconTableRef : {
-		// 				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
-		// 			},
-		// 			onClick : function(event) {
-		// 				AUIGrid.openInputer(event.pid);
-		// 			}
-		// 		},
-		// 		editRenderer : {
-		// 			type : "ComboBoxRenderer",
-		// 			autoCompleteMode : true,
-		// 			autoEasyMode : true,
-		// 			matchFromFirst : false,
-		// 			showEditorBtnOver : false,
-		// 			keyField : "key",
-		// 			valueField : "value",
-		// 			descendants : [ "spec_code" ],
-		// 			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
-		// 				const param = item.category_code;
-		// 				const dd = itemListMap[param];
-		// 				let isValid = false;
-		// 				if (fromClipboard) {
-		// 					for (let i = 0; i < dd.length; i++) {
-		// 						const key = dd[i]["key"];
-		// 						if (newValue === key) {
-		// 							isValid = true;
-		// 						}
-		// 					}
-		// 				}
-		// 				for (let i = 0, len = dd.length; i < len; i++) {
-		// 					if (dd[i]["value"] == newValue) {
-		// 						isValid = true;
-		// 						break;
-		// 					}
-		// 				}
-		// 				return {
-		// 					"validate" : isValid,
-		// 					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
-		// 				};
-		// 			},
-		// 			listFunction : function(rowIndex, columnIndex, item, dataField) {
-		// 				const param = item.category_code;
-		// 				const dd = itemListMap[param];
-		// 				if (dd === undefined) {
-		// 					return [];
-		// 				}
-		// 				return dd;
-		// 			},
-		// 		},
 		labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
 			let retStr = "";
 			const param = item.category_code;
@@ -278,73 +194,6 @@ String oid = (String) request.getAttribute("oid");
 		headerText : "사양",
 		dataType : "string",
 		width : 350,
-	// 		renderer : {
-	// 			type : "IconRenderer",
-	// 			iconWidth : 16,
-	// 			iconHeight : 16,
-	// 			iconPosition : "aisleRight",
-	// 			iconTableRef : {
-	// 				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
-	// 			},
-	// 			onClick : function(event) {
-	// 				AUIGrid.openInputer(event.pid);
-	// 			}
-	// 		},
-	// 		editRenderer : {
-	// 			type : "ComboBoxRenderer",
-	// 			autoCompleteMode : true,
-	// 			autoEasyMode : true,
-	// 			matchFromFirst : false,
-	// 			showEditorBtnOver : false,
-	// 			keyField : "key",
-	// 			valueField : "value",
-	// 			validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
-	// 				const param = item.item_code;
-	// 				const dd = specListMap[param];
-	// 				let isValid = false;
-	// 				if (fromClipboard) {
-	// 					for (let i = 0; i < dd.length; i++) {
-	// 						const key = dd[i]["key"];
-	// 						if (newValue === key) {
-	// 							isValid = true;
-	// 						}
-	// 					}
-	// 				}
-	// 				for (let i = 0, len = dd.length; i < len; i++) {
-	// 					if (dd[i]["value"] == newValue) {
-	// 						isValid = true;
-	// 						break;
-	// 					}
-	// 				}
-	// 				return {
-	// 					"validate" : isValid,
-	// 					"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
-	// 				};
-	// 			},
-	// 			listFunction : function(rowIndex, columnIndex, item, dataField) {
-	// 				const param = item.item_code;
-	// 				const dd = specListMap[param];
-	// 				if (dd === undefined) {
-	// 					return [];
-	// 				}
-	// 				return dd;
-	// 			},
-	// 		},
-	// 		labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
-	// 			let retStr = "";
-	// 			const param = item.item_code;
-	// 			const dd = specListMap[param];
-	// 			if (dd === undefined) {
-	// 				return value;
-	// 			}
-	// 			for (let i = 0, len = dd.length; i < len; i++) {
-	// 				if (dd[i]["key"] == value) {
-	// 					retStr = dd[i]["value"];
-	// 					break;
-	// 				}
-	// 			}
-	// 			return retStr == "" ? value : retStr;
-	// 		},
 	}, {
 		dataField : "note",
 		headerText : "NOTE",
@@ -360,24 +209,13 @@ String oid = (String) request.getAttribute("oid");
 		const props = {
 			headerHeight : 30,
 			showRowNumColumn : true,
-			// 			showStateColumn : true,
 			rowNumHeaderText : "번호",
 			selectionMode : "multipleCells",
 			enableSorting : false,
-			// 			showRowCheckColumn : true,
 			enableCellMerge : true,
 			showDragKnobColumn : true,
-			// 			enableDrag : true,
-			// 			enableMultipleDrag : true,
-			// 			enableDrop : true,
 			editable : true,
 			enableRowCheckShiftKey : true,
-			// 			useContextMenu : true,
-			// 			enableRightDownFocus : true,
-			// 			contextMenuItems : [ {
-			// 				label : "선택된 행 삭제",
-			// 				callback : contextItemHandler
-			// 			} ],
 			rowStyleFunction : function(rowIndex, item) {
 				const value = item.category_code;
 				if (value === "CATEGORY_2") {
@@ -530,9 +368,9 @@ String oid = (String) request.getAttribute("oid");
 
 		const url = getCallUrl("/configSheet/create");
 		const params = new Object();
-		const addRows = AUIGrid.getAddedRowItems(myGridID);
-		const _addRows = AUIGrid.getAddedRowItems(_myGridID);
-		const _addRows_ = AUIGrid.getAddedRowItems(_myGridID_);
+		const addRows = AUIGrid.getGridData(myGridID);
+		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
+		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
 
 		addRows.sort(function(a, b) {
 			return a.sort - b.sort;
@@ -541,15 +379,17 @@ String oid = (String) request.getAttribute("oid");
 		params.name = document.getElementById("name").value;
 		params.description = document.getElementById("description").value;
 		params.addRows = addRows;
-		params._addRows = _addRows;
+		params.addRows9 = addRows9;
 		params.secondarys = toArray("secondarys");
-		toRegister(params, _addRows_);
+		toRegister(params, addRows8);
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}

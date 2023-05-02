@@ -17,7 +17,7 @@ OutputDTO dto = (OutputDTO) request.getAttribute("dto");
 JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
-<input type="hidden" name="oid" value="<%=dto.getOid()%>">
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -27,8 +27,8 @@ JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="개정" title="개정" class="blue" onclick="revise();">
-			<input type="button" value="수정" title="수정" onclick="modify();">
+			<input type="button" value="개정" title="개정" class="blue" onclick="update('revise');">
+			<input type="button" value="수정" title="수정" onclick="update('modify');">
 			<%
 			if (isAdmin) {
 			%>
@@ -226,6 +226,7 @@ JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 	function update(mode) {
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/output/update?oid=" + oid + "&mode="+mode);
+		openLayer();
 		document.location.href = url;
 	}
 	

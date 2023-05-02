@@ -44,6 +44,7 @@ public class OutputDTO {
 	private String toid;
 	private boolean connect;
 	private int progress = 0;
+	private boolean self;
 
 	public OutputDTO() {
 

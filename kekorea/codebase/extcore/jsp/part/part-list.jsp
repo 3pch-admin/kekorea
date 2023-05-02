@@ -13,7 +13,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -24,7 +24,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 		<input type="hidden" name="oid" id="oid">
-		<input type="hidden" name="container" id="container" value="product"> 
+		<input type="hidden" name="container" id="container" value="product">
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
@@ -39,8 +39,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>부품 분류</th>
 				<td colspan="7" class="indent5">
-					<input type="hidden" name="location" value="">
-					<span id="location">defaultttttttt</span>
+					<input type="hidden" name="location" id="location" value="<%=PartHelper.DEFAULT_ROOT%>">
+					<span id="locationText"><%=PartHelper.DEFAULT_ROOT%></span>
 				</td>
 			</tr>
 			<tr>
@@ -209,7 +209,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/part/view?oid=" + oid);
-							popup(url, 1500, 800);
+							popup(url, 1500, 500);
 						}
 					},
 					filter : {
@@ -247,7 +247,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
 							const url = getCallUrl("/part/view?oid=" + oid);
-							popup(url, 1500, 800);
+							popup(url, 1500, 500);
 						}
 					},
 					filter : {
@@ -368,7 +368,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				loadGridData();
+// 				loadGridData();
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
@@ -432,18 +432,18 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					console.log(data);
 				});
 			}
-			
+
 			function toggle(container) {
 				const iframe = parent.document.getElementById("content");
 				iframe.src = getCallUrl("/part/library");
 			}
-			
+
 			function exportExcel() {
 				const exceptColumnFields = [ "thumnail" ];
 				const sessionName = document.getElementById("sessionName").value;
 				exportToExcel("부품 리스트", "부품", "부품 리스트", exceptColumnFields, sessionName);
 			}
-			
+
 			document.addEventListener("DOMContentLoaded", function() {
 				const columns = loadColumnLayout("part-list");
 				const contenxtHeader = genColumnHtml(columns);
@@ -463,7 +463,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				twindate("created");
 				twindate("modified");
 			});
-			
+
 			document.addEventListener("keydown", function(event) {
 				const keyCode = event.keyCode || event.which;
 				if (keyCode === 13) {

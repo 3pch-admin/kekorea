@@ -248,9 +248,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 </div>
 <script type="text/javascript">
 	function modify() {
-		openLayer();
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/partlist/modify?oid=" + oid);
+		openLayer();
 		document.location.href = url;
 	}
 

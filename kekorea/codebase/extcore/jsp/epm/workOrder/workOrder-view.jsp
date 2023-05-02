@@ -376,12 +376,14 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 	function modify() {
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/workOrder/modify?oid=" + oid);
+		openLayer();
 		document.location.href = url;
 	}
 
 	function revise() {
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/workOrder/revise?oid=" + oid);
+		openLayer();
 		document.location.href = url;
 	}
 

@@ -406,6 +406,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 
 			function toggle() {
 				const iframe = parent.document.getElementById("content");
+				parent.openLayer();
 				iframe.src = getCallUrl("/output/old");
 			}
 

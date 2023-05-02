@@ -1,8 +1,5 @@
 package e3ps.part.controller;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,14 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.DateUtils;
-import e3ps.org.service.OrgHelper;
+import e3ps.doc.service.DocumentHelper;
 import e3ps.part.dto.PartDTO;
 import e3ps.part.service.PartHelper;
-import e3ps.project.template.service.TemplateHelper;
 import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
@@ -141,13 +135,9 @@ public class PartController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		WTPart part = (WTPart) CommonUtils.getObject(oid);
 		PartDTO dto = new PartDTO(part);
-		JSONArray history = WorkspaceHelper.manager.jsonArrayHistory(part.getMaster());
-		JSONArray data = PartHelper.manager.jsonArrayAui(dto.getOid());
-		JSONArray list = PartHelper.manager.list(part.getMaster());
+		JSONArray versionHistory = PartHelper.manager.versionHistory(part);
 		model.addObject("dto", dto);
-		model.addObject("history", history);
-		model.addObject("data", data);
-		model.addObject("list", list);
+		model.addObject("versionHistory", versionHistory);
 		model.setViewName("popup:/part/part-view");
 		return model;
 	}
@@ -192,6 +182,17 @@ public class PartController extends BaseController {
 		model.addObject("method", method);
 		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.setViewName("popup:/part/part-popup");
+		return model;
+	}
+
+	@Description(value = "부품 수정 페이지")
+	@GetMapping(value = "/modify")
+	public ModelAndView modify(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		WTPart part = (WTPart) CommonUtils.getObject(oid);
+		PartDTO dto = new PartDTO(part);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/part/part-modify");
 		return model;
 	}
 }

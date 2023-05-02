@@ -388,6 +388,13 @@ String end = (String)request.getAttribute("end");
 			enableRightDownFocus : true,
 			filterLayerWidth : 320,
 			filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+			<%
+				if(!multi) {
+			%>
+			rowCheckToRadio : true
+			<%
+				}
+			%>
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		loadGridData();
@@ -398,20 +405,6 @@ String end = (String)request.getAttribute("end");
 		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 			hideContextMenu(); 
 		});
-		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
-	}
-	
-	function auiCellClickHandler(event) {
-		const item = event.item;
-		rowIdField = AUIGrid.getProp(event.pid, "rowIdField");
-		rowId = item[rowIdField];
-		rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); 
-		rowId = item[rowIdField];
-		if(AUIGrid.isCheckedRowById(event.pid, rowId)) {
-			AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
-		} else {
-			AUIGrid.addCheckedRowsByIds(event.pid, rowId);
-		}
 	}
 	
 	function loadGridData() {

@@ -1,9 +1,22 @@
 package e3ps.workspace.controller;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.context.annotation.Description;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,15 +28,21 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.ContentUtils;
+import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.org.Department;
 import e3ps.org.service.OrgHelper;
+import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
 import e3ps.workspace.dto.ApprovalLineDTO;
 import e3ps.workspace.service.WorkspaceHelper;
+import wt.content.ApplicationData;
+import wt.content.ContentServerHelper;
 import wt.fc.Persistable;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
+import wt.util.WTProperties;
 
 @Controller
 @RequestMapping(value = "/workspace/**")
@@ -337,5 +356,25 @@ public class WorkspaceController extends BaseController {
 			result.put("msg", e.toString());
 		}
 		return result;
+	}
+
+	@Description(value = "도면승인 일람표 다운로드")
+	@GetMapping(value = "/print")
+	public ResponseEntity<byte[]> print(@RequestParam String oid) throws Exception {
+		ApprovalContract contract = (ApprovalContract) CommonUtils.getObject(oid);
+		Workbook cover = WorkspaceHelper.manager.print(oid);
+		
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		cover.write(byteArrayOutputStream);
+		
+		byte[] bytes = byteArrayOutputStream.toByteArray();
+		String name = URLEncoder.encode(contract.getName(), "UTF-8").replaceAll("\\+", "%20");
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		headers.setContentLength(bytes.length);
+		headers.setContentDispositionFormData("attachment", name + ".xlsx");
+
+		return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
 	}
 }

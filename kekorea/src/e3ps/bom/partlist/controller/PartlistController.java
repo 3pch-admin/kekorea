@@ -163,6 +163,15 @@ public class PartlistController extends BaseController {
 		PartListDTO dto = new PartListDTO(master);
 		JSONArray list = PartlistHelper.manager.getData(dto.getOid());
 		JSONArray data = PartlistHelper.manager.jsonAuiProject(dto.getOid());
+		People people = CommonUtils.sessionPeople();
+		Department department = people.getDepartment();
+		String engType = "";
+		if (department.getCode().equals("MACHINE")) {
+			engType = "기계";
+		} else if (department.getCode().equals("ELEC")) {
+			engType = "전기";
+		}
+		model.addObject("engType", engType);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
 		model.addObject("dto", dto);

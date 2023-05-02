@@ -8,10 +8,12 @@ import java.util.Map;
 
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.ContentUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.doc.dto.DocumentDTO;
 import e3ps.epm.numberRule.NumberRule;
+import e3ps.epm.numberRule.NumberRulePersistableLink;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputDocumentLink;
 import e3ps.workspace.ApprovalContract;
@@ -195,6 +197,14 @@ public class StandardDocumentService extends StandardManager implements Document
 				PersistenceHelper.manager.delete(output);
 			}
 
+			QueryResult result = PersistenceHelper.manager.navigate(document.getMaster(), "numberRule",
+					NumberRulePersistableLink.class);
+			while (result.hasMoreElements()) {
+				NumberRule numberRule = (NumberRule) result.nextElement();
+				numberRule.setPersist(null);
+				PersistenceHelper.manager.modify(numberRule);
+			}
+			
 			WorkspaceHelper.manager.deleteAllLines(document);
 
 			PersistenceHelper.manager.delete(document);
@@ -248,6 +258,14 @@ public class StandardDocumentService extends StandardManager implements Document
 			Folder folder = FolderTaskLogic.getFolder(location, CommonUtils.getPDMLinkProductContainer());
 			FolderHelper.service.changeFolder((FolderEntry) workCopy, folder);
 
+			QueryResult result = PersistenceHelper.manager.navigate(master, "numberRule",
+					NumberRulePersistableLink.class);
+			while (result.hasMoreElements()) {
+				NumberRule numberRule = (NumberRule) result.nextElement();
+				numberRule.setPersist(null);
+				PersistenceHelper.manager.modify(numberRule);
+			}
+
 			// 도번 추가
 			for (Map<String, Object> addRow11 : addRows11) {
 				NumberRule numberRule = (NumberRule) CommonUtils.getObject((String) addRow11.get("oid"));
@@ -258,6 +276,9 @@ public class StandardDocumentService extends StandardManager implements Document
 				IBAUtils.createIBA((IBAHolder) workCopy.getMaster(), "s", "NUMBER_RULE_VERSION",
 						String.valueOf(numberRule.getVersion()));
 			}
+
+			// ???
+			CommonContentHelper.manager.clear(workCopy);
 
 			for (int i = 0; i < primarys.size(); i++) {
 				String cacheId = (String) primarys.get(i);
@@ -319,18 +340,29 @@ public class StandardDocumentService extends StandardManager implements Document
 			WTDocument document = (WTDocument) CommonUtils.getObject(oid);
 
 			WTDocument newDoc = (WTDocument) VersionControlHelper.service.newVersion(document);
+			WTUser user = (WTUser) SessionHelper.manager.getPrincipal();
+			String msg = user.getFullName() + " 사용자가 문서를 개정 하였습니다.";
+			VersionControlHelper.setNote(newDoc, msg);
+			newDoc.setDescription(description);
 			WTDocumentMaster master = (WTDocumentMaster) newDoc.getMaster();
 			WTDocumentMasterIdentity identity = (WTDocumentMasterIdentity) master.getIdentificationObject();
 			identity.setName(name);
 			master = (WTDocumentMaster) IdentityHelper.service.changeIdentity(master, identity);
 
-			WTUser user = (WTUser) SessionHelper.manager.getPrincipal();
-			String msg = user.getFullName() + " 사용자가 문서를 개정 하였습니다.";
 			// 필요하면 수정 사유로 대체
-			newDoc = (WTDocument) WorkInProgressHelper.service.checkin(newDoc, msg);
+//			newDoc = (WTDocument) WorkInProgressHelper.service.checkin(newDoc, msg);
+			PersistenceHelper.manager.save(newDoc);
 
 			Folder folder = FolderTaskLogic.getFolder(location, CommonUtils.getPDMLinkProductContainer());
 			FolderHelper.service.changeFolder((FolderEntry) newDoc, folder);
+
+			QueryResult result = PersistenceHelper.manager.navigate(master, "numberRule",
+					NumberRulePersistableLink.class);
+			while (result.hasMoreElements()) {
+				NumberRule numberRule = (NumberRule) result.nextElement();
+				numberRule.setPersist(null);
+				PersistenceHelper.manager.modify(numberRule);
+			}
 
 			// 도번 추가
 			for (Map<String, Object> addRow11 : addRows11) {
@@ -342,6 +374,8 @@ public class StandardDocumentService extends StandardManager implements Document
 				IBAUtils.createIBA((IBAHolder) newDoc.getMaster(), "s", "NUMBER_RULE_VERSION",
 						String.valueOf(numberRule.getVersion()));
 			}
+
+			CommonContentHelper.manager.clear(newDoc);
 
 			for (int i = 0; i < primarys.size(); i++) {
 				String cacheId = (String) primarys.get(i);

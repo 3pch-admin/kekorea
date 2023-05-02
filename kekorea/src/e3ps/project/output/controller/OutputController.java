@@ -107,6 +107,8 @@ public class OutputController extends BaseController {
 			model.addObject("location", "/Default/프로젝트/" + task.getName());
 			model.addObject("toid", toid);
 		}
+		String number = OutputHelper.manager.getNextNumber();
+		model.addObject("number", number);
 		model.setViewName("popup:/project/output/output-create");
 		return model;
 	}
@@ -234,5 +236,39 @@ public class OutputController extends BaseController {
 		model.addObject("sessionUser", sessionUser);
 		model.setViewName("popup:/project/output/output-update");
 		return model;
+	}
+
+	@Description(value = "산출물 수정")
+	@ResponseBody
+	@PostMapping(value = "/modify")
+	public Map<String, Object> modify(@RequestBody OutputDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			OutputHelper.service.modify(dto);
+			result.put("msg", MODIFY_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "산출물 개정")
+	@ResponseBody
+	@PostMapping(value = "/revise")
+	public Map<String, Object> revise(@RequestBody OutputDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			OutputHelper.service.revise(dto);
+			result.put("msg", REVISE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
 	}
 }

@@ -95,42 +95,6 @@ public class DocumentHelper {
 		return number;
 	}
 
-	public String getNextNumber(String number) throws Exception {
-
-		Calendar ca = Calendar.getInstance();
-//		int day = ca.get(Calendar.DATE);
-		int month = ca.get(Calendar.MONTH) + 1;
-		int year = ca.get(Calendar.YEAR);
-		DecimalFormat df = new DecimalFormat("00");
-		number = number + df.format(year).substring(2) + df.format(month) + "-";
-
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(WTDocumentMaster.class, true);
-
-		SearchCondition sc = new SearchCondition(WTDocumentMaster.class, WTDocumentMaster.NUMBER, "LIKE",
-				number.toUpperCase() + "%");
-		query.appendWhere(sc, new int[] { idx });
-
-		ClassAttribute attr = new ClassAttribute(WTDocumentMaster.class, WTDocumentMaster.NUMBER);
-		OrderBy orderBy = new OrderBy(attr, true);
-		query.appendOrderBy(orderBy, new int[] { idx });
-
-		QueryResult result = PersistenceHelper.manager.find(query);
-		if (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			WTDocumentMaster document = (WTDocumentMaster) obj[0];
-
-			String s = document.getNumber().substring(document.getNumber().lastIndexOf("-") + 1);
-
-			int ss = Integer.parseInt(s) + 1;
-			DecimalFormat d = new DecimalFormat("0000");
-			number += d.format(ss);
-		} else {
-			number += "0001";
-		}
-		return number;
-	}
-
 	public String getNextNumber() throws Exception {
 
 		Calendar ca = Calendar.getInstance();
@@ -312,6 +276,7 @@ public class DocumentHelper {
 			Map<String, Object> map = new HashMap<>();
 			WTDocument dd = (WTDocument) result.nextElement();
 			map.put("oid", dd.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("number", dd.getNumber());
 			map.put("name", dd.getName());
 			map.put("version", CommonUtils.getFullVersion(dd));
 			map.put("creator", dd.getCreatorFullName());
@@ -380,7 +345,7 @@ public class DocumentHelper {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		Map<String, Object> map = new HashMap<>();
 		WTDocument document = (WTDocument) CommonUtils.getObject(oid);
-		QueryResult result = PersistenceHelper.manager.navigate(document, "numberRule",
+		QueryResult result = PersistenceHelper.manager.navigate(document.getMaster(), "numberRule",
 				NumberRulePersistableLink.class);
 		while (result.hasMoreElements()) {
 			NumberRule numberRule = (NumberRule) result.nextElement();

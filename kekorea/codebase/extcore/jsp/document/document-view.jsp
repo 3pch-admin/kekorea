@@ -21,7 +21,7 @@ JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="개정" title="개정" class="blue" onclick="update('update');">
+			<input type="button" value="개정" title="개정" class="blue" onclick="update('revise');">
 			<input type="button" value="수정" title="수정" onclick="update('modify');">
 			<%
 			if (isAdmin) {
@@ -128,9 +128,33 @@ JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 		<script type="text/javascript">
 			let myGridID;
 			const columns = [ {
+				dataField : "number",
+				headerText : "문서번호",
+				dataType : "string",
+				width : 120,
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const url = getCallUrl("/doc/view?oid=" + oid);
+						popup(url, 1600, 800);
+					}
+				},
+			}, {
 				dataField : "name",
 				headerText : "문서제목",
 				dataType : "string",
+				style : "aui-left",
+				renderer : {
+					type : "LinkRenderer",
+					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const url = getCallUrl("/doc/view?oid=" + oid);
+						popup(url, 1600, 800);
+					}
+				},
 			}, {
 				dataField : "version",
 				headerText : "버전",
@@ -157,7 +181,7 @@ JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 				dataType : "string",
 				width : 100,
 			}, {
-				dataField : "priamry",
+				dataField : "primary",
 				headerText : "주 첨부파일",
 				dataType : "string",
 				width : 100,
@@ -201,6 +225,7 @@ JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 	function update(mode) {
 		const oid = document.getElementById("oid").value;
 		const url = getCallUrl("/doc/update?oid=" + oid + "&mode=" + mode);
+		openLayer();
 		document.location.href = url;
 	}
 

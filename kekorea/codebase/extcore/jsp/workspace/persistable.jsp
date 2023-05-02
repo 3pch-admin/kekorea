@@ -1,3 +1,8 @@
+<%@page import="e3ps.korea.configSheet.service.ConfigSheetHelper"%>
+<%@page import="e3ps.korea.configSheet.ConfigSheetProjectLink"%>
+<%@page import="e3ps.epm.workOrder.WorkOrder"%>
+<%@page import="e3ps.bom.tbom.TBOMMaster"%>
+<%@page import="e3ps.korea.configSheet.ConfigSheet"%>
 <%@page import="e3ps.workspace.ApprovalContract"%>
 <%@page import="e3ps.bom.partlist.service.PartlistHelper"%>
 <%@page import="e3ps.bom.partlist.PartListMasterProjectLink"%>
@@ -82,6 +87,9 @@ if (per instanceof ApprovalContract) {
 			<div class="header">
 				<img src="/Windchill/extcore/images/header.png">
 				도번 결재
+				<a href="/Windchill/plm/workspace/print?oid=<%=oid%>" title="도면승인 요청서 다운로드">
+					<img src="/Windchill/extcore/images/fileicon/file_excel.gif">
+				</a>
 			</div>
 		</td>
 	</tr>
@@ -334,9 +342,134 @@ Map<String, Object> primary = ContentUtils.getPrimary(requestDocument);
 	</tr>
 	<%
 	}
+	%>
+</table>
+<%
+} else if (per instanceof ConfigSheet) {
+	ConfigSheet configSheet = (ConfigSheet)per;
+%>
+<!-- CONFIG SHEET -->
+<table class="button-table">
+	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				CONFIG SHEET
+			</div>
+		</td>
+	</tr>
+</table>
+
+<table class="view-table">
+	<colgroup>
+		<col width="*">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+	</colgroup>
+	<tr>
+		<th class="lb">CONFIG SHEET 제목</th>
+		<th class="lb">상태</th>
+		<th class="lb">작성자</th>
+		<th class="lb">작성일</th>
+	</tr>
+	<tr>
+		<td class="indent5">
+			<a href="javascript:detail();"><%=configSheet.getName()%></a>
+		</td>
+		<td class="center"><%=configSheet.getLifeCycleState().getDisplay()%></td>
+		<td class="center"><%=configSheet.getCreatorFullName()%></td>
+		<td class="center"><%=CommonUtils.getPersistableTime(configSheet.getCreateTimestamp())%></td>
+	</tr>
+</table>
+
+<table class="button-table">
+	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				관련 작번
+			</div>
+		</td>
+	</tr>
+</table>
+
+<table class="view-table">
+	<colgroup>
+		<col width="100">
+		<col width="100">
+		<col width="80">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="*">
+	</colgroup>
+	<tr>
+		<th class="lb">KEK 작번</th>
+		<th class="lb">KE 작번</th>
+		<th class="lb">작번유형</th>
+		<th class="lb">거래처</th>
+		<th class="lb">설치장소</th>
+		<th class="lb">막종</th>
+		<th class="lb">막종상세</th>
+		<th class="lb">작업내용</th>
+	</tr>
+	<%
+	ArrayList<ConfigSheetProjectLink> list = ConfigSheetHelper.manager.getLinks(configSheet);
+	for (ConfigSheetProjectLink link : list) {
+		Project project = link.getProject();
+	%>
+	<tr>
+		<td class="center">
+			<a href="javascript:detail();"><%=project.getKekNumber()%></a>
+		</td>
+		<td class="center">
+			<a href="javascript:detail();"><%=project.getKeNumber()%></a>
+		</td>
+		<td class="center"><%=project.getProjectType().getName()%></td>
+		<td class="center"><%=project.getCustomer().getName()%></td>
+		<td class="center"><%=project.getInstall().getName()%></td>
+		<td class="center"><%=project.getMak().getName()%></td>
+		<td class="center"><%=project.getDetail().getName()%></td>
+		<td class="indent5"><%=project.getDescription()%></td>
+	</tr>
+	<%
 	}
 	%>
 </table>
+
+<%
+} else if (per instanceof TBOMMaster) {
+%>
+<!-- T-BOM -->
+<table class="button-table">
+	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				T-BOM
+			</div>
+		</td>
+	</tr>
+</table>
+<%
+} else if (per instanceof WorkOrder) {
+%>
+<!-- 도면 일람표 -->
+<table class="button-table">
+	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				도면 일람표
+			</div>
+		</td>
+	</tr>
+</table>
+<%
+}
+%>
 <script type="text/javascript">
 	function _detail(oid) {
 

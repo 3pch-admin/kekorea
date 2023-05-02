@@ -33,7 +33,6 @@ import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.KeDrawingMaster;
-import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;

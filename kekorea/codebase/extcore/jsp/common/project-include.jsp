@@ -5,6 +5,7 @@
 String oid = request.getParameter("oid");
 String mode = request.getParameter("mode");
 String height = StringUtils.replaceToValue(request.getParameter("height"), "150");
+boolean multi = StringUtils.parseBoolean(request.getParameter("multi"), true);
 boolean isView = "view".equals(mode);
 boolean isCreate = "create".equals(mode);
 boolean isUpdate = "update".equals(mode);
@@ -93,11 +94,17 @@ boolean isUpdate = "update".equals(mode);
 				showAutoNoDataMessage : false,
 				enableSorting : false,
 				softRemoveRowMode : false,
-// 				autoGridHeight : true,
 				<%if (isCreate || isUpdate) {%>
 				showRowCheckColumn : true,
 				showStateColumn : true,
 				<%}%>
+				<%
+					if(!multi) {
+				%>
+				rowCheckToRadio : true
+				<%
+					}
+				%>
 			}
 			myGridID9 = AUIGrid.create("#grid_wrap9", columnLayout, props);
 			<%if (isView || isUpdate) {%>
@@ -106,7 +113,7 @@ boolean isUpdate = "update".equals(mode);
 		}
 
 		function insert9() {
-			const url = getCallUrl("/project/popup?method=append&multi=true");
+			const url = getCallUrl("/project/popup?method=append&multi=<%=multi%>");
 			popup(url, 1500, 700);
 		}
 
@@ -115,6 +122,14 @@ boolean isUpdate = "update".equals(mode);
 				const item = data[i].item;
 				const isUnique = AUIGrid.isUniqueValue(myGridID9, "oid", item.oid);
 				if (isUnique) {
+					<%
+						if(!multi) {
+					%>
+					// 멀티 아닐경우 그리드 데이터 클리어
+					AUIGrid.clearGridData(myGridID9);
+					<%
+						}
+					%>
 					AUIGrid.addRow(myGridID9, item, "first");
 				}
 			}

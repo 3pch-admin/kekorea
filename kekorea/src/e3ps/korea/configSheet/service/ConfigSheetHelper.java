@@ -1,7 +1,9 @@
 package e3ps.korea.configSheet.service;
 
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +33,9 @@ public class ConfigSheetHelper {
 	public static final ConfigSheetHelper manager = new ConfigSheetHelper();
 	public static final ConfigSheetService service = ServiceFactory.getService(ConfigSheetService.class);
 
+	/**
+	 * CONFIG SHEET 검색
+	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<>();
 
@@ -309,6 +314,53 @@ public class ConfigSheetHelper {
 			map.put("apply", variable.getApply());
 			map.put("sort", sort);
 			list.add(map);
+		}
+		return list;
+	}
+
+	/**
+	 * CONFIG SHEET 번호
+	 */
+	public String getNextNumber() throws Exception {
+
+		Calendar ca = Calendar.getInstance();
+		int month = ca.get(Calendar.MONTH) + 1;
+		int year = ca.get(Calendar.YEAR);
+		DecimalFormat df = new DecimalFormat("00");
+		String number = "CS-" + df.format(year).substring(2) + df.format(month) + "-";
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ConfigSheet.class, true);
+
+		QuerySpecUtils.toLikeRightAnd(query, idx, ConfigSheet.class, ConfigSheet.NUMBER, number);
+		QuerySpecUtils.toOrderBy(query, idx, ConfigSheet.class, ConfigSheet.NUMBER, true);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			ConfigSheet configSheet = (ConfigSheet) obj[0];
+
+			String s = configSheet.getNumber().substring(configSheet.getNumber().lastIndexOf("-") + 1);
+
+			int ss = Integer.parseInt(s) + 1;
+			DecimalFormat d = new DecimalFormat("0000");
+			number += d.format(ss);
+		} else {
+			number += "0001";
+		}
+		return number;
+	}
+
+	/**
+	 * CONFIG SHEET 프로젝트 링크 가져오기
+	 */
+	public ArrayList<ConfigSheetProjectLink> getLinks(ConfigSheet configSheet) throws Exception {
+		ArrayList<ConfigSheetProjectLink> list = new ArrayList<>();
+		QueryResult result = PersistenceHelper.manager.navigate(configSheet, "project", ConfigSheetProjectLink.class,
+				false);
+		while (result.hasMoreElements()) {
+			ConfigSheetProjectLink link = (ConfigSheetProjectLink) result.nextElement();
+			list.add(link);
 		}
 		return list;
 	}

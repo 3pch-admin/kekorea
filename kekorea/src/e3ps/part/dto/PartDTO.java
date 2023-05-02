@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.ContentUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.part.service.PartHelper;
 import lombok.Getter;
@@ -68,7 +69,7 @@ public class PartDTO {
 		setModifiedDate_txt(CommonUtils.getPersistableTime(part.getModifyTimestamp()));
 		setState(part.getLifeCycleState().getDisplay());
 		setLocation(part.getLocation());
-//		setPreView(ContentUtils.getPreViewBase64(part));
+		setPreView(ContentUtils.getPreViewBase64(part));
 		putAttr(part);
 	}
 

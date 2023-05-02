@@ -132,7 +132,7 @@ public class StandardPartlistService extends StandardManager implements Partlist
 		try {
 			trs.start();
 
-			String number = DocumentHelper.manager.getNextNumber("PP-");
+			String number = PartlistHelper.manager.getNextNumber();
 			PartListMaster master = PartListMaster.newPartListMaster();
 			master.setNumber(number);
 			master.setName(name);
