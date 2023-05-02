@@ -10,6 +10,7 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
+import e3ps.project.Project;
 import wt.doc.WTDocument;
 import wt.util.WTException;
 
@@ -18,7 +19,7 @@ import wt.util.WTException;
 		properties = {
 
 				@GeneratedProperty(name = "content", type = String.class, javaDoc = "회의록 내용", columnProperties = @ColumnProperties(columnType = ColumnType.BLOB)),
-
+				
 		},
 
 		foreignKeys = {
@@ -26,6 +27,14 @@ import wt.util.WTException;
 				@GeneratedForeignKey(name = "MeetingTinyLink",
 
 						foreignKeyRole = @ForeignKeyRole(name = "tiny", type = MeetingTemplate.class,
+
+								constraints = @PropertyConstraints(required = false)),
+
+						myRole = @MyRole(name = "meeting", cardinality = Cardinality.ONE)),
+
+				@GeneratedForeignKey(name = "MeetingProjectLink",
+
+						foreignKeyRole = @ForeignKeyRole(name = "project", type = Project.class,
 
 								constraints = @PropertyConstraints(required = false)),
 

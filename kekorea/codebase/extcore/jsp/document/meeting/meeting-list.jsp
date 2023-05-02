@@ -351,7 +351,7 @@ String end = (String) request.getAttribute("end");
 					},
 					editable : false
 				}, {
-					dataField : "pdate",
+					dataField : "pdate_txt",
 					headerText : "발행일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd",
