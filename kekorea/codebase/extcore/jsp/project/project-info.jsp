@@ -305,19 +305,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				iframe.src = "/Windchill/plm/project/view?oid=" + oid;
 			} else if (item.type == "task" && !item.isNew) {
 				iframe.src = "/Windchill/plm/project/task?oid=" + oid + "&toid=" + item.oid + "&name=" + name;
-				// 				if (name === "의뢰서") {
-				// 					iframe.src = "/Windchill/plm/project/request?oid=" + oid + "&toid=" + item.oid;
-				// 				} else if (name === "1차_수배" || name === "2차_수배") {
-				// 					iframe.src = "/Windchill/plm/project/step?oid=" + oid + "&toid=" + item.oid;
-				// 				} else if (name === "전기_수배표" || name === "기계_수배표") {
-				// 					iframe.src = "/Windchill/plm/project/partlist?oid=" + oid + "&toid=" + item.oid;
-				// 				} else if (name === "T-BOM") {
-				// 					iframe.src = "/Windchill/plm/project/tbom?oid=" + oid + "&toid=" + item.oid;
-				// 				} else if(name === "회의록") {
-				// 					iframe.src = "/Windchill/plm/project/meeting?oid=" + oid + "&toid=" + item.oid;
-				// 				} else {
-				// 					iframe.src = "/Windchill/plm/project/normal?oid=" + oid + "&toid=" + item.oid;
-				// 				}
 			}
 		}
 	}

@@ -28,25 +28,13 @@ public class NumberRuleCodeHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<NumberRuleCodeDTO> list = new ArrayList<>();
-		String name = (String) params.get("name");
-		String code = (String) params.get("code");
-		String codeType = (String) params.get("codeType");
-		String description = (String) params.get("description");
-		boolean enable = (boolean) params.get("enable");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(NumberRuleCode.class, true);
-		QuerySpecUtils.toLikeAnd(query, idx, NumberRuleCode.class, NumberRuleCode.NAME, name);
-		QuerySpecUtils.toLikeAnd(query, idx, NumberRuleCode.class, NumberRuleCode.CODE, code);
-		QuerySpecUtils.toLikeAnd(query, idx, NumberRuleCode.class, NumberRuleCode.DESCRIPTION, description);
-		QuerySpecUtils.toLikeAnd(query, idx, NumberRuleCode.class, NumberRuleCode.CODE_TYPE, codeType);
-		QuerySpecUtils.toBooleanAnd(query, idx, NumberRuleCode.class, NumberRuleCode.ENABLE, enable);
 		QuerySpecUtils.toOrderBy(query, idx, NumberRuleCode.class, NumberRuleCode.CODE_TYPE, false);
 		QuerySpecUtils.toOrderBy(query, idx, NumberRuleCode.class, NumberRuleCode.SORT, false);
 
-		PageQueryUtils pager = new PageQueryUtils(params, query);
-		PagingQueryResult result = pager.find();
-
+		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			NumberRuleCode numberRuleCode = (NumberRuleCode) obj[0];
@@ -54,8 +42,6 @@ public class NumberRuleCodeHelper {
 			list.add(column);
 		}
 		map.put("list", list);
-		map.put("sessionid", pager.getSessionId());
-		map.put("curPage", pager.getCpage());
 		return map;
 	}
 

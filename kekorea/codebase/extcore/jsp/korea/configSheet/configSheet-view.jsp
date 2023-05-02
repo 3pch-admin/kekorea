@@ -5,8 +5,6 @@
 JSONArray data = (JSONArray) request.getAttribute("data");
 ConfigSheetDTO dto = (ConfigSheetDTO) request.getAttribute("dto");
 String oid = (String) request.getAttribute("oid");
-JSONArray history = (JSONArray) request.getAttribute("history");
-JSONArray list = (JSONArray) request.getAttribute("list");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
@@ -96,13 +94,21 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		<table class="view-table">
 			<colgroup>
 				<col width="150">
-				<col width="*">
+				<col width="600">
+				<col width="150">
+				<col width="600">
 			</colgroup>
 			<tr>
 				<th class="lb">CONFIG SHEET 제목</th>
 				<td class="indent5"><%=dto.getName()%></td>
-				<th>상태</th>
+				<th class="lb">CONFIG SHEET 번호</th>
+				<td class="indent5"><%=dto.getNumber()%></td>
+			</tr>
+			<tr>
+				<th class="lb">상태</th>
 				<td class="indent5"><%=dto.getState()%></td>
+				<th>버전</th>
+				<td class="indent5"><%=dto.getVersion()%></td>
 			</tr>
 			<tr>
 				<th class="lb">작성자</th>
@@ -175,10 +181,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				const props = {
 					headerHeight : 30,
 					showRowNumColumn : true,
-					showStateColumn : true,
 					rowNumHeaderText : "번호",
 					selectionMode : "multipleCells",
 					enableCellMerge : true,
+					enableSorting : false,
 					rowStyleFunction : function(rowIndex, item) {
 						const value = item.category_code;
 						if (value === "CATEGORY_2") {
@@ -241,7 +247,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 		}, "GET");
 	}
-	
+
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs({
 			active : 0,

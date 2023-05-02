@@ -33,6 +33,7 @@ import e3ps.korea.configSheet.beans.ConfigSheetDTO;
 import e3ps.korea.configSheet.service.ConfigSheetHelper;
 import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
+import e3ps.project.output.service.OutputHelper;
 import e3ps.project.template.service.TemplateHelper;
 import net.sf.json.JSONArray;
 import wt.fc.PersistenceHelper;
@@ -107,7 +108,6 @@ public class ConfigSheetController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
 		JSONArray data = ConfigSheetHelper.manager.loadBaseGridData(oid);
-		JSONArray list = ConfigSheetHelper.manager.jsonAuiProject(configSheet);
 //		JSONArray history = WorkspaceHelper.manager.jsonAuiHistory(configSheet);
 		ConfigSheetDTO dto = new ConfigSheetDTO(configSheet);
 		boolean isAdmin = CommonUtils.isAdmin();
@@ -115,7 +115,6 @@ public class ConfigSheetController extends BaseController {
 		model.addObject("oid", oid);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
-		model.addObject("list", list);
 //		model.addObject("history", history);
 		model.setViewName("popup:/korea/configSheet/configSheet-view");
 		return model;

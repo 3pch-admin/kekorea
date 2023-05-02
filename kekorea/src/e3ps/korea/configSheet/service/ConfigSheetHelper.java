@@ -185,24 +185,17 @@ public class ConfigSheetHelper {
 	/**
 	 * CONFIG SHEET 관련 작번
 	 */
-	public JSONArray jsonAuiProject(ConfigSheet configSheet) throws Exception {
+	public JSONArray jsonAuiProject(String oid) throws Exception {
+		ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
 		ArrayList<Map<String, String>> list = new ArrayList<>();
-
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(ConfigSheet.class, true);
-		int idx_link = query.appendClassList(ConfigSheetProjectLink.class, true);
-		QuerySpecUtils.toInnerJoin(query, ConfigSheet.class, ConfigSheetProjectLink.class, WTAttributeNameIfc.ID_NAME,
-				"roleAObjectRef.key.id", idx, idx_link);
-		QuerySpecUtils.toEqualsAnd(query, idx_link, ConfigSheetProjectLink.class, "roleAObjectRef.key.id", configSheet);
-		QueryResult result = PersistenceHelper.manager.find(query);
+		QueryResult result = PersistenceHelper.manager.navigate(configSheet, "project", ConfigSheetProjectLink.class);
 		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			ConfigSheetProjectLink link = (ConfigSheetProjectLink) obj[1];
-			Project project = link.getProject();
+			Project project = (Project) result.nextElement();
 			Map<String, String> map = new HashMap<>();
 			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
 			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("install_name", project.getInstall() != null ? project.getInstall().getName() : "");
 			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
 			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
 			map.put("kekNumber", project.getKekNumber());

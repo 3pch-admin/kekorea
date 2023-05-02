@@ -12,82 +12,83 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
-	<table class="search-table">
-		<tr>
-			<th>코드 명</th>
-			<td class="indent5">
-				<input type="text" name="name" id="name" class="width-200">
-			</td>
-			<th>코드</th>
-			<td class="indent5">
-				<input type="text" name="code" id="code" class="width-200">
-			</td>
-			<th>코드 타입</th>
-			<td class="indent5">
-				<select name="codeType" id="codeType" class="width-200">
-					<option value="">선택</option>
-					<%
-					for (CommonCodeType codeType : codeTypes) {
-						String value = codeType.toString();
-						if (value.equals("MAK_DETAIL") || value.equals("INSTALL") || value.equals("CATEGORY")
-						|| value.equals("CATEGORY_ITEM") || value.equals("CATEGORY_SPEC")) {
-							continue;
+	<form>
+		<table class="search-table">
+			<tr>
+				<th>코드 명</th>
+				<td class="indent5">
+					<input type="text" name="name" id="name" class="width-200">
+				</td>
+				<th>코드</th>
+				<td class="indent5">
+					<input type="text" name="code" id="code" class="width-200">
+				</td>
+				<th>코드 타입</th>
+				<td class="indent5">
+					<select name="codeType" id="codeType" class="width-200">
+						<option value="">선택</option>
+						<%
+						for (CommonCodeType codeType : codeTypes) {
+							String value = codeType.toString();
+							if (value.equals("MAK_DETAIL") || value.equals("INSTALL") || value.equals("CATEGORY")
+							|| value.equals("CATEGORY_ITEM") || value.equals("CATEGORY_SPEC")) {
+								continue;
+							}
+						%>
+						<option value="<%=codeType.toString()%>"><%=codeType.getDisplay()%></option>
+						<%
 						}
-					%>
-					<option value="<%=codeType.toString()%>"><%=codeType.getDisplay()%></option>
-					<%
-					}
-					%>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<th>설명</th>
-			<td class="indent5" colspan="3">
-				<input type="text" name="description" id="description" class="width-200">
-			</td>
-			<th>사용여부</th>
-			<td>
-				&nbsp;
-				<div class="pretty p-switch">
-					<input type="radio" name="enable" value="true" checked="checked">
-					<div class="state p-success">
-						<label>
-							<b>최신버전</b>
-						</label>
+						%>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>설명</th>
+				<td class="indent5" colspan="3">
+					<input type="text" name="description" id="description" class="width-500">
+				</td>
+				<th>사용여부</th>
+				<td>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="enable" value="true" checked="checked">
+						<div class="state p-success">
+							<label>
+								<b>사용</b>
+							</label>
+						</div>
 					</div>
-				</div>
-				&nbsp;
-				<div class="pretty p-switch">
-					<input type="radio" name="enable" value="">
-					<div class="state p-success">
-						<label>
-							<b>모든버전</b>
-						</label>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="enable" value="">
+						<div class="state p-success">
+							<label>
+								<b>미사용</b>
+							</label>
+						</div>
 					</div>
-				</div>
-			</td>
-		</tr>
-	</table>
+				</td>
+			</tr>
+		</table>
 
-	<!-- button table -->
-	<table class="button-table">
-		<tr>
-			<td class="left">
-				<input type="button" value="저장" class="" id="saveBtn" title="저장" onclick="save()">
-				<input type="button" value="행 추가" class="blue" id="addRowBtn" title="추가" onclick="addRow();">
-				<input type="button" value="행 삭제" class="red" id="deleteRowBtn" title="삭제" onclick="deleteRow()">
-			</td>
-			<td class="right">
-				<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회" onclick="loadGridData();">
-			</td>
-		</tr>
-	</table>
-	<div id="grid_wrap" style="height: 700px; border-top: 1px solid #3180c3;"></div>
+		<table class="button-table">
+			<tr>
+				<td class="left">
+					<input type="button" value="저장" class="" id="saveBtn" title="저장" onclick="save()">
+					<input type="button" value="행 추가" class="blue" id="addRowBtn" title="추가" onclick="addRow();">
+					<input type="button" value="행 삭제" class="red" id="deleteRowBtn" title="삭제" onclick="deleteRow()">
+				</td>
+				<td class="right">
+					<input type="button" value="조회" class="blueBtn" id="searchBtn" title="조회" onclick="loadGridData();">
+				</td>
+			</tr>
+		</table>
+		<div id="grid_wrap" style="height: 700px; border-top: 1px solid #3180c3;"></div>
+	</form>
 </body>
 <script type="text/javascript">
 	let myGridID;
@@ -141,7 +142,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			return retStr == "" ? value : retStr;
 		}
 	}, {
-		dataField : "parentName",
+		dataField : "parent_name",
 		headerText : "상위코드 명",
 		dataType : "string",
 		width : 180,
@@ -207,13 +208,11 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 			editable : true,
 			showStateColumn : true,
 			selectionMode : "multipleCells",
-			flat2tree : true,
 			treeIdField : "oid",
 			treeIdRefField : "parent",
 			enableRowCheckShiftKey : true,
 			useContextMenu : true,
 			enableRightDownFocus : true,
-// 			forceTreeView : true,
 			contextMenuItems : [ {
 				label : "선택된 행 이전 추가",
 				callback : contextItemHandler
@@ -231,7 +230,6 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		loadGridData();
 		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditHandler);
-		AUIGrid.bind(myGridID, "addRowFinish", auiAddRowHandler);
 	}
 
 	function contextItemHandler(event) {
@@ -260,22 +258,10 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		}
 	}
 
-	function auiAddRowHandler(event) {
-		let selected = AUIGrid.getSelectedIndex(myGridID);
-		if (selected.length <= 0) {
-			return;
-		}
-
-		let rowIndex = selected[0];
-		let colIndex = AUIGrid.getColumnIndexByDataField(myGridID, "name");
-		AUIGrid.setSelectionByIndex(myGridID, rowIndex, colIndex); // ISBN 으로 선택자 이동
-		AUIGrid.openInputer(myGridID);
-	}
-
 	function auiCellEditHandler(event) {
 		if (event.dataField === "parentName") {
-			let item = getItem(event.value);
-			let poid = item.key;
+			const item = getItem(event.value);
+			const poid = item.key;
 			AUIGrid.updateRow(myGridID, {
 				poid : poid
 			}, event.rowIndex);
@@ -296,11 +282,16 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 	function loadGridData() {
 		const params = new Object();
 		const url = getCallUrl("/commonCode/list");
+		const name = document.getElementById("name").value;
+		const code = document.getElementById("code").value;
+		const description = document.getElementById("description").value;
 		const enable = !!document.querySelector("input[name=enable]:checked").value;
 		const codeType = document.getElementById("codeType").value;
 		params.enable = enable;
+		params.name = name;
+		params.code = code;
+		params.description = description;
 		params.codeType = codeType;
-		console.log(params);
 		AUIGrid.showAjaxLoader(myGridID);
 		parent.openLayer();
 		call(url, params, function(data) {

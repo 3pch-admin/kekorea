@@ -11,6 +11,7 @@ import e3ps.korea.configSheet.ConfigSheetProjectLink;
 import e3ps.project.Project;
 import lombok.Getter;
 import lombok.Setter;
+import wt.folder.SubFolder;
 
 @Getter
 @Setter
@@ -21,6 +22,7 @@ public class ConfigSheetDTO {
 	private String poid;
 	private String projectType_name;
 	private String name;
+	private String number;
 	private String content;
 	private String customer_name;
 	private String install_name;
@@ -49,7 +51,7 @@ public class ConfigSheetDTO {
 	private ArrayList<Map<String, String>> approvalRows = new ArrayList<>(); // 결재
 	private ArrayList<Map<String, String>> receiveRows = new ArrayList<>(); // 수신
 	private int progress;
-	
+
 	public ConfigSheetDTO() {
 
 	}
@@ -57,6 +59,7 @@ public class ConfigSheetDTO {
 	public ConfigSheetDTO(ConfigSheet configSheet) throws Exception {
 		setOid(configSheet.getPersistInfo().getObjectIdentifier().getStringValue());
 		setName(configSheet.getName());
+		setNumber(configSheet.getNumber());
 		setContent(StringUtils.replaceToValue(configSheet.getDescription()));
 		setState(configSheet.getLifeCycleState().getDisplay());
 		setCreator(configSheet.getCreatorFullName());
@@ -73,6 +76,7 @@ public class ConfigSheetDTO {
 		setPoid(project.getPersistInfo().getObjectIdentifier().getStringValue());
 		setProjectType_name(project.getProjectType().getName());
 		setName(configSheet.getName());
+		setNumber(configSheet.getNumber());
 		setContent(StringUtils.replaceToValue(configSheet.getDescription()));
 		setCustomer_name(project.getCustomer().getName());
 		setInstall_name(project.getInstall().getName());

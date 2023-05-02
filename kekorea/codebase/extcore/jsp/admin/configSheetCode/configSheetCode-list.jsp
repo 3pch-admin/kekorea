@@ -6,7 +6,7 @@
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
@@ -18,9 +18,6 @@
 					<input type="button" value="자식 추가" title="자식 추가" class="orange" onclick="addTreeRow();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
-				</td>
-				<td class="right">
-					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
 		</table>
@@ -310,6 +307,8 @@
 					alert(data.msg);
 					if (data.result) {
 						loadGridData();
+					} else {
+						closeLayer();
 					}
 				})
 			}

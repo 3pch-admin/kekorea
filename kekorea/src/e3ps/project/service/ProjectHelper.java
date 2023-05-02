@@ -23,7 +23,6 @@ import e3ps.common.util.StringUtils;
 import e3ps.doc.meeting.Meeting;
 import e3ps.doc.meeting.service.MeetingHelper;
 import e3ps.doc.request.RequestDocument;
-import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.service.RequestDocumentHelper;
 import e3ps.doc.service.DocumentHelper;
 import e3ps.epm.keDrawing.KeDrawing;
@@ -31,6 +30,8 @@ import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.service.EpmHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
+import e3ps.korea.configSheet.ConfigSheet;
+import e3ps.korea.configSheet.service.ConfigSheetHelper;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.service.KePartHelper;
 import e3ps.project.Project;
@@ -39,7 +40,6 @@ import e3ps.project.dto.ProjectDTO;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputTaskLink;
 import e3ps.project.output.service.OutputHelper;
-import e3ps.project.task.ParentTaskChildTaskLink;
 import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.task.variable.TaskStateVariable;
@@ -996,8 +996,6 @@ public class ProjectHelper {
 			Map<String, String> map = new HashMap<>();
 			map.put("ooid", output.getPersistInfo().getObjectIdentifier().getStringValue());
 
-			System.out.println("class=" + lcm.getClass());
-
 			if (lcm instanceof WTDocument) {
 				WTDocument document = (WTDocument) lcm;
 				map.put("oid", document.getPersistInfo().getObjectIdentifier().getStringValue());
@@ -1017,9 +1015,18 @@ public class ProjectHelper {
 				map.put("secondary", AUIGridUtils.secondaryTemplate(meeting));
 			} else if (lcm instanceof PartListMaster) {
 				PartListMaster master = (PartListMaster) lcm;
-
+				map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("name", master.getName());
+				map.put("creator", master.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+				map.put("secondary", AUIGridUtils.secondaryTemplate(master));
 			} else if (lcm instanceof RequestDocument) {
-				RequestDocument workOrder = (RequestDocument) lcm;
+				RequestDocument requestDocument = (RequestDocument) lcm;
+				map.put("oid", requestDocument.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("name", requestDocument.getName());
+				map.put("creator", requestDocument.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(requestDocument.getCreateTimestamp()));
+				map.put("secondary", AUIGridUtils.secondaryTemplate(requestDocument));
 			} else if (lcm instanceof WorkOrder) {
 				WorkOrder workOrder = (WorkOrder) lcm;
 				map.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
@@ -1034,6 +1041,13 @@ public class ProjectHelper {
 				map.put("creator", master.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
 				map.put("secondary", AUIGridUtils.secondaryTemplate(master));
+			} else if (lcm instanceof ConfigSheet) {
+				ConfigSheet configSheet = (ConfigSheet) lcm;
+				map.put("oid", configSheet.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("name", configSheet.getName());
+				map.put("creator", configSheet.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(configSheet.getCreateTimestamp()));
+				map.put("secondary", AUIGridUtils.secondaryTemplate(configSheet));
 			}
 			list.add(map);
 		}
@@ -1265,6 +1279,8 @@ public class ProjectHelper {
 			return OutputHelper.manager.jsonAuiProject(oid);
 		} else if (per instanceof WTDocument) {
 			return DocumentHelper.manager.jsonAuiProject(oid);
+		} else if (per instanceof ConfigSheet) {
+			return ConfigSheetHelper.manager.jsonAuiProject(oid);
 		}
 		return new JSONArray();
 	}

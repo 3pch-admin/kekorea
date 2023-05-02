@@ -936,33 +936,25 @@ public class WorkspaceHelper {
 				cell.setCellStyle(cellStyle);
 				cell.setCellValue(String.valueOf(rowNum));
 
-				Row row2 = sheet.createRow(rowIndex);
-				Cell cell2 = row2.createCell(1);
-				cell2.setCellStyle(cellStyle);
-				cell2.setCellValue(numberRule.getMaster().getLotNo() + " / " + numberRule.getMaster().getUnitName());
-//				cell.setCellValue("222");
-//				
-//				row = sheet.createRow(rowIndex);
-//				cell = row.createCell(2);
-//				cell.setCellStyle(cellStyle);
-////				cell.setCellValue(name);
-//				cell.setCellValue("333");
-//				
-//				row = sheet.createRow(rowIndex);
-//				cell = row.createCell(3);
-//				cell.setCellStyle(cellStyle);
-////				cell.setCellValue(number);
-//				cell.setCellValue("444");
-//
-//				row = sheet.createRow(rowIndex);
-//				cell = row.createCell(4);
-//				cell.setCellStyle(cellStyle);
-//				cell.setCellValue(String.valueOf(numberRule.getVersion()));
-//
-//				row = sheet.createRow(rowIndex);
-//				cell = row.createCell(5);
-//				cell.setCellStyle(cellStyle);
-//				cell.setCellValue("");
+				cell = row.createCell(1);
+				cell.setCellStyle(cellStyle);
+				cell.setCellValue(numberRule.getMaster().getLotNo() + " / " + numberRule.getMaster().getUnitName());
+
+				cell = row.createCell(2);
+				cell.setCellStyle(cellStyle);
+				cell.setCellValue(name);
+
+				cell = row.createCell(3);
+				cell.setCellStyle(cellStyle);
+				cell.setCellValue(number);
+
+				cell = row.createCell(4);
+				cell.setCellStyle(cellStyle);
+				cell.setCellValue(String.valueOf(numberRule.getVersion()));
+
+				cell = row.createCell(5);
+				cell.setCellStyle(cellStyle);
+				cell.setCellValue("");
 
 				rowIndex++;
 				rowNum++;

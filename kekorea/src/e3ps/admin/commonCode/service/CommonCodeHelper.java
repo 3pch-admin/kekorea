@@ -24,6 +24,9 @@ public class CommonCodeHelper {
 	public static final CommonCodeHelper manager = new CommonCodeHelper();
 	public static final CommonCodeService service = ServiceFactory.getService(CommonCodeService.class);
 
+	/**
+	 * 코드타입 검색
+	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<CommonCodeDTO> list = new ArrayList<CommonCodeDTO>();
@@ -77,16 +80,14 @@ public class CommonCodeHelper {
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.SORT, false);
 
 		QueryResult result = PersistenceHelper.manager.find(query);
+
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			CommonCode commonCode = (CommonCode) obj[0];
 			CommonCodeDTO column = new CommonCodeDTO(commonCode);
 			list.add(column);
 		}
-
 		map.put("list", list);
-//		map.put("sessionid", pager.getSessionId());
-//		map.put("curPage", pager.getCpage());
 		return map;
 	}
 

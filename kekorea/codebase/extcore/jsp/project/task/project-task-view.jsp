@@ -215,17 +215,17 @@ int taskType = (int) request.getAttribute("taskType");
 				if (taskType == 0) {
 				%>
 				<jsp:include page="/extcore/jsp/project/task/normal.jsp">
-					<jsp:param value="<%=data.getOid() %>" name="poid"/>
-					<jsp:param value="<%=dto.getOid() %>" name="toid"/>
-					<jsp:param value="<%=isAdmin %>" name="isAdmin"/>
+					<jsp:param value="<%=data.getOid()%>" name="poid" />
+					<jsp:param value="<%=dto.getOid()%>" name="toid" />
+					<jsp:param value="<%=isAdmin%>" name="isAdmin" />
 				</jsp:include>
 				<%
 				} else if (taskType == 1) {
 				%>
 				<jsp:include page="/extcore/jsp/project/task/request.jsp">
-					<jsp:param value="<%=data.getOid() %>" name="poid"/>
-					<jsp:param value="<%=dto.getOid() %>" name="toid"/>
-					<jsp:param value="<%=isAdmin %>" name="isAdmin"/>
+					<jsp:param value="<%=data.getOid()%>" name="poid" />
+					<jsp:param value="<%=dto.getOid()%>" name="toid" />
+					<jsp:param value="<%=isAdmin%>" name="isAdmin" />
 				</jsp:include>
 				<%
 				} else if (taskType == 2) {
@@ -240,17 +240,25 @@ int taskType = (int) request.getAttribute("taskType");
 				} else if (taskType == 4) {
 				%>
 				<jsp:include page="/extcore/jsp/project/task/tbom.jsp">
-					<jsp:param value="<%=data.getOid() %>" name="poid"/>
-					<jsp:param value="<%=dto.getOid() %>" name="toid"/>
-					<jsp:param value="<%=isAdmin %>" name="isAdmin"/>
+					<jsp:param value="<%=data.getOid()%>" name="poid" />
+					<jsp:param value="<%=dto.getOid()%>" name="toid" />
+					<jsp:param value="<%=isAdmin%>" name="isAdmin" />
 				</jsp:include>
 				<%
 				} else if (taskType == 5) {
 				%>
 				<jsp:include page="/extcore/jsp/project/task/meeting.jsp">
-					<jsp:param value="<%=data.getOid() %>" name="poid"/>
-					<jsp:param value="<%=dto.getOid() %>" name="toid"/>
-					<jsp:param value="<%=isAdmin %>" name="isAdmin"/>
+					<jsp:param value="<%=data.getOid()%>" name="poid" />
+					<jsp:param value="<%=dto.getOid()%>" name="toid" />
+					<jsp:param value="<%=isAdmin%>" name="isAdmin" />
+				</jsp:include>
+				<%
+				} else if (taskType == 6) {
+				%>
+				<jsp:include page="/extcore/jsp/project/task/configSheet.jsp">
+					<jsp:param value="<%=data.getOid()%>" name="poid" />
+					<jsp:param value="<%=dto.getOid()%>" name="toid" />
+					<jsp:param value="<%=isAdmin%>" name="isAdmin" />
 				</jsp:include>
 				<%
 				}

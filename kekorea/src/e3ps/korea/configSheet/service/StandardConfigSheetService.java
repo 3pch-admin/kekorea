@@ -8,12 +8,10 @@ import java.util.Map;
 
 import e3ps.admin.configSheetCode.ConfigSheetCode;
 import e3ps.admin.configSheetCode.service.ConfigSheetCodeHelper;
-import e3ps.common.Constants;
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.korea.configSheet.ConfigSheetProjectLink;
 import e3ps.korea.configSheet.ConfigSheetVariable;
@@ -34,7 +32,6 @@ import wt.fc.PersistenceHelper;
 import wt.folder.Folder;
 import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
-import wt.method.MethodServerMain;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
 import wt.util.WTException;
@@ -148,16 +145,12 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 
 				ConfigSheetCode category = null;
 				ConfigSheetCode item = null;
-//				ConfigSheetCode spec = null;
 				if (!StringUtils.isNull(category_code)) {
 					category = ConfigSheetCodeHelper.manager.getConfigSheetCode(category_code, "CATEGORY");
 				}
 				if (!StringUtils.isNull(item_code)) {
 					item = ConfigSheetCodeHelper.manager.getConfigSheetCode(item_code, "CATEGORY_ITEM");
 				}
-//				if (!StringUtils.isNull(spec_code)) {
-//					spec = ConfigSheetCodeHelper.manager.getConfigSheetCode(spec_code, "CATEGORY_SPEC");
-//				}
 
 				ConfigSheetVariable variable = ConfigSheetVariable.newConfigSheetVariable();
 				variable.setCategory(category);
