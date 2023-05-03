@@ -423,6 +423,10 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 		String number = IBAUtils.getStringValue(document, "NUMBER_RULE");
 		String version = IBAUtils.getStringValue(document, "NUMBER_RULE_VERSION");
 
+		if (StringUtils.isNull(number) || StringUtils.isNull(version)) {
+			return;
+		}
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(NumberRule.class, true);
 		int idx_m = query.appendClassList(NumberRuleMaster.class, false);

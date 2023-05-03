@@ -16,8 +16,8 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 String number = (String)request.getAttribute("number");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
-<input type="hidden" name="toid" id="toid" value="<%=toid%>">
-<input type="hidden" name="poid" id="poid" value="<%=poid%>">
+<input type="hidden" name="toid" id="toid" value="<%=toid != null ? toid : ""%>">
+<input type="hidden" name="poid" id="poid" value="<%=poid != null ? poid : ""%>">
 <input type="hidden" name="location" id="location" value="<%=location != null ? location : OutputHelper.OUTPUT_NEW_ROOT%>">
 <table class="button-table">
 	<tr>
@@ -93,7 +93,7 @@ String number = (String)request.getAttribute("number");
 		</td>
 	</tr>
 	<tr>
-		<th class="lb">첨부파일</th>
+		<th class="lb req">첨부파일</th>
 		<td class="indent5" colspan="3">
 			<jsp:include page="/extcore/jsp/common/attach-primary.jsp">
 				<jsp:param value="" name="oid" />
@@ -135,6 +135,7 @@ String number = (String)request.getAttribute("number");
 		const toid = document.getElementById("toid").value;
 		const poid = document.getElementById("poid").value;
 		const location = document.getElementById("location").value;
+		
 		if (isNull(name.value)) {
 			alert("산출물 제목을 입력하세요.");
 			name.focus();
@@ -168,6 +169,7 @@ String number = (String)request.getAttribute("number");
 		params.poid = poid;
 		toRegister(params, addRows8);
 		openLayer();
+		console.log(params);
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {

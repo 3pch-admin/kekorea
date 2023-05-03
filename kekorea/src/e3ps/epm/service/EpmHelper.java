@@ -111,35 +111,6 @@ public class EpmHelper {
 		return epm2d;
 	}
 
-	public boolean checkPLMYCode(String itemNo) throws Exception {
-		QuerySpec query = null;
-
-		boolean isYcode = false;
-
-		try {
-			query = new QuerySpec();
-
-			int idx = query.appendClassList(EPMDocument.class, true);
-
-//			SearchCondition sc = null;
-//			ClassAttribute ca = null;
-
-			if (!StringUtils.isNull(itemNo)) {
-				IBAUtils.addIBAConditionEquals(query, EPMDocument.class, idx, "PART_CODE", itemNo);
-			}
-
-			QueryResult result = PersistenceHelper.manager.find(query);
-
-			if (result.size() > 0) {
-				isYcode = true;
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return isYcode;
-	}
-
 	/**
 	 * 도면 검색
 	 */
