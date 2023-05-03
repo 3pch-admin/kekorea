@@ -26,7 +26,6 @@ import wt.fc.QueryResult;
 import wt.folder.Folder;
 import wt.folder.IteratedFolderMemberLink;
 import wt.query.ClassAttribute;
-import wt.query.OrderBy;
 import wt.query.QuerySpec;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
@@ -245,6 +244,25 @@ public class OutputHelper {
 			number += "0001";
 		}
 		return number;
+	}
+
+	/**
+	 * 산출물과 관련된 작번들
+	 */
+	public ArrayList<OutputProjectLink> getLinks(WTDocument document) throws Exception {
+		ArrayList<OutputProjectLink> list = new ArrayList<>();
+
+		QueryResult result = PersistenceHelper.manager.navigate(document, "output", OutputDocumentLink.class);
+		while (result.hasMoreElements()) {
+			Output output = (Output) result.nextElement();
+
+			QueryResult qr = PersistenceHelper.manager.navigate(output, "project", OutputProjectLink.class);
+			while (qr.hasMoreElements()) {
+				OutputProjectLink link = (OutputProjectLink) qr.nextElement();
+				list.add(link);
+			}
+		}
+		return list;
 	}
 
 }

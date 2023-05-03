@@ -6,15 +6,13 @@ public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-		ArrayList<String> list = new ArrayList<>();
-		list.add("1");
-		list.add("2");
 
-		String[] s = list.toArray(new String[list.size()]);
-		for (String ss : s) {
-			System.out.print(ss);
-		}
+		String a = "/Default/dafdf/공정계획서";
+		
 
+		System.out.println(a.substring(a.lastIndexOf("/")));
+		
+		
 		System.exit(0);
 	}
 }

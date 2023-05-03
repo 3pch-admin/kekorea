@@ -83,7 +83,7 @@ public class AUIGridUtils {
 		String icon = "/Windchill/extcore/images/fileicon/file_generic.gif";
 		if (ext.equalsIgnoreCase("pdf")) {
 			icon = "/Windchill/extcore/images/fileicon/file_pdf.gif";
-		} else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx")) {
+		} else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx") || ext.equalsIgnoreCase("csv")) {
 			icon = "/Windchill/extcore/images/fileicon/file_excel.gif";
 		} else if (ext.equalsIgnoreCase("ppt") || ext.equalsIgnoreCase("pptx")) {
 			icon = "/Windchill/extcore/images/fileicon/file_ppoint.gif";

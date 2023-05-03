@@ -19,7 +19,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body style="margin: 0px 0px 0px 5px;">
@@ -76,10 +76,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<col width="330">
 			</colgroup>
 			<tr>
-				<th class="lb">태스크 타입</th>
-				<td class="indent5"><%=dto.getTaskType()%></td>
-				<th>태스크 명</th>
+				<th class="lb">태스크 명</th>
 				<td class="indent5"><%=dto.getName()%></td>
+				<th>태스크 타입</th>
+				<td class="indent5"><%=dto.getTaskType()%></td>
 			</tr>
 			<tr>
 				<th class="lb">기간</th>
@@ -119,7 +119,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<td><%=task.getName()%></td>
 				<td><%=task.getDuration()%>일
 				</td>
-				<td><%=task.getAllocate() != null ? task.getAllocate() : 0%>%</td>
+				<td><%=task.getAllocate() != null ? task.getAllocate() : 0%>%
+				</td>
 				<td><%=task.getOwnership().getOwner().getFullName()%></td>
 				<td><%=CommonUtils.getPersistableTime(task.getCreateTimestamp())%></td>
 			</tr>

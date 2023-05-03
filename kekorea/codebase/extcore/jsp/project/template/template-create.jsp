@@ -8,6 +8,12 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 %>
 <table class="button-table">
 	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				템플릿 등록
+			</div>
+		</td>
 		<td class="right">
 			<input type="button" value="등록" title="등록" onclick="create();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
@@ -57,8 +63,9 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 		const reference = document.getElementById("reference").value;
 		const url = getCallUrl("/template/create");
 
-		if (isNull(name)) {
+		if (isNull(name.value)) {
 			alert("템플릿 명을 입력하세요.");
+			name.focus();
 			return false;
 		}
 

@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -117,7 +116,7 @@ public class ContentUtils {
 		String icon = "/Windchill/extcore/images/fileicon/file_notepad.gif";
 		if (ext.equalsIgnoreCase("pdf")) {
 			icon = "/Windchill/extcore/images/fileicon/file_pdf.gif";
-		} else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx")) {
+		} else if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx") || ext.equalsIgnoreCase("csv")) {
 			icon = "/Windchill/extcore/images/fileicon/file_excel.gif";
 		} else if (ext.equalsIgnoreCase("ppt") || ext.equalsIgnoreCase("pptx")) {
 			icon = "/Windchill/extcore/images/fileicon/file_ppoint.gif";
@@ -166,90 +165,6 @@ public class ContentUtils {
 			}
 		}
 		return representationData;
-	}
-
-	public static String[] getPDF(ContentHolder holder) throws Exception {
-		String[] pdf = new String[9];
-
-		Representation representation = PublishUtils.getRepresentation(holder);
-
-		if (representation != null) {
-			// QueryResult result = ContentHelper.service.getContentsByRole(representation,
-			// ContentRoleType.ADDITIONAL_FILES);
-			QueryResult result = ContentHelper.service.getContentsByRole(representation, ContentRoleType.SECONDARY);
-			while (result.hasMoreElements()) {
-				ContentItem item = (ContentItem) result.nextElement();
-				if (item instanceof ApplicationData) {
-					ApplicationData data = (ApplicationData) item;
-
-					String ext = FileUtil.getExtension(data.getFileName());
-
-					if (!ext.equalsIgnoreCase("pdf")) {
-						continue;
-					}
-
-					// 0 = holder oid
-					pdf[0] = representation.getPersistInfo().getObjectIdentifier().getStringValue();
-					// 1 = app oid
-					pdf[1] = data.getPersistInfo().getObjectIdentifier().getStringValue();
-					// 2 = name
-					pdf[2] = data.getFileName();
-					// 3 = size
-					pdf[3] = data.getFileSizeKB() + " KB";
-					// 4 = icon
-					pdf[4] = getFileIcon(pdf[2]);
-					// 5 = down url
-					pdf[5] = ContentHelper.getDownloadURL(representation, data, false, pdf[2]).toString();
-					// 6 = file version
-					pdf[6] = data.getFileVersion();
-					// 7 = file category
-					pdf[7] = data.getCategory();
-
-					pdf[6] = String.valueOf(data.getFileSize());
-				}
-			}
-		}
-		return pdf;
-	}
-
-	public static String[] getDWG(ContentHolder holder) throws Exception {
-		String[] dwg = new String[8];
-
-		Representation representation = PublishUtils.getRepresentation(holder);
-
-		if (representation != null) {
-			// QueryResult result = ContentHelper.service.getContentsByRole(representation,
-			// ContentRoleType.SECONDARY);
-			QueryResult result = ContentHelper.service.getContentsByRole(representation,
-					ContentRoleType.ADDITIONAL_FILES);
-			if (result.hasMoreElements()) {
-				ContentItem item = (ContentItem) result.nextElement();
-				if (item instanceof ApplicationData) {
-					ApplicationData data = (ApplicationData) item;
-
-					String ext = FileUtil.getExtension(data.getFileName());
-					if (ext.equalsIgnoreCase("dwg")) {
-						// 0 = holder oid
-						dwg[0] = representation.getPersistInfo().getObjectIdentifier().getStringValue();
-						// 1 = app oid
-						dwg[1] = data.getPersistInfo().getObjectIdentifier().getStringValue();
-						// 2 = name
-						dwg[2] = data.getFileName();
-						// 3 = size
-						dwg[3] = data.getFileSizeKB() + " KB";
-						// 4 = icon
-						dwg[4] = getFileIcon(dwg[2]);
-						// 5 = down url
-						dwg[5] = ContentHelper.getDownloadURL(representation, data, false, dwg[2]).toString();
-						// 6 = file version
-						dwg[6] = data.getFileVersion();
-						// 7 = file category
-						dwg[7] = data.getCategory();
-					}
-				}
-			}
-		}
-		return dwg;
 	}
 
 	/**

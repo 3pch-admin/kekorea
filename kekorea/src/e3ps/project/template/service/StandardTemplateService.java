@@ -375,6 +375,7 @@ public class StandardTemplateService extends StandardManager implements Template
 			QuerySpec qs = new QuerySpec();
 			int _idx = qs.appendClassList(Task.class, true);
 			QuerySpecUtils.toEqualsAnd(qs, _idx, Task.class, "templateReference.key.id", template);
+			QuerySpecUtils.toOrderBy(qs, _idx, Task.class, Task.DEPTH, true);
 			QueryResult qr = PersistenceHelper.manager.find(qs);
 			while (qr.hasMoreElements()) {
 				Object[] obj = (Object[]) qr.nextElement();

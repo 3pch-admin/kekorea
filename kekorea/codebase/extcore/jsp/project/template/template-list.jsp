@@ -244,7 +244,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function create() {
 				const url = getCallUrl("/template/create");
-				popup(url, 1200, 350);
+				popup(url, 1200, 300);
 			}
 
 			function deleteRow() {

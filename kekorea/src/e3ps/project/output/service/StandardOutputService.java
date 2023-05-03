@@ -10,6 +10,7 @@ import java.util.Map;
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.IBAUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.numberRule.NumberRulePersistableLink;
 import e3ps.project.Project;
@@ -70,7 +71,13 @@ public class StandardOutputService extends StandardManager implements OutputServ
 		try {
 			trs.start();
 
-			Task task = (Task) CommonUtils.getObject(toid);
+			String taskName = "";
+			if (!StringUtils.isNull(toid)) {
+				Task task = (Task) CommonUtils.getObject(toid);
+				taskName = task.getName();
+			} else {
+				taskName = location.substring(location.lastIndexOf("/") + 1);
+			}
 
 			WTDocument document = WTDocument.newWTDocument();
 			document.setName(name);
@@ -108,11 +115,11 @@ public class StandardOutputService extends StandardManager implements OutputServ
 			for (Map<String, String> addRow9 : addRows9) {
 				String oid = addRow9.get("oid");
 				Project project = (Project) CommonUtils.getObject(oid);
-				Task t = ProjectHelper.manager.getTaskByName(project, task.getName());
+				Task t = ProjectHelper.manager.getTaskByName(project, taskName);
 
 				// 강제 에러 처리
 				if (t == null) {
-					throw new Exception(project.getKekNumber() + "작번에 태스크 명(" + task.getName() + ")이 존재하지 않습니다.");
+					throw new Exception(project.getKekNumber() + "작번에 태스크 명(" + taskName + ")이 존재하지 않습니다.");
 				}
 
 				Output output = Output.newOutput();

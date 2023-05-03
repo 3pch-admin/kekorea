@@ -12,7 +12,7 @@
 <%
 NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
@@ -28,58 +28,48 @@ NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 		</td>
 	</tr>
 </table>
-<div id="tabs">
-	<ul>
-		<li>
-			<a href="#tabs-1">기본정보</a>
-		</li>
-	</ul>
-	<div id="tabs-1">
-		<table class="view-table">
-			<colgroup>
-				<col width="10%">
-				<col width="300">
-				<col width="130">
-				<col width="300">
-			</colgroup>
-			<tr>
-				<th class="lb">공지사항 제목</th>
-				<td class="indent5" colspan="3"><%=dto.getName()%></td>
-			</tr>
-			<tr>
-				<th class="lb">작성자</th>
-				<td class="indent5"><%=dto.getCreator()%></td>
-				<th class="lb">작성일</th>
-				<td class="indent5"><%=dto.getCreatedDate().toString().substring(0, 10)%></td>
-			</tr>
-			<tr>
-				<th class="lb">설명</th>
-				<td colspan="3" class="indent5">
-					<textarea name="descriptionNotice" id="descriptionNotice" rows="12" cols="" readonly="readonly"><%=dto.getDescription()%></textarea>
-				</td>
-			</tr>
-			<tr>
-				<th class="lb">주 첨부파일</th>
-				<td class="indent5" colspan="3">
-					<jsp:include page="/extcore/jsp/common/primary-view.jsp">
-						<jsp:param value="<%=dto.getOid()%>" name="oid" />
-					</jsp:include>
-				</td>
-			</tr>
-			<tr>
-				<th class="lb">첨부파일</th>
-				<td class="indent5" colspan="3">
-					<jsp:include page="/extcore/jsp/common/secondary-view.jsp">
-						<jsp:param value="<%=dto.getOid()%>" name="oid" />
-					</jsp:include>
-				</td>
-			</tr>
-		</table>
-	</div>
-</div>
+<table class="view-table">
+	<colgroup>
+		<col width="150">
+		<col width="300">
+		<col width="150">
+		<col width="300">
+	</colgroup>
+	<tr>
+		<th class="lb">공지사항 제목</th>
+		<td class="indent5" colspan="3"><%=dto.getName()%></td>
+	</tr>
+	<tr>
+		<th class="lb">작성자</th>
+		<td class="indent5"><%=dto.getCreator()%></td>
+		<th class="lb">작성일</th>
+		<td class="indent5"><%=dto.getCreatedDate().toString().substring(0, 10)%></td>
+	</tr>
+	<tr>
+		<th class="lb">설명</th>
+		<td colspan="3" class="indent5">
+			<textarea name="descriptionNotice" id="descriptionNotice" rows="12" cols="" readonly="readonly"><%=dto.getDescription()%></textarea>
+		</td>
+	</tr>
+	<tr>
+		<th class="lb">주 첨부파일</th>
+		<td class="indent5" colspan="3">
+			<jsp:include page="/extcore/jsp/common/primary-view.jsp">
+				<jsp:param value="<%=dto.getOid()%>" name="oid" />
+			</jsp:include>
+		</td>
+	</tr>
+	<tr>
+		<th class="lb">첨부파일</th>
+		<td class="indent5" colspan="3">
+			<jsp:include page="/extcore/jsp/common/secondary-view.jsp">
+				<jsp:param value="<%=dto.getOid()%>" name="oid" />
+			</jsp:include>
+		</td>
+	</tr>
+</table>
 <script type="text/javascript">
 	document.addEventListener("DOMContentLoaded", function() {
-		$("#tabs").tabs();
 	})
 
 	function modify() {

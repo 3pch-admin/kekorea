@@ -23,7 +23,6 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="수정" title="수정" class="green">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 	</tr>
@@ -58,7 +57,7 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 			<tr>
 				<th class="lb">도면 번호</th>
 				<td class="indent5" colspan="3"><%=dto.getDwg_no()%></td>
-				<td class="center" rowspan="10">
+				<td class="center" rowspan="7">
 					<img src="<%=dto.getThumnail()%>" style="height: 140px; cursor: pointer;" onclick="preView();" title="클릭시 원본크기로 볼 수 있습니다.">
 				</td>
 			</tr>
@@ -71,7 +70,6 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 				<td class="indent5"><%=dto.getVersion()%></td>
 				<th class="lb">부품</th>
 				<td class="indent5"></td>
-
 			</tr>
 			<tr>
 				<th class="lb">상태</th>
@@ -99,7 +97,7 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 			</tr>
 			<tr>
 				<th class="lb">설명</th>
-				<td colspan="3" class="indent5">
+				<td colspan="4" class="indent5">
 					<textarea class="description" rows="7" cols="" readonly="readonly"><%=dto.getDescription() != null ? dto.getDescription() : ""%></textarea>
 				</td>
 			</tr>
@@ -221,7 +219,9 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 					autoGridHeight : true,
 				}
 				myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-				AUIGrid.setGridData(myGridID, <%=list%>);
+				AUIGrid.setGridData(myGridID,
+		<%=list%>
+			);
 			}
 		</script>
 	</div>

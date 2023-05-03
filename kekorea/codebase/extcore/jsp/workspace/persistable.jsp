@@ -1,3 +1,6 @@
+<%@page import="e3ps.project.output.OutputProjectLink"%>
+<%@page import="e3ps.project.output.service.OutputHelper"%>
+<%@page import="wt.doc.WTDocument"%>
 <%@page import="e3ps.korea.configSheet.service.ConfigSheetHelper"%>
 <%@page import="e3ps.korea.configSheet.ConfigSheetProjectLink"%>
 <%@page import="e3ps.epm.workOrder.WorkOrder"%>
@@ -67,8 +70,12 @@ if (per instanceof ApprovalContract) {
 		if (map.get("oid").indexOf("EPMDocument") > -1) {
 	%>
 	<tr>
-		<td class="indent5"><%=map.get("name")%></td>
-		<td class="indent5"><%=map.get("nameOfParts")%></td>
+		<td class="indent5">
+			<a href="javascript:_detail('<%=map.get("oid")%>');"><%=map.get("name")%></a>
+		</td>
+		<td class="indent5">
+			<a href="javascript:_detail('<%=map.get("oid")%>');"><%=map.get("nameOfParts")%></a>
+		</td>
 		<td class="center"><%=map.get("dwgNo")%></td>
 		<td class="center"><%=map.get("state")%></td>
 		<td class="center"><%=map.get("version")%></td>
@@ -141,8 +148,6 @@ if (per instanceof ApprovalContract) {
 %>
 
 
-
-
 <%
 if (per instanceof PartListMaster) {
 	PartListMaster mm = (PartListMaster) per;
@@ -179,7 +184,9 @@ if (per instanceof PartListMaster) {
 		<th class="lb">첨부파일</th>
 	</tr>
 	<tr>
-		<td class="indent5"><%=mm.getName()%></td>
+		<td class="indent5">
+			<a href="javascript:_detail('<%=_oid%>');"><%=mm.getName()%></a>
+		</td>
 		<td class="center"><%=mm.getLifeCycleState().getDisplay()%></td>
 		<td class="center">
 			<img src="/Windchill/extcore/images/details.gif" onclick="_detail('<%=_oid%>');">
@@ -226,10 +233,15 @@ if (per instanceof PartListMaster) {
 	ArrayList<PartListMasterProjectLink> list = PartlistHelper.manager.getLinks(mm);
 	for (PartListMasterProjectLink link : list) {
 		Project project = link.getProject();
+		String poid = project.getPersistInfo().getObjectIdentifier().getStringValue();
 	%>
 	<tr>
-		<td class="center"><%=project.getKekNumber()%></td>
-		<td class="center"><%=project.getKeNumber()%></td>
+		<td class="center">
+			<a href="javascript:_detail('<%=poid%>');"><%=project.getKekNumber()%></a>
+		</td>
+		<td class="center">
+			<a href="javascript:_detail('<%=poid%>');"><%=project.getKeNumber()%></a>
+		</td>
 		<td class="center"><%=project.getProjectType().getName()%></td>
 		<td class="center"><%=project.getCustomer().getName()%></td>
 		<td class="center"><%=project.getInstall().getName()%></td>
@@ -325,13 +337,14 @@ Map<String, Object> primary = ContentUtils.getPrimary(requestDocument);
 	ArrayList<RequestDocumentProjectLink> list = RequestDocumentHelper.manager.getLinks(requestDocument);
 	for (RequestDocumentProjectLink link : list) {
 		Project project = link.getProject();
+		String poid = project.getPersistInfo().getObjectIdentifier().getStringValue();
 	%>
 	<tr>
 		<td class="center">
-			<a href="javascript:detail();"><%=project.getKekNumber()%></a>
+			<a href="javascript:_detail('<%=poid%>');"><%=project.getKekNumber()%></a>
 		</td>
 		<td class="center">
-			<a href="javascript:detail();"><%=project.getKeNumber()%></a>
+			<a href="javascript:_detail('<%=poid%>');"><%=project.getKeNumber()%></a>
 		</td>
 		<td class="center"><%=project.getProjectType().getName()%></td>
 		<td class="center"><%=project.getCustomer().getName()%></td>
@@ -346,7 +359,7 @@ Map<String, Object> primary = ContentUtils.getPrimary(requestDocument);
 </table>
 <%
 } else if (per instanceof ConfigSheet) {
-	ConfigSheet configSheet = (ConfigSheet)per;
+ConfigSheet configSheet = (ConfigSheet) per;
 %>
 <!-- CONFIG SHEET -->
 <table class="button-table">
@@ -419,13 +432,14 @@ Map<String, Object> primary = ContentUtils.getPrimary(requestDocument);
 	ArrayList<ConfigSheetProjectLink> list = ConfigSheetHelper.manager.getLinks(configSheet);
 	for (ConfigSheetProjectLink link : list) {
 		Project project = link.getProject();
+		String poid = project.getPersistInfo().getObjectIdentifier().getStringValue();
 	%>
 	<tr>
 		<td class="center">
-			<a href="javascript:detail();"><%=project.getKekNumber()%></a>
+			<a href="javascript:_detail('<%=poid%>');"><%=project.getKekNumber()%></a>
 		</td>
 		<td class="center">
-			<a href="javascript:detail();"><%=project.getKeNumber()%></a>
+			<a href="javascript:_detail('<%=poid%>');"><%=project.getKeNumber()%></a>
 		</td>
 		<td class="center"><%=project.getProjectType().getName()%></td>
 		<td class="center"><%=project.getCustomer().getName()%></td>
@@ -468,10 +482,81 @@ Map<String, Object> primary = ContentUtils.getPrimary(requestDocument);
 	</tr>
 </table>
 <%
+} else if (per instanceof WTDocument) {
+WTDocument document = (WTDocument) per;
+%>
+<!-- 산출물 -->
+<table class="button-table">
+	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				산출물
+			</div>
+		</td>
+	</tr>
+</table>
+
+<table class="view-table">
+	<colgroup>
+		<col width="100">
+		<col width="100">
+		<col width="80">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="*">
+	</colgroup>
+	<tr>
+		<th class="lb">KEK 작번</th>
+		<th class="lb">KE 작번</th>
+		<th class="lb">작번유형</th>
+		<th class="lb">거래처</th>
+		<th class="lb">설치장소</th>
+		<th class="lb">막종</th>
+		<th class="lb">막종상세</th>
+		<th class="lb">작업내용</th>
+	</tr>
+	<%
+	ArrayList<OutputProjectLink> list = OutputHelper.manager.getLinks(document);
+	for (OutputProjectLink link : list) {
+		Project project = link.getProject();
+		String poid = project.getPersistInfo().getObjectIdentifier().getStringValue();
+	%>
+	<tr>
+		<td class="center">
+			<a href="javascript:_detail('<%=poid%>');"><%=project.getKekNumber()%></a>
+		</td>
+		<td class="center">
+			<a href="javascript:_detail('<%=poid%>');"><%=project.getKeNumber()%></a>
+		</td>
+		<td class="center"><%=project.getProjectType().getName()%></td>
+		<td class="center"><%=project.getCustomer().getName()%></td>
+		<td class="center"><%=project.getInstall().getName()%></td>
+		<td class="center"><%=project.getMak().getName()%></td>
+		<td class="center"><%=project.getDetail().getName()%></td>
+		<td class="indent5"><%=project.getDescription()%></td>
+	</tr>
+	<%
+	}
+	%>
+</table>
+<%
 }
 %>
 <script type="text/javascript">
 	function _detail(oid) {
-
+		let url = "/Windchill/plm";
+		if (oid.indexOf("Project") > -1) {
+			url += "/project/info?oid=" + oid;
+			popup(url);
+		} else if (oid.indexOf("PartListMaster") > -1) {
+			url += "/partlist/view?oid=" + oid;
+			popup(url, 1700, 800);
+		} else if (oid.indexOf("EPMDocument") > -1) {
+			url += "/epm/view?oid=" + oid;
+			popup(url, 1400, 600);
+		}
 	}
 </script>

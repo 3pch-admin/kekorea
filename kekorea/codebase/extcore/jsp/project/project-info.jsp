@@ -299,11 +299,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		const oid = document.getElementById("oid").value;
 		const iframe = document.getElementById("view");
 		const taskType = item.taskType;
-		if (dataField === "name") {
+		if (dataField === "name" && !item.isNew) {
 			openLayer();
 			if (item.type == "project") {
 				iframe.src = "/Windchill/plm/project/view?oid=" + oid;
-			} else if (item.type == "task" && !item.isNew) {
+			} else if (item.type == "task") {
 				iframe.src = "/Windchill/plm/project/task?oid=" + oid + "&toid=" + item.oid + "&name=" + name;
 			}
 		}

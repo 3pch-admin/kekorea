@@ -300,11 +300,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		const item = event.selectedItems[0].item;
 		const oid = document.getElementById("oid").value;
 		const iframe = document.getElementById("view");
-		if (dataField === "name") {
+		if (dataField === "name" && !item.isNew) {
 			openLayer();
 			if (item.type == "template") {
 				iframe.src = "/Windchill/plm/template/view?oid=" + oid;
-			} else if (item.type == "task" && !item.isNew) {
+			} else if (item.type == "task") {
 				iframe.src = "/Windchill/plm/template/task?oid=" + oid + "&toid=" + item.oid;
 			}
 		}
