@@ -1,11 +1,18 @@
+<%@page import="e3ps.common.util.StringUtils"%>
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="java.util.Map"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 String engType = (String) request.getAttribute("engType");
+JSONArray list = (JSONArray) request.getAttribute("list");
+String poid = (String) request.getAttribute("poid");
+String toid = (String) request.getAttribute("toid");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
+<input type="hidden" name="toid" id="toid" value="<%=toid%>">
+<input type="hidden" name="poid" id="poid" value="<%=poid%>">
 <style type="text/css">
 .ng {
 	background-color: yellow;
@@ -552,12 +559,32 @@ String engType = (String) request.getAttribute("engType");
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
+				<%
+					if(!StringUtils.isNull(toid)) {
+				%>
+				opener._reload();
+				<%
+					} else {
+				%>
 				opener.loadGridData();
+				<%
+					}
+				%>
 				self.close();
 			} else {
 				closeLayer();
 			}
 		})
+	}
+	
+	function auiBeforeRemoveRow(event) {
+		const item = event.items[0];
+		const oid = document.getElementById("poid").value;
+		if (item.oid === oid) {
+			alert("기준 작번은 제거 할 수 없습니다.");
+			return false;
+		}
+		return true;
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
@@ -603,6 +630,8 @@ String engType = (String) request.getAttribute("engType");
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
 		AUIGrid.resize(myGridID);
+		AUIGrid.addRow(myGridID9, <%=list%>);
+		AUIGrid.bind(myGridID9, "beforeRemoveRow", auiBeforeRemoveRow);
 	});
 
 	window.addEventListener("resize", function() {

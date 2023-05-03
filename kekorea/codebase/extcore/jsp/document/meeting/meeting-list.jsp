@@ -21,7 +21,7 @@ String end = (String) request.getAttribute("end");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -44,23 +44,23 @@ String end = (String) request.getAttribute("end");
 				<col width="500">
 			</colgroup>
 			<tr>
+				<th>회의록 제목</th>
+				<td class="indent5">
+					<input type="text" name="name" id="name" class="width-200">
+				</td>
 				<th>KEK 작번</th>
 				<td class="indent5">
-					<input type="text" name="kekNumber" id="kekNumber">
+					<input type="text" name="kekNumber" id="kekNumber" class="width-200">
 				</td>
 				<th>KE 작번</th>
 				<td class="indent5">
-					<input type="text" name="keNumber" id="keNumber">
+					<input type="text" name="keNumber" id="keNumber" class="width-200">
 				</td>
 				<th>발행일</th>
 				<td class="indent5">
 					<input type="text" name="pdateFrom" id="pdateFrom" class="width-100">
 					~
 					<input type="text" name="pdateTo" id="pdateTo" class="width-100">
-				</td>
-				<th>USER ID</th>
-				<td class="indent5">
-					<input type="text" name="userId" id="userId">
 				</td>
 			</tr>
 			<tr>
@@ -152,20 +152,9 @@ String end = (String) request.getAttribute("end");
 						<option value="">선택</option>
 					</select>
 				</td>
-				<th>템플릿</th>
+				<th>USER ID</th>
 				<td class="indent5">
-					<select name="template" id="template" class="width-200">
-						<option value="">선택</option>
-						<%
-						for (Map<String, String> map : list) {
-							String oid = map.get("key");
-							String name = map.get("value");
-						%>
-						<option value="<%=oid%>"><%=name%></option>
-						<%
-						}
-						%>
-					</select>
+					<input type="text" name="userId" id="userId">
 				</td>
 				<th>작업 내용</th>
 				<td colspan="3" class="indent5">
@@ -210,8 +199,8 @@ String end = (String) request.getAttribute("end");
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
-				return [{
-// 				const columns = [ {
+				return [ {
+					// 				const columns = [ {
 					dataField : "name",
 					headerText : "회의록 제목",
 					dataType : "string",
@@ -461,9 +450,10 @@ String end = (String) request.getAttribute("end");
 				const softOid = document.getElementById("softOid").value;
 				const mak_name = document.getElementById("mak_name").value;
 				const detail_name = document.getElementById("detail_name").value;
-				const template = document.getElementById("template").value;
 				const description = document.getElementById("description").value;
 				const psize = document.getElementById("psize").value;
+				const name = document.getElementById("name").value;
+				params.name = name;
 				params.kekNumber = kekNumber;
 				params.keNumber = keNumber;
 				params.pdateFrom = pdateFrom;
@@ -479,7 +469,6 @@ String end = (String) request.getAttribute("end");
 				params.softOid = softOid;
 				params.mak_name = mak_name;
 				params.detail_name = detail_name;
-				params.template = template;
 				params.description = description;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
@@ -588,7 +577,6 @@ String end = (String) request.getAttribute("end");
 					}
 				})
 				selectbox("detail_name");
-				selectbox("template");
 				selectbox("psize");
 			});
 

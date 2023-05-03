@@ -31,6 +31,7 @@ import wt.clients.folder.FolderTaskLogic;
 import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
+import wt.doc.WTDocument;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.folder.Folder;
@@ -610,5 +611,120 @@ public class StandardPartlistService extends StandardManager implements Partlist
 			if (trs != null)
 				trs.rollback();
 		}
+	}
+
+	@Override
+	public Map<String, Object> connect(Map<String, Object> params) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		String toid = (String) params.get("toid");
+		String poid = (String) params.get("poid");
+		ArrayList<String> arr = (ArrayList<String>) params.get("arr");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Task task = (Task) CommonUtils.getObject(toid);
+			Project project = (Project) CommonUtils.getObject(poid);
+			for (String oid : arr) {
+				PartListMaster mm = (PartListMaster) CommonUtils.getObject(oid);
+
+				QueryResult result = PersistenceHelper.manager.navigate(mm, "output", OutputDocumentLink.class);
+
+				System.out.println("result=" + result.size());
+
+				while (result.hasMoreElements()) {
+					Output output = (Output) result.nextElement();
+					Project p = output.getProject();
+
+					if (p.getPersistInfo().getObjectIdentifier().getStringValue().equals(oid)) {
+						map.put("msg",
+								"해당 산출물이 작번 : " + p.getKekNumber() + "의 태스크 : " + task.getName() + "에 연결이 되어있습니다.");
+						map.put("exist", true);
+						return map;
+					}
+				}
+
+				String engType = "";
+				double totalPrice = 0D;
+				if (task.getName().indexOf("기계") > -1) {
+					double outputMachinePrice = project.getOutputMachinePrice() != null
+							? project.getOutputMachinePrice()
+							: 0D;
+					outputMachinePrice += totalPrice;
+					project.setOutputMachinePrice(outputMachinePrice);
+					engType = "기계";
+				} else if (task.getName().indexOf("전기") > -1) {
+					double outputElecPrice = project.getOutputElecPrice() != null ? project.getOutputElecPrice() : 0D;
+					outputElecPrice += totalPrice;
+					project.setOutputElecPrice(outputElecPrice);
+					engType = "전기";
+				}
+				PersistenceHelper.manager.modify(project);
+
+				Task parentTask = ProjectHelper.manager.getTaskByName(project, task.getName());
+				// 1차수배 2차수배
+				Task t = ProjectHelper.manager.getTaskByParent(project, parentTask);
+				if (t == null) {
+					throw new Exception(project.getKekNumber() + "작번에 태스크(1차_수배, 2차_수배)가 존재하지 않습니다.");
+				}
+
+				mm.setEngType(engType + "_" + t.getName());
+				PartListMasterProjectLink link = PartListMasterProjectLink.newPartListMasterProjectLink(mm, project);
+				PersistenceHelper.manager.save(link);
+
+				Output output = Output.newOutput();
+				output.setName(mm.getName());
+				output.setLocation(mm.getLocation());
+				output.setTask(t);
+				output.setProject(project);
+				output.setDocument(mm);
+				output.setOwnership(CommonUtils.sessionOwner());
+				PersistenceHelper.manager.save(output);
+
+				// 태스크
+				if (t.getStartDate() == null) {
+					// 중복적으로 실제 시작일이 변경 되지 않게
+					t.setStartDate(DateUtils.getCurrentTimestamp());
+				}
+
+				t.setState(TaskStateVariable.INWORK);
+				t = (Task) PersistenceHelper.manager.modify(t);
+
+				// 무조건 부모는 존재 한다
+				Task pTask = t.getParentTask();
+				if (pTask.getStartDate() == null) {
+					pTask.setStartDate(DateUtils.getCurrentTimestamp());
+					pTask.setState(TaskStateVariable.INWORK);
+				}
+				PersistenceHelper.manager.modify(pTask);
+
+				// 시작이 된 흔적이 없을 경우
+				if (project.getStartDate() == null) {
+					project.setStartDate(DateUtils.getCurrentTimestamp());
+					project.setKekState(ProjectStateVariable.KEK_DESIGN_INWORK);
+					project.setState(ProjectStateVariable.INWORK);
+					project = (Project) PersistenceHelper.manager.modify(project);
+				}
+
+				ProjectHelper.service.calculation(project);
+				ProjectHelper.service.commit(project);
+
+				mm.setTotalPrice(totalPrice);
+				PersistenceHelper.manager.modify(mm);
+
+			}
+			map.put("exist", false);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+		return map;
 	}
 }

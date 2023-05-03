@@ -1,611 +1,379 @@
-<%@page import="e3ps.org.Department"%>
-<%@page import="e3ps.common.util.CommonUtils"%>
-<%@page import="e3ps.org.People"%>
-<%@page import="net.sf.json.JSONArray"%>
-<%@page import="java.util.Map"%>
-<%@page import="e3ps.admin.commonCode.CommonCode"%>
-<%@page import="java.util.ArrayList"%>
+<%@page import="wt.org.WTUser"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-String poid = (String) request.getAttribute("poid");
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 String toid = (String) request.getAttribute("toid");
-String engType = (String) request.getAttribute("engType");
-JSONArray list = (JSONArray) request.getAttribute("list");
+String poid = (String) request.getAttribute("poid");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
+<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
+<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
+<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
+<input type="hidden" name="sessionid" id="sessionid">
 <input type="hidden" name="toid" id="toid" value="<%=toid%>">
 <input type="hidden" name="poid" id="poid" value="<%=poid%>">
-<table class="button-table">
+<input type="hidden" name="curPage" id="curPage">
+
+<table class="search-table">
+	<colgroup>
+		<col width="130">
+		<col width="*">
+		<col width="130">
+		<col width="*">
+		<col width="130">
+		<col width="*">
+	</colgroup>
 	<tr>
-		<td class="left">
-			<div class="header">
-				<img src="/Windchill/extcore/images/header.png">
-				수배표 등록
-			</div>
+		<th>수배표 제목</th>
+		<td class="indent5">
+			<input type="text" name="fileName" class="width-200">
 		</td>
-		<td class="right">
-			<input type="button" value="등록" title="등록" onclick="create();">
-			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
+		<th>상태</th>
+		<td class="indent5">
+			<select name="state" id="state" class="width-200">
+				<option value="">선택</option>
+			</select>
+		</td>
+		<th>KEK 작번</th>
+		<td class="indent5">
+			<input type="text" name="partName" class="width-200">
+		</td>
+		<th>KE 작번</th>
+		<td class="indent5">
+			<input type="text" name="number" class="width-200">
+		</td>
+	</tr>
+	<tr>
+		<th>설명</th>
+		<td class="indent5">
+			<input type="text" name="number" class="width-200">
+		</td>
+		<th>설계 구분</th>
+		<td class="indent5">
+			<select name="projectType_name" id="projectType_name" class="width-100">
+				<option value="">선택</option>
+			</select>
+		</td>
+		<th>막종</th>
+		<td class="indent5">
+			<input type="text" name="number" class="width-200">
+		</td>
+		<th>작업 내용</th>
+		<td class="indent5">
+			<input type="text" name="number" class="width-200">
+		</td>
+	</tr>
+	<tr>
+		<th>작성자</th>
+		<td class="indent5">
+			<input type="text" name="creator" id="creator" class="width-200">
+		</td>
+		<th>작성일</th>
+		<td class="indent5">
+			<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+			~
+			<input type="text" name="createdTo" id="createdTo" class="width-100">
+		</td>
+		<th>수정자</th>
+		<td class="indent5">
+			<input type="text" name="modifier" id="modifier" class="width-200">
+		</td>
+		<th>수정일</th>
+		<td class="indent5">
+			<input type="text" name="modifiedFrom" id="modifiedFrom" class="width-100">
+			~
+			<input type="text" name="modifiedTo" id="modifiedTo" class="width-100">
 		</td>
 	</tr>
 </table>
 
-<div id="tabs">
-	<ul>
-		<li>
-			<a href="#tabs-1">기본정보</a>
-		</li>
-		<li>
-			<a href="#tabs-2">수배표</a>
-		</li>
-	</ul>
-	<div id="tabs-1">
-		<table class="create-table">
-			<colgroup>
-				<col width="130">
-				<col width="400">
-				<col width="130">
-				<col width="400">
-				<col width="130">
-				<col width="400">
-			</colgroup>
-			<tr>
-				<th class="req lb">수배표 제목</th>
-				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-400">
-				</td>
-				<th>설계구분</th>
-				<td class="indent5">
-					<select name="engType" id="engType" class="width-200">
-						<option value="">선택</option>
-						<option value="기계">기계</option>
-						<option value="전기">전기</option>
-					</select>
-				</td>
-				<th>진행율</th>
-				<td class="indent5">
-					<input type="number" name="progress" id="progress" class="width-300">
-				</td>
-			</tr>
-			<tr>
-				<th class="req lb">KEK 작번</th>
-				<td colspan="5">
-					<jsp:include page="/extcore/jsp/common/project-include.jsp">
-						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
-					</jsp:include>
-				</td>
-			</tr>
-			<tr>
-				<th class="req lb">내용</th>
-				<td class="indent5" colspan="5">
-					<textarea name="description" id="description" rows="8"></textarea>
-				</td>
-			</tr>
-			<tr>
-				<th class="req lb">결재</th>
-				<td colspan="5">
-					<jsp:include page="/extcore/jsp/common/approval-register.jsp">
-						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
-					</jsp:include>
-				</td>
-			</tr>
-			<tr>
-				<th class="lb">첨부파일</th>
-				<td class="indent5" colspan="5">
-					<jsp:include page="/extcore/jsp/common/attach-secondary.jsp">
-						<jsp:param value="" name="oid" />
-					</jsp:include>
-				</td>
-			</tr>
-		</table>
-	</div>
-	<div id="tabs-2">
-		<table class="button-table">
-			<tr>
-				<td class="left">
-					<input type="button" value="행 추가(이전)" title="행 추가(이전)" class="blue" onclick="addBeforeRow();">
-					<input type="button" value="행 추가(이후)" title="행 추가(이후)" class="orange" onclick="addAfterRow();">
-					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
-				</td>
-			</tr>
-		</table>
-		<div id="grid_wrap" style="height: 780px; border-top: 1px solid #3180c3;"></div>
-		<script type="text/javascript">
-			let myGridID;
-			const columns = [ {
-				dataField : "check",
-				headerText : "체크",
-				dataType : "string",
-				width : 80,
-// 				editable : false,
-				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-					if (value === "NG") {
-						return "ng";
-					}
-					return "";
-				},
-			}, {
-				dataField : "lotNo",
-				headerText : "LOT_NO",
-				dataType : "numeric",
-				width : 80,
-				editRenderer : {
-					type : "InputEditRenderer",
-					onlyNumeric : true,
-					maxlength : 3,
-				},
-			}, {
-				dataField : "unitName",
-				headerText : "UNIT NAME",
-				dataType : "string",
-				width : 120,
-// 				editable : false,
-			}, {
-				dataField : "partNo",
-				headerText : "부품번호",
-				dataType : "string",
-				width : 130,
-				editRenderer : {
-					type : "InputEditRenderer",
-					regExp : "^[a-zA-Z0-9]+$",
-					autoUpperCase : true,
-					maxlength : 10,
-				},
-			}, {
-				dataField : "partName",
-				headerText : "부품명",
-				dataType : "string",
-				width : 200,
-// 				editable : false,
-			}, {
-				dataField : "standard",
-				headerText : "규격",
-				dataType : "string",
-				width : 250,
-// 				editable : false,
-			}, {
-				dataField : "maker",
-				headerText : "MAKER",
-				dataType : "string",
-				width : 130,
-			}, {
-				dataField : "customer",
-				headerText : "거래처",
-				dataType : "string",
-				width : 130,
-			}, {
-				dataField : "quantity",
-				headerText : "수량",
-				dataType : "numeric",
-				width : 60,
-				formatString : "###0",
-				editRenderer : {
-					type : "InputEditRenderer",
-					onlyNumeric : true,
-				},
-			}, {
-				dataField : "unit",
-				headerText : "단위",
-				dataType : "string",
-				width : 80,
-// 				editable : false,
-			}, {
-				dataField : "price",
-				headerText : "단가",
-				dataType : "numeric",
-				width : 120,
-// 				editable : false,
-			}, {
-				dataField : "currency",
-				headerText : "화폐",
-				dataType : "string",
-				width : 60,
-// 				editable : false,
-			}, {
-				dataField : "won",
-				headerText : "원화금액",
-				dataType : "numeric",
-				width : 120,
-// 				editable : false,
-			}, {
-				dataField : "partListDate",
-				headerText : "수배일자",
-				dataType : "date",
-				formatString : "yyyy-mm-dd",
-				width : 100,
-// 				editable : false
-			}, {
-				dataField : "exchangeRate",
-				headerText : "환율",
-				dataType : "numeric",
-				width : 80,
-				formatString : "#,##0.0000",
-// 				editable : false,
-			}, {
-				dataField : "referDrawing",
-				headerText : "참고도면",
-				dataType : "string",
-				width : 120,
-			}, {
-				dataField : "classification",
-				headerText : "조달구분",
-				dataType : "string",
-				width : 120,
-			}, {
-				dataField : "note",
-				headerText : "비고",
-				dataType : "string",
-				width : 250,
-			} ];
+<table class="button-table">
+	<tr>
+		<td class="left">
+			<input type="button" value="확장" title="확장" class="red" onclick="expand();">
+			<input type="button" value="추가" title="추가" onclick="connect();">
+			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
+		</td>
+		<td class="right">
+			<select name="psize" id="psize">
+				<option value="30">30</option>
+				<option value="50">50</option>
+				<option value="100">100</option>
+				<option value="200">200</option>
+				<option value="300">300</option>
+			</select>
+			<input type="button" value="조회" title="조회" onclick="loadGridData();">
+		</td>
+	</tr>
+</table>
 
-			function createAUIGrid(columnLayout) {
-				const props = {
-					headerHeight : 30,
-					showRowNumColumn : true,
-					showRowCheckColumn : true,
-					showStateColumn : true,
-					rowNumHeaderText : "번호",
-					selectionMode : "multipleCells",
-					showDragKnobColumn : true,
-					enableDrag : true,
-					enableMultipleDrag : true,
-					enableDrop : true,
-					enableSorting : false,
-					$compaEventOnPaste : true,
-					editable : true,
-					enableRowCheckShiftKey : true,
-					useContextMenu : true,
-					enableRightDownFocus : true,
-					contextMenuItems : [ {
-						label : "선택된 행 이전 추가",
-						callback : contextItemHandler
-					}, {
-						label : "선택된 행 이후 추가",
-						callback : contextItemHandler
-					}, {
-						label : "_$line"
-					}, {
-						label : "선택된 행 삭제",
-						callback : contextItemHandler
-					} ],
-				};
-				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-				readyHandler();
-// 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
-				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRow);
-			}
-
-			function auiCellEditEndHandler(event) {
-				const rowIndex = event.rowIndex;
-				const dataField = event.dataField;
-				const item = event.item;
-				const partNo = item.partNo;
-				const lotNo = item.lotNo;
-				const quantity = item.quantity;
-				if (dataField === "lotNo") {
-					const url = getCallUrl("/erp/getUnitName?lotNo=" + lotNo);
-					call(url, null, function(data) {
-						if (data.result) {
-							const newItem = {
-								unitName : data.unitName,
-								partListDate : new Date(),
-								sort : rowIndex
-							};
-							AUIGrid.updateRow(myGridID, newItem, rowIndex);
-						}
-					}, "GET");
-				}
-
-				if (dataField === "partNo") {
-					const url = getCallUrl("/erp/validate?partNo=" + partNo);
-					call(url, null, function(data) {
-						if (data.result) {
-							const newItem = {
-								check : data.check,
-								partListDate : new Date(),
-								sort : rowIndex
-							};
-							AUIGrid.updateRow(myGridID, newItem, rowIndex);
-						}
-					}, "GET");
-				}
-
-				if (dataField === "quantity") {
-					// 값이 있을 경우만
-					const url = getCallUrl("/erp/getErpItemByPartNoAndQuantity?partNo=" + partNo + "&quantity=" + quantity);
-					call(url, null, function(data) {
-						if (data.result) {
-							const newItem = {
-								unit : data.unit,
-								exchangeRate : data.exchangeRate,
-								price : data.price,
-								maker : data.maker,
-								customer : data.customer,
-								currency : data.currency,
-								won : data.won,
-								partName : data.partName,
-								standard : data.standard,
-								partListDate : new Date(),
-								sort : rowIndex,
-							};
-							AUIGrid.updateRow(myGridID, newItem, rowIndex);
-						}
-					}, "GET");
-				}
-			}
-
-			function contextItemHandler(event) {
-				const item = {
-					partListDate : new Date(),
-					lotNo : 0,
-					quantity : 0,
-					price : 0,
-					exchangeRate : 0,
-					won : 0
-				}
-				switch (event.contextIndex) {
-				case 0:
-					AUIGrid.addRow(myGridID, item, "selectionUp");
-					break;
-				case 1:
-					AUIGrid.addRow(myGridID, item, "selectionDown");
-					break;
-				case 3:
-					const selectedItems = AUIGrid.getSelectedItems(myGridID);
-					const rows = AUIGrid.getRowCount(myGridID);
-					if (rows === 1) {
-						alert("최 소 하나의 행이 존재해야합니다.");
-						return false;
-					}
-					for (let i = selectedItems.length - 1; i >= 0; i--) {
-						const rowIndex = selectedItems[i].rowIndex;
-						AUIGrid.removeRow(myGridID, rowIndex);
-					}
-					break;
-				}
-			}
-
-			function auiBeforeRemoveRow(event) {
-				const rows = AUIGrid.getRowCount(myGridID);
-				if (rows === 1) {
-					alert("최소 하나의 행이 존재해야합니다.");
-					return false;
-				}
-				return true;
-			}
-
-			function deleteRow() {
-				const checked = AUIGrid.getCheckedRowItems(myGridID);
-				const rows = AUIGrid.getRowCount(myGridID);
-				if (rows === 1) {
-					alert("최 소 하나의 행이 존재해야합니다.");
-					return false;
-				}
-
-				if (checked.length === 0) {
-					alert("삭제할 행을 선택하세요.");
-					return false;
-				}
-				for (let i = checked.length - 1; i >= 0; i--) {
-					const rowIndex = checked[i].rowIndex;
-					AUIGrid.removeRow(myGridID, rowIndex);
-				}
-			};
-
-			function readyHandler() {
-				const item = {
-					partListDate : new Date(),
-					lotNo : 0,
-					quantity : 0,
-					price : 0,
-					exchangeRate : 0,
-					won : 0
-				}
-				AUIGrid.addRow(myGridID, item, "last");
-			}
-
-			function addBeforeRow() {
-				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				if (checkedItems.length === 0) {
-					alert("추가하려는 행의 기준이 되는 행을 선택하세요.");
-					return false;
-				}
-				if (checkedItems.length > 1) {
-					alert("하나의 행만 선택하세요.");
-					return false;
-				}
-				const rowIndex = checkedItems[0].rowIndex;
-				const item = {
-					partListDate : new Date(),
-					lotNo : 0,
-					quantity : 0,
-					price : 0,
-					exchangeRate : 0,
-					won : 0
-				}
-				AUIGrid.addRow(myGridID, item, rowIndex);
-			}
-
-			function addAfterRow() {
-				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-				if (checkedItems.length === 0) {
-					alert("추가하려는 행의 기준이 되는 행을 선택하세요.");
-					return false;
-				}
-				if (checkedItems.length > 1) {
-					alert("하나의 행만 선택하세요.");
-					return false;
-				}
-				const rowIndex = checkedItems[0].rowIndex;
-				const item = {
-					partListDate : new Date(),
-					lotNo : 0,
-					quantity : 0,
-					price : 0,
-					exchangeRate : 0,
-					won : 0
-				}
-				AUIGrid.addRow(myGridID, item, rowIndex + 1);
-			}
-		</script>
-	</div>
-</div>
-
+<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
+<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
-	function create() {
+	let myGridID;
+	function _layout() {
+		return [ {
+			dataField : "name",
+			headerText : "수배표 제목",
+			dataType : "string",
+			width : 450,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+			cellMerge : true
+		}, {
+			dataField : "projectType_name",
+			headerText : "설계구분",
+			dataType : "string",
+			width : 80,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "mak_name",
+			headerText : "막종",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "detail_name",
+			headerText : "막종상세",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "kekNumber",
+			headerText : "KEK 작번",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "keNumber",
+			headerText : "KE 작번",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "userId",
+			headerText : "USER ID",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "description",
+			headerText : "작업내용",
+			dataType : "string",
+			width : 300,
+			style : "auit-left",
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "customer_name",
+			headerText : "거래처",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "install_name",
+			headerText : "설치 장소",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "pdate_txt",
+			headerText : "발행일",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true,
+			},
+		}, {
+			dataField : "model",
+			headerText : "모델",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "creator",
+			headerText : "작성자",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+			cellMerge : true,
+			mergeRef : "name",
+			mergePolicy : "restrict"
+		}, {
+			dataField : "createdDate_txt",
+			headerText : "작성일",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true,
+			},
+			cellMerge : true,
+			mergeRef : "name",
+			mergePolicy : "restrict"
+		}, {
+			dataField : "modifiedDate_txt",
+			headerText : "수정일",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true,
+			},
+			cellMerge : true,
+			mergeRef : "name",
+			mergePolicy : "restrict"
+		}, {
+			dataField : "state",
+			headerText : "상태",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+			cellMerge : true,
+			mergeRef : "name",
+			mergePolicy : "restrict"
+		} ]
+	};
 
+	function createAUIGrid(columnLayout) {
+		const props = {
+			headerHeight : 30,
+			showRowNumColumn : true,
+			rowNumHeaderText : "번호",
+			showAutoNoDataMessage : false,
+			enableFilter : true,
+			selectionMode : "multipleCells",
+			enableMovingColumn : true,
+			showInlineFilter : true,
+			useContextMenu : true,
+			enableRightDownFocus : true,
+			filterLayerWidth : 320,
+			filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
+			fixedColumnCount : 1,
+			enableCellMerge : true,
+			forceTreeView : true,
+			showRowCheckColumn : true,
+		};
+		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+		loadGridData();
+		AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
+		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+			hideContextMenu();
+			vScrollChangeHandler(event);
+		});
+		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
+			hideContextMenu();
+		});
+	}
+
+	function loadGridData() {
 		const params = new Object();
-		const url = getCallUrl("/partlist/create");
-		const addRows = AUIGrid.getGridData(myGridID);
-		const addRows9 = AUIGrid.getGridData(myGridID9);
-		const addRows8 = AUIGrid.getGridData(myGridID8);
-		const name = document.getElementById("name").value;
-		const engType = document.getElementById("engType").value;
-		const description = document.getElementById("description").value;
-		const progress = document.getElementById("progress").value;
+		const url = getCallUrl("/partlist/list");
+		const psize = document.getElementById("psize").value;
+		params.psize = psize;
+		AUIGrid.showAjaxLoader(myGridID);
+		parent.openLayer();
+		call(url, params, function(data) {
+			AUIGrid.removeAjaxLoader(myGridID);
+			document.getElementById("sessionid").value = data.sessionid;
+			document.getElementById("curPage").value = data.curPage;
+			AUIGrid.setGridData(myGridID, data.list);
+			parent.closeLayer();
+		});
+	}
+
+
+	document.addEventListener("DOMContentLoaded", function() {
+		const columns = loadColumnLayout("partlist-list");
+		const contenxtHeader = genColumnHtml(columns);
+		$("#h_item_ul").append(contenxtHeader);
+		$("#headerMenu").menu({
+			select : headerMenuSelectHandler
+		});
+		createAUIGrid(columns);
+		AUIGrid.resize(myGridID);
+		selectbox("state");
+		selectbox("projectType_name");
+		finderUser("creator");
+		finderUser("modifier");
+		twindate("created");
+		twindate("modified");
+		selectbox("psize");
+	});
+
+	function connect() {
 		const toid = document.getElementById("toid").value;
 		const poid = document.getElementById("poid").value;
-		
-		if (addRows9.length === 0) {
-			alert("최소 하나 이상의 작번을 추가하세요.");
-			insert9();
+		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+		if (checkedItems.length == 0) {
+			alert("추가할 수배표를 선택하세요.");
 			return false;
 		}
-
-		for (let i = 0; i < addRows.length; i++) {
-			const item = addRows[i];
-			const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
-			if (isNull(item.partNo)) {
-				alert("부품번호를 입력하세요.\n수배표 탭으로 이동하여 확인 해주세요.");
-				AUIGrid.showToastMessage(myGridID, rowIndex, 3, "부품번호를 입력하세요.");
-				return false;
-			}
-
-			if (item.check === "NG") {
-				alert("ERP에 등록된 부품번호가 아닙니다.\n수배표 탭으로 이동하여 확인 해주세요.");
-				AUIGrid.showToastMessage(myGridID, rowIndex, 0, "ERP에 등록된 부품번호가 아닙니다.");
-				return false;
-			}
-
-			if (isNull(item.lotNo)) {
-				alert("LOT NO를 입력하세요.\n수배표 탭으로 이동하여 확인 해주세요.");
-				AUIGrid.showToastMessage(myGridID, rowIndex, 1, "LOT NO를 입력하세요.");
-				return false;
-			}
-
-			if (item.lotNo === 0) {
-				alert("LOT NO의 값은 0이 될 수 없습니다.\n수배표 탭으로 이동하여 확인 해주세요.");
-				AUIGrid.showToastMessage(myGridID, rowIndex, 1, "LOT NO의 값은 0이 될 수 없습니다.");
-				return false;
-			}
-
-			if (isNull(item.quantity)) {
-				alert("수량을 입력하세요.\n수배표 탭으로 이동하여 확인 해주세요.");
-				AUIGrid.showToastMessage(myGridID, rowIndex, 8, "수량을 입력하세요.");
-				return false;
-			}
-
-			if (item.quantity === 0) {
-				alert("수량의 값은 0이 될 수 없습니다.\n수배표 탭으로 이동하여 확인 해주세요.");
-				AUIGrid.showToastMessage(myGridID, rowIndex, 8, "수량의 값은 0이 될 수 없습니다.");
-				return false;
-			}
-		}
-
-		if (addRows8.length === 0) {
-			alert("결재선을 지정하세요.");
-			_register();
-			return false;
-		}
-		
-		if (!confirm("등록 하시겠습니까?")) {
-			return false;
-		}
-		
-		params.addRows = addRows;
-		params.addRows9 = addRows9;
-		params.name = name;
-		params.engType = engType;
-		params.description = description;
-		params.secondarys = toArray("secondarys");
-		params.progress = Number(progress);
-		params.toid = toid;
-		params.poid = poid;
-		toRegister(params, addRows8);
 		openLayer();
-		call(url, params, function(data) {
-			alert(data.msg);
-			if (data.result) {
-				opener.document.location.reload();
+		opener._connect(checkedItems, toid, poid, function(res) {
+			alert(res.msg);
+			if (res.result) {
+				closeLayer();
+				opener._reload();
 				self.close();
 			} else {
 				closeLayer();
 			}
-		})
-	}
-
-	function beforeRemoveRow(event) {
-		const item = event.items[0];
-		const oid = document.getElementById("poid").value;
-		if (item.oid === oid) {
-			alert("기준 작번은 제거 할 수 없습니다.");
-			return false;
-		}
-		return true;
+		});
 	}
 	
-	document.addEventListener("DOMContentLoaded", function() {
-		document.getElementById("name").focus();
-		$("#tabs").tabs({
-			active : 0,
-			activate : function(event, ui) {
-				var tabId = ui.newPanel.prop("id");
-				switch (tabId) {
-				case "tabs-1":
-					const isCreated9 = AUIGrid.isCreated(myGridID9);
-					if (isCreated9) {
-						AUIGrid.resize(myGridID9);
-					} else {
-						createAUIGrid9(columns9);
-					}
-					const isCreated8 = AUIGrid.isCreated(myGridID8);
-					if (isCreated8) {
-						AUIGrid.resize(myGridID8);
-					} else {
-						createAUIGrid8(columns8);
-					}
-					selectbox("engType");
-					$("#engType").bindSelectDisabled(true);
-					break;
-				case "tabs-2":
-					const isCreated = AUIGrid.isCreated(myGridID);
-					if (isCreated) {
-						AUIGrid.resize(myGridID);
-					} else {
-						createAUIGrid(columns);
-					}
-					break;
-				}
-			}
-		});
-		selectbox("engType");
-		$("#engType").bindSelectSetValue("<%=engType%>");
-		$("#engType").bindSelectDisabled(true);
-		createAUIGrid9(columns9);
-		createAUIGrid8(columns8);
-		createAUIGrid(columns);
-		AUIGrid.resize(myGridID9);
-		AUIGrid.resize(myGridID8);
-		AUIGrid.resize(myGridID);
-		AUIGrid.addRow(myGridID9, <%=list%>);
-		AUIGrid.bind(myGridID9, "beforeRemoveRow", beforeRemoveRow);
-	});
+	document.addEventListener("keydown", function(event) {
+		const keyCode = event.keyCode || event.which;
+		if (keyCode === 13) {
+			loadGridData();
+		}
+	})
+
+	document.addEventListener("click", function(event) {
+		hideContextMenu();
+	})
 
 	window.addEventListener("resize", function() {
-		AUIGrid.resize(myGridID9);
-		AUIGrid.resize(myGridID8);
 		AUIGrid.resize(myGridID);
 	});
 </script>

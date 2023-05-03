@@ -18,7 +18,7 @@ String number = (String)request.getAttribute("number");
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="toid" id="toid" value="<%=toid%>">
 <input type="hidden" name="poid" id="poid" value="<%=poid%>">
-<input type="hidden" name="location" id="location" value="<%=location%>">
+<input type="hidden" name="location" id="location" value="<%=location != null ? location : OutputHelper.OUTPUT_NEW_ROOT%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -44,8 +44,14 @@ String number = (String)request.getAttribute("number");
 	<tr>
 		<th class="req lb">저장위치</th>
 		<td class="indent5">
-			<span id="loc"><%=OutputHelper.OUTPUT_NEW_ROOT%></span>
+			<span id="loc"><%=location != null ? location : OutputHelper.OUTPUT_NEW_ROOT%></span>
+			<%
+				if(StringUtils.isNull(location)) {
+			%>
 			<input type="button" value="폴더선택" title="폴더선택" class="blue" onclick="folder();">
+			<%
+				}
+			%>
 		</td>
 		<th>진행율</th>
 		<td class="indent5">
@@ -190,9 +196,7 @@ String number = (String)request.getAttribute("number");
 		AUIGrid.resize(myGridID11);
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
-		AUIGrid.addRow(myGridID9,
-<%=list%>
-	);
+		AUIGrid.addRow(myGridID9, <%=list%>);
 		AUIGrid.bind(myGridID9, "beforeRemoveRow", auiBeforeRemoveRow);
 		document.getElementById("name").focus();
 	})

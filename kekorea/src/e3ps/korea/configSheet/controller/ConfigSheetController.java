@@ -256,8 +256,23 @@ public class ConfigSheetController extends BaseController {
 			result.put("msg", SAVE_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;
+	}
+
+	@Description(value = "산출물 태스크에서 CONFIG SHEET 연결 페이지")
+	@GetMapping(value = "/connect")
+	public ModelAndView connect(@RequestParam String poid, @RequestParam String toid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("toid", toid);
+		model.addObject("poid", poid);
+		model.setViewName("popup:/korea/configSheet/configSheet-connect");
+		return model;
 	}
 }

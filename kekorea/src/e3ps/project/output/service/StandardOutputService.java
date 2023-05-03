@@ -34,7 +34,6 @@ import wt.fc.QueryResult;
 import wt.folder.Folder;
 import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
-import wt.iba.value.IBAHolder;
 import wt.org.WTUser;
 import wt.pom.Transaction;
 import wt.services.StandardManager;
@@ -88,10 +87,8 @@ public class StandardOutputService extends StandardManager implements OutputServ
 				NumberRule numberRule = (NumberRule) CommonUtils.getObject(oid);
 				numberRule.setPersist(document.getMaster());
 				PersistenceHelper.manager.modify(numberRule);
-				IBAUtils.createIBA((IBAHolder) document.getMaster(), "s", "NUMBER_RULE",
-						numberRule.getMaster().getNumber());
-				IBAUtils.createIBA((IBAHolder) document.getMaster(), "s", "NUMBER_RULE_VERSION",
-						String.valueOf(numberRule.getVersion()));
+				IBAUtils.createIBA(document, "s", "NUMBER_RULE", numberRule.getMaster().getNumber());
+				IBAUtils.createIBA(document, "s", "NUMBER_RULE_VERSION", String.valueOf(numberRule.getVersion()));
 			}
 
 			for (int i = 0; i < primarys.size(); i++) {
@@ -201,6 +198,18 @@ public class StandardOutputService extends StandardManager implements OutputServ
 				output.setDocument(document);
 				output.setOwnership(CommonUtils.sessionOwner());
 				PersistenceHelper.manager.save(output);
+
+				// 의뢰서는 아에 다른 페이지에서 작동하므로 소스 간결 연결된 태스트 상태 변경
+				// 추가적인 산출물 등록시 실제 시작일이 변경 안되도록 처리한다.
+				if (task.getStartDate() == null) {
+					task.setStartDate(new Timestamp(new Date().getTime()));
+				}
+				task.setState(TaskStateVariable.INWORK);
+				PersistenceHelper.manager.modify(task);
+
+				// 프로젝트 전체 진행율 조정
+				ProjectHelper.service.calculation(project);
+				ProjectHelper.service.commit(project);
 			}
 
 			map.put("exist", false);
@@ -331,10 +340,8 @@ public class StandardOutputService extends StandardManager implements OutputServ
 				NumberRule numberRule = (NumberRule) CommonUtils.getObject((String) addRow11.get("oid"));
 				numberRule.setPersist(workCopy.getMaster());
 				PersistenceHelper.manager.modify(numberRule);
-				IBAUtils.createIBA((IBAHolder) workCopy.getMaster(), "s", "NUMBER_RULE",
-						numberRule.getMaster().getNumber());
-				IBAUtils.createIBA((IBAHolder) workCopy.getMaster(), "s", "NUMBER_RULE_VERSION",
-						String.valueOf(numberRule.getVersion()));
+				IBAUtils.createIBA(workCopy, "s", "NUMBER_RULE", numberRule.getMaster().getNumber());
+				IBAUtils.createIBA(workCopy, "s", "NUMBER_RULE_VERSION", String.valueOf(numberRule.getVersion()));
 			}
 
 			// ???
@@ -466,10 +473,8 @@ public class StandardOutputService extends StandardManager implements OutputServ
 				NumberRule numberRule = (NumberRule) CommonUtils.getObject((String) addRow11.get("oid"));
 				numberRule.setPersist(newDoc.getMaster());
 				PersistenceHelper.manager.modify(numberRule);
-				IBAUtils.createIBA((IBAHolder) newDoc.getMaster(), "s", "NUMBER_RULE",
-						numberRule.getMaster().getNumber());
-				IBAUtils.createIBA((IBAHolder) newDoc.getMaster(), "s", "NUMBER_RULE_VERSION",
-						String.valueOf(numberRule.getVersion()));
+				IBAUtils.createIBA(newDoc, "s", "NUMBER_RULE", numberRule.getMaster().getNumber());
+				IBAUtils.createIBA(newDoc, "s", "NUMBER_RULE_VERSION", String.valueOf(numberRule.getVersion()));
 			}
 
 			// ???

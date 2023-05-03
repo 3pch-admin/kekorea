@@ -27,4 +27,9 @@ public interface PartlistService {
 	 * 수배표 태스크 연결 제거
 	 */
 	public abstract void disconnect(Map<String, Object> params) throws Exception;
+
+	/**
+	 * 수배표 링크 등록
+	 */
+	public abstract Map<String, Object> connect(Map<String, Object> params) throws Exception;
 }

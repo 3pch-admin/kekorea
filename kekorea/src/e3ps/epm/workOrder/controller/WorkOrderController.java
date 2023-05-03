@@ -232,4 +232,18 @@ public class WorkOrderController extends BaseController {
 		}
 		return result;
 	}
+	
+	@Description(value = "산출물 도면일람표 연결 페이지")
+	@GetMapping(value = "/connect")
+	public ModelAndView connect(@RequestParam String poid, @RequestParam String toid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("toid", toid);
+		model.addObject("poid", poid);
+		model.setViewName("popup:/epm/workOrder/workOrder-connect");
+		return model;
+	}
 }

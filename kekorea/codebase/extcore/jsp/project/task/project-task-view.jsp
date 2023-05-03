@@ -230,12 +230,21 @@ int taskType = (int) request.getAttribute("taskType");
 				<%
 				} else if (taskType == 2) {
 				%>
-
-
+				<!-- 1차 2차 수배 -->
+				<jsp:include page="/extcore/jsp/project/task/step.jsp">
+					<jsp:param value="<%=data.getOid()%>" name="poid" />
+					<jsp:param value="<%=dto.getOid()%>" name="toid" />
+					<jsp:param value="<%=isAdmin%>" name="isAdmin" />
+				</jsp:include>
 				<%
 				} else if (taskType == 3) {
 				%>
-
+				<!-- 수배표 전체 -->
+				<jsp:include page="/extcore/jsp/project/task/partlist.jsp">
+					<jsp:param value="<%=data.getOid()%>" name="poid" />
+					<jsp:param value="<%=dto.getOid()%>" name="toid" />
+					<jsp:param value="<%=isAdmin%>" name="isAdmin" />
+				</jsp:include>
 				<%
 				} else if (taskType == 4) {
 				%>

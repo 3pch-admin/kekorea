@@ -129,10 +129,8 @@ public class StandardDocumentService extends StandardManager implements Document
 				NumberRule numberRule = (NumberRule) CommonUtils.getObject(oid);
 				numberRule.setPersist(document.getMaster());
 				PersistenceHelper.manager.modify(numberRule);
-				IBAUtils.createIBA((IBAHolder) document.getMaster(), "s", "NUMBER_RULE",
-						numberRule.getMaster().getNumber());
-				IBAUtils.createIBA((IBAHolder) document.getMaster(), "s", "NUMBER_RULE_VERSION",
-						String.valueOf(numberRule.getVersion()));
+				IBAUtils.createIBA(document, "s", "NUMBER_RULE", numberRule.getMaster().getNumber());
+				IBAUtils.createIBA(document, "s", "NUMBER_RULE_VERSION", String.valueOf(numberRule.getVersion()));
 			}
 
 			for (int i = 0; i < primarys.size(); i++) {
@@ -204,7 +202,7 @@ public class StandardDocumentService extends StandardManager implements Document
 				numberRule.setPersist(null);
 				PersistenceHelper.manager.modify(numberRule);
 			}
-			
+
 			WorkspaceHelper.manager.deleteAllLines(document);
 
 			PersistenceHelper.manager.delete(document);
@@ -271,10 +269,8 @@ public class StandardDocumentService extends StandardManager implements Document
 				NumberRule numberRule = (NumberRule) CommonUtils.getObject((String) addRow11.get("oid"));
 				numberRule.setPersist(workCopy.getMaster());
 				PersistenceHelper.manager.modify(numberRule);
-				IBAUtils.createIBA((IBAHolder) workCopy.getMaster(), "s", "NUMBER_RULE",
-						numberRule.getMaster().getNumber());
-				IBAUtils.createIBA((IBAHolder) workCopy.getMaster(), "s", "NUMBER_RULE_VERSION",
-						String.valueOf(numberRule.getVersion()));
+				IBAUtils.createIBA(workCopy, "s", "NUMBER_RULE", numberRule.getMaster().getNumber());
+				IBAUtils.createIBA(workCopy, "s", "NUMBER_RULE_VERSION", String.valueOf(numberRule.getVersion()));
 			}
 
 			// ???
@@ -369,10 +365,8 @@ public class StandardDocumentService extends StandardManager implements Document
 				NumberRule numberRule = (NumberRule) CommonUtils.getObject((String) addRow11.get("oid"));
 				numberRule.setPersist(newDoc.getMaster());
 				PersistenceHelper.manager.modify(numberRule);
-				IBAUtils.createIBA((IBAHolder) newDoc.getMaster(), "s", "NUMBER_RULE",
-						numberRule.getMaster().getNumber());
-				IBAUtils.createIBA((IBAHolder) newDoc.getMaster(), "s", "NUMBER_RULE_VERSION",
-						String.valueOf(numberRule.getVersion()));
+				IBAUtils.createIBA(newDoc, "s", "NUMBER_RULE", numberRule.getMaster().getNumber());
+				IBAUtils.createIBA(newDoc, "s", "NUMBER_RULE_VERSION", String.valueOf(numberRule.getVersion()));
 			}
 
 			CommonContentHelper.manager.clear(newDoc);

@@ -19,22 +19,15 @@ import e3ps.doc.meeting.dto.MeetingDTO;
 import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
-import e3ps.project.output.Output;
-import e3ps.project.output.OutputDocumentLink;
-import e3ps.project.output.OutputProjectLink;
-import e3ps.project.output.dto.OutputDTO;
 import e3ps.project.template.Template;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import wt.doc.WTDocument;
 import wt.doc.WTDocumentMaster;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.WTUser;
-import wt.query.ClassAttribute;
 import wt.query.QuerySpec;
-import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
 
@@ -77,8 +70,8 @@ public class MeetingHelper {
 	 * 회의록 조회
 	 */
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();System.out.println("params 안에 뭐 있나 보자아아아아아아아아"+params+"아아아아아아아아아");
-		JSONArray list = new JSONArray();
+		Map<String, Object> map = new HashMap<String, Object>();
+
 		String description = (String) params.get("description");
 		String kekNumber = (String) params.get("kekNumber");
 		String keNumber = (String) params.get("keNumber");
@@ -95,224 +88,168 @@ public class MeetingHelper {
 		String softOid = (String) params.get("softOid");
 		String mak_name = (String) params.get("mak_name");
 		String detail_name = (String) params.get("detail_name");
-		String template = (String) params.get("template");
-//		String creator = (String) params.get("creator");
-		String psize = (String) params.get("psize");
-		
+		String name = (String) params.get("name");
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Meeting.class, true);
-//		int idx_o = query.appendClassList(Output.class, false);
-		int idx_p = query.appendClassList(Project.class, true);
-		int idx_mplink = query.appendClassList(MeetingProjectLink.class, false);
-//		QuerySpecUtils.toInnerJoin(query, Meeting.class, Output.class, "documentReference.key.id",
-//				WTAttributeNameIfc.ID_NAME, idx, idx_o);
-//		int idx_p = query.appendClassList(Project.class, true);//이 줄부터 PersistenceHelper까지 아래의 메소드에서 가져온 코드
-////		QuerySpecUtils.toCI(query, idx, Meeting.class);
-		QuerySpecUtils.toInnerJoin(query, Meeting.class, MeetingProjectLink.class, WTAttributeNameIfc.ID_NAME,
-				"roleAObjectRef.key.id", idx, idx_mplink);
-		QuerySpecUtils.toInnerJoin(query, Project.class, MeetingProjectLink.class, WTAttributeNameIfc.ID_NAME,
-				"roleBObjectRef.key.id", idx_p, idx_mplink);
-//		QuerySpecUtils.toEqualsAnd(query, idx_link, MeetingProjectLink.class, "roleAObjectRef.key.id", meeting);
-//		QueryResult result = PersistenceHelper.manager.find(query);
+		QuerySpecUtils.toLikeAnd(query, idx, Meeting.class, Meeting.NAME, name);
+		QuerySpecUtils.toOrderBy(query, idx, Meeting.class, Meeting.CREATE_TIMESTAMP, true);
 
-//		QuerySpecUtils.toTimeGreaterAndLess(query, idx, Meeting.class, Meeting.CREATE_TIMESTAMP, );
-//		QuerySpecUtils.to(query, idx, Meeting.class, Meeting.NAME, n);
-//		QuerySpecUtils.toLikeAnd(query, idx, Meeting.class, Meeting.DESCRIPTION, description);
-//		QuerySpecUtils.toCreator(query, idx, Project.class, userId);
-//		QuerySpecUtils.toTimeGreaterAndLess(query, idx, Meeting.class, Meeting.CREATE_TIMESTAMP , pdateFrom, pdateTo);
-		
-		
-		//output helper에서 가져온 코드==========================================
-		if (!StringUtils.isNull(kekNumber) || !StringUtils.isNull(keNumber) || !StringUtils.isNull(description)) {
-
-			if (query.getConditionCount() > 0) {
-				query.appendAnd();
-			}
-			
-			int idx_olink = query.appendClassList(OutputDocumentLink.class, false);
-			int idx_plink = query.appendClassList(OutputProjectLink.class, false);
-			int idx_o = query.appendClassList(Output.class, false);
-//			int idx_p = query.appendClassList(Project.class, true);
-			
-			query.appendOpenParen();
-			
-			ClassAttribute roleAca = new ClassAttribute(Output.class, WTAttributeNameIfc.ID_NAME);
-			ClassAttribute roleBca = new ClassAttribute(WTDocument.class, WTAttributeNameIfc.ID_NAME);
-			SearchCondition sc = new SearchCondition(
-					new ClassAttribute(OutputDocumentLink.class, "roleAObjectRef.key.id"), "=", roleAca);
-			query.appendWhere(sc, new int[] { idx_olink, idx_o });
-			query.appendAnd();
-			sc = new SearchCondition(new ClassAttribute(OutputDocumentLink.class, "roleBObjectRef.key.id"), "=",
-					roleBca);
-			query.appendWhere(sc, new int[] { idx_olink, idx });
-			query.appendAnd();
-			
-			roleAca = new ClassAttribute(Output.class, WTAttributeNameIfc.ID_NAME);
-			roleBca = new ClassAttribute(Project.class, WTAttributeNameIfc.ID_NAME);
-
-			sc = new SearchCondition(new ClassAttribute(OutputProjectLink.class, "roleAObjectRef.key.id"), "=",
-					roleAca);
-			query.appendWhere(sc, new int[] { idx_plink, idx_o });
-			query.appendAnd();
-			sc = new SearchCondition(new ClassAttribute(OutputProjectLink.class, "roleBObjectRef.key.id"), "=",
-					roleBca);
-			query.appendWhere(sc, new int[] { idx_plink, idx_p });
-
-			query.appendCloseParen();
-			
-			QuerySpecUtils.toLikeAnd(query, idx_p, Project.class, Project.KEK_NUMBER, kekNumber);
-			QuerySpecUtils.toLikeAnd(query, idx_p, Project.class, Project.KE_NUMBER, keNumber);
-			QuerySpecUtils.toLikeAnd(query, idx_p, Project.class, Project.DESCRIPTION, description);
-		}
-		//project에서 가져온 코드
-//		if (!StringUtils.isNull(customer_name)) {
-//			CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer_name);
-//			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "customerReference.key.id", customerCode);
-//		}
-//
-//		if (!StringUtils.isNull(install_name)) {
-//			CommonCode installCode = (CommonCode) CommonUtils.getObject(install_name);
-//			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "installReference.key.id", installCode);
-//		}
-//
-//		if (!StringUtils.isNull(projectType)) {
-//			CommonCode projectTypeCode = (CommonCode) CommonUtils.getObject(projectType);
-//			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "projectTypeReference.key.id", projectTypeCode);
-//		}
-//
-//		if (!StringUtils.isNull(machineOid)) {
-//			WTUser machine = (WTUser) CommonUtils.getObject(machineOid);
-//			CommonCode machineCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
-//			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
-//			int idx_u = query.appendClassList(WTUser.class, false);
-//
-//			QuerySpecUtils.toInnerJoin(query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
-//					"roleAObjectRef.key.id", idx, idx_plink);
-//			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
-//					"roleBObjectRef.key.id", idx_u, idx_plink);
-//			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", machine);
-//			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id",
-//					machineCode);
-//		}
-//
-//		if (!StringUtils.isNull(elecOid)) {
-//			WTUser elec = (WTUser) CommonUtils.getObject(elecOid);
-//			CommonCode elecCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
-//			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
-//			int idx_u = query.appendClassList(WTUser.class, false);
-//
-//			QuerySpecUtils.toInnerJoin(query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
-//					"roleAObjectRef.key.id", idx, idx_plink);
-//			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
-//					"roleBObjectRef.key.id", idx_u, idx_plink);
-//			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", elec);
-//			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id", elecCode);
-//		}
-//
-//		if (!StringUtils.isNull(softOid)) {
-//			WTUser soft = (WTUser) CommonUtils.getObject(softOid);
-//			CommonCode softCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
-//			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
-//			int idx_u = query.appendClassList(WTUser.class, false);
-//
-//			QuerySpecUtils.toInnerJoin(query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
-//					"roleAObjectRef.key.id", idx, idx_plink);
-//			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
-//					"roleBObjectRef.key.id", idx_u, idx_plink);
-//			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", soft);
-//			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id", softCode);
-//		}
-//
-//		if (!StringUtils.isNull(mak_name)) {
-//			CommonCode makCode = (CommonCode) CommonUtils.getObject(mak_name);
-//			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "makReference.key.id", makCode);
-//		}
-//
-//		if (!StringUtils.isNull(detail_name)) {
-//			CommonCode detailCode = (CommonCode) CommonUtils.getObject(detail_name);
-//			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "detailReference.key.id", detailCode);
-//		}
-//
-//		if (!StringUtils.isNull(template)) {
-//			Template t = (Template) CommonUtils.getObject(template);
-//			QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "templateReference.key.id", t);
-//		}
-		//=============================================================
-
-//		JSONArray list = new JSONArray();
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 
-//		while (result.hasMoreElements()) {
-//			Object[] obj = (Object[]) result.nextElement();
-//			Meeting meeting = (Meeting) obj[0];
-//			JSONObject node = new JSONObject();
-//			node.put("oid", meeting.getPersistInfo().getObjectIdentifier().getStringValue());
-//			node.put("name", meeting.getName());
-//			QueryResult group = PersistenceHelper.manager.navigate(meeting, "project", MeetingProjectLink.class, false);
-//			int isNode = 1;
-//			JSONArray children = new JSONArray();
-//			while (group.hasMoreElements()) {
-//				MeetingProjectLink link = (MeetingProjectLink) group.nextElement();
-//				MeetingDTO dto = new MeetingDTO(link);
-//				if (isNode == 1) {
-//					node.put("poid", dto.getPoid());
-//					node.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
-//					node.put("projectType_name", dto.getProjectType_name());
-//					node.put("customer_name", dto.getCustomer_name());
-//					node.put("install_name", dto.getInstall_name());
-//					node.put("mak_name", dto.getMak_name());
-//					node.put("detail_name", dto.getDetail_name());
-//					node.put("kekNumber", dto.getKekNumber());
-//					node.put("keNumber", dto.getKeNumber());
-//					node.put("userId", dto.getUserId());
-//					node.put("description", dto.getDescription());
-//					node.put("state", dto.getState());
-//					node.put("model", dto.getModel());
-//					node.put("pdate_txt", dto.getPdate_txt());
-//					node.put("creator", dto.getCreator());
-//					node.put("creatorId", meeting.getOwnership().getOwner().getName());
-//					node.put("createdDate_txt", dto.getCreatedDate_txt());
-//				} else {
-//					JSONObject data = new JSONObject();
-//					data.put("name", dto.getName());
-//					data.put("oid", dto.getOid());
-//					data.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
-//					data.put("poid", dto.getPoid());
-//					data.put("projectType_name", dto.getProjectType_name());
-//					data.put("customer_name", dto.getCustomer_name());
-//					data.put("install_name", dto.getInstall_name());
-//					data.put("mak_name", dto.getMak_name());
-//					data.put("detail_name", dto.getDetail_name());
-//					data.put("kekNumber", dto.getKekNumber());
-//					data.put("keNumber", dto.getKeNumber());
-//					data.put("userId", dto.getUserId());
-//					data.put("description", dto.getDescription());
-//					data.put("state", dto.getState());
-//					data.put("model", dto.getModel());
-//					data.put("pdate_txt", dto.getPdate_txt());
-//					data.put("creator", dto.getCreator());
-//					data.put("creatorId", meeting.getOwnership().getOwner().getName());
-//					data.put("createdDate_txt", dto.getCreatedDate_txt());
-//					children.add(data);
-//				}
-//				isNode++;
-//			}
-//			node.put("children", children);
-//			list.add(node);
-//		}
-		QuerySpecUtils.toOrderBy(query, idx, Meeting.class, Meeting.CREATE_TIMESTAMP, true);
-		System.out.println("회의록 쿼리 확인 좀 해보장아ㅏ아아아아아아아앙 :"+query+"아아아아아아");
-		pager = new PageQueryUtils(params, query);
-		result = pager.find();
-		while (result.hasMoreElements()) {int i=0;i++;
+		JSONArray list = new JSONArray();
+
+		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
-			System.out.println(obj.length+"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"+i+"@"+result);
-			MeetingProjectLink meeting = (MeetingProjectLink) obj[0];
-			MeetingDTO dto = new MeetingDTO(meeting);
-			list.add(dto);
+			Meeting meeting = (Meeting) obj[0];
+			JSONObject node = new JSONObject();
+			node.put("oid", meeting.getPersistInfo().getObjectIdentifier().getStringValue());
+			node.put("name", meeting.getName());
+
+			QuerySpec _query = new QuerySpec();
+			int _idx = _query.appendClassList(Meeting.class, true);
+			int _idx_p = _query.appendClassList(Project.class, true);
+			int _idx_link = _query.appendClassList(MeetingProjectLink.class, true);
+
+			QuerySpecUtils.toEqualsAnd(_query, _idx_link, MeetingProjectLink.class, "roleAObjectRef.key.id", meeting);
+			QuerySpecUtils.toInnerJoin(_query, Meeting.class, MeetingProjectLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleAObjectRef.key.id", _idx, _idx_link);
+			QuerySpecUtils.toInnerJoin(_query, Project.class, MeetingProjectLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleBObjectRef.key.id", _idx_p, _idx_link);
+
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KEK_NUMBER, kekNumber);
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KE_NUMBER, keNumber);
+			QuerySpecUtils.toTimeGreaterAndLess(_query, _idx_p, Project.class, Project.P_DATE, pdateFrom, pdateTo);
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.USER_ID, userId);
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KEK_STATE, kekState);
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.MODEL, model);
+
+			if (!StringUtils.isNull(customer_name)) {
+				CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "customerReference.key.id", customerCode);
+			}
+
+			if (!StringUtils.isNull(install_name)) {
+				CommonCode installCode = (CommonCode) CommonUtils.getObject(install_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "installReference.key.id", installCode);
+			}
+
+			if (!StringUtils.isNull(projectType)) {
+				CommonCode projectTypeCode = (CommonCode) CommonUtils.getObject(projectType);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "projectTypeReference.key.id",
+						projectTypeCode);
+			}
+
+			if (!StringUtils.isNull(machineOid)) {
+				WTUser machine = (WTUser) CommonUtils.getObject(machineOid);
+				CommonCode machineCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
+				int idx_u = _query.appendClassList(WTUser.class, false);
+
+				QuerySpecUtils.toInnerJoin(_query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleAObjectRef.key.id", _idx_p, idx_plink);
+				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleBObjectRef.key.id", idx_u, idx_plink);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", machine);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+						machineCode);
+			}
+
+			if (!StringUtils.isNull(elecOid)) {
+				WTUser elec = (WTUser) CommonUtils.getObject(machineOid);
+				CommonCode elecCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
+				int idx_u = _query.appendClassList(WTUser.class, false);
+
+				QuerySpecUtils.toInnerJoin(_query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleAObjectRef.key.id", _idx_p, idx_plink);
+				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleBObjectRef.key.id", idx_u, idx_plink);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", elec);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+						elecCode);
+			}
+
+			if (!StringUtils.isNull(softOid)) {
+				WTUser soft = (WTUser) CommonUtils.getObject(machineOid);
+				CommonCode softCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
+				int idx_u = _query.appendClassList(WTUser.class, false);
+
+				QuerySpecUtils.toInnerJoin(_query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleAObjectRef.key.id", _idx_p, idx_plink);
+				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleBObjectRef.key.id", idx_u, idx_plink);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", soft);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+						softCode);
+			}
+
+			if (!StringUtils.isNull(mak_name)) {
+				CommonCode makCode = (CommonCode) CommonUtils.getObject(mak_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "makReference.key.id", makCode);
+			}
+
+			if (!StringUtils.isNull(detail_name)) {
+				CommonCode detailCode = (CommonCode) CommonUtils.getObject(detail_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "detailReference.key.id", detailCode);
+			}
+
+//			QueryResult group = PersistenceHelper.manager.navigate(meeting, "project", MeetingProjectLink.class, false);
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.DESCRIPTION, description);
+			QueryResult group = PersistenceHelper.manager.find(_query);
+			int isNode = 1;
+			JSONArray children = new JSONArray();
+			while (group.hasMoreElements()) {
+				MeetingProjectLink link = (MeetingProjectLink) group.nextElement();
+				MeetingDTO dto = new MeetingDTO(link);
+				if (isNode == 1) {
+					node.put("poid", dto.getPoid());
+					node.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
+					node.put("projectType_name", dto.getProjectType_name());
+					node.put("customer_name", dto.getCustomer_name());
+					node.put("install_name", dto.getInstall_name());
+					node.put("mak_name", dto.getMak_name());
+					node.put("detail_name", dto.getDetail_name());
+					node.put("kekNumber", dto.getKekNumber());
+					node.put("keNumber", dto.getKeNumber());
+					node.put("userId", dto.getUserId());
+					node.put("description", dto.getDescription());
+					node.put("state", dto.getState());
+					node.put("model", dto.getModel());
+					node.put("pdate_txt", dto.getPdate_txt());
+					node.put("creator", dto.getCreator());
+					node.put("creatorId", meeting.getOwnership().getOwner().getName());
+					node.put("createdDate_txt", dto.getCreatedDate_txt());
+				} else {
+					JSONObject data = new JSONObject();
+					data.put("name", dto.getName());
+					data.put("oid", dto.getOid());
+					data.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
+					data.put("poid", dto.getPoid());
+					data.put("projectType_name", dto.getProjectType_name());
+					data.put("customer_name", dto.getCustomer_name());
+					data.put("install_name", dto.getInstall_name());
+					data.put("mak_name", dto.getMak_name());
+					data.put("detail_name", dto.getDetail_name());
+					data.put("kekNumber", dto.getKekNumber());
+					data.put("keNumber", dto.getKeNumber());
+					data.put("userId", dto.getUserId());
+					data.put("description", dto.getDescription());
+					data.put("state", dto.getState());
+					data.put("model", dto.getModel());
+					data.put("pdate_txt", dto.getPdate_txt());
+					data.put("creator", dto.getCreator());
+					data.put("creatorId", meeting.getOwnership().getOwner().getName());
+					data.put("createdDate_txt", dto.getCreatedDate_txt());
+					children.add(data);
+				}
+				isNode++;
+			}
+			node.put("children", children);
+			list.add(node);
 		}
-		
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());

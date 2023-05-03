@@ -77,8 +77,7 @@ public class DocumentDTO {
 		setModifiedDate(document.getModifyTimestamp());
 		setModifiedDate_txt(CommonUtils.getPersistableTime(document.getModifyTimestamp()));
 		setDocType(document.getDocType().getDisplay());
-		setNumberRule(IBAUtils.getStringValue((IBAHolder) document.getMaster(), "NUMBER_RULE"));
-		setNumberRuleVersion(IBAUtils.getStringValue((IBAHolder) document.getMaster(), "NUMBER_RULE_VERSION"));
-//		setRevise(CommonUtils.getFullVersion(document));
+		setNumberRule(IBAUtils.getStringValue(document, "NUMBER_RULE"));
+		setNumberRuleVersion(IBAUtils.getStringValue(document, "NUMBER_RULE_VERSION"));
 	}
 }

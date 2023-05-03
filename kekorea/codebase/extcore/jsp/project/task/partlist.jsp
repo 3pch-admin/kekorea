@@ -7,12 +7,13 @@
 %>
 <div class="info-header">
 	<img src="/Windchill/extcore/images/header.png">
-	태스크 의뢰서 정보
+	태스크 수배표 정보
 </div>
 
 <table class="button-table">
 	<tr>
 		<td class="left">
+			<input type="button" value="수배표 등록" title="수배표 등록" class="blue" onclick="create();">
 			<input type="button" value="링크 등록" title="링크 등록" class="orange" onclick="connect();">
 			<%
 			if (isAdmin) {
@@ -29,7 +30,7 @@
 	let myGridID;
 	const columns = [ {
 		dataField : "name",
-		headerText : "의뢰서 제목",
+		headerText : "수배표 제목",
 		dataType : "string",
 		style : "aui-left",
 		renderer : {
@@ -37,7 +38,7 @@
 			baseUrl : "javascript",
 			jsCallback : function(rowIndex, columnIndex, value, item) {
 				const oid = item.oid;
-				const url = getCallUrl("/requestDocument/view?oid=" + oid);
+				const url = getCallUrl("/meeting/view?oid=" + oid);
 				popup(url);
 			}
 		},
@@ -80,10 +81,17 @@
 		parent.readyHandler();
 	}
 
+	function create() {
+		const toid = document.getElementById("oid").value;
+		const poid = document.getElementById("poid").value;
+		const url = getCallUrl("/partlist/create?toid=" + toid + "&poid=" + poid);
+		popup(url);
+	}
+
 	function connect() {
 		const toid = document.getElementById("oid").value;
 		const poid = document.getElementById("poid").value;
-		const url = getCallUrl("/output/connect?toid=" + toid + "&poid=" + poid);
+		const url = getCallUrl("/partlist/connect?toid=" + toid + "&poid=" + poid);
 		popup(url, 1600, 700);
 	}
 
@@ -93,11 +101,12 @@
 			const item = data[i].item;
 			arr.push(item.oid);
 		}
-		const url = getCallUrl("/output/connect");
+		const url = getCallUrl("/partlist/connect");
 		const params = new Object();
 		params.arr = arr;
 		params.toid = toid;
 		params.poid = poid;
+		console.log(params);
 		call(url, params, function(res) {
 			callBack(res);
 		})
@@ -107,7 +116,7 @@
 		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 		const arr = new Array();
 		if (checkedItems.length === 0) {
-			alert("삭제할 의뢰서를 선택하세요.");
+			alert("삭제할 회의록 선택하세요.");
 			return false;
 		}
 
@@ -119,7 +128,7 @@
 		const url = getCallUrl("/output/disconnect");
 		const params = new Object();
 		params.arr = arr;
-		if (!confirm("삭제 하시겠습니까?\n의뢰서와 태스크의 연결관계만 삭제 되어집니다.")) {
+		if (!confirm("삭제 하시겠습니까?\n회의록과 태스크의 연결관계만 삭제 되어집니다.")) {
 			return false;
 		}
 		parent.parent.openLayer();
