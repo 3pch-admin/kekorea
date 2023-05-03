@@ -13,12 +13,14 @@ public class MakLoader {
 
 	public static void main(String[] args) throws Exception {
 
-//		if (args.length != 1) {
-//			System.out.println("엑셀 파일 추가.");
-//			System.exit(0);
-//		}
+		if (args.length != 1) {
+			System.out.println("엑셀 파일 추가.");
+			System.exit(0);
+		}
 
-		File file = new File("D:\\git\\kekorea\\codebase\\extcore\\loadFromFiles\\막종 엑셀 정리.xlsx");
+		File file = new File(args[0]);
+
+//		File file = new File("D:\\git\\kekorea\\codebase\\extcore\\loadFromFiles\\막종 엑셀 정리.xlsx");
 		XSSFWorkbook workBook = new XSSFWorkbook(file);
 		MakLoader loader = new MakLoader();
 		loader.load(workBook);
