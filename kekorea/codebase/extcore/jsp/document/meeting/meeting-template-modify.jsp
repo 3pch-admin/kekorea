@@ -8,10 +8,16 @@
 MeetingTemplateDTO dto = (MeetingTemplateDTO) request.getAttribute("dto");
 %>
 <!-- tinymce -->
-<%@include file="/extcore/include/tinymce.jsp"%>
+<%@include file="/extcore/jsp/common/tinymce.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">
 	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				회의록 템플릿 수정
+			</div>
+		</td>
 		<td class="right">
 			<input type="button" value="수정" title="수정" onclick="modify();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">

@@ -10,7 +10,7 @@ ArrayList<Map<String, String>> list = (ArrayList<Map<String, String>>) request.g
 MeetingDTO dto = (MeetingDTO) request.getAttribute("dto");
 String oid = dto.getOid();
 %>
-<%@include file="/extcore/include/tinymce.jsp"%>
+<%@include file="/extcore/jsp/common/tinymce.jsp"%>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <table class="button-table">

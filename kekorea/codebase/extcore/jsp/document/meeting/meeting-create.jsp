@@ -11,7 +11,7 @@ String poid = (String) request.getAttribute("poid");
 String location = (String) request.getAttribute("location");
 JSONArray data = (JSONArray) request.getAttribute("data");
 %>
-<%@include file="/extcore/include/tinymce.jsp"%>
+<%@include file="/extcore/jsp/common/tinymce.jsp"%>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="toid" id="toid" value="<%=toid%>">
 <input type="hidden" name="poid" id="poid" value="<%=poid%>">
