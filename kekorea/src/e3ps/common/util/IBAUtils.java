@@ -77,7 +77,7 @@ public class IBAUtils {
 
 		query.setAdvancedQueryEnabled(true);
 		query.setDescendantQuery(false);
-		
+
 		long key = ((Persistable) holder).getPersistInfo().getObjectIdentifier().getId();
 		SearchCondition sc = new SearchCondition(holder.getClass(), "thePersistInfo.theObjectIdentifier.id", "=", key);
 		query.appendWhere(sc, new int[] { ii });
@@ -755,117 +755,6 @@ public class IBAUtils {
 			e.printStackTrace();
 		}
 		return obj;
-	}
-
-	public static void addIBAConditionLike(QuerySpec _query, Class _target, int _idx, String ibaName, String ibaValue)
-			throws Exception {
-		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath(ibaName.trim());
-
-		if (aview != null) {
-			if (_query.getConditionCount() > 0) {
-				_query.appendAnd();
-			}
-
-			int idx = _query.appendClassList(StringValue.class, false);
-			SearchCondition sc = new SearchCondition(
-					new ClassAttribute(StringValue.class, "theIBAHolderReference.key.id"), "=",
-					new ClassAttribute(_target, "thePersistInfo.theObjectIdentifier.id"));
-			sc.setFromIndicies(new int[] { idx, _idx }, 0);
-			sc.setOuterJoin(0);
-			_query.appendWhere(sc, new int[] { idx, _idx });
-			_query.appendAnd();
-			sc = new SearchCondition(StringValue.class, "definitionReference.key.id", "=", aview.getObjectID().getId());
-			_query.appendWhere(sc, new int[] { idx });
-			_query.appendAnd();
-
-			ColumnExpression ce = StringUtils.getUpperColumnExpression(ibaValue);
-			ClassAttribute ca = new ClassAttribute(StringValue.class, StringValue.VALUE);
-			SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
-			sc = new SearchCondition(function, SearchCondition.LIKE, ce);
-			_query.appendWhere(sc, new int[] { idx });
-		}
-	}
-
-	public static void addIBAConditionEquals(QuerySpec _query, Class _target, int _idx, String ibaName, String ibaValue)
-			throws Exception {
-		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath(ibaName.trim());
-
-		if (aview != null) {
-			if (_query.getConditionCount() > 0) {
-				_query.appendAnd();
-			}
-
-			int idx = _query.appendClassList(StringValue.class, false);
-			SearchCondition sc = new SearchCondition(
-					new ClassAttribute(StringValue.class, "theIBAHolderReference.key.id"), "=",
-					new ClassAttribute(_target, "thePersistInfo.theObjectIdentifier.id"));
-			sc.setFromIndicies(new int[] { idx, _idx }, 0);
-			sc.setOuterJoin(0);
-			_query.appendWhere(sc, new int[] { idx, _idx });
-			_query.appendAnd();
-			sc = new SearchCondition(StringValue.class, "definitionReference.key.id", "=", aview.getObjectID().getId());
-			_query.appendWhere(sc, new int[] { idx });
-			_query.appendAnd();
-
-			sc = new SearchCondition(StringValue.class, StringValue.VALUE, "=", ibaValue);
-			_query.appendWhere(sc, new int[] { idx });
-		}
-	}
-
-	public static void addIBAIntegerUpperSearch(QuerySpec _query, Class _target, int _idx, String ibaName,
-			String ibaValue) throws Exception {
-		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath(ibaName.trim());
-
-		if (aview != null) {
-			if (_query.getConditionCount() > 0) {
-				_query.appendAnd();
-			}
-
-			int idx = _query.appendClassList(IntegerValue.class, false);
-			SearchCondition sc = new SearchCondition(
-					new ClassAttribute(IntegerValue.class, "theIBAHolderReference.key.id"), "=",
-					new ClassAttribute(_target, "thePersistInfo.theObjectIdentifier.id"));
-			sc.setFromIndicies(new int[] { idx, _idx }, 0);
-			sc.setOuterJoin(0);
-			_query.appendWhere(sc, new int[] { idx, _idx });
-			_query.appendAnd();
-			sc = new SearchCondition(IntegerValue.class, "definitionReference.key.id", "=",
-					aview.getObjectID().getId());
-			_query.appendWhere(sc, new int[] { idx });
-			_query.appendAnd();
-
-			sc = new SearchCondition(IntegerValue.class, IntegerValue.VALUE, SearchCondition.GREATER_THAN_OR_EQUAL,
-					Long.valueOf(ibaValue));
-			_query.appendWhere(sc, new int[] { idx });
-		}
-	}
-
-	public static void addIBAIntegerLowerSearch(QuerySpec _query, Class _target, int _idx, String ibaName,
-			String ibaValue) throws Exception {
-		AttributeDefDefaultView aview = IBADefinitionHelper.service.getAttributeDefDefaultViewByPath(ibaName.trim());
-
-		if (aview != null) {
-			if (_query.getConditionCount() > 0) {
-				_query.appendAnd();
-			}
-
-			int idx = _query.appendClassList(IntegerValue.class, false);
-			SearchCondition sc = new SearchCondition(
-					new ClassAttribute(IntegerValue.class, "theIBAHolderReference.key.id"), "=",
-					new ClassAttribute(_target, "thePersistInfo.theObjectIdentifier.id"));
-			sc.setFromIndicies(new int[] { idx, _idx }, 0);
-			sc.setOuterJoin(0);
-			_query.appendWhere(sc, new int[] { idx, _idx });
-			_query.appendAnd();
-			sc = new SearchCondition(IntegerValue.class, "definitionReference.key.id", "=",
-					aview.getObjectID().getId());
-			_query.appendWhere(sc, new int[] { idx });
-			_query.appendAnd();
-
-			sc = new SearchCondition(IntegerValue.class, IntegerValue.VALUE, SearchCondition.LESS_THAN_OR_EQUAL,
-					Long.valueOf(ibaValue));
-			_query.appendWhere(sc, new int[] { idx });
-		}
 	}
 
 	public static void queryNumber(QuerySpec _query, Class _target, int _idx, String number) throws Exception {

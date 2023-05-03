@@ -109,7 +109,7 @@ public class StandardRequestDocumentService extends StandardManager implements R
 			trs.start();
 
 			RequestDocument requestDocument = RequestDocument.newRequestDocument();
-			String number = DocumentHelper.manager.getNextNumber("PJ-");
+			String number = RequestDocumentHelper.manager.getNextNumber();
 			requestDocument.setNumber(number);
 			requestDocument.setName(name);
 			requestDocument.setDescription(description);

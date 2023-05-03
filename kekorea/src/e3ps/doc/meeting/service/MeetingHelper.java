@@ -309,6 +309,9 @@ public class MeetingHelper {
 		return JSONArray.fromObject(list);
 	}
 
+	/**
+	 * 회의록 다음 번호
+	 */
 	public String getNextNumber() throws Exception {
 
 		Calendar ca = Calendar.getInstance();
@@ -316,7 +319,7 @@ public class MeetingHelper {
 		int month = ca.get(Calendar.MONTH) + 1;
 		int year = ca.get(Calendar.YEAR);
 		DecimalFormat df = new DecimalFormat("00");
-		String number = "MEETING-" + df.format(year) + df.format(month) + df.format(day) + "-";
+		String number = "ME-" + df.format(year) + df.format(month) + df.format(day) + "-";
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTDocumentMaster.class, true);
@@ -339,5 +342,4 @@ public class MeetingHelper {
 		}
 		return number;
 	}
-
 }
