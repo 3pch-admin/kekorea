@@ -202,7 +202,8 @@ public class MeetingHelper {
 			int isNode = 1;
 			JSONArray children = new JSONArray();
 			while (group.hasMoreElements()) {
-				MeetingProjectLink link = (MeetingProjectLink) group.nextElement();
+				Object[] oo = (Object[]) group.nextElement();
+				MeetingProjectLink link = (MeetingProjectLink) oo[0];
 				MeetingDTO dto = new MeetingDTO(link);
 				if (isNode == 1) {
 					node.put("poid", dto.getPoid());

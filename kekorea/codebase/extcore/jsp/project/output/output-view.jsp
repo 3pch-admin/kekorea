@@ -64,7 +64,7 @@ JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 			<tr>
 				<th class="lb">산출물 제목</th>
 				<td class="indent5"><%=dto.getName()%></td>
-				<th>진행율</th>
+				<th>산출물 번호</th>
 				<td class="indent5"><%=dto.getNumber()%></td>
 			</tr>
 			<tr>

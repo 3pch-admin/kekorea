@@ -13,7 +13,7 @@ String toid = (String) request.getAttribute("toid");
 String poid = (String) request.getAttribute("poid");
 String location = (String) request.getAttribute("location");
 JSONArray list = (JSONArray) request.getAttribute("list");
-String number = (String)request.getAttribute("number");
+String number = (String) request.getAttribute("number");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="toid" id="toid" value="<%=toid != null ? toid : ""%>">
@@ -46,11 +46,11 @@ String number = (String)request.getAttribute("number");
 		<td class="indent5">
 			<span id="loc"><%=location != null ? location : OutputHelper.OUTPUT_NEW_ROOT%></span>
 			<%
-				if(StringUtils.isNull(location)) {
+			if (StringUtils.isNull(location)) {
 			%>
 			<input type="button" value="폴더선택" title="폴더선택" class="blue" onclick="folder();">
 			<%
-				}
+			}
 			%>
 		</td>
 		<th>진행율</th>
@@ -63,7 +63,7 @@ String number = (String)request.getAttribute("number");
 		<td class="indent5">
 			<input type="text" name="name" id="name" class="width-300">
 		</td>
-		<th>산출물번호</th>
+		<th class="req">산출물 번호</th>
 		<td class="indent5">
 			<input type="text" name="number" id="number" readonly="readonly" class="width-200" value="<%=number%>">
 		</td>
@@ -135,15 +135,34 @@ String number = (String)request.getAttribute("number");
 		const toid = document.getElementById("toid").value;
 		const poid = document.getElementById("poid").value;
 		const location = document.getElementById("location").value;
-		
+		const primarys = toArray("primarys");
+
+		if (location === "/Default/프로젝트") {
+			alert("산출물 저장 위치를 선택하세요.");
+			folder();
+			return false;
+		}
+
 		if (isNull(name.value)) {
 			alert("산출물 제목을 입력하세요.");
 			name.focus();
 			return false;
 		}
+		
+		if(addRows11.length === 0) {
+			alert("도번을 추가하세요.");
+			insert11();
+			return false;
+		}
 
 		if (addRows9.length === 0) {
 			alert("하나 이상의 작번이 추가되어야 합니다.");
+			insert9();
+			return false;
+		}
+
+		if (primarys.length === 0) {
+			alert("첨부파일을 선택하세요.");
 			return false;
 		}
 
@@ -163,7 +182,7 @@ String number = (String)request.getAttribute("number");
 		params.number = number;
 		params.addRows9 = addRows9
 		params.addRows11 = addRows11;
-		params.primarys = toArray("primarys");
+		params.primarys = primarys;
 		params.location = location;
 		params.toid = toid;
 		params.poid = poid;
@@ -198,8 +217,14 @@ String number = (String)request.getAttribute("number");
 		AUIGrid.resize(myGridID11);
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
+		<%
+			if(list != null) {
+		%>
 		AUIGrid.addRow(myGridID9, <%=list%>);
 		AUIGrid.bind(myGridID9, "beforeRemoveRow", auiBeforeRemoveRow);
+		<%
+			}
+		%>
 		document.getElementById("name").focus();
 	})
 

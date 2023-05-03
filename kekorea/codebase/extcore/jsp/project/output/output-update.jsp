@@ -60,7 +60,7 @@ if ("modify".equals(mode)) {
 		<td class="indent5">
 			<input type="text" name="name" id="name" class="width-300" value="<%=dto.getName() %>">
 		</td>
-		<th class="req">산출물번호</th>
+		<th class="req">산출물 번호</th>
 		<td class="indent5">
 			<input type="text" name="number" id="number" class="width-300" value="<%=dto.getNumber() %>" readonly="readonly">
 		</td>
@@ -90,7 +90,7 @@ if ("modify".equals(mode)) {
 		</td>
 	</tr>
 	<tr>
-		<th class="lb">첨부파일</th>
+		<th class="lb req">첨부파일</th>
 		<td class="indent5" colspan="3">
 			<jsp:include page="/extcore/jsp/common/attach-primary.jsp">
 				<jsp:param value="<%=dto.getOid() %>" name="oid" />
@@ -137,14 +137,35 @@ if ("modify".equals(mode)) {
 		const addRows8 = AUIGrid.getGridData(myGridID8);
 		const location = document.getElementById("location").value;
 		const oid = document.getElementById("oid").value;
+		const primarys = toArray("primarys");
+
+
+		if (location === "/Default/프로젝트") {
+			alert("산출물 저장 위치를 선택하세요.");
+			folder();
+			return false;
+		}
+
 		if (isNull(name.value)) {
 			alert("산출물 제목을 입력하세요.");
 			name.focus();
 			return false;
 		}
+		
+		if(addRows11.length === 0) {
+			alert("도번을 추가하세요.");
+			insert11();
+			return false;
+		}
 
 		if (addRows9.length === 0) {
 			alert("하나 이상의 작번이 추가되어야 합니다.");
+			insert9();
+			return false;
+		}
+
+		if (primarys.length === 0) {
+			alert("첨부파일을 선택하세요.");
 			return false;
 		}
 
@@ -165,7 +186,7 @@ if ("modify".equals(mode)) {
 		params.progress = Number(progress);
 		params.addRows9 = addRows9
 		params.addRows11 = addRows11;
-		params.primarys = toArray("primarys");
+		params.primarys = primarys;
 		params.location = location;
 		params.self = JSON.parse(isSelf);
 		toRegister(params, addRows8);

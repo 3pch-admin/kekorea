@@ -70,7 +70,7 @@ if ("modify".equals(mode)) {
 		</td>
 	</tr>
 	<tr>
-		<th class="req lb">관련부품</th>
+		<th class="lb">관련부품</th>
 		<td colspan="3">
 			<jsp:include page="/extcore/jsp/common/part-include.jsp">
 				<jsp:param value="<%=dto.getOid() %>" name="oid" />
@@ -87,7 +87,7 @@ if ("modify".equals(mode)) {
 		</td>
 	</tr>
 	<tr>
-		<th class="req lb">결재</th>
+		<th class="lb">결재</th>
 		<td colspan="5">
 			<jsp:include page="/extcore/jsp/common/approval-register.jsp">
 				<jsp:param value="<%=dto.getOid() %>" name="oid" />
@@ -123,15 +123,28 @@ if ("modify".equals(mode)) {
 		const addRows8 = AUIGrid.getGridData(myGridID8);
 		const addRows11 = AUIGrid.getGridData(myGridID11);
 		const oid = document.getElementById("oid").value;
-
+		const primarys = toArray("primarys");
+		
+		if(location === "/Default/문서") {
+			alert("문서 저장위치를 선택하세요.");
+			folder();
+			return false;
+		}
+		
 		if (isNull(name.value)) {
 			alert("문서제목을 입력하세요.");
 			name.focus();
 			return false;
 		}
-
-		if (addRows11.length === 0) {
+		
+		if(addRows11.length === 0) {
 			alert("도번을 추가하세요.");
+			insert11();
+			return false;
+		}
+		
+		if(primarys.length === 0) {
+			alert("첨부파일을 선택하세요.");
 			return false;
 		}
 

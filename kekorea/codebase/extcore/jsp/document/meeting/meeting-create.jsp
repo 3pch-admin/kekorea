@@ -106,6 +106,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		
 		if (addRows9.length === 0) {
 			alert("최소 하나이상의 작번을 추가하세요.");
+			insert9();
 			return false;
 		}
 
@@ -114,6 +115,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 			tinymce.activeEditor.focus();
 			return fasle;
 		}
+		
 		if (!confirm("등록 하시겠습니까?")) {
 			return false;
 		}
@@ -180,7 +182,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		createAUIGrid9(columns9);
 		AUIGrid.resize(myGridID9);
 		<%
-			if(!data.isEmpty()) {
+			if(data != null) {
 		%>
 		AUIGrid.bind(myGridID9, "beforeRemoveRow", auiBeforeRemoveRow);
 		AUIGrid.addRow(myGridID9, <%=data%>);
