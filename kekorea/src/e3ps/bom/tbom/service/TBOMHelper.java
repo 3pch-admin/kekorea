@@ -16,6 +16,8 @@ import e3ps.common.util.DateUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.epm.workOrder.WorkOrder;
+import e3ps.korea.configSheet.ConfigSheet;
+import e3ps.korea.configSheet.ConfigSheetProjectLink;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import e3ps.project.Project;
@@ -165,21 +167,6 @@ public class TBOMHelper {
 			number += "0001";
 		}
 		return number;
-	}
-
-	public ArrayList<TBOMMasterDataLink> getLinks(TBOMMaster master) throws Exception {
-		ArrayList<TBOMMasterDataLink> list = new ArrayList<>();
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(TBOMMasterDataLink.class, true);
-		QuerySpecUtils.toEqualsAnd(query, idx, TBOMMasterDataLink.class, "roleAObjectRef.key.id",
-				master.getPersistInfo().getObjectIdentifier().getId());
-		QueryResult result = PersistenceHelper.manager.find(query);
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			TBOMMasterDataLink link = (TBOMMasterDataLink) obj[0];
-			list.add(link);
-		}
-		return list;
 	}
 
 	/**
@@ -520,5 +507,18 @@ public class TBOMHelper {
 			return pre;
 		}
 		return null;
+	}
+
+	/**
+	 * T-BOM 프로젝트 링크 가져오기
+	 */
+	public ArrayList<TBOMMasterProjectLink> getLinks(TBOMMaster master) throws Exception {
+		ArrayList<TBOMMasterProjectLink> list = new ArrayList<>();
+		QueryResult result = PersistenceHelper.manager.navigate(master, "project", TBOMMasterProjectLink.class, false);
+		while (result.hasMoreElements()) {
+			TBOMMasterProjectLink link = (TBOMMasterProjectLink) result.nextElement();
+			list.add(link);
+		}
+		return list;
 	}
 }

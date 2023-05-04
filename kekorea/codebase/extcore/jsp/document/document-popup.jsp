@@ -37,7 +37,7 @@ String method = (String) request.getAttribute("method");
 	<tr>
 		<th>문서 제목</th>
 		<td class="indent5">
-			<input type="text" name="name" id="name" class="width-300">
+			<input type="text" name="name" id="name" class="width-200">
 		</td>
 		<th>문서 번호</th>
 		<td class="indent5">
@@ -45,7 +45,7 @@ String method = (String) request.getAttribute("method");
 		</td>
 		<th>설명</th>
 		<td class="indent5">
-			<input type="text" name="description" id="description" class="width-300">
+			<input type="text" name="description" id="description" class="width-200">
 		</td>
 		<th>상태</th>
 		<td class="indent5">

@@ -7,13 +7,13 @@
 %>
 <div class="info-header">
 	<img src="/Windchill/extcore/images/header.png">
-	태스크 회의록 정보
+	태스크 도면일람표 정보
 </div>
 
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<input type="button" value="회의록 등록" title="회의록 등록" class="blue" onclick="create();">
+			<input type="button" value="도면일람표 등록" title="도면일람표 등록" class="blue" onclick="create();">
 			<input type="button" value="링크 등록" title="링크 등록" class="orange" onclick="connect();">
 			<%
 			if (isAdmin) {
@@ -30,7 +30,7 @@
 	let myGridID;
 	const columns = [ {
 		dataField : "name",
-		headerText : "회의록 제목",
+		headerText : "CONFIG SHEET 제목",
 		dataType : "string",
 		style : "aui-left",
 		renderer : {
@@ -38,7 +38,7 @@
 			baseUrl : "javascript",
 			jsCallback : function(rowIndex, columnIndex, value, item) {
 				const oid = item.oid;
-				const url = getCallUrl("/meeting/view?oid=" + oid);
+				const url = getCallUrl("/configSheet/view?oid=" + oid);
 				popup(url);
 			}
 		},
@@ -78,14 +78,14 @@
 	function create() {
 		const toid = document.getElementById("oid").value;
 		const poid = document.getElementById("poid").value;
-		const url = getCallUrl("/meeting/create?toid=" + toid + "&poid=" + poid);
+		const url = getCallUrl("/configSheet/create?toid=" + toid + "&poid=" + poid);
 		popup(url);
 	}
 
 	function connect() {
 		const toid = document.getElementById("oid").value;
 		const poid = document.getElementById("poid").value;
-		const url = getCallUrl("/output/connect?toid=" + toid + "&poid=" + poid);
+		const url = getCallUrl("/configSheet/connect?toid=" + toid + "&poid=" + poid);
 		popup(url, 1600, 700);
 	}
 
@@ -95,7 +95,7 @@
 			const item = data[i].item;
 			arr.push(item.oid);
 		}
-		const url = getCallUrl("/output/connect");
+		const url = getCallUrl("/configSheet/connect");
 		const params = new Object();
 		params.arr = arr;
 		params.toid = toid;
@@ -109,7 +109,7 @@
 		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 		const arr = new Array();
 		if (checkedItems.length === 0) {
-			alert("삭제할 회의록 선택하세요.");
+			alert("삭제할 도면일람표를 선택하세요.");
 			return false;
 		}
 
@@ -121,7 +121,7 @@
 		const url = getCallUrl("/output/disconnect");
 		const params = new Object();
 		params.arr = arr;
-		if (!confirm("삭제 하시겠습니까?\n회의록과 태스크의 연결관계만 삭제 되어집니다.")) {
+		if (!confirm("삭제 하시겠습니까?\nCONFIG SHEET와 태스크의 연결관계만 삭제 되어집니다.")) {
 			return false;
 		}
 		parent.parent.openLayer();

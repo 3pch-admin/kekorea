@@ -8,20 +8,27 @@
 TBOMDTO dto = (TBOMDTO) request.getAttribute("dto");
 JSONArray list = (JSONArray) request.getAttribute("list");
 JSONArray data = (JSONArray) request.getAttribute("data");
+String mode = (String) request.getAttribute("mode");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+String title = "";
+if ("modify".equals(mode)) {
+	title = "수정";
+} else if ("revise".equals(mode)) {
+	title = "개정";
+}
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
-<input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
+<input type="hidden" name="oid" id="oid" value="<%=dto.getOid() %>">
 <table class="button-table">
 	<tr>
 		<td class="left">
 			<div class="header">
 				<img src="/Windchill/extcore/images/header.png">
-				T-BOM 개정
+				T-BOM <%=title %>
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="개정" title="개정" onclick="revise();">
+			<input type="button" value="<%=title %>" title="<%=title %>" onclick="<%=mode%>();">
 			<input type="button" value="뒤로" title="뒤로" class="blue" onclick="history.go(-1);">
 		</td>
 	</tr>
@@ -284,9 +291,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 </div>
 
 <script type="text/javascript">
-	function revise() {
+	function <%=mode%>() {
 		const params = new Object();
-		const url = getCallUrl("/tbom/revise");
+		const url = getCallUrl("/tbom/<%=mode%>");
 		const oid = document.getElementById("oid").value;
 		const name = document.getElementById("name");
 		const description = document.getElementById("description").value;
@@ -304,13 +311,54 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			return false;
 		}
 
-		if (!confirm("등록 하시겠습니까?")) {
+		if (addRows9.length === 0) {
+			alert("최소 하나 이상의 작번을 추가하세요.");
+			insert9();
+			return false;
+		}
+
+		if (addRows8.length === 0) {
+			alert("결재선을 지정하세요.");
+			_register();
+			return false;
+		}
+		
+		for (let i = 0; i < addRows.length; i++) {
+			const item = addRows[i];
+			const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
+
+			if (isNull(item.lotNo) || item.lotNo === 0) {
+				alert("LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.\nT-BOM 탭으로 이동하여 확인 해주세요.");
+				AUIGrid.showToastMessage(myGridID, rowIndex, 1, "LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.");
+				return false;
+			}
+			
+			if (isNull(item.code)) {
+				alert("중간코드는 공백을 입력 할 수 없습니다.\nT-BOM 탭으로 이동하여 확인 해주세요.");
+				AUIGrid.showToastMessage(myGridID, rowIndex, 2, "중간코드는 공백을 입력 할 수 없습니다.");
+				return false;
+			}
+			
+			if (isNull(item.keNumber)) {
+				alert("부품번호를 공백을 입력 할 수 없습니다.\nT-BOM 탭으로 이동하여 확인 해주세요.");
+				AUIGrid.showToastMessage(myGridID, rowIndex, 3, "부품번호는 공백을 입력 할 수 없습니다.");
+				return false;
+			}
+			
+			if (isNull(item.qty) || item.qty === 0) {
+				alert("수량의 값은 0혹은 공백을 입력 할 수 없습니다.\nT-BOM 탭으로 이동하여 확인 해주세요.");
+				AUIGrid.showToastMessage(myGridID, rowIndex, 6, "LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.");
+				return false;
+			}
+		}
+
+		if (!confirm("<%=title%> 하시겠습니까?")) {
 			return false;
 		}
 
 		params.name = name.value;
-		params.oid = oid;
 		params.description = description;
+		params.oid = oid;
 		params.addRows = addRows;
 		params.addRows9 = addRows9;
 		params.secondarys = toArray("secondarys");

@@ -3,6 +3,7 @@ package e3ps.project.task.dto;
 import java.sql.Timestamp;
 
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.DateUtils;
 import e3ps.project.task.Task;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,7 @@ public class TaskDTO {
 	private String description;
 	private String state;
 	private int duration;
+	private int holiday;
 	private String creator;
 	private Timestamp createdDate;
 	private String createdDate_txt;
@@ -59,5 +61,7 @@ public class TaskDTO {
 		setStartDate_txt(CommonUtils.getPersistableTime(task.getStartDate()));
 		setEndDate_txt(CommonUtils.getPersistableTime(task.getEndDate()));
 		setProgress(task.getProgress());
+		setDuration(DateUtils.getDuration(task.getPlanStartDate(), task.getPlanEndDate()));
+		setHoliday(DateUtils.getPlanDurationHoliday(task.getPlanStartDate(), task.getPlanEndDate()));
 	}
 }

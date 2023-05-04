@@ -2,10 +2,16 @@ package e3ps.project.task.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Map;
 
+import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
+import e3ps.project.Project;
+import e3ps.project.service.ProjectHelper;
 import e3ps.project.task.ParentTaskChildTaskLink;
 import e3ps.project.task.Task;
+import e3ps.project.task.variable.TaskStateVariable;
+import e3ps.project.variable.ProjectStateVariable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.pom.Transaction;
@@ -70,6 +76,59 @@ public class StandardTaskService extends StandardManager implements TaskService 
 					task = (Task) PersistenceHelper.manager.modify(task);
 				}
 			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void editProgress(Map<String, Object> params) throws Exception {
+		String oid = (String) params.get("oid");
+		int progress = (int) params.get("progress");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Task task = (Task) CommonUtils.getObject(oid);
+			if (progress > 100) {
+				progress = 100;
+			}
+
+			// 태스크
+			if (task.getStartDate() == null) {
+				// 중복적으로 실제 시작일이 변경 되지 않게
+				task.setStartDate(DateUtils.getCurrentTimestamp());
+			}
+
+			if (progress >= 100) {
+				task.setEndDate(DateUtils.getCurrentTimestamp());
+				task.setState(TaskStateVariable.COMPLETE);
+			} else {
+				task.setState(TaskStateVariable.INWORK);
+			}
+			task.setProgress(progress);
+			task = (Task) PersistenceHelper.manager.modify(task);
+
+			Project project = task.getProject();
+
+			// 시작이 된 흔적이 없을 경우
+			if (project.getStartDate() == null) {
+				project.setStartDate(DateUtils.getCurrentTimestamp());
+				project.setKekState(ProjectStateVariable.KEK_DESIGN_INWORK);
+				project.setState(ProjectStateVariable.INWORK);
+				project = (Project) PersistenceHelper.manager.modify(project);
+			}
+
+			ProjectHelper.service.calculation(project);
+			ProjectHelper.service.commit(project);
 
 			trs.commit();
 			trs = null;

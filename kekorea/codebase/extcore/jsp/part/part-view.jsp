@@ -101,11 +101,29 @@ JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 							headerText : "문서번호",
 							dataType : "string",
 							width : 150,
+							renderer : {
+								type : "LinkRenderer",
+								baseUrl : "javascript",
+								jsCallback : function(rowIndex, columnIndex, value, item) {
+									const oid = item.oid;
+									const url = getCallUrl("/doc/view?oid=" + oid);
+									popup(url, 1600, 800);
+								}
+							},
 						}, {
 							dataField : "name",
 							headerText : "문서 제목",
 							dataType : "string",
 							style : "aui-left",
+							renderer : {
+								type : "LinkRenderer",
+								baseUrl : "javascript",
+								jsCallback : function(rowIndex, columnIndex, value, item) {
+									const oid = item.oid;
+									const url = getCallUrl("/doc/view?oid=" + oid);
+									popup(url, 1600, 800);
+								}
+							},
 						}, {
 							dataField : "version",
 							headerText : "버전",

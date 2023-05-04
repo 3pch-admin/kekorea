@@ -208,7 +208,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 				while (result.hasMoreElements()) {
 					Persistable per = (Persistable) result.nextElement();
 					if (per instanceof LifeCycleManaged) {
-						LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) persistable,
+						LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) per,
 								State.toState("UNDERAPPROVAL"));
 					} else if (per instanceof NumberRule) {
 						NumberRule numberRule = (NumberRule) per;

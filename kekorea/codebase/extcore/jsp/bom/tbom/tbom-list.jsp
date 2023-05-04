@@ -11,7 +11,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -134,10 +134,22 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					},
 					cellMerge : true
 				}, {
+					dataField : "state",
+					headerText : "상태",
+					dataType : "string",
+					width : 100,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+					cellMerge : true,
+					mergeRef : "name",
+					mergePolicy : "restrict"
+				}, {
 					dataField : "version",
 					headerText : "버전",
 					dataType : "string",
-					width : 100,
+					width : 80,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -303,18 +315,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					cellMerge : true,
 					mergeRef : "name",
 					mergePolicy : "restrict"
-				}, {
-					dataField : "state",
-					headerText : "상태",
-					dataType : "string",
-					width : 100,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-					cellMerge : true,
-					mergeRef : "name",
-					mergePolicy : "restrict"
 				} ]
 			};
 
@@ -381,9 +381,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const url = getCallUrl("/tbom/create");
 				popup(url, 1500, 850);
 			}
-			
+
 			function exportExcel() {
-				const exceptColumnFields = ["latest"];
+				const exceptColumnFields = [ "latest" ];
 				const sessionName = document.getElementById("sessionName").value;
 				exportToExcel("TBOM 리스트", "TBOM", "TBOM 리스트", exceptColumnFields, sessionName);
 			}

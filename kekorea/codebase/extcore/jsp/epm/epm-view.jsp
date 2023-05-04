@@ -6,7 +6,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 EpmDTO dto = (EpmDTO) request.getAttribute("dto");
-JSONArray list = (JSONArray) request.getAttribute("list");
+JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 JSONArray data = (JSONArray) request.getAttribute("data");
 JSONArray history = (JSONArray) request.getAttribute("history");
 boolean isAutoCad = (boolean) request.getAttribute("isAutoCad");
@@ -175,12 +175,17 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 			let myGridID;
 			const columns = [ {
 				dataField : "name",
-				headerText : "파일이름",
+				headerText : "이름",
 				dataType : "string",
 				style : "aui-left",
 				renderer : {
 					type : "LinkRenderer",
 					baseUrl : "javascript",
+					jsCallback : function(rowIndex, columnIndex, value, item) {
+						const oid = item.oid;
+						const url = getCallUrl("/epm/view?oid=" + oid);
+						popup(url, 1400, 500);
+					}
 				},
 			}, {
 				dataField : "version",
@@ -196,7 +201,7 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 				dataField : "createdDate_txt",
 				headerText : "작성일",
 				dataType : "string",
-				width : 130,
+				width : 100,
 			}, {
 				dataField : "modifier",
 				headerText : "수정자",
@@ -206,7 +211,7 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 				dataField : "modifiedDate_txt",
 				headerText : "수정일",
 				dataType : "string",
-				width : 130,
+				width : 100,
 			} ]
 			function createAUIGrid(columnLayout) {
 				const props = {
@@ -219,9 +224,7 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 					autoGridHeight : true,
 				}
 				myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-				AUIGrid.setGridData(myGridID,
-		<%=list%>
-			);
+				AUIGrid.setGridData(myGridID, <%=versionHistory%>);
 			}
 		</script>
 	</div>

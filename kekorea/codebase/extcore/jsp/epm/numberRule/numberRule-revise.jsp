@@ -24,62 +24,41 @@
 		formatString : "###0",
 		editable : false
 	}, {
+		dataField : "unitName",
+		headerText : "UNIT NAME",
+		dataType : "string",
+		width : 200,
+		editable : false
+	}, {
 		dataField : "name",
-		headerText : "DRAWING TITLE",
+		headerText : "도번명",
 		dataType : "string",
-		style : "aui-left",
+		width : 250,
 		editable : false
 	}, {
-		dataField : "keNumber",
-		headerText : "DWG NO (개정전)",
+		dataField : "number",
+		headerText : "도번",
 		dataType : "string",
-		width : 140,
-		editable : false
-	}, {
-		dataField : "keNumberNext",
-		headerText : "DWG NO (개정후)",
-		dataType : "string",
-		width : 140,
+		width : 100,
 		editable : false
 	}, {
 		dataField : "version",
 		headerText : "버전(개정전)",
 		dataType : "numeric",
-		width : 80,
+		width : 100,
 		formatString : "###0",
 		editable : false,
 	}, {
 		dataField : "next",
 		headerText : "버전(개정후)",
 		dataType : "numeric",
-		width : 80,
+		width : 100,
 		formatString : "###0",
 	}, {
 		dataField : "note",
 		headerText : "개정사유",
 		dataType : "string",
 		style : "aui-left",
-	}, {
-		dataField : "primary",
-		headerText : "개정도면",
-		dataType : "string",
-		width : 100,
-		renderer : {
-			type : "TemplateRenderer",
-		},
-	}, {
-		width : 100,
-		editable : false,
-		renderer : {
-			type : "ButtonRenderer",
-			labelText : "파일선택",
-			onclick : function(rowIndex, columnIndex, value, item) {
-				recentGridItem = item
-				const _$uid = item._$uid;
-				const url = getCallUrl("/aui/primary?oid=" + _$uid + "&method=attach");
-				popup(url, 1000, 300);
-			}
-		}
 	}, ]
 
 	function createAUIGrid(columnLayout) {
@@ -98,6 +77,8 @@
 
 	function readyHandler() {
 		for (let i = 0; i < data.length; i++) {
+			const item = data[i].item;
+			item.next = item.version + 1;
 			AUIGrid.addRow(myGridID, data[i].item, "last");
 		}
 	}
@@ -105,7 +86,7 @@
 	function remove() {
 		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 		for (let i = checkedItems.length - 1; i >= 0; i--) {
-			let rowIndex = checkedItems[i].rowIndex;
+			const rowIndex = checkedItems[i].rowIndex;
 			AUIGrid.removeRow(myGridID, rowIndex);
 		}
 	}
@@ -120,16 +101,10 @@
 
 		for (let i = 0; i < addRows.length; i++) {
 			const item = addRows[i];
-			const version = item.version;
-			const next = item.next;
-			const keNumberNext = item.keNumberNext;
-			const keNumber = item.keNumber;
-
 			if (isNull(item.note)) {
 				AUIGrid.showToastMessage(myGridID, i, 6, "개정사유를 입력하세요.");
 				return false;
 			}
-
 		}
 
 		if (!confirm("개정 하시겠습니까?")) {
@@ -145,6 +120,8 @@
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		});
 	}

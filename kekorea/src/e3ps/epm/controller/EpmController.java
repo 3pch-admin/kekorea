@@ -96,7 +96,7 @@ public class EpmController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		EPMDocument epm = (EPMDocument) CommonUtils.getObject(oid);
 		EpmDTO dto = new EpmDTO(epm);
-		JSONArray list = EpmHelper.manager.history(epm.getMaster());
+		JSONArray versionHistory = EpmHelper.manager.versionHistory(epm);
 		JSONArray data = EpmHelper.manager.jsonAuiProject(dto.getOid());
 		boolean isAutoCad = dto.getApplicationType().equalsIgnoreCase("AUTOCAD");
 		boolean isCreo = dto.getApplicationType().equalsIgnoreCase("CREO");
@@ -104,7 +104,7 @@ public class EpmController extends BaseController {
 		model.addObject("isCreo", isCreo);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
-		model.addObject("list", list);
+		model.addObject("versionHistory", versionHistory);
 		model.setViewName("popup:/epm/epm-view");
 		return model;
 	}

@@ -563,7 +563,78 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					alert("변경된 내용이 없습니다.");
 					return false;
 				}
+				
+				for (let i = 0; i < addRows.length; i++) {
+					const item = addRows[i];
+					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
+					
+					if (isNull(item.size_code)) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "사이즈를 선택하세요.");
+						return false;
+					}
+					
+					if (isNull(item.lotNo) || item.lotNo === 0) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 2, "LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.");
+						return false;
+					}
+					
+					if (isNull(item.unitName)) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 3, "UNIT NAME을 입력하세요.");
+						return false;
+					}
+					
+					if (isNull(item.name)) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 4, "도면명을 입력하세요.");
+						return false;
+					}
+					
+					if (isNull(item.classificationWritingDepartments_code)) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 7, "작성부서를 선택하세요.");
+						return false;
+					}
+					
+					if (isNull(item.writtenDocuments_code)) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 8, "작성문서구분을 선택하세요.");
+						return false;
+					}
+				}
 
+				
+				for (let i = 0; i < editRows.length; i++) {
+					const item = editRows[i];
+					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
+					
+					if (isNull(item.size_code)) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "사이즈를 선택하세요.");
+						return false;
+					}
+					
+					if (isNull(item.lotNo) || item.lotNo === 0) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 2, "LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.");
+						return false;
+					}
+					
+					if (isNull(item.unitName)) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 3, "UNIT NAME을 입력하세요.");
+						return false;
+					}
+					
+					if (isNull(item.name)) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 4, "도면명을 입력하세요.");
+						return false;
+					}
+					
+					if (isNull(item.classificationWritingDepartments_code)) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 7, "작성부서를 선택하세요.");
+						return false;
+					}
+					
+					if (isNull(item.writtenDocuments_code)) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 8, "작성문서구분을 선택하세요.");
+						return false;
+					}
+				}
+				
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
 				}

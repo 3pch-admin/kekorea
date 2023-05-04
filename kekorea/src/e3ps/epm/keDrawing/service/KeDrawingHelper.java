@@ -279,7 +279,6 @@ public class KeDrawingHelper {
 
 		for (KeDrawingDTO dto : addRow) {
 			String keNumber = dto.getKeNumber();
-			int lotNo = dto.getLotNo();
 			QuerySpec query = new QuerySpec();
 			int idx = query.appendClassList(EPMDocument.class, true);
 			int idx_m = query.appendClassList(EPMDocumentMaster.class, false);
@@ -298,7 +297,6 @@ public class KeDrawingHelper {
 
 		for (KeDrawingDTO dto : editRow) {
 			String keNumber = dto.getKeNumber();
-			int lotNo = dto.getLotNo();
 			QuerySpec query = new QuerySpec();
 			int idx = query.appendClassList(EPMDocument.class, true);
 			int idx_m = query.appendClassList(EPMDocumentMaster.class, false);

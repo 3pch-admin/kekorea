@@ -14,7 +14,7 @@ WTUser softUser = (WTUser) request.getAttribute("softUser");
 		<td class="left">
 			<div class="header">
 				<img src="/Windchill/extcore/images/header.png">
-				도면일람표 정보
+				프로젝트 담당자 수정
 			</div>
 		</td>
 		<td class="right">
@@ -90,6 +90,8 @@ WTUser softUser = (WTUser) request.getAttribute("softUser");
 			if (data.result) {
 				opener.document.location.reload();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}

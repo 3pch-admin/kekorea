@@ -94,8 +94,6 @@ String loc = (String) request.getAttribute("loc");
 <table class="button-table">
 	<tr>
 		<td class="left">
-			<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('document-only');">
-			<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('document-only');">
 			<input type="button" value="추가" title="추가" class="blue" onclick="<%=method%>();">
 			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
@@ -266,7 +264,7 @@ String loc = (String) request.getAttribute("loc");
 	function <%=method%>	() {
 		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 		if (checkedItems.length == 0) {
-			alert("추가할 도면을 선택하세요.");
+			alert("추가할 제작사양서를 선택하세요.");
 			return false;
 		}
 		openLayer();

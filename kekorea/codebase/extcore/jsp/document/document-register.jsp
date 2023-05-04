@@ -199,7 +199,7 @@
 					if (data.result) {
 						document.location.href = getCallUrl("/workspace/approval");
 					} else {
-						closeLayer();
+						parent.closeLayer();
 					}
 				})
 			}

@@ -5,10 +5,9 @@ public class Test {
 	public static void main(String[] args) throws Exception {
 
 
-		String a = "/Default/dafdf/공정계획서";
+		String a = "KMCA00001";
 		
-
-		System.out.println(a.substring(a.lastIndexOf("/")));
+		System.out.println(a.substring(4, 9));
 		
 		
 		System.exit(0);

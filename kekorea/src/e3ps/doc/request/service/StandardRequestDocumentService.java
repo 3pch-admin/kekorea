@@ -18,7 +18,6 @@ import e3ps.common.util.StringUtils;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.dto.RequestDocumentDTO;
-import e3ps.doc.service.DocumentHelper;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.output.Output;
@@ -46,7 +45,6 @@ import wt.org.OrganizationServicesHelper;
 import wt.org.WTUser;
 import wt.ownership.Ownership;
 import wt.pom.Transaction;
-import wt.projmgmt.admin.ProjectState;
 import wt.services.StandardManager;
 import wt.util.WTException;
 
@@ -362,6 +360,9 @@ public class StandardRequestDocumentService extends StandardManager implements R
 				RequestDocumentProjectLink link = RequestDocumentProjectLink
 						.newRequestDocumentProjectLink(requestDocument, project);
 				PersistenceHelper.manager.save(link);
+
+				// 계산
+				ProjectHelper.service.commit(project);
 			}
 
 		} catch (Exception e) {

@@ -131,7 +131,7 @@
 	function remove() {
 		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 		for (let i = checkedItems.length - 1; i >= 0; i--) {
-			let rowIndex = checkedItems[i].rowIndex;
+			const rowIndex = checkedItems[i].rowIndex;
 			AUIGrid.removeRow(myGridID, rowIndex);
 		}
 	}
@@ -153,11 +153,6 @@
 				AUIGrid.showToastMessage(myGridID, i, 8, "개정사유를 입력하세요.");
 				return false;
 			}
-
-// 			if (isNull(item.primary)) {
-// 				AUIGrid.showToastMessage(myGridID, i, 9, "첨부파일 선택하세요.");
-// 				return false;
-// 			}
 		}
 
 		if (!confirm("개정 하시겠습니까?")) {

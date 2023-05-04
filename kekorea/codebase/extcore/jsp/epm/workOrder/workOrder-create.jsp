@@ -6,7 +6,7 @@
 String workOrderType = (String) request.getAttribute("workOrderType");
 String toid = (String) request.getAttribute("toid");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -56,8 +56,8 @@ String toid = (String) request.getAttribute("toid");
 				</td>
 				<th>진행율</th>
 				<td class="indent5">
-					<input type="number" name="progress" id="progress" class="width-200" value="0">
-				</td>				
+					<input type="text" name="progress" id="progress" class="width-200">
+				</td>
 			</tr>
 			<tr>
 				<th class="lb">내용</th>
@@ -351,28 +351,30 @@ String toid = (String) request.getAttribute("toid");
 			return a.sort - b.sort;
 		});
 
-		if (isNull(name.value)) {
-			alert("도면일람표 제목을 입력하세요.");
-			name.focus();
-			return false;
+// 		if (isNull(name.value)) {
+// 			alert("도면일람표 제목을 입력하세요.");
+// 			name.focus();
+// 			return false;
+// 		}
+
+// 		if (addRows9.length === 0) {
+// 			alert("최소 하나이상의 작번을 추가하세요.");
+// 			_insert();
+// 			return false;
+// 		}
+
+// 		if (addRows8.length === 0) {
+// 			alert("결재선을 지정하세요.");
+// 			_register();
+// 			return false;
+// 		}
+
+		for (let i = 0; i < addRows.length; i++) {
+			const item = addRows[i];
+			const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
+			
 		}
 
-		if (addRows9.length === 0) {
-			alert("최소 하나이상의 작번을 추가하세요.");
-			_insert();
-			return false;
-		}
-
-		if (addRows8.length === 0) {
-			alert("결재선을 지정하세요.");
-			_register();
-			return false;
-		}
-
-		if (addRows.length === 0) {
-			alert("도면일람표의 데이터는 최소 하나 이상이어야 합니다.");
-			return false;
-		}
 
 		if (!confirm("등록 하시겠습니까?")) {
 			return false;
@@ -441,6 +443,24 @@ String toid = (String) request.getAttribute("toid");
 		createAUIGrid8(columns8);
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
+
+		// 진행율
+		const field = document.getElementById("progress");
+		field.addEventListener("input", function(event) {
+			const value = event.target.value;
+			if (value.slice(0, 1) === "0") {
+				alert("첫째 자리의 값은 0을 입력 할 수 없습니다.");
+				event.target.value = "";
+			}
+
+			if (value.length > 3 || !/^[1-9][0-9]{0,2}$|^0$/.test(value)) {
+				event.target.value = value.replace(/[^\d]/g, '').slice(0, 3);
+			}
+
+			if (value > 100) {
+				event.target.value = 100;
+			}
+		})
 	})
 
 	window.addEventListener("resize", function() {

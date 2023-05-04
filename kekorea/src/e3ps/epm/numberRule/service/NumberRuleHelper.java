@@ -58,6 +58,9 @@ public class NumberRuleHelper {
 		return map;
 	}
 
+	/**
+	 * KEK 도번 마지막 도번 + 1 가져오기
+	 */
 	public Map<String, Object> last(String number) throws Exception {
 		Map<String, Object> map = new HashMap<>();
 		DecimalFormat df = new DecimalFormat("00000");
@@ -69,12 +72,21 @@ public class NumberRuleHelper {
 		QuerySpecUtils.toOrderBy(query, idx, NumberRuleMaster.class, NumberRuleMaster.NUMBER, true);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		String next = "A00000";
+
+		System.out.println(query);
+
 		if (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			NumberRuleMaster rule = (NumberRuleMaster) obj[0];
+
+			System.out.println("number=" + rule.getNumber());
+
 			seq1 = rule.getNumber().substring(3, 4);
-			seq2 = df.format(Integer.parseInt(rule.getNumber().substring(4, 8))); // 00001
-			next = seq1 + df.format(Integer.parseInt(rule.getNumber().substring(4, 8)) + 1); // 00001
+			System.out.println("seq1=" + seq1);
+			seq2 = df.format(Integer.parseInt(rule.getNumber().substring(4, 9))); // 00001
+			System.out.println("seq2=" + seq2);
+			next = seq1 + df.format(Integer.parseInt(rule.getNumber().substring(4, 9)) + 1); // 00001
+			System.out.println("next=" + next);
 			int pos = 0;
 			for (int i = 0; i < alphabet.length; i++) {
 				if (seq1.equals(alphabet[i])) {
@@ -137,8 +149,8 @@ public class NumberRuleHelper {
 		}
 
 		for (NumberRuleDTO dto : editRow) {
-			KeDrawingMaster master = (KeDrawingMaster) CommonUtils.getObject(dto.getMoid());
-			String number = master.getKeNumber();
+			NumberRuleMaster master = (NumberRuleMaster) CommonUtils.getObject(dto.getMoid());
+			String number = master.getNumber();
 			String diffNumber = dto.getNumber();
 
 			// 원본 도면의 번호 혹은 LON NO 가 변경 될시 체크만한다...

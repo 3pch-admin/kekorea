@@ -19,7 +19,6 @@ import e3ps.doc.meeting.dto.MeetingDTO;
 import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
-import e3ps.project.template.Template;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.doc.WTDocumentMaster;
@@ -203,7 +202,7 @@ public class MeetingHelper {
 			JSONArray children = new JSONArray();
 			while (group.hasMoreElements()) {
 				Object[] oo = (Object[]) group.nextElement();
-				MeetingProjectLink link = (MeetingProjectLink) oo[0];
+				MeetingProjectLink link = (MeetingProjectLink) oo[2];
 				MeetingDTO dto = new MeetingDTO(link);
 				if (isNode == 1) {
 					node.put("poid", dto.getPoid());

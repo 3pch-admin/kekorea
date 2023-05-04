@@ -179,8 +179,12 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 				String oid = (String) removeRow.get("oid");
 				TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
 
-				ArrayList<TBOMMasterDataLink> list = TBOMHelper.manager.getLinks(master);
-				for (TBOMMasterDataLink link : list) {
+				QueryResult result = PersistenceHelper.manager.navigate(master, "data", TBOMMasterDataLink.class,
+						false);
+				while (result.hasMoreElements()) {
+					TBOMMasterDataLink link = (TBOMMasterDataLink) result.nextElement();
+					TBOMData data = link.getData();
+					PersistenceHelper.manager.delete(data);
 					PersistenceHelper.manager.delete(link);
 				}
 

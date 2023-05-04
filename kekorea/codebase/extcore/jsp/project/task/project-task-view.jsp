@@ -187,10 +187,9 @@ int taskType = (int) request.getAttribute("taskType");
 						<td class="center"><%=dto.getTaskType()%></td>
 						<td class="center"><%=dto.getAllocate()%>%
 						</td>
-						<td class="center">
-							<%
-							//=dto.getName()
-							%>
+						<td class="center"><%=dto.getDuration()%>[
+							<font color="red"><%=dto.getHoliday()%></font>
+							]일
 						</td>
 						<td class="center"><%=dto.getState()%></td>
 					</tr>
@@ -199,7 +198,10 @@ int taskType = (int) request.getAttribute("taskType");
 						<th class="rb">계획 종요일</th>
 						<th class="rb">실제 시작일</th>
 						<th class="rb">실제 종료일</th>
-						<th class="rb">진행율</th>
+						<th class="rb">
+							진행율&nbsp;
+							<img src="/Windchill/extcore/images/edit.gif" class="edit" onclick="edit();">
+						</th>
 					</tr>
 					<tr>
 						<td class="center"><%=dto.getPlanEndDate_txt()%></td>
@@ -270,6 +272,14 @@ int taskType = (int) request.getAttribute("taskType");
 					<jsp:param value="<%=isAdmin%>" name="isAdmin" />
 				</jsp:include>
 				<%
+				} else if (taskType == 7) {
+				%>
+				<jsp:include page="/extcore/jsp/project/task/workOrder.jsp">
+					<jsp:param value="<%=data.getOid()%>" name="poid" />
+					<jsp:param value="<%=dto.getOid()%>" name="toid" />
+					<jsp:param value="<%=isAdmin%>" name="isAdmin" />
+				</jsp:include>
+				<%
 				}
 				%>
 			</div>
@@ -298,6 +308,17 @@ int taskType = (int) request.getAttribute("taskType");
 		</div>
 
 		<script type="text/javascript">
+			function edit() {
+				const oid = document.getElementById("oid").value;
+				const url = getCallUrl("/task/editProgress?oid=" + oid);
+				popup(url, 500, 200);
+			}
+
+			function _reload() {
+				document.location.reload();
+				parent.readyHandler();
+			}
+
 			document.addEventListener("DOMContentLoaded", function() {
 				$("#tabs").tabs();
 				createAUIGrid(columns);

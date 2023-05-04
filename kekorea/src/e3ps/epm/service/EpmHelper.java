@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
@@ -210,14 +211,24 @@ public class EpmHelper {
 		return map;
 	}
 
-	// 버전이력
-	public JSONArray history(Mastered master) throws Exception {
-		ArrayList<EpmDTO> list = new ArrayList<>();
-		QueryResult result = VersionControlHelper.service.allIterationsOf(master);
+	/**
+	 * 도면 버전 이력
+	 */
+	public JSONArray versionHistory(EPMDocument epm) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		QueryResult result = VersionControlHelper.service.allIterationsOf(epm.getMaster());
 		while (result.hasMoreElements()) {
-			EPMDocument epm = (EPMDocument) result.nextElement();
-			EpmDTO dto = new EpmDTO(epm);
-			list.add(dto);
+			Map<String, Object> map = new HashMap<>();
+			EPMDocument dd = (EPMDocument) result.nextElement();
+			map.put("oid", dd.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("number", dd.getNumber());
+			map.put("name", dd.getName());
+			map.put("version", CommonUtils.getFullVersion(dd));
+			map.put("creator", dd.getCreatorFullName());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(dd.getCreateTimestamp()));
+			map.put("modifier", dd.getModifierName());
+			map.put("modifiedDate_txt", dd.getModifierFullName());
+			list.add(map);
 		}
 		return JSONArray.fromObject(list);
 	}

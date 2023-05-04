@@ -46,14 +46,14 @@
 		dataField : "version",
 		headerText : "버전(개정전)",
 		dataType : "numeric",
-		width : 80,
+		width : 100,
 		formatString : "###0",
 		editable : false,
 	}, {
 		dataField : "next",
 		headerText : "버전(개정후)",
 		dataType : "numeric",
-		width : 80,
+		width : 100,
 		formatString : "###0",
 		editable : false,
 	}, {
@@ -92,6 +92,7 @@
 			rowNumHeaderText : "번호",
 			selectionMode : "multipleCells",
 			showRowCheckColumn : true,
+			enableSorting : false,
 			editable : true
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
@@ -154,8 +155,13 @@
 
 	function remove() {
 		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+		if(checkedItems.length === 0) {
+			alert("삭제할 행을 선택하세요.");
+			return false;
+		}
+		
 		for (let i = checkedItems.length - 1; i >= 0; i--) {
-			let rowIndex = checkedItems[i].rowIndex;
+			const rowIndex = checkedItems[i].rowIndex;
 			AUIGrid.removeRow(myGridID, rowIndex);
 		}
 	}
@@ -210,6 +216,8 @@
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		});
 	}

@@ -54,10 +54,10 @@ public class StandardEpmService extends StandardManager implements EpmService {
 						.newApprovalContractPersistableLink(contract, epm);
 				PersistenceHelper.manager.save(aLink);
 			}
-			
+
 			for (Map<String, String> addRow11 : addRows11) {
 				String oid = addRow11.get("oid");
-				NumberRule numberRule = (NumberRule)CommonUtils.getObject(oid);
+				NumberRule numberRule = (NumberRule) CommonUtils.getObject(oid);
 				ApprovalContractPersistableLink aLink = ApprovalContractPersistableLink
 						.newApprovalContractPersistableLink(contract, numberRule);
 				PersistenceHelper.manager.save(aLink);
@@ -66,6 +66,24 @@ public class StandardEpmService extends StandardManager implements EpmService {
 			if (approvalRows.size() > 0) {
 				WorkspaceHelper.service.register(contract, agreeRows, approvalRows, receiveRows);
 			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void convertAutoCADToPDF(EPMDocument epm) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
 
 			trs.commit();
 			trs = null;

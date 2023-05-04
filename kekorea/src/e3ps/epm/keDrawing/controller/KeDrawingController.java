@@ -111,7 +111,7 @@ public class KeDrawingController extends BaseController {
 				result.put("result", FAIL);
 				return result;
 			}
-
+			
 			result = KeDrawingHelper.manager.isValid(addRow, editRow);
 			// true 중복있음
 			if ((boolean) result.get("isExist")) {

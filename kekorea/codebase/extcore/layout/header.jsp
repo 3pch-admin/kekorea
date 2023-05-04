@@ -141,9 +141,9 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 					<li>
 						<a onclick="moveToPage(this, '/part/list', '부품 관리 > 부품 조회');">부품 조회</a>
 					</li>
-					<li>
-						<a href="profile.html">코드 생성</a>
-					</li>
+<!-- 					<li> -->
+<!-- 						<a href="profile.html">코드 생성</a> -->
+<!-- 					</li> -->
 					<li>
 						<a onclick="moveToPage(this, '/part/bundle', '부품 관리 > 부품 일괄 등록');">부품 일괄 등록</a>
 					</li>

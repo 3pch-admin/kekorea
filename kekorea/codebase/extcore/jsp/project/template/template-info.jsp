@@ -140,6 +140,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						enableRightDownFocus : true,
 						fixedColumnCount : 1,
 						editableOnFixedCell : true,
+						treeLevelIndent : 24,
 						contextMenuItems : [ {
 							label : "선택된 행 이전 추가",
 							callback : contextItemHandler

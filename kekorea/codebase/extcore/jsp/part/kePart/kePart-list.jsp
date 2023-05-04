@@ -496,8 +496,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
 					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
-					if (item.lotNo === 0) {
-						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
+					if (isNull(item.lotNo) || item.lotNo === 0) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 
@@ -520,18 +520,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						AUIGrid.showToastMessage(myGridID, rowIndex, 4, "KokusaiModel 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
-
-					// 					if (isNull(item.primary)) {
-					// 						AUIGrid.showToastMessage(myGridID, rowIndex, 12, "첨부파일을 선택하세요.");
-					// 						return false;
-					// 					}
 				}
 
 				for (let i = 0; i < editRows.length; i++) {
 					const item = editRows[i];
 					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
-					if (item.lotNo === 0) {
-						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
+					if (isNull(item.lotNo) || item.lotNo === 0) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 
@@ -554,11 +549,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						AUIGrid.showToastMessage(myGridID, rowIndex, 4, "KokusaiModel 값은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
-
-					// 					if (isNull(item.primary)) {
-					// 						AUIGrid.showToastMessage(myGridID, rowIndex, 12, "첨부파일을 선택하세요.");
-					// 						return false;
-					// 					}
 				}
 
 				if (!confirm("저장 하시겠습니까?")) {
@@ -568,7 +558,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				params.addRows = addRows;
 				params.removeRows = removeRows;
 				params.editRows = editRows;
-				console.log(params);
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);

@@ -190,9 +190,9 @@ public class TBOMController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "T-BOM 수정 페이지")
-	@GetMapping(value = "/modify")
-	public ModelAndView modify(@RequestParam String oid) throws Exception {
+	@Description(value = "T-BOM 수정 & 개정 페이지")
+	@GetMapping(value = "/update")
+	public ModelAndView update(@RequestParam String oid, @RequestParam String mode) throws Exception {
 		ModelAndView model = new ModelAndView();
 		TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
 		TBOMDTO dto = new TBOMDTO(master);
@@ -206,7 +206,8 @@ public class TBOMController extends BaseController {
 		model.addObject("list", list);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
-		model.setViewName("popup:/bom/tbom/tbom-modify");
+		model.addObject("mode", mode);
+		model.setViewName("popup:/bom/tbom/tbom-update");
 		return model;
 	}
 
@@ -243,26 +244,6 @@ public class TBOMController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "T-BOM 개정 페이지")
-	@GetMapping(value = "/revise")
-	public ModelAndView revise(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
-		TBOMDTO dto = new TBOMDTO(master);
-		JSONArray list = TBOMHelper.manager.jsonAuiProject(oid);
-		JSONArray data = TBOMHelper.manager.getData(master);
-		boolean isAdmin = CommonUtils.isAdmin();
-		model.addObject("isAdmin", isAdmin);
-		WTUser sessionUser = CommonUtils.sessionUser();
-		model.addObject("isAdmin", isAdmin);
-		model.addObject("sessionUser", sessionUser);
-		model.addObject("list", list);
-		model.addObject("data", data);
-		model.addObject("dto", dto);
-		model.setViewName("popup:/bom/tbom/tbom-revise");
-		return model;
-	}
-
 	@Description(value = "T-BOM 개정")
 	@PostMapping(value = "/revise")
 	@ResponseBody
@@ -292,7 +273,7 @@ public class TBOMController extends BaseController {
 		model.setViewName("popup:/bom/tbom/tbom-connect");
 		return model;
 	}
-	
+
 	@Description(value = "산출물 태스크에서 T-BOM 연결")
 	@PostMapping(value = "/connect")
 	@ResponseBody

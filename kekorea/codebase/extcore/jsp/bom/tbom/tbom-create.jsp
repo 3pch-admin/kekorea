@@ -3,7 +3,7 @@
 <%@page import="e3ps.doc.service.DocumentHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!-- AUIGrid -->
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -294,6 +294,47 @@
 			return false;
 		}
 
+		if (addRows9.length === 0) {
+			alert("최소 하나 이상의 작번을 추가하세요.");
+			insert9();
+			return false;
+		}
+
+		if (addRows8.length === 0) {
+			alert("결재선을 지정하세요.");
+			_register();
+			return false;
+		}
+		
+		for (let i = 0; i < addRows.length; i++) {
+			const item = addRows[i];
+			const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
+
+			if (isNull(item.lotNo) || item.lotNo === 0) {
+				alert("LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.\nT-BOM 탭으로 이동하여 확인 해주세요.");
+				AUIGrid.showToastMessage(myGridID, rowIndex, 1, "LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.");
+				return false;
+			}
+			
+			if (isNull(item.code)) {
+				alert("중간코드는 공백을 입력 할 수 없습니다.\nT-BOM 탭으로 이동하여 확인 해주세요.");
+				AUIGrid.showToastMessage(myGridID, rowIndex, 2, "중간코드는 공백을 입력 할 수 없습니다.");
+				return false;
+			}
+			
+			if (isNull(item.keNumber)) {
+				alert("부품번호를 공백을 입력 할 수 없습니다.\nT-BOM 탭으로 이동하여 확인 해주세요.");
+				AUIGrid.showToastMessage(myGridID, rowIndex, 3, "부품번호는 공백을 입력 할 수 없습니다.");
+				return false;
+			}
+			
+			if (isNull(item.qty) || item.qty === 0) {
+				alert("수량의 값은 0혹은 공백을 입력 할 수 없습니다.\nT-BOM 탭으로 이동하여 확인 해주세요.");
+				AUIGrid.showToastMessage(myGridID, rowIndex, 6, "LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.");
+				return false;
+			}
+		}
+
 		if (!confirm("등록 하시겠습니까?")) {
 			return false;
 		}
@@ -329,7 +370,7 @@
 						keNumber : data.keNumber,
 						lotNo : data.lotNo,
 						oid : data.oid,
-// 						code : data.code,
+						// 						code : data.code,
 						model : data.model,
 						qty : 1,
 						unit : "EA",

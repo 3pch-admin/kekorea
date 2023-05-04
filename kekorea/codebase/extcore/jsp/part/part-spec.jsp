@@ -37,6 +37,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<div id="grid_wrap" style="height: 350px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
+			const list = [ "KRW", "JPY" ];
 			const columns = [ {
 				dataField : "dwg_check",
 				headerText : "체크(DWG_NO)",
@@ -93,6 +94,39 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				headerText : "통화",
 				dataType : "string",
 				width : 100,
+				renderer : {
+					type : "IconRenderer",
+					iconWidth : 16,
+					iconHeight : 16,
+					iconPosition : "aisleRight",
+					iconTableRef : {
+						"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+					},
+					onClick : function(event) {
+						AUIGrid.openInputer(event.pid);
+					}
+				},
+				editRenderer : {
+					type : "ComboBoxRenderer",
+					autoCompleteMode : true,
+					autoEasyMode : true,
+					matchFromFirst : false,
+					showEditorBtnOver : false,
+					list : list,
+					validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+						let isValid = false;
+						for (let i = 0, len = list.length; i < len; i++) {
+							if (list[i] == newValue) {
+								isValid = true;
+								break;
+							}
+						}
+						return {
+							"validate" : isValid,
+							"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+						};
+					}
+				},
 			} ]
 
 			function createAUIGrid(columnLayout) {

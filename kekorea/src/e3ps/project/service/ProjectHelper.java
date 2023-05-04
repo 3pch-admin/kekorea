@@ -1206,7 +1206,8 @@ public class ProjectHelper {
 				sum += task.getProgress();
 			}
 
-			if (result.size() != 0) {
+			if (result.size() != 0 && sum != 0) {
+
 				int comp = sum / result.size();
 				tt.setProgress(comp);
 

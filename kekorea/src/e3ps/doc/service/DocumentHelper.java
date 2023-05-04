@@ -330,7 +330,7 @@ public class DocumentHelper {
 			map.put("name", part.getName());
 			map.put("nameOfParts", IBAUtils.getStringValue(part, "NAME_OF_PARTS"));
 			map.put("version", CommonUtils.getFullVersion(part));
-			map.put("state", CommonUtils.getFullVersion(part));
+			map.put("state", part.getLifeCycleState().getDisplay());
 			map.put("creator", part.getCreatorFullName());
 			map.put("createdDate_txt", CommonUtils.getPersistableTime(part.getCreateTimestamp()));
 			list.add(map);

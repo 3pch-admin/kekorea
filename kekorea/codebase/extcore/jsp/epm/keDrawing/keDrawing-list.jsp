@@ -560,8 +560,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
 					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
-					if (item.lotNo === 0) {
-						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
+					if (isNull(item.lotNo) || item.lotNo === 0) {
+						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
 
@@ -579,7 +579,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				for (let i = 0; i < editRows.length; i++) {
 					const item = editRows[i];
 					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
-					if (item.lotNo === 0) {
+					if (isNull(item.lotNo) || item.lotNo === 0) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
 						return false;
 					}

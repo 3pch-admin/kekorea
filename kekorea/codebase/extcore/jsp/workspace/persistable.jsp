@@ -1,3 +1,5 @@
+<%@page import="e3ps.bom.tbom.TBOMMasterProjectLink"%>
+<%@page import="e3ps.bom.tbom.service.TBOMHelper"%>
 <%@page import="e3ps.project.output.OutputProjectLink"%>
 <%@page import="e3ps.project.output.service.OutputHelper"%>
 <%@page import="wt.doc.WTDocument"%>
@@ -455,6 +457,8 @@ ConfigSheet configSheet = (ConfigSheet) per;
 
 <%
 } else if (per instanceof TBOMMaster) {
+TBOMMaster master = (TBOMMaster) per;
+String toid = master.getPersistInfo().getObjectIdentifier().getStringValue();
 %>
 <!-- T-BOM -->
 <table class="button-table">
@@ -467,6 +471,90 @@ ConfigSheet configSheet = (ConfigSheet) per;
 		</td>
 	</tr>
 </table>
+
+<table class="view-table">
+	<colgroup>
+		<col width="*">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+	</colgroup>
+	<tr>
+		<th class="lb">T-BOM 제목</th>
+		<th class="lb">버전</th>
+		<th class="lb">상태</th>
+		<th class="lb">작성자</th>
+		<th class="lb">작성일</th>
+	</tr>
+	<tr>
+		<td class="indent5">
+			<a href="javascript:_detail('<%=toid%>');"><%=master.getName()%></a>
+		</td>
+		<td class="center"><%=master.getVersion()%></td>
+		<td class="center"><%=master.getLifeCycleState().getDisplay()%></td>
+		<td class="center"><%=master.getCreatorFullName()%></td>
+		<td class="center"><%=CommonUtils.getPersistableTime(master.getCreateTimestamp())%></td>
+	</tr>
+</table>
+
+<table class="button-table">
+	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				관련 작번
+			</div>
+		</td>
+	</tr>
+</table>
+
+<table class="view-table">
+	<colgroup>
+		<col width="100">
+		<col width="100">
+		<col width="80">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="120">
+		<col width="*">
+	</colgroup>
+	<tr>
+		<th class="lb">KEK 작번</th>
+		<th class="lb">KE 작번</th>
+		<th class="lb">작번유형</th>
+		<th class="lb">거래처</th>
+		<th class="lb">설치장소</th>
+		<th class="lb">막종</th>
+		<th class="lb">막종상세</th>
+		<th class="lb">작업내용</th>
+	</tr>
+	<%
+	ArrayList<TBOMMasterProjectLink> list = TBOMHelper.manager.getLinks(master);
+	for (TBOMMasterProjectLink link : list) {
+		Project project = link.getProject();
+		String poid = project.getPersistInfo().getObjectIdentifier().getStringValue();
+	%>
+	<tr>
+		<td class="center">
+			<a href="javascript:_detail('<%=poid%>');"><%=project.getKekNumber()%></a>
+		</td>
+		<td class="center">
+			<a href="javascript:_detail('<%=poid%>');"><%=project.getKeNumber()%></a>
+		</td>
+		<td class="center"><%=project.getProjectType().getName()%></td>
+		<td class="center"><%=project.getCustomer().getName()%></td>
+		<td class="center"><%=project.getInstall().getName()%></td>
+		<td class="center"><%=project.getMak().getName()%></td>
+		<td class="center"><%=project.getDetail().getName()%></td>
+		<td class="indent5"><%=project.getDescription()%></td>
+	</tr>
+	<%
+	}
+	%>
+</table>
+
 <%
 } else if (per instanceof WorkOrder) {
 %>
@@ -557,6 +645,9 @@ WTDocument document = (WTDocument) per;
 		} else if (oid.indexOf("EPMDocument") > -1) {
 			url += "/epm/view?oid=" + oid;
 			popup(url, 1400, 600);
+		} else if (oid.indexOf("TBOMMaster") > -1) {
+			url += "/tbom/view?oid=" + oid;
+			popup(url, 1500, 700);
 		}
 	}
 </script>

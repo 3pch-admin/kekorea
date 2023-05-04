@@ -496,6 +496,7 @@ String toid = (String) request.getAttribute("toid");
 		for (let i = 0; i < addRows.length; i++) {
 			const item = addRows[i];
 			const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
+			
 			if (isNull(item.partNo)) {
 				alert("부품번호를 입력하세요.\n수배표 탭으로 이동하여 확인 해주세요.");
 				AUIGrid.showToastMessage(myGridID, rowIndex, 3, "부품번호를 입력하세요.");

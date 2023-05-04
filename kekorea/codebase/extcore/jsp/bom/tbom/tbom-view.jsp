@@ -12,9 +12,9 @@ int latestVersion = (int) request.getAttribute("latestVersion");
 String loid = (String) request.getAttribute("loid");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
-<input type="hidden" name="loid" id="loid" value="<%=dto.getLoid() %>">
+<input type="hidden" name="loid" id="loid" value="<%=dto.getLoid()%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -34,14 +34,14 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			<%
 			if (isAdmin || dto.isEdit()) {
 			%>
-			<input type="button" value="수정" title="수정" class="green" onclick="modify();">
+			<input type="button" value="수정" title="수정" class="green" onclick="update('modify');">
 			<%
 			}
 			%>
 			<%
 			if (isAdmin || dto.isRevise()) {
 			%>
-			<input type="button" value="개정" title="개정" class="green" onclick="revise();">
+			<input type="button" value="개정" title="개정" class="green" onclick="update('revise');">
 			<%
 			}
 			%>
@@ -310,16 +310,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		popup(url, 1500, 700);
 	}
 
-	function modify() {
+	function update(mode) {
 		const oid = document.getElementById("oid").value;
-		const url = getCallUrl("/tbom/modify?oid=" + oid);
-		openLayer();
-		document.location.href = url;
-	}
-
-	function revise() {
-		const oid = document.getElementById("oid").value;
-		const url = getCallUrl("/tbom/revise?oid=" + oid);
+		const url = getCallUrl("/tbom/update?oid=" + oid + "&mode=" + mode);
 		openLayer();
 		document.location.href = url;
 	}

@@ -165,9 +165,9 @@ public class WorkOrderController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "도면 일람표 수정 페이지")
-	@GetMapping(value = "/modify")
-	public ModelAndView modify(@RequestParam String oid) throws Exception {
+	@Description(value = "도면 일람표 수정 & 개정 페이지")
+	@GetMapping(value = "/update")
+	public ModelAndView update(@RequestParam String oid, @RequestParam String mode) throws Exception {
 		ModelAndView model = new ModelAndView();
 		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
 		WorkOrderDTO dto = new WorkOrderDTO(workOrder);
@@ -178,7 +178,8 @@ public class WorkOrderController extends BaseController {
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("list", list);
 		model.addObject("dto", dto);
-		model.setViewName("popup:/epm/workOrder/workOrder-modify");
+		model.addObject("mode", mode);
+		model.setViewName("popup:/epm/workOrder/workOrder-update");
 		return model;
 	}
 
@@ -199,23 +200,6 @@ public class WorkOrderController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "도면 일람표 개정 페이지")
-	@GetMapping(value = "/revise")
-	public ModelAndView revise(@RequestParam String oid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		WorkOrder workOrder = (WorkOrder) CommonUtils.getObject(oid);
-		WorkOrderDTO dto = new WorkOrderDTO(workOrder);
-		JSONArray list = KeDrawingHelper.manager.getData(workOrder);
-		boolean isAdmin = CommonUtils.isAdmin();
-		WTUser sessionUser = CommonUtils.sessionUser();
-		model.addObject("isAdmin", isAdmin);
-		model.addObject("sessionUser", sessionUser);
-		model.addObject("list", list);
-		model.addObject("dto", dto);
-		model.setViewName("popup:/epm/workOrder/workOrder-revise");
-		return model;
-	}
-
 	@Description(value = "도면일람표 개정")
 	@PostMapping(value = "/revise")
 	@ResponseBody
@@ -232,7 +216,7 @@ public class WorkOrderController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description(value = "산출물 도면일람표 연결 페이지")
 	@GetMapping(value = "/connect")
 	public ModelAndView connect(@RequestParam String poid, @RequestParam String toid) throws Exception {

@@ -74,12 +74,6 @@
 		AUIGrid.setGridData(myGridID, <%=ProjectHelper.manager.jsonAuiOutput(poid, toid)%>);
 	}
 	
-	// 등록 후 호출
-	function _reload() {
-		document.location.reload();
-		parent.readyHandler();
-	}
-
 	function connect() {
 		const toid = document.getElementById("oid").value;
 		const poid = document.getElementById("poid").value;

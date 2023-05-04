@@ -28,11 +28,29 @@ boolean isUpdate = "update".equals(mode);
 			headerText : "DWG NO",
 			dataType : "string",
 			width : 250,
+			renderer : {
+				type : "LinkRenderer",
+				baseUrl : "javascript",
+				jsCallback : function(rowIndex, columnIndex, value, item) {
+					const oid = item.oid;
+					const url = getCallUrl("/part/view?oid=" + oid);
+					popup(url, 1500, 500);
+				}
+			},
 		}, {
 			dataField : "name",
 			headerText : "NAME",
 			dataType : "string",
 			width : 250,
+			renderer : {
+				type : "LinkRenderer",
+				baseUrl : "javascript",
+				jsCallback : function(rowIndex, columnIndex, value, item) {
+					const oid = item.oid;
+					const url = getCallUrl("/part/view?oid=" + oid);
+					popup(url, 1500, 500);
+				}
+			},
 		}, {
 			dataField : "nameOfParts",
 			headerText : "NAME_OF_PARTS",

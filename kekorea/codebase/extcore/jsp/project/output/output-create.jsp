@@ -226,6 +226,24 @@ String number = (String) request.getAttribute("number");
 			}
 		%>
 		document.getElementById("name").focus();
+		
+		// 진행율
+		const field = document.getElementById("progress");
+		field.addEventListener("input", function(event) {
+			const value = event.target.value;
+			if (value.slice(0, 1) === "0") {
+				alert("첫째 자리의 값은 0을 입력 할 수 없습니다.");
+				event.target.value = "";
+			}
+
+			if (value.length > 3 || !/^[1-9][0-9]{0,2}$|^0$/.test(value)) {
+				event.target.value = value.replace(/[^\d]/g, '').slice(0, 3);
+			}
+
+			if (value > 100) {
+				event.target.value = 100;
+			}
+		})
 	})
 
 	window.addEventListener("resize", function() {

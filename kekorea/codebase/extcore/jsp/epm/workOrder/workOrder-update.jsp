@@ -7,6 +7,13 @@
 WorkOrderDTO dto = (WorkOrderDTO) request.getAttribute("dto");
 JSONArray list = (JSONArray) request.getAttribute("list");
 String workOrderType = dto.getWorkOrderType();
+String mode = (String)request.getAttribute("mode");
+String title = "";
+if ("modify".equals(mode)) {
+	title = "수정";
+} else if ("revise".equals(mode)) {
+	title = "개정";
+}
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid() %>">
@@ -15,13 +22,12 @@ String workOrderType = dto.getWorkOrderType();
 		<td class="left">
 			<div class="header">
 				<img src="/Windchill/extcore/images/header.png">
-				도면일람표 개정
+				도면일람표 <%=title %>
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="개정" title="개정" onclick="revise();">
+			<input type="button" value="<%=title %>" title="<%=title %>" onclick="<%=mode%>();">
 			<input type="button" value="뒤로" title="뒤로" class="blue" onclick="history.go(-1);">
-			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
 	</tr>
 </table>
@@ -61,12 +67,6 @@ String workOrderType = dto.getWorkOrderType();
 				<th class="lb">내용</th>
 				<td class="indent5" colspan="3">
 					<textarea name="description" id="description" rows="5"><%=dto.getContent() != null ? dto.getContent() : ""%></textarea>
-				</td>
-			</tr>
-			<tr>
-				<th class="lb">개정사유</th>
-				<td class="indent5" colspan="3">
-					<textarea name="note" id="note" rows="5"></textarea>
 				</td>
 			</tr>
 			<tr>
@@ -341,19 +341,18 @@ String workOrderType = dto.getWorkOrderType();
 		AUIGrid.addRow(myGridID, item, rowIndex + 1);
 	}
 
-	function revise() {
+	function <%=mode%>() {
 
 		const params = new Object();
 		const oid = document.getElementById("oid").value;
 		const name = document.getElementById("name");
 		const description = document.getElementById("description").value;
 		const workOrderType = document.getElementById("workOrderType").value;
-		const note = document.getElementById("note").value;
 // 		const progress = document.getElementById("progress").value;
 		const addRows = AUIGrid.getGridData(myGridID);
 		const addRows9 = AUIGrid.getGridData(myGridID9);
 		const addRows8 = AUIGrid.getGridData(myGridID8);
-		const url = getCallUrl("/workOrder/revise");
+		const url = getCallUrl("/workOrder/<%=mode%>");
 
 		addRows.sort(function(a, b) {
 			return a.sort - b.sort;
@@ -382,14 +381,13 @@ String workOrderType = dto.getWorkOrderType();
 			return false;
 		}
 
-		if (!confirm("개정 하시겠습니까?")) {
+		if (!confirm("<%=title%> 하시겠습니까?")) {
 			return false;
 		}
 
 		params.oid = oid;
 		params.name = name.value;
 		params.description = description;
-		params.note = note;
 		params.workOrderType = workOrderType;
 // 		params.progress = Number(progress);
 		params.addRows = addRows;
@@ -397,7 +395,6 @@ String workOrderType = dto.getWorkOrderType();
 		params.secondarys = toArray("secondarys");
 		toRegister(params, addRows8);
 		openLayer();
-		console.log(params);
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
