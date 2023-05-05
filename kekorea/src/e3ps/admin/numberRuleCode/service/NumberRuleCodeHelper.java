@@ -4,14 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.numberRuleCode.NumberRuleCode;
 import e3ps.admin.numberRuleCode.NumberRuleCodeType;
 import e3ps.admin.numberRuleCode.dto.NumberRuleCodeDTO;
-import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import net.sf.json.JSONArray;
-import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.query.QuerySpec;

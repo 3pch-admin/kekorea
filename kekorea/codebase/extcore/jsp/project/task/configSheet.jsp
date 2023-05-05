@@ -118,7 +118,7 @@
 			const oid = item.ooid;
 			arr.push(oid);
 		}
-		const url = getCallUrl("/output/disconnect");
+		const url = getCallUrl("/configSheet/disconnect");
 		const params = new Object();
 		params.arr = arr;
 		if (!confirm("삭제 하시겠습니까?\nCONFIG SHEET와 태스크의 연결관계만 삭제 되어집니다.")) {

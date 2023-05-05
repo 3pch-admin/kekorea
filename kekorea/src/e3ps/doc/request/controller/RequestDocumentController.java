@@ -153,32 +153,6 @@ public class RequestDocumentController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "의뢰서 태스크에서 등록 페이지")
-	@GetMapping(value = "/connect")
-	public ModelAndView connect(@RequestParam String poid, @RequestParam String toid) throws Exception {
-		ModelAndView model = new ModelAndView();
-		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
-		JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
-		JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
-		JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
-		JSONArray maks = CommonCodeHelper.manager.parseJson("MAK");
-		JSONArray customers = CommonCodeHelper.manager.parseJson("CUSTOMER");
-		JSONArray installs = CommonCodeHelper.manager.parseJson("INSTALL");
-		JSONArray projectTypes = CommonCodeHelper.manager.parseJson("PROJECT_TYPE");
-		model.addObject("maks", maks);
-		model.addObject("installs", installs);
-		model.addObject("customers", customers);
-		model.addObject("elecs", elecs);
-		model.addObject("softs", softs);
-		model.addObject("machines", machines);
-		model.addObject("projectTypes", projectTypes);
-		model.addObject("list", list);
-		model.addObject("poid", poid);
-		model.addObject("toid", toid);
-		model.setViewName("popup:/document/request/requestDocument-connect");
-		return model;
-	}
-
 	@Description(value = "의뢰서 등록 검증")
 	@ResponseBody
 	@PostMapping(value = "/validate")
@@ -240,5 +214,43 @@ public class RequestDocumentController extends BaseController {
 		model.addObject("dto", dto);
 		model.setViewName("popup:/document/request/requestDocument-view");
 		return model;
+	}
+
+	@Description(value = "산출물 의뢰서 연결 페이지")
+	@GetMapping(value = "/connect")
+	public ModelAndView connect(@RequestParam String poid, @RequestParam String toid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("toid", toid);
+		model.addObject("poid", poid);
+		model.setViewName("popup:/document/request/requestDocument-connect");
+		return model;
+	}
+
+	@Description(value = "의뢰서 태스크에서 연결")
+	@PostMapping(value = "/connect")
+	@ResponseBody
+	public Map<String, Object> connect(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = RequestDocumentHelper.service.connect(params);
+
+			if ((boolean) result.get("exist")) {
+				result.put("result", FAIL);
+				result.put("msg", "이미 해당 태스크와 연결된 의뢰서 입니다.");
+				return result;
+			}
+
+			result.put("msg", SAVE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
 	}
 }

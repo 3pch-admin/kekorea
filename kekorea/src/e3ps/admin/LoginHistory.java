@@ -2,8 +2,6 @@ package e3ps.admin;
 
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
-import com.ptc.windchill.annotations.metadata.IconProperties;
-import com.ptc.windchill.annotations.metadata.TableProperties;
 
 import wt.fc.WTObject;
 import wt.util.WTException;

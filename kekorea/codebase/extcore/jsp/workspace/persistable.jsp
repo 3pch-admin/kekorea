@@ -35,8 +35,9 @@ Persistable per = (Persistable) CommonUtils.getObject(oid);
 if (per instanceof ApprovalContract) {
 	ApprovalContract contract = (ApprovalContract) per;
 	ArrayList<Map<String, String>> list = WorkspaceHelper.manager.contractData(contract);
+	if (contract.getContractType().equals("EPMDOCUMENT")) {
 %>
-<!-- 일괄결재 -->
+<!-- 일괄결재 도면 -->
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -146,6 +147,58 @@ if (per instanceof ApprovalContract) {
 </table>
 
 <%
+} else {
+%>
+<!-- 일괄결재 문서 -->
+<table class="button-table">
+	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				문서 결재
+			</div>
+		</td>
+	</tr>
+</table>
+
+<table class="view-table">
+	<colgroup>
+		<col width="100">
+		<col width="*">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+	</colgroup>
+	<tr>
+		<th class="lb">문서번호</th>
+		<th class="lb">문서명</th>
+		<th class="lb">상태</th>
+		<th class="lb">버전</th>
+		<th class="lb">작성자</th>
+		<th class="lb">작성일</th>
+	</tr>
+	<%
+	for (Map<String, String> map : list) {
+	%>
+	<tr>
+		<td class="center">
+			<a href="javascript:_detail('<%=map.get("oid")%>');"><%=map.get("number")%></a>
+		</td>
+		<td class="indent5">
+			<a href="javascript:_detail('<%=map.get("oid")%>');"><%=map.get("name")%></a>
+		</td>
+		<td class="center"><%=map.get("state")%></td>
+		<td class="center"><%=map.get("version")%></td>
+		<td class="center"><%=map.get("creator")%></td>
+		<td class="center"><%=map.get("createdDate_txt")%></td>
+	</tr>
+	<%
+	}
+	%>
+</table>
+<%
+}
 }
 %>
 
@@ -153,8 +206,7 @@ if (per instanceof ApprovalContract) {
 <%
 if (per instanceof PartListMaster) {
 	PartListMaster mm = (PartListMaster) per;
-	String _oid = mm.getPersistInfo().getObjectIdentifier().getStringValue();
-	// 	Vector<String[]> secondarys = ContentUtils.getSecondary(mm);
+	String moid = mm.getPersistInfo().getObjectIdentifier().getStringValue();
 %>
 <!-- 수배표 -->
 <table class="button-table">
@@ -187,11 +239,11 @@ if (per instanceof PartListMaster) {
 	</tr>
 	<tr>
 		<td class="indent5">
-			<a href="javascript:_detail('<%=_oid%>');"><%=mm.getName()%></a>
+			<a href="javascript:_detail('<%=moid%>');"><%=mm.getName()%></a>
 		</td>
 		<td class="center"><%=mm.getLifeCycleState().getDisplay()%></td>
 		<td class="center">
-			<img src="/Windchill/extcore/images/details.gif" onclick="_detail('<%=_oid%>');">
+			<img src="/Windchill/extcore/images/details.gif" onclick="_detail('<%=moid%>');">
 		</td>
 		<td class="center"><%=mm.getCreatorFullName()%></td>
 		<td class="center"><%=CommonUtils.getPersistableTime(mm.getCreateTimestamp())%></td>
@@ -199,66 +251,14 @@ if (per instanceof PartListMaster) {
 	</tr>
 </table>
 
-<table class="button-table">
-	<tr>
-		<td class="left">
-			<div class="header">
-				<img src="/Windchill/extcore/images/header.png">
-				관련 작번
-			</div>
-		</td>
-	</tr>
-</table>
-
-<table class="view-table">
-	<colgroup>
-		<col width="100">
-		<col width="100">
-		<col width="80">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="*">
-	</colgroup>
-	<tr>
-		<th class="lb">KEK 작번</th>
-		<th class="lb">KE 작번</th>
-		<th class="lb">작번유형</th>
-		<th class="lb">거래처</th>
-		<th class="lb">설치장소</th>
-		<th class="lb">막종</th>
-		<th class="lb">막종상세</th>
-		<th class="lb">작업내용</th>
-	</tr>
-	<%
-	ArrayList<PartListMasterProjectLink> list = PartlistHelper.manager.getLinks(mm);
-	for (PartListMasterProjectLink link : list) {
-		Project project = link.getProject();
-		String poid = project.getPersistInfo().getObjectIdentifier().getStringValue();
-	%>
-	<tr>
-		<td class="center">
-			<a href="javascript:_detail('<%=poid%>');"><%=project.getKekNumber()%></a>
-		</td>
-		<td class="center">
-			<a href="javascript:_detail('<%=poid%>');"><%=project.getKeNumber()%></a>
-		</td>
-		<td class="center"><%=project.getProjectType().getName()%></td>
-		<td class="center"><%=project.getCustomer().getName()%></td>
-		<td class="center"><%=project.getInstall().getName()%></td>
-		<td class="center"><%=project.getMak().getName()%></td>
-		<td class="center"><%=project.getDetail().getName()%></td>
-		<td class="indent5"><%=project.getDescription()%></td>
-	</tr>
-	<%
-	}
-	%>
-</table>
+<jsp:include page="/extcore/jsp/workspace/project.jsp">
+	<jsp:param value="<%=moid%>" name="oid" />
+</jsp:include>
 
 <%
 } else if (per instanceof RequestDocument) {
 RequestDocument requestDocument = (RequestDocument) per;
+String roid = requestDocument.getPersistInfo().getObjectIdentifier().getStringValue();
 Map<String, Object> primary = ContentUtils.getPrimary(requestDocument);
 %>
 <!-- 의뢰서 -->
@@ -303,65 +303,14 @@ Map<String, Object> primary = ContentUtils.getPrimary(requestDocument);
 	</tr>
 </table>
 
-<table class="button-table">
-	<tr>
-		<td class="left">
-			<div class="header">
-				<img src="/Windchill/extcore/images/header.png">
-				관련 작번
-			</div>
-		</td>
-	</tr>
-</table>
+<jsp:include page="/extcore/jsp/workspace/project.jsp">
+	<jsp:param value="<%=roid%>" name="oid" />
+</jsp:include>
 
-<table class="view-table">
-	<colgroup>
-		<col width="100">
-		<col width="100">
-		<col width="80">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="*">
-	</colgroup>
-	<tr>
-		<th class="lb">KEK 작번</th>
-		<th class="lb">KE 작번</th>
-		<th class="lb">작번유형</th>
-		<th class="lb">거래처</th>
-		<th class="lb">설치장소</th>
-		<th class="lb">막종</th>
-		<th class="lb">막종상세</th>
-		<th class="lb">작업내용</th>
-	</tr>
-	<%
-	ArrayList<RequestDocumentProjectLink> list = RequestDocumentHelper.manager.getLinks(requestDocument);
-	for (RequestDocumentProjectLink link : list) {
-		Project project = link.getProject();
-		String poid = project.getPersistInfo().getObjectIdentifier().getStringValue();
-	%>
-	<tr>
-		<td class="center">
-			<a href="javascript:_detail('<%=poid%>');"><%=project.getKekNumber()%></a>
-		</td>
-		<td class="center">
-			<a href="javascript:_detail('<%=poid%>');"><%=project.getKeNumber()%></a>
-		</td>
-		<td class="center"><%=project.getProjectType().getName()%></td>
-		<td class="center"><%=project.getCustomer().getName()%></td>
-		<td class="center"><%=project.getInstall().getName()%></td>
-		<td class="center"><%=project.getMak().getName()%></td>
-		<td class="center"><%=project.getDetail().getName()%></td>
-		<td class="indent5"><%=project.getDescription()%></td>
-	</tr>
-	<%
-	}
-	%>
-</table>
 <%
 } else if (per instanceof ConfigSheet) {
 ConfigSheet configSheet = (ConfigSheet) per;
+String coid = configSheet.getPersistInfo().getObjectIdentifier().getStringValue();
 %>
 <!-- CONFIG SHEET -->
 <table class="button-table">
@@ -390,7 +339,7 @@ ConfigSheet configSheet = (ConfigSheet) per;
 	</tr>
 	<tr>
 		<td class="indent5">
-			<a href="javascript:detail();"><%=configSheet.getName()%></a>
+			<a href="javascript:_detail('<%=coid%>');"><%=configSheet.getName()%></a>
 		</td>
 		<td class="center"><%=configSheet.getLifeCycleState().getDisplay()%></td>
 		<td class="center"><%=configSheet.getCreatorFullName()%></td>
@@ -398,62 +347,9 @@ ConfigSheet configSheet = (ConfigSheet) per;
 	</tr>
 </table>
 
-<table class="button-table">
-	<tr>
-		<td class="left">
-			<div class="header">
-				<img src="/Windchill/extcore/images/header.png">
-				관련 작번
-			</div>
-		</td>
-	</tr>
-</table>
-
-<table class="view-table">
-	<colgroup>
-		<col width="100">
-		<col width="100">
-		<col width="80">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="*">
-	</colgroup>
-	<tr>
-		<th class="lb">KEK 작번</th>
-		<th class="lb">KE 작번</th>
-		<th class="lb">작번유형</th>
-		<th class="lb">거래처</th>
-		<th class="lb">설치장소</th>
-		<th class="lb">막종</th>
-		<th class="lb">막종상세</th>
-		<th class="lb">작업내용</th>
-	</tr>
-	<%
-	ArrayList<ConfigSheetProjectLink> list = ConfigSheetHelper.manager.getLinks(configSheet);
-	for (ConfigSheetProjectLink link : list) {
-		Project project = link.getProject();
-		String poid = project.getPersistInfo().getObjectIdentifier().getStringValue();
-	%>
-	<tr>
-		<td class="center">
-			<a href="javascript:_detail('<%=poid%>');"><%=project.getKekNumber()%></a>
-		</td>
-		<td class="center">
-			<a href="javascript:_detail('<%=poid%>');"><%=project.getKeNumber()%></a>
-		</td>
-		<td class="center"><%=project.getProjectType().getName()%></td>
-		<td class="center"><%=project.getCustomer().getName()%></td>
-		<td class="center"><%=project.getInstall().getName()%></td>
-		<td class="center"><%=project.getMak().getName()%></td>
-		<td class="center"><%=project.getDetail().getName()%></td>
-		<td class="indent5"><%=project.getDescription()%></td>
-	</tr>
-	<%
-	}
-	%>
-</table>
+<jsp:include page="/extcore/jsp/workspace/project.jsp">
+	<jsp:param value="<%=coid%>" name="oid" />
+</jsp:include>
 
 <%
 } else if (per instanceof TBOMMaster) {
@@ -498,65 +394,14 @@ String toid = master.getPersistInfo().getObjectIdentifier().getStringValue();
 	</tr>
 </table>
 
-<table class="button-table">
-	<tr>
-		<td class="left">
-			<div class="header">
-				<img src="/Windchill/extcore/images/header.png">
-				관련 작번
-			</div>
-		</td>
-	</tr>
-</table>
-
-<table class="view-table">
-	<colgroup>
-		<col width="100">
-		<col width="100">
-		<col width="80">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="*">
-	</colgroup>
-	<tr>
-		<th class="lb">KEK 작번</th>
-		<th class="lb">KE 작번</th>
-		<th class="lb">작번유형</th>
-		<th class="lb">거래처</th>
-		<th class="lb">설치장소</th>
-		<th class="lb">막종</th>
-		<th class="lb">막종상세</th>
-		<th class="lb">작업내용</th>
-	</tr>
-	<%
-	ArrayList<TBOMMasterProjectLink> list = TBOMHelper.manager.getLinks(master);
-	for (TBOMMasterProjectLink link : list) {
-		Project project = link.getProject();
-		String poid = project.getPersistInfo().getObjectIdentifier().getStringValue();
-	%>
-	<tr>
-		<td class="center">
-			<a href="javascript:_detail('<%=poid%>');"><%=project.getKekNumber()%></a>
-		</td>
-		<td class="center">
-			<a href="javascript:_detail('<%=poid%>');"><%=project.getKeNumber()%></a>
-		</td>
-		<td class="center"><%=project.getProjectType().getName()%></td>
-		<td class="center"><%=project.getCustomer().getName()%></td>
-		<td class="center"><%=project.getInstall().getName()%></td>
-		<td class="center"><%=project.getMak().getName()%></td>
-		<td class="center"><%=project.getDetail().getName()%></td>
-		<td class="indent5"><%=project.getDescription()%></td>
-	</tr>
-	<%
-	}
-	%>
-</table>
+<jsp:include page="/extcore/jsp/workspace/project.jsp">
+	<jsp:param value="<%=toid%>" name="oid" />
+</jsp:include>
 
 <%
 } else if (per instanceof WorkOrder) {
+WorkOrder workOrder = (WorkOrder) per;
+String woid = workOrder.getPersistInfo().getObjectIdentifier().getStringValue();
 %>
 <!-- 도면 일람표 -->
 <table class="button-table">
@@ -569,9 +414,40 @@ String toid = master.getPersistInfo().getObjectIdentifier().getStringValue();
 		</td>
 	</tr>
 </table>
+
+<table class="view-table">
+	<colgroup>
+		<col width="*">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+	</colgroup>
+	<tr>
+		<th class="lb">도면 일람표 제목</th>
+		<th class="lb">버전</th>
+		<th class="lb">상태</th>
+		<th class="lb">작성자</th>
+		<th class="lb">작성일</th>
+	</tr>
+	<tr>
+		<td class="indent5">
+			<a href="javascript:_detail('<%=woid%>');"><%=workOrder.getName()%></a>
+		</td>
+		<td class="center"><%=workOrder.getVersion()%></td>
+		<td class="center"><%=workOrder.getLifeCycleState().getDisplay()%></td>
+		<td class="center"><%=workOrder.getCreatorFullName()%></td>
+		<td class="center"><%=CommonUtils.getPersistableTime(workOrder.getCreateTimestamp())%></td>
+	</tr>
+</table>
+
+<jsp:include page="/extcore/jsp/workspace/project.jsp">
+	<jsp:param value="<%=woid%>" name="oid" />
+</jsp:include>
 <%
 } else if (per instanceof WTDocument) {
 WTDocument document = (WTDocument) per;
+String doid = document.getPersistInfo().getObjectIdentifier().getStringValue();
 %>
 <!-- 산출물 -->
 <table class="button-table">
@@ -585,51 +461,9 @@ WTDocument document = (WTDocument) per;
 	</tr>
 </table>
 
-<table class="view-table">
-	<colgroup>
-		<col width="100">
-		<col width="100">
-		<col width="80">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="120">
-		<col width="*">
-	</colgroup>
-	<tr>
-		<th class="lb">KEK 작번</th>
-		<th class="lb">KE 작번</th>
-		<th class="lb">작번유형</th>
-		<th class="lb">거래처</th>
-		<th class="lb">설치장소</th>
-		<th class="lb">막종</th>
-		<th class="lb">막종상세</th>
-		<th class="lb">작업내용</th>
-	</tr>
-	<%
-	ArrayList<OutputProjectLink> list = OutputHelper.manager.getLinks(document);
-	for (OutputProjectLink link : list) {
-		Project project = link.getProject();
-		String poid = project.getPersistInfo().getObjectIdentifier().getStringValue();
-	%>
-	<tr>
-		<td class="center">
-			<a href="javascript:_detail('<%=poid%>');"><%=project.getKekNumber()%></a>
-		</td>
-		<td class="center">
-			<a href="javascript:_detail('<%=poid%>');"><%=project.getKeNumber()%></a>
-		</td>
-		<td class="center"><%=project.getProjectType().getName()%></td>
-		<td class="center"><%=project.getCustomer().getName()%></td>
-		<td class="center"><%=project.getInstall().getName()%></td>
-		<td class="center"><%=project.getMak().getName()%></td>
-		<td class="center"><%=project.getDetail().getName()%></td>
-		<td class="indent5"><%=project.getDescription()%></td>
-	</tr>
-	<%
-	}
-	%>
-</table>
+<jsp:include page="/extcore/jsp/workspace/project.jsp">
+	<jsp:param value="<%=doid%>" name="oid" />
+</jsp:include>
 <%
 }
 %>
@@ -648,6 +482,9 @@ WTDocument document = (WTDocument) per;
 		} else if (oid.indexOf("TBOMMaster") > -1) {
 			url += "/tbom/view?oid=" + oid;
 			popup(url, 1500, 700);
+		} else if (oid.indexOf("WorkOrder") > -1) {
+			url += "/workOrder/view?oid=" + oid;
+			popup(url, 1600, 800);
 		}
 	}
 </script>

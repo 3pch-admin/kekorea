@@ -249,17 +249,16 @@ public class OutputHelper {
 	/**
 	 * 산출물과 관련된 작번들
 	 */
-	public ArrayList<OutputProjectLink> getLinks(WTDocument document) throws Exception {
-		ArrayList<OutputProjectLink> list = new ArrayList<>();
-
+	public ArrayList<Project> getProjects(WTDocument document) throws Exception {
+		ArrayList<Project> list = new ArrayList<>();
 		QueryResult result = PersistenceHelper.manager.navigate(document, "output", OutputDocumentLink.class);
 		while (result.hasMoreElements()) {
 			Output output = (Output) result.nextElement();
 
 			QueryResult qr = PersistenceHelper.manager.navigate(output, "project", OutputProjectLink.class);
 			while (qr.hasMoreElements()) {
-				OutputProjectLink link = (OutputProjectLink) qr.nextElement();
-				list.add(link);
+				Project project = (Project) qr.nextElement();
+				list.add(project);
 			}
 		}
 		return list;

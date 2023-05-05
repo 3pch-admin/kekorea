@@ -345,15 +345,14 @@ public class ConfigSheetHelper {
 	}
 
 	/**
-	 * CONFIG SHEET 프로젝트 링크 가져오기
+	 * CONFIG SHEET 프로젝트 가져오기
 	 */
-	public ArrayList<ConfigSheetProjectLink> getLinks(ConfigSheet configSheet) throws Exception {
-		ArrayList<ConfigSheetProjectLink> list = new ArrayList<>();
-		QueryResult result = PersistenceHelper.manager.navigate(configSheet, "project", ConfigSheetProjectLink.class,
-				false);
+	public ArrayList<Project> getProjects(ConfigSheet configSheet) throws Exception {
+		ArrayList<Project> list = new ArrayList<>();
+		QueryResult result = PersistenceHelper.manager.navigate(configSheet, "project", ConfigSheetProjectLink.class);
 		while (result.hasMoreElements()) {
-			ConfigSheetProjectLink link = (ConfigSheetProjectLink) result.nextElement();
-			list.add(link);
+			Project project = (Project) result.nextElement();
+			list.add(project);
 		}
 		return list;
 	}

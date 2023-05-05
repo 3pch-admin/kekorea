@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.dto.PartListDTO;
@@ -25,7 +24,6 @@ import e3ps.common.util.StringUtils;
 import e3ps.org.Department;
 import e3ps.org.People;
 import e3ps.project.Project;
-import e3ps.project.output.service.OutputHelper;
 import e3ps.project.task.Task;
 import net.sf.json.JSONArray;
 import wt.fc.Persistable;
@@ -278,11 +276,11 @@ public class PartlistController extends BaseController {
 
 	@Description(value = "수배표 태스크 연결 제거 함수")
 	@ResponseBody
-	@PostMapping(value = "/disconnect")
-	public Map<String, Object> disconnect(@RequestBody Map<String, Object> params) throws Exception {
+	@GetMapping(value = "/disconnect")
+	public Map<String, Object> disconnect(@RequestParam String oid) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			PartlistHelper.service.disconnect(params);
+			PartlistHelper.service.disconnect(oid);
 			result.put("msg", DELETE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

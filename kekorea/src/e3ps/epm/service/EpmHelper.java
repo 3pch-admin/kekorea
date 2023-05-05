@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
@@ -39,7 +38,6 @@ import wt.query.QuerySpec;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
-import wt.vc.Mastered;
 import wt.vc.VersionControlHelper;
 
 public class EpmHelper {

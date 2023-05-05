@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.doc.request.service.RequestDocumentHelper;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
@@ -24,7 +25,6 @@ import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.org.Department;
 import e3ps.org.People;
 import e3ps.project.Project;
-import e3ps.project.template.service.TemplateHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -42,8 +42,6 @@ public class WorkOrderController extends BaseController {
 		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
 		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
 		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
-		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
-		model.addObject("list", list);
 		model.addObject("customers", customers);
 		model.addObject("projectTypes", projectTypes);
 		model.addObject("maks", maks);
@@ -223,11 +221,58 @@ public class WorkOrderController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
+		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
+		model.addObject("customers", customers);
+		model.addObject("projectTypes", projectTypes);
+		model.addObject("maks", maks);
 		model.addObject("toid", toid);
 		model.addObject("poid", poid);
 		model.setViewName("popup:/epm/workOrder/workOrder-connect");
 		return model;
+	}
+
+	@Description(value = "도면일람표 태스크에서 연결")
+	@PostMapping(value = "/connect")
+	@ResponseBody
+	public Map<String, Object> connect(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = WorkOrderHelper.service.connect(params);
+
+			if ((boolean) result.get("exist")) {
+				result.put("result", FAIL);
+				result.put("msg", "이미 해당 태스크와 연결된 도면일람표 입니다.");
+				return result;
+			}
+
+			result.put("msg", SAVE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "도면일람표 태스트 연결 제거 함수")
+	@ResponseBody
+	@GetMapping(value = "/disconnect")
+	public Map<String, Object> disconnect(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkOrderHelper.service.disconnect(oid);
+			result.put("msg", DELETE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
 	}
 }

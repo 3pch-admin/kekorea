@@ -18,16 +18,23 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.bom.tbom.TBOMMaster;
+import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.common.util.StringUtils;
+import e3ps.doc.request.RequestDocument;
+import e3ps.doc.request.service.RequestDocumentHelper;
 import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.workOrder.WorkOrder;
+import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.korea.configSheet.ConfigSheet;
+import e3ps.korea.configSheet.service.ConfigSheetHelper;
 import e3ps.org.dto.UserDTO;
+import e3ps.project.Project;
+import e3ps.project.output.service.OutputHelper;
 import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.ApprovalLine;
@@ -860,6 +867,16 @@ public class WorkspaceHelper {
 				map.put("modifiedDate_txt", CommonUtils.getPersistableTime(numberRule.getCreateTimestamp()));
 				map.put("oid", numberRule.getPersistInfo().getObjectIdentifier().getStringValue());
 				list.add(map);
+			} else if (per instanceof WTDocument) {
+				WTDocument document = (WTDocument) per;
+				map.put("oid", document.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("name", document.getName());
+				map.put("number", document.getNumber());
+				map.put("state", document.getLifeCycleState().getDisplay());
+				map.put("version", document.getVersionIdentifier().getSeries().getValue() + "."
+						+ document.getIterationIdentifier().getSeries().getValue());
+				map.put("creator", document.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(document.getCreateTimestamp()));
 			}
 		}
 		return list;
@@ -919,7 +936,6 @@ public class WorkspaceHelper {
 		cellStyle.setBorderLeft(BorderStyle.MEDIUM);
 		cellStyle.setBorderRight(BorderStyle.MEDIUM);
 
-		int rowIndex = 11;
 		int rowNum = 1;
 		while (result.hasMoreElements()) {
 			Persistable per = (Persistable) result.nextElement();
@@ -964,15 +980,23 @@ public class WorkspaceHelper {
 	}
 
 	/**
-	 * 엑셀 데이터 세팅 함수
+	 * 결재시 관련 작번
 	 */
-	private void setCellValue(Sheet sheet, int rowIndex, int cellIndex, String data, CellStyle style) {
-		Row row = sheet.createRow(rowIndex);
-		Cell cell = row.createCell(cellIndex);
-		if (style != null) {
-			cell.setCellStyle(style);
+	public ArrayList<Project> getProjects(String oid) throws Exception {
+		Persistable per = CommonUtils.getObject(oid);
+		if (per instanceof TBOMMaster) {
+			return TBOMHelper.manager.getProjects((TBOMMaster) per);
+		} else if (per instanceof WorkOrder) {
+			return WorkOrderHelper.manager.getProjects((WorkOrder) per);
+		} else if (per instanceof PartListMaster) {
+			return PartlistHelper.manager.getProjects((PartListMaster) per);
+		} else if (per instanceof ConfigSheet) {
+			return ConfigSheetHelper.manager.getProjects((ConfigSheet) per);
+		} else if (per instanceof RequestDocument) {
+			return RequestDocumentHelper.manager.getProjects((RequestDocument) per);
+		} else if (per instanceof WTDocument) {
+			return OutputHelper.manager.getProjects((WTDocument) per);
 		}
-		cell.setCellValue(StringUtils.replaceToValue(data));
+		return null;
 	}
-
 }

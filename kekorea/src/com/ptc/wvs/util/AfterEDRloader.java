@@ -199,7 +199,6 @@ public class AfterEDRloader {
 //		appDatas = ContentHelper.getContentListExcludeRoles(ch, "THUMBNAIL,THUMBNAIL3D,THUMBNAIL_SMALL,CAD_HIDDEN_CONTENT");
 		appDatas = ContentHelper.getContentListExcludeRoles(ch, "THUMBNAIL,THUMBNAIL3D,THUMBNAIL_SMALL");
 
-		int num_of_files = appDatas.size();
 		for (int i = 0; i < appDatas.size(); i++) {
 			appData = (ApplicationData) appDatas.get(i);
 			fileName = appData.getFileName();
@@ -339,14 +338,12 @@ public class AfterEDRloader {
 				ApplicationData appData = null;
 				Vector<?> appDatas = null;
 				String fileName = null;
-				String sName = null;
 				String fileExt = null;
 				String postfix = null;
 				InputStream is = null;
 				String iterationInfo = cadDoc.getIterationDisplayIdentifier().toString();
 
 				appDatas = ContentHelper.getContentList(ch);
-				int num_of_files = appDatas.size();
 
 				for (int i = 0; i < appDatas.size(); i++) {
 					appData = (ApplicationData) appDatas.get(i);

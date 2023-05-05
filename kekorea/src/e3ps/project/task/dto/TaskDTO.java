@@ -8,12 +8,6 @@ import e3ps.project.task.Task;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Timestamp;
-
-import e3ps.project.task.Task;
-import lombok.Getter;
-import lombok.Setter;
-
 @Getter
 @Setter
 public class TaskDTO {

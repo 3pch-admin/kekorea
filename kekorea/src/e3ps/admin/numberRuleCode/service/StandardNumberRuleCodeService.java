@@ -1,18 +1,12 @@
 package e3ps.admin.numberRuleCode.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.admin.numberRuleCode.NumberRuleCode;
 import e3ps.admin.numberRuleCode.NumberRuleCodeType;
 import e3ps.admin.numberRuleCode.dto.NumberRuleCodeDTO;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.ContentUtils;
-import e3ps.common.util.StringUtils;
-import e3ps.korea.cip.Cip;
-import e3ps.korea.cip.dto.CipDTO;
 import wt.fc.PersistenceHelper;
 import wt.pom.Transaction;
 import wt.services.StandardManager;

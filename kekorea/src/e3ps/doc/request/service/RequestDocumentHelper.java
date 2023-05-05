@@ -117,15 +117,15 @@ public class RequestDocumentHelper {
 	}
 
 	/**
-	 * 의뢰서 프로젝트 링크 가져오기
+	 * 의뢰서 프로젝트 가져오기
 	 */
-	public ArrayList<RequestDocumentProjectLink> getLinks(RequestDocument requestDocument) throws Exception {
-		ArrayList<RequestDocumentProjectLink> list = new ArrayList<>();
+	public ArrayList<Project> getProjects(RequestDocument requestDocument) throws Exception {
+		ArrayList<Project> list = new ArrayList<>();
 		QueryResult result = PersistenceHelper.manager.navigate(requestDocument, "project",
-				RequestDocumentProjectLink.class, false);
+				RequestDocumentProjectLink.class);
 		while (result.hasMoreElements()) {
-			RequestDocumentProjectLink link = (RequestDocumentProjectLink) result.nextElement();
-			list.add(link);
+			Project project = (Project) result.nextElement();
+			list.add(project);
 		}
 		return list;
 	}

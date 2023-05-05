@@ -15,9 +15,6 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.epm.workOrder.WorkOrder;
-import e3ps.korea.configSheet.ConfigSheet;
-import e3ps.korea.configSheet.ConfigSheetProjectLink;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.KePartMaster;
 import e3ps.project.Project;
@@ -510,14 +507,14 @@ public class TBOMHelper {
 	}
 
 	/**
-	 * T-BOM 프로젝트 링크 가져오기
+	 * T-BOM 프로젝트 가져오기
 	 */
-	public ArrayList<TBOMMasterProjectLink> getLinks(TBOMMaster master) throws Exception {
-		ArrayList<TBOMMasterProjectLink> list = new ArrayList<>();
-		QueryResult result = PersistenceHelper.manager.navigate(master, "project", TBOMMasterProjectLink.class, false);
+	public ArrayList<Project> getProjects(TBOMMaster master) throws Exception {
+		ArrayList<Project> list = new ArrayList<>();
+		QueryResult result = PersistenceHelper.manager.navigate(master, "project", TBOMMasterProjectLink.class);
 		while (result.hasMoreElements()) {
-			TBOMMasterProjectLink link = (TBOMMasterProjectLink) result.nextElement();
-			list.add(link);
+			Project project = (Project) result.nextElement();
+			list.add(project);
 		}
 		return list;
 	}

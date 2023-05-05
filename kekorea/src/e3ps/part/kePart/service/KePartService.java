@@ -2,9 +2,7 @@ package e3ps.part.kePart.service;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.part.kePart.beans.KePartDTO;
 import wt.method.RemoteInterface;
 

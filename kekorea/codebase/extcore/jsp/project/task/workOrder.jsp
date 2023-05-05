@@ -85,7 +85,7 @@
 	function connect() {
 		const toid = document.getElementById("oid").value;
 		const poid = document.getElementById("poid").value;
-		const url = getCallUrl("/configSheet/connect?toid=" + toid + "&poid=" + poid);
+		const url = getCallUrl("/workOrder/connect?toid=" + toid + "&poid=" + poid);
 		popup(url, 1600, 700);
 	}
 
@@ -95,7 +95,7 @@
 			const item = data[i].item;
 			arr.push(item.oid);
 		}
-		const url = getCallUrl("/configSheet/connect");
+		const url = getCallUrl("/workOrder/connect");
 		const params = new Object();
 		params.arr = arr;
 		params.toid = toid;
@@ -118,7 +118,7 @@
 			const oid = item.ooid;
 			arr.push(oid);
 		}
-		const url = getCallUrl("/output/disconnect");
+		const url = getCallUrl("/workOrder/disconnect");
 		const params = new Object();
 		params.arr = arr;
 		if (!confirm("삭제 하시겠습니까?\nCONFIG SHEET와 태스크의 연결관계만 삭제 되어집니다.")) {

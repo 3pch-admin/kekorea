@@ -338,9 +338,57 @@ public class MeetingController extends BaseController {
 			result.put("msg", MODIFY_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
 		}
 		return result;
 	}
 
+	@Description(value = "산출물 회의록 연결 페이지")
+	@GetMapping(value = "/connect")
+	public ModelAndView connect(@RequestParam String poid, @RequestParam String toid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
+		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
+		ArrayList<HashMap<String, String>> list = TemplateHelper.manager.getTemplateArrayMap();
+		model.addObject("list", list);
+		model.addObject("customers", customers);
+		model.addObject("projectTypes", projectTypes);
+		model.addObject("maks", maks);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("toid", toid);
+		model.addObject("poid", poid);
+		model.setViewName("popup:/document/meeting/meeting-connect");
+		return model;
+	}
+	
+	@Description(value = "회의록 태스크에서 연결")
+	@PostMapping(value = "/connect")
+	@ResponseBody
+	public Map<String, Object> connect(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = MeetingHelper.service.connect(params);
+
+			if ((boolean) result.get("exist")) {
+				result.put("result", FAIL);
+				result.put("msg", "이미 해당 태스크와 연결된 회의록 입니다.");
+				return result;
+			}
+
+			result.put("msg", SAVE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
 }

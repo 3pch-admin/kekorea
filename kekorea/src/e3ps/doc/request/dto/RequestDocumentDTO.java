@@ -4,8 +4,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import e3ps.common.util.CommonUtils;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;

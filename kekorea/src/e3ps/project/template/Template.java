@@ -7,7 +7,6 @@ import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import e3ps.project.ProjectImpl;
 import wt.fc.WTObject;
-import wt.ownership.Ownership;
 import wt.util.WTException;
 
 @GenAsPersistable(superClass = WTObject.class, interfaces = { ProjectImpl.class },

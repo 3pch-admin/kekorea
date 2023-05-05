@@ -229,7 +229,6 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
-					editable : false
 				}, {
 					dataField : "customer_name",
 					headerText : "거래처",
@@ -239,7 +238,6 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
-					editable : false
 				}, {
 					dataField : "install_name",
 					headerText : "설치장소",
@@ -249,7 +247,6 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
-					editable : false
 				}, {
 					dataField : "mak_name",
 					headerText : "막종",
@@ -259,7 +256,6 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
-					editable : false
 				}, {
 					dataField : "detail_name",
 					headerText : "막종상세",
@@ -269,7 +265,6 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
-					editable : false
 				}, {
 					dataField : "kekNumber",
 					headerText : "KEK 작번",
@@ -288,7 +283,6 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
-					editable : false
 				}, {
 					dataField : "keNumber",
 					headerText : "KE 작번",
@@ -307,7 +301,6 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
-					editable : false
 				}, {
 					dataField : "userId",
 					headerText : "USER ID",
@@ -317,7 +310,6 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
-					editable : false
 				}, {
 					dataField : "description",
 					headerText : "작업 내용",
@@ -328,7 +320,6 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
-					editable : false
 				}, {
 					dataField : "model",
 					headerText : "모델",
@@ -338,7 +329,6 @@ String end = (String) request.getAttribute("end");
 						showIcon : true,
 						inline : true
 					},
-					editable : false
 				}, {
 					dataField : "pdate_txt",
 					headerText : "발행일",
@@ -350,7 +340,6 @@ String end = (String) request.getAttribute("end");
 						inline : true,
 						displayFormatValues : true
 					},
-					editable : false
 				}, {
 					dataField : "state",
 					headerText : "상태",
@@ -399,7 +388,7 @@ String end = (String) request.getAttribute("end");
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "singleRow",
+					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,

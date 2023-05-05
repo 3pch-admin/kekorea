@@ -36,7 +36,6 @@ import wt.query.QuerySpec;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
-import wt.vc.Mastered;
 import wt.vc.VersionControlHelper;
 
 public class DocumentHelper {

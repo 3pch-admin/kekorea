@@ -17,7 +17,6 @@ import net.sf.json.JSONArray;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
-import wt.part.WTPart;
 import wt.query.QuerySpec;
 import wt.services.ServiceFactory;
 

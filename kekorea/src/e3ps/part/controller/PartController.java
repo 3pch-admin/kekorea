@@ -15,10 +15,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.doc.service.DocumentHelper;
 import e3ps.part.dto.PartDTO;
 import e3ps.part.service.PartHelper;
-import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.part.WTPart;

@@ -1,7 +1,9 @@
 package e3ps.korea.configSheet.service;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,7 @@ import e3ps.korea.configSheet.ConfigSheetVariableLink;
 import e3ps.korea.configSheet.beans.ConfigSheetDTO;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
+import e3ps.project.output.OutputDocumentLink;
 import e3ps.project.service.ProjectHelper;
 import e3ps.project.task.Task;
 import e3ps.project.task.variable.TaskStateVariable;
@@ -29,6 +32,7 @@ import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.folder.Folder;
 import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
@@ -218,6 +222,107 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 
 			ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
 			PersistenceHelper.manager.delete(configSheet);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public Map<String, Object> connect(Map<String, Object> params) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		String poid = (String) params.get("poid");
+		String toid = (String) params.get("toid");
+		ArrayList<String> arr = (ArrayList<String>) params.get("arr");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Task task = (Task) CommonUtils.getObject(toid);
+			Project project = (Project) CommonUtils.getObject(poid);
+			for (String oid : arr) {
+				ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
+
+				QueryResult result = PersistenceHelper.manager.navigate(configSheet, "project",
+						ConfigSheetProjectLink.class);
+				while (result.hasMoreElements()) {
+					Project p = (Project) result.nextElement();
+
+					if (p.getPersistInfo().getObjectIdentifier().getStringValue().equals(poid)) {
+						trs.rollback();
+						map.put("msg", "해당 CONFIG SHEET가 작번 : " + p.getKekNumber() + "의 태스크 : " + task.getName()
+								+ "에 연결이 되어있습니다.");
+						map.put("exist", true);
+						return map;
+					}
+				}
+
+				ConfigSheetProjectLink link = ConfigSheetProjectLink.newConfigSheetProjectLink(configSheet, project);
+				PersistenceHelper.manager.save(link);
+
+				Output output = Output.newOutput();
+				output.setName(configSheet.getName());
+				output.setLocation(configSheet.getLocation());
+				output.setTask(task);
+				output.setProject(project);
+				output.setDocument(configSheet);
+				output.setOwnership(CommonUtils.sessionOwner());
+				PersistenceHelper.manager.save(output);
+
+				// 의뢰서는 아에 다른 페이지에서 작동하므로 소스 간결 연결된 태스트 상태 변경
+				// 추가적인 산출물 등록시 실제 시작일이 변경 안되도록 처리한다.
+				if (task.getStartDate() == null) {
+					task.setStartDate(new Timestamp(new Date().getTime()));
+				}
+				task.setState(TaskStateVariable.INWORK);
+				PersistenceHelper.manager.modify(task);
+
+				// 프로젝트 전체 진행율 조정
+				ProjectHelper.service.calculation(project);
+				ProjectHelper.service.commit(project);
+			}
+
+			map.put("exist", false);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+		return map;
+	}
+
+	@Override
+	public void disconnect(String oid) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
+			QueryResult qr = PersistenceHelper.manager.navigate(configSheet, "project", ConfigSheetProjectLink.class,
+					false);
+			while (qr.hasMoreElements()) {
+				ConfigSheetProjectLink link = (ConfigSheetProjectLink) qr.nextElement();
+				PersistenceHelper.manager.delete(link);
+			}
+
+			QueryResult result = PersistenceHelper.manager.navigate(configSheet, "output", OutputDocumentLink.class);
+			while (result.hasMoreElements()) {
+				Output output = (Output) result.nextElement();
+				PersistenceHelper.manager.delete(output);
+			}
 
 			trs.commit();
 			trs = null;

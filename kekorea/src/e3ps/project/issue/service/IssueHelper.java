@@ -4,14 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import e3ps.bom.partlist.PartListMaster;
-import e3ps.bom.partlist.PartListMasterProjectLink;
-import e3ps.bom.partlist.dto.PartListDTO;
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.common.util.StringUtils;
 import e3ps.project.Project;
 import e3ps.project.issue.Issue;
 import e3ps.project.issue.IssueProjectLink;

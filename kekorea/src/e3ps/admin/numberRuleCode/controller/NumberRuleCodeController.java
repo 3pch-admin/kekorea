@@ -18,16 +18,11 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import e3ps.admin.commonCode.CommonCodeType;
-import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.admin.numberRuleCode.NumberRuleCodeType;
 import e3ps.admin.numberRuleCode.dto.NumberRuleCodeDTO;
 import e3ps.admin.numberRuleCode.service.NumberRuleCodeHelper;
-import e3ps.admin.specCode.service.SpecCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.korea.cip.dto.CipDTO;
-import e3ps.korea.cip.service.CipHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;

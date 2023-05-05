@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.ContentUtils;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;

@@ -39,10 +39,8 @@ import wt.iba.value.service.IBAValueHelper;
 import wt.part.WTPart;
 import wt.pds.StatementSpec;
 import wt.query.ClassAttribute;
-import wt.query.ColumnExpression;
 import wt.query.OrderBy;
 import wt.query.QuerySpec;
-import wt.query.SQLFunction;
 import wt.query.SearchCondition;
 import wt.util.WTAttributeNameIfc;
 

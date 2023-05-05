@@ -17,7 +17,6 @@ import wt.inf.library.WTLibrary;
 import wt.org.WTUser;
 import wt.ownership.Ownership;
 import wt.pdmlink.PDMLinkProduct;
-import wt.pds.StatementSpec;
 import wt.query.QuerySpec;
 import wt.query.SearchCondition;
 import wt.session.SessionHelper;
@@ -162,10 +161,6 @@ public class CommonUtils {
 
 	/**
 	 * 객체를 가져오는 함수
-	 * 
-	 * @param oid : 가져올 객체의 OID
-	 * @return Persistable
-	 * @throws Exception
 	 */
 	public static Persistable getObject(String oid) throws Exception {
 		if (rf == null) {
@@ -176,10 +171,6 @@ public class CommonUtils {
 
 	/**
 	 * 객체의 버전을 가져오는 함수
-	 * 
-	 * @param rc : 버전을 가져올 객체
-	 * @return String
-	 * @throws Exception
 	 */
 	public static String getVersion(RevisionControlled rc) throws Exception {
 		return rc.getVersionIdentifier().getSeries().getValue();

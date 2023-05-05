@@ -37,8 +37,6 @@ public class StandardEventService extends StandardManager implements EventServic
 
 	private static final String STATE_CHANGE = LifeCycleServiceEvent.STATE_CHANGE;
 
-	private static String temp = null;
-
 	public static StandardEventService newStandardEventService() throws WTException {
 		StandardEventService instance = new StandardEventService();
 		instance.initialize();

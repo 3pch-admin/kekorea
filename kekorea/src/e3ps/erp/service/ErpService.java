@@ -1,6 +1,5 @@
 package e3ps.erp.service;
 
-import wt.fc.Persistable;
 import wt.method.RemoteInterface;
 
 @RemoteInterface

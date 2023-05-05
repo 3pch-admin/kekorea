@@ -2,7 +2,6 @@ package e3ps.workspace.notice.service;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import e3ps.workspace.notice.dto.NoticeDTO;
 import wt.method.RemoteInterface;

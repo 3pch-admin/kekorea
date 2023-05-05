@@ -10,7 +10,6 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
-import e3ps.project.Project;
 import wt.doc.WTDocument;
 import wt.util.WTException;
 

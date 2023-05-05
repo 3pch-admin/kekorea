@@ -9,15 +9,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import e3ps.admin.commonCode.CommonCode;
-import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.common.util.QuerySpecUtils;
-import e3ps.common.util.StringUtils;
-import e3ps.project.Project;
-import wt.fc.PersistenceHelper;
-import wt.fc.QueryResult;
-import wt.query.QuerySpec;
-
 public class StartMigration {
 
 	public static void main(String[] args) throws Exception {

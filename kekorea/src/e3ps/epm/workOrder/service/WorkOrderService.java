@@ -1,5 +1,7 @@
 package e3ps.epm.workOrder.service;
 
+import java.util.Map;
+
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import wt.method.RemoteInterface;
 
@@ -26,4 +28,13 @@ public interface WorkOrderService {
 	 */
 	public abstract void revise(WorkOrderDTO dto) throws Exception;
 
+	/**
+	 * 도면일람표 산출물 연결
+	 */
+	public abstract Map<String, Object> connect(Map<String, Object> params) throws Exception;
+	
+	/**
+	 * 태스크 도면일람표 연결 제거
+	 */
+	public abstract void disconnect(String oid) throws Exception;
 }

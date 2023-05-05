@@ -693,8 +693,6 @@ public class ErpHelper {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
-		boolean sendResult = true;
-		String sendQuery = "";
 		try {
 			con = dataSource.getConnection();
 			st = con.createStatement();

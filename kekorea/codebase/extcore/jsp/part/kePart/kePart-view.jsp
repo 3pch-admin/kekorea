@@ -207,6 +207,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 				headerText : "개정사유",
 				dateType : "string",
 				width : 250,
+				style : "aui-left",
 				filter : {
 					showIcon : true,
 					inline : true

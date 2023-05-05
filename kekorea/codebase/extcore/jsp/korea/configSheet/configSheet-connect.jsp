@@ -12,10 +12,9 @@ String poid = (String) request.getAttribute("poid");
 <input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 <input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
 <input type="hidden" name="sessionid" id="sessionid">
+<input type="hidden" name="curPage" id="curPage">
 <input type="hidden" name="toid" id="toid" value="<%=toid%>">
 <input type="hidden" name="poid" id="poid" value="<%=poid%>">
-<input type="hidden" name="curPage" id="curPage">
-
 <table class="search-table">
 	<colgroup>
 		<col width="130">
@@ -24,48 +23,18 @@ String poid = (String) request.getAttribute("poid");
 		<col width="*">
 		<col width="130">
 		<col width="*">
+		<col width="130">
+		<col width="*">
 	</colgroup>
 	<tr>
-		<th>수배표 제목</th>
+		<th>공지사항 제목</th>
 		<td class="indent5">
-			<input type="text" name="fileName" class="width-200">
+			<input type="text" name="name" class="width-200">
 		</td>
-		<th>상태</th>
-		<td class="indent5">
-			<select name="state" id="state" class="width-200">
-				<option value="">선택</option>
-			</select>
-		</td>
-		<th>KEK 작번</th>
-		<td class="indent5">
-			<input type="text" name="partName" class="width-200">
-		</td>
-		<th>KE 작번</th>
-		<td class="indent5">
-			<input type="text" name="number" class="width-200">
-		</td>
-	</tr>
-	<tr>
 		<th>설명</th>
 		<td class="indent5">
-			<input type="text" name="number" class="width-200">
+			<input type="text" name="description" class="width-200">
 		</td>
-		<th>설계 구분</th>
-		<td class="indent5">
-			<select name="projectType_name" id="projectType_name" class="width-100">
-				<option value="">선택</option>
-			</select>
-		</td>
-		<th>막종</th>
-		<td class="indent5">
-			<input type="text" name="number" class="width-200">
-		</td>
-		<th>작업 내용</th>
-		<td class="indent5">
-			<input type="text" name="number" class="width-200">
-		</td>
-	</tr>
-	<tr>
 		<th>작성자</th>
 		<td class="indent5">
 			<input type="text" name="creator" id="creator" class="width-200">
@@ -76,16 +45,6 @@ String poid = (String) request.getAttribute("poid");
 			~
 			<input type="text" name="createdTo" id="createdTo" class="width-100">
 		</td>
-		<th>수정자</th>
-		<td class="indent5">
-			<input type="text" name="modifier" id="modifier" class="width-200">
-		</td>
-		<th>수정일</th>
-		<td class="indent5">
-			<input type="text" name="modifiedFrom" id="modifiedFrom" class="width-100">
-			~
-			<input type="text" name="modifiedTo" id="modifiedTo" class="width-100">
-		</td>
 	</tr>
 </table>
 
@@ -93,7 +52,7 @@ String poid = (String) request.getAttribute("poid");
 	<tr>
 		<td class="left">
 			<input type="button" value="확장" title="확장" class="red" onclick="expand();">
-			<input type="button" value="추가" title="추가" onclick="connect();">
+			<input type="button" value="추가" title="추가" class="red" onclick="connect();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 		<td class="right">
@@ -109,26 +68,67 @@ String poid = (String) request.getAttribute("poid");
 	</tr>
 </table>
 
-<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
+<div id="grid_wrap" style="height: 480px; border-top: 1px solid #3180c3;"></div>
 <%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
 	let myGridID;
 	function _layout() {
 		return [ {
 			dataField : "name",
-			headerText : "수배표 제목",
+			headerText : "CONFIG SHEET 제목",
 			dataType : "string",
-			width : 450,
+			width : 350,
 			filter : {
 				showIcon : true,
 				inline : true
 			},
-			cellMerge : true
+		}, {
+			dataField : "version",
+			headerText : "버전",
+			dataType : "numeric",
+			width : 80,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+			cellMerge : true,
+			mergeRef : "name",
+			mergePolicy : "restrict"
+		}, {
+			dataField : "latest",
+			headerText : "최신버전",
+			dataType : "boolean",
+			width : 80,
+			filter : {
+				showIcon : false,
+				inline : false
+			},
+			cellMerge : true,
+			mergeRef : "name",
+			mergePolicy : "restrict"
 		}, {
 			dataField : "projectType_name",
-			headerText : "설계구분",
+			headerText : "작번유형",
 			dataType : "string",
 			width : 80,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "customer_name",
+			headerText : "거래처",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true
+			},
+		}, {
+			dataField : "install_name",
+			headerText : "설치장소",
+			dataType : "string",
+			width : 100,
 			filter : {
 				showIcon : true,
 				inline : true
@@ -180,40 +180,22 @@ String poid = (String) request.getAttribute("poid");
 			},
 		}, {
 			dataField : "description",
-			headerText : "작업내용",
+			headerText : "작업 내용",
 			dataType : "string",
-			width : 300,
-			style : "auit-left",
+			width : 450,
+			style : "aui-left",
 			filter : {
 				showIcon : true,
 				inline : true
 			},
 		}, {
-			dataField : "customer_name",
-			headerText : "거래처",
+			dataField : "state",
+			headerText : "상태",
 			dataType : "string",
-			width : 100,
+			width : 80,
 			filter : {
 				showIcon : true,
 				inline : true
-			},
-		}, {
-			dataField : "install_name",
-			headerText : "설치 장소",
-			dataType : "string",
-			width : 100,
-			filter : {
-				showIcon : true,
-				inline : true
-			},
-		}, {
-			dataField : "pdate_txt",
-			headerText : "발행일",
-			dataType : "string",
-			width : 100,
-			filter : {
-				showIcon : true,
-				inline : true,
 			},
 		}, {
 			dataField : "model",
@@ -225,6 +207,15 @@ String poid = (String) request.getAttribute("poid");
 				inline : true
 			},
 		}, {
+			dataField : "pdate",
+			headerText : "발행일",
+			dataType : "string",
+			width : 100,
+			filter : {
+				showIcon : true,
+				inline : true,
+			},
+		}, {
 			dataField : "creator",
 			headerText : "작성자",
 			dataType : "string",
@@ -233,9 +224,6 @@ String poid = (String) request.getAttribute("poid");
 				showIcon : true,
 				inline : true
 			},
-			cellMerge : true,
-			mergeRef : "name",
-			mergePolicy : "restrict"
 		}, {
 			dataField : "createdDate_txt",
 			headerText : "작성일",
@@ -245,51 +233,24 @@ String poid = (String) request.getAttribute("poid");
 				showIcon : true,
 				inline : true,
 			},
-			cellMerge : true,
-			mergeRef : "name",
-			mergePolicy : "restrict"
-		}, {
-			dataField : "modifiedDate_txt",
-			headerText : "수정일",
-			dataType : "string",
-			width : 100,
-			filter : {
-				showIcon : true,
-				inline : true,
-			},
-			cellMerge : true,
-			mergeRef : "name",
-			mergePolicy : "restrict"
-		}, {
-			dataField : "state",
-			headerText : "상태",
-			dataType : "string",
-			width : 100,
-			filter : {
-				showIcon : true,
-				inline : true
-			},
-			cellMerge : true,
-			mergeRef : "name",
-			mergePolicy : "restrict"
 		} ]
-	};
+	}
 
 	function createAUIGrid(columnLayout) {
 		const props = {
 			headerHeight : 30,
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
+			showRowCheckColumn : true,
 			showAutoNoDataMessage : false,
 			enableFilter : true,
 			selectionMode : "multipleCells",
 			showInlineFilter : true,
 			filterLayerWidth : 320,
 			filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
-			fixedColumnCount : 1,
 			enableCellMerge : true,
-			forceTreeView : true,
-			showRowCheckColumn : true,
+			fixedColumnCount : 1,
+			forceTreeView : true
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		loadGridData();
@@ -304,8 +265,8 @@ String poid = (String) request.getAttribute("poid");
 	}
 
 	function loadGridData() {
+		const url = getCallUrl("/configSheet/list");
 		const params = new Object();
-		const url = getCallUrl("/partlist/list");
 		const psize = document.getElementById("psize").value;
 		params.psize = psize;
 		AUIGrid.showAjaxLoader(myGridID);
@@ -320,30 +281,12 @@ String poid = (String) request.getAttribute("poid");
 	}
 
 
-	document.addEventListener("DOMContentLoaded", function() {
-		const columns = loadColumnLayout("partlist-list");
-		const contenxtHeader = genColumnHtml(columns);
-		$("#h_item_ul").append(contenxtHeader);
-		$("#headerMenu").menu({
-			select : headerMenuSelectHandler
-		});
-		createAUIGrid(columns);
-		AUIGrid.resize(myGridID);
-		selectbox("state");
-		selectbox("projectType_name");
-		finderUser("creator");
-		finderUser("modifier");
-		twindate("created");
-		twindate("modified");
-		selectbox("psize");
-	});
-
 	function connect() {
 		const toid = document.getElementById("toid").value;
 		const poid = document.getElementById("poid").value;
 		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 		if (checkedItems.length == 0) {
-			alert("추가할 수배표를 선택하세요.");
+			alert("추가할 CONFIG SHEET를 선택하세요.");
 			return false;
 		}
 		openLayer();
@@ -358,7 +301,21 @@ String poid = (String) request.getAttribute("poid");
 			}
 		});
 	}
-	
+
+
+	document.addEventListener("DOMContentLoaded", function() {
+		const columns = loadColumnLayout("configSheet-list");
+		const contenxtHeader = genColumnHtml(columns);
+		$("#h_item_ul").append(contenxtHeader);
+		$("#headerMenu").menu({
+			select : headerMenuSelectHandler
+		});
+		createAUIGrid(columns);
+		finderUser("creator");
+		twindate("created");
+		selectbox("psize");
+	});
+
 	document.addEventListener("keydown", function(event) {
 		const keyCode = event.keyCode || event.which;
 		if (keyCode === 13) {

@@ -23,7 +23,7 @@
 			jsCallback : function(rowIndex, columnIndex, value, item) {
 				const oid = item.oid;
 				const url = getCallUrl("/partlist/view?oid=" + oid);
-				popup(url);
+				popup(url, 1700, 800);
 			}
 		},
 	}, {

@@ -4,13 +4,11 @@ import com.ptc.windchill.annotations.metadata.Cardinality;
 import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
 import com.ptc.windchill.annotations.metadata.GenAsBinaryLink;
 import com.ptc.windchill.annotations.metadata.GeneratedForeignKey;
-import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.GeneratedRole;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
 import e3ps.admin.commonCode.CommonCode;
-import e3ps.project.task.Task;
 import wt.fc.ObjectToObjectLink;
 import wt.org.WTUser;
 import wt.util.WTException;

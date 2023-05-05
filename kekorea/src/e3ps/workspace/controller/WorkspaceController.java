@@ -1,17 +1,11 @@
 package e3ps.workspace.controller;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,8 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.ContentUtils;
-import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.org.Department;
 import e3ps.org.service.OrgHelper;
 import e3ps.workspace.ApprovalContract;
@@ -37,12 +29,9 @@ import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
 import e3ps.workspace.dto.ApprovalLineDTO;
 import e3ps.workspace.service.WorkspaceHelper;
-import wt.content.ApplicationData;
-import wt.content.ContentServerHelper;
 import wt.fc.Persistable;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
-import wt.util.WTProperties;
 
 @Controller
 @RequestMapping(value = "/workspace/**")

@@ -351,28 +351,39 @@ String toid = (String) request.getAttribute("toid");
 			return a.sort - b.sort;
 		});
 
-// 		if (isNull(name.value)) {
-// 			alert("도면일람표 제목을 입력하세요.");
-// 			name.focus();
-// 			return false;
-// 		}
+		if (isNull(name.value)) {
+			alert("도면일람표 제목을 입력하세요.");
+			name.focus();
+			return false;
+		}
 
-// 		if (addRows9.length === 0) {
-// 			alert("최소 하나이상의 작번을 추가하세요.");
-// 			_insert();
-// 			return false;
-// 		}
+		if (addRows9.length === 0) {
+			alert("최소 하나이상의 작번을 추가하세요.");
+			_insert();
+			return false;
+		}
 
-// 		if (addRows8.length === 0) {
-// 			alert("결재선을 지정하세요.");
-// 			_register();
-// 			return false;
-// 		}
+		if (addRows8.length === 0) {
+			alert("결재선을 지정하세요.");
+			_register();
+			return false;
+		}
 
 		for (let i = 0; i < addRows.length; i++) {
 			const item = addRows[i];
 			const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
 			
+			if (isNull(item.lotNo) || item.lotNo === 0) {
+				alert("DWG. NO 값은 공백을 입력 할 수 없습니다.\n도면일람표 탭으로 이동하여 확인 해주세요.");
+				AUIGrid.showToastMessage(myGridID, rowIndex, 3, "DWG. NO 값은 공백을 입력 할 수 없습니다.");
+				return false;
+			}
+			
+			if (isNull(item.lotNo) || item.lotNo === 0) {
+				alert("LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.\n도면일람표 탭으로 이동하여 확인 해주세요.");
+				AUIGrid.showToastMessage(myGridID, rowIndex, 6, "LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.");
+				return false;
+			}
 		}
 
 

@@ -397,7 +397,6 @@ String end = (String) request.getAttribute("end");
 
 				params.editRows = editRows;
 				params.removeRows = removeRows;
-				console.log(params);
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);

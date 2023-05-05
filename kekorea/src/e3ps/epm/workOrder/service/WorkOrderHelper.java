@@ -737,4 +737,17 @@ public class WorkOrderHelper {
 		}
 		return JSONArray.fromObject(list);
 	}
+
+	/**
+	 * 도면 일람표 프로젝트 가져오기
+	 */
+	public ArrayList<Project> getProjects(WorkOrder workOrder) throws Exception {
+		ArrayList<Project> list = new ArrayList<>();
+		QueryResult result = PersistenceHelper.manager.navigate(workOrder, "project", WorkOrderProjectLink.class);
+		while (result.hasMoreElements()) {
+			Project project = (Project) result.nextElement();
+			list.add(project);
+		}
+		return list;
+	}
 }

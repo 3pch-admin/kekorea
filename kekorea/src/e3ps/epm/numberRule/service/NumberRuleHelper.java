@@ -8,7 +8,6 @@ import java.util.Map;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.epm.keDrawing.KeDrawingMaster;
 import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.numberRule.NumberRuleMaster;
 import e3ps.epm.numberRule.dto.NumberRuleDTO;
@@ -73,20 +72,12 @@ public class NumberRuleHelper {
 		QueryResult result = PersistenceHelper.manager.find(query);
 		String next = "A00000";
 
-		System.out.println(query);
-
 		if (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			NumberRuleMaster rule = (NumberRuleMaster) obj[0];
-
-			System.out.println("number=" + rule.getNumber());
-
 			seq1 = rule.getNumber().substring(3, 4);
-			System.out.println("seq1=" + seq1);
 			seq2 = df.format(Integer.parseInt(rule.getNumber().substring(4, 9))); // 00001
-			System.out.println("seq2=" + seq2);
 			next = seq1 + df.format(Integer.parseInt(rule.getNumber().substring(4, 9)) + 1); // 00001
-			System.out.println("next=" + next);
 			int pos = 0;
 			for (int i = 0; i < alphabet.length; i++) {
 				if (seq1.equals(alphabet[i])) {

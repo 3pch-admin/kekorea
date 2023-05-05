@@ -7,7 +7,6 @@
 ArrayList<Map<String, String>> customers = (ArrayList<Map<String, String>>) request.getAttribute("customers");
 ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.getAttribute("maks");
 ArrayList<Map<String, String>> projectTypes = (ArrayList<Map<String, String>>) request.getAttribute("projectTypes");
-ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) request.getAttribute("list");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
@@ -450,7 +449,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "singleRow",
+					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,

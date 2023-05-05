@@ -8,10 +8,8 @@ import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
-import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.configSheetCode.ConfigSheetCode;
 import wt.fc.WTObject;
-import wt.org.WTUser;
 import wt.util.WTException;
 
 @GenAsPersistable(superClass = WTObject.class,

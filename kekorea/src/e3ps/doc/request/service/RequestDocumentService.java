@@ -2,6 +2,7 @@ package e3ps.doc.request.service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import e3ps.doc.request.dto.RequestDocumentDTO;
 import wt.method.RemoteInterface;
@@ -27,6 +28,11 @@ public interface RequestDocumentService {
 	/**
 	 * 태스크 의뢰서 연결 제거
 	 */
-	public abstract void disconnect(String oid)throws Exception;
+	public abstract void disconnect(String oid) throws Exception;
+
+	/**
+	 * 태스크 의뢰서 연결
+	 */
+	public abstract Map<String, Object> connect(Map<String, Object> params) throws Exception;
 
 }

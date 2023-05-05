@@ -1,24 +1,14 @@
 package e3ps.epm.numberRule.service;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import e3ps.admin.numberRuleCode.service.NumberRuleCodeHelper;
 import e3ps.common.Constants;
-import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
-import e3ps.epm.keDrawing.KeDrawing;
-import e3ps.epm.keDrawing.dto.KeDrawingDTO;
-import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.numberRule.NumberRuleMaster;
 import e3ps.epm.numberRule.dto.NumberRuleDTO;
-import wt.content.ApplicationData;
-import wt.content.ContentRoleType;
-import wt.content.ContentServerHelper;
 import wt.fc.PersistenceHelper;
 import wt.ownership.Ownership;
 import wt.pom.Transaction;

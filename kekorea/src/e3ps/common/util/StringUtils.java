@@ -1,10 +1,6 @@
 package e3ps.common.util;
 
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.Map;
-
-import wt.query.ColumnExpression;
 
 public class StringUtils {
 
@@ -54,36 +50,6 @@ public class StringUtils {
 			return EPMTY_CHAR;
 		}
 		return arg;
-	}
-
-	/**
-	 * @param map : Map 객체
-	 * @return boolean
-	 *         <p>
-	 *         Map객체가 null or size 가 0 일 경우 true
-	 *         </p>
-	 */
-	private static boolean isMapNull(Map map) {
-		boolean isNull = false;
-		if (map == null || map.size() == 0) {
-			isNull = true;
-		}
-		return isNull;
-	}
-
-	/**
-	 * @param list : ArrayList 배열
-	 * @return boolean
-	 *         <p>
-	 *         배열이 null or size 가 0 일 경우 true
-	 *         </p>
-	 */
-	private static boolean isArrayNull(List list) {
-		boolean isNull = false;
-		if (list == null || list.size() == 0) {
-			isNull = true;
-		}
-		return isNull;
 	}
 
 	/**

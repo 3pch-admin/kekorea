@@ -30,33 +30,8 @@ import wt.util.WTProperties;
 public class MailUtils {
 
 	public static final boolean isMail = true;
-
-	// private static final String host = "mail.e3ps.com";
-	// private static final String host = "smtp.mailplug.co.kr";
-	private static final String host = "mail.kekorea.co.kr";
-	// mail.kekorea.co.kr
+	private static final String host = "kokusai-electric.com";
 	private static final String port = "465";
-	// 25 
-
-	// 테크윙 적용시
-	// private static final String host = "mail.techwing.co.kr";
-	// private static final String port = "465";
-
-//	private static final String ID = "jhkim@e3ps.com";
-//	private static final String PW = "e3ps.windchill";
-
-	// private static final String ADMIN_ID = "pdm.mail@techwing.co.kr";
-	// private static final String ADMIN_PW = "e3psPDM.sys12#";
-
-	private static String codebase;
-
-	static {
-		try {
-			codebase = WTProperties.getLocalProperties().getProperty("wt.server.codebase");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	private MailUtils() {
 

@@ -42,5 +42,4 @@ public interface TBOMService {
 	 * T-BOM 산출물에 연결
 	 */
 	public abstract Map<String, Object> connect(Map<String, Object> params) throws Exception;
-
 }

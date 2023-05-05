@@ -1,7 +1,9 @@
 package e3ps.bom.tbom.service;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +15,6 @@ import e3ps.bom.tbom.dto.TBOMDTO;
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
-import e3ps.common.util.QuerySpecUtils;
 import e3ps.part.kePart.KePart;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
@@ -27,16 +28,13 @@ import wt.clients.folder.FolderTaskLogic;
 import wt.content.ApplicationData;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
-import wt.doc.WTDocument;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.folder.Folder;
 import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
 import wt.pom.Transaction;
-import wt.query.QuerySpec;
 import wt.services.StandardManager;
-import wt.util.WTAttributeNameIfc;
 import wt.util.WTException;
 
 public class StandardTBOMService extends StandardManager implements TBOMService {
@@ -209,18 +207,11 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
-			TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
 
-			QuerySpec query = new QuerySpec();
-			int idx = query.appendClassList(TBOMMaster.class, true);
-			int idx_link = query.appendClassList(TBOMMasterProjectLink.class, true);
-			QuerySpecUtils.toInnerJoin(query, TBOMMaster.class, TBOMMasterProjectLink.class, WTAttributeNameIfc.ID_NAME,
-					"roleAObjectRef.key.id", idx, idx_link);
-			QuerySpecUtils.toEqualsAnd(query, idx_link, TBOMMasterProjectLink.class, "roleAObjectRef.key.id", master);
-			QueryResult qr = PersistenceHelper.manager.find(query);
+			TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
+			QueryResult qr = PersistenceHelper.manager.navigate(master, "project", TBOMMasterProjectLink.class, false);
 			while (qr.hasMoreElements()) {
-				Object[] obj = (Object[]) qr.nextElement();
-				TBOMMasterProjectLink link = (TBOMMasterProjectLink) obj[1];
+				TBOMMasterProjectLink link = (TBOMMasterProjectLink) qr.nextElement();
 				PersistenceHelper.manager.delete(link);
 			}
 
@@ -572,18 +563,22 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 			for (String oid : arr) {
 				TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
 
-				QueryResult result = PersistenceHelper.manager.navigate(master, "output", OutputDocumentLink.class);
+				QueryResult result = PersistenceHelper.manager.navigate(master, "output", TBOMMasterProjectLink.class);
 				while (result.hasMoreElements()) {
 					Output output = (Output) result.nextElement();
 					Project p = output.getProject();
 
-					if (p.getPersistInfo().getObjectIdentifier().getStringValue().equals(oid)) {
+					if (p.getPersistInfo().getObjectIdentifier().getStringValue().equals(poid)) {
+						trs.rollback();
 						map.put("msg",
 								"해당 T-BOM이 작번 : " + p.getKekNumber() + "의 태스크 : " + task.getName() + "에 연결이 되어있습니다.");
 						map.put("exist", true);
 						return map;
 					}
 				}
+
+				TBOMMasterProjectLink link = TBOMMasterProjectLink.newTBOMMasterProjectLink(master, project);
+				PersistenceHelper.manager.save(link);
 
 				Output output = Output.newOutput();
 				output.setName(master.getName());
@@ -593,6 +588,18 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 				output.setDocument(master);
 				output.setOwnership(CommonUtils.sessionOwner());
 				PersistenceHelper.manager.save(output);
+
+				// 의뢰서는 아에 다른 페이지에서 작동하므로 소스 간결 연결된 태스트 상태 변경
+				// 추가적인 산출물 등록시 실제 시작일이 변경 안되도록 처리한다.
+				if (task.getStartDate() == null) {
+					task.setStartDate(new Timestamp(new Date().getTime()));
+				}
+				task.setState(TaskStateVariable.INWORK);
+				PersistenceHelper.manager.modify(task);
+
+				// 프로젝트 전체 진행율 조정
+				ProjectHelper.service.calculation(project);
+				ProjectHelper.service.commit(project);
 			}
 
 			map.put("exist", false);

@@ -8,7 +8,6 @@ import java.util.Map;
 
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.ContentUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.doc.WTDocumentWTPartLink;
 import e3ps.doc.dto.DocumentDTO;
@@ -33,7 +32,6 @@ import wt.fc.QueryResult;
 import wt.folder.Folder;
 import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
-import wt.iba.value.IBAHolder;
 import wt.org.WTUser;
 import wt.part.WTPart;
 import wt.pom.Transaction;

@@ -2,7 +2,6 @@ package e3ps.korea.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
@@ -16,9 +15,6 @@ import e3ps.project.dto.ProjectDTO;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
-import wt.org.WTUser;
-import wt.query.ClassAttribute;
-import wt.query.OrderBy;
 import wt.query.QuerySpec;
 import wt.services.ServiceFactory;
 

@@ -16,7 +16,6 @@ import e3ps.bom.partlist.dto.PartListDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.part.service.PartHelper;
 import e3ps.project.Project;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -160,7 +159,7 @@ public class PartlistHelper {
 			MasterDataLink link = (MasterDataLink) obj[0];
 			PartListData data = link.getData();
 
-			WTPart wtPart = PartHelper.manager.getWTPart(data.getPartNo());
+//			WTPart wtPart = PartHelper.manager.getWTPart(data.getPartNo());
 
 			Map<String, Object> map = new HashMap<>();
 			map.put("check", "OK");
@@ -538,14 +537,14 @@ public class PartlistHelper {
 	}
 
 	/**
-	 * 수배표 프로젝트 링크
+	 * 수배표 프로젝트 가져오기
 	 */
-	public ArrayList<PartListMasterProjectLink> getLinks(PartListMaster mm) throws Exception {
-		ArrayList<PartListMasterProjectLink> list = new ArrayList<>();
-		QueryResult result = PersistenceHelper.manager.navigate(mm, "project", PartListMasterProjectLink.class, false);
+	public ArrayList<Project> getProjects(PartListMaster mm) throws Exception {
+		ArrayList<Project> list = new ArrayList<>();
+		QueryResult result = PersistenceHelper.manager.navigate(mm, "project", PartListMasterProjectLink.class);
 		while (result.hasMoreElements()) {
-			PartListMasterProjectLink link = (PartListMasterProjectLink) result.nextElement();
-			list.add(link);
+			Project project = (Project) result.nextElement();
+			list.add(project);
 		}
 		return list;
 	}

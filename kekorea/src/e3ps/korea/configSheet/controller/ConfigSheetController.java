@@ -33,7 +33,6 @@ import e3ps.korea.configSheet.beans.ConfigSheetDTO;
 import e3ps.korea.configSheet.service.ConfigSheetHelper;
 import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
-import e3ps.project.output.service.OutputHelper;
 import e3ps.project.template.service.TemplateHelper;
 import net.sf.json.JSONArray;
 import wt.fc.PersistenceHelper;
@@ -274,5 +273,46 @@ public class ConfigSheetController extends BaseController {
 		model.addObject("poid", poid);
 		model.setViewName("popup:/korea/configSheet/configSheet-connect");
 		return model;
+	}
+
+	@Description(value = "CONFIG SHEET 태스크에서 연결")
+	@PostMapping(value = "/connect")
+	@ResponseBody
+	public Map<String, Object> connect(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = ConfigSheetHelper.service.connect(params);
+
+			if ((boolean) result.get("exist")) {
+				result.put("result", FAIL);
+				result.put("msg", "이미 해당 태스크와 연결된 CONFIG SHEET 입니다.");
+				return result;
+			}
+
+			result.put("msg", SAVE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "CONFIG SHEET 태스크 연결 제거 함수")
+	@ResponseBody
+	@GetMapping(value = "/disconnect")
+	public Map<String, Object> disconnect(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ConfigSheetHelper.service.disconnect(oid);
+			result.put("msg", DELETE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
 	}
 }

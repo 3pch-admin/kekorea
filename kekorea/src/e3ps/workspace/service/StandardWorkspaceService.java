@@ -726,6 +726,10 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 				persistable = (Persistable) LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) persistable,
 						state);
 
+				if (persistable instanceof WTDocument) {
+					observe((WTDocument) persistable, Constants.State.APPROVED);
+				}
+
 				if (persistable instanceof RequestDocument) {
 					RequestDocument requestDocument = (RequestDocument) persistable;
 					settingUser(requestDocument, master);
@@ -738,17 +742,10 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 					PersistenceHelper.manager.modify(mm);
 					mm = (PartListMaster) PersistenceHelper.manager.refresh(mm);
 				}
-
-//					if (per instanceof RequestDocument) {
-//						RequestDocument req = (RequestDocument) per;
-//						setProjectRoleUser(req, master);
-//					} else if (per instanceof WTDocument) {
-//						setTaskStateCheck(per);
-//					}
 				sendToERP(persistable);
 			} else if (persistable instanceof ApprovalContract) {
 				ApprovalContract contract = (ApprovalContract) persistable;
-//					approvalContract(contract);
+				setApprovalContractState(contract);
 			} else if (persistable instanceof KePart) {
 				KePart kePart = (KePart) persistable;
 				kePart.setState(Constants.State.APPROVED);

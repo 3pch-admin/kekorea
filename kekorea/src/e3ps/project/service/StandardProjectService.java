@@ -637,7 +637,6 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 		String customer = (String) params.get("customer");
 		String install = (String) params.get("install");
 		String projectType = (String) params.get("projectType");
-		String reference = (String) params.get("reference");
 		String description = (String) params.get("description");
 		String customDate = (String) params.get("customDate");
 		Transaction trs = new Transaction();

@@ -2,8 +2,8 @@ package e3ps.korea.configSheet.service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import e3ps.doc.meeting.dto.MeetingDTO;
 import e3ps.korea.configSheet.beans.ConfigSheetDTO;
 import wt.method.RemoteInterface;
 
@@ -25,4 +25,13 @@ public interface ConfigSheetService {
 	 */
 	public abstract void delete(String oid) throws Exception;
 
+	/**
+	 * CONFIG SHEET 산출물 연결
+	 */
+	public abstract Map<String, Object> connect(Map<String, Object> params) throws Exception;
+	
+	/**
+	 * 태스크 CONFIG SHEET 연결 제거
+	 */
+	public abstract void disconnect(String oid) throws Exception;
 }

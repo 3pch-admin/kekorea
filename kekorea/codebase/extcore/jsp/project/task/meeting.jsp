@@ -1,9 +1,9 @@
 <%@page import="e3ps.project.service.ProjectHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	boolean isAdmin = Boolean.parseBoolean(request.getParameter("isAdmin"));
-	String poid = (String) request.getParameter("poid");
-	String toid = (String) request.getParameter("toid");
+boolean isAdmin = Boolean.parseBoolean(request.getParameter("isAdmin"));
+String poid = (String) request.getParameter("poid");
+String toid = (String) request.getParameter("toid");
 %>
 <div class="info-header">
 	<img src="/Windchill/extcore/images/header.png">
@@ -72,9 +72,11 @@
 			selectionMode : "multipleCells",
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-		AUIGrid.setGridData(myGridID, <%=ProjectHelper.manager.jsonAuiOutput(poid, toid)%>);
+		AUIGrid.setGridData(myGridID,
+<%=ProjectHelper.manager.jsonAuiOutput(poid, toid)%>
+	);
 	}
-	
+
 	function create() {
 		const toid = document.getElementById("oid").value;
 		const poid = document.getElementById("poid").value;
@@ -85,7 +87,7 @@
 	function connect() {
 		const toid = document.getElementById("oid").value;
 		const poid = document.getElementById("poid").value;
-		const url = getCallUrl("/output/connect?toid=" + toid + "&poid=" + poid);
+		const url = getCallUrl("/meeting/connect?toid=" + toid + "&poid=" + poid);
 		popup(url, 1600, 700);
 	}
 
@@ -95,7 +97,7 @@
 			const item = data[i].item;
 			arr.push(item.oid);
 		}
-		const url = getCallUrl("/output/connect");
+		const url = getCallUrl("/meeting/connect");
 		const params = new Object();
 		params.arr = arr;
 		params.toid = toid;
@@ -118,7 +120,7 @@
 			const oid = item.ooid;
 			arr.push(oid);
 		}
-		const url = getCallUrl("/output/disconnect");
+		const url = getCallUrl("/meeting/disconnect");
 		const params = new Object();
 		params.arr = arr;
 		if (!confirm("삭제 하시겠습니까?\n회의록과 태스크의 연결관계만 삭제 되어집니다.")) {
