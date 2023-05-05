@@ -278,7 +278,6 @@
 								params.arr = arr;
 								parent.openLayer();
 								call(url, params, function(data) {
-									console.log(data);
 									const list1 = data.list1;
 									const list2 = data.list2;
 									if (data.result) {

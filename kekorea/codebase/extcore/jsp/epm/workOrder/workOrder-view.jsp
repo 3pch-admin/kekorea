@@ -273,8 +273,6 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
 					const rev = item.rev;
 					if (Number(value) !== Number(rev)) {
-						console.log(rev);
-						console.log(value);
 						return "compare";
 					}
 					return "";

@@ -11,6 +11,7 @@ import java.util.Map;
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.service.TBOMHelper;
@@ -55,10 +56,7 @@ import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.lifecycle.LifeCycleManaged;
 import wt.org.WTUser;
-import wt.query.ClassAttribute;
-import wt.query.OrderBy;
 import wt.query.QuerySpec;
-import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
 
@@ -88,11 +86,14 @@ public class ProjectHelper {
 	public static final ProjectService service = ServiceFactory.getService(ProjectService.class);
 	public static final ProjectHelper manager = new ProjectHelper();
 
+	/**
+	 * 전기 진행율 할당율 계산
+	 */
 	public int getElecAllocateProgress(Project project) throws Exception {
 		int progress = 0;
 
 		ArrayList<Task> list = new ArrayList<Task>();
-		list = getterProjectTask(project, list);
+		list = recurciveTask(project);
 
 		int sumAllocate = 0;
 		int sumProgress = 0;
@@ -122,12 +123,15 @@ public class ProjectHelper {
 		return progress;
 	}
 
+	/**
+	 * 기계 진행율 할당율 계산
+	 */
 	public int getMachineAllocateProgress(Project project) throws Exception {
 		int progress = 0;
 
 		ArrayList<Task> list = new ArrayList<Task>();
 
-		list = getterProjectTask(project, list);
+		list = recurciveTask(project);
 
 		int sumAllocate = 0;
 		int sumProgress = 0;
@@ -156,71 +160,9 @@ public class ProjectHelper {
 		return progress;
 	}
 
-	public ArrayList<Task> getterProjectTask(Project project, ArrayList<Task> list) throws Exception {
-
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(Task.class, true);
-		long ids = project.getPersistInfo().getObjectIdentifier().getId();
-		SearchCondition sc = new SearchCondition(Task.class, "projectReference.key.id", "=", ids);
-		query.appendWhere(sc, new int[] { idx });
-		query.appendAnd();
-
-		sc = new SearchCondition(Task.class, "parentTaskReference.key.id", "=", 0L);
-		query.appendWhere(sc, new int[] { idx });
-		query.appendAnd();
-
-		sc = new SearchCondition(Task.class, Task.DEPTH, "=", 1);
-		query.appendWhere(sc, new int[] { idx });
-
-		ClassAttribute ca = new ClassAttribute(Task.class, Task.SORT);
-		OrderBy orderBy = new OrderBy(ca, false);
-		query.appendOrderBy(orderBy, new int[] { idx });
-
-		query.setAdvancedQueryEnabled(true);
-		query.setDescendantQuery(false);
-
-		QueryResult result = PersistenceHelper.manager.find(query);
-
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			Task t = (Task) obj[0];
-			list.add(t);
-			getterTasks(t, project, list);
-		}
-		return list;
-	}
-
-	public void getterTasks(Task parentTask, Project project, ArrayList<Task> list) throws Exception {
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(Task.class, true);
-
-		long ids = parentTask.getPersistInfo().getObjectIdentifier().getId();
-		long pids = project.getPersistInfo().getObjectIdentifier().getId();
-
-		SearchCondition sc = new SearchCondition(Task.class, "parentTaskReference.key.id", "=", ids);
-		query.appendWhere(sc, new int[] { idx });
-		query.appendAnd();
-
-		sc = new SearchCondition(Task.class, "projectReference.key.id", "=", pids);
-		query.appendWhere(sc, new int[] { idx });
-
-		ClassAttribute ca = new ClassAttribute(Task.class, Task.SORT);
-		OrderBy orderBy = new OrderBy(ca, false);
-		query.appendOrderBy(orderBy, new int[] { idx });
-
-		query.setAdvancedQueryEnabled(true);
-		query.setDescendantQuery(false);
-
-		QueryResult result = PersistenceHelper.manager.find(query);
-
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			Task t = (Task) obj[0];
-			list.add(t);
-			getterTasks(t, project, list);
-		}
-	}
-
+	/**
+	 * 프로젝트 담당자가져오기
+	 */
 	public WTUser getUserType(Project project, String userType) throws Exception {
 		CommonCode userTypeCode = CommonCodeHelper.manager.getCommonCode(userType, "USER_TYPE");
 		QuerySpec query = new QuerySpec();
@@ -236,256 +178,9 @@ public class ProjectHelper {
 		return null;
 	}
 
-//
-//	public int getProjectTaskProgress(Task task, boolean isNormalTask) throws Exception {
-//		int progress = 0;
-//		// 일반 태스크 일경우
-//		if (isNormalTask) {
-//			ArrayList<DocumentOutputLink> list = getProjectOutputLink(task);
-//			int count = list.size();
-//			int data = 0;
-//			for (DocumentOutputLink link : list) {
-//				LifeCycleManaged document = link.getDocument();
-//
-//				if (document.getLifeCycleState().toString().equals("APPROVED")
-//						|| document.getLifeCycleState().toString().equals("RELEASED")) {
-//					data += 1;
-//				}
-//			}
-//
-//			if (data == 0) {
-//				progress = 0;
-//			} else {
-//				BigDecimal counting = new BigDecimal(data);
-//				BigDecimal total = new BigDecimal(count);
-//
-//				BigDecimal result = counting.divide(total, 2, BigDecimal.ROUND_FLOOR);
-//				progress = (int) (result.doubleValue() * 100);
-//			}
-//		}
-//		return progress;
-//	}
-//
-//	public String getProjectPartListTask(Project project, Task tt) throws Exception {
-//		String tname = "1차_수배";
-//		Task task = null;
-//		QuerySpec query = new QuerySpec();
-//		int idx = query.appendClassList(Task.class, true);
-//
-//		SearchCondition sc = new SearchCondition(Task.class, "projectReference.key.id", "=",
-//				project.getPersistInfo().getObjectIdentifier().getId());
-//		query.appendWhere(sc, new int[] { idx });
-//		query.appendAnd();
-//
-//		sc = new SearchCondition(Task.class, "parentTaskReference.key.id", "=",
-//				tt.getPersistInfo().getObjectIdentifier().getId());
-//		query.appendWhere(sc, new int[] { idx });
-//
-//		QueryResult result = PersistenceHelper.manager.find(query);
-//		while (result.hasMoreElements()) {
-//			Object[] obj = (Object[]) result.nextElement();
-//			task = (Task) obj[0];
-//
-//			QueryResult qr = PersistenceHelper.manager.navigate(task, "output", TaskOutputLink.class);
-//			if (qr.size() >= 1) {
-//				tname = "2차_수배";
-//			}
-//
-//		}
-//		return tname;
-//	}
-//
-//	public Task getProjectTaskByName(Project project, String location) throws Exception {
-//
-//		int end = location.lastIndexOf("/");
-//		Task task = null;
-//		if (end > -1) {
-//			String taskName = location.substring(end + 1);
-//
-//			WTUser user = (WTUser) SessionHelper.manager.getPrincipal();
-//
-//			Department dept = OrgHelper.manager.getDepartment(user);
-//
-//			if ("작업지시서".equals(taskName.trim())) {
-//				if ("기계설계".equals(dept.getName())) {
-//					taskName = "기계_" + taskName;
-//				} else if ("전기설계".equals(dept.getName())) {
-//					taskName = "전기_" + taskName;
-//				}
-//			} else if ("도면일람표".equals(taskName.trim())) {
-//				if ("기계설계".equals(dept.getName())) {
-//					taskName = "기계_" + taskName;
-//				} else if ("전기설계".equals(dept.getName())) {
-//					taskName = "전기_" + taskName;
-//				}
-//			} else if ("제작사양서".equals(taskName.trim())) {
-//				if ("기계설계".equals(dept.getName())) {
-//					taskName = "기계_" + taskName;
-//				} else if ("전기설계".equals(dept.getName())) {
-//					taskName = "전기_" + taskName;
-//				}
-//			}
-//
-//			QuerySpec query = new QuerySpec();
-//			int idx = query.appendClassList(Task.class, true);
-//
-//			SearchCondition sc = new SearchCondition(Task.class, "projectReference.key.id", "=",
-//					project.getPersistInfo().getObjectIdentifier().getId());
-//			query.appendWhere(sc, new int[] { idx });
-//			query.appendAnd();
-//
-//			sc = new SearchCondition(Task.class, Task.NAME, "=", taskName);
-//			query.appendWhere(sc, new int[] { idx });
-//
-//			QueryResult result = PersistenceHelper.manager.find(query);
-//			while (result.hasMoreElements()) {
-//				Object[] obj = (Object[]) result.nextElement();
-//				task = (Task) obj[0];
-//
-//				if (taskName.equals(task.getName())) {
-//					break;
-//				}
-//			}
-//		}
-//
-//		return task;
-//	}
-//
-//	public Task getProjectTaskByName(Project project, String location, String engType) throws Exception {
-//
-//		int end = location.lastIndexOf("/");
-//		Task task = null;
-//		if (end > -1) {
-//			String taskName = location.substring(end + 1);
-//
-//			// 1차 수배..
-//
-//			QuerySpec query = new QuerySpec();
-//			int idx = query.appendClassList(Task.class, true);
-//
-//			SearchCondition sc = new SearchCondition(Task.class, "projectReference.key.id", "=",
-//					project.getPersistInfo().getObjectIdentifier().getId());
-//			query.appendWhere(sc, new int[] { idx });
-//			query.appendAnd();
-//
-//			sc = new SearchCondition(Task.class, Task.NAME, "=", taskName);
-//			query.appendWhere(sc, new int[] { idx });
-//
-//			QueryResult result = PersistenceHelper.manager.find(query);
-//			while (result.hasMoreElements()) {
-//				Object[] obj = (Object[]) result.nextElement();
-//				task = (Task) obj[0];
-//
-//				if (taskName.equals(task.getName())) {
-//					break;
-//				}
-//			}
-//		}
-//
-//		if (task == null) {
-//			if (engType.equals("기계")) {
-//				QuerySpec query = new QuerySpec();
-//				int idx = query.appendClassList(Task.class, true);
-//
-//				SearchCondition sc = new SearchCondition(Task.class, "projectReference.key.id", "=",
-//						project.getPersistInfo().getObjectIdentifier().getId());
-//				query.appendWhere(sc, new int[] { idx });
-//				query.appendAnd();
-//
-//				sc = new SearchCondition(Task.class, Task.NAME, "=", "기계_수배표작성");
-//				query.appendWhere(sc, new int[] { idx });
-//
-//				QueryResult result = PersistenceHelper.manager.find(query);
-//				while (result.hasMoreElements()) {
-//					Object[] obj = (Object[]) result.nextElement();
-//					task = (Task) obj[0];
-//
-//					if ("기계_수배표작성".equals(task.getName())) {
-//						break;
-//					}
-//				}
-//			} else if (engType.equals("전기")) {
-//				QuerySpec query = new QuerySpec();
-//				int idx = query.appendClassList(Task.class, true);
-//
-//				SearchCondition sc = new SearchCondition(Task.class, "projectReference.key.id", "=",
-//						project.getPersistInfo().getObjectIdentifier().getId());
-//				query.appendWhere(sc, new int[] { idx });
-//				query.appendAnd();
-//
-//				sc = new SearchCondition(Task.class, Task.NAME, "=", "전기_수배표작성");
-//				query.appendWhere(sc, new int[] { idx });
-//
-//				QueryResult result = PersistenceHelper.manager.find(query);
-//				while (result.hasMoreElements()) {
-//					Object[] obj = (Object[]) result.nextElement();
-//					task = (Task) obj[0];
-//
-//					if ("전기_수배표작성".equals(task.getName())) {
-//						break;
-//					}
-//				}
-//			}
-//		}
-//
-//		return task;
-//	}
-//
-//	public Project getProjectByKekNumber(Map<String, Object> param) throws Exception {
-//		String ss = (String) param.get("kekNumber");
-//
-//		String kekNumber = ss.split("/")[0];
-//		String pType = ss.split("/")[1];
-//
-//		QuerySpec query = new QuerySpec();
-//		int idx = query.appendClassList(Project.class, true);
-//
-//		SearchCondition sc = new SearchCondition(Project.class, Project.KEK_NUMBER, "=", kekNumber);
-//		query.appendWhere(sc, new int[] { idx });
-//		query.appendAnd();
-//
-//		sc = new SearchCondition(Project.class, Project.P_TYPE, "=", pType);
-//		query.appendWhere(sc, new int[] { idx });
-//
-//		QueryResult result = PersistenceHelper.manager.find(query);
-//		Project project = null;
-//		if (result.hasMoreElements()) {
-//			Object[] obj = (Object[]) result.nextElement();
-//			project = (Project) obj[0];
-//		}
-//		return project;
-//	}
-//
-//	public ArrayList<TargetTaskSourceTaskLink> getTargetTaskSourceTaskLinkByTarget(Task task) throws Exception {
-//		ArrayList<TargetTaskSourceTaskLink> list = new ArrayList<TargetTaskSourceTaskLink>();
-//
-//		QuerySpec query = new QuerySpec();
-//		int idx = query.appendClassList(TargetTaskSourceTaskLink.class, true);
-//
-//		long ids = task.getPersistInfo().getObjectIdentifier().getId();
-//		SearchCondition sc = new SearchCondition(TargetTaskSourceTaskLink.class, "roleBObjectRef.key.id", "=", ids);
-//		query.appendWhere(sc, new int[] { idx });
-//
-//		query.appendAnd();
-//
-//		long tids = task.getProject().getPersistInfo().getObjectIdentifier().getId();
-//		sc = new SearchCondition(TargetTaskSourceTaskLink.class, "projectReference.key.id", "=", tids);
-//		query.appendWhere(sc, new int[] { idx });
-//
-//		// QueryResult result = PersistenceHelper.manager.navigate(task, "targetTask",
-//		// TargetTaskSourceTaskLink.class,
-//		// false);
-//		QueryResult result = PersistenceHelper.manager.find(query);
-//		while (result.hasMoreElements()) {
-//			Object[] obj = (Object[]) result.nextElement();
-//			// TargetTaskSourceTaskLink link = (TargetTaskSourceTaskLink)
-//			// result.nextElement();
-//			TargetTaskSourceTaskLink link = (TargetTaskSourceTaskLink) obj[0];
-//			list.add(link);
-//		}
-//		return list;
-//	}
-//
+	/**
+	 * 진행율 계산
+	 */
 	public static double getPreferComp(Task task) throws Exception {
 		double preferComp = 0;
 		Timestamp today = DateUtils.getCurrentTimestamp();
@@ -510,6 +205,9 @@ public class ProjectHelper {
 		return preferComp;
 	}
 
+	/**
+	 * 계획 대비 진행율 계산
+	 */
 	public static double getPreferComp(Project project) throws Exception {
 		double preferComp = 0;
 
@@ -537,6 +235,9 @@ public class ProjectHelper {
 		return preferComp;
 	}
 
+	/**
+	 * 리스트 프로젝트 진행 바 표시
+	 */
 	public String getProjectStateBar(Project project) throws Exception {
 
 		int progress = ProjectHelper.manager.getKekProgress(project);
@@ -610,6 +311,9 @@ public class ProjectHelper {
 		return bar;
 	}
 
+	/**
+	 * 트리 태스크 아이콘
+	 */
 	public String getStateIcon(int type) throws Exception {
 		if (type == 0) {
 			return "<img title='태스크 시작전 입니다.' style='position: relative; top: 3px;' src='/Windchill/extcore/images/project/state_blank_bar.png'>";
@@ -623,27 +327,6 @@ public class ProjectHelper {
 			return "<img title='태스크 완료 입니다.' style='position: relative; top: 3px;' src='/Windchill/extcore/images/project/state_green_bar.png'>";
 		}
 		return "";
-	}
-
-	public ArrayList<Map<String, Object>> remoter(Map<String, Object> params) throws Exception {
-		String term = (String) params.get("term");
-		ArrayList<Map<String, Object>> list = new ArrayList<>();
-
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(Project.class, true);
-		QuerySpecUtils.toLikeAnd(query, idx, Project.class, Project.KEK_NUMBER, term);
-		QuerySpecUtils.toOrderBy(query, idx, Project.class, Project.KEK_NUMBER, false);
-
-		QueryResult result = PersistenceHelper.manager.find(query);
-		while (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			Project project = (Project) obj[0];
-			Map<String, Object> data = new HashMap<String, Object>();
-			data.put("key", project.getPersistInfo().getObjectIdentifier().getStringValue());
-			data.put("value", project.getKekNumber());
-			list.add(data);
-		}
-		return list;
 	}
 
 	/**
@@ -771,30 +454,6 @@ public class ProjectHelper {
 		map.put("sessionid", pager.getSessionId());
 		map.put("curPage", pager.getCpage());
 		System.out.println("작번검색 END = " + new Timestamp(new Date().getTime()));
-		return map;
-	}
-
-	public Map<String, Object> get(String kekNumber) throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
-
-		QuerySpec query = new QuerySpec();
-		int idx = query.appendClassList(Project.class, true);
-
-		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, Project.KEK_NUMBER, kekNumber);
-
-		QueryResult result = PersistenceHelper.manager.find(query);
-		if (result.hasMoreElements()) {
-			Object[] obj = (Object[]) result.nextElement();
-			Project project = (Project) obj[0];
-			map.put("kekNumber", kekNumber);
-			map.put("keNumber", project.getKeNumber());
-			map.put("mak", project.getMak() != null ? project.getMak().getName() : "");
-			map.put("install", project.getInstall() != null ? project.getInstall().getName() : "");
-			map.put("pDate", project.getPDate());
-			map.put("customer", project.getCustomer() != null ? project.getCustomer().getName() : "");
-			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
-		}
-
 		return map;
 	}
 
@@ -977,6 +636,49 @@ public class ProjectHelper {
 	}
 
 	/**
+	 * 수배표 전체 리스트 (기계, 전기 구분)
+	 */
+	public JSONArray jsonAuiPartlist(String oid, String toid) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		Project project = (Project) CommonUtils.getObject(oid);
+		Task task = (Task) CommonUtils.getObject(toid);
+		String[] t = null;
+		if (task.getName().equals("기계_수배표")) {
+			t = new String[] { "기계_1차_수배", "기계_2차_수배" };
+		} else if (task.getName().equals("전기_수배표")) {
+			t = new String[] { "전기_1차_수배", "전기_2차_수배" };
+		}
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(PartListMaster.class, true);
+		int idx_link = query.appendClassList(PartListMasterProjectLink.class, false);
+		int idx_p = query.appendClassList(Project.class, false);
+
+		QuerySpecUtils.toInnerJoin(query, PartListMaster.class, PartListMasterProjectLink.class,
+				WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toInnerJoin(query, Project.class, PartListMasterProjectLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleBObjectRef.key.id", idx_p, idx_link);
+		QuerySpecUtils.toEqualsAnd(query, idx_link, PartListMasterProjectLink.class, "roleBObjectRef.key.id", project);
+		QuerySpecUtils.toIn(query, idx, PartListMaster.class, PartListMaster.ENG_TYPE, t);
+		QuerySpecUtils.toOrderBy(query, idx, PartListMaster.class, PartListMaster.CREATE_TIMESTAMP, false);
+
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			PartListMaster master = (PartListMaster) obj[0];
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", master.getName());
+			map.put("state", master.getLifeCycleState().getDisplay());
+			map.put("creator", master.getCreatorFullName());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+			map.put("secondary", AUIGridUtils.secondaryTemplate(master));
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	/**
 	 * 작번 기본 산출물
 	 */
 	public JSONArray jsonAuiOutput(String poid, String toid) throws Exception {
@@ -1010,6 +712,7 @@ public class ProjectHelper {
 				Meeting meeting = (Meeting) lcm;
 				map.put("oid", meeting.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("name", meeting.getName());
+				map.put("state", meeting.getLifeCycleState().getDisplay());
 				map.put("creator", meeting.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(meeting.getCreateTimestamp()));
 				map.put("secondary", AUIGridUtils.secondaryTemplate(meeting));
@@ -1017,6 +720,7 @@ public class ProjectHelper {
 				PartListMaster master = (PartListMaster) lcm;
 				map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("name", master.getName());
+				map.put("state", master.getLifeCycleState().getDisplay());
 				map.put("creator", master.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
 				map.put("secondary", AUIGridUtils.secondaryTemplate(master));
@@ -1024,6 +728,7 @@ public class ProjectHelper {
 				RequestDocument requestDocument = (RequestDocument) lcm;
 				map.put("oid", requestDocument.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("name", requestDocument.getName());
+				map.put("state", requestDocument.getLifeCycleState().getDisplay());
 				map.put("creator", requestDocument.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(requestDocument.getCreateTimestamp()));
 				map.put("secondary", AUIGridUtils.secondaryTemplate(requestDocument));
@@ -1031,6 +736,7 @@ public class ProjectHelper {
 				WorkOrder workOrder = (WorkOrder) lcm;
 				map.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("name", workOrder.getName());
+				map.put("state", workOrder.getLifeCycleState().getDisplay());
 				map.put("creator", workOrder.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(workOrder.getCreateTimestamp()));
 				map.put("secondary", AUIGridUtils.secondaryTemplate(workOrder));
@@ -1038,6 +744,7 @@ public class ProjectHelper {
 				TBOMMaster master = (TBOMMaster) lcm;
 				map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("name", master.getName());
+				map.put("state", master.getLifeCycleState().getDisplay());
 				map.put("creator", master.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
 				map.put("secondary", AUIGridUtils.secondaryTemplate(master));
@@ -1045,6 +752,7 @@ public class ProjectHelper {
 				ConfigSheet configSheet = (ConfigSheet) lcm;
 				map.put("oid", configSheet.getPersistInfo().getObjectIdentifier().getStringValue());
 				map.put("name", configSheet.getName());
+				map.put("state", configSheet.getLifeCycleState().getDisplay());
 				map.put("creator", configSheet.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(configSheet.getCreateTimestamp()));
 				map.put("secondary", AUIGridUtils.secondaryTemplate(configSheet));
@@ -1095,6 +803,9 @@ public class ProjectHelper {
 		return kekProgress;
 	}
 
+	/**
+	 * 태스크 가져오기 재귀함수
+	 */
 	public ArrayList<Task> recurciveTask(Project project) throws Exception {
 		return recurciveTask(project, null);
 	}

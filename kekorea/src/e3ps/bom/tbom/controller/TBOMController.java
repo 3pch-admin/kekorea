@@ -138,11 +138,11 @@ public class TBOMController extends BaseController {
 
 	@Description(value = "T-BOM 태스크 연결 제거 함수")
 	@ResponseBody
-	@GetMapping(value = "/disconnect")
-	public Map<String, Object> disconnect(@RequestParam String oid) throws Exception {
+	@PostMapping(value = "/disconnect")
+	public Map<String, Object> disconnect(@RequestBody Map<String,Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			TBOMHelper.service.disconnect(oid);
+			TBOMHelper.service.disconnect(params);
 			result.put("msg", DELETE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
@@ -297,5 +297,5 @@ public class TBOMController extends BaseController {
 		}
 		return result;
 	}
-	
+
 }

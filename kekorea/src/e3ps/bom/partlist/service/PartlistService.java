@@ -1,5 +1,6 @@
 package e3ps.bom.partlist.service;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import e3ps.bom.partlist.dto.PartListDTO;
@@ -26,7 +27,7 @@ public interface PartlistService {
 	/**
 	 * 수배표 태스크 연결 제거
 	 */
-	public abstract void disconnect(String oid) throws Exception;
+	public abstract void disconnect(Map<String, Object> params) throws Exception;
 
 	/**
 	 * 수배표 링크 등록

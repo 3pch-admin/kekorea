@@ -15,6 +15,7 @@ import e3ps.bom.tbom.dto.TBOMDTO;
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.part.kePart.KePart;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
@@ -34,6 +35,7 @@ import wt.folder.Folder;
 import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
 import wt.pom.Transaction;
+import wt.query.QuerySpec;
 import wt.services.StandardManager;
 import wt.util.WTException;
 
@@ -203,22 +205,31 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 	}
 
 	@Override
-	public void disconnect(String oid) throws Exception {
+	public void disconnect(Map<String, Object> params) throws Exception {
+		ArrayList<String> arr = (ArrayList<String>) params.get("arr");
+		String poid = (String) params.get("poid");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
-			QueryResult qr = PersistenceHelper.manager.navigate(master, "project", TBOMMasterProjectLink.class, false);
-			while (qr.hasMoreElements()) {
-				TBOMMasterProjectLink link = (TBOMMasterProjectLink) qr.nextElement();
-				PersistenceHelper.manager.delete(link);
-			}
+			Project project = (Project) CommonUtils.getObject(poid);
+			for (String oid : arr) {
+				TBOMMaster master = (TBOMMaster) CommonUtils.getObject(oid);
+				QuerySpec query = new QuerySpec();
+				int idx = query.appendClassList(TBOMMasterProjectLink.class, true);
+				QuerySpecUtils.toEqualsAnd(query, idx, TBOMMasterProjectLink.class, "roleAObjectRef.key.id", master);
+				QuerySpecUtils.toEqualsAnd(query, idx, TBOMMasterProjectLink.class, "roleBObjectRef.key.id", project);
+				QueryResult qr = PersistenceHelper.manager.find(query);
+				while (qr.hasMoreElements()) {
+					TBOMMasterProjectLink link = (TBOMMasterProjectLink) qr.nextElement();
+					PersistenceHelper.manager.delete(link);
+				}
 
-			QueryResult result = PersistenceHelper.manager.navigate(master, "output", OutputDocumentLink.class);
-			while (result.hasMoreElements()) {
-				Output output = (Output) result.nextElement();
-				PersistenceHelper.manager.delete(output);
+				QueryResult result = PersistenceHelper.manager.navigate(master, "output", OutputDocumentLink.class);
+				while (result.hasMoreElements()) {
+					Output output = (Output) result.nextElement();
+					PersistenceHelper.manager.delete(output);
+				}
 			}
 
 			trs.commit();

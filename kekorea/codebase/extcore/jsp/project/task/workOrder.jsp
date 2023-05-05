@@ -1,9 +1,9 @@
 <%@page import="e3ps.project.service.ProjectHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	boolean isAdmin = Boolean.parseBoolean(request.getParameter("isAdmin"));
-	String poid = (String) request.getParameter("poid");
-	String toid = (String) request.getParameter("toid");
+boolean isAdmin = Boolean.parseBoolean(request.getParameter("isAdmin"));
+String poid = (String) request.getParameter("poid");
+String toid = (String) request.getParameter("toid");
 %>
 <div class="info-header">
 	<img src="/Windchill/extcore/images/header.png">
@@ -43,6 +43,11 @@
 			}
 		},
 	}, {
+		dataField : "state",
+		headerText : "상태",
+		dataType : "string",
+		width : 100,
+	}, {
 		dataField : "creator",
 		headerText : "작성자",
 		dataType : "string",
@@ -72,9 +77,11 @@
 			selectionMode : "multipleCells",
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-		AUIGrid.setGridData(myGridID, <%=ProjectHelper.manager.jsonAuiOutput(poid, toid)%>);
+		AUIGrid.setGridData(myGridID,
+<%=ProjectHelper.manager.jsonAuiOutput(poid, toid)%>
+	);
 	}
-	
+
 	function create() {
 		const toid = document.getElementById("oid").value;
 		const poid = document.getElementById("poid").value;
@@ -115,11 +122,13 @@
 
 		for (let i = 0; i < checkedItems.length; i++) {
 			const item = checkedItems[i].item;
-			const oid = item.ooid;
+			const oid = item.oid;
 			arr.push(oid);
 		}
 		const url = getCallUrl("/workOrder/disconnect");
 		const params = new Object();
+		const poid = document.getElementById("poid").value;
+		params.poid;
 		params.arr = arr;
 		if (!confirm("삭제 하시겠습니까?\nCONFIG SHEET와 태스크의 연결관계만 삭제 되어집니다.")) {
 			return false;

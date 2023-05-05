@@ -400,7 +400,6 @@ String toid = (String) request.getAttribute("toid");
 		params.secondarys = toArray("secondarys");
 		toRegister(params, addRows8);
 		openLayer();
-		console.log(params);
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {

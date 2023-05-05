@@ -200,7 +200,7 @@ public class OutputController extends BaseController {
 	@Description(value = "산출물 태스크에서 연결 제거")
 	@PostMapping(value = "/disconnect")
 	@ResponseBody
-	public Map<String, Object> disconnect(@RequestBody Map<String, Object> params) throws Exception {
+	public Map<String, Object> disconnect(@RequestBody Map<String, ArrayList<String>> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			OutputHelper.service.disconnect(params);

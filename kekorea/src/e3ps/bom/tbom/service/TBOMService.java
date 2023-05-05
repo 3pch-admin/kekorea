@@ -21,7 +21,7 @@ public interface TBOMService {
 	/**
 	 * T-BOM 태스크 연결 제거
 	 */
-	public abstract void disconnect(String oid) throws Exception;
+	public abstract void disconnect(Map<String, Object> params) throws Exception;
 
 	/**
 	 * T-BOM 수정

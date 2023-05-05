@@ -487,7 +487,6 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					const newNumber = "K" + value1 + value;
 					const url = getCallUrl("/numberRule/last?number=" + newNumber);
 					call(url, null, function(data) {
-						console.log(data);
 						const next = data.next;
 						AUIGrid.setCellValue(myGridID, rowIndex, "number", newNumber + next);
 					}, "GET");
@@ -662,7 +661,6 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
-					console.log(data);
 					AUIGrid.removeAjaxLoader(myGridID);
 					$("input[name=sessionid]").val(data.sessionid);
 					$("input[name=curPage]").val(data.curPage);

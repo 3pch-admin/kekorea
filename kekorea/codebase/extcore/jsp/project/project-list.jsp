@@ -667,7 +667,6 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
-				console.log(data);
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
 					document.getElementById("curPage").value = data.curPage;
@@ -690,7 +689,6 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 				}
 				
 				params.editRows = editRows;
-				console.log(params);
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);

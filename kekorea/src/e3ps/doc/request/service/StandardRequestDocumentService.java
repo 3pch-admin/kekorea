@@ -14,6 +14,7 @@ import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
@@ -45,6 +46,7 @@ import wt.org.OrganizationServicesHelper;
 import wt.org.WTUser;
 import wt.ownership.Ownership;
 import wt.pom.Transaction;
+import wt.query.QuerySpec;
 import wt.services.StandardManager;
 import wt.util.WTException;
 
@@ -474,24 +476,34 @@ public class StandardRequestDocumentService extends StandardManager implements R
 	}
 
 	@Override
-	public void disconnect(String oid) throws Exception {
+	public void disconnect(Map<String, Object> params) throws Exception {
+		ArrayList<String> arr = (ArrayList<String>) params.get("arr");
+		String poid = (String) params.get("poid");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			RequestDocument requestDocument = (RequestDocument) CommonUtils.getObject(oid);
-			QueryResult qr = PersistenceHelper.manager.navigate(requestDocument, "project",
-					RequestDocumentProjectLink.class, false);
-			while (qr.hasMoreElements()) {
-				RequestDocumentProjectLink link = (RequestDocumentProjectLink) qr.nextElement();
-				PersistenceHelper.manager.delete(link);
-			}
+			Project project = (Project) CommonUtils.getObject(poid);
+			for (String oid : arr) {
+				RequestDocument requestDocument = (RequestDocument) CommonUtils.getObject(oid);
+				QuerySpec query = new QuerySpec();
+				int idx = query.appendClassList(RequestDocumentProjectLink.class, true);
+				QuerySpecUtils.toEqualsAnd(query, idx, RequestDocumentProjectLink.class, "roleAObjectRef.key.id",
+						requestDocument);
+				QuerySpecUtils.toEqualsAnd(query, idx, RequestDocumentProjectLink.class, "roleBObjectRef.key.id",
+						project);
+				QueryResult qr = PersistenceHelper.manager.find(query);
+				while (qr.hasMoreElements()) {
+					RequestDocumentProjectLink link = (RequestDocumentProjectLink) qr.nextElement();
+					PersistenceHelper.manager.delete(link);
+				}
 
-			QueryResult result = PersistenceHelper.manager.navigate(requestDocument, "output",
-					OutputDocumentLink.class);
-			while (result.hasMoreElements()) {
-				Output output = (Output) result.nextElement();
-				PersistenceHelper.manager.delete(output);
+				QueryResult result = PersistenceHelper.manager.navigate(requestDocument, "output",
+						OutputDocumentLink.class);
+				while (result.hasMoreElements()) {
+					Output output = (Output) result.nextElement();
+					PersistenceHelper.manager.delete(output);
+				}
 			}
 
 			trs.commit();

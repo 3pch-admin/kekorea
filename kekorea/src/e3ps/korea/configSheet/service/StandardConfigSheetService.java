@@ -13,6 +13,7 @@ import e3ps.admin.configSheetCode.service.ConfigSheetCodeHelper;
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.korea.configSheet.ConfigSheetProjectLink;
@@ -37,6 +38,7 @@ import wt.folder.Folder;
 import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
 import wt.pom.Transaction;
+import wt.query.QuerySpec;
 import wt.services.StandardManager;
 import wt.util.WTException;
 
@@ -305,23 +307,33 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 	}
 
 	@Override
-	public void disconnect(String oid) throws Exception {
+	public void disconnect(Map<String, Object> params) throws Exception {
+		ArrayList<String> arr = (ArrayList<String>) params.get("arr");
+		String poid = (String) params.get("poid");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
+			Project project = (Project) CommonUtils.getObject(poid);
+			for (String oid : arr) {
+				ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
 
-			ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
-			QueryResult qr = PersistenceHelper.manager.navigate(configSheet, "project", ConfigSheetProjectLink.class,
-					false);
-			while (qr.hasMoreElements()) {
-				ConfigSheetProjectLink link = (ConfigSheetProjectLink) qr.nextElement();
-				PersistenceHelper.manager.delete(link);
-			}
+				QuerySpec query = new QuerySpec();
+				int idx = query.appendClassList(ConfigSheetProjectLink.class, true);
+				QuerySpecUtils.toEqualsAnd(query, idx, ConfigSheetProjectLink.class, "roleAObjectRef.key.id",
+						configSheet);
+				QuerySpecUtils.toEqualsAnd(query, idx, ConfigSheetProjectLink.class, "roleBObjectRef.key.id", project);
+				QueryResult qr = PersistenceHelper.manager.find(query);
+				while (qr.hasMoreElements()) {
+					ConfigSheetProjectLink link = (ConfigSheetProjectLink) qr.nextElement();
+					PersistenceHelper.manager.delete(link);
+				}
 
-			QueryResult result = PersistenceHelper.manager.navigate(configSheet, "output", OutputDocumentLink.class);
-			while (result.hasMoreElements()) {
-				Output output = (Output) result.nextElement();
-				PersistenceHelper.manager.delete(output);
+				QueryResult result = PersistenceHelper.manager.navigate(configSheet, "output",
+						OutputDocumentLink.class);
+				while (result.hasMoreElements()) {
+					Output output = (Output) result.nextElement();
+					PersistenceHelper.manager.delete(output);
+				}
 			}
 
 			trs.commit();

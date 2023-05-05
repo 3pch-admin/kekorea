@@ -1,9 +1,9 @@
 <%@page import="e3ps.project.service.ProjectHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	boolean isAdmin = Boolean.parseBoolean(request.getParameter("isAdmin"));
-	String poid = (String) request.getParameter("poid");
-	String toid = (String) request.getParameter("toid");
+boolean isAdmin = Boolean.parseBoolean(request.getParameter("isAdmin"));
+String poid = (String) request.getParameter("poid");
+String toid = (String) request.getParameter("toid");
 %>
 <div class="info-header">
 	<img src="/Windchill/extcore/images/header.png">
@@ -38,10 +38,15 @@
 			baseUrl : "javascript",
 			jsCallback : function(rowIndex, columnIndex, value, item) {
 				const oid = item.oid;
-				const url = getCallUrl("/meeting/view?oid=" + oid);
-				popup(url);
+				const url = getCallUrl("/partlist/view?oid=" + oid);
+				popup(url, 1700, 800);
 			}
 		},
+	}, {
+		dataField : "state",
+		headerText : "상태",
+		dataType : "string",
+		width : 100,
 	}, {
 		dataField : "creator",
 		headerText : "작성자",
@@ -72,9 +77,11 @@
 			selectionMode : "multipleCells",
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-		AUIGrid.setGridData(myGridID, <%=ProjectHelper.manager.jsonAuiOutput(poid, toid)%>);
+		AUIGrid.setGridData(myGridID,
+<%=ProjectHelper.manager.jsonAuiPartlist(poid, toid)%>
+	);
 	}
-	
+
 	function create() {
 		const toid = document.getElementById("oid").value;
 		const poid = document.getElementById("poid").value;
@@ -100,7 +107,6 @@
 		params.arr = arr;
 		params.toid = toid;
 		params.poid = poid;
-		console.log(params);
 		call(url, params, function(res) {
 			callBack(res);
 		})
@@ -110,19 +116,21 @@
 		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 		const arr = new Array();
 		if (checkedItems.length === 0) {
-			alert("삭제할 회의록 선택하세요.");
+			alert("삭제할 수배표를 선택하세요.");
 			return false;
 		}
 
 		for (let i = 0; i < checkedItems.length; i++) {
 			const item = checkedItems[i].item;
-			const oid = item.ooid;
+			const oid = item.oid;
 			arr.push(oid);
 		}
-		const url = getCallUrl("/output/disconnect");
+		const url = getCallUrl("/partlist/disconnect");
 		const params = new Object();
+		const poid = document.getElementById("poid").value;
+		params.poid;
 		params.arr = arr;
-		if (!confirm("삭제 하시겠습니까?\n회의록과 태스크의 연결관계만 삭제 되어집니다.")) {
+		if (!confirm("삭제 하시겠습니까?\n수배표와 태스크의 연결관계만 삭제 되어집니다.")) {
 			return false;
 		}
 		parent.parent.openLayer();

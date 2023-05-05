@@ -569,23 +569,33 @@ public class StandardPartlistService extends StandardManager implements Partlist
 	}
 
 	@Override
-	public void disconnect(String oid) throws Exception {
+	public void disconnect(Map<String, Object> params) throws Exception {
+		ArrayList<String> arr = (ArrayList<String>) params.get("arr");
+		String poid = (String) params.get("poid");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
-			QueryResult qr = PersistenceHelper.manager.navigate(master, "project", PartListMasterProjectLink.class,
-					false);
-			while (qr.hasMoreElements()) {
-				PartListMasterProjectLink link = (PartListMasterProjectLink) qr.nextElement();
-				PersistenceHelper.manager.delete(link);
-			}
+			Project project = (Project) CommonUtils.getObject(poid);
+			for (String oid : arr) {
+				PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
+				QuerySpec query = new QuerySpec();
+				int idx = query.appendClassList(PartListMasterProjectLink.class, true);
+				QuerySpecUtils.toEqualsAnd(query, idx, PartListMasterProjectLink.class, "roleAObjectRef.key.id",
+						master);
+				QuerySpecUtils.toEqualsAnd(query, idx, PartListMasterProjectLink.class, "roleBObjectRef.key.id",
+						project);
+				QueryResult qr = PersistenceHelper.manager.find(query);
+				while (qr.hasMoreElements()) {
+					PartListMasterProjectLink link = (PartListMasterProjectLink) qr.nextElement();
+					PersistenceHelper.manager.delete(link);
+				}
 
-			QueryResult result = PersistenceHelper.manager.navigate(master, "output", OutputDocumentLink.class);
-			while (result.hasMoreElements()) {
-				Output output = (Output) result.nextElement();
-				PersistenceHelper.manager.delete(output);
+				QueryResult result = PersistenceHelper.manager.navigate(master, "output", OutputDocumentLink.class);
+				while (result.hasMoreElements()) {
+					Output output = (Output) result.nextElement();
+					PersistenceHelper.manager.delete(output);
+				}
 			}
 
 			trs.commit();
@@ -614,14 +624,9 @@ public class StandardPartlistService extends StandardManager implements Partlist
 			Project project = (Project) CommonUtils.getObject(poid);
 			for (String oid : arr) {
 				PartListMaster mm = (PartListMaster) CommonUtils.getObject(oid);
-
-				QueryResult result = PersistenceHelper.manager.navigate(mm, "output", OutputDocumentLink.class);
-
-				System.out.println("result=" + result.size());
-
+				QueryResult result = PersistenceHelper.manager.navigate(mm, "project", PartListMasterProjectLink.class);
 				while (result.hasMoreElements()) {
-					Output output = (Output) result.nextElement();
-					Project p = output.getProject();
+					Project p = (Project) result.nextElement();
 
 					if (p.getPersistInfo().getObjectIdentifier().getStringValue().equals(oid)) {
 						map.put("msg",

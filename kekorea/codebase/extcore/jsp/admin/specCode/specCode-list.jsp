@@ -357,7 +357,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				params.addRows = addRows;
 				params.removeRows = removeRows;
 				params.editRows = editRows;
-				console.log(params);
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);

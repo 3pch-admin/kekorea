@@ -1,5 +1,7 @@
 package e3ps.project.output.service;
 
+import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.Map;
 
 import e3ps.project.output.dto.OutputDTO;
@@ -26,7 +28,7 @@ public interface OutputService {
 	/**
 	 * 산출물 연결 제거
 	 */
-	public abstract void disconnect(Map<String, Object> params) throws Exception;
+	public abstract void disconnect(Map<String, ArrayList<String>> params) throws Exception;
 
 	/**
 	 * 산출물 수정

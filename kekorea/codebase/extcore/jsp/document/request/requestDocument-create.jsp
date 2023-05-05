@@ -780,7 +780,6 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			params.template = template.value;
 			toRegister(params, addRows8);
 			openLayer();
-			console.log(params);
 			call(url, params, function(data) {
 				alert(data.msg);
 				if (data.result) {

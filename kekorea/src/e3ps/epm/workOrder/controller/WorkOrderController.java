@@ -17,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.doc.request.service.RequestDocumentHelper;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
@@ -261,11 +260,11 @@ public class WorkOrderController extends BaseController {
 
 	@Description(value = "도면일람표 태스트 연결 제거 함수")
 	@ResponseBody
-	@GetMapping(value = "/disconnect")
-	public Map<String, Object> disconnect(@RequestParam String oid) throws Exception {
+	@PostMapping(value = "/disconnect")
+	public Map<String, Object> disconnect(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			WorkOrderHelper.service.disconnect(oid);
+			WorkOrderHelper.service.disconnect(params);
 			result.put("msg", DELETE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

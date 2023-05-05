@@ -241,46 +241,13 @@ public class PartlistController extends BaseController {
 		return result;
 	}
 
-//	@Description(value = "수배표 태스크에서 등록 페이지")
-//	@GetMapping(value = "/connect")
-//	public ModelAndView connect(@RequestParam String poid, @RequestParam String toid) throws Exception {
-//		ModelAndView model = new ModelAndView();
-//		People people = CommonUtils.sessionPeople();
-//		Department department = people.getDepartment();
-//		String engType = "";
-//		if (department.getCode().equals("MACHINE")) {
-//			engType = "기계";
-//		} else if (department.getCode().equals("ELEC")) {
-//			engType = "전기";
-//		}
-//
-//		Project project = (Project) CommonUtils.getObject(poid);
-//		ArrayList<Map<String, String>> list = new ArrayList<>();
-//		Map<String, String> map = new HashMap<>();
-//		map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
-//		map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
-//		map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
-//		map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
-//		map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
-//		map.put("kekNumber", project.getKekNumber());
-//		map.put("keNumber", project.getKeNumber());
-//		map.put("description", project.getDescription());
-//		list.add(map); // 기본 선택한 작번
-//		model.addObject("toid", toid);
-//		model.addObject("poid", poid);
-//		model.addObject("list", JSONArray.fromObject(list));
-//		model.addObject("engType", engType);
-//		model.setViewName("popup:/bom/partlist/partlist-connect");
-//		return model;
-//	}
-
 	@Description(value = "수배표 태스크 연결 제거 함수")
 	@ResponseBody
-	@GetMapping(value = "/disconnect")
-	public Map<String, Object> disconnect(@RequestParam String oid) throws Exception {
+	@PostMapping(value = "/disconnect")
+	public Map<String, Object> disconnect(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			PartlistHelper.service.disconnect(oid);
+			PartlistHelper.service.disconnect(params);
 			result.put("msg", DELETE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

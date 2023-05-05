@@ -1,9 +1,9 @@
 <%@page import="e3ps.project.service.ProjectHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	boolean isAdmin = Boolean.parseBoolean(request.getParameter("isAdmin"));
-	String poid = (String) request.getParameter("poid");
-	String toid = (String) request.getParameter("toid");
+boolean isAdmin = Boolean.parseBoolean(request.getParameter("isAdmin"));
+String poid = (String) request.getParameter("poid");
+String toid = (String) request.getParameter("toid");
 %>
 <div class="info-header">
 	<img src="/Windchill/extcore/images/header.png">
@@ -26,6 +26,11 @@
 				popup(url, 1700, 800);
 			}
 		},
+	}, {
+		dataField : "state",
+		headerText : "상태",
+		dataType : "string",
+		width : 100,
 	}, {
 		dataField : "creator",
 		headerText : "작성자",
@@ -55,6 +60,8 @@
 			selectionMode : "multipleCells",
 		};
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-		AUIGrid.setGridData(myGridID, <%=ProjectHelper.manager.jsonAuiOutput(poid, toid)%>);
+		AUIGrid.setGridData(myGridID,
+<%=ProjectHelper.manager.jsonAuiOutput(poid, toid)%>
+	);
 	}
 </script>

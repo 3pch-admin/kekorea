@@ -28,7 +28,7 @@ public interface RequestDocumentService {
 	/**
 	 * 태스크 의뢰서 연결 제거
 	 */
-	public abstract void disconnect(String oid) throws Exception;
+	public abstract void disconnect(Map<String, Object> params) throws Exception;
 
 	/**
 	 * 태스크 의뢰서 연결

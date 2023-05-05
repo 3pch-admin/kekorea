@@ -810,11 +810,6 @@ public class WorkspaceHelper {
 		return prefix;
 	}
 
-	public JSONArray jsonArrayHistory(WTPartMaster master) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/**
 	 * 결재 의견 가져오기
 	 */
@@ -972,7 +967,6 @@ public class WorkspaceHelper {
 				cell.setCellStyle(cellStyle);
 				cell.setCellValue("");
 
-				rowIndex++;
 				rowNum++;
 			}
 		}

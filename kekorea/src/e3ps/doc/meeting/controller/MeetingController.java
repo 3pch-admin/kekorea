@@ -367,7 +367,7 @@ public class MeetingController extends BaseController {
 		model.setViewName("popup:/document/meeting/meeting-connect");
 		return model;
 	}
-	
+
 	@Description(value = "회의록 태스크에서 연결")
 	@PostMapping(value = "/connect")
 	@ResponseBody
@@ -383,6 +383,23 @@ public class MeetingController extends BaseController {
 			}
 
 			result.put("msg", SAVE_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "회의록 태스트 연결 제거 함수")
+	@ResponseBody
+	@PostMapping(value = "/disconnect")
+	public Map<String, Object> disconnect(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			MeetingHelper.service.disconnect(params);
+			result.put("msg", DELETE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();

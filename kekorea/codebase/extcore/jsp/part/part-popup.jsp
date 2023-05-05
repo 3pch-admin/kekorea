@@ -430,14 +430,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		params.state = state;
 		AUIGrid.showAjaxLoader(myGridID);
 		parent.openLayer();
-		console.log(params);
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
 			document.getElementById("sessionid").value = data.sessionid;
 			document.getElementById("curPage").value = data.curPage;
 			AUIGrid.setGridData(myGridID, data.list);
 			parent.closeLayer();
-			console.log(data);
 		});
 	}
 

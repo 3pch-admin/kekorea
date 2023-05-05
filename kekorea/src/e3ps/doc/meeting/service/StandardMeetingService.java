@@ -11,6 +11,7 @@ import java.util.Map;
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.doc.meeting.Meeting;
 import e3ps.doc.meeting.MeetingProjectLink;
@@ -40,6 +41,7 @@ import wt.folder.FolderEntry;
 import wt.folder.FolderHelper;
 import wt.org.WTUser;
 import wt.pom.Transaction;
+import wt.query.QuerySpec;
 import wt.services.StandardManager;
 import wt.session.SessionHelper;
 import wt.util.WTException;
@@ -437,22 +439,31 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 	}
 
 	@Override
-	public void disconnect(String oid) throws Exception {
+	public void disconnect(Map<String, Object> params) throws Exception {
+		ArrayList<String> arr = (ArrayList<String>) params.get("arr");
+		String poid = (String) params.get("poid");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			Meeting meeting = (Meeting) CommonUtils.getObject(oid);
-			QueryResult qr = PersistenceHelper.manager.navigate(meeting, "project", MeetingProjectLink.class, false);
-			while (qr.hasMoreElements()) {
-				MeetingProjectLink link = (MeetingProjectLink) qr.nextElement();
-				PersistenceHelper.manager.delete(link);
-			}
+			Project project = (Project) CommonUtils.getObject(poid);
+			for (String oid : arr) {
+				Meeting meeting = (Meeting) CommonUtils.getObject(oid);
+				QuerySpec query = new QuerySpec();
+				int idx = query.appendClassList(MeetingProjectLink.class, true);
+				QuerySpecUtils.toEqualsAnd(query, idx, MeetingProjectLink.class, "roleAObjectRef.key.id", meeting);
+				QuerySpecUtils.toEqualsAnd(query, idx, MeetingProjectLink.class, "roleBObjectRef.key.id", project);
+				QueryResult qr = PersistenceHelper.manager.find(query);
+				while (qr.hasMoreElements()) {
+					MeetingProjectLink link = (MeetingProjectLink) qr.nextElement();
+					PersistenceHelper.manager.delete(link);
+				}
 
-			QueryResult result = PersistenceHelper.manager.navigate(meeting, "output", OutputDocumentLink.class);
-			while (result.hasMoreElements()) {
-				Output output = (Output) result.nextElement();
-				PersistenceHelper.manager.delete(output);
+				QueryResult result = PersistenceHelper.manager.navigate(meeting, "output", OutputDocumentLink.class);
+				while (result.hasMoreElements()) {
+					Output output = (Output) result.nextElement();
+					PersistenceHelper.manager.delete(output);
+				}
 			}
 
 			trs.commit();

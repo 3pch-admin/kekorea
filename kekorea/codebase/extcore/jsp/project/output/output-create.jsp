@@ -188,7 +188,6 @@ String number = (String) request.getAttribute("number");
 		params.poid = poid;
 		toRegister(params, addRows8);
 		openLayer();
-		console.log(params);
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {

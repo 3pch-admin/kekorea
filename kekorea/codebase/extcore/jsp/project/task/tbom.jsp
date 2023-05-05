@@ -43,6 +43,11 @@
 			}
 		},
 	}, {
+		dataField : "state",
+		headerText : "상태",
+		dataType : "string",
+		width : 100,
+	},  {
 		dataField : "creator",
 		headerText : "작성자",
 		dataType : "string",
@@ -115,11 +120,13 @@
 
 		for (let i = 0; i < checkedItems.length; i++) {
 			const item = checkedItems[i].item;
-			const oid = item.ooid;
+			const oid = item.oid;
 			arr.push(oid);
 		}
 		const url = getCallUrl("/tbom/disconnect");
 		const params = new Object();
+		const poid = document.getElementById("poid").value;
+		params.poid;
 		params.arr = arr;
 		if (!confirm("삭제 하시겠습니까?\nT-BOM 태스크의 연결관계만 삭제 되어집니다.")) {
 			return false;

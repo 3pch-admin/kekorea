@@ -555,7 +555,6 @@ String toid = (String) request.getAttribute("toid");
 		params.progress = Number(progress);
 		params.secondarys = toArray("secondarys");
 		toRegister(params, addRows8);
-		console.log(params);
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);

@@ -301,11 +301,11 @@ public class ConfigSheetController extends BaseController {
 
 	@Description(value = "CONFIG SHEET 태스크 연결 제거 함수")
 	@ResponseBody
-	@GetMapping(value = "/disconnect")
-	public Map<String, Object> disconnect(@RequestParam String oid) throws Exception {
+	@PostMapping(value = "/disconnect")
+	public Map<String, Object> disconnect(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			ConfigSheetHelper.service.disconnect(oid);
+			ConfigSheetHelper.service.disconnect(params);
 			result.put("msg", DELETE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

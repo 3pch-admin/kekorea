@@ -309,7 +309,6 @@ boolean multi = (boolean) request.getAttribute("multi");
 		params.end = (curPage * 100) + 100;
 		const url = getCallUrl("/aui/appendData");
 		AUIGrid.showAjaxLoader(myGridID);
-		console.log(params);
 		call(url, params, function(data) {
 			if (data.list.length == 0) {
 				last = true;

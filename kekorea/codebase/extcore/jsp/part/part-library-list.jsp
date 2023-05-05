@@ -382,7 +382,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function loadGridData() {
-// 				console.log(document.getElementsByName ("number"));
 				const params = new Object();
 				const url = getCallUrl("/epm/list");
 				const psize = document.getElementById("psize").value;

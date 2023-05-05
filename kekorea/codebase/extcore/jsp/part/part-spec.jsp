@@ -319,7 +319,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 				// PDM 에 등록 안된 품목이다..
 				if (dataField === "spec" && !isNull(spec)) {
-					console.log(item.ycode);
 					if (item.ycode !== undefined && item.ycode === false) {
 						const url = getCallUrl("/erp/getErpItemBySpec?spec=" + item.spec);
 						call(url, null, function(data) {

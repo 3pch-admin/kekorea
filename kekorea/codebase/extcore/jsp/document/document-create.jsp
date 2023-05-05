@@ -150,7 +150,6 @@
 		params.addRows11 = addRows11;
 		params.primarys = primarys;
 		toRegister(params, addRows8);
-		console.log(params);
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);

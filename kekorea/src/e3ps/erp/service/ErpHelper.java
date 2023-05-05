@@ -785,7 +785,7 @@ public class ErpHelper {
 
 					String lastId = master.getLast();
 					sql.append("'" + lastId + "');");
-					sendQuery += sql.toString() + "\n";
+//					sendQuery += sql.toString() + "\n";
 
 					st.executeUpdate(sql.toString());
 				}
@@ -795,9 +795,7 @@ public class ErpHelper {
 				st.executeUpdate(sb.toString());
 			}
 			con.commit();
-			sendResult = true;
 		} catch (Exception e) {
-			sendResult = false;
 			e.printStackTrace();
 			con.rollback();
 			throw e;

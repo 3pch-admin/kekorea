@@ -380,7 +380,6 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 				params.type = type;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
-				console.log(params);
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					AUIGrid.setGridData(myGridID, data.list);

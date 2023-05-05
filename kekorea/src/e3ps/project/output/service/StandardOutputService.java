@@ -274,8 +274,8 @@ public class StandardOutputService extends StandardManager implements OutputServ
 	}
 
 	@Override
-	public void disconnect(Map<String, Object> params) throws Exception {
-		ArrayList<String> arr = (ArrayList<String>) params.get("arr");
+	public void disconnect(Map<String, ArrayList<String>> params) throws Exception {
+		ArrayList<String> arr = params.get("arr");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();

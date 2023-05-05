@@ -165,7 +165,6 @@ if ("modify".equals(mode)) {
 		params.oid = oid;
 		toRegister(params, addRows8);
 		openLayer();
-		console.log(params);
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
