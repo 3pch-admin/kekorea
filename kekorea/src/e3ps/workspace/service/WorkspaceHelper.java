@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import e3ps.bom.partlist.PartListMaster;
@@ -51,7 +52,6 @@ import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.WTUser;
 import wt.part.WTPart;
-import wt.part.WTPartMaster;
 import wt.query.QuerySpec;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
@@ -932,6 +932,7 @@ public class WorkspaceHelper {
 		cellStyle.setBorderRight(BorderStyle.MEDIUM);
 
 		int rowNum = 1;
+		int rowIndex = 14;
 		while (result.hasMoreElements()) {
 			Persistable per = (Persistable) result.nextElement();
 			if (per instanceof NumberRule) {
@@ -940,9 +941,22 @@ public class WorkspaceHelper {
 				String name = numberRule.getMaster().getName();
 				String number = numberRule.getMaster().getNumber();
 
-				System.out.println("깡ㅂ이 =" + numberRule.getMaster().getLotNo());
+				Row row = sheet.createRow(rowIndex);
 
-				Row row = sheet.createRow(11);
+				CellRangeAddress region = new CellRangeAddress(rowIndex, rowIndex, 1, 3);
+				CellRangeAddress region1 = new CellRangeAddress(rowIndex, rowIndex, 4, 6);
+				CellRangeAddress region2 = new CellRangeAddress(rowIndex, rowIndex, 7, 9);
+				CellRangeAddress region3 = new CellRangeAddress(rowIndex, rowIndex, 11, 14);
+
+				sheet.addMergedRegion(region);
+				sheet.addMergedRegion(region1);
+//				sheet.addMergedRegion(region2);
+//				sheet.addMergedRegion(region3);
+
+				System.out.println("number=" + number);
+				System.out.println("v=" + numberRule.getVersion());
+				System.out.println("name=" + name);
+
 				Cell cell = row.createCell(0);
 				cell.setCellStyle(cellStyle);
 				cell.setCellValue(String.valueOf(rowNum));
@@ -968,6 +982,7 @@ public class WorkspaceHelper {
 				cell.setCellValue("");
 
 				rowNum++;
+				rowIndex++;
 			}
 		}
 		return workbook;

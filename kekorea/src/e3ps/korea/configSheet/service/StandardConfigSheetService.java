@@ -347,4 +347,41 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 				trs.rollback();
 		}
 	}
+
+	@Override
+	public void modify(Map<String, Object> params) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+
+	}
+
+	@Override
+	public void revise(Map<String, Object> params) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
 }

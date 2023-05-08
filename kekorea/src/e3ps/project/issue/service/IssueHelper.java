@@ -8,6 +8,8 @@ import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.korea.configSheet.ConfigSheet;
+import e3ps.korea.configSheet.ConfigSheetProjectLink;
 import e3ps.project.Project;
 import e3ps.project.issue.Issue;
 import e3ps.project.issue.IssueProjectLink;
@@ -167,6 +169,30 @@ public class IssueHelper {
 			map.put("creator", issue.getOwnership().getOwner().getFullName());
 			map.put("createdDate_txt", CommonUtils.getPersistableTime(issue.getCreateTimestamp()));
 			map.put("icons", AUIGridUtils.secondaryTemplate(issue));
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
+
+	/**
+	 * 특이사항 작번 리스트
+	 */
+	public JSONArray jsonAuiProject(String oid) throws Exception {
+		Issue issue = (Issue) CommonUtils.getObject(oid);
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		QueryResult result = PersistenceHelper.manager.navigate(issue, "project", IssueProjectLink.class);
+		while (result.hasMoreElements()) {
+			Project project = (Project) result.nextElement();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("projectType_name", project.getProjectType() != null ? project.getProjectType().getName() : "");
+			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("install_name", project.getInstall() != null ? project.getInstall().getName() : "");
+			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("description", project.getDescription());
 			list.add(map);
 		}
 		return JSONArray.fromObject(list);

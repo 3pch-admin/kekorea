@@ -67,6 +67,8 @@ public class IssueController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		IssueProjectLink link = (IssueProjectLink) CommonUtils.getObject(oid);
 		IssueDTO dto = new IssueDTO(link);
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/project/issue/issue-view");
 		return model;
@@ -145,7 +147,7 @@ public class IssueController extends BaseController {
 	}
 
 	@Description(value = "이슈 삭제")
-	@PostMapping(value = "/delete")
+	@GetMapping(value = "/delete")
 	@ResponseBody
 	public Map<String, Object> delete(String oid) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();

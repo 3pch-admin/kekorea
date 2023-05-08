@@ -128,8 +128,7 @@ String toid = (String) request.getParameter("toid");
 		const url = getCallUrl("/partlist/disconnect");
 		const params = new Object();
 		const poid = document.getElementById("poid").value;
-		params.poid;
-		params.arr = arr;
+		params.poid = poid;		params.arr = arr;
 		if (!confirm("삭제 하시겠습니까?\n수배표와 태스크의 연결관계만 삭제 되어집니다.")) {
 			return false;
 		}

@@ -34,4 +34,14 @@ public interface ConfigSheetService {
 	 * 태스크 CONFIG SHEET 연결 제거
 	 */
 	public abstract void disconnect(Map<String, Object> params) throws Exception;
+
+	/**
+	 * CONFIG SHEET 수정
+	 */
+	public abstract void modify(Map<String, Object> params) throws Exception;
+
+	/**
+	 * CONFIG SHEET 개정
+	 */
+	public abstract void revise(Map<String, Object> params) throws Exception;
 }

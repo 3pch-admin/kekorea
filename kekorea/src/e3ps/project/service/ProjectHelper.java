@@ -38,6 +38,8 @@ import e3ps.part.kePart.service.KePartHelper;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.dto.ProjectDTO;
+import e3ps.project.issue.Issue;
+import e3ps.project.issue.service.IssueHelper;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputTaskLink;
 import e3ps.project.output.service.OutputHelper;
@@ -993,6 +995,8 @@ public class ProjectHelper {
 			return DocumentHelper.manager.jsonAuiProject(oid);
 		} else if (per instanceof ConfigSheet) {
 			return ConfigSheetHelper.manager.jsonAuiProject(oid);
+		} else if(per instanceof Issue) {
+			return IssueHelper.manager.jsonAuiProject(oid);
 		}
 		return new JSONArray();
 	}
