@@ -143,6 +143,7 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 				ProjectHelper.service.commit(project);
 			}
 
+			ArrayList<String> dataFields = new ArrayList<>();
 			int sort = 0;
 			for (Map<String, String> addRow : addRows) {
 				String category_code = addRow.get("category_code");
@@ -167,9 +168,15 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 				variable.setSort(sort);
 				PersistenceHelper.manager.save(variable);
 
+//				int lastIndex = addRow.keySet().size() - 1;
 				int ss = 0;
 				for (String key : addRow.keySet()) {
 					if (key.contains("spec")) {
+
+						if (!dataFields.contains(key)) {
+							dataFields.add(key);
+						}
+
 						ConfigSheetColumnData column = ConfigSheetColumnData.newConfigSheetColumnData();
 						column.setDataField(key);
 						column.setValue(addRow.get(key));
@@ -188,6 +195,9 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 				PersistenceHelper.manager.save(link);
 				sort++;
 			}
+
+			configSheet.setDataFields(dataFields);
+			PersistenceHelper.manager.modify(configSheet);
 
 			if (approvalRows.size() > 0) {
 				WorkspaceHelper.service.register(configSheet, agreeRows, approvalRows, receiveRows);

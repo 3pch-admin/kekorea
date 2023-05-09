@@ -41,6 +41,7 @@ public class ConfigSheetDTO {
 	private String creatorId;
 	private int version;
 	private boolean latest;
+	private ArrayList<String> dataFields = new ArrayList<>();
 
 	// 변수용
 	private ArrayList<String> secondarys = new ArrayList<>();
@@ -70,6 +71,7 @@ public class ConfigSheetDTO {
 		setCreatorId(configSheet.getCreatorName());
 		setEdit(configSheet.getLifeCycleState().toString().equals("INWORK"));
 		setRevise(configSheet.getLifeCycleState().toString().equals("APPROVED"));
+		setDataFields(configSheet.getDataFields());
 	}
 
 	public ConfigSheetDTO(ConfigSheetProjectLink link) throws Exception {
@@ -102,5 +104,6 @@ public class ConfigSheetDTO {
 		setLatest(configSheet.getLatest());
 		setEdit(configSheet.getLifeCycleState().toString().equals("INWORK"));
 		setRevise(configSheet.getLifeCycleState().toString().equals("APPROVED"));
+		setDataFields(configSheet.getDataFields());
 	}
 }
