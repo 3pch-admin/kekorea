@@ -400,7 +400,7 @@ public class ProjectHelper {
 		}
 
 		if (!StringUtils.isNull(elecOid)) {
-			WTUser elec = (WTUser) CommonUtils.getObject(machineOid);
+			WTUser elec = (WTUser) CommonUtils.getObject(elecOid);
 			CommonCode elecCode = CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE");
 			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
 			int idx_u = query.appendClassList(WTUser.class, false);
@@ -414,7 +414,7 @@ public class ProjectHelper {
 		}
 
 		if (!StringUtils.isNull(softOid)) {
-			WTUser soft = (WTUser) CommonUtils.getObject(machineOid);
+			WTUser soft = (WTUser) CommonUtils.getObject(softOid);
 			CommonCode softCode = CommonCodeHelper.manager.getCommonCode("SOFT", "USER_TYPE");
 			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
 			int idx_u = query.appendClassList(WTUser.class, false);

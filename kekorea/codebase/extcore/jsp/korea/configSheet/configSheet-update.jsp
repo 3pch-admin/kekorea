@@ -1,3 +1,4 @@
+<%@page import="e3ps.korea.configSheet.beans.ConfigSheetDTO"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.common.util.ContentUtils"%>
@@ -8,6 +9,13 @@ JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 JSONArray baseData = (JSONArray) request.getAttribute("baseData");
 String oid = (String) request.getAttribute("oid");
 String mode = (String) request.getAttribute("mode");
+ConfigSheetDTO dto = (ConfigSheetDTO) request.getAttribute("dto");
+String title = "";
+if ("modify".equals(mode)) {
+	title = "수정";
+} else if ("revise".equals(mode)) {
+	title = "개정";
+}
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <style type="text/css">
@@ -64,12 +72,13 @@ String mode = (String) request.getAttribute("mode");
 		<td class="left">
 			<div class="header">
 				<img src="/Windchill/extcore/images/header.png">
-				CONFIG SHEET 등록
+				CONFIG SHEET
+				<%=title%>
 			</div>
 		</td>
 		<td class="right">
-			<input type="button" value="등록" title="등록" onclick="create();">
-			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
+			<input type="button" value="<%=title%>" title="<%=title%>" onclick="<%=mode%>();">
+			<input type="button" value="뒤로" title="뒤로" class="blue" onclick="history.go(-1);">
 		</td>
 	</tr>
 </table>
@@ -92,14 +101,14 @@ String mode = (String) request.getAttribute("mode");
 			<tr>
 				<th class="req lb">CONFIG SHEET 제목</th>
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="AXInput width-700">
+					<input type="text" name="name" id="name" class="width-700" value="<%=dto.getName()%>">
 				</td>
 			</tr>
 			<tr>
 				<th class="req lb">KEK 작번</th>
 				<td>
 					<jsp:include page="/extcore/jsp/common/project-include.jsp">
-						<jsp:param value="" name="oid" />
+						<jsp:param value="<%=dto.getOid()%>" name="oid" />
 						<jsp:param value="create" name="mode" />
 						<jsp:param value="false" name="multi" />
 					</jsp:include>
@@ -108,14 +117,14 @@ String mode = (String) request.getAttribute("mode");
 			<tr>
 				<th class="lb">설명</th>
 				<td class="indent5">
-					<textarea name="description" id="description" rows="6"></textarea>
+					<textarea name="description" id="description" rows="6"><%=dto.getDescription()%></textarea>
 				</td>
 			</tr>
 			<tr>
 				<th class="lb">첨부파일</th>
 				<td class="indent5">
 					<jsp:include page="/extcore/jsp/common/attach-secondary.jsp">
-						<jsp:param value="" name="oid" />
+						<jsp:param value="<%=dto.getOid()%>" name="oid" />
 					</jsp:include>
 				</td>
 			</tr>
@@ -123,8 +132,8 @@ String mode = (String) request.getAttribute("mode");
 				<th class="req lb">결재</th>
 				<td>
 					<jsp:include page="/extcore/jsp/common/approval-register.jsp">
-						<jsp:param value="" name="oid" />
-						<jsp:param value="create" name="mode" />
+						<jsp:param value="<%=dto.getOid()%>" name="oid" />
+						<jsp:param value="update" name="mode" />
 					</jsp:include>
 				</td>
 			</tr>

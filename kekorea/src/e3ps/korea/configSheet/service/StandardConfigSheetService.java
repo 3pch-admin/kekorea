@@ -15,7 +15,9 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.korea.configSheet.ColumnVariableLink;
 import e3ps.korea.configSheet.ConfigSheet;
+import e3ps.korea.configSheet.ConfigSheetColumnData;
 import e3ps.korea.configSheet.ConfigSheetProjectLink;
 import e3ps.korea.configSheet.ConfigSheetVariable;
 import e3ps.korea.configSheet.ConfigSheetVariableLink;
@@ -145,7 +147,6 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 			for (Map<String, String> addRow : addRows) {
 				String category_code = addRow.get("category_code");
 				String item_code = addRow.get("item_code");
-				String spec = addRow.get("spec");
 				String note = addRow.get("note");
 				String apply = addRow.get("apply");
 
@@ -161,11 +162,25 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 				ConfigSheetVariable variable = ConfigSheetVariable.newConfigSheetVariable();
 				variable.setCategory(category);
 				variable.setItem(item);
-				variable.setSpec(spec);
 				variable.setNote(note);
 				variable.setApply(apply);
 				variable.setSort(sort);
 				PersistenceHelper.manager.save(variable);
+
+				int ss = 0;
+				for (String key : addRow.keySet()) {
+					if (key.contains("spec")) {
+						ConfigSheetColumnData column = ConfigSheetColumnData.newConfigSheetColumnData();
+						column.setDataField(key);
+						column.setValue(addRow.get(key));
+						PersistenceHelper.manager.save(column);
+
+						ColumnVariableLink ll = ColumnVariableLink.newColumnVariableLink(column, variable);
+						ll.setSort(ss);
+						PersistenceHelper.manager.save(ll);
+						ss++;
+					}
+				}
 
 				ConfigSheetVariableLink link = ConfigSheetVariableLink.newConfigSheetVariableLink(configSheet,
 						variable);
@@ -223,6 +238,30 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 			trs.start();
 
 			ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
+
+			QueryResult result = PersistenceHelper.manager.navigate(configSheet, "project",
+					ConfigSheetProjectLink.class, false);
+			while (result.hasMoreElements()) {
+				ConfigSheetProjectLink link = (ConfigSheetProjectLink) result.nextElement();
+				PersistenceHelper.manager.delete(link);
+			}
+
+			result.reset();
+			result = PersistenceHelper.manager.navigate(configSheet, "output", OutputDocumentLink.class);
+			while (result.hasMoreElements()) {
+				Output output = (Output) result.nextElement();
+				PersistenceHelper.manager.delete(output);
+			}
+
+			result.reset();
+			result = PersistenceHelper.manager.navigate(configSheet, "variable", ConfigSheetVariableLink.class, false);
+			while (result.hasMoreElements()) {
+				ConfigSheetVariableLink link = (ConfigSheetVariableLink) result.nextElement();
+				ConfigSheetVariable variable = link.getVariable();
+				PersistenceHelper.manager.delete(variable);
+				PersistenceHelper.manager.delete(link);
+			}
+
 			PersistenceHelper.manager.delete(configSheet);
 
 			trs.commit();

@@ -133,7 +133,7 @@ ul, ol {
 			<tr>
 				<th class="req lb">CONFIG SHEET 제목</th>
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="AXInput width-700">
+					<input type="text" name="name" id="name" class="width-700">
 				</td>
 			</tr>
 			<tr>
@@ -176,6 +176,7 @@ ul, ol {
 			<tr>
 				<td class="left">
 					<input type="button" value="불러오기" title="불러오기" class="blue" onclick="load();">
+					<input type="button" value="열 추가" title="열 추가" class="red" onclick="toAppend();">
 				</td>
 			</tr>
 		</table>
@@ -245,7 +246,7 @@ ul, ol {
 		dataField : "spec",
 		headerText : "사양",
 		dataType : "string",
-		width : 350,
+		width : 250,
 		renderer : {
 			type : "templaterenderer"
 		}
@@ -309,6 +310,24 @@ ul, ol {
 		readyHandler();
 		auiReadyHandler();
 		AUIGrid.bind(myGridID, "pasteBegin", auiPasteBeginHandler);
+	}
+
+	let toIndex = 0;
+	function toAppend() {
+		const dataField = "spec" + toIndex;
+		var columnObj = {
+			headerText : "사양" + toIndex,
+			dataField : dataField, // dataField 는 중복되지 않게 설정
+			defaultValue : "", // 칼럼 추가 할 때 해당 칼럼의 기본값 지정, 만약 지정하지 않으면 초기화 하지 않음
+			width : 250,
+			renderer : {
+				type : "templaterenderer"
+			}
+		};
+// 		var columnPos = document.getElementById("addSelect").value;
+		// columnPos : columnIndex 인 경우 해당 index 에 삽입, "first" : 맨처음, "last" : 맨끝, "selectionLeft" : 선택 열 왼쪽에,  "selectionRight" : 선택 열 오른쪽에 추가
+		AUIGrid.addColumn(myGridID, columnObj, "selectionRight");
+		toIndex++;
 	}
 
 	function auiPasteBeginHandler(event) {
@@ -391,7 +410,7 @@ ul, ol {
 		if (event.isClipboard) {
 			return true;
 		}
-		if (event.dataField === "spec") {
+		if (event.dataField.indexOf("spec") > -1) {
 			openTextarea(event);
 		} else {
 			return true;
