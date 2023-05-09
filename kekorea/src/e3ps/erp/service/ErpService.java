@@ -10,4 +10,10 @@ public interface ErpService {
 	 */
 	public abstract void save(String name, boolean result, String sendQuery, String snedType) throws Exception;
 
+	/**
+	 * ERP 로그 작성 샘플
+	 */
+	public abstract void writeLog(String name, String query, String msg, boolean isResult, String sendType)
+			throws Exception;
+
 }

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.project.Project;
+import e3ps.project.issue.Issue;
 import e3ps.project.issue.IssueProjectLink;
 import e3ps.project.issue.beans.IssueDTO;
 import e3ps.project.issue.service.IssueHelper;
@@ -155,6 +156,36 @@ public class IssueController extends BaseController {
 			IssueHelper.service.delete(oid);
 			result.put("result", SUCCESS);
 			result.put("msg", DELETE_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+	
+	@Description(value = "특이사항 수정 페이지")
+	@GetMapping(value = "/modify")
+	public ModelAndView modify(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Issue issue = (Issue) CommonUtils.getObject(oid);
+		IssueDTO dto = new IssueDTO(issue);
+		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/project/issue/issue-modify");
+		return model;
+	}
+
+	@Description(value = "이슈 수정")
+	@PostMapping(value = "/modify")
+	@ResponseBody
+	public Map<String, Object> modify(@RequestBody IssueDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			IssueHelper.service.modify(dto);
+			result.put("result", SUCCESS);
+			result.put("msg", MODIFY_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);

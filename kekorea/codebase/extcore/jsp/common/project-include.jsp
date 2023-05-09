@@ -28,6 +28,9 @@ boolean isUpdate = "update".equals(mode);
 			headerText : "KEK 작번",
 			dataType : "string",
 			width : 100,
+			<%
+				if(isView) {
+			%>
 			renderer : {
 				type : "LinkRenderer",
 				baseUrl : "javascript",
@@ -37,11 +40,17 @@ boolean isUpdate = "update".equals(mode);
 					popup(url);
 				}
 			},
+			<%
+				}
+			%>
 		}, {
 			dataField : "keNumber",
 			headerText : "KE 작번",
 			dataType : "string",
 			width : 100,
+			<%
+				if(isView) {
+			%>
 			renderer : {
 				type : "LinkRenderer",
 				baseUrl : "javascript",
@@ -51,6 +60,9 @@ boolean isUpdate = "update".equals(mode);
 					popup(url);
 				}
 			},
+			<%
+				}
+			%>
 		}, {
 			dataField : "projectType_name",
 			headerText : "작번유형",

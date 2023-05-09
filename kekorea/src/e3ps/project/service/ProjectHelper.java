@@ -53,12 +53,14 @@ import net.sf.json.JSONObject;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.fc.PagingQueryResult;
+import wt.fc.PagingSessionHelper;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.lifecycle.LifeCycleManaged;
 import wt.org.WTUser;
 import wt.query.QuerySpec;
+import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
 
@@ -399,7 +401,7 @@ public class ProjectHelper {
 
 		if (!StringUtils.isNull(elecOid)) {
 			WTUser elec = (WTUser) CommonUtils.getObject(machineOid);
-			CommonCode elecCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+			CommonCode elecCode = CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE");
 			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
 			int idx_u = query.appendClassList(WTUser.class, false);
 
@@ -413,7 +415,7 @@ public class ProjectHelper {
 
 		if (!StringUtils.isNull(softOid)) {
 			WTUser soft = (WTUser) CommonUtils.getObject(machineOid);
-			CommonCode softCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+			CommonCode softCode = CommonCodeHelper.manager.getCommonCode("SOFT", "USER_TYPE");
 			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
 			int idx_u = query.appendClassList(WTUser.class, false);
 
@@ -995,7 +997,7 @@ public class ProjectHelper {
 			return DocumentHelper.manager.jsonAuiProject(oid);
 		} else if (per instanceof ConfigSheet) {
 			return ConfigSheetHelper.manager.jsonAuiProject(oid);
-		} else if(per instanceof Issue) {
+		} else if (per instanceof Issue) {
 			return IssueHelper.manager.jsonAuiProject(oid);
 		}
 		return new JSONArray();
@@ -1024,8 +1026,7 @@ public class ProjectHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);
 		QuerySpecUtils.toLikeRightAnd(query, idx, Project.class, Project.KEK_NUMBER, project.getKekNumber());
-		QuerySpecUtils.toNotEqualsAnd(query, idx, Project.class, "projectTypeReference.key.id",
-				project.getProjectType());
+		QuerySpecUtils.toNotEqualsAnd(query, idx, Project.class, "projectTypeReference.key.id", project);
 		QueryResult result = PersistenceHelper.manager.find(query);
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -1033,5 +1034,67 @@ public class ProjectHelper {
 			list.add(p);
 		}
 		return list;
+	}
+
+	/**
+	 * 메인페이지 나의 작번 리스트
+	 */
+	public JSONArray firstPageData(WTUser sessionUser) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Project.class, true);
+		int idx_link = query.appendClassList(ProjectUserLink.class, false);
+		int idx_u = query.appendClassList(WTUser.class, false);
+
+		query.appendOpenParen();
+		QuerySpecUtils.toInnerJoin(query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleAObjectRef.key.id", idx, idx_link);
+		QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+				"roleBObjectRef.key.id", idx_u, idx_link);
+		query.appendCloseParen();
+
+		QuerySpecUtils.toEqualsAnd(query, idx_link, ProjectUserLink.class, "roleBObjectRef.key.id", sessionUser);
+
+		CommonCode machineCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+		CommonCode elecCode = CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE");
+		CommonCode softCode = CommonCodeHelper.manager.getCommonCode("SOFT", "USER_TYPE");
+
+		query.appendAnd();
+		query.appendOpenParen();
+
+		SearchCondition sc = new SearchCondition(ProjectUserLink.class, "userTypeReference.key.id", "=",
+				machineCode.getPersistInfo().getObjectIdentifier().getId());
+		query.appendWhere(sc, new int[] { idx_link });
+		query.appendOr();
+
+		sc = new SearchCondition(ProjectUserLink.class, "userTypeReference.key.id", "=",
+				elecCode.getPersistInfo().getObjectIdentifier().getId());
+		query.appendWhere(sc, new int[] { idx_link });
+		query.appendOr();
+
+		sc = new SearchCondition(ProjectUserLink.class, "userTypeReference.key.id", "=",
+				softCode.getPersistInfo().getObjectIdentifier().getId());
+		query.appendWhere(sc, new int[] { idx_link });
+
+		query.appendCloseParen();
+
+		QuerySpecUtils.toOrderBy(query, idx, Project.class, Project.P_DATE, true);
+
+		QueryResult result = PagingSessionHelper.openPagingSession(0, 30, query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Project project = (Project) obj[0];
+
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("mak", project.getMak().getName());
+			map.put("detail", project.getDetail().getName());
+			map.put("customer", project.getCustomer().getName());
+			map.put("install", project.getInstall().getName());
+			map.put("description", project.getDescription());
+		}
+		return JSONArray.fromObject(list);
 	}
 }

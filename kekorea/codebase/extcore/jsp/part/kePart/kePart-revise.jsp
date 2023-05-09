@@ -53,14 +53,14 @@
 		headerText : "버전(개정전)",
 		dataType : "numeric",
 		formatString : "###0",
-		width : 80,
+		width : 100,
 		editable : false
 	}, {
 		dataField : "next",
 		headerText : "버전(개정후)",
 		dataType : "numeric",
 		formatString : "###0",
-		width : 80,
+		width : 100,
 		editRenderer : {
 			type : "InputEditRenderer",
 			onlyNumeric : true, 		

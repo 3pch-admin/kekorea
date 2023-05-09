@@ -20,6 +20,30 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	color: #FF0000;
 	font-weight: bold;
 }
+.row1 {
+	background-color: #fed7be;
+	font-weight: bold;
+}
+
+.row2 {
+	background-color: #FFCCFF;
+	font-weight: bold;
+}
+
+.row3 {
+	background-color: #CCFFCC;
+	font-weight: bold;
+}
+
+.row4 {
+	background-color: #FFFFCC;
+	font-weight: bold;
+}
+
+.none {
+	color: black;
+	font-weight: normal;
+}
 </style>
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
 <input type="hidden" name="compareArr" id="compareArr" value="<%=compareArr%>">
@@ -53,6 +77,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				showIcon : true,
 				inline : true
 			},
+			cellColMerge: true, // 셀 가로 병합 실행
+			cellColSpan: 4, // 셀 가로 병합 대상은 6개로 설정
 		},{
 			dataField : "lotNo",
 			headerText : "LOT_NO",
@@ -100,6 +126,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					}
 					return value;
 				},
+				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+					const quantity1 = item.quantity1;
+					if(typeof quantity1 === "string" ) {
+						return "none";
+					}
+					return "";
+				},
 				filter : {
 					showIcon : true,
 					inline : true
@@ -123,6 +156,9 @@ for (Project project : destList) {%>
 						},
 						styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
 							const quantity1 = item.quantity1;
+							if(typeof quantity1 === "string" ) {
+								return "none";
+							}
 							if (value !== quantity1) {
 								return "compare";
 							}
@@ -269,7 +305,20 @@ for (Project project : destList) {%>
 			showInlineFilter : true,
 			enableRightDownFocus : true,
 			fixedColumnCount : 5,
-// 			autoGridHeight : true
+			enableCellMerge: true,
+			rowStyleFunction : function(rowIndex, item) {
+				const value = item.lotNo;
+				if(value === "막종 / 막종상세") {
+					return "row1";
+				} else if(value === "고객사 / 설치장소") {
+					return "row2";
+				} else if(value === "KE 작번") {
+					return "row3";
+				} else if(value === "발행일") {
+					return "row4";
+				}
+				return "";
+			}			
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);

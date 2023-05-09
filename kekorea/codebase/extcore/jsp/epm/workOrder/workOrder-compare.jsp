@@ -20,6 +20,30 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	color: red;
 	font-weight: bold;
 }
+.row1 {
+	background-color: #fed7be;
+	font-weight: bold;
+}
+
+.row2 {
+	background-color: #FFCCFF;
+	font-weight: bold;
+}
+
+.row3 {
+	background-color: #CCFFCC;
+	font-weight: bold;
+}
+
+.row4 {
+	background-color: #FFFFCC;
+	font-weight: bold;
+}
+
+.none {
+	color: black;
+	font-weight: normal;
+}
 </style>
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
 <input type="hidden" name="compareArr" id="compareArr" value="<%=compareArr%>">
@@ -53,6 +77,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				showIcon : true,
 				inline : true
 			},
+			cellColMerge: true, // 셀 가로 병합 실행
+			cellColSpan: 3, // 셀 가로 병합 대상은 6개로 설정
 		}, {
 			dataField : "name",
 			headerText : "DRAWING TITLE",
@@ -86,7 +112,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						const number = item.number;
 						const rev = item.version;
 						let url;
-						if (oid.indexOf("KeDrawing") > -1) {
+						if(oid.indexOf("Project") > -1) {
+							url = getCallUrl("/project/info?oid="+oid);
+							popup(url);
+						} else if (oid.indexOf("KeDrawing") > -1) {
 							url = getCallUrl("/keDrawing/viewByNumberAndRev?number=" + number + "&rev=" + rev);
 							popup(url, 1400, 700);
 						} else {
@@ -100,6 +129,13 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					}
 					return value;
 				},
+				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+					const rev1 = item.rev1;
+					if(typeof rev1 === "string" ) {
+						return "none";
+					}
+					return "";
+				},				
 				filter : {
 					showIcon : true,
 					inline : true
@@ -123,7 +159,10 @@ for (Project project : destList) {%>
 								const number = item.number;
 								const rev = item.version;
 								let url;
-								if (oid.indexOf("KeDrawing") > -1) {
+								if(oid.indexOf("Project") > -1) {
+									url = getCallUrl("/project/info?oid="+oid);
+									popup(url);
+								} else if (oid.indexOf("KeDrawing") > -1) {
 									url = getCallUrl("/keDrawing/viewByNumberAndRev?number=" + number + "&rev=" + rev);
 									popup(url, 1400, 700);
 								} else {
@@ -139,6 +178,9 @@ for (Project project : destList) {%>
 						},
 						styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
 							const rev1 = item.rev1;
+							if(typeof value === "string" ) {
+								return "none";
+							}
 							if (value !== rev1) {
 								return "compare";
 							}
@@ -173,7 +215,21 @@ for (Project project : destList) {%>
 			showInlineFilter : true,
 			enableRightDownFocus : true,
 			fixedColumnCount : 3,
-			autoGridHeight : true
+			autoGridHeight : true,
+			enableCellMerge: true,
+			rowStyleFunction : function(rowIndex, item) {
+				const value = item.lotNo;
+				if(value === "막종 / 막종상세") {
+					return "row1";
+				} else if(value === "고객사 / 설치장소") {
+					return "row2";
+				} else if(value === "KE 작번") {
+					return "row3";
+				} else if(value === "발행일") {
+					return "row4";
+				}
+				return "";
+			}
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		AUIGrid.setGridData(myGridID, data);

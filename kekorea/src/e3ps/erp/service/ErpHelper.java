@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -20,8 +21,12 @@ import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.common.util.IBAUtils;
+import e3ps.common.util.PageQueryUtils;
+import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.erp.ErpConnectionPool;
+import e3ps.erp.ErpSendHistory;
+import e3ps.erp.dto.ErpDTO;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputDocumentLink;
@@ -30,11 +35,13 @@ import wt.content.ContentHelper;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
 import wt.doc.WTDocument;
+import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.WTPrincipal;
 import wt.org.WTUser;
 import wt.part.WTPart;
+import wt.query.QuerySpec;
 import wt.queue.ProcessingQueue;
 import wt.queue.QueueHelper;
 import wt.services.ServiceFactory;
@@ -87,22 +94,21 @@ public class ErpHelper {
 	 * YCODE 체크 수배표 등록시
 	 */
 	public Map<String, Object> validate(String partNo) throws Exception {
+		StringBuffer sql = new StringBuffer();
 		Map<String, Object> result = new HashMap<String, Object>();
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-
+			sql.append("SELECT *");
+			sql.append(" FROM KEK_VDAITEM");
+			sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
 			Map<String, Object> cacheData = validateCache.get(partNo);
 			if (cacheData == null || cacheData.get("check") == "NG") {
 
 				con = dataSource.getConnection();
 				st = con.createStatement();
 
-				StringBuffer sql = new StringBuffer();
-				sql.append("SELECT *");
-				sql.append(" FROM KEK_VDAITEM");
-				sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
 				rs = st.executeQuery(sql.toString());
 				if (rs.next()) {
 					result.put("check", "OK");
@@ -118,6 +124,7 @@ public class ErpHelper {
 		} catch (Exception e) {
 			e.printStackTrace();
 			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -129,30 +136,33 @@ public class ErpHelper {
 	 */
 	public Map<String, Object> getUnitName(int lotNo) throws Exception {
 		Map<String, Object> result = new HashMap<>();
+		StringBuffer sql = new StringBuffer();
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
 		try {
 
 			Map<String, Object> cacheData = unitCache.get(lotNo);
+			sql.append("SELECT LOTUNITNAME FROM KEK_VDALOTNO WHERE LOTNO='" + lotNo + "'");
 			if (cacheData == null) {
 				con = dataSource.getConnection();
 				st = con.createStatement();
-
-				StringBuffer sql = new StringBuffer();
-				sql.append("SELECT LOTUNITNAME FROM KEK_VDALOTNO WHERE LOTNO='" + lotNo + "'");
 				rs = st.executeQuery(sql.toString());
+
 				if (rs.next()) {
 					result.put("unitName", (String) rs.getString(1));
 					unitCache.put(lotNo, result);
 				}
 			} else {
-				System.out.println("UNIT NAME CACHE");
 				result = cacheData;
 			}
+
+			ErpHelper.service.writeLog("LOT번호로 UNIT NAME 가져오기", sql.toString(), "", true, "KEK 도번");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("LOT번호로 UNIT NAME 가져오기", sql.toString(), e.toString(), false, "KEK 도번");
 			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -163,6 +173,7 @@ public class ErpHelper {
 	 * 부품수배표 부품정보 가져오기
 	 */
 	public Map<String, Object> getErpItemByPartNoAndQuantity(String partNo, int quantity) throws Exception {
+		StringBuffer sql = new StringBuffer();
 		Map<String, Object> result = new HashMap<>();
 		Connection con = null;
 		Statement st = null;
@@ -173,14 +184,12 @@ public class ErpHelper {
 			String cacheKey = partNo + quantity;
 			Map<String, Object> cacheData = cacheManager.get(cacheKey);
 
+			sql.append("SELECT ITEMSEQ, ITEMNAME, SPEC");
+			sql.append(" FROM KEK_VDAITEM");
+			sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
 			if (cacheData == null) {
 				con = dataSource.getConnection();
 				st = con.createStatement();
-
-				StringBuffer sql = new StringBuffer();
-				sql.append("SELECT ITEMSEQ, ITEMNAME, SPEC");
-				sql.append(" FROM KEK_VDAITEM");
-				sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
 
 				rs = st.executeQuery(sql.toString());
 				if (rs.next()) {
@@ -222,8 +231,10 @@ public class ErpHelper {
 				System.out.println("수배표 등록 CACHE");
 				result = cacheData;
 			}
+			ErpHelper.service.writeLog("수배표 부품 정보 가져오기 가져오기", sql.toString(), "", true, "수배표");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("수배표 부품 정보 가져오기 가져오기", sql.toString(), e.toString(), false, "수배표");
 			if (con != null) {
 				con.close();
 			}
@@ -239,6 +250,7 @@ public class ErpHelper {
 			if (_rs != null) {
 				_rs.close();
 			}
+			throw e;
 		} finally {
 			if (con != null) {
 				con.close();
@@ -263,6 +275,7 @@ public class ErpHelper {
 	 * 규격으로 ERP 부품정보 가져오기
 	 */
 	public Map<String, Object> getErpItemBySpec(String spec) throws Exception {
+		StringBuffer sql = new StringBuffer();
 		Map<String, Object> result = new HashMap<String, Object>(); // json
 		Connection con = null;
 		Statement st = null;
@@ -273,7 +286,6 @@ public class ErpHelper {
 			con = dataSource.getConnection();
 			st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
 			sql.append("SELECT ITEMSEQ, ITEMNAME, SPEC, ITEMNO");
 			sql.append(" FROM KEK_VDAITEM");
 			sql.append(" WHERE SPEC='" + spec.trim() + "'");
@@ -310,8 +322,10 @@ public class ErpHelper {
 				result.put("price", price);
 				result.put("currency", currency);
 			}
+			ErpHelper.service.writeLog("규격으로 ERP 부품 정보 가져오기 가져오기", sql.toString(), "", true, "제작사양서");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("규격으로 ERP 부품 정보 가져오기 가져오기", sql.toString(), e.toString(), false, "제작사양서");
 			if (con != null) {
 				con.close();
 			}
@@ -327,6 +341,7 @@ public class ErpHelper {
 			if (_rs != null) {
 				_rs.close();
 			}
+			throw e;
 		} finally {
 			if (con != null) {
 				con.close();
@@ -416,6 +431,7 @@ public class ErpHelper {
 			if (_rs != null) {
 				_rs.close();
 			}
+			throw e;
 		} finally {
 			if (con != null) {
 				con.close();
@@ -440,6 +456,7 @@ public class ErpHelper {
 	 * 산출물 ERP 전송
 	 */
 	public void sendToErp(WTDocument document) throws Exception {
+		String errorQuery = "";
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -510,6 +527,9 @@ public class ErpHelper {
 
 				String createTime = new Timestamp(new Date().getTime()).toString().substring(0, 16);
 				sql.append("'" + createTime + "');");
+
+				errorQuery = sql.toString();
+
 				st.executeUpdate(sql.toString());
 
 				sendToErpFile(document, project);
@@ -519,13 +539,16 @@ public class ErpHelper {
 				sb.append("EXEC KEK_SPLMOutputRptDOProc ");
 				sb.append("'" + stdNo + "'");
 				st.executeUpdate(sb.toString());
+				ErpHelper.service.writeLog("규격으로 ERP 부품 정보 가져오기 가져오기", sql.toString(), "", true, "제작사양서");
 			}
 
 			con.commit();
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("규격으로 ERP 부품 정보 가져오기 가져오기", errorQuery, e.toString(), false, "제작사양서");
 			con.rollback();
+			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
@@ -543,6 +566,7 @@ public class ErpHelper {
 
 			con = dataSource.getConnection();
 			st = con.createStatement();
+			con.setAutoCommit(false);
 
 			StringBuffer sql = new StringBuffer();
 
@@ -605,8 +629,11 @@ public class ErpHelper {
 				fos.close();
 				is.close();
 			}
+			con.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -640,6 +667,8 @@ public class ErpHelper {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -672,6 +701,8 @@ public class ErpHelper {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -798,6 +829,7 @@ public class ErpHelper {
 		} catch (Exception e) {
 			e.printStackTrace();
 			con.rollback();
+			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
@@ -828,6 +860,8 @@ public class ErpHelper {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -854,6 +888,8 @@ public class ErpHelper {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -887,6 +923,8 @@ public class ErpHelper {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -914,6 +952,8 @@ public class ErpHelper {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -938,6 +978,8 @@ public class ErpHelper {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -964,6 +1006,8 @@ public class ErpHelper {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -991,6 +1035,8 @@ public class ErpHelper {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -1018,6 +1064,8 @@ public class ErpHelper {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -1107,6 +1155,8 @@ public class ErpHelper {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -1138,6 +1188,8 @@ public class ErpHelper {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -1157,6 +1209,7 @@ public class ErpHelper {
 
 			con = dataSource.getConnection();
 			st = con.createStatement();
+			con.setAutoCommit(false);
 
 			int keyIdx = 1;
 			StringBuffer sql = new StringBuffer();
@@ -1247,8 +1300,11 @@ public class ErpHelper {
 
 			partNo = savePartNo(part, spec);
 
+			con.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpConnectionPool.free(con, st, rs);
+			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
 		}
@@ -1273,5 +1329,42 @@ public class ErpHelper {
 
 	public void sendToErpFromQueue(HashMap<String, String> hash) throws Exception {
 
+	}
+
+	/**
+	 * ERP 로그 리스트 검색 함수
+	 */
+	public Map<String, Object> list(Map<String, Object> params) throws Exception {
+		System.out.println("ERP 로그 START = " + new Timestamp(new Date().getTime()));
+		Map<String, Object> map = new HashMap<String, Object>();
+		String name = (String) params.get("name");
+		String resultMsg = (String) params.get("resultMsg");
+		String sendQuery = (String) params.get("sendQuery");
+
+		List<ErpDTO> list = new ArrayList<ErpDTO>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ErpSendHistory.class, true);
+
+		QuerySpecUtils.toLikeAnd(query, idx, ErpSendHistory.class, ErpSendHistory.NAME, name);
+		QuerySpecUtils.toLikeAnd(query, idx, ErpSendHistory.class, ErpSendHistory.RESULT_MSG, resultMsg);
+		QuerySpecUtils.toLikeAnd(query, idx, ErpSendHistory.class, ErpSendHistory.SEND_QUERY, sendQuery);
+
+		QuerySpecUtils.toOrderBy(query, idx, ErpSendHistory.class, ErpSendHistory.CREATE_TIMESTAMP, true);
+
+		PageQueryUtils pager = new PageQueryUtils(params, query);
+		PagingQueryResult result = pager.find();
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			ErpSendHistory erpSendHistory = (ErpSendHistory) obj[0];
+			ErpDTO column = new ErpDTO(erpSendHistory);
+			list.add(column);
+		}
+
+		map.put("list", list);
+		map.put("sessionid", pager.getSessionId());
+		map.put("curPage", pager.getCpage());
+		System.out.println("ERP 로그 END = " + new Timestamp(new Date().getTime()));
+		return map;
 	}
 }

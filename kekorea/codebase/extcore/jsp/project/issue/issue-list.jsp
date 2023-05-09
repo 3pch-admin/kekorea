@@ -177,7 +177,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.poid;
+							const url = getCallUrl("/project/info?oid=" + oid);
+							popup(url);
 						}
 					},
 					filter : {
@@ -190,6 +192,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataType : "string",
 					style : "underline",
 					width : 100,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.poid;
+							const url = getCallUrl("/project/info?oid=" + oid);
+							popup(url);
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -297,7 +308,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "singleRow",
+					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -317,6 +328,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu();
 				});
+				AUIGrid.bind(myGridID, "cellDoubleClick", auiCellDoubleClick);
+			}
+
+			function auiCellDoubleClick(event) {
+				const dataField = event.dataField;
+				const item = event.item;
+				if (dataField == "name") {
+					const url = getCallUrl("/issue/view?oid=" + item.loid);
+					popup(url, 1400, 550);
+				}
 			}
 
 			function loadGridData() {
@@ -375,7 +396,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					}
 				});
 			}
-			
+
 			function exportExcel() {
 				const exceptColumnFields = [];
 				const sessionName = document.getElementById("sessionName").value;

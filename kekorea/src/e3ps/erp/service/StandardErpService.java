@@ -44,4 +44,34 @@ public class StandardErpService extends StandardManager implements ErpService {
 		}
 
 	}
+
+	@Override
+	public void writeLog(String name, String query, String msg, boolean isResult, String sendType) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			System.out.println("query=" + query);
+
+			ErpSendHistory erpSendHistory = ErpSendHistory.newErpSendHistory();
+			erpSendHistory.setName(name);
+			erpSendHistory.setResult(isResult);
+			erpSendHistory.setResultMsg(msg);
+			erpSendHistory.setSendType(sendType);
+			erpSendHistory.setSendQuery(query);
+			erpSendHistory.setOwnership(CommonUtils.sessionOwner());
+
+			PersistenceHelper.manager.save(erpSendHistory);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
 }

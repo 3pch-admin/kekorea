@@ -238,6 +238,46 @@ public class TBOMHelper {
 		ArrayList<Map<String, Object>> list = integratedData(p1);
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
 
+		Map<String, Object> makList = new HashMap<>();
+		Map<String, Object> customerList = new HashMap<>();
+		Map<String, Object> keList = new HashMap<>();
+		Map<String, Object> pdateList = new HashMap<>();
+
+		makList.put("lotNo", "막종 / 막종상세");
+		customerList.put("lotNo", "고객사 / 설치장소");
+		keList.put("lotNo", "KE 작번");
+		pdateList.put("lotNo", "발행일");
+
+		makList.put("code", "막종 / 막종상세");
+		customerList.put("code", "고객사 / 설치장소");
+		keList.put("code", "KE 작번");
+		pdateList.put("code", "발행일");
+
+		makList.put("keNumber", "막종 / 막종상세");
+		customerList.put("keNumber", "고객사 / 설치장소");
+		keList.put("keNumber", "KE 작번");
+		pdateList.put("keNumber", "발행일");
+
+		destList.add(0, p1);
+		for (int i = 0; i < destList.size(); i++) {
+			Project project = (Project) destList.get(i);
+			String oid = project.getPersistInfo().getObjectIdentifier().getStringValue();
+			makList.put("oid", oid);
+			customerList.put("oid", oid);
+			keList.put("oid", oid);
+			pdateList.put("oid", oid);
+			makList.put("qty" + (i + 1), project.getMak().getName() + " / " + project.getDetail().getName());
+			customerList.put("qty" + (i + 1), project.getCustomer().getName() + " / " + project.getInstall().getName());
+			keList.put("qty" + (i + 1), project.getKeNumber());
+			pdateList.put("qty" + (i + 1), CommonUtils.getPersistableTime(project.getPDate()));
+		}
+
+		mergedList.add(makList);
+		mergedList.add(customerList);
+		mergedList.add(keList);
+		mergedList.add(pdateList);
+
+		destList.remove(0);
 		// list1의 데이터를 먼저 추가
 		for (Map<String, Object> data : list) {
 			Map<String, Object> mergedData = new HashMap<>();

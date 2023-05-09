@@ -40,9 +40,9 @@ String loid = (String) request.getAttribute("loid");
 		<li>
 			<a href="#tabs-2">버전정보</a>
 		</li>
-		<li>
-			<a href="#tabs-3">결재이력</a>
-		</li>
+<!-- 		<li> -->
+<!-- 			<a href="#tabs-3">결재이력</a> -->
+<!-- 		</li> -->
 	</ul>
 	<div id="tabs-1">
 		<table class="view-table">
@@ -110,7 +110,7 @@ String loid = (String) request.getAttribute("loid");
 		</table>
 	</div>
 	<div id="tabs-2">
-		<div id="grid_wrap" style="height: 350px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 470px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			const columns = [ {
@@ -248,12 +248,6 @@ String loid = (String) request.getAttribute("loid");
 			}
 		</script>
 	</div>
-	<div id="tabs-3">
-		<!-- 결재이력 -->
-		<jsp:include page="/extcore/jsp/common/approval-history.jsp">
-			<jsp:param value="<%=dto.getOid()%>" name="oid" />
-		</jsp:include>
-	</div>
 </div>
 <script type="text/javascript">
 	function preView() {
@@ -290,29 +284,29 @@ String loid = (String) request.getAttribute("loid");
 						createAUIGrid50(columns);
 					}
 					break;
-				case "tabs-3":
-					const isCreated100 = AUIGrid.isCreated(myGridID100);
-					if (isCreated100) {
-						AUIGrid.resize(myGridID100);
-					} else {
-						createAUIGrid100(columns100);
-					}
-					break;
+// 				case "tabs-3":
+// 					const isCreated100 = AUIGrid.isCreated(myGridID100);
+// 					if (isCreated100) {
+// 						AUIGrid.resize(myGridID100);
+// 					} else {
+// 						createAUIGrid100(columns100);
+// 					}
+// 					break;
 				}
 			}
 		});
 
 		createAUIGrid(columns);
 		createAUIGrid50(columns50);
-		createAUIGrid100(columns100);
+// 		createAUIGrid100(columns100);
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID50);
-		AUIGrid.resize(myGridID100);
+// 		AUIGrid.resize(myGridID100);
 	})
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID50);
-		AUIGrid.resize(myGridID100);
+// 		AUIGrid.resize(myGridID100);
 	});
 </script>

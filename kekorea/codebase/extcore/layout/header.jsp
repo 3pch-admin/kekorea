@@ -235,7 +235,7 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/erp/list', 'ERP 로그 > ERP 전송 로그');">ERP 전송 로그</a>
+						<a onclick="moveToPage(this, '/erp/list', 'ERP 로그 > ERP 로그');">ERP 로그</a>
 					</li>
 				</ul>
 			</li>

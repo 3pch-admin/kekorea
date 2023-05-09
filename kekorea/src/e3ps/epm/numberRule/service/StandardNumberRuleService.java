@@ -148,7 +148,7 @@ public class StandardNumberRuleService extends StandardManager implements Number
 				latest.setLatest(true);
 				latest.setVersion(next);
 				latest.setMaster(pre.getMaster());
-				latest.setState(Constants.KeState.USE);
+				latest.setState(Constants.State.INWORK);
 				latest.setOwnership(CommonUtils.sessionOwner());
 				latest.setNote(note);
 				PersistenceHelper.manager.save(latest);

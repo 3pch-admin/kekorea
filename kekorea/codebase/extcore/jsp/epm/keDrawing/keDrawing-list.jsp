@@ -168,7 +168,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 							}
 							const moid = item.moid;
 							const url = getCallUrl("/keDrawing/view?oid=" + oid);
-							popup(url, 1400, 700);
+							popup(url, 1400, 620);
 						}
 					},
 					filter : {
@@ -191,7 +191,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 							}
 							const moid = item.moid;
 							const url = getCallUrl("/keDrawing/view?oid=" + oid);
-							popup(url, 1400, 700);
+							popup(url, 1400, 620);
 						}
 					},
 					filter : {

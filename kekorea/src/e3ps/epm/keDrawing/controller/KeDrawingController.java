@@ -202,6 +202,9 @@ public class KeDrawingController extends BaseController {
 		KeDrawing keDrawing = KeDrawingHelper.manager.getKeDrawingByNumberAndRev(number, rev);
 		KeDrawingDTO dto = new KeDrawingDTO(keDrawing);
 		JSONArray history = KeDrawingHelper.manager.history(keDrawing.getMaster());
+		KeDrawing latest = KeDrawingHelper.manager.getLatest(keDrawing);
+		model.addObject("latestVersion", latest.getVersion());
+		model.addObject("loid", latest.getPersistInfo().getObjectIdentifier().getStringValue());
 		model.addObject("history", history);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/epm/keDrawing/keDrawing-view");

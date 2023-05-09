@@ -195,7 +195,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 							const oid = item.oid;
 							if (oid !== undefined) {
 								const url = getCallUrl("/kePart/view?oid=" + oid);
-								popup(url, 1400, 700);
+								popup(url, 1400, 600);
 							} else {
 								alert("서버에 저장되지 않은 데이터 입니다.");
 							}
@@ -223,7 +223,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 							const oid = item.oid;
 							if (oid !== undefined) {
 								const url = getCallUrl("/kePart/view?oid=" + oid);
-								popup(url, 1300, 650);
+								popup(url, 1400, 600);
 							} else {
 								alert("서버에 저장 되지 않은 데이터 입니다.");
 							}

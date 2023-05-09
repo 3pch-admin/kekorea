@@ -63,6 +63,17 @@ public class IssueDTO {
 
 	}
 
+	public IssueDTO(Issue issue) throws Exception {
+		setOid(issue.getPersistInfo().getObjectIdentifier().getStringValue());
+		setName(issue.getName());
+		setContent(issue.getDescription());
+		setModifiedDate(issue.getModifyTimestamp());
+		setModifiedDate_txt(CommonUtils.getPersistableTime(issue.getModifyTimestamp()));
+		setCreator(issue.getOwnership().getOwner().getFullName());
+		setCreatedDate(issue.getCreateTimestamp());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(issue.getCreateTimestamp()));
+	}
+
 	public IssueDTO(IssueProjectLink link) throws Exception {
 		Issue issue = link.getIssue();
 		Project project = link.getProject();

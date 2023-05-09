@@ -664,6 +664,8 @@ public class WorkspaceHelper {
 			Map<String, String> map = new HashMap<>();
 			map.put("name", approvalLine.getName());
 			map.put("oid", approvalLine.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("poid",
+					approvalLine.getMaster().getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("createdDate_txt", CommonUtils.getPersistableTime(approvalLine.getCreateTimestamp()));
 			list.add(map);
 		}
@@ -944,12 +946,12 @@ public class WorkspaceHelper {
 				Row row = sheet.createRow(rowIndex);
 
 				CellRangeAddress region = new CellRangeAddress(rowIndex, rowIndex, 1, 3);
-				CellRangeAddress region1 = new CellRangeAddress(rowIndex, rowIndex, 4, 6);
-				CellRangeAddress region2 = new CellRangeAddress(rowIndex, rowIndex, 7, 9);
-				CellRangeAddress region3 = new CellRangeAddress(rowIndex, rowIndex, 11, 14);
-
+//				CellRangeAddress region1 = new CellRangeAddress(rowIndex, rowIndex, 4, 6);
+//				CellRangeAddress region2 = new CellRangeAddress(rowIndex, rowIndex, 7, 9);
+//				CellRangeAddress region3 = new CellRangeAddress(rowIndex, rowIndex, 11, 14);
+//
 				sheet.addMergedRegion(region);
-				sheet.addMergedRegion(region1);
+//				sheet.addMergedRegion(region1);
 //				sheet.addMergedRegion(region2);
 //				sheet.addMergedRegion(region3);
 

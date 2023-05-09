@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.FolderUtils;
 import e3ps.org.dto.UserDTO;
+import e3ps.project.service.ProjectHelper;
 import e3ps.workspace.notice.service.NoticeHelper;
 import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
@@ -41,6 +42,8 @@ public class IndexController extends BaseController {
 		boolean isAdmin = CommonUtils.isAdmin();
 		JSONArray nList = NoticeHelper.manager.firstPageData();
 		JSONArray aList = WorkspaceHelper.manager.firstPageData(sessionUser);
+		JSONArray pList = ProjectHelper.manager.firstPageData(sessionUser);
+		model.addObject("pList", pList);
 		model.addObject("aList", aList);
 		model.addObject("nList", nList);
 		model.addObject("isAdmin", isAdmin);

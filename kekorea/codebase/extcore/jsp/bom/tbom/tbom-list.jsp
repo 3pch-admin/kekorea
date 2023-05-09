@@ -379,7 +379,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function create() {
 				const url = getCallUrl("/tbom/create");
-				popup(url, 1500, 850);
+				popup(url, 1500, 880);
 			}
 
 			function exportExcel() {

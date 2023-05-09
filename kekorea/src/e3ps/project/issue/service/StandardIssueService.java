@@ -32,7 +32,6 @@ public class StandardIssueService extends StandardManager implements IssueServic
 	@Override
 	public void create(IssueDTO dto) throws Exception {
 		String name = dto.getName();
-		String oid = dto.getOid();
 		String description = dto.getDescription();
 		ArrayList<Map<String, String>> addRows9 = dto.getAddRows9();
 		ArrayList<String> secondarys = dto.getSecondarys();
@@ -45,11 +44,6 @@ public class StandardIssueService extends StandardManager implements IssueServic
 			issue.setDescription(description);
 			issue.setOwnership(CommonUtils.sessionOwner());
 			PersistenceHelper.manager.save(issue);
-
-			// root link
-			Project p = (Project) CommonUtils.getObject(oid);
-			IssueProjectLink rlink = IssueProjectLink.newIssueProjectLink(issue, p);
-			PersistenceHelper.manager.save(rlink);
 
 			for (Map<String, String> addRow9 : addRows9) {
 				String poid = addRow9.get("oid");
@@ -124,6 +118,59 @@ public class StandardIssueService extends StandardManager implements IssueServic
 			}
 
 			PersistenceHelper.manager.delete(issue);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void modify(IssueDTO dto) throws Exception {
+		String name = dto.getName();
+		String oid = dto.getOid();
+		String description = dto.getDescription();
+		ArrayList<Map<String, String>> addRows9 = dto.getAddRows9();
+		ArrayList<String> secondarys = dto.getSecondarys();
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Issue issue = (Issue) CommonUtils.getObject(oid);
+			issue.setName(name);
+			issue.setDescription(description);
+			issue.setOwnership(CommonUtils.sessionOwner());
+			PersistenceHelper.manager.save(issue);
+
+			QueryResult result = PersistenceHelper.manager.navigate(issue, "project", IssueProjectLink.class, false);
+			while (result.hasMoreElements()) {
+				IssueProjectLink link = (IssueProjectLink) result.nextElement();
+				PersistenceHelper.manager.delete(link);
+			}
+
+			for (Map<String, String> addRow9 : addRows9) {
+				String poid = addRow9.get("oid");
+				Project project = (Project) CommonUtils.getObject(poid);
+				IssueProjectLink link = IssueProjectLink.newIssueProjectLink(issue, project);
+				PersistenceHelper.manager.save(link);
+			}
+
+			CommonContentHelper.manager.clear(issue);
+
+			for (int i = 0; secondarys != null && i < secondarys.size(); i++) {
+				String cacheId = (String) secondarys.get(i);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
+				ApplicationData applicationData = ApplicationData.newApplicationData(issue);
+				applicationData.setRole(ContentRoleType.SECONDARY);
+				PersistenceHelper.manager.save(applicationData);
+				ContentServerHelper.service.updateContent(issue, applicationData, vault.getPath());
+			}
 
 			trs.commit();
 			trs = null;

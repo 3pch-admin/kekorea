@@ -103,7 +103,7 @@ ul, ol {
 					type : "LinkRenderer",
 					baseUrl : "javascript",
 					jsCallback : function(rowIndex, columnIndex, value, item) {
-						const oid = item.oid;
+						const oid = item.loid;
 						const url = getCallUrl("/issue/view?oid=" + oid);
 						popup(url, 1400, 700);
 					}
@@ -121,7 +121,7 @@ ul, ol {
 					type : "LinkRenderer",
 					baseUrl : "javascript",
 					jsCallback : function(rowIndex, columnIndex, value, item) {
-						const oid = item.oid;
+						const oid = item.loid;
 						const url = getCallUrl("/issue/view?oid=" + oid);
 						popup(url, 1400, 700);
 					}

@@ -1,5 +1,8 @@
 package e3ps.erp.dto;
 
+import java.sql.Timestamp;
+
+import e3ps.common.util.CommonUtils;
 import e3ps.erp.ErpSendHistory;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +17,9 @@ public class ErpDTO {
 	private boolean result;
 	private String sendType;
 	private String sendQuery;
+	private String createdDate_txt;
+	private Timestamp createdDate;
+	private String creator;
 
 	public ErpDTO() {
 
@@ -26,5 +32,8 @@ public class ErpDTO {
 		setResult(history.getResult());
 		setSendType(history.getSendType());
 		setSendQuery(history.getSendQuery());
+		setCreatedDate_txt(CommonUtils.getPersistableTime(history.getCreateTimestamp()));
+		setCreatedDate(history.getCreateTimestamp());
+		setCreator(history.getOwnership().getOwner().getFullName());
 	}
 }

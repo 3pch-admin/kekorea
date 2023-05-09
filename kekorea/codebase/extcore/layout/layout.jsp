@@ -66,6 +66,14 @@
 			document.getElementById("loading_layer").style.display = "none";
 			cover.close();
 		}
+
+		function logout() {
+			if (!confirm("로그아웃 하시겠습니까?")) {
+				return false;
+			}
+			document.execCommand("ClearAuthenticationCache");
+			document.location.href = "/Windchill/login/logout.jsp";
+		}
 	</script>
 </body>
 </html>

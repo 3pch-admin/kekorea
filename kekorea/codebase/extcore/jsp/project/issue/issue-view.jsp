@@ -25,7 +25,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			<%
 			}
 			%>
-			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
+			<input type="button" value="수정" title="수정" class="blue" onclick="modify();">
+			<input type="button" value="닫기" title="닫기" onclick="self.close();">
 		</td>
 	</tr>
 </table>
@@ -80,6 +81,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 	</div>
 </div>
 <script type="text/javascript">
+	function modify() {
+		openLayer();
+		const oid = document.getElementById("oid").value;
+		document.location.href = getCallUrl("/issue/modify?oid=" + oid);
+	}
+
 	function _delete() {
 		if (!confirm("삭제 하시겠습니까?")) {
 			return false;

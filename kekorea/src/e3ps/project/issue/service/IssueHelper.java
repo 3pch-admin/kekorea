@@ -8,8 +8,6 @@ import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.korea.configSheet.ConfigSheet;
-import e3ps.korea.configSheet.ConfigSheetProjectLink;
 import e3ps.project.Project;
 import e3ps.project.issue.Issue;
 import e3ps.project.issue.IssueProjectLink;
@@ -47,9 +45,6 @@ public class IssueHelper {
 			Issue issue = (Issue) obj[0];
 
 			JSONObject node = new JSONObject();
-			node.put("oid", issue.getPersistInfo().getObjectIdentifier().getStringValue());
-			node.put("name", issue.getName());
-			node.put("content", issue.getDescription());
 			QueryResult group = PersistenceHelper.manager.navigate(issue, "project", IssueProjectLink.class, false);
 
 			int isNode = 1;
@@ -57,6 +52,9 @@ public class IssueHelper {
 			while (group.hasMoreElements()) {
 				IssueProjectLink link = (IssueProjectLink) group.nextElement();
 				IssueDTO dto = new IssueDTO(link);
+				node.put("oid", issue.getPersistInfo().getObjectIdentifier().getStringValue());
+				node.put("name", issue.getName());
+				node.put("content", issue.getDescription());
 				if (isNode == 1) {
 					node.put("poid", dto.getPoid());
 					node.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
@@ -72,12 +70,14 @@ public class IssueHelper {
 					node.put("model", dto.getModel());
 					node.put("pdate_txt", dto.getPdate_txt());
 					node.put("creator", dto.getCreator());
+					node.put("creatorId", dto.getCreatorId());
 					node.put("createdDate_txt", dto.getCreatedDate_txt());
 					node.put("modifiedDate_txt", dto.getModifiedDate_txt());
 				} else {
 					JSONObject data = new JSONObject();
-					data.put("name", dto.getName());
-					data.put("oid", dto.getOid());
+					data.put("oid", issue.getPersistInfo().getObjectIdentifier().getStringValue());
+					data.put("name", issue.getName());
+					data.put("content", issue.getDescription());
 					data.put("poid", dto.getPoid());
 					data.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
 					data.put("projectType_name", dto.getProjectType_name());
@@ -92,6 +92,7 @@ public class IssueHelper {
 					data.put("model", dto.getModel());
 					data.put("pdate_txt", dto.getPdate_txt());
 					data.put("creator", dto.getCreator());
+					data.put("creatorId", dto.getCreatorId());
 					data.put("createdDate_txt", dto.getCreatedDate_txt());
 					data.put("modifiedDate_txt", dto.getModifiedDate_txt());
 					children.add(data);
@@ -163,7 +164,8 @@ public class IssueHelper {
 			IssueProjectLink link = (IssueProjectLink) obj[0];
 			Issue issue = link.getIssue();
 			Map<String, String> map = new HashMap();
-			map.put("oid", link.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("oid", issue.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("name", issue.getName());
 			map.put("description", issue.getDescription());
 			map.put("creator", issue.getOwnership().getOwner().getFullName());

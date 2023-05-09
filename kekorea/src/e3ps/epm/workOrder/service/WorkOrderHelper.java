@@ -512,6 +512,48 @@ public class WorkOrderHelper {
 		ArrayList<Map<String, Object>> list = integratedData(p1);
 		ArrayList<Map<String, Object>> mergedList = new ArrayList<>();
 
+		Map<String, Object> makList = new HashMap<>();
+		Map<String, Object> customerList = new HashMap<>();
+		Map<String, Object> keList = new HashMap<>();
+		Map<String, Object> pdateList = new HashMap<>();
+
+		makList.put("lotNo", "막종 / 막종상세");
+		customerList.put("lotNo", "고객사 / 설치장소");
+		keList.put("lotNo", "KE 작번");
+		pdateList.put("lotNo", "발행일");
+
+		makList.put("name", "막종 / 막종상세");
+		customerList.put("name", "고객사 / 설치장소");
+		keList.put("name", "KE 작번");
+		pdateList.put("name", "발행일");
+
+		makList.put("number", "막종 / 막종상세");
+		customerList.put("number", "고객사 / 설치장소");
+		keList.put("number", "KE 작번");
+		pdateList.put("number", "발행일");
+
+		destList.add(0, p1);
+		for (int i = 0; i < destList.size(); i++) {
+			Project project = (Project) destList.get(i);
+			String oid = project.getPersistInfo().getObjectIdentifier().getStringValue();
+			makList.put("oid", oid);
+			customerList.put("oid", oid);
+			keList.put("oid", oid);
+			pdateList.put("oid", oid);
+			
+			makList.put("rev" + (i + 1), project.getMak().getName() + " / " + project.getDetail().getName());
+			customerList.put("rev" + (i + 1), project.getCustomer().getName() + " / " + project.getInstall().getName());
+			keList.put("rev" + (i + 1), project.getKeNumber());
+			pdateList.put("rev" + (i + 1), CommonUtils.getPersistableTime(project.getPDate()));
+		}
+
+		mergedList.add(makList);
+		mergedList.add(customerList);
+		mergedList.add(keList);
+		mergedList.add(pdateList);
+
+		destList.remove(0);
+
 		// list1의 데이터를 먼저 추가
 		for (Map<String, Object> data : list) {
 			Map<String, Object> mergedData = new HashMap<>();

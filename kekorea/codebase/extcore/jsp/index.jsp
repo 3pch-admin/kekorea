@@ -19,9 +19,6 @@
 				<ul class="dropdown-menu dropdown-messages dropdown-menu-right">
 					<li>
 						<div class="dropdown-messages-box">
-							<a class="dropdown-item float-left" href="profile.html">
-								<img alt="image" class="rounded-circle" src="">
-							</a>
 							<div class="media-body">
 								<small class="float-right">46h ago</small>
 								<strong>Mike Loreipsum</strong>
@@ -36,9 +33,6 @@
 					<li class="dropdown-divider"></li>
 					<li>
 						<div class="dropdown-messages-box">
-							<a class="dropdown-item float-left" href="profile.html">
-								<img alt="image" class="rounded-circle" src="">
-							</a>
 							<div class="media-body ">
 								<small class="float-right text-navy">5h ago</small>
 								<strong>Chris Johnatan Overtunk</strong>
@@ -53,9 +47,6 @@
 					<li class="dropdown-divider"></li>
 					<li>
 						<div class="dropdown-messages-box">
-							<a class="dropdown-item float-left" href="profile.html">
-								<img alt="image" class="rounded-circle" src="">
-							</a>
 							<div class="media-body ">
 								<small class="float-right">23h ago</small>
 								<strong>Monica Smith</strong>
@@ -125,9 +116,9 @@
 				</ul>
 			</li>
 			<li>
-				<a href="login.html">
+				<a href="javascript:logout();" title="로그아웃">
 					<i class="fa fa-sign-out"></i>
-					Log out
+					<b>로그아웃</b>
 				</a>
 			</li>
 		</ul>

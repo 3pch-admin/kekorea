@@ -18,7 +18,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=11210"></script>
 <style type="text/css">
 .row1 {
-	background-color: #99CCFF;
+	background-color: #fed7be;
 	font-weight: bold;
 }
 

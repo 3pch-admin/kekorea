@@ -280,6 +280,71 @@ public class PartlistHelper {
 			t = new String[] { "전기_1차_수배", "전기_2차_수배" };
 			list = integratedData(p1, t);
 		}
+		
+		Map<String, Object> makList = new HashMap<>();
+		Map<String, Object> customerList = new HashMap<>();
+		Map<String, Object> keList = new HashMap<>();
+		Map<String, Object> pdateList = new HashMap<>();
+
+		
+		makList.put("engType", "막종 / 막종상세");
+		customerList.put("engType", "고객사 / 설치장소");
+		keList.put("engType", "KE 작번");
+		pdateList.put("engType", "발행일");
+		
+		makList.put("lotNo", "막종 / 막종상세");
+		customerList.put("lotNo", "고객사 / 설치장소");
+		keList.put("lotNo", "KE 작번");
+		pdateList.put("lotNo", "발행일");
+		
+		makList.put("unitName", "막종 / 막종상세");
+		customerList.put("unitName", "고객사 / 설치장소");
+		keList.put("unitName", "KE 작번");
+		pdateList.put("unitName", "발행일");
+		
+		makList.put("partNo", "막종 / 막종상세");
+		customerList.put("partNo", "고객사 / 설치장소");
+		keList.put("partNo", "KE 작번");
+		pdateList.put("partNo", "발행일");
+
+		destList.add(0, p1);
+		for (int i = 0; i < destList.size(); i++) {
+			Project project = (Project) destList.get(i);
+			String oid = project.getPersistInfo().getObjectIdentifier().getStringValue();
+			makList.put("oid", oid);
+			customerList.put("oid", oid);
+			keList.put("oid", oid);
+			pdateList.put("oid", oid);
+			makList.put("quantity" + (i + 1), project.getMak().getName() + " / " + project.getDetail().getName());
+			customerList.put("quantity" + (i + 1), project.getCustomer().getName() + " / " + project.getInstall().getName());
+			keList.put("quantity" + (i + 1), project.getKeNumber());
+			pdateList.put("quantity" + (i + 1), CommonUtils.getPersistableTime(project.getPDate()));
+		}
+
+		mergedList.add(makList);
+		mergedList.add(customerList);
+		mergedList.add(keList);
+		mergedList.add(pdateList);
+
+		destList.remove(0);
+
+		for (int i = 0; i < destList.size(); i++) {
+			Project project = (Project) destList.get(i);
+			Map<String, Object> mergedData = new HashMap<>();
+			mergedData.put("key", "막종 / 막종상세");
+			mergedData.put("qty1", project.getMak().getName() + " / " + project.getDetail().getName());
+
+			mergedData.put("key", "고객사 / 설치장소");
+			mergedData.put("qty1", project.getCustomer().getName() + " / " + project.getInstall().getName());
+
+			mergedData.put("key", "KE 작번");
+			mergedData.put("qty1", project.getKeNumber());
+
+			mergedData.put("key", "발행일");
+			mergedData.put("qty1", CommonUtils.getPersistableTime(project.getPDate()));
+
+			mergedList.add(mergedData);
+		}
 
 		// list1의 데이터를 먼저 추가
 		for (Map<String, Object> data : list) {

@@ -91,7 +91,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 		</table>
 	</div>
 	<div id="tabs-2">
-		<div id="grid_wrap" style="height: 550px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 450px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			const columns = [ {
@@ -120,7 +120,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					jsCallback : function(rowIndex, columnIndex, value, item) {
 						const oid = item.oid;
 						const url = getCallUrl("/kePart/view?oid=" + oid);
-						popup(url, 1400, 700);
+						popup(url, 1400, 600);
 					}
 				},
 				filter : {
@@ -138,7 +138,7 @@ JSONArray list = (JSONArray) request.getAttribute("list");
 					jsCallback : function(rowIndex, columnIndex, value, item) {
 						const oid = item.oid;
 						const url = getCallUrl("/kePart/view?oid=" + oid);
-						popup(url, 1400, 700);
+						popup(url, 1400, 600);
 					}
 				},
 				filter : {

@@ -23,4 +23,9 @@ public interface IssueService {
 	 * 이슈 삭제
 	 */
 	public abstract void delete(String oid) throws Exception;
+
+	/**
+	 * 특이사항 수정
+	 */
+	public abstract void modify(IssueDTO dto) throws Exception;
 }

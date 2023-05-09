@@ -74,7 +74,19 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			<%
 			}
 			%>
-			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
+			<%
+				if(dto.isEdit() || isAdmin) {
+			%>
+			<input type="button" value="수정" title="수정" class="blue" onclick="update('modify');">
+			<%
+				}
+				if(dto.isRevise() || isAdmin) {)
+			%>
+			<input type="button" value="개정" title="개정" class="blue" onclick="update('revise');">
+			<%
+				}
+			%>
+			<input type="button" value="닫기" title="닫기" onclick="self.close();">
 		</td>
 	</tr>
 </table>
@@ -230,6 +242,13 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 	</div>
 </div>
 <script type="text/javascript">
+	function update(mode) {
+		openLayer();
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/configSheet/update?oid=" + oid + "&mode=" + mode);
+		document.location.href = url;
+	}
+
 	function _delete() {
 
 		if (!confirm("삭제 하시겠습니까?")) {

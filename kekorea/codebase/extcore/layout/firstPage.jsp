@@ -3,6 +3,7 @@
 <%
 JSONArray nList = (JSONArray) request.getAttribute("nList");
 JSONArray aList = (JSONArray) request.getAttribute("aList");
+JSONArray pList = (JSONArray) request.getAttribute("pList");
 %>
 <!DOCTYPE html>
 <html>
@@ -11,7 +12,7 @@ JSONArray aList = (JSONArray) request.getAttribute("aList");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -77,7 +78,7 @@ JSONArray aList = (JSONArray) request.getAttribute("aList");
 								showRowNumColumn : true,
 								rowNumHeaderText : "번호",
 								showAutoNoDataMessage : false,
-								selectionMode : "singleRow",
+								selectionMode : "multipleCells",
 							};
 							myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 							AUIGrid.setGridData(myGridID,
@@ -101,7 +102,7 @@ JSONArray aList = (JSONArray) request.getAttribute("aList");
 								baseUrl : "javascript",
 								jsCallback : function(rowIndex, columnIndex, value, item) {
 									const oid = item.oid;
-									const url = getCallUrl("/notice/view?oid=" + oid);
+									const url = getCallUrl("/workspace/lineView?oid=" + oid + "&columnType=COLUMN_APPROVAL&poid=" + item.poid);
 									popup(url, 1400, 600);
 								}
 							},
@@ -118,7 +119,7 @@ JSONArray aList = (JSONArray) request.getAttribute("aList");
 								showRowNumColumn : true,
 								rowNumHeaderText : "번호",
 								showAutoNoDataMessage : false,
-								selectionMode : "singleRow",
+								selectionMode : "multipleCells",
 							};
 							_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
 							AUIGrid.setGridData(_myGridID_,
@@ -142,24 +143,49 @@ JSONArray aList = (JSONArray) request.getAttribute("aList");
 					<script type="text/javascript">
 						let _myGridID;
 						const _columns = [ {
-							dataField : "name",
-							headerText : "공지사항 제목",
+							dataField : "kekNumber",
+							headerText : "KEK 작번",
 							dataType : "string",
-							style : "aui-left",
+							width : 100,
 							renderer : {
 								type : "LinkRenderer",
 								baseUrl : "javascript",
 								jsCallback : function(rowIndex, columnIndex, value, item) {
 									const oid = item.oid;
-									const url = getCallUrl("/notice/view?oid=" + oid);
-									popup(url, 1400, 600);
+									const url = getCallUrl("/project/view?oid=" + oid);
+									popup(url);
 								}
 							},
 						}, {
-							dataField : "createdDate_txt",
-							headerText : "작성일",
+							dataField : "keNumber",
+							headerText : "KE 작번",
 							dataType : "string",
-							width : 150,
+							width : 100,
+						}, {
+							dataField : "mak",
+							headerText : "막종",
+							dataType : "string",
+							width : 100,
+						}, {
+							dataField : "detail",
+							headerText : "막종상세",
+							dataType : "string",
+							width : 100,
+						}, {
+							dataField : "customer",
+							headerText : "고객사",
+							dataType : "string",
+							width : 100,
+						}, {
+							dataField : "install",
+							headerText : "설치장소",
+							dataType : "string",
+							width : 100,
+						}, {
+							dataField : "description",
+							headerText : "작업내용",
+							dataType : "string",
+							style : "aui-left"
 						} ]
 
 						function _createAUIGrid(columnLayout) {
@@ -168,11 +194,11 @@ JSONArray aList = (JSONArray) request.getAttribute("aList");
 								showRowNumColumn : true,
 								rowNumHeaderText : "번호",
 								showAutoNoDataMessage : false,
-								selectionMode : "singleRow",
+								selectionMode : "multipleCells",
 							};
 							_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 							AUIGrid.setGridData(_myGridID,
-					<%=nList%>
+					<%=pList%>
 						);
 						}
 					</script>

@@ -22,7 +22,7 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "sendType", type = String.class, constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "sendQuery", type = String.class, columnProperties = @ColumnProperties(columnType = ColumnType.CLOB))
+				@GeneratedProperty(name = "sendQuery", type = String.class, constraints = @PropertyConstraints(upperLimit = 4000))
 
 		}
 

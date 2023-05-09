@@ -51,6 +51,9 @@ public class ConfigSheetDTO {
 	private ArrayList<Map<String, String>> receiveRows = new ArrayList<>(); // 수신
 	private int progress;
 
+	private boolean isEdit = false;
+	private boolean isRevise = false;
+
 	public ConfigSheetDTO() {
 
 	}
@@ -65,6 +68,8 @@ public class ConfigSheetDTO {
 		setCreatedDate(configSheet.getCreateTimestamp());
 		setCreatedDate_txt(CommonUtils.getPersistableTime(configSheet.getCreateTimestamp()));
 		setCreatorId(configSheet.getCreatorName());
+		setEdit(configSheet.getLifeCycleState().toString().equals("INWORK"));
+		setRevise(configSheet.getLifeCycleState().toString().equals("APPROVED"));
 	}
 
 	public ConfigSheetDTO(ConfigSheetProjectLink link) throws Exception {
@@ -95,5 +100,7 @@ public class ConfigSheetDTO {
 		setCreatorId(configSheet.getCreatorName());
 		setVersion(configSheet.getVersion());
 		setLatest(configSheet.getLatest());
+		setEdit(configSheet.getLifeCycleState().toString().equals("INWORK"));
+		setRevise(configSheet.getLifeCycleState().toString().equals("APPROVED"));
 	}
 }

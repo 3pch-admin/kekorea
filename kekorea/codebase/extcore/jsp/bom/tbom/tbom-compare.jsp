@@ -10,13 +10,38 @@ ArrayList<Project> destList = (ArrayList<Project>) request.getAttribute("destLis
 String oid = (String) request.getAttribute("oid");
 String compareArr = (String) request.getAttribute("compareArr");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=11210"></script>
 <style type="text/css">
 .compare {
 	background-color: yellow;
 	color: red !important;
 	font-weight: bold;
+}
+
+.row1 {
+	background-color: #fed7be;
+	font-weight: bold;
+}
+
+.row2 {
+	background-color: #FFCCFF;
+	font-weight: bold;
+}
+
+.row3 {
+	background-color: #CCFFCC;
+	font-weight: bold;
+}
+
+.row4 {
+	background-color: #FFFFCC;
+	font-weight: bold;
+}
+
+.none {
+	color: black;
+	font-weight: normal;
 }
 </style>
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
@@ -51,6 +76,8 @@ String compareArr = (String) request.getAttribute("compareArr");
 				showIcon : true,
 				inline : true
 			},
+			cellColMerge: true, // 셀 가로 병합 실행
+			cellColSpan: 3, // 셀 가로 병합 대상은 6개로 설정
 		}, {
 			dataField : "code",
 			headerText : "중간코드",
@@ -65,15 +92,6 @@ String compareArr = (String) request.getAttribute("compareArr");
 			headerText : "부품번호",
 			dataType : "string",
 			width : 120,
-			renderer : {
-				type : "LinkRenderer",
-				baseUrl : "javascript",
-				jsCallback : function(rowIndex, columnIndex, value, item) {
-					const oid = item.oid;
-					const url = getCallUrl("/kePart/view?oid=" + oid);
-					popup(url, 1400, 700);
-				}
-			},			
 			filter : {
 				showIcon : true,
 				inline : true
@@ -89,9 +107,17 @@ String compareArr = (String) request.getAttribute("compareArr");
 					type : "LinkRenderer",
 					baseUrl : "javascript",
 					jsCallback : function(rowIndex, columnIndex, value, item) {
-						const oid = item.moid;
-						const url = getCallUrl("/tbom/view?oid=" + oid);
-						popup(url, 1500, 700);
+						const oid = item.oid;
+						let url;
+						if(oid !== undefined) {
+							if(oid.indexOf("Project") > -1) {
+								url = getCallUrl("/project/info?oid="+oid);
+								popup(url);
+							} else {
+								url = getCallUrl("/kePart/view?oid=" + oid);
+								popup(url, 1500, 700);
+							}
+						}
 					}
 				},	
 				labelFunction : function(rowIndex, columnIndex, value, headerText, item, dataField, cItem) {
@@ -99,6 +125,13 @@ String compareArr = (String) request.getAttribute("compareArr");
 						return 0;
 					}
 					return value;
+				},
+				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+					const qty1 = item.qty1;
+					if(typeof qty1 === "string" ) {
+						return "none";
+					}
+					return "";
 				},
 				filter : {
 					showIcon : true,
@@ -119,9 +152,17 @@ for (Project project : destList) {%>
 					type : "LinkRenderer",
 					baseUrl : "javascript",
 					jsCallback : function(rowIndex, columnIndex, value, item) {
-						const oid = item.moid;
-						const url = getCallUrl("/tbom/view?oid=" + oid);
-						popup(url, 1500, 700);
+						const oid = item.oid;
+						let url;
+						if(oid !== undefined) {
+							if(oid.indexOf("Project") > -1) {
+								url = getCallUrl("/project/info?oid="+oid);
+								popup(url);
+							} else {
+								url = getCallUrl("/kePart/view?oid=" + oid);
+								popup(url, 1500, 700);
+							}
+						}
 					}
 				},
 				labelFunction : function(rowIndex, columnIndex, value, headerText, item, dataField, cItem) {
@@ -132,6 +173,9 @@ for (Project project : destList) {%>
 				},
 				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
 					const qty1 = item.qty1;
+					if(typeof value === "string" ) {
+						return "none";
+					}
 					if (value !== qty1) {
 						return "compare";
 					}
@@ -216,15 +260,35 @@ for (Project project : destList) {%>
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
 			showAutoNoDataMessage : false,
-// 			showFooter : true,
 			enableFilter : true,
 			selectionMode : "multipleCells",
 			enableMovingColumn : true,
 			showInlineFilter : true,
 			useContextMenu : true,
 			enableRightDownFocus : true,
-			autoGridHeight : true
-// 			footerPosition : "top",
+			autoGridHeight : true,
+			enableCellMerge: true,
+			cellColMergeFunction: function (rowIndex, columnIndex, item) {
+				// item 에 noColMerge 가 true 인 행이 있다면 가로 병합 시키지 않음.
+// 				if (item.noColMerge === true) {
+// 					return false; // false 를 반환하면 해당 행은 가로 병합 하지 않습니다.
+// 				}
+				return true;
+			},
+			
+			rowStyleFunction : function(rowIndex, item) {
+				const value = item.lotNo;
+				if(value === "막종 / 막종상세") {
+					return "row1";
+				} else if(value === "고객사 / 설치장소") {
+					return "row2";
+				} else if(value === "KE 작번") {
+					return "row3";
+				} else if(value === "발행일") {
+					return "row4";
+				}
+				return "";
+			}
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 // 		AUIGrid.setFooter(myGridID, footerLayout);
