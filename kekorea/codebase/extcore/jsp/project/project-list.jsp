@@ -370,7 +370,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 					},
 					editable : false
 				}, {
-					dataField : "machine_oid",
+					dataField : "machine_name",
 					headerText : "기계 담당자",
 					width : 100,
 					renderer : {
@@ -419,7 +419,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 						return retStr == "" ? value : retStr;
 					},
 				}, {
-					dataField : "elec_oid",
+					dataField : "elec_name",
 					headerText : "전기 담당자",
 					width : 100,
 					renderer : {
@@ -468,7 +468,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 						return retStr == "" ? value : retStr;
 					},
 				}, {
-					dataField : "soft_oid",
+					dataField : "soft_name",
 					headerText : "SW 담당자",
 					dataType : "string",
 					width : 100,
