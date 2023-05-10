@@ -69,12 +69,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<th>작성자</th>
 				<td class="indent5">
 					<input type="text" name="creator" id="creator">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('creator')">
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
 					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
 					~
 					<input type="text" name="createdTo" id="createdTo" class="width-100">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('createdFrom', 'createdTo')">
 				</td>
 				<th>작업 내용</th>
 				<td class="indent5">

@@ -86,12 +86,14 @@ String poid = (String) request.getAttribute("poid");
 		<td class="indent5">
 			<input type="text" name="creator" id="creator">
 			<input type="hidden" name="creatorOid" id="creatorOid">
+			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('creator')">
 		</td>
 		<th>작성일</th>
 		<td class="indent5">
 			<input type="text" name="createdFrom" id="createdFrom" class="width-100">
 			~
 			<input type="text" name="createdTo" id="createdTo" class="width-100">
+			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('createdFrom', 'createdTo')">
 		</td>
 		<th>버전</th>
 		<td>

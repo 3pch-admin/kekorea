@@ -60,6 +60,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 					<input type="text" name="pdateFrom" id="pdateFrom" class="width-100" value="<%=before%>">
 					~
 					<input type="text" name="pdateTo" id="pdateTo" class="width-100" value="<%=end%>">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('pdateFrom', 'pdateTo')">
 				</td>
 				<th>USER ID</th>
 				<td class="indent5">

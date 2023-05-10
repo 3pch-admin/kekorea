@@ -47,6 +47,7 @@ String end = (String)request.getAttribute("end");
 			<input type="text" name="pdateFrom" id="pdateFrom" class="width-100" value="<%=before%>">
 			~
 			<input type="text" name="pdateTo" id="pdateTo" class="width-100" value="<%=end %>">
+			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('pdateFrom', 'pdateTo')">
 		</td>
 		<th>USER ID</th>
 		<td class="indent5">
@@ -108,16 +109,19 @@ String end = (String)request.getAttribute("end");
 		<td class="indent5">
 			<input type="text" name="machine" id="machine">
 			<input type="hidden" name="machineOid" id="machineOid">
+			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('machine')">
 		</td>
 		<th>전기 담당자</th>
 		<td class="indent5">
 			<input type="text" name="elec" id="elec">
 			<input type="hidden" name="elecOid" id="elecOid">
+			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('elec')">
 		</td>
 		<th>SW 담당자</th>
 		<td class="indent5">
 			<input type="text" name="soft" id="soft">
 			<input type="hidden" name="softOid" id="softOid">
+			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('soft')">
 		</td>
 	</tr>
 	<tr>
@@ -144,7 +148,7 @@ String end = (String)request.getAttribute("end");
 		</td>
 		<th>템플릿</th>
 		<td class="indent5">
-			<select name="template" id="template" class="width-200">
+			<select name="template" id="template" class="width-300">
 				<option value="">선택</option>
 				<%
 				for (Map<String, String> map : list) {

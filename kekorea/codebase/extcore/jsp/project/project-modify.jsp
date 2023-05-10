@@ -35,6 +35,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 		<th class="req">작번 발행일</th>
 		<td class="indent5">
 			<input type="text" name="pdate" id="pdate" value="<%=dto.getPdate_txt() %>">
+			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('pdate')">
 		</td>
 	</tr>
 	<tr>
@@ -45,6 +46,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 		<th class="req">요구납기일</th>
 		<td class="indent5">
 			<input type="text" name="customDate" id="customDate" value="<%=dto.getCustomDate_txt() %>">
+			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('customDate')">
 		</td>
 	</tr>
 	<tr>

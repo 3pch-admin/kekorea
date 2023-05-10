@@ -49,6 +49,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<input type="text" name="receiveFrom" id="receiveFrom" class="width-100">
 					~
 					<input type="text" name="receiveTo" id="receiveTo" class="width-100">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('receiveFrom', 'receiveTo')">
 				</td>
 			</tr>
 		</table>

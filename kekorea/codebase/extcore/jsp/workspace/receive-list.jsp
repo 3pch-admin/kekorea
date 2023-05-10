@@ -38,12 +38,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<th>기안자</th>
 				<td class="indent5">
 					<input type="text" name="submiter" id="submiter">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('submiter')">
 				</td>
 				<th>수신일</th>
 				<td class="indent5">
 					<input type="text" name="receiveFrom" id="receiveFrom" class="width-100">
 					~
 					<input type="text" name="receiveTo" id="receiveTo" class="width-100">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('receiveFrom', 'receiveTo')">
 				</td>
 			</tr>
 		</table>

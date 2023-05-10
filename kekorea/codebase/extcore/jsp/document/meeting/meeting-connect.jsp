@@ -52,6 +52,7 @@ String toid = (String) request.getAttribute("toid");
 			<input type="text" name="pdateFrom" id="pdateFrom" class="width-100">
 			~
 			<input type="text" name="pdateTo" id="pdateTo" class="width-100">
+			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('pdateFrom', 'pdateTo')">
 		</td>
 	</tr>
 	<tr>
@@ -109,16 +110,19 @@ String toid = (String) request.getAttribute("toid");
 		<td class="indent5">
 			<input type="text" name="machine" id="machine">
 			<input type="hidden" name="machineOid" id="machineOid">
+			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('machine')">
 		</td>
 		<th>전기 담당자</th>
 		<td class="indent5">
 			<input type="text" name="elec" id="elec">
 			<input type="hidden" name="elecOid" id="elecOid">
+			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('elec')">
 		</td>
 		<th>SW 담당자</th>
 		<td class="indent5">
 			<input type="text" name="soft" id="soft">
 			<input type="hidden" name="softOid" id="softOid">
+			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('soft')">
 		</td>
 	</tr>
 	<tr>
