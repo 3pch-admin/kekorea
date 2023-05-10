@@ -168,7 +168,6 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 				variable.setSort(sort);
 				PersistenceHelper.manager.save(variable);
 
-//				int lastIndex = addRow.keySet().size() - 1;
 				int ss = 0;
 				for (String key : addRow.keySet()) {
 					if (key.contains("spec")) {
@@ -176,17 +175,26 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 						if (!dataFields.contains(key)) {
 							dataFields.add(key);
 						}
-
-						ConfigSheetColumnData column = ConfigSheetColumnData.newConfigSheetColumnData();
-						column.setDataField(key);
-						column.setValue(addRow.get(key));
-						PersistenceHelper.manager.save(column);
-
-						ColumnVariableLink ll = ColumnVariableLink.newColumnVariableLink(column, variable);
-						ll.setSort(ss);
-						PersistenceHelper.manager.save(ll);
-						ss++;
 					}
+				}
+
+				int lastIndex = dataFields.size() - 1;
+				for (int i = 0; i < dataFields.size(); i++) {
+					String key = dataFields.get(i);
+					ConfigSheetColumnData column = ConfigSheetColumnData.newConfigSheetColumnData();
+					column.setDataField(key);
+					column.setValue(addRow.get(key));
+					if (i == lastIndex) {
+						column.setLast(true);
+					} else {
+						column.setLast(false);
+					}
+					PersistenceHelper.manager.save(column);
+
+					ColumnVariableLink ll = ColumnVariableLink.newColumnVariableLink(column, variable);
+					ll.setSort(ss);
+					PersistenceHelper.manager.save(ll);
+					ss++;
 				}
 
 				ConfigSheetVariableLink link = ConfigSheetVariableLink.newConfigSheetVariableLink(configSheet,
@@ -205,7 +213,9 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 
 			trs.commit();
 			trs = null;
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			e.printStackTrace();
 			trs.rollback();
 			throw e;
@@ -268,6 +278,16 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 			while (result.hasMoreElements()) {
 				ConfigSheetVariableLink link = (ConfigSheetVariableLink) result.nextElement();
 				ConfigSheetVariable variable = link.getVariable();
+
+				QueryResult qr = PersistenceHelper.manager.navigate(variable, "column", ColumnVariableLink.class,
+						false);
+				while (qr.hasMoreElements()) {
+					ColumnVariableLink ll = (ColumnVariableLink) qr.nextElement();
+					ConfigSheetColumnData dd = ll.getColumn();
+					PersistenceHelper.manager.delete(dd);
+					PersistenceHelper.manager.delete(ll);
+				}
+
 				PersistenceHelper.manager.delete(variable);
 				PersistenceHelper.manager.delete(link);
 			}

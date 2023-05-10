@@ -248,7 +248,7 @@ ul, ol {
 		dataType : "string",
 		width : 250,
 		renderer : {
-			type : "templaterenderer"
+			type : "Templaterenderer"
 		}
 	}, {
 		dataField : "note",
@@ -321,7 +321,7 @@ ul, ol {
 			defaultValue : "", // 칼럼 추가 할 때 해당 칼럼의 기본값 지정, 만약 지정하지 않으면 초기화 하지 않음
 			width : 250,
 			renderer : {
-				type : "templaterenderer"
+				type : "Templaterenderer"
 			}
 		};
 // 		var columnPos = document.getElementById("addSelect").value;

@@ -107,7 +107,6 @@ public class ConfigSheetController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
 		JSONArray data = ConfigSheetHelper.manager.loadBaseGridData(oid);
-//		JSONArray history = WorkspaceHelper.manager.jsonAuiHistory(configSheet);
 		ConfigSheetDTO dto = new ConfigSheetDTO(configSheet);
 		boolean isAdmin = CommonUtils.isAdmin();
 		model.addObject("isAdmin", isAdmin);
