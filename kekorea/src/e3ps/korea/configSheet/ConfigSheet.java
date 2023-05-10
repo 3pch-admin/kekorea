@@ -1,5 +1,9 @@
 package e3ps.korea.configSheet;
 
+import java.util.ArrayList;
+
+import java.util.ArrayList;
+
 import com.ptc.windchill.annotations.metadata.ColumnProperties;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
@@ -24,6 +28,8 @@ import wt.util.WTException;
 				@GeneratedProperty(name = "number", type = String.class, constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(columnName = "WorkOrderNumber")),
 
 				@GeneratedProperty(name = "note", type = String.class, javaDoc = "개정사유", constraints = @PropertyConstraints(upperLimit = 2000)),
+
+				@GeneratedProperty(name = "dataFields", type = ArrayList.class)
 
 		}
 

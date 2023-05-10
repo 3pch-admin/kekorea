@@ -173,12 +173,20 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				cellMerge : true,
 				mergeRef : "category_code",
 				mergePolicy : "restrict",
-			}, {
-				dataField : "spec",
+			}, 
+			<%
+				for(String dataFields : dto.getDataFields()) {
+			%>
+			{
+				dataField : "<%=dataFields%>",
 				headerText : "사양",
 				dataType : "string",
 				width : 250,
-			}, {
+			}, 
+			<%
+			}
+			%>
+			{
 				dataField : "note",
 				headerText : "NOTE",
 				dataType : "string",

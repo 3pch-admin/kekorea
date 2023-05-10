@@ -10,6 +10,7 @@ import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.project.task.TargetTaskSourceTaskLink;
 import e3ps.project.task.Task;
 import e3ps.project.task.service.TaskHelper;
@@ -23,6 +24,7 @@ import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.WTUser;
 import wt.query.QuerySpec;
+import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 
 public class TemplateHelper {
@@ -36,12 +38,36 @@ public class TemplateHelper {
 
 		String name = (String) params.get("name");
 		String duration = (String) params.get("duration");
+		String creatorOid = (String) params.get("creatorOid");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
+		String modifierOid = (String) params.get("modifierOid");
+		String modifiedFrom = (String) params.get("modifiedFrom");
+		String modifiedTo = (String) params.get("modifiedTo");
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Template.class, true);
 
 		QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.NAME, name);
 		QuerySpecUtils.toLikeAnd(query, idx, Template.class, Template.DURATION, duration);
+		QuerySpecUtils.toCreator(query, idx, Template.class, creatorOid);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, Template.class, Template.CREATE_TIMESTAMP, createdFrom,
+				createdTo);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, Template.class, Template.MODIFY_TIMESTAMP, modifiedFrom,
+				modifiedTo);
 		QuerySpecUtils.toBooleanAnd(query, idx, Template.class, Template.ENABLE, true);
+
+		if (!StringUtils.isNull(modifierOid)) {
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+			WTUser user = (WTUser) CommonUtils.getObject(modifierOid);
+			SearchCondition sc = new SearchCondition(Template.class, "updateUser.owner.key.id", "=",
+					user.getPersistInfo().getObjectIdentifier().getId());
+			;
+			query.appendWhere(sc, new int[] { idx });
+		}
+
 		QuerySpecUtils.toOrderBy(query, idx, Template.class, Template.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
