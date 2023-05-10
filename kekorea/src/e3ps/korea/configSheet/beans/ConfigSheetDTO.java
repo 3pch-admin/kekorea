@@ -72,6 +72,7 @@ public class ConfigSheetDTO {
 		setEdit(configSheet.getLifeCycleState().toString().equals("INWORK"));
 		setRevise(configSheet.getLifeCycleState().toString().equals("APPROVED"));
 		setDataFields(configSheet.getDataFields());
+		setVersion(configSheet.getVersion());
 	}
 
 	public ConfigSheetDTO(ConfigSheetProjectLink link) throws Exception {

@@ -1,3 +1,4 @@
+<%@page import="java.util.ArrayList"%>
 <%@page import="e3ps.korea.configSheet.beans.ConfigSheetDTO"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -175,13 +176,30 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				mergePolicy : "restrict",
 			}, 
 			<%
-				for(String dataFields : dto.getDataFields()) {
+				int index = 0;
+				ArrayList<String> dd = dto.getDataFields();
+				for(int i=0; i<dd.size(); i++) {
+					String dataFields = dd.get(i);
 			%>
 			{
 				dataField : "<%=dataFields%>",
+				<%
+					if(i == 0) {
+				%>
 				headerText : "사양",
+				<%
+					} else {
+				%>
+				headerText : "사양<%=index%>",
+				<%
+					index++;
+					}
+				%>
 				dataType : "string",
 				width : 250,
+				renderer : {
+					type : "Templaterenderer"
+				}
 			}, 
 			<%
 			}
@@ -205,6 +223,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					selectionMode : "multipleCells",
 					enableCellMerge : true,
 					enableSorting : false,
+					wordWrap : true,
 					rowStyleFunction : function(rowIndex, item) {
 						const value = item.category_code;
 						if (value === "CATEGORY_2") {

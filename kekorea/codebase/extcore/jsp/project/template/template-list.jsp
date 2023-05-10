@@ -39,12 +39,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<td class="indent5">
 					<input type="text" name="creator" id="creator">
 					<input type="hidden" name="creatorOid" id="creatorOid">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('creator');">
 				</td>
 				<th>작성일</th>
 				<td class="indent5">
 					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
 					~
 					<input type="text" name="createdTo" id="createdTo" class="width-100">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('createdFrom', 'createdTo');">
 				</td>
 			</tr>
 			<tr>
@@ -56,12 +58,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<td class="indent5">
 					<input type="text" name="modifier" id="modifier">
 					<input type="hidden" name="modifierOid" id="modifierOid">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('modifier');">
 				</td>
 				<th>수정일</th>
 				<td class="indent5">
 					<input type="text" name="modifiedFrom" id="modifiedFrom" class="width-100">
 					~
 					<input type="text" name="modifiedTo" id="modifiedTo" class="width-100">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('modifiedFrom', 'modifiedTo');">
 				</td>
 			</tr>
 		</table>

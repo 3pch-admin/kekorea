@@ -12,7 +12,9 @@ import e3ps.admin.configSheetCode.ConfigSheetCode;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.korea.configSheet.ColumnVariableLink;
 import e3ps.korea.configSheet.ConfigSheet;
+import e3ps.korea.configSheet.ConfigSheetColumnData;
 import e3ps.korea.configSheet.ConfigSheetProjectLink;
 import e3ps.korea.configSheet.ConfigSheetVariable;
 import e3ps.korea.configSheet.ConfigSheetVariableLink;
@@ -166,14 +168,19 @@ public class ConfigSheetHelper {
 			ConfigSheetVariable variable = link.getVariable();
 			ConfigSheetCode category = variable.getCategory();
 			ConfigSheetCode item = variable.getItem();
-//			String spec = variable.getSpec();
 			int sort = link.getSort();
 			Map<String, Object> map = new HashMap<>();
 			map.put("category_code", category != null ? category.getCode() : "");
 			map.put("category_name", category != null ? category.getName() : "");
 			map.put("item_code", item != null ? item.getCode() : "");
 			map.put("item_name", item != null ? item.getName() : "");
-//			map.put("spec", spec);
+
+			QueryResult qr = PersistenceHelper.manager.navigate(variable, "column", ColumnVariableLink.class);
+			while (qr.hasMoreElements()) {
+				ConfigSheetColumnData column = (ConfigSheetColumnData) qr.nextElement();
+				map.put(column.getDataField(), column.getValue());
+			}
+
 			map.put("note", variable.getNote());
 			map.put("apply", variable.getApply());
 			map.put("sort", sort);
