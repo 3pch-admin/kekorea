@@ -262,3 +262,16 @@ function toRegister(params, rows) {
 	params.approvalRows = approvals;
 	params.receiveRows = receives;
 }
+
+// 사용자 정보 삭제
+function clearUser(target) {
+	document.getElementById(target).value = "";
+	document.getElementById(target + "Oid").value = "";
+}
+
+// 범위 기간 달력 삭제
+function clearFromTo(from, to) {
+	document.getElementById(from).value = "";
+	document.getElementById(to).value = "";
+}
+

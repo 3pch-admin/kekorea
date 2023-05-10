@@ -602,3 +602,9 @@ img.edit {
 	top: 2px;
 	cursor: pointer;
 }
+
+.search-table img.delete {
+	position: relative;
+	top: 3px;
+	cursor: pointer;
+}
