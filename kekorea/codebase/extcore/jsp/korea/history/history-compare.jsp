@@ -7,6 +7,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 JSONArray data = (JSONArray) request.getAttribute("data");
+System.out.println(data);
 Project p1 = (Project) request.getAttribute("p1");
 ArrayList<Project> destList = (ArrayList<Project>) request.getAttribute("destList");
 String oid = (String) request.getAttribute("oid");
@@ -17,6 +18,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=11210"></script>
 <style type="text/css">
+.compare {
+	background: #FFFF00;
+	color: #FF0000;
+	font-weight: bold;
+}
+
 .row1 {
 	background-color: #fed7be;
 	font-weight: bold;
@@ -35,6 +42,24 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 .row4 {
 	background-color: #FFFFCC;
 	font-weight: bold;
+}
+.none {
+	color: black;
+	font-weight: bold;
+	cursor: pointer;
+	text-align: center !important;
+}
+
+.link {
+	color: blue;
+	font-weight: bold;
+	cursor: pointer;
+	text-align: center !important;
+}
+
+.link:hover {
+	color: blue !important;
+	text-decoration: underline;
 }
 </style>
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
@@ -63,22 +88,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		dataType : "string",
 		width : 300,
 		style : "aui-left",
-		filter : {
-			showIcon : true,
-			inline : true
-		},
-	}, 
-	<%
-	int i = 1;
-	for (Project project : destList) {
-		String dataField = String.valueOf(project.getPersistInfo().getObjectIdentifier().getId());
-	%>
-	{
-		headerText : "<%=project.getKekNumber()%>",
-		dataField : "<%=dataField%>",
-		dataType : "string",
-		width : 200,
 		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const id = item.id;
+			if(!isNull(id)) {
+				return "none";
+			}
 			return "";
 		},
 		filter : {
@@ -87,7 +101,34 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		},
 	}, 
 	<%
-		i++;
+	int i = 0;
+	for (Project project : destList) {
+		String dataField = String.valueOf(project.getPersistInfo().getObjectIdentifier().getId());
+	%>
+	{
+		headerText : "<%=project.getKekNumber()%>",
+		dataField : "P<%=i%>",
+		dataType : "string",
+		width : 200,
+		styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+			const id = item.id;
+			if(!isNull(id)) {
+				return "link";
+			}
+			if(!isNull(value)) {
+				if(item.P0 !== value) {
+					return "compare";
+				}
+			}
+			return "";
+		},
+		filter : {
+			showIcon : true,
+			inline : true
+		},
+	},
+	<%
+	i++;
 	}
 	%>
 	]
@@ -104,7 +145,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			showInlineFilter : true,
 			useContextMenu : true,
 			enableRightDownFocus : true,
-			fixedColumnCount : 1,
+			fixedColumnCount : 2,
 			autoGridHeight : true,
 			rowStyleFunction : function(rowIndex, item) {
 				const value = item.key;
@@ -122,6 +163,18 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		AUIGrid.setGridData(myGridID, data);
+		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+	}
+	
+	function auiCellClickHandler(event) {
+		const dataField = event.dataField;
+		const item = event.item;
+		const oid = item.oid;
+		const id = item.id;
+		if(dataField !== "key" && !isNull(id)) {
+			const url = getCallUrl("/project/info?oid="+oid);
+			popup(url);
+		}
 	}
 
 	

@@ -19,7 +19,7 @@ JSONArray departments = JSONArray.fromObject(list);
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -42,7 +42,7 @@ JSONArray departments = JSONArray.fromObject(list);
 			</colgroup>
 			<tr>
 				<th>부서</th>
-				<td class="indent5" colspan="5"><%=OrgHelper.DEPARTMENT_ROOT %></td>
+				<td class="indent5" colspan="5"><%=OrgHelper.DEPARTMENT_ROOT%></td>
 			</tr>
 			<tr>
 				<th>이름</th>
@@ -120,8 +120,10 @@ JSONArray departments = JSONArray.fromObject(list);
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
-			const maks = <%=maks%>
-			const departments = <%=departments%>
+			const maks =
+		<%=maks%>
+			const departments =
+		<%=departments%>
 			const dutys = [ "사장", "부사장", "PL", "TL" ];
 			function _layout() {
 				return [ {
@@ -229,6 +231,7 @@ JSONArray departments = JSONArray.fromObject(list);
 					headerText : "막종",
 					dataType : "string",
 					style : "aui-left",
+					width : 300,
 					renderer : {
 						type : "IconRenderer",
 						iconWidth : 16,
@@ -391,9 +394,9 @@ JSONArray departments = JSONArray.fromObject(list);
 					}
 				})
 			}
-			
+
 			function exportExcel() {
-				const exceptColumnFields = ["resign"];
+				const exceptColumnFields = [ "resign" ];
 				const sessionName = document.getElementById("sessionName").value;
 				exportToExcel("조직도 리스트", "조직도", "조직도 리스트", exceptColumnFields, sessionName);
 			}

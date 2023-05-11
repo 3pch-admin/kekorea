@@ -7,6 +7,12 @@ String workOrderType = (String) request.getAttribute("workOrderType");
 String toid = (String) request.getAttribute("toid");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
+<style type="text/css">
+.preView {
+	background-color: #caf4fd;
+	cursor: pointer;
+}
+</style>
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -122,6 +128,7 @@ String toid = (String) request.getAttribute("toid");
 		headerText : "미리보기",
 		width : 80,
 		editable : false,
+		style :  "preView",
 		renderer : {
 			type : "ImageRenderer",
 			altField : null,
@@ -131,7 +138,7 @@ String toid = (String) request.getAttribute("toid");
 		dataField : "name",
 		headerText : "DRAWING TITLE",
 		dataType : "string",
-		editable : false,
+// 		editable : false,
 		style : "aui-left"
 	}, {
 		dataField : "number",
@@ -213,11 +220,11 @@ String toid = (String) request.getAttribute("toid");
 
 	function auiCellClickHandler(event) {
 		const dataField = event.dataField;
-		const oid = event.item.oid;
+		const doid = event.item.doid;
 		const preView = event.item.preView;
 		if (dataField === "preView") {
-			if (oid !== undefined && preView !== undefined) {
-				const url = getCallUrl("/aui/thumbnail?oid=" + oid);
+			if (doid !== undefined && preView !== undefined) {
+				const url = getCallUrl("/aui/thumbnail?oid=" + doid);
 				popup(url);
 			}
 		}
@@ -373,9 +380,9 @@ String toid = (String) request.getAttribute("toid");
 			const item = addRows[i];
 			const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
 			
-			if (isNull(item.lotNo) || item.lotNo === 0) {
+			if (isNull(item.number) || item.number === 0) {
 				alert("DWG. NO 값은 공백을 입력 할 수 없습니다.\n도면일람표 탭으로 이동하여 확인 해주세요.");
-				AUIGrid.showToastMessage(myGridID, rowIndex, 3, "DWG. NO 값은 공백을 입력 할 수 없습니다.");
+				AUIGrid.showToastMessage(myGridID, rowIndex, 2, "DWG. NO 값은 공백을 입력 할 수 없습니다.");
 				return false;
 			}
 			

@@ -18,6 +18,7 @@ import com.aspose.pdf.License;
 import com.aspose.pdf.Page;
 import com.aspose.pdf.devices.PngDevice;
 import com.aspose.pdf.devices.Resolution;
+import com.ptc.wvs.server.util.PublishUtils;
 
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.QuerySpecUtils;
@@ -29,10 +30,12 @@ import wt.content.ContentHelper;
 import wt.content.ContentItem;
 import wt.content.ContentRoleType;
 import wt.content.ContentServerHelper;
+import wt.epm.EPMDocument;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.query.QuerySpec;
+import wt.representation.Representation;
 import wt.util.WTAttributeNameIfc;
 import wt.util.WTProperties;
 
@@ -102,6 +105,28 @@ public class AsposeUtils {
 					}
 					fos.close();
 					is.close();
+				}
+			} else if (per instanceof EPMDocument) {
+				EPMDocument epm = (EPMDocument) per;
+				Representation representation = PublishUtils.getRepresentation(epm);
+				if (representation != null) {
+					QueryResult qr = ContentHelper.service.getContentsByRole(representation, ContentRoleType.SECONDARY);
+					if (qr.hasMoreElements()) {
+						ApplicationData data = (ApplicationData) qr.nextElement();
+						byte[] buffer = new byte[10240];
+						InputStream is = ContentServerHelper.service.findLocalContentStream(data);
+						String name = epm.getNumber();
+						String fullPath = mergePath + File.separator + name;
+						File file = new File(fullPath);
+						list.add(fullPath); // 경로 추가
+						FileOutputStream fos = new FileOutputStream(file);
+						int j = 0;
+						while ((j = is.read(buffer, 0, 10240)) > 0) {
+							fos.write(buffer, 0, j);
+						}
+						fos.close();
+						is.close();
+					}
 				}
 			}
 		}

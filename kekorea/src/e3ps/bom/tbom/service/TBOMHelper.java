@@ -262,6 +262,11 @@ public class TBOMHelper {
 		for (int i = 0; i < destList.size(); i++) {
 			Project project = (Project) destList.get(i);
 			String oid = project.getPersistInfo().getObjectIdentifier().getStringValue();
+			long id = project.getPersistInfo().getObjectIdentifier().getId();
+			makList.put("id", id);
+			customerList.put("id", id);
+			keList.put("id", id);
+			pdateList.put("id", id);
 			makList.put("oid", oid);
 			customerList.put("oid", oid);
 			keList.put("oid", oid);

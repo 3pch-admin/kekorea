@@ -48,6 +48,10 @@ String end = (String) request.getAttribute("end");
 				<td class="indent5">
 					<input type="text" name="name" id="name" class="width-200">
 				</td>
+				<th>회의록 내용</th>
+				<td class="indent5">
+					<input type="text" name="description" id="description" class="width-200">
+				</td>
 				<th>KEK 작번</th>
 				<td class="indent5">
 					<input type="text" name="kekNumber" id="kekNumber" class="width-200">
@@ -56,30 +60,28 @@ String end = (String) request.getAttribute("end");
 				<td class="indent5">
 					<input type="text" name="keNumber" id="keNumber" class="width-200">
 				</td>
-				<th>발행일</th>
-				<td class="indent5">
-					<input type="text" name="pdateFrom" id="pdateFrom" class="width-100">
-					~
-					<input type="text" name="pdateTo" id="pdateTo" class="width-100">
-					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('pdateFrom', 'pdateTo')">
-				</td>
 			</tr>
 			<tr>
-				<th>작번 상태</th>
+				<th>막종</th>
 				<td class="indent5">
-					<select name="kekState" id="kekState" class="width-200">
+					<select name="mak_name" id="mak_name" class="width-200">
 						<option value="">선택</option>
-						<option value="준비">준비</option>
-						<option value="설계중">설계중</option>
-						<option value="설계완료">설계완료</option>
-						<option value="작업완료">작업완료</option>
-						<option value="중단됨">중단됨</option>
-						<option value="취소">취소</option>
+						<%
+						for (Map<String, String> map : maks) {
+							String oid = map.get("key");
+							String name = map.get("value");
+						%>
+						<option value="<%=oid%>"><%=name%></option>
+						<%
+						}
+						%>
 					</select>
 				</td>
-				<th>모델</th>
+				<th>막종상세</th>
 				<td class="indent5">
-					<input type="text" name="model" id="model">
+					<select name="detail_name" id="detail_name" class="width-200">
+						<option value="">선택</option>
+					</select>
 				</td>
 				<th>거래처</th>
 				<td class="indent5">
@@ -134,37 +136,6 @@ String end = (String) request.getAttribute("end");
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('soft')">
 				</td>
 			</tr>
-			<tr>
-				<th>막종</th>
-				<td class="indent5">
-					<select name="mak_name" id="mak_name" class="width-200">
-						<option value="">선택</option>
-						<%
-						for (Map<String, String> map : maks) {
-							String oid = map.get("key");
-							String name = map.get("value");
-						%>
-						<option value="<%=oid%>"><%=name%></option>
-						<%
-						}
-						%>
-					</select>
-				</td>
-				<th>막종상세</th>
-				<td class="indent5">
-					<select name="detail_name" id="detail_name" class="width-200">
-						<option value="">선택</option>
-					</select>
-				</td>
-				<th>USER ID</th>
-				<td class="indent5">
-					<input type="text" name="userId" id="userId">
-				</td>
-				<th>작업 내용</th>
-				<td colspan="3" class="indent5">
-					<input type="text" name="description" id="description" class="width-200">
-				</td>
-			</tr>
 		</table>
 
 
@@ -198,7 +169,7 @@ String end = (String) request.getAttribute("end");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 630px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 665px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -430,11 +401,6 @@ String end = (String) request.getAttribute("end");
 				const url = getCallUrl("/meeting/list");
 				const kekNumber = document.getElementById("kekNumber").value;
 				const keNumber = document.getElementById("keNumber").value;
-				const pdateFrom = document.getElementById("pdateFrom").value;
-				const pdateTo = document.getElementById("pdateTo").value;
-				const userId = document.getElementById("userId").value;
-				const kekState = document.getElementById("kekState").value;
-				const model = document.getElementById("model").value;
 				const customer_name = document.getElementById("customer_name").value;
 				const install_name = document.getElementById("install_name").value;
 				const projectType = document.getElementById("projectType").value;
@@ -449,11 +415,6 @@ String end = (String) request.getAttribute("end");
 				params.name = name;
 				params.kekNumber = kekNumber;
 				params.keNumber = keNumber;
-				params.pdateFrom = pdateFrom;
-				params.pdateTo = pdateTo;
-				params.userId = userId;
-				params.kekState = kekState;
-				params.model = model;
 				params.customer_name = customer_name;
 				params.install_name = install_name;
 				params.projectType = projectType;
@@ -532,8 +493,6 @@ String end = (String) request.getAttribute("end");
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				twindate("pdate");
-				selectbox("kekState");
 				$("#customer_name").bindSelect({
 					onchange : function() {
 						const oid = this.optionValue;

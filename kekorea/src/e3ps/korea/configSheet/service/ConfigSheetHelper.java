@@ -222,6 +222,44 @@ public class ConfigSheetHelper {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		destList.add(0, p1);
 
+		Map<String, Object> makList = new HashMap<>();
+		Map<String, Object> customerList = new HashMap<>();
+		Map<String, Object> keList = new HashMap<>();
+		Map<String, Object> pdateList = new HashMap<>();
+
+		makList.put("category_name", "막종 / 막종상세");
+		customerList.put("category_name", "고객사 / 설치장소");
+		keList.put("category_name", "KE 작번");
+		pdateList.put("category_name", "발행일");
+
+		makList.put("item_name", "막종 / 막종상세");
+		customerList.put("item_name", "고객사 / 설치장소");
+		keList.put("item_name", "KE 작번");
+		pdateList.put("item_name", "발행일");
+
+		for (int i = 0; i < destList.size(); i++) {
+			Project project = (Project) destList.get(i);
+			String oid = project.getPersistInfo().getObjectIdentifier().getStringValue();
+			long id = project.getPersistInfo().getObjectIdentifier().getId();
+			makList.put("oid", oid);
+			customerList.put("oid", oid);
+			keList.put("oid", oid);
+			pdateList.put("oid", oid);
+			makList.put("id", id);
+			customerList.put("id", id);
+			keList.put("id", id);
+			pdateList.put("id", id);
+			makList.put("P" + (i + 1), project.getMak().getName() + " / " + project.getDetail().getName());
+			customerList.put("P" + (i + 1), project.getCustomer().getName() + " / " + project.getInstall().getName());
+			keList.put("P" + (i + 1), project.getKeNumber());
+			pdateList.put("P" + (i + 1), CommonUtils.getPersistableTime(project.getPDate()));
+		}
+
+		list.add(makList);
+		list.add(customerList);
+		list.add(keList);
+		list.add(pdateList);
+
 		for (ConfigSheetCode fix : fixedList) {
 
 			QuerySpec query = new QuerySpec();
@@ -268,12 +306,24 @@ public class ConfigSheetHelper {
 						while (_qr.hasMoreElements()) {
 							Object[] o = (Object[]) _qr.nextElement();
 							ConfigSheetVariable variable = (ConfigSheetVariable) o[0];
-							mergedList.put("P" + key, variable.getSpec());
+
+							QuerySpec qs = new QuerySpec();
+							int idx_l = qs.appendClassList(ColumnVariableLink.class, true);
+							QuerySpecUtils.toEqualsAnd(qs, idx_l, ColumnVariableLink.class, "roleBObjectRef.key.id",
+									variable);
+							QuerySpecUtils.toBooleanAnd(qs, idx_l, ColumnVariableLink.class, ColumnVariableLink.LAST,
+									true);
+							QueryResult rs = PersistenceHelper.manager.find(qs);
+
+							if (rs.hasMoreElements()) {
+								Object[] oo = (Object[]) rs.nextElement();
+								ColumnVariableLink ll = (ColumnVariableLink) oo[0];
+								mergedList.put("P" + key, ll.getColumn().getValue());
+							}
 							key++;
 						}
 					}
 				}
-
 				list.add(mergedList);
 			}
 		}
@@ -302,14 +352,17 @@ public class ConfigSheetHelper {
 			ConfigSheetVariable variable = link.getVariable();
 			ConfigSheetCode category = variable.getCategory();
 			ConfigSheetCode item = variable.getItem();
-			String spec = variable.getSpec();
 			int sort = link.getSort();
 			Map<String, Object> map = new HashMap<>();
 			map.put("category_code", category != null ? category.getCode() : "");
 			map.put("category_name", category != null ? category.getName() : "");
 			map.put("item_code", item != null ? item.getCode() : "");
 			map.put("item_name", item != null ? item.getName() : "");
-			map.put("spec", spec);
+			QueryResult qr = PersistenceHelper.manager.navigate(variable, "column", ColumnVariableLink.class);
+			while (qr.hasMoreElements()) {
+				ConfigSheetColumnData column = (ConfigSheetColumnData) qr.nextElement();
+				map.put(column.getDataField(), column.getValue());
+			}
 			map.put("note", variable.getNote());
 			map.put("apply", variable.getApply());
 			map.put("sort", sort);

@@ -17,7 +17,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -215,18 +215,21 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
-					cellMerge : true,
+// 					cellMerge : true,
 				}, {
+				dataField:"oid",
+				width : 100,
+				},{
 					dataField : "version",
 					headerText : "버전",
 					dataType : "string",
-					width : 100,
+					width : 80,
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 					cellMerge : true,
-					mergeRef : "name",
+					mergeRef : "oid",
 					mergePolicy : "restrict"
 				}, {
 					dataField : "latest",
@@ -241,7 +244,55 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						inline : false
 					},
 					cellMerge : true,
-					mergeRef : "name",
+					mergeRef : "oid",
+					mergePolicy : "restrict"
+				}, {
+					dataField : "primary",
+					headerText : "표지",
+					dataType : "string",
+					width : 60,
+					editable : false,
+					renderer : {
+						type : "TemplateRenderer",
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
+					cellMerge : true,
+					mergeRef : "oid",
+					mergePolicy : "restrict"
+				}, {
+					dataField : "thumbnail",
+					headerText : "병합PDF",
+					dataType : "string",
+					width : 80,
+					editable : false,
+					renderer : {
+						type : "TemplateRenderer",
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
+					cellMerge : true,
+					mergeRef : "oid",
+					mergePolicy : "restrict"
+				}, {
+					dataField : "icons",
+					headerText : "첨부파일",
+					dataType : "string",
+					width : 80,
+					editable : false,
+					renderer : {
+						type : "TemplateRenderer",
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
+					cellMerge : true,
+					mergeRef : "oid",
 					mergePolicy : "restrict"
 				}, {
 					dataField : "projectType_name",
@@ -395,54 +446,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					cellMerge : true,
 					mergeRef : "name",
 					mergePolicy : "restrict"
-				}, {
-					dataField : "primary",
-					headerText : "표지",
-					dataType : "string",
-					width : 80,
-					editable : false,
-					renderer : {
-						type : "TemplateRenderer",
-					},
-					filter : {
-						showIcon : false,
-						inline : false
-					},
-					cellMerge : true,
-					mergeRef : "name",
-					mergePolicy : "restrict"
-				}, {
-					dataField : "thumbnail",
-					headerText : "병합PDF",
-					dataType : "string",
-					width : 80,
-					editable : false,
-					renderer : {
-						type : "TemplateRenderer",
-					},
-					filter : {
-						showIcon : false,
-						inline : false
-					},
-					cellMerge : true,
-					mergeRef : "name",
-					mergePolicy : "restrict"
-				}, {
-					dataField : "icons",
-					headerText : "첨부파일",
-					dataType : "string",
-					width : 80,
-					editable : false,
-					renderer : {
-						type : "TemplateRenderer",
-					},
-					filter : {
-						showIcon : false,
-						inline : false
-					},
-					cellMerge : true,
-					mergeRef : "name",
-					mergePolicy : "restrict"
 				} ]
 			}
 
@@ -543,7 +546,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function exportExcel() {
-				const exceptColumnFields = [ "cover", "secondary","latest"];
+				const exceptColumnFields = [ "cover", "secondary", "latest" ];
 				const sessionName = document.getElementById("sessionName").value;
 				exportToExcel("도면일람표 리스트", "도면일람표", "도면일람표 리스트", exceptColumnFields, sessionName);
 			}

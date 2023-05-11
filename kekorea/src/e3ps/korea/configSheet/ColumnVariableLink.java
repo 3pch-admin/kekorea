@@ -15,8 +15,9 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "sort", type = Integer.class)
+				@GeneratedProperty(name = "sort", type = Integer.class),
 
+				@GeneratedProperty(name = "last", type = Boolean.class)
 		}
 
 )

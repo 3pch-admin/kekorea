@@ -206,8 +206,7 @@ function finderUser(id) {
 		finder: {
 			onclick: function() { // {Function} - 파인더 버튼 클릭 이벤트 콜백함수 (optional)
 				const multi = document.getElementById(id).dataset.multi;
-				const method = document.getElementById(id).dataset.method;
-				const url = getCallUrl("/org/popup?method=" + method + "&multi=" + multi + "&openerId=" + id);
+				const url = getCallUrl("/org/popup?multi=" + multi + "&openerId=" + id);
 				popup(url, 1300, 600);
 			}
 		},

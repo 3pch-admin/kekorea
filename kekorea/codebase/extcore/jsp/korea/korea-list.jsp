@@ -93,7 +93,7 @@ String end = (String) request.getAttribute("end");
 					<input type="button" value="기계수배표비교" title="기계수배표비교" class="orange" onclick="partlistCompare('m');">
 					<input type="button" value="전기수배표비교" title="전기수배표비교" onclick="partlistCompare('e');">
 					<input type="button" value="도면일람표비교" title="도면일람표비교" class="blue" onclick="workOrderCompare();">
-					<input type="button" value="CONFIG SHEET비교" title="CONFIG SHEET비교" class="red" onclick="loadGridData();">
+					<input type="button" value="CONFIG SHEET비교" title="CONFIG SHEET비교" class="red" onclick="configSheetCompare();">
 					<input type="button" value="이력비교" title="이력비교" class="orange" onclick="historyCompare();">
 				</td>
 				<td class="right">
@@ -370,6 +370,20 @@ String end = (String) request.getAttribute("end");
 				popup(url);
 			}
 
+			function configSheetCompare() {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const arr = [];
+				if (checkedItems.length <= 1) {
+					alert("데이터 비교를 위해선 최소 2개 이상의 데이터를 선택해야 합니다.");
+					return false;
+				}
+				for (let i = 1; i < checkedItems.length; i++) {
+					arr.push(checkedItems[i].item.oid);
+				}
+				const url = getCallUrl("/configSheet/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
+				popup(url);
+			}
+			
 			function workOrderCompare() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				const arr = [];

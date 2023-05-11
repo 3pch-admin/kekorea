@@ -118,8 +118,6 @@ public class WorkOrderHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			WorkOrder workOrder = (WorkOrder) obj[0];
 
-			JSONObject node = new JSONObject();
-
 			QuerySpec _query = new QuerySpec();
 			int _idx = _query.appendClassList(WorkOrder.class, true);
 			int _idx_p = _query.appendClassList(Project.class, true);
@@ -216,8 +214,10 @@ public class WorkOrderHelper {
 
 			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.DESCRIPTION, description);
 			QueryResult group = PersistenceHelper.manager.find(_query);
+
 			int isNode = 1;
 			JSONArray children = new JSONArray();
+			JSONObject node = new JSONObject();
 			while (group.hasMoreElements()) {
 				Object[] oo = (Object[]) group.nextElement();
 				WorkOrderProjectLink link = (WorkOrderProjectLink) oo[2];
@@ -328,6 +328,7 @@ public class WorkOrderHelper {
 		QuerySpecUtils.toInnerJoin(first, EPMDocument.class, EPMDocumentMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx1, idx2);
 		QuerySpecUtils.toLatest(first, idx1, EPMDocument.class);
+		QuerySpecUtils.toEqualsAnd(first, idx1, EPMDocument.class, EPMDocument.DOC_TYPE, "CADDRAWING");
 		QuerySpecUtils.toIBAEqualsAnd(first, EPMDocument.class, idx1, "DWG_NO", number);
 		QueryResult qr = PersistenceHelper.manager.find(first);
 		if (qr.hasMoreElements()) {
@@ -540,7 +541,7 @@ public class WorkOrderHelper {
 			customerList.put("oid", oid);
 			keList.put("oid", oid);
 			pdateList.put("oid", oid);
-			
+
 			makList.put("rev" + (i + 1), project.getMak().getName() + " / " + project.getDetail().getName());
 			customerList.put("rev" + (i + 1), project.getCustomer().getName() + " / " + project.getInstall().getName());
 			keList.put("rev" + (i + 1), project.getKeNumber());

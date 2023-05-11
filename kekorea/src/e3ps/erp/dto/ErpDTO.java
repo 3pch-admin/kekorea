@@ -32,7 +32,7 @@ public class ErpDTO {
 		setResult(history.getResult());
 		setSendType(history.getSendType());
 		setSendQuery(history.getSendQuery());
-		setCreatedDate_txt(CommonUtils.getPersistableTime(history.getCreateTimestamp()));
+		setCreatedDate_txt(CommonUtils.getPersistableTime(history.getCreateTimestamp(), 16));
 		setCreatedDate(history.getCreateTimestamp());
 		setCreator(history.getOwnership().getOwner().getFullName());
 	}

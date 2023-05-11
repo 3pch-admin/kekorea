@@ -11,7 +11,7 @@ int latestVersion = (int) request.getAttribute("latestVersion");
 String loid = (String) request.getAttribute("loid");
 JSONArray history = (JSONArray) request.getAttribute("history");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <style type="text/css">
 .compare {
 	background-color: yellow;
@@ -33,14 +33,14 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 			<%
 			if (isAdmin || dto.isEdit()) {
 			%>
-			<input type="button" value="수정" title="수정" onclick="modify();">
+			<input type="button" value="수정" title="수정" onclick="update('modify');">
 			<%
 			}
 			%>
 			<%
 			if (isAdmin || dto.isRevise()) {
 			%>
-			<input type="button" value="개정" title="개정" onclick="revise();">
+			<input type="button" value="개정" title="개정" onclick="update('revise');">
 			<%
 			}
 			%>
@@ -131,7 +131,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 		</table>
 	</div>
 	<div id="tabs-2">
-	<div id="grid_wrap_" style="height: 500px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap_" style="height: 500px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID_;
 			const columns_ = [ {
@@ -212,20 +212,13 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 					enableSorting : false,
 				}
 				myGridID_ = AUIGrid.create("#grid_wrap_", columnLayout, props);
-				AUIGrid.setGridData(myGridID_, <%=history%>);
+				AUIGrid.setGridData(myGridID_,
+		<%=history%>
+			);
 			}
 		</script>
 	</div>
 	<div id="tabs-3">
-		<table class="button-table">
-			<tr>
-				<td class="left">
-					<input type="button" value="표지 다운로드" title="표지 다운로드" onclick="cover();">
-					<input type="button" value="PDF 압축파일 다운로드" title="PDF 압축파일 다운로드" class="blue" onclick="zip();">
-					<input type="button" value="병합 PDF 다운로드" title="병합 PDF 다운로드" class="orange" onclick="merge();">
-				</td>
-			</tr>
-		</table>
 		<div id="grid_wrap" style="height: 800px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
@@ -333,7 +326,6 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 					showStateColumn : true,
 					selectionMode : "multipleCells",
 					rowNumHeaderText : "번호",
-					showRowCheckColumn : true,
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				AUIGrid.setGridData(myGridID,
@@ -350,37 +342,14 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 	</div>
 </div>
 <script type="text/javascript">
-	function zip() {
-		const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
-		if (checkedItems.length === 0) {
-			alert("ZIP파일로 다운로드 받을 도면을 하나 이상 선택하세요.");
-			return false;
-		}
-	}
-
-	function cover() {
-
-	}
-
-	function merge() {
-
-	}
-
 	function view() {
 		const url = getCallUrl("/workOrder/view?oid=" + item.oid);
 		popup(url, 1600, 800);
 	}
 
-	function modify() {
+	function update(mode) {
 		const oid = document.getElementById("oid").value;
-		const url = getCallUrl("/workOrder/modify?oid=" + oid);
-		openLayer();
-		document.location.href = url;
-	}
-
-	function revise() {
-		const oid = document.getElementById("oid").value;
-		const url = getCallUrl("/workOrder/revise?oid=" + oid);
+		const url = getCallUrl("/workOrder/update?oid=" + oid + "&mode=" + mode);
 		openLayer();
 		document.location.href = url;
 	}

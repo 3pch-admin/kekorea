@@ -1,8 +1,6 @@
 package e3ps.doc.meeting;
 
 import com.ptc.windchill.annotations.metadata.Cardinality;
-import com.ptc.windchill.annotations.metadata.ColumnProperties;
-import com.ptc.windchill.annotations.metadata.ColumnType;
 import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedForeignKey;
@@ -17,7 +15,7 @@ import wt.util.WTException;
 
 		properties = {
 
-				@GeneratedProperty(name = "content", type = String.class, javaDoc = "회의록 내용", columnProperties = @ColumnProperties(columnType = ColumnType.BLOB)),
+				@GeneratedProperty(name = "content", type = String.class, javaDoc = "회의록 내용", constraints = @PropertyConstraints(upperLimit = 10000))
 
 		},
 

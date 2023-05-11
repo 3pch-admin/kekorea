@@ -42,7 +42,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 .none {
 	color: black;
-	font-weight: normal;
+	font-weight: bold;
+	cursor: pointer;
+	text-align: center !important;
 }
 </style>
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
@@ -118,8 +120,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						} else if (oid.indexOf("KeDrawing") > -1) {
 							url = getCallUrl("/keDrawing/viewByNumberAndRev?number=" + number + "&rev=" + rev);
 							popup(url, 1400, 700);
-						} else {
-							url = getCallUrl("/project/info?oid=" + oid);
 						}
 					}
 				},
@@ -165,8 +165,6 @@ for (Project project : destList) {%>
 								} else if (oid.indexOf("KeDrawing") > -1) {
 									url = getCallUrl("/keDrawing/viewByNumberAndRev?number=" + number + "&rev=" + rev);
 									popup(url, 1400, 700);
-								} else {
-									url = getCallUrl("/project/info?oid=" + oid);
 								}
 							}
 						},

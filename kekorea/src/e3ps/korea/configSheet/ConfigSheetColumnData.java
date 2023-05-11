@@ -14,8 +14,6 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "dataField", type = String.class),
 
-				@GeneratedProperty(name = "last", type = Boolean.class)
-
 		}
 
 )

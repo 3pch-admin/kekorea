@@ -176,7 +176,8 @@ ul, ol {
 			<tr>
 				<td class="left">
 					<input type="button" value="불러오기" title="불러오기" class="blue" onclick="load();">
-					<input type="button" value="열 추가" title="열 추가" class="red" onclick="toAppend();">
+					<input type="button" value="열 추가" title="열 추가" onclick="toAppend();">
+					<input type="button" value="열 삭제" title="열 삭제" class="red" onclick="removeColumn();">
 				</td>
 			</tr>
 		</table>
@@ -254,6 +255,7 @@ ul, ol {
 		dataField : "note",
 		headerText : "NOTE",
 		dataType : "string",
+		width : 250
 	}, {
 		dataField : "apply",
 		headerText : "APPLY",
@@ -324,11 +326,14 @@ ul, ol {
 				type : "Templaterenderer"
 			}
 		};
-// 		var columnPos = document.getElementById("addSelect").value;
-		// columnPos : columnIndex 인 경우 해당 index 에 삽입, "first" : 맨처음, "last" : 맨끝, "selectionLeft" : 선택 열 왼쪽에,  "selectionRight" : 선택 열 오른쪽에 추가
 		AUIGrid.addColumn(myGridID, columnObj, "selectionRight");
 		toIndex++;
 	}
+	
+	function removeColumn() {
+		AUIGrid.removeColumn(myGridID, "selectedIndex");
+	};
+
 
 	function auiPasteBeginHandler(event) {
 		const data = event.clipboardData;

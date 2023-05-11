@@ -127,11 +127,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 						inline : true
 					},
 				}, {
-					dataField : "createdDate",
+					dataField : "createdDate_txt",
 					headerText : "작성일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
-					width : 100,
+					dataType : "string",
+					width : 150,
 					filter : {
 						showIcon : true,
 						inline : true,

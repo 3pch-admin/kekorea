@@ -20,6 +20,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	color: #FF0000;
 	font-weight: bold;
 }
+
 .row1 {
 	background-color: #fed7be;
 	font-weight: bold;
@@ -42,7 +43,21 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 .none {
 	color: black;
-	font-weight: normal;
+	font-weight: bold;
+	cursor: pointer;
+	text-align: center !important;
+}
+
+.link {
+	color: blue;
+	font-weight: bold;
+	cursor: pointer;
+	text-align: center !important;
+}
+
+.link:hover {
+	color: blue !important;
+	text-decoration: underline;
 }
 </style>
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
@@ -129,7 +144,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
 					const quantity1 = item.quantity1;
 					if(typeof quantity1 === "string" ) {
-						return "none";
+						return "link";
 					}
 					return "";
 				},
@@ -157,7 +172,7 @@ for (Project project : destList) {%>
 						styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
 							const quantity1 = item.quantity1;
 							if(typeof quantity1 === "string" ) {
-								return "none";
+								return "link";
 							}
 							if (value !== quantity1) {
 								return "compare";
@@ -328,8 +343,11 @@ for (Project project : destList) {%>
 	function auiCellClickHandler(event) {
 		const dataField = event.dataField;
 		const item = event.item;
-		if(dataField === "partNo" && !isNull(item.oid)) {
-			const oid = item.oid;
+		const oid = item.oid;
+		if(dataField.indexOf("quantity") > -1 && !isNull(oid)) {
+			const url = getCallUrl("/project/info?oid="+oid);
+			popup(url);
+		} else if(dataField === "partNo" && !isNull(item.oid)) {
 			const url = getCallUrl("/part/view?oid=" + oid);
 			popup(url, 1500, 800);
 		}

@@ -16,8 +16,9 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=11210"></script>
 <style type="text/css">
 .compare {
+	background: #FFFF00 !important;
+	color: #FF0000;
 	font-weight: bold;
-	color: red;
 }
 
 .row1 {
@@ -67,6 +68,45 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 .row12 {
 	background-color: #FFFFCC;
 }
+
+.row1-1 {
+	background-color: #fed7be;
+	font-weight: bold;
+}
+
+.row2-1 {
+	background-color: #FFCCFF;
+	font-weight: bold;
+}
+
+.row3-1 {
+	background-color: #CCFFCC;
+	font-weight: bold;
+}
+
+.row4-1 {
+	background-color: #FFFFCC;
+	font-weight: bold;
+}
+
+.none {
+	color: black;
+	font-weight: bold;
+	cursor: pointer;
+	text-align: center !important;
+}
+
+.link {
+	color: blue;
+	font-weight: bold;
+	cursor: pointer;
+	text-align: center !important;
+}
+
+.link:hover {
+	color: blue !important;
+	text-decoration: underline;
+}
 </style>
 <input type="hidden" name="oid" id="oid" value="<%=oid%>">
 <input type="hidden" name="compareArr" id="compareArr" value="<%=compareArr%>">
@@ -92,10 +132,19 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 			width : 150,
 			style : "aui-left",
 			cellMerge : true,
+			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+				const id = item.id;
+				if(!isNull(id)) {
+					return "none";
+				}
+				return "";
+			},
 			filter : {
 				showIcon : true,
 				inline : true
 			},
+			cellColMerge: true, // 셀 가로 병합 실행
+			cellColSpan: 2, // 셀 가로 병합 대상은 6개로 설정
 		}, {
 			dataField : "item_name",
 			headerText : "",
@@ -115,7 +164,14 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 			dataField : "P1",
 			dataType : "string",
 			width : 200,
+			renderer : {
+				type : "Templaterenderer"
+			},
 			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+				const id = item.id;
+				if(id !== undefined) {
+					return "link";
+				}
 				return "";
 			},
 			filter : {
@@ -131,10 +187,19 @@ for (Project project : destList) {
 			dataField : "<%=dataField%>",
 			dataType : "string",
 			width : 250,
+			renderer : {
+				type : "Templaterenderer"
+			},
 			styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+				const id = item.id;
+				if(id !== undefined) {
+					return "link";
+				}
 				const P1 = item.P1;
-				if(P1 !== value) {
-					return "compare";
+				if(!isNull(value)) {
+					if(P1 !== value) {
+						return "compare";
+					}
 				}
 				return "";
 			},
@@ -162,8 +227,8 @@ for (Project project : destList) {
 			enableRightDownFocus : true,
 			enableCellMerge : true,
 			fixedColumnCount : 3,
-// 			autoGridHeight : true
-	rowStyleFunction : function(rowIndex, item) {
+			wordWrap : true,
+			rowStyleFunction : function(rowIndex, item) {
 				const value = item.category_code;
 				if (value === "CATEGORY_2") {
 					return "row1";
@@ -192,6 +257,16 @@ for (Project project : destList) {
 				} else if (value === "CATEGORY_15") {
 					return "row12";
 				}
+				const name = item.category_name;
+				if(name === "막종 / 막종상세") {
+					return "row1";
+				} else if(name === "고객사 / 설치장소") {
+					return "row2";
+				} else if(name === "KE 작번") {
+					return "row3";
+				} else if(name === "발행일") {
+					return "row4";
+				}
 				return "";
 			}
 		}
@@ -204,8 +279,19 @@ for (Project project : destList) {
 		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 			hideContextMenu();
 		});
+		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 	}
 
+	function auiCellClickHandler(event) {
+		const dataField = event.dataField;
+		const id = event.item.id;
+		const oid = event.item.oid;
+		if(dataField.indexOf("P") > -1 && !isNull(id)) {
+			const url = getCallUrl("/project/info?oid="+oid);
+			popup(url);
+		}
+	}
+	
 	document.addEventListener("DOMContentLoaded", function() {
 		const columns = loadColumnLayout("tbom-compare");
 		const contenxtHeader = genColumnHtml(columns);

@@ -74,11 +74,7 @@ public class MeetingHelper {
 		String description = (String) params.get("description");
 		String kekNumber = (String) params.get("kekNumber");
 		String keNumber = (String) params.get("keNumber");
-		String pdateFrom = (String) params.get("pdateFrom");
-		String pdateTo = (String) params.get("pdateTo");
 		String userId = (String) params.get("userId");
-		String kekState = (String) params.get("kekState");
-		String model = (String) params.get("model");
 		String customer_name = (String) params.get("customer_name");
 		String install_name = (String) params.get("install_name");
 		String projectType = (String) params.get("projectType");
@@ -92,6 +88,7 @@ public class MeetingHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Meeting.class, true);
 		QuerySpecUtils.toLikeAnd(query, idx, Meeting.class, Meeting.NAME, name);
+		QuerySpecUtils.toLikeAnd(query, idx, Meeting.class, Meeting.CONTENT, description);
 		QuerySpecUtils.toOrderBy(query, idx, Meeting.class, Meeting.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
@@ -119,10 +116,7 @@ public class MeetingHelper {
 
 			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KEK_NUMBER, kekNumber);
 			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KE_NUMBER, keNumber);
-			QuerySpecUtils.toTimeGreaterAndLess(_query, _idx_p, Project.class, Project.P_DATE, pdateFrom, pdateTo);
 			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.USER_ID, userId);
-			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KEK_STATE, kekState);
-			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.MODEL, model);
 
 			if (!StringUtils.isNull(customer_name)) {
 				CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer_name);
@@ -195,8 +189,6 @@ public class MeetingHelper {
 				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "detailReference.key.id", detailCode);
 			}
 
-//			QueryResult group = PersistenceHelper.manager.navigate(meeting, "project", MeetingProjectLink.class, false);
-			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.DESCRIPTION, description);
 			QueryResult group = PersistenceHelper.manager.find(_query);
 			int isNode = 1;
 			JSONArray children = new JSONArray();

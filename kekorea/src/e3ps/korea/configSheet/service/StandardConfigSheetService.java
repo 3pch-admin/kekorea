@@ -184,15 +184,16 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 					ConfigSheetColumnData column = ConfigSheetColumnData.newConfigSheetColumnData();
 					column.setDataField(key);
 					column.setValue(addRow.get(key));
-					if (i == lastIndex) {
-						column.setLast(true);
-					} else {
-						column.setLast(false);
-					}
+					
 					PersistenceHelper.manager.save(column);
 
 					ColumnVariableLink ll = ColumnVariableLink.newColumnVariableLink(column, variable);
 					ll.setSort(ss);
+					if (i == lastIndex) {
+						ll.setLast(true);
+					} else {
+						ll.setLast(false);
+					}
 					PersistenceHelper.manager.save(ll);
 					ss++;
 				}

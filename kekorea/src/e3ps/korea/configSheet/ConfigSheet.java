@@ -2,8 +2,6 @@ package e3ps.korea.configSheet;
 
 import java.util.ArrayList;
 
-import java.util.ArrayList;
-
 import com.ptc.windchill.annotations.metadata.ColumnProperties;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;

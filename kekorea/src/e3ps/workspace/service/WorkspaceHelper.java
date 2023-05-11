@@ -946,12 +946,12 @@ public class WorkspaceHelper {
 				Row row = sheet.createRow(rowIndex);
 
 				CellRangeAddress region = new CellRangeAddress(rowIndex, rowIndex, 1, 3);
-//				CellRangeAddress region1 = new CellRangeAddress(rowIndex, rowIndex, 4, 6);
+				CellRangeAddress region1 = new CellRangeAddress(rowIndex, rowIndex, 4, 6);
 //				CellRangeAddress region2 = new CellRangeAddress(rowIndex, rowIndex, 7, 9);
 //				CellRangeAddress region3 = new CellRangeAddress(rowIndex, rowIndex, 11, 14);
 //
 				sheet.addMergedRegion(region);
-//				sheet.addMergedRegion(region1);
+				sheet.addMergedRegion(region1);
 //				sheet.addMergedRegion(region2);
 //				sheet.addMergedRegion(region3);
 

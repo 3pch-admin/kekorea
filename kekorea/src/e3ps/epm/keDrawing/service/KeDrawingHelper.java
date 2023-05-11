@@ -360,9 +360,7 @@ public class KeDrawingHelper {
 				map.put("number", IBAUtils.getStringValue(epm, "DWG_NO"));
 				map.put("current", epm.getVersionIdentifier().getSeries().getValue());
 				map.put("preView", ContentUtils.getPreViewBase64(epm));
-//				map.put("primary", AUIGridUtils.primaryTemplate(keDrawing)); // pdf...
-
-				System.out.println(epm.getVersionIdentifier().getSeries().getValue().getClass());
+				map.put("primary", AUIGridUtils.additionalTemplate(epm)); // pdf...
 			}
 			list.add(map);
 		}

@@ -773,11 +773,6 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 				selectbox("psize");
 			});
 
-			function clearUser(target) {
-				document.getElementById(target).value = "";
-				document.getElementById(target + "Oid").value = "";
-			}
-
 			function create() {
 				const url = getCallUrl("/project/create");
 				popup(url, 1200, 460);
