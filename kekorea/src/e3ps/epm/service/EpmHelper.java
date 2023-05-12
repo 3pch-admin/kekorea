@@ -131,6 +131,8 @@ public class EpmHelper {
 		String oid = (String) params.get("oid"); // 폴더 OID
 		String container = (String) params.get("container");
 		String creatorOid = (String) params.get("creatorOid");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
 		String modifierOid = (String) params.get("modifierOid");
 		QuerySpec query = new QuerySpec();
 
@@ -140,6 +142,9 @@ public class EpmHelper {
 		QuerySpecUtils.toCI(query, idx, EPMDocument.class);
 		QuerySpecUtils.toInnerJoin(query, EPMDocument.class, EPMDocumentMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);
+
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, EPMDocument.class, EPMDocument.CREATE_TIMESTAMP, createdFrom,
+				createdTo);
 
 		// 캐드파일명
 		QuerySpecUtils.toLikeAnd(query, idx, EPMDocument.class, EPMDocument.CADNAME, fileName);
@@ -193,6 +198,7 @@ public class EpmHelper {
 
 		QuerySpecUtils.toOrderBy(query, idx, EPMDocument.class, EPMDocument.MODIFY_TIMESTAMP, true);
 
+		System.out.println(query);
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 

@@ -76,7 +76,7 @@ public class IssueHelper {
 
 			if (!StringUtils.isNull(mak_name)) {
 				CommonCode makCode = (CommonCode) CommonUtils.getObject(mak_name);
-				QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "makReference.key.id", makCode);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "makReference.key.id", makCode);
 			}
 
 			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.DESCRIPTION, description);
