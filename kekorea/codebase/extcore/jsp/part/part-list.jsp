@@ -78,7 +78,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="creator" id="creator">
+					<input type="text" name="creator" id="creator" data-multi="false">
 					<input type="hidden" name="creatorOid" id="creatorOid">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('creator')">
 				</td>
@@ -91,8 +91,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				</td>
 				<th>수정자</th>
 				<td class="indent5">
-					<input type="text" name="modifier" id="modifier">
-					<input type="hidden" name="modifierOId" id="modifierOid">
+					<input type="text" name="modifier" id="modifier" data-multi="false">
+					<input type="hidden" name="modifierOId" id="modifierOid" data-multi="false">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('modifier')">
 				</td>
 				<th>수정일</th>

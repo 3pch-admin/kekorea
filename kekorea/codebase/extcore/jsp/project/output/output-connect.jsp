@@ -84,7 +84,7 @@ String poid = (String) request.getAttribute("poid");
 	<tr>
 		<th>작성자</th>
 		<td class="indent5">
-			<input type="text" name="creator" id="creator">
+			<input type="text" name="creator" id="creator" data-multi="false">
 			<input type="hidden" name="creatorOid" id="creatorOid">
 			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('creator')">
 		</td>

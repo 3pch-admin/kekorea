@@ -92,7 +92,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			<tr>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="creator" id="creator" class="width-200">
+					<input type="text" name="creator" id="creator" data-multi="false" class="width-200">
 					<input type="hidden" name="creatorOid" id="creatorOid">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('creator')">
 				</td>
@@ -105,7 +105,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				</td>
 				<th>수정자</th>
 				<td class="indent5">
-					<input type="text" name="modifier" id="modifier" class="width-200">
+					<input type="text" name="modifier" id="modifier" data-multi="false" class="width-200">
 					<input type="hidden" name="modifierOid" id="modifierOid">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('modifier')">
 				</td>

@@ -32,35 +32,35 @@ WTUser softUser = (WTUser) request.getAttribute("softUser");
 	<tr>
 		<th class="lb">총괄 책임자</th>
 		<td class="indent5">
-			<input type="text" name="pm" id="pm" value="<%=pmUser != null ? pmUser.getFullName() : ""%>">
+			<input type="text" name="pm" id="pm" value="<%=pmUser != null ? pmUser.getFullName() : ""%>" data-multi="false">
 			<input type="hidden" name="pmOid" id="pmOid" value="<%=pmUser != null ? pmUser.getPersistInfo().getObjectIdentifier().getStringValue() : ""%>">
 		</td>
 	</tr>
 	<tr>
 		<th class="lb">세부일정 책임자</th>
 		<td class="indent5">
-			<input type="text" name="subPm" id="subPm" value="<%=subPmUser != null ? subPmUser.getFullName() : ""%>">
+			<input type="text" name="subPm" id="subPm" value="<%=subPmUser != null ? subPmUser.getFullName() : ""%>" data-multi="false">
 			<input type="hidden" name="subPmOid" id="subPmOid" value="<%=subPmUser != null ? subPmUser.getPersistInfo().getObjectIdentifier().getStringValue() : ""%>">
 		</td>
 	</tr>
 	<tr>
 		<th class="lb">기계</th>
 		<td class="indent5">
-			<input type="text" name="machine" id="machine" value="<%=machineUser != null ? machineUser.getFullName() : ""%>">
+			<input type="text" name="machine" id="machine" value="<%=machineUser != null ? machineUser.getFullName() : ""%>" data-multi="false">
 			<input type="hidden" name="machineOid" id="machineOid" value="<%=machineUser != null ? machineUser.getPersistInfo().getObjectIdentifier().getStringValue() : ""%>">
 		</td>
 	</tr>
 	<tr>
 		<th class="lb">전기</th>
 		<td class="indent5">
-			<input type="text" name="elec" id="elec" value="<%=elecUser != null ? elecUser.getFullName() : ""%>">
+			<input type="text" name="elec" id="elec" value="<%=elecUser != null ? elecUser.getFullName() : ""%>" data-multi="false">
 			<input type="hidden" name="elecOid" id="elecOid" value="<%=elecUser != null ? elecUser.getPersistInfo().getObjectIdentifier().getStringValue() : ""%>">
 		</td>
 	</tr>
 	<tr>
 		<th class="lb">SW</th>
 		<td class="indent5">
-			<input type="text" name="soft" id="soft" value="<%=softUser != null ? softUser.getFullName() : ""%>">
+			<input type="text" name="soft" id="soft" value="<%=softUser != null ? softUser.getFullName() : ""%>" data-multi="false">
 			<input type="hidden" name="softOid" id="softOid" value="<%=softUser != null ? softUser.getPersistInfo().getObjectIdentifier().getStringValue() : ""%>">
 		</td>
 	</tr>

@@ -125,19 +125,19 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 				</td>
 				<th>기계 담당자</th>
 				<td class="indent5">
-					<input type="text" name="machine" id="machine" value="<%=isMachine ? sessionUser.getFullName() : ""%>">
+					<input type="text" name="machine" id="machine" value="<%=isMachine ? sessionUser.getFullName() : ""%>" data-multi="false">
 					<input type="hidden" name="machineOid" id="machineOid" value="<%=isMachine ? sessionUser.getPersistInfo().getObjectIdentifier().getStringValue() : ""%>">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('machine');">
 				</td>
 				<th>전기 담당자</th>
 				<td class="indent5">
-					<input type="text" name="elec" id="elec" value="<%=isElec ? sessionUser.getFullName() : ""%>">
+					<input type="text" name="elec" id="elec" value="<%=isElec ? sessionUser.getFullName() : ""%>" data-multi="false">
 					<input type="hidden" name="elecOid" id="elecOid" value="<%=isElec ? sessionUser.getPersistInfo().getObjectIdentifier().getStringValue() : ""%>">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('elec');">
 				</td>
 				<th>SW 담당자</th>
 				<td class="indent5">
-					<input type="text" name="soft" id="soft" value="<%=isSw ? sessionUser.getFullName() : ""%>">
+					<input type="text" name="soft" id="soft" value="<%=isSw ? sessionUser.getFullName() : ""%>" data-multi="false">
 					<input type="hidden" name="softOid" id="softOid" value="<%=isSw ? sessionUser.getPersistInfo().getObjectIdentifier().getStringValue() : ""%>">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('soft');">
 				</td>
