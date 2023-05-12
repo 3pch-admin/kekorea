@@ -101,7 +101,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "point",
 					headerText : "진행단계",
 					dataType : "string",
-					width : 350,
 					style : "right",
 					renderer : {
 						type : "TemplateRenderer"
@@ -133,7 +132,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "수신일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd HH:MM:ss",
-					width : 130,
+					width : 170,
 					filter : {
 						showIcon : true,
 						inline : true,
@@ -149,7 +148,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "singleRow",
+					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -201,6 +200,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("approvalTitle").focus();
 				const columns = loadColumnLayout("complete-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

@@ -11,7 +11,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
@@ -37,7 +37,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>기안자</th>
 				<td class="indent5">
-					<input type="text" name="submiter" id="submiter">
+					<input type="text" name="submiter" id="submiter" data-multi="false">
+					<input type="hidden" name="submiterOid" id="submiterOid">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('submiter')">
 				</td>
 				<th>수신일</th>
@@ -145,7 +146,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "point",
 					headerText : "진행단계",
 					dataType : "string",
-					width : 350,
 					style : "right",
 					renderer : {
 						type : "TemplateRenderer"
@@ -177,7 +177,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "수신일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd HH:MM:ss",
-					width : 130,
+					width : 170,
 					filter : {
 						showIcon : true,
 						inline : true,
@@ -219,10 +219,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const approvalTitle = document.getElementById("approvalTitle").value;
 				const receiveFrom = document.getElementById("receiveFrom").value;
 				const receiveTo = document.getElementById("receiveTo").value;
+				const submiterOid = document.getElementById("submiterOid").value;
 				const psize = document.getElementById("psize").value;
 				params.approvalTitle = approvalTitle;
 				params.receiveFrom = receiveFrom;
 				params.receiveTo = receiveTo;
+				params.submiterOid = submiterOid;
 				params.psize = psize;
 
 				AUIGrid.showAjaxLoader(myGridID);
@@ -237,6 +239,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				document.getElementById("approvalTitle").focus();
 				const columns = loadColumnLayout("receive-list");
 				let contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

@@ -237,7 +237,7 @@ public class WorkspaceHelper {
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, APPROVAL_LINE);
 		QuerySpecUtils.toTimeGreaterAndLess(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveFrom,
 				receiveTo);
-		QuerySpecUtils.toCreator(query, idx, ApprovalLine.class, submiterOid);
+		QuerySpecUtils.toCreator(query, idx_m, ApprovalMaster.class, submiterOid);
 
 		if (!CommonUtils.isAdmin()) {
 			WTUser sessionUser = CommonUtils.sessionUser();
@@ -274,6 +274,7 @@ public class WorkspaceHelper {
 		String approvalTitle = (String) params.get("approvalTitle");
 		String receiveFrom = (String) params.get("receiveFrom");
 		String receiveTo = (String) params.get("receiveTo");
+		String submiterOid = (String) params.get("submiterOid");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ApprovalLine.class, true);
@@ -285,6 +286,7 @@ public class WorkspaceHelper {
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, RECEIVE_LINE);
 		QuerySpecUtils.toTimeGreaterAndLess(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveFrom,
 				receiveTo);
+		QuerySpecUtils.toCreator(query, idx_master, ApprovalMaster.class, submiterOid);
 
 		if (!CommonUtils.isAdmin()) {
 			WTUser sessionUser = CommonUtils.sessionUser();

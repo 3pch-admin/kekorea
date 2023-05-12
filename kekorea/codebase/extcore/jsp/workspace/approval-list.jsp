@@ -37,7 +37,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>기안자</th>
 				<td class="indent5">
-					<input type="text" name="submiter" id="submiter" data-multi="false" data-method="setUser">
+					<input type="text" name="submiter" id="submiter" data-multi="false">
 					<input type="hidden" name="submiterOid" id="submiterOid">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('submiter')">
 				</td>
@@ -146,7 +146,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "point",
 					headerText : "진행단계",
 					dataType : "string",
-					width : 350,
 					style : "right",
 					filter : {
 						showIcon : false,
@@ -178,7 +177,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "수신일",
 					dataType : "date",
 					formatString : "yyyy-mm-dd HH:MM:ss",
-					width : 130,
+					width : 170,
 					filter : {
 						showIcon : true,
 						inline : true,

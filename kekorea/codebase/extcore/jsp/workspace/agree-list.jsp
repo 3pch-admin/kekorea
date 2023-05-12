@@ -145,7 +145,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "point",
 					headerText : "진행단계",
 					dataType : "string",
-					width : 350,
 					style : "right",
 					renderer : {
 						type : "TemplateRenderer"
@@ -193,7 +192,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "singleRow",
+					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
