@@ -78,22 +78,4 @@ public class StandardEpmService extends StandardManager implements EpmService {
 				trs.rollback();
 		}
 	}
-
-	@Override
-	public void convertAutoCADToPDF(EPMDocument epm) throws Exception {
-		Transaction trs = new Transaction();
-		try {
-			trs.start();
-
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			trs.rollback();
-			throw e;
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-	}
 }

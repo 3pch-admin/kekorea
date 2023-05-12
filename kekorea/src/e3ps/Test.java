@@ -1,16 +1,29 @@
 package e3ps;
 
-import wt.content.ContentRoleType;
+import e3ps.common.convert.ProcessOutputThread;
 
 public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-
-		String a = "KMCA00001";
+		String a = "ASD.dwg";
+		System.out.println(a.substring(0, a.lastIndexOf(".")));
 		
-		System.out.println(a.substring(4, 9));
-		
+//		Runtime rt = Runtime.getRuntime();
+//		String dwgFilePath = "C:\\NA-AF-STB301-013.A.2.dwg";
+//		String pdfFileName = "test.pdf";
+//		
+//		String exec1 = "C:\\Program Files (x86)\\AutoDWG\\AutoDWG DWG to PDF Converter 2023\\d2p.exe /InFile";
+//		String conFile = "C:\\\\Program Files (x86)\\\\AutoDWG\\\\AutoDWG DWG to PDF Converter 2023\\\\AutoDWGPdf.ddp";
+//
+//		String exec = exec1 + " " + dwgFilePath + " /OutFile " + pdfFileName + " /InConfigFile " + conFile;
+//		System.out.println(exec);
+//
+//		Process p = rt.exec(exec);
+//		ProcessOutputThread o = new ProcessOutputThread(p.getInputStream(), new StringBuffer());
+//		o.start();
+//		p.waitFor();
+//	
 		System.exit(0);
 	}
 }

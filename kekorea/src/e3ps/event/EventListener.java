@@ -1,6 +1,5 @@
 package e3ps.event;
 
-import e3ps.epm.service.EpmHelper;
 import e3ps.org.service.OrgHelper;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
@@ -41,9 +40,14 @@ public class EventListener extends ServiceEventListenerAdapter {
 		if (target instanceof EPMDocument) {
 			if (POST_CHECKIN.equals(type)) {
 				EPMDocument epm = (EPMDocument) target;
+				System.out.println("epm=" + epm.getAuthoringApplication());
 				if (epm.getAuthoringApplication().toString().equals("ACAD")) {
-					EpmHelper.service.convertAutoCADToPDF(epm);
+					System.out.println("AutoCAD 변환 시작!!");
+					EventHelper.service.convertAutoCADToPDF(epm);
 				}
+			} else if(POST_STORE.equals(type)) {
+				EPMDocument epm = (EPMDocument) target;
+				System.out.println("epm11=" + epm.getAuthoringApplication());
 			}
 		}
 

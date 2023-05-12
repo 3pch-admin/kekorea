@@ -11,7 +11,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
@@ -30,19 +30,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</colgroup>
 			<tr>
 				<th>결재 제목</th>
-				<td colspan="3" class="indent5">
-					<input type="text" name="approvalTitle" id="approvalTitle" class="width-300">
-				</td>
-			</tr>
-			<tr>
-				<th>구분</th>
 				<td class="indent5">
-					<select name="type" id="type" class="width-200">
-						<option value="">선택</option>
-						<option value="검토">검토</option>
-						<option value="결재">결재</option>
-						<option value="수신">수신</option>
-					</select>
+					<input type="text" name="approvalTitle" id="approvalTitle" class="width-300">
 				</td>
 				<th>수신일</th>
 				<td class="indent5">
@@ -74,7 +63,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 740px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -174,12 +163,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const approvalTitle = document.getElementById("approvalTitle").value;
 				const receiveFrom = document.getElementById("receiveFrom").value;
 				const receiveTo = document.getElementById("receiveTo").value;
-				const type = document.getElementById("type").value;
 				const psize = document.getElementById("psize").value;
 				params.approvalTitle = approvalTitle;
 				params.receiveFrom = receiveFrom;
 				params.receiveTo = receiveTo;
-				params.psize = type;
 				params.psize = psize;
 
 				AUIGrid.showAjaxLoader(myGridID);
@@ -209,7 +196,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				selectbox("type");
 				twindate("receive");
 				selectbox("psize");
 			});
