@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import e3ps.admin.commonCode.CommonCode;
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.common.util.StringUtils;
+import e3ps.epm.workOrder.WorkOrder;
+import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.project.Project;
 import e3ps.project.issue.Issue;
 import e3ps.project.issue.IssueProjectLink;
@@ -29,11 +33,24 @@ public class IssueHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		String issueName = (String) params.get("issueName");
+		String kekNumber = (String) params.get("kekNumber");
+		String keNumber = (String) params.get("keNumber");
+		String name = (String) params.get("name");
+		String mak_name = (String) params.get("mak_name");
+		String content = (String) params.get("content");
 		String description = (String) params.get("description");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
+		String creatorOid = (String) params.get("creatorOid");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Issue.class, true);
+
+		QuerySpecUtils.toLikeAnd(query, idx, Issue.class, Issue.NAME, name);
+		QuerySpecUtils.toLikeAnd(query, idx, Issue.class, Issue.DESCRIPTION, content);
+
+		QuerySpecUtils.toCreator(query, idx, Issue.class, creatorOid);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, Issue.class, Issue.CREATE_TIMESTAMP, createdFrom, createdTo);
 
 		QuerySpecUtils.toOrderBy(query, idx, Issue.class, Issue.CREATE_TIMESTAMP, true);
 
@@ -44,13 +61,34 @@ public class IssueHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			Issue issue = (Issue) obj[0];
 
+			QuerySpec _query = new QuerySpec();
+			int _idx = _query.appendClassList(Issue.class, true);
+			int _idx_p = _query.appendClassList(Project.class, true);
+			int _idx_link = _query.appendClassList(IssueProjectLink.class, true);
+
+			QuerySpecUtils.toEqualsAnd(_query, _idx_link, IssueProjectLink.class, "roleAObjectRef.key.id", issue);
+			QuerySpecUtils.toInnerJoin(_query, Issue.class, IssueProjectLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleAObjectRef.key.id", _idx, _idx_link);
+			QuerySpecUtils.toInnerJoin(_query, Project.class, IssueProjectLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleBObjectRef.key.id", _idx_p, _idx_link);
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KEK_NUMBER, kekNumber);
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KE_NUMBER, keNumber);
+
+			if (!StringUtils.isNull(mak_name)) {
+				CommonCode makCode = (CommonCode) CommonUtils.getObject(mak_name);
+				QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "makReference.key.id", makCode);
+			}
+
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.DESCRIPTION, description);
+
 			JSONObject node = new JSONObject();
-			QueryResult group = PersistenceHelper.manager.navigate(issue, "project", IssueProjectLink.class, false);
+			QueryResult group = PersistenceHelper.manager.find(_query);
 
 			int isNode = 1;
 			JSONArray children = new JSONArray();
 			while (group.hasMoreElements()) {
-				IssueProjectLink link = (IssueProjectLink) group.nextElement();
+				Object[] oo = (Object[]) group.nextElement();
+				IssueProjectLink link = (IssueProjectLink) oo[2];
 				IssueDTO dto = new IssueDTO(link);
 				node.put("oid", issue.getPersistInfo().getObjectIdentifier().getStringValue());
 				node.put("name", issue.getName());

@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.project.Project;
@@ -40,6 +41,8 @@ public class IssueController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
+		model.addObject("maks", maks);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/project/issue/issue-list.jsp");
@@ -163,7 +166,7 @@ public class IssueController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description(value = "특이사항 수정 페이지")
 	@GetMapping(value = "/modify")
 	public ModelAndView modify(@RequestParam String oid) throws Exception {

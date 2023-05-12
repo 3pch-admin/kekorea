@@ -1,3 +1,4 @@
+<%@page import="java.util.Map"%>
 <%@page import="wt.org.WTUser"%>
 <%@page import="e3ps.org.service.OrgHelper"%>
 <%@page import="wt.epm.EPMDocumentType"%>
@@ -14,6 +15,7 @@
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.getAttribute("maks");
 %>
 <!DOCTYPE html>
 <html>
@@ -50,25 +52,37 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				</td>
 				<th>설명</th>
 				<td class="indent5">
-					<input type="text" name="description" id="description">
+					<input type="text" name="content" id="content">
 				</td>
 				<th>KEK 작번</th>
 				<td class="indent5">
-					<input type="text" name="partName">
+					<input type="text" name="kekNumber" id="kekNumber">
 				</td>
 				<th>KE 작번</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<input type="text" name="keNumber" id="keNumber">
 				</td>
 			</tr>
 			<tr>
 				<th>막종</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<select name="mak_name" id="mak_name" class="width-200">
+						<option value="">선택</option>
+						<%
+						for (Map<String, String> map : maks) {
+							String oid = map.get("key");
+							String name = map.get("value");
+						%>
+						<option value="<%=oid%>"><%=name%></option>
+						<%
+						}
+						%>
+					</select>
 				</td>
 				<th>작성자</th>
 				<td class="indent5">
 					<input type="text" name="creator" id="creator" data-multi="false">
+					<input type="hidden" name="creatorOid" id="creatorOid">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('creator')">
 				</td>
 				<th>작성일</th>
@@ -80,7 +94,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				</td>
 				<th>작업 내용</th>
 				<td class="indent5">
-					<input type="text" name="number">
+					<input type="text" name="description" id="description">
 				</td>
 			</tr>
 		</table>
@@ -345,9 +359,25 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/issue/list");
+				const name = document.getElementById("name").value;
+				const content = document.getElementById("content").value;
 				const description = document.getElementById("description").value;
+				const kekNumber = document.getElementById("kekNumber").value;
+				const keNumber = document.getElementById("keNumber").value;
+				const mak_name = document.getElementById("mak_name").value;
+				const creatorOid = document.getElementById("creatorOid").value;
+				const createdFrom = document.getElementById("createdFrom").value;
+				const createdTo = document.getElementById("createdTo").value;
 				const psize = document.getElementById("psize").value;
+				params.kekNumber = kekNumber;
+				params.keNumber = keNumber;
+				params.name = name;
+				params.content = content;
 				params.description = description;
+				params.mak_name = mak_name;
+				params.creatorOid = creatorOid;
+				params.createdFrom = createdFrom;
+				params.createdTo = createdTo;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -418,6 +448,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				finderUser("creator");
 				twindate("created");
 				selectbox("psize");
+				selectbox("mak_name");
 			});
 
 			document.addEventListener("keydown", function(event) {
