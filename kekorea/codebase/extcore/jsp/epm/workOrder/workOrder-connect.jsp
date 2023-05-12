@@ -106,17 +106,17 @@ String poid = (String) request.getAttribute("poid");
 		</td>
 		<th>기계 담당자</th>
 		<td class="indent5">
-			<input type="text" name="machine" id="machine">
+			<input type="text" name="machine" id="machine" data-multi="false">
 			<input type="hidden" name="machineOid" id="machineOid">
 		</td>
 		<th>전기 담당자</th>
 		<td class="indent5">
-			<input type="text" name="elec" id="elec">
+			<input type="text" name="elec" id="elec" data-multi="false">
 			<input type="hidden" name="elecOid" id="elecOid">
 		</td>
 		<th>SW 담당자</th>
 		<td class="indent5">
-			<input type="text" name="soft" id="soft">
+			<input type="text" name="soft" id="soft" data-multi="false">
 			<input type="hidden" name="softOid" id="softOid">
 		</td>
 	</tr>

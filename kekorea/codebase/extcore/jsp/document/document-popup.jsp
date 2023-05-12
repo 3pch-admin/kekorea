@@ -57,7 +57,7 @@ String method = (String) request.getAttribute("method");
 	<tr>
 		<th>작성자</th>
 		<td class="indent5">
-			<input type="text" name="creator" id="creator" class="width-200">
+			<input type="text" name="creator" id="creator" data-multi="false" class="width-200">
 			<input type="hidden" name="creatorOid" id="creatorOid">
 			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('creator')">
 		</td>
