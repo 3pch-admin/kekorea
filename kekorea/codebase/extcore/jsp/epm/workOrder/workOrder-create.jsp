@@ -1,3 +1,4 @@
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
 <%@page import="java.util.ArrayList"%>
@@ -5,8 +6,12 @@
 <%
 String workOrderType = (String) request.getAttribute("workOrderType");
 String toid = (String) request.getAttribute("toid");
+String poid = (String) request.getAttribute("poid");
+JSONArray data = (JSONArray) request.getAttribute("data");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
+<input type="hidden" name="toid" id="toid" value="<%=toid%>">
+<input type="hidden" name="poid" id="poid" value="<%=poid%>">
 <style type="text/css">
 .preView {
 	background-color: #caf4fd;
@@ -352,6 +357,8 @@ String toid = (String) request.getAttribute("toid");
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
 		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
 		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
+		const toid = document.getElementById("toid").value;
+		const poid = document.getElementById("poid").value;
 		const url = getCallUrl("/workOrder/create");
 
 		addRows.sort(function(a, b) {
@@ -404,6 +411,8 @@ String toid = (String) request.getAttribute("toid");
 		params.progress = Number(progress);
 		params.addRows = addRows;
 		params.addRows9 = addRows9;
+		params.poid = poid;
+		params.toid = toid;
 		params.secondarys = toArray("secondarys");
 		toRegister(params, addRows8);
 		openLayer();
@@ -416,6 +425,16 @@ String toid = (String) request.getAttribute("toid");
 				closeLayer();
 			}
 		})
+	}
+	
+	function auiBeforeRemoveRow(event) {
+		const item = event.items[0];
+		const oid = document.getElementById("poid").value;
+		if (item.oid === oid) {
+			alert("기준 작번은 제거 할 수 없습니다.");
+			return false;
+		}
+		return true;
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
@@ -461,6 +480,15 @@ String toid = (String) request.getAttribute("toid");
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
 
+		<%
+		if(data != null) {
+		%>
+		AUIGrid.bind(myGridID9, "beforeRemoveRow", auiBeforeRemoveRow);
+		AUIGrid.addRow(myGridID9, <%=data%>);
+		<%
+			}
+		%>
+		
 		// 진행율
 		const field = document.getElementById("progress");
 		field.addEventListener("input", function(event) {

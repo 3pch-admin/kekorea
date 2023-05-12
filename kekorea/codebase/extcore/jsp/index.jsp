@@ -7,7 +7,7 @@
 			</a>
 			<span class="loc">
 				<strong>홈</strong> >
-				<span id="subLoc">> 문서관리 > 문서목록</span>
+				<span id="subLoc">> 메인</span>
 			</span>
 		</div>
 		<ul class="nav navbar-top-links navbar-right">

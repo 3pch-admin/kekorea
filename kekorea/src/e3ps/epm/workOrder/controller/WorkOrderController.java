@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
@@ -24,6 +25,7 @@ import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.org.Department;
 import e3ps.org.People;
 import e3ps.project.Project;
+import e3ps.project.task.Task;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -85,7 +87,8 @@ public class WorkOrderController extends BaseController {
 
 	@Description(value = "작업지시서 생성 페이지")
 	@GetMapping(value = "/create")
-	public ModelAndView create(@RequestParam(required = false) String toid) throws Exception {
+	public ModelAndView create(@RequestParam(required = false) String poid, @RequestParam(required = false) String toid)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
 		People people = CommonUtils.sessionPeople();
 		Department department = people.getDepartment();
@@ -95,7 +98,27 @@ public class WorkOrderController extends BaseController {
 		} else if (department.getCode().equals("ELEC")) {
 			workOrderType = "전기";
 		}
-		model.addObject("toid", toid);
+		if (!StringUtils.isNull(poid) && !StringUtils.isNull(toid)) {
+			Project project = (Project) CommonUtils.getObject(poid);
+			ArrayList<Map<String, String>> data = new ArrayList<>();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("projectType_name", project.getProjectType().getName());
+			map.put("customer_name", project.getCustomer().getName());
+			map.put("mak_name", project.getMak().getName());
+			map.put("detail_name", project.getDetail().getName());
+			map.put("install_name", project.getInstall().getName());
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("description", project.getDescription());
+			data.add(map); // 기본 선택한 작번
+
+			Task task = (Task) CommonUtils.getObject(toid);
+			model.addObject("location", "/Default/프로젝트/" + task.getName());
+			model.addObject("toid", toid);
+			model.addObject("poid", poid);
+			model.addObject("data", JSONArray.fromObject(data));
+		}
 		model.addObject("workOrderType", workOrderType);
 		model.setViewName("popup:/epm/workOrder/workOrder-create");
 		return model;

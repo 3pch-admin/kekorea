@@ -67,7 +67,7 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 	}
 
 	@Override
-	public void delete(HashMap<String, List<NoticeDTO>> dataMap) throws Exception {
+	public void save(HashMap<String, List<NoticeDTO>> dataMap) throws Exception {
 		List<NoticeDTO> removeRows = dataMap.get("removeRows");
 		Transaction trs = new Transaction();
 		try {
@@ -138,5 +138,30 @@ public class StandardNoticeService extends StandardManager implements NoticeServ
 			if (trs != null)
 				trs.rollback();
 		}
+	}
+
+	@Override
+	public void delete(String oid) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			Notice notice = (Notice) CommonUtils.getObject(oid);
+
+			CommonContentHelper.manager.clear(notice);
+
+			PersistenceHelper.manager.delete(notice);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+
 	}
 }

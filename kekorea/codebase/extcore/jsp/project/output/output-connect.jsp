@@ -334,7 +334,7 @@ String poid = (String) request.getAttribute("poid");
 			alert(res.msg);
 			if (res.result) {
 				closeLayer();
-				opener.document.location.reload();
+				opener._reload();
 				self.close();
 			} else {
 				closeLayer();

@@ -11,7 +11,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -42,7 +42,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="creator" id="creator">
+					<input type="text" name="creator" id="creator" data-multi="false">
 					<input type="hidden" name="creatorOid" id="creatorOid">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('creator')">
 				</td>
@@ -137,21 +137,31 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						inline : true
 					},
 				}, {
-					dataField : "createdDate",
+					dataField : "createdDate_txt",
 					headerText : "작성일",
-					dataType : "date",
-					formatString : "yyyy-mm-dd",
-					width : 100,
+					dataType : "string",
+					width : 150,
 					filter : {
 						showIcon : true,
 						inline : true,
-						displayFormatValues : true
 					},
 				}, {
 					dataField : "primary",
+					headerText : "주 첨부파일",
+					dataType : "string",
+					width : 100,
+					renderer : {
+						type : "TemplateRenderer"
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
+				}, {
+					dataField : "secondary",
 					headerText : "첨부파일",
 					dataType : "string",
-					width : 80,
+					width : 150,
 					renderer : {
 						type : "TemplateRenderer"
 					},
@@ -191,7 +201,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function save() {
-				const url = getCallUrl("/notice/delete");
+				const url = getCallUrl("/notice/save");
 				const params = new Object();
 				const removeRows = AUIGrid.getRemovedItems(myGridID);
 				if (removeRows.length === 0) {
@@ -210,6 +220,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					parent.closeLayer();
 					if (data.result) {
 						loadGridData();
+					} else {
+						parent.closeLayer();
 					}
 				});
 			}

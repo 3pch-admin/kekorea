@@ -27,12 +27,14 @@ import e3ps.admin.configSheetCode.service.ConfigSheetCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.korea.configSheet.ConfigSheetProjectLink;
 import e3ps.korea.configSheet.beans.ConfigSheetDTO;
 import e3ps.korea.configSheet.service.ConfigSheetHelper;
 import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
+import e3ps.project.task.Task;
 import e3ps.project.template.service.TemplateHelper;
 import net.sf.json.JSONArray;
 import wt.fc.PersistenceHelper;
@@ -74,10 +76,33 @@ public class ConfigSheetController extends BaseController {
 
 	@Description(value = "CONFIG SHEET 등록 페이지")
 	@GetMapping(value = "/create")
-	public ModelAndView create() throws Exception {
+	public ModelAndView create(@RequestParam(required = false) String poid, @RequestParam(required = false) String toid)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
 		JSONArray categorys = ConfigSheetCodeHelper.manager.parseJson("CATEGORY");
 		JSONArray baseData = ConfigSheetHelper.manager.loadBaseGridData();
+		if (!StringUtils.isNull(poid) && !StringUtils.isNull(toid)) {
+			Project project = (Project) CommonUtils.getObject(poid);
+			ArrayList<Map<String, String>> data = new ArrayList<>();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("projectType_name", project.getProjectType().getName());
+			map.put("customer_name", project.getCustomer().getName());
+			map.put("mak_name", project.getMak().getName());
+			map.put("detail_name", project.getDetail().getName());
+			map.put("install_name", project.getInstall().getName());
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("description", project.getDescription());
+			data.add(map); // 기본 선택한 작번
+
+			Task task = (Task) CommonUtils.getObject(toid);
+			model.addObject("location", "/Default/프로젝트/" + task.getName());
+			model.addObject("toid", toid);
+			model.addObject("poid", poid);
+			model.addObject("data", JSONArray.fromObject(data));
+			model.addObject("kekNumber", project.getKekNumber());
+		}
 		model.addObject("baseData", baseData);
 		model.addObject("categorys", categorys);
 		model.setViewName("popup:/korea/configSheet/configSheet-create");

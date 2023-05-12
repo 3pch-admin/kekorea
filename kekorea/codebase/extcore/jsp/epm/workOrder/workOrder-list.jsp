@@ -219,19 +219,22 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				}, {
 				dataField:"oid",
 				width : 100,
-				},{
-					dataField : "version",
-					headerText : "버전",
-					dataType : "string",
-					width : 80,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-					cellMerge : true,
-					mergeRef : "oid",
-					mergePolicy : "restrict"
-				}, {
+				},
+// 				{
+// 					visible : false,
+// 					dataField : "version",
+// 					headerText : "버전",
+// 					dataType : "string",
+// 					width : 80,
+// 					filter : {
+// 						showIcon : true,
+// 						inline : true
+// 					},
+// 					cellMerge : true,
+// 					mergeRef : "oid",
+// 					mergePolicy : "restrict"
+// 				}, 
+				{
 					dataField : "latest",
 					headerText : "최신버전",
 					dataType : "boolean",

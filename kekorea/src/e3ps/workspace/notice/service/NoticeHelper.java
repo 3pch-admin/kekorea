@@ -72,7 +72,7 @@ public class NoticeHelper {
 			Map<String, String> map = new HashMap<>();
 			map.put("name", notice.getName());
 			map.put("oid", notice.getPersistInfo().getObjectIdentifier().getStringValue());
-			map.put("createdDate_txt", CommonUtils.getPersistableTime(notice.getCreateTimestamp()));
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(notice.getCreateTimestamp(), 16));
 			list.add(map);
 		}
 		return JSONArray.fromObject(list);

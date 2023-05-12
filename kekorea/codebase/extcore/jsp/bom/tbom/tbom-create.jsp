@@ -1,9 +1,17 @@
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.org.Department"%>
 <%@page import="e3ps.doc.service.DocumentHelper"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+String toid = (String) request.getAttribute("toid");
+String poid = (String) request.getAttribute("poid");
+JSONArray data = (JSONArray) request.getAttribute("data");
+%>
 <!-- AUIGrid -->
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
+<input type="hidden" name="toid" id="toid" value="<%=toid%>">
+<input type="hidden" name="poid" id="poid" value="<%=poid%>">
 <table class="button-table">
 	<tr>
 		<td class="left">
@@ -283,6 +291,8 @@
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
 		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
 		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
+		const toid = document.getElementById("toid").value;
+		const poid = document.getElementById("poid").value;
 
 		addRows.sort(function(a, b) {
 			return a.sort - b.sort;
@@ -344,6 +354,8 @@
 		params.addRows = addRows;
 		params.addRows9 = addRows9;
 		params.secondarys = toArray("secondarys");
+		params.toid = toid;
+		params.poid = poid;
 		toRegister(params, addRows8);
 		openLayer();
 		call(url, params, function(data) {
@@ -425,8 +437,26 @@
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
 		AUIGrid.resize(myGridID);
+		<%
+		if(data != null) {
+		%>
+		AUIGrid.bind(myGridID9, "beforeRemoveRow", auiBeforeRemoveRow);
+		AUIGrid.addRow(myGridID9, <%=data%>);
+		<%
+			}
+		%>
 	})
 
+	function auiBeforeRemoveRow(event) {
+		const item = event.items[0];
+		const oid = document.getElementById("poid").value;
+		if (item.oid === oid) {
+			alert("기준 작번은 제거 할 수 없습니다.");
+			return false;
+		}
+		return true;
+	}
+	
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);

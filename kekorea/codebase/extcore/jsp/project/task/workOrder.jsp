@@ -85,7 +85,7 @@ String toid = (String) request.getParameter("toid");
 	function create() {
 		const toid = document.getElementById("oid").value;
 		const poid = document.getElementById("poid").value;
-		const url = getCallUrl("/configSheet/create?toid=" + toid + "&poid=" + poid);
+		const url = getCallUrl("/workOrder/create?toid=" + toid + "&poid=" + poid);
 		popup(url);
 	}
 

@@ -28,7 +28,9 @@ JSONArray departments = JSONArray.fromObject(list);
 	</colgroup>
 	<tr>
 		<th>부서</th>
-		<td class="indent5" colspan="5"><%=OrgHelper.DEPARTMENT_ROOT%></td>
+		<td class="indent5" colspan="5">
+			<span id="departmentText"><%=OrgHelper.DEPARTMENT_ROOT%></span>
+		</td>
 	</tr>
 	<tr>
 		<th>이름</th>

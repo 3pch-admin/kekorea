@@ -19,7 +19,9 @@ import e3ps.bom.tbom.dto.TBOMDTO;
 import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.project.Project;
+import e3ps.project.task.Task;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -58,8 +60,30 @@ public class TBOMController extends BaseController {
 
 	@Description(value = "T-BOM 등록")
 	@GetMapping(value = "/create")
-	public ModelAndView create() throws Exception {
+	public ModelAndView create(@RequestParam(required = false) String poid, @RequestParam(required = false) String toid)
+			throws Exception {
 		ModelAndView model = new ModelAndView();
+		if (!StringUtils.isNull(poid) && !StringUtils.isNull(toid)) {
+			Project project = (Project) CommonUtils.getObject(poid);
+			ArrayList<Map<String, String>> data = new ArrayList<>();
+			Map<String, String> map = new HashMap<>();
+			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("projectType_name", project.getProjectType().getName());
+			map.put("customer_name", project.getCustomer().getName());
+			map.put("mak_name", project.getMak().getName());
+			map.put("detail_name", project.getDetail().getName());
+			map.put("install_name", project.getInstall().getName());
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("description", project.getDescription());
+			data.add(map); // 기본 선택한 작번
+
+			Task task = (Task) CommonUtils.getObject(toid);
+			model.addObject("location", "/Default/프로젝트/" + task.getName());
+			model.addObject("toid", toid);
+			model.addObject("poid", poid);
+			model.addObject("data", JSONArray.fromObject(data));
+		}
 		model.setViewName("popup:/bom/tbom/tbom-create");
 		return model;
 	}
@@ -139,7 +163,7 @@ public class TBOMController extends BaseController {
 	@Description(value = "T-BOM 태스크 연결 제거 함수")
 	@ResponseBody
 	@PostMapping(value = "/disconnect")
-	public Map<String, Object> disconnect(@RequestBody Map<String,Object> params) throws Exception {
+	public Map<String, Object> disconnect(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			TBOMHelper.service.disconnect(params);

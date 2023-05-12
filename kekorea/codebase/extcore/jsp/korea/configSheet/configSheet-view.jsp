@@ -166,6 +166,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				dataType : "string",
 				width : 250,
 				cellMerge : true,
+				cellColMerge: true, // 셀 가로 병합 실행
+				cellColSpan: 2, // 셀 가로 병합 대상은 6개로 설정
 			}, {
 				dataField : "item_name",
 				headerText : "ITEM",
@@ -183,18 +185,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			%>
 			{
 				dataField : "<%=dataFields%>",
-				<%
-					if(i == 0) {
-				%>
-				headerText : "사양",
-				<%
-					} else {
-				%>
-				headerText : "사양<%=index%>",
-				<%
-					index++;
-					}
-				%>
+				headerText : "1",
 				dataType : "string",
 				width : 250,
 				renderer : {
@@ -208,6 +199,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				dataField : "note",
 				headerText : "NOTE",
 				dataType : "string",
+				width : 250
 			}, {
 				dataField : "apply",
 				headerText : "APPLY",

@@ -549,7 +549,7 @@ span.text {
 }
 
 span.inactive {
-	z-index: 99999;
+/* 	z-index: 99999; */
 	position: relative;
 	text-align: center !important;
 	height: 23px;
@@ -560,7 +560,7 @@ span.inactive {
 }
 
 span.active {
-	z-index: 99999;
+/* 	z-index: 99999; */
 	position: relative;
 	text-align: center !important;
 	height: 23px;

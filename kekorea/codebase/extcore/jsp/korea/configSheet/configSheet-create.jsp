@@ -7,8 +7,14 @@
 JSONArray categorys = (JSONArray) request.getAttribute("categorys");
 JSONArray baseData = (JSONArray) request.getAttribute("baseData");
 String oid = (String) request.getAttribute("oid");
+String toid = (String) request.getAttribute("toid");
+String poid = (String) request.getAttribute("poid");
+JSONArray data = (JSONArray) request.getAttribute("data");
+String kekNumber = (String) request.getAttribute("kekNumber");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
+<input type="hidden" name="toid" id="toid" value="<%=toid%>">
+<input type="hidden" name="poid" id="poid" value="<%=poid%>">
 <style type="text/css">
 .row1 {
 	background-color: #99CCFF;
@@ -555,6 +561,8 @@ ul, ol {
 		const addRows = AUIGrid.getGridData(myGridID);
 		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
 		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
+		const toid = document.getElementById("toid").value;
+		const poid = document.getElementById("poid").value;
 
 		addRows.sort(function(a, b) {
 			return a.sort - b.sort;
@@ -565,6 +573,8 @@ ul, ol {
 		params.addRows = addRows;
 		params.addRows9 = addRows9;
 		params.secondarys = toArray("secondarys");
+		params.toid = toid;
+		params.poid = poid;
 		toRegister(params, addRows8);
 		openLayer();
 		call(url, params, function(data) {
@@ -576,6 +586,16 @@ ul, ol {
 				closeLayer();
 			}
 		})
+	}
+	
+	function auiBeforeRemoveRow(event) {
+		const item = event.items[0];
+		const oid = document.getElementById("poid").value;
+		if (item.oid === oid) {
+			alert("기준 작번은 제거 할 수 없습니다.");
+			return false;
+		}
+		return true;
 	}
 
 	document.getElementById("cancel").addEventListener("click", function(event) {
@@ -631,6 +651,15 @@ ul, ol {
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
 		AUIGrid.resize(myGridID);
+		
+		<%
+		if(data != null) {
+		%>
+		AUIGrid.bind(myGridID9, "beforeRemoveRow", auiBeforeRemoveRow);
+		AUIGrid.addRow(myGridID9, <%=data%>);
+		<%
+			}
+		%>
 	});
 
 	window.addEventListener("resize", function() {

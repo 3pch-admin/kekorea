@@ -85,9 +85,9 @@ public class NoticeController extends BaseController {
 	}
 
 	@Description(value = "공지사항 그리드 저장 - 관리자용")
-	@PostMapping(value = "/delete")
+	@PostMapping(value = "/save")
 	@ResponseBody
-	public Map<String, Object> delete(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
+	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
 			throws Exception {
 		ArrayList<LinkedHashMap<String, Object>> removeRows = params.get("removeRows");
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -104,7 +104,7 @@ public class NoticeController extends BaseController {
 			HashMap<String, List<NoticeDTO>> dataMap = new HashMap<>();
 			dataMap.put("removeRows", removeRow); // 삭제행
 
-			NoticeHelper.service.delete(dataMap);
+			NoticeHelper.service.save(dataMap);
 			result.put("result", SUCCESS);
 			result.put("msg", SAVE_MSG);
 		} catch (Exception e) {
@@ -119,9 +119,11 @@ public class NoticeController extends BaseController {
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
 		Notice notice = (Notice) CommonUtils.getObject(oid);
 		NoticeDTO dto = new NoticeDTO(notice);
 		model.addObject("dto", dto);
+		model.addObject("isAdmin", isAdmin);
 		model.setViewName("popup:/workspace/notice/notice-view");
 		return model;
 	}
@@ -146,6 +148,23 @@ public class NoticeController extends BaseController {
 			NoticeHelper.service.modify(dto);
 			result.put("result", SUCCESS);
 			result.put("msg", MODIFY_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+		}
+		return result;
+	}
+
+	@Description(value = "공지사항 삭제")
+	@ResponseBody
+	@GetMapping(value = "/delete")
+	public Map<String, Object> delete(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			NoticeHelper.service.delete(oid);
+			result.put("msg", DELETE_MSG);
+			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);

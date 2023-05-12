@@ -153,6 +153,33 @@ public class ConfigSheetHelper {
 	public JSONArray loadBaseGridData(String oid) throws Exception {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
+
+		QueryResult rs = PersistenceHelper.manager.navigate(configSheet, "project", ConfigSheetProjectLink.class);
+		Project project = null;
+		if (rs.hasMoreElements()) {
+			project = (Project) rs.nextElement();
+
+			Map<String, Object> makList = new HashMap<>();
+			Map<String, Object> customerList = new HashMap<>();
+			Map<String, Object> keList = new HashMap<>();
+			Map<String, Object> pdateList = new HashMap<>();
+
+			makList.put("category_name", "막종 / 막종상세");
+			customerList.put("category_name", "고객사 / 설치장소");
+			keList.put("category_name", "KE 작번");
+			pdateList.put("category_name", "발행일");
+
+			makList.put("item_name", "막종 / 막종상세");
+			customerList.put("item_name", "고객사 / 설치장소");
+			keList.put("item_name", "KE 작번");
+			pdateList.put("item_name", "발행일");
+
+			list.add(makList);
+			list.add(customerList);
+			list.add(keList);
+			list.add(pdateList);
+		}
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ConfigSheet.class, true);
 		int idx_link = query.appendClassList(ConfigSheetVariableLink.class, true);
@@ -162,6 +189,7 @@ public class ConfigSheetHelper {
 				configSheet);
 		QuerySpecUtils.toOrderBy(query, idx_link, ConfigSheetVariableLink.class, ConfigSheetVariableLink.SORT, false);
 		QueryResult result = PersistenceHelper.manager.find(query);
+
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			ConfigSheetVariableLink link = (ConfigSheetVariableLink) obj[1];
@@ -186,6 +214,7 @@ public class ConfigSheetHelper {
 			map.put("sort", sort);
 			list.add(map);
 		}
+
 		return JSONArray.fromObject(list);
 	}
 

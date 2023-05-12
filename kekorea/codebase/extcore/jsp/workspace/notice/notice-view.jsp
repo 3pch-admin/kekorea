@@ -11,6 +11,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
+boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
@@ -23,6 +24,13 @@ NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 			</div>
 		</td>
 		<td class="right">
+			<%
+			if (isAdmin) {
+			%>
+			<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
+			<%
+			}
+			%>
 			<input type="button" value="수정" title="수정" class="green" onclick="modify();">
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
@@ -30,10 +38,10 @@ NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 </table>
 <table class="view-table">
 	<colgroup>
-		<col width="150">
-		<col width="300">
-		<col width="150">
-		<col width="300">
+		<col width="130">
+		<col width="500">
+		<col width="130">
+		<col width="500">
 	</colgroup>
 	<tr>
 		<th class="lb">공지사항 제목</th>
@@ -69,8 +77,25 @@ NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 	</tr>
 </table>
 <script type="text/javascript">
-	document.addEventListener("DOMContentLoaded", function() {
-	})
+	function _delete() {
+
+		if (!confirm("삭제 하시겠습니까?")) {
+			return false;
+		}
+
+		const oid = document.getElementById("oid").value;
+		const url = getCallUrl("/notice/delete?oid=" + oid);
+		openLayer();
+		call(url, null, function(data) {
+			alert(data.msg);
+			if (data.result) {
+				opener.loadGridData();
+				self.close();
+			} else {
+				closeLayer();
+			}
+		}, "GET");
+	}
 
 	function modify() {
 		const oid = document.getElementById("oid").value;
