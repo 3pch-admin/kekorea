@@ -241,20 +241,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/notice/list");
-				const name = document.getElementById("name").value;
-				const description = document.getElementById("description").value;
-				const creatorOid = document.getElementById("creatorOid").value;
-				const createdFrom = document.getElementById("createdFrom").value;
-				const createdTo = document.getElementById("createdTo").value;
-				const psize = document.getElementById("psize").value;
-				params.name = name;
-				params.description = description;
-				params.creatorOid = creatorOid;
-				params.createdFrom = createdFrom;
-				params.createdTo = createdTo;
-				params.psize = psize;
+				const field = [ "name", "description", "creatorOid", "createdFrom", "createdTo", "psize" ];
+				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -278,7 +268,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
-				document.getElementById("name").focus();
+				toFocus("name");
 				const columns = loadColumnLayout("notice-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

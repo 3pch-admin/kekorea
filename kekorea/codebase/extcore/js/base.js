@@ -283,3 +283,11 @@ function toFocus(id) {
 function toValue(id) {
 	return document.getElementById(id).value;
 }
+
+// TABLE ID 값 한번에 처리
+function toField(params, arr) {
+	for (let i = 0; i < arr.length; i++) {
+		params[arr[i]] = document.getElementById(arr[i]).value;
+	}
+	return params;
+}
