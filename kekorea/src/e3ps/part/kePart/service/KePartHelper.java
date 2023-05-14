@@ -36,11 +36,36 @@ public class KePartHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<>();
 		ArrayList<KePartDTO> list = new ArrayList<>();
+		String lotNo = (String) params.get("lotNo");
+		String keNumber = (String) params.get("keNumber");
+		String name = (String) params.get("name");
+		String code = (String) params.get("code");
+		String model = (String) params.get("model");
+		String state = (String) params.get("state");
+		String creatorOid = (String) params.get("creatorOid");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
+		String modifierOid = (String) params.get("modifierOid");
+		String modifiedFrom = (String) params.get("modifiedFrom");
+		String modifiedTo = (String) params.get("modifiedTo");
 		boolean latest = (boolean) params.get("latest");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(KePart.class, true);
 		int idx_m = query.appendClassList(KePartMaster.class, false);
+
+		QuerySpecUtils.toLikeAnd(query, idx_m, KePartMaster.class, KePartMaster.LOT_NO, lotNo);
+		QuerySpecUtils.toLikeAnd(query, idx_m, KePartMaster.class, KePartMaster.KE_NUMBER, keNumber);
+		QuerySpecUtils.toLikeAnd(query, idx_m, KePartMaster.class, KePartMaster.NAME, name);
+		QuerySpecUtils.toEqualsAnd(query, idx, KePart.class, KePart.STATE, state);
+		QuerySpecUtils.toLikeAnd(query, idx_m, KePartMaster.class, KePartMaster.MODEL, model);
+		QuerySpecUtils.toLikeAnd(query, idx_m, KePartMaster.class, KePartMaster.CODE, code);
+		QuerySpecUtils.toCreator(query, idx_m, KePartMaster.class, creatorOid);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx_m, KePartMaster.class, KePartMaster.CREATE_TIMESTAMP,
+				createdFrom, createdTo);
+		QuerySpecUtils.toCreator(query, idx, KePart.class, modifierOid);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, KePart.class, KePart.CREATE_TIMESTAMP, modifiedFrom,
+				modifiedTo);
 
 		QuerySpecUtils.toInnerJoin(query, KePart.class, KePartMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_m);

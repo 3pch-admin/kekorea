@@ -59,6 +59,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<td class="indent5">
 					<select name="state" id="state" class="width-200">
 						<option value="">선택</option>
+						<option value="INWORK">작업 중</option>
+						<option value="UNDERAPPROVAL">승인 중</option>
+						<option value="APPROVED">승인됨</option>
+						<option value="RETURN">반려됨</option>
 					</select>
 				</td>
 			</tr>
@@ -289,7 +293,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-// 				loadGridData();
+				// 				loadGridData();
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
@@ -316,6 +320,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				params.name = name;
 				params.number = number;
 				params.oid = oid;
+				params.state = state;
 				params.description = description;
 				params.creatorOid = creatorOid;
 				params.createdFrom = createdFrom;
@@ -339,6 +344,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				toFocus("name");
 				const columns = loadColumnLayout("document-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

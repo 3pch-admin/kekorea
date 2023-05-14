@@ -40,6 +40,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<col width="500">
 			</colgroup>
 			<tr>
+				<th>도면일람표 제목</th>
+				<td class="indent5">
+					<input type="text" name="name" id="name" class="width-200">
+				</td>
 				<th>KEK 작번</th>
 				<td class="indent5">
 					<input type="text" name="kekNumber" id="kekNumber">
@@ -55,28 +59,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<input type="text" name="pdateTo" id="pdateTo" class="width-100">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('pdateFrom', 'pdateTo')">
 				</td>
-				<th>USER ID</th>
-				<td class="indent5">
-					<input type="text" name="userId" id="userId">
-				</td>
 			</tr>
 			<tr>
-				<th>작번 상태</th>
-				<td class="indent5">
-					<select name="kekState" id="kekState" class="width-200">
-						<option value="">선택</option>
-						<option value="준비">준비</option>
-						<option value="설계중">설계중</option>
-						<option value="설계완료">설계완료</option>
-						<option value="작업완료">작업완료</option>
-						<option value="중단됨">중단됨</option>
-						<option value="취소">취소</option>
-					</select>
-				</td>
-				<th>모델</th>
-				<td class="indent5">
-					<input type="text" name="model" id="model">
-				</td>
 				<th>거래처</th>
 				<td class="indent5">
 					<select name="customer_name" id="customer_name" class="width-200">
@@ -93,6 +77,27 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<th>설치장소</th>
 				<td class="indent5">
 					<select name="install_name" id="install_name" class="width-200">
+						<option value="">선택</option>
+					</select>
+				</td>
+				<th>막종</th>
+				<td class="indent5">
+					<select name="mak_name" id="mak_name" class="width-200">
+						<option value="">선택</option>
+						<%
+						for (Map<String, String> map : maks) {
+							String oid = map.get("key");
+							String name = map.get("value");
+						%>
+						<option value="<%=oid%>"><%=name%></option>
+						<%
+						}
+						%>
+					</select>
+				</td>
+				<th>막종상세</th>
+				<td class="indent5">
+					<select name="detail_name" id="detail_name" class="width-200">
 						<option value="">선택</option>
 					</select>
 				</td>
@@ -131,27 +136,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				</td>
 			</tr>
 			<tr>
-				<th>막종</th>
-				<td class="indent5">
-					<select name="mak_name" id="mak_name" class="width-200">
-						<option value="">선택</option>
-						<%
-						for (Map<String, String> map : maks) {
-							String oid = map.get("key");
-							String name = map.get("value");
-						%>
-						<option value="<%=oid%>"><%=name%></option>
-						<%
-						}
-						%>
-					</select>
-				</td>
-				<th>막종상세</th>
-				<td class="indent5">
-					<select name="detail_name" id="detail_name" class="width-200">
-						<option value="">선택</option>
-					</select>
-				</td>
+
 				<th>버전</th>
 				<td>
 					&nbsp;
@@ -172,6 +157,19 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 							</label>
 						</div>
 					</div>
+				</td>
+				<th>작성자</th>
+				<td class="indent5">
+					<input type="text" name="creator" id="creator" data-multi="false">
+					<input type="hidden" name="creatorOid" id="creatorOid">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('creator')">
+				</td>
+				<th>작성일</th>
+				<td class="indent5">
+					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+					~
+					<input type="text" name="createdTo" id="createdTo" class="width-100">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('createdFrom', 'createdTo')">
 				</td>
 				<th>작업 내용</th>
 				<td colspan="3" class="indent5">
@@ -215,26 +213,25 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
-// 					cellMerge : true,
-				}, {
-				dataField:"oid",
-				width : 100,
+				// 					cellMerge : true,
 				},
-// 				{
-// 					visible : false,
-// 					dataField : "version",
-// 					headerText : "버전",
-// 					dataType : "string",
-// 					width : 80,
-// 					filter : {
-// 						showIcon : true,
-// 						inline : true
-// 					},
-// 					cellMerge : true,
-// 					mergeRef : "oid",
-// 					mergePolicy : "restrict"
-// 				}, 
+				// 				{
+				// 				dataField:"oid",
+				// 				width : 100,
+				// 				},
 				{
+					dataField : "version",
+					headerText : "버전",
+					dataType : "string",
+					width : 80,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+					cellMerge : true,
+					mergeRef : "oid",
+					mergePolicy : "restrict"
+				}, {
 					dataField : "latest",
 					headerText : "최신버전",
 					dataType : "boolean",
@@ -351,8 +348,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							const oid = item.oid;
-							alert(oid);
+							const oid = item.poid;
+							const url = getCallUrl("/project/info?oid=" + oid);
+							popup(url);
 						}
 					},
 					filter : {
@@ -368,8 +366,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							const oid = item.oid;
-							alert(oid);
+							const oid = item.poid;
+							const url = getCallUrl("/project/info?oid=" + oid);
+							popup(url);
 						}
 					},
 					filter : {
@@ -500,9 +499,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const keNumber = document.getElementById("keNumber").value;
 				const pdateFrom = document.getElementById("pdateFrom").value;
 				const pdateTo = document.getElementById("pdateTo").value;
-				const userId = document.getElementById("userId").value;
-				const kekState = document.getElementById("kekState").value;
-				const model = document.getElementById("model").value;
 				const customer_name = document.getElementById("customer_name").value;
 				const install_name = document.getElementById("install_name").value;
 				const projectType = document.getElementById("projectType").value;
@@ -513,14 +509,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				const detail_name = document.getElementById("detail_name").value;
 				const description = document.getElementById("description").value;
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
+				const creatorOid = document.getElementById("creatorOid").value;
+				const createdFrom = document.getElementById("createdFrom").value;
+				const createdTo = document.getElementById("createdTo").value;
 				const psize = document.getElementById("psize").value;
 				params.kekNumber = kekNumber;
 				params.keNumber = keNumber;
 				params.pdateFrom = pdateFrom;
 				params.pdateTo = pdateTo;
-				params.userId = userId;
-				params.kekState = kekState;
-				params.model = model;
 				params.customer_name = customer_name;
 				params.install_name = install_name;
 				params.projectType = projectType;
@@ -531,6 +527,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				params.detail_name = detail_name;
 				params.description = description;
 				params.latest = latest;
+				params.creatorOid = creatorOid;
+				params.createdFrom = createdFrom;
+				params.createdTo = createdTo;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -555,6 +554,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				toFocus("name");
 				const columns = loadColumnLayout("workOrder-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
@@ -564,7 +564,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 				twindate("pdate");
-				selectbox("kekState");
 				$("#customer_name").bindSelect({
 					onchange : function() {
 						const oid = this.optionValue;
@@ -585,6 +584,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				finderUser("machine");
 				finderUser("elec");
 				finderUser("soft");
+				finderUser("creator");
+				twindate("created");
 				$("#mak_name").bindSelect({
 					onchange : function() {
 						const oid = this.optionValue;

@@ -106,13 +106,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			<tr>
 				<th>상태</th>
 				<td class="indent5">
-					<select name="stare" id="state" class="width-200">
+					<select name="state" id="state" class="width-200">
 						<option value="">선택</option>
-						<option value="작업 중">작업 중</option>
-						<option value="승인 중">승인 중</option>
-						<option value="승인됨">승인됨</option>
-						<option value="반려됨">반려됨</option>
-						<option value="폐기">폐기</option>
+						<option value="INWORK">작업 중</option>
+						<option value="UNDERAPPROVAL">승인 중</option>
+						<option value="APPROVED">승인됨</option>
+						<option value="RETURN">반려됨</option>
 					</select>
 				</td>
 				<th>버전</th>
@@ -372,7 +371,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				};
 
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-// 				loadGridData();
+				// 				loadGridData();
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
@@ -447,6 +446,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				toFocus("name");
 				const columns = loadColumnLayout("part-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

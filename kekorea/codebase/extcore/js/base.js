@@ -274,3 +274,12 @@ function clearFromTo(from, to) {
 	document.getElementById(to).value = "";
 }
 
+// 포커스
+function toFocus(id) {
+	document.getElementById(id).focus();
+}
+
+// ID 태그 값
+function toValue(id) {
+	return document.getElementById(id).value;
+}

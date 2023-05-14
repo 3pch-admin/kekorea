@@ -366,6 +366,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				const psize = document.getElementById("psize").value;
 				const type = document.getElementById("type").value;
+				const mak = document.getElementById("mak").value;
 				params.oid = oid;
 				params.name = name;
 				params.number = number;
@@ -380,6 +381,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 				params.latest = latest;
 				params.psize = psize;
 				params.type = type;
+				params.mak = mak;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -412,7 +414,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 
 			function toggle() {
 				const iframe = parent.document.getElementById("content");
-				parent.openLayer();
+// 				parent.openLayer();
 				iframe.src = getCallUrl("/output/list");
 			}
 

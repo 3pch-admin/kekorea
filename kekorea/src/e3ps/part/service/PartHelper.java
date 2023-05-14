@@ -132,7 +132,7 @@ public class PartHelper {
 		QuerySpecUtils.toTimeGreaterAndLess(query, idx, WTPart.class, WTPart.CREATE_TIMESTAMP, createdFrom, createdTo);
 		QuerySpecUtils.toTimeGreaterAndLess(query, idx, WTPart.class, WTPart.MODIFY_TIMESTAMP, modifiedFrom,
 				modifiedTo);
-		QuerySpecUtils.toLikeAnd(query, idx, WTPart.class, WTPart.LIFE_CYCLE_STATE, state);
+		QuerySpecUtils.toState(query, idx, WTPart.class, state);
 
 		// 국제 전용 IBA 프로이 오토 캐드 검색용
 		QuerySpecUtils.queryLikeNumber(query, WTPart.class, idx, number);

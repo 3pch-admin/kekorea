@@ -40,7 +40,6 @@ import e3ps.epm.workOrder.WorkOrderProjectLink;
 import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
-import e3ps.project.template.Template;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.epm.EPMDocument;
@@ -79,9 +78,6 @@ public class WorkOrderHelper {
 		String keNumber = (String) params.get("keNumber");
 		String pdateFrom = (String) params.get("pdateFrom");
 		String pdateTo = (String) params.get("pdateTo");
-		String userId = (String) params.get("userId");
-		String kekState = (String) params.get("kekState");
-		String model = (String) params.get("model");
 		String customer_name = (String) params.get("customer_name");
 		String install_name = (String) params.get("install_name");
 		String projectType = (String) params.get("projectType");
@@ -90,8 +86,10 @@ public class WorkOrderHelper {
 		String softOid = (String) params.get("softOid");
 		String mak_name = (String) params.get("mak_name");
 		String detail_name = (String) params.get("detail_name");
-		String template = (String) params.get("template");
 		String description = (String) params.get("description");
+		String creatorOid = (String) params.get("creatorOid");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
 		boolean latest = (boolean) params.get("latest");
 
 		QuerySpec query = new QuerySpec();
@@ -108,6 +106,11 @@ public class WorkOrderHelper {
 			QuerySpecUtils.toBooleanOr(query, idx, WorkOrder.class, WorkOrder.LATEST, false);
 			query.appendCloseParen();
 		}
+
+		QuerySpecUtils.toCreator(query, idx, WorkOrder.class, creatorOid);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, WorkOrder.class, WorkOrder.CREATE_TIMESTAMP, createdFrom,
+				createdTo);
+
 		QuerySpecUtils.toOrderBy(query, idx, WorkOrder.class, WorkOrder.CREATE_TIMESTAMP, true);
 		QuerySpecUtils.toOrderBy(query, idx, WorkOrder.class, WorkOrder.NAME, false);
 		PageQueryUtils pager = new PageQueryUtils(params, query);
@@ -132,9 +135,6 @@ public class WorkOrderHelper {
 			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KEK_NUMBER, kekNumber);
 			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KE_NUMBER, keNumber);
 			QuerySpecUtils.toTimeGreaterAndLess(_query, _idx_p, Project.class, Project.P_DATE, pdateFrom, pdateTo);
-			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.USER_ID, userId);
-			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KEK_STATE, kekState);
-			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.MODEL, model);
 
 			if (!StringUtils.isNull(customer_name)) {
 				CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer_name);
@@ -168,8 +168,8 @@ public class WorkOrderHelper {
 			}
 
 			if (!StringUtils.isNull(elecOid)) {
-				WTUser elec = (WTUser) CommonUtils.getObject(machineOid);
-				CommonCode elecCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+				WTUser elec = (WTUser) CommonUtils.getObject(elecOid);
+				CommonCode elecCode = CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE");
 				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
 				int idx_u = _query.appendClassList(WTUser.class, false);
 
@@ -183,8 +183,8 @@ public class WorkOrderHelper {
 			}
 
 			if (!StringUtils.isNull(softOid)) {
-				WTUser soft = (WTUser) CommonUtils.getObject(machineOid);
-				CommonCode softCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+				WTUser soft = (WTUser) CommonUtils.getObject(softOid);
+				CommonCode softCode = CommonCodeHelper.manager.getCommonCode("SOFT", "USER_TYPE");
 				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
 				int idx_u = _query.appendClassList(WTUser.class, false);
 
@@ -205,11 +205,6 @@ public class WorkOrderHelper {
 			if (!StringUtils.isNull(detail_name)) {
 				CommonCode detailCode = (CommonCode) CommonUtils.getObject(detail_name);
 				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "detailReference.key.id", detailCode);
-			}
-
-			if (!StringUtils.isNull(template)) {
-				Template t = (Template) CommonUtils.getObject(template);
-				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "templateReference.key.id", t);
 			}
 
 			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.DESCRIPTION, description);

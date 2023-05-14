@@ -356,6 +356,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 				const state = document.getElementById("state").value;
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				const psize = document.getElementById("psize").value;
+				const mak = document.getElementById("mak").value;
 				const type = document.getElementById("type").value;
 				params.oid = oid;
 				params.name = name;
@@ -368,6 +369,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 				params.createdFrom = createdFrom;
 				params.createdTo = createdTo;
 				params.state = state
+				params.mak = mak;
 				params.latest = latest;
 				params.psize = psize;
 				params.type = type;
@@ -388,7 +390,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
-				document.getElementById("name").focus();
+				toFocus("name");
 				const columns = loadColumnLayout("document-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
@@ -408,7 +410,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 
 			function toggle() {
 				const iframe = parent.document.getElementById("content");
-				parent.openLayer();
+// 				parent.openLayer();
 				iframe.src = getCallUrl("/output/old");
 			}
 

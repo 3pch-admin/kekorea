@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import e3ps.admin.commonCode.CommonCode;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.FolderUtils;
 import e3ps.common.util.PageQueryUtils;
@@ -62,6 +63,7 @@ public class OutputHelper {
 		boolean latest = (boolean) params.get("latest");
 		String oid = (String) params.get("oid"); // 폴더 OID
 		String type = (String) params.get("type");
+		String mak = (String) params.get("mak");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WTDocument.class, true);
@@ -78,7 +80,8 @@ public class OutputHelper {
 		QuerySpecUtils.toLikeAnd(query, idx, WTDocument.class, WTDocument.NUMBER, number);
 		QuerySpecUtils.toLikeAnd(query, idx, WTDocument.class, WTDocument.DESCRIPTION, content);
 
-		if (!StringUtils.isNull(kekNumber) || !StringUtils.isNull(keNumber) || !StringUtils.isNull(description)) {
+		if (!StringUtils.isNull(kekNumber) || !StringUtils.isNull(keNumber) || !StringUtils.isNull(description)
+				|| !StringUtils.isNull(mak)) {
 
 			if (query.getConditionCount() > 0) {
 				query.appendAnd();
@@ -118,6 +121,11 @@ public class OutputHelper {
 			QuerySpecUtils.toLikeAnd(query, idx_p, Project.class, Project.KEK_NUMBER, kekNumber);
 			QuerySpecUtils.toLikeAnd(query, idx_p, Project.class, Project.KE_NUMBER, keNumber);
 			QuerySpecUtils.toLikeAnd(query, idx_p, Project.class, Project.DESCRIPTION, description);
+
+			if (!StringUtils.isNull(mak)) {
+				CommonCode makCode = (CommonCode) CommonUtils.getObject(mak);
+				QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "makReference.key.id", makCode);
+			}
 		}
 
 		Folder folder = null;
@@ -126,7 +134,7 @@ public class OutputHelper {
 		} else {
 			if ("new".equalsIgnoreCase(type)) {
 				folder = FolderTaskLogic.getFolder(OUTPUT_NEW_ROOT, CommonUtils.getPDMLinkProductContainer());
-			} else if ("old".equals(type)) {
+			} else if ("old".equalsIgnoreCase(type)) {
 				folder = FolderTaskLogic.getFolder(OUTPUT_OLD_ROOT, CommonUtils.getPDMLinkProductContainer());
 			}
 		}

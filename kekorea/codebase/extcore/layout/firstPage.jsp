@@ -62,7 +62,7 @@ JSONArray pList = (JSONArray) request.getAttribute("pList");
 								jsCallback : function(rowIndex, columnIndex, value, item) {
 									const oid = item.oid;
 									const url = getCallUrl("/notice/view?oid=" + oid);
-									popup(url, 1400, 600);
+									popup(url, 1400, 500);
 								}
 							},
 						}, {
@@ -79,6 +79,7 @@ JSONArray pList = (JSONArray) request.getAttribute("pList");
 								rowNumHeaderText : "번호",
 								showAutoNoDataMessage : false,
 								selectionMode : "multipleCells",
+								enableSorting : false
 							};
 							myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 							AUIGrid.setGridData(myGridID,
@@ -120,6 +121,7 @@ JSONArray pList = (JSONArray) request.getAttribute("pList");
 								rowNumHeaderText : "번호",
 								showAutoNoDataMessage : false,
 								selectionMode : "multipleCells",
+								enableSorting : false
 							};
 							_myGridID_ = AUIGrid.create("#_grid_wrap_", columnLayout, props);
 							AUIGrid.setGridData(_myGridID_,
@@ -195,6 +197,7 @@ JSONArray pList = (JSONArray) request.getAttribute("pList");
 								rowNumHeaderText : "번호",
 								showAutoNoDataMessage : false,
 								selectionMode : "multipleCells",
+								enableSorting : false
 							};
 							_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
 							AUIGrid.setGridData(_myGridID,

@@ -132,7 +132,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<option value="UNDERAPPROVAL">승인 중</option>
 						<option value="APPROVED">승인됨</option>
 						<option value="RETURN">반려됨</option>
-						<option value="WITHDRAWN">폐기</option>
 					</select>
 				</td>
 				<th>버전</th>
@@ -461,6 +460,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				toFocus("fileName");
 				const columns = loadColumnLayout("epm-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

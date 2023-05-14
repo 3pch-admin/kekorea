@@ -1,3 +1,6 @@
+<%@page import="net.sf.json.JSONObject"%>
+<%@page import="java.util.ListIterator"%>
+<%@page import="java.util.Iterator"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.admin.numberRuleCode.NumberRuleCode"%>
 <%@page import="java.sql.Timestamp"%>
@@ -35,58 +38,121 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
 			<tr>
-				<th>사업부문</th>
-				<td class="indent5">
-					<select name="businessSector" id="businessSector" class="width-200">
-						<option value="">선택</option>
-					</select>
-				</td>
-				<th>작성기간</th>
-				<td class="indent5">&nbsp;</td>
 				<th>도면번호</th>
 				<td class="indent5">
-					<input type="text" name="kekNumber" class="width-200">
+					<input type="text" name="number" id="number">
 				</td>
-				<th>도면생성회사</th>
-				<td class="indent5">
-					<select name="size" id="size" class="width-200">
-						<option value="">선택</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
 				<th>사이즈</th>
 				<td class="indent5">
 					<select name="size" id="size" class="width-200">
 						<option value="">선택</option>
+						<%
+						ListIterator lit = sizes.listIterator();
+						while (lit.hasNext()) {
+							JSONObject node = (JSONObject) lit.next();
+							String key = node.getString("key");
+							String value = node.getString("value");
+						%>
+						<option value="<%=key%>"><%=value%></option>
+						<%
+						}
+						%>
 					</select>
 				</td>
-				<th>도면구분</th>
-				<td class="indent5">&nbsp;</td>
-				<th>년도</th>
-				<td class="indent5">&nbsp;</td>
-				<th>관리번호</th>
+				<th>LOT</th>
 				<td class="indent5">
-					<input type="text" name="kekNumber" class="width-200">
+					<input type="text" name="lotNo" id="lotNo" maxlength="4">
+				</td>
+				<th>UNIT NAME</th>
+				<td class="indent5">
+					<input type="text" name="unitName" id="unitName">
 				</td>
 			</tr>
 			<tr>
-				<th>부품도구분</th>
-				<td class="indent5">&nbsp;</td>
-				<th>진행상태</th>
+				<th>도면명</th>
+				<td class="indent5">
+					<input type="text" name="name" id="name">
+				</td>
+				<th>작성부서구분</th>
+				<td class="indent5">
+					<select name="classificationWritingDepartments_code" id="classificationWritingDepartments_code" class="width-200">
+						<option value="">선택</option>
+						<%
+						ListIterator lit2 = classificationWritingDepartments.listIterator();
+						while (lit2.hasNext()) {
+							JSONObject node = (JSONObject) lit2.next();
+							String key = node.getString("key");
+							String value = node.getString("value");
+						%>
+						<option value="<%=key%>"><%=value%></option>
+						<%
+						}
+						%>
+					</select>
+				</td>
+				<th>작성문서구분</th>
+				<td class="indent5">
+					<select name="writtenDocuments_code" id="writtenDocuments_code" class="width-200">
+						<option value="">선택</option>
+						<%
+						ListIterator lit3 = writtenDocuments.listIterator();
+						while (lit3.hasNext()) {
+							JSONObject node = (JSONObject) lit3.next();
+							String key = node.getString("key");
+							String value = node.getString("value");
+						%>
+						<option value="<%=key%>"><%=value%></option>
+						<%
+						}
+						%>
+					</select>
+				</td>
+				<th>상태</th>
 				<td class="indent5">
 					<select name="state" id="state" class="width-200">
 						<option value="">선택</option>
-						<option value="진행중">진행중</option>
-						<option value="완료">완료</option>
-						<option value="폐기">폐기</option>
+						<option value="INWORK">작업 중</option>
+						<option value="UNDERAPPROVAL">승인 중</option>
+						<option value="APPROVED">승인됨</option>
+						<option value="RETURN">반려됨</option>
+						<option value="WITHDRAWN">폐기</option>
 					</select>
 				</td>
-				<th>작성부서</th>
-				<td class="indent5">&nbsp;</td>
+			</tr>
+			<tr>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="kekNumber" class="width-200">
+					<input type="text" name="creator" id="creator" data-multi="false">
+					<input type="hidden" name="creatorOid" id="creatorOid">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('creator')">
+				</td>
+				<th>작성일</th>
+				<td class="indent5">
+					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+					~
+					<input type="text" name="createdTo" id="createdTo" class="width-100">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('createdFrom', 'createdTo')">
+				</td>
+				<th>버전</th>
+				<td colspan="3">
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="latest" value="true" checked="checked">
+						<div class="state p-success">
+							<label>
+								<b>죄신버전</b>
+							</label>
+						</div>
+					</div>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="latest" value="">
+						<div class="state p-success">
+							<label>
+								<b>모든버전</b>
+							</label>
+						</div>
+					</div>
 				</td>
 			</tr>
 		</table>
@@ -538,12 +604,12 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 
 				for (let i = 0; i < checkedItems.length; i++) {
 					const oid = checkedItems[i].item.oid;
-					// 					const latest = checkedItems[i].item.latest;
+					const latest = checkedItems[i].item.latest;
 					const rowIndex = checkedItems[i].rowIndex;
-					// 					if (!latest) {
-					// 						alert("최신버전이 아닌 도면이 포함되어있습니다.\n" + (rowIndex + 1) + "행 데이터");
-					// 						return false;
-					// 					}
+					if (!latest) {
+						alert("최신버전이 아닌 도면이 포함되어있습니다.\n" + (rowIndex + 1) + "행 데이터");
+						return false;
+					}
 
 					if (oid === undefined) {
 						alert("신규로 작성한 데이터가 존재합니다.\n" + (rowIndex + 1) + "행 데이터");
@@ -566,78 +632,77 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					alert("변경된 내용이 없습니다.");
 					return false;
 				}
-				
+
 				for (let i = 0; i < addRows.length; i++) {
 					const item = addRows[i];
 					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
-					
+
 					if (isNull(item.size_code)) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "사이즈를 선택하세요.");
 						return false;
 					}
-					
+
 					if (isNull(item.lotNo) || item.lotNo === 0) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 2, "LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
-					
+
 					if (isNull(item.unitName)) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 3, "UNIT NAME을 입력하세요.");
 						return false;
 					}
-					
+
 					if (isNull(item.name)) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 4, "도면명을 입력하세요.");
 						return false;
 					}
-					
+
 					if (isNull(item.classificationWritingDepartments_code)) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 7, "작성부서를 선택하세요.");
 						return false;
 					}
-					
+
 					if (isNull(item.writtenDocuments_code)) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 8, "작성문서구분을 선택하세요.");
 						return false;
 					}
 				}
 
-				
 				for (let i = 0; i < editRows.length; i++) {
 					const item = editRows[i];
 					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
-					
+
 					if (isNull(item.size_code)) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "사이즈를 선택하세요.");
 						return false;
 					}
-					
+
 					if (isNull(item.lotNo) || item.lotNo === 0) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 2, "LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.");
 						return false;
 					}
-					
+
 					if (isNull(item.unitName)) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 3, "UNIT NAME을 입력하세요.");
 						return false;
 					}
-					
+
 					if (isNull(item.name)) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 4, "도면명을 입력하세요.");
 						return false;
 					}
-					
+
 					if (isNull(item.classificationWritingDepartments_code)) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 7, "작성부서를 선택하세요.");
 						return false;
 					}
-					
+
 					if (isNull(item.writtenDocuments_code)) {
 						AUIGrid.showToastMessage(myGridID, rowIndex, 8, "작성문서구분을 선택하세요.");
 						return false;
 					}
 				}
-				
+
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
 				}
@@ -660,7 +725,31 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 			function loadGridData() {
 				const params = new Object();
 				const url = getCallUrl("/numberRule/list");
+				const number = document.getElementById("number").value;
+				const name = document.getElementById("name").value;
+				const lotNo = document.getElementById("lotNo").value;
+				const unitName = document.getElementById("unitName").value;
+				const size = document.getElementById("size").value;
+				const state = document.getElementById("state").value;
+				const writtenDocuments_code = document.getElementById("writtenDocuments_code").value;
+				const creatorOid = document.getElementById("creatorOid").value;
+				const createdFrom = document.getElementById("createdFrom").value;
+				const createdTo = document.getElementById("createdTo").value;
+				const classificationWritingDepartments_code = document.getElementById("classificationWritingDepartments_code").value;
+				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				const psize = document.getElementById("psize").value;
+				params.latest = latest;
+				params.writtenDocuments_code = writtenDocuments_code;
+				params.classificationWritingDepartments_code = classificationWritingDepartments_code;
+				params.creatorOid = creatorOid;
+				params.createdFrom = createdFrom;
+				params.createdTo = createdTo;
+				params.state = state;
+				params.size = size;
+				params.name = name;
+				params.number = number;
+				params.lotNo = lotNo;
+				params.unitName = unitName;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -703,6 +792,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				toFocus("number");
 				const columns = loadColumnLayout("numberRule-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
@@ -712,9 +802,12 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
 				selectbox("psize");
-				selectbox("businessSector");
 				selectbox("state");
 				selectbox("size");
+				selectbox("writtenDocuments_code");
+				selectbox("classificationWritingDepartments_code");
+				finderUser("creator");
+				twindate("created");
 			});
 
 			document.addEventListener("keydown", function(event) {

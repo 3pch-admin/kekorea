@@ -40,7 +40,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			<tr>
 				<th>LOT</th>
 				<td class="indent5">
-					<input type="number" name="lotNo" id="lotNo" class="width-200">
+					<input type="text" name="lotNo" id="lotNo" class="width-200" maxlength="4">
 				</td>
 				<th>중간코드</th>
 				<td class="indent5">
@@ -471,7 +471,31 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				const params = new Object();
 				const url = getCallUrl("/kePart/list");
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
+				const lotNo = document.getElementById("lotNo").value;
+				const keNumber = document.getElementById("keNumber").value;
+				const name = document.getElementById("name").value;
+				const code = document.getElementById("code").value;
+				const model = document.getElementById("model").value;
+				const state = document.getElementById("state").value;
+				const creatorOid = document.getElementById("creatorOid").value;
+				const createdFrom = document.getElementById("createdFrom").value;
+				const createdTo = document.getElementById("createdTo").value;
+				const modifierOid = document.getElementById("modifierOid").value;
+				const modifiedFrom = document.getElementById("modifiedFrom").value;
+				const modifiedTo = document.getElementById("modifiedTo").value;
 				const psize = document.getElementById("psize").value;
+				params.lotNo = lotNo;
+				params.keNumber = keNumber;
+				params.name = name;
+				params.code = code;
+				params.state = state;
+				params.model = model;
+				params.creatorOid = creatorOid;
+				params.createdFrom = createdFrom;
+				params.createdTo = createdTo;
+				params.modifierOid = modifierOid;
+				params.modifiedFrom = modifiedFrom;
+				params.modifiedTo = modifiedTo;
 				params.latest = latest;
 				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
@@ -645,6 +669,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				toFocus("lotNo");
 				const columns = loadColumnLayout("kePart-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

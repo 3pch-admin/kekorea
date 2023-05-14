@@ -5,16 +5,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import e3ps.admin.numberRuleCode.NumberRuleCode;
+import e3ps.admin.numberRuleCode.service.NumberRuleCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.numberRule.NumberRuleMaster;
 import e3ps.epm.numberRule.dto.NumberRuleDTO;
+import e3ps.epm.workOrder.WorkOrder;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.query.QuerySpec;
+import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
 
@@ -35,10 +40,67 @@ public class NumberRuleHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<NumberRuleDTO> list = new ArrayList<NumberRuleDTO>();
+
+		String name = (String) params.get("name");
+		String number = (String) params.get("number");
+		String writtenDocuments = (String) params.get("writtenDocuments_code");
+		String classificationWritingDepartments = (String) params.get("classificationWritingDepartments_code");
+		String state = (String) params.get("state");
+		String creatorOid = (String) params.get("creatorOid");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
+		String size = (String) params.get("size");
+		String lotNo = (String) params.get("lotNo");
+		String unitName = (String) params.get("unitName");
+		boolean latest = (boolean) params.get("latest");
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(NumberRule.class, true);
+		int idx_m = query.appendClassList(NumberRuleMaster.class, false);
 
-		QuerySpecUtils.toBooleanAnd(query, idx, NumberRule.class, NumberRule.LATEST, true);
+		QuerySpecUtils.toInnerJoin(query, NumberRule.class, NumberRuleMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_m);
+
+		QuerySpecUtils.toLikeAnd(query, idx_m, NumberRuleMaster.class, NumberRuleMaster.NAME, name);
+		QuerySpecUtils.toLikeAnd(query, idx_m, NumberRuleMaster.class, NumberRuleMaster.NUMBER, number);
+		QuerySpecUtils.toEqualsAnd(query, idx, NumberRule.class, NumberRule.STATE, state);
+		QuerySpecUtils.toLikeAnd(query, idx_m, NumberRuleMaster.class, NumberRuleMaster.LOT_NO, lotNo);
+		QuerySpecUtils.toLikeAnd(query, idx_m, NumberRuleMaster.class, NumberRuleMaster.UNIT_NAME, unitName);
+
+		QuerySpecUtils.toCreator(query, idx, NumberRule.class, creatorOid);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, NumberRule.class, NumberRule.CREATE_TIMESTAMP, createdFrom,
+				createdTo);
+
+		if (!StringUtils.isNull(size)) {
+			NumberRuleCode sizeCode = NumberRuleCodeHelper.manager.getNumberRuleCode("SIZE", size);
+			QuerySpecUtils.toEqualsAnd(query, idx_m, NumberRuleMaster.class, "sizeReference.key.id", sizeCode);
+		}
+		if (!StringUtils.isNull(writtenDocuments)) {
+			NumberRuleCode writtenDocumentsCode = NumberRuleCodeHelper.manager.getNumberRuleCode("WRITTEN_DOCUMENT",
+					writtenDocuments);
+			QuerySpecUtils.toEqualsAnd(query, idx_m, NumberRuleMaster.class, "documentReference.key.id",
+					writtenDocumentsCode);
+		}
+
+		if (!StringUtils.isNull(classificationWritingDepartments)) {
+			NumberRuleCode classificationWritingDepartmentsCode = NumberRuleCodeHelper.manager
+					.getNumberRuleCode("CLASSIFICATION_WRITING_DEPARTMENT", classificationWritingDepartments);
+			QuerySpecUtils.toEqualsAnd(query, idx_m, NumberRuleMaster.class, "departmentReference.key.id",
+					classificationWritingDepartmentsCode);
+		}
+
+		if (latest) {
+			QuerySpecUtils.toBooleanAnd(query, idx, NumberRule.class, NumberRule.LATEST, true);
+		} else {
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+			query.appendOpenParen();
+			SearchCondition sc = new SearchCondition(NumberRule.class, NumberRule.LATEST, SearchCondition.IS_TRUE);
+			query.appendWhere(sc, new int[] { idx });
+			QuerySpecUtils.toBooleanOr(query, idx, NumberRule.class, NumberRule.LATEST, false);
+			query.appendCloseParen();
+		}
 		QuerySpecUtils.toOrderBy(query, idx, NumberRule.class, NumberRule.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
