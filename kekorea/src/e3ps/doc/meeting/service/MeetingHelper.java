@@ -84,7 +84,7 @@ public class MeetingHelper {
 		String softOid = (String) params.get("softOid");
 		String mak_name = (String) params.get("mak_name");
 		String detail_name = (String) params.get("detail_name");
-		String description = (String) params.get("content");
+		String content = (String) params.get("content");
 		String creatorOid = (String) params.get("creatorOid");
 		String createdFrom = (String) params.get("createdFrom");
 		String createdTo = (String) params.get("createdTo");
@@ -92,7 +92,10 @@ public class MeetingHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Meeting.class, true);
 		QuerySpecUtils.toLikeAnd(query, idx, Meeting.class, Meeting.NAME, name);
-		QuerySpecUtils.toLikeAnd(query, idx, Meeting.class, Meeting.CONTENT, description);
+		QuerySpecUtils.toLikeAnd(query, idx, Meeting.class, Meeting.CONTENT, content);
+		QuerySpecUtils.toCreator(query, idx, Meeting.class, creatorOid);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, Meeting.class, Meeting.CREATE_TIMESTAMP, createdFrom,
+				createdTo);
 		QuerySpecUtils.toOrderBy(query, idx, Meeting.class, Meeting.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
@@ -120,6 +123,7 @@ public class MeetingHelper {
 
 			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KEK_NUMBER, kekNumber);
 			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KE_NUMBER, keNumber);
+			QuerySpecUtils.toTimeGreaterAndLess(_query, _idx_p, Project.class, Project.P_DATE, pdateFrom, pdateTo);
 
 			if (!StringUtils.isNull(customer_name)) {
 				CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer_name);
@@ -243,7 +247,10 @@ public class MeetingHelper {
 				isNode++;
 			}
 			node.put("children", children);
-			list.add(node);
+
+			if (group.size() > 0) {
+				list.add(node);
+			}
 		}
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());
