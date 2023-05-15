@@ -280,18 +280,12 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 	};
 
 	function loadGridData() {
-		const params = new Object();
+		let params = new Object();
 		const url = getCallUrl("/commonCode/list");
-		const name = document.getElementById("name").value;
-		const code = document.getElementById("code").value;
-		const description = document.getElementById("description").value;
+		const field = ["name","code","description","codeType"];
 		const enable = !!document.querySelector("input[name=enable]:checked").value;
-		const codeType = document.getElementById("codeType").value;
+		params = toField(params, field);
 		params.enable = enable;
-		params.name = name;
-		params.code = code;
-		params.description = description;
-		params.codeType = codeType;
 		AUIGrid.showAjaxLoader(myGridID);
 		parent.openLayer();
 		call(url, params, function(data) {

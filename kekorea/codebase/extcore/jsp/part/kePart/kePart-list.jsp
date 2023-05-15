@@ -468,36 +468,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/kePart/list");
+				const field =["lotNo","keNumber","name","code","model","state","creatorOid","createdFrom","createdTo","modifierOid","modifiedFrom","modifiedTo","psize"];
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
-				const lotNo = document.getElementById("lotNo").value;
-				const keNumber = document.getElementById("keNumber").value;
-				const name = document.getElementById("name").value;
-				const code = document.getElementById("code").value;
-				const model = document.getElementById("model").value;
-				const state = document.getElementById("state").value;
-				const creatorOid = document.getElementById("creatorOid").value;
-				const createdFrom = document.getElementById("createdFrom").value;
-				const createdTo = document.getElementById("createdTo").value;
-				const modifierOid = document.getElementById("modifierOid").value;
-				const modifiedFrom = document.getElementById("modifiedFrom").value;
-				const modifiedTo = document.getElementById("modifiedTo").value;
-				const psize = document.getElementById("psize").value;
-				params.lotNo = lotNo;
-				params.keNumber = keNumber;
-				params.name = name;
-				params.code = code;
-				params.state = state;
-				params.model = model;
-				params.creatorOid = creatorOid;
-				params.createdFrom = createdFrom;
-				params.createdTo = createdTo;
-				params.modifierOid = modifierOid;
-				params.modifiedFrom = modifiedFrom;
-				params.modifiedTo = modifiedTo;
+				params = toField(params, field);
 				params.latest = latest;
-				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

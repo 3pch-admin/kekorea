@@ -413,44 +413,10 @@ String end = (String) request.getAttribute("end");
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/history/list");
-				const kekNumber = document.getElementById("kekNumber").value;
-				const keNumber = document.getElementById("keNumber").value;
-				const pdateFrom = document.getElementById("pdateFrom").value;
-				const pdateTo = document.getElementById("pdateTo").value;
-				const userId = document.getElementById("userId").value;
-				const kekState = document.getElementById("kekState").value;
-				const model = document.getElementById("model").value;
-				const customer_name = document.getElementById("customer_name").value;
-				const install_name = document.getElementById("install_name").value;
-				const projectType = document.getElementById("projectType").value;
-				const machineOid = document.getElementById("machineOid").value;
-				const elecOid = document.getElementById("elecOid").value;
-				const softOid = document.getElementById("softOid").value;
-				const mak_name = document.getElementById("mak_name").value;
-				const detail_name = document.getElementById("detail_name").value;
-				const template = document.getElementById("template").value;
-				const description = document.getElementById("description").value;
-				const psize = document.getElementById("psize").value;
-				params.kekNumber = kekNumber;
-				params.keNumber = keNumber;
-				params.pdateFrom = pdateFrom;
-				params.pdateTo = pdateTo;
-				params.userId = userId;
-				params.kekState = kekState;
-				params.model = model;
-				params.customer_name = customer_name;
-				params.install_name = install_name;
-				params.projectType = projectType;
-				params.machineOid = machineOid;
-				params.elecOid = elecOid;
-				params.softOid = softOid;
-				params.mak_name = mak_name;
-				params.detail_name = detail_name;
-				params.template = template;
-				params.description = description;
-				params.psize = psize;
+				const field =["kekNumber","keNumber","pdateFrom","pdateTo","userId","kekState","model","customer_name","install_name","projectType","machineOid","elecOid","softOid","mak_name","detail_name","template","description","psize"];
+				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

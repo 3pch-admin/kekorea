@@ -158,17 +158,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/workspace/complete");
-				const approvalTitle = document.getElementById("approvalTitle").value;
-				const receiveFrom = document.getElementById("receiveFrom").value;
-				const receiveTo = document.getElementById("receiveTo").value;
-				const psize = document.getElementById("psize").value;
-				params.approvalTitle = approvalTitle;
-				params.receiveFrom = receiveFrom;
-				params.receiveTo = receiveTo;
-				params.psize = psize;
-
+				const field = ["approvalTitle","receiveFrom","receiveTo","psize"];
+				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

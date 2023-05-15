@@ -399,12 +399,9 @@ String end = (String) request.getAttribute("end");
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/korea/list");
-				const psize = document.getElementById("psize").value;
-				const pdateFrom = document.getElementById("pdateFrom").value;
-				const pdateTo = document.getElementById("pdateTo").value;
-				const projectType = document.getElementById("projectType").value;
+				const field =["psize","pdateFrom","pdateTo","projectType"];
 				const kekNumbers = [];
 				const kekNumber = document.getElementById("kekNumber").value;
 				const values = kekNumber.split(",");
@@ -413,19 +410,14 @@ String end = (String) request.getAttribute("end");
 						kekNumbers.push(values[i]);
 					}
 				}
-
 				const mak = document.querySelectorAll("input[name=mak]:checked");
 				const maks = [];
 				for (let i = 0; i < mak.length; i++) {
 					maks.push(mak[i].value);
 				}
-
+				params = toField(params, field);
 				params.kekNumbers = kekNumbers;
 				params.maks = maks;
-				params.psize = psize;
-				params.pdateFrom = pdateFrom;
-				params.pdateTo = pdateTo;
-				params.projectType = projectType;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

@@ -166,10 +166,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/erp/list");
-				const psize = document.getElementById("psize").value;
-				params.psize = psize;
+				const field = ["psize"];
+				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

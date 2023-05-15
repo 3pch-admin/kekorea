@@ -444,30 +444,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/keDrawing/list");
-				const name = document.getElementById("name").value;
-				const lotNo = Number(document.getElementById("lotNo").value);
-				const creatorOid = document.getElementById("creatorOid").value;
-				const createdFrom = document.getElementById("createdFrom").value;
-				const createdTo = document.getElementById("createdTo").value;
-				const keNumber = document.getElementById("keNumber").value;
+				const field = ["name","lotNo","creatorOid","createdFrom","createdTo","keNumber","modifierOid","modifiedFrom","modifiedTo","psize"];
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
-				const modifierOid = document.getElementById("modifierOid").value;
-				const modifiedFrom = document.getElementById("modifiedFrom").value;
-				const modifiedTo = document.getElementById("modifiedTo").value;
-				const psize = document.getElementById("psize").value;
-				params.name = name;
-				params.lotNo = lotNo;
-				params.creatorOid = creatorOid;
-				params.createdFrom = createdFrom;
-				params.createdTo = createdTo;
-				params.keNumber = keNumber;
+				params = toField(params, field);
 				params.latest = latest;
-				params.modifierOid = modifierOid;
-				params.modifiedFrom = modifiedFrom;
-				params.modifiedTo = modifiedTo;
-				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

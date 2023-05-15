@@ -357,28 +357,10 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/issue/list");
-				const name = document.getElementById("name").value;
-				const content = document.getElementById("content").value;
-				const description = document.getElementById("description").value;
-				const kekNumber = document.getElementById("kekNumber").value;
-				const keNumber = document.getElementById("keNumber").value;
-				const mak_name = document.getElementById("mak_name").value;
-				const creatorOid = document.getElementById("creatorOid").value;
-				const createdFrom = document.getElementById("createdFrom").value;
-				const createdTo = document.getElementById("createdTo").value;
-				const psize = document.getElementById("psize").value;
-				params.kekNumber = kekNumber;
-				params.keNumber = keNumber;
-				params.name = name;
-				params.content = content;
-				params.description = description;
-				params.mak_name = mak_name;
-				params.creatorOid = creatorOid;
-				params.createdFrom = createdFrom;
-				params.createdTo = createdTo;
-				params.psize = psize;
+				const field =["name","content","description","kekNumber","keNumber","mak_name","creatorOid","createdFrom","createdTo","psize"];
+				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

@@ -349,18 +349,12 @@ JSONArray departments = JSONArray.fromObject(list);
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/org/list");
-				const userName = document.getElementById("userName").value;
-				const userId = document.getElementById("userId").value;
+				const field = ["userName","userId","oid","psize"];
 				const resign = !!document.querySelector("input[name=resign]:checked").value;
-				const oid = document.getElementById("oid").value;
-				const psize = document.getElementById("psize").value;
-				params.userName = userName;
-				params.userId = userId;
+				params = toField(params, field);
 				params.resign = resign;
-				params.psize = psize;
-				params.oid = oid;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

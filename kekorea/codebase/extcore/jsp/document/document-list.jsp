@@ -305,28 +305,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function loadGridData() {
+				let params = new Object();
 				const url = getCallUrl("/doc/list");
-				const params = new Object();
-				const psize = document.getElementById("psize").value;
-				const oid = document.getElementById("oid").value;
-				const name = document.getElementById("name").value;
-				const number = document.getElementById("number").value;
-				const description = document.getElementById("description").value;
-				const state = document.getElementById("state").value;
-				const creatorOid = document.getElementById("creatorOid").value;
-				const createdFrom = document.getElementById("createdFrom").value;
-				const createdTo = document.getElementById("createdTo").value;
+				const field = ["psize","oid","name","number","description","state","creatorOid","createdFrom","createdTo"];
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
-				params.name = name;
-				params.number = number;
-				params.oid = oid;
-				params.state = state;
-				params.description = description;
-				params.creatorOid = creatorOid;
-				params.createdFrom = createdFrom;
-				params.createdTo = createdTo;
+				params = toField(params, field);
 				params.latest = latest;
-				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

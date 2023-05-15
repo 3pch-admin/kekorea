@@ -297,10 +297,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function loadGridData() {
+				let params = new Object();
 				const url = getCallUrl("/configSheet/list");
-				const params = new Object();
-				const psize = document.getElementById("psize").value;
-				params.psize = psize;
+				const field = ["psize"];
+				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

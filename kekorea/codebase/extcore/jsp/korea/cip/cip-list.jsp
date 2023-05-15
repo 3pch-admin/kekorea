@@ -715,34 +715,10 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/cip/list");
-				const item = document.getElementById("item").value;
-				const improvements = document.getElementById("improvements").value;
-				const improvement = document.getElementById("improvement").value;
-				const apply = document.getElementById("apply").value;
-				const mak = document.getElementById("mak").value;
-				const detail = document.getElementById("detail").value;
-				const customer = document.getElementById("customer").value;
-				const install = document.getElementById("install").value;
-				const creatorId = document.getElementById("creatorOid").value;
-				const createdFrom = document.getElementById("createdFrom").value;
-				const createdTo = document.getElementById("createdTo").value;
-				const note = document.getElementById("note").value;
-				const psize = document.getElementById("psize").value;
-				params.item = item;
-				params.improvements = improvements;
-				params.improvement = improvement;
-				params.apply = apply;
-				params.mak = mak;
-				params.detail = detail;
-				params.customer = customer;
-				params.install = install;
-				params.creatorId = creatorId;
-				params.createdFrom = createdFrom;
-				params.createdTo = createdTo;
-				params.note = note;
-				params.psize = psize;
+				const field = ["item","improvements","improvement","apply","mak","detail","customer","install","creatorOid","createdFrom","createdTo","note","psize"];
+				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

@@ -350,38 +350,13 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 			}
 
 			function loadGridData() {
+				let params = new Object();
 				const url = getCallUrl("/output/list");
-				const params = new Object();
-				const oid = document.getElementById("oid").value;
-				const name = document.getElementById("name").value;
-				const number = document.getElementById("number").value;
-				const content = document.getElementById("content").value;
-				const kekNumber = document.getElementById("kekNumber").value;
-				const keNumber = document.getElementById("keNumber").value;
-				const description = document.getElementById("description").value;
-				const creatorOid = document.getElementById("creatorOid").value;
-				const createdFrom = document.getElementById("createdFrom").value;
-				const createdTo = document.getElementById("createdTo").value;
-				const state = document.getElementById("state").value;
+				const field =["oid","name","number","content","kekNumber","keNumber","description"
+									,"creatorOid","createdFrom","createdTo","state","psize","type","mak"];
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
-				const psize = document.getElementById("psize").value;
-				const type = document.getElementById("type").value;
-				const mak = document.getElementById("mak").value;
-				params.oid = oid;
-				params.name = name;
-				params.number = number;
-				params.content = content;
-				params.kekNumber = kekNumber;
-				params.keNumber = keNumber;
-				params.description = description;
-				params.creatorOid = creatorOid;
-				params.createdFrom = createdFrom;
-				params.createdTo = createdTo;
-				params.state = state
+				params = toField(params, field);
 				params.latest = latest;
-				params.psize = psize;
-				params.type = type;
-				params.mak = mak;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
