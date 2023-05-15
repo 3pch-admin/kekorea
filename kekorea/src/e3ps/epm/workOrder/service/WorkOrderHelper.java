@@ -74,6 +74,7 @@ public class WorkOrderHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 
+		String name = (String) params.get("name");
 		String kekNumber = (String) params.get("kekNumber");
 		String keNumber = (String) params.get("keNumber");
 		String pdateFrom = (String) params.get("pdateFrom");
@@ -107,6 +108,7 @@ public class WorkOrderHelper {
 			query.appendCloseParen();
 		}
 
+		QuerySpecUtils.toLikeAnd(query, idx, WorkOrder.class, WorkOrder.NAME, name);
 		QuerySpecUtils.toCreator(query, idx, WorkOrder.class, creatorOid);
 		QuerySpecUtils.toTimeGreaterAndLess(query, idx, WorkOrder.class, WorkOrder.CREATE_TIMESTAMP, createdFrom,
 				createdTo);

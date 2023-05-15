@@ -11,17 +11,20 @@ import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.doc.meeting.Meeting;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.doc.request.dto.RequestDocumentDTO;
 import e3ps.project.Project;
+import e3ps.project.ProjectUserLink;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.doc.WTDocumentMaster;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.org.WTUser;
 import wt.query.QuerySpec;
 import wt.services.ServiceFactory;
 import wt.util.WTAttributeNameIfc;
@@ -38,9 +41,34 @@ public class RequestDocumentHelper {
 
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
+
+		String name = (String) params.get("name");
+		String kekNumber = (String) params.get("kekNumber");
+		String keNumber = (String) params.get("keNumber");
+		String pdateFrom = (String) params.get("pdateFrom");
+		String pdateTo = (String) params.get("pdateTo");
+		String customer_name = (String) params.get("customer_name");
+		String install_name = (String) params.get("install_name");
+		String projectType = (String) params.get("projectType");
+		String machineOid = (String) params.get("machineOid");
+		String elecOid = (String) params.get("elecOid");
+		String softOid = (String) params.get("softOid");
+		String mak_name = (String) params.get("mak_name");
+		String detail_name = (String) params.get("detail_name");
+		String description = (String) params.get("description");
+		String creatorOid = (String) params.get("creatorOid");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
+		String state = (String) params.get("state");
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(RequestDocument.class, true);
 
+		QuerySpecUtils.toCreator(query, idx, RequestDocument.class, creatorOid);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, RequestDocument.class, RequestDocument.CREATE_TIMESTAMP,
+				createdFrom, createdTo);
+		QuerySpecUtils.toLikeAnd(query, idx, RequestDocument.class, RequestDocument.NAME, name);
+		QuerySpecUtils.toEqualsAnd(query, idx, RequestDocument.class, RequestDocument.STATE, state);
 		QuerySpecUtils.toOrderBy(query, idx, RequestDocument.class, Meeting.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
@@ -52,13 +80,98 @@ public class RequestDocumentHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			RequestDocument requestDocument = (RequestDocument) obj[0];
 
-			JSONObject node = new JSONObject();
-			node.put("oid", requestDocument.getPersistInfo().getObjectIdentifier().getStringValue());
-			node.put("name", requestDocument.getName());
-			QueryResult group = PersistenceHelper.manager.navigate(requestDocument, "project",
-					RequestDocumentProjectLink.class, false);
+			QuerySpec _query = new QuerySpec();
+			int _idx = _query.appendClassList(RequestDocument.class, true);
+			int _idx_p = _query.appendClassList(Project.class, true);
+			int _idx_link = _query.appendClassList(RequestDocumentProjectLink.class, true);
+
+			QuerySpecUtils.toEqualsAnd(_query, _idx_link, RequestDocumentProjectLink.class, "roleAObjectRef.key.id",
+					requestDocument);
+			QuerySpecUtils.toInnerJoin(_query, RequestDocument.class, RequestDocumentProjectLink.class,
+					WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", _idx, _idx_link);
+			QuerySpecUtils.toInnerJoin(_query, Project.class, RequestDocumentProjectLink.class,
+					WTAttributeNameIfc.ID_NAME, "roleBObjectRef.key.id", _idx_p, _idx_link);
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KEK_NUMBER, kekNumber);
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KE_NUMBER, keNumber);
+			QuerySpecUtils.toTimeGreaterAndLess(_query, _idx_p, Project.class, Project.P_DATE, pdateFrom, pdateTo);
+
+			if (!StringUtils.isNull(customer_name)) {
+				CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "customerReference.key.id", customerCode);
+			}
+
+			if (!StringUtils.isNull(install_name)) {
+				CommonCode installCode = (CommonCode) CommonUtils.getObject(install_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "installReference.key.id", installCode);
+			}
+
+			if (!StringUtils.isNull(projectType)) {
+				CommonCode projectTypeCode = (CommonCode) CommonUtils.getObject(projectType);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "projectTypeReference.key.id",
+						projectTypeCode);
+			}
+
+			if (!StringUtils.isNull(machineOid)) {
+				WTUser machine = (WTUser) CommonUtils.getObject(machineOid);
+				CommonCode machineCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
+				int idx_u = _query.appendClassList(WTUser.class, false);
+
+				QuerySpecUtils.toInnerJoin(_query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleAObjectRef.key.id", _idx_p, idx_plink);
+				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleBObjectRef.key.id", idx_u, idx_plink);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", machine);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+						machineCode);
+			}
+
+			if (!StringUtils.isNull(elecOid)) {
+				WTUser elec = (WTUser) CommonUtils.getObject(elecOid);
+				CommonCode elecCode = CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE");
+				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
+				int idx_u = _query.appendClassList(WTUser.class, false);
+
+				QuerySpecUtils.toInnerJoin(_query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleAObjectRef.key.id", _idx_p, idx_plink);
+				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleBObjectRef.key.id", idx_u, idx_plink);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", elec);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+						elecCode);
+			}
+
+			if (!StringUtils.isNull(softOid)) {
+				WTUser soft = (WTUser) CommonUtils.getObject(softOid);
+				CommonCode softCode = CommonCodeHelper.manager.getCommonCode("SOFT", "USER_TYPE");
+				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
+				int idx_u = _query.appendClassList(WTUser.class, false);
+
+				QuerySpecUtils.toInnerJoin(_query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleAObjectRef.key.id", _idx_p, idx_plink);
+				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleBObjectRef.key.id", idx_u, idx_plink);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", soft);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+						softCode);
+			}
+
+			if (!StringUtils.isNull(mak_name)) {
+				CommonCode makCode = (CommonCode) CommonUtils.getObject(mak_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "makReference.key.id", makCode);
+			}
+
+			if (!StringUtils.isNull(detail_name)) {
+				CommonCode detailCode = (CommonCode) CommonUtils.getObject(detail_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "detailReference.key.id", detailCode);
+			}
+
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.DESCRIPTION, description);
+			QueryResult group = PersistenceHelper.manager.find(_query);
+
 			int isNode = 1;
 			JSONArray children = new JSONArray();
+			JSONObject node = new JSONObject();
 			while (group.hasMoreElements()) {
 				RequestDocumentProjectLink link = (RequestDocumentProjectLink) group.nextElement();
 				RequestDocumentDTO dto = new RequestDocumentDTO(link);
@@ -108,7 +221,10 @@ public class RequestDocumentHelper {
 				isNode++;
 			}
 			node.put("children", children);
-			list.add(node);
+
+			if (group.size() > 0) {
+				list.add(node);
+			}
 		}
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());

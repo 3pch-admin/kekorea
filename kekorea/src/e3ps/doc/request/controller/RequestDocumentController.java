@@ -46,8 +46,14 @@ public class RequestDocumentController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		model.addObject("isAdmin", isAdmin);
+		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
+		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
+		model.addObject("customers", customers);
+		model.addObject("projectTypes", projectTypes);
+		model.addObject("maks", maks);
 		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/document/request/requestDocument-list.jsp");
 		return model;
 	}
@@ -172,7 +178,7 @@ public class RequestDocumentController extends BaseController {
 	@Description(value = "의뢰서 태스크 연결 제거 함수")
 	@ResponseBody
 	@PostMapping(value = "/disconnect")
-	public Map<String, Object> disconnect(@RequestBody Map<String,Object> params) throws Exception {
+	public Map<String, Object> disconnect(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			RequestDocumentHelper.service.disconnect(params);
