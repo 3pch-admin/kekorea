@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import e3ps.admin.commonCode.CommonCode;
 import e3ps.bom.partlist.MasterDataLink;
 import e3ps.bom.partlist.PartListData;
 import e3ps.bom.partlist.PartListMaster;
@@ -16,6 +17,7 @@ import e3ps.bom.partlist.dto.PartListDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.project.Project;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -38,9 +40,31 @@ public class PartlistHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 
+		String name = (String) params.get("name");
+		String state = (String) params.get("state");
+		String kekNumber = (String) params.get("kekNumber");
+		String keNumber = (String) params.get("keNumber");
+		String description = (String) params.get("description");
+		String engType = (String) params.get("engType");
+		String pdateFrom = (String) params.get("pdateFrom");
+		String pdateTo = (String) params.get("pdateTo");
+		String customer_name = (String) params.get("customer_name");
+		String install_name = (String) params.get("install_name");
+		String mak_name = (String) params.get("mak_name");
+		String detail_name = (String) params.get("detail_name");
+		String creatorOid = (String) params.get("creatorOid");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(PartListMaster.class, true);
 
+		QuerySpecUtils.toEqualsAnd(query, idx, PartListMaster.class, PartListMaster.ENG_TYPE, engType);
+		QuerySpecUtils.toEqualsAnd(query, idx, PartListMaster.class, PartListMaster.STATE, state);
+		QuerySpecUtils.toLikeAnd(query, idx, PartListMaster.class, PartListMaster.NAME, name);
+		QuerySpecUtils.toCreator(query, idx, PartListMaster.class, creatorOid);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, PartListMaster.class, PartListMaster.CREATE_TIMESTAMP,
+				createdFrom, createdTo);
 		QuerySpecUtils.toOrderBy(query, idx, PartListMaster.class, PartListMaster.CREATE_TIMESTAMP, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
@@ -51,17 +75,52 @@ public class PartlistHelper {
 			Object[] obj = (Object[]) result.nextElement();
 			PartListMaster master = (PartListMaster) obj[0];
 
-			JSONObject node = new JSONObject();
-			node.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
-			node.put("name", master.getName());
-			QueryResult group = PersistenceHelper.manager.navigate(master, "project", PartListMasterProjectLink.class,
-					false);
+			QuerySpec _query = new QuerySpec();
+			int _idx = _query.appendClassList(PartListMaster.class, true);
+			int _idx_p = _query.appendClassList(Project.class, true);
+			int _idx_link = _query.appendClassList(PartListMasterProjectLink.class, true);
+
+			QuerySpecUtils.toEqualsAnd(_query, _idx_link, PartListMasterProjectLink.class, "roleAObjectRef.key.id",
+					master);
+			QuerySpecUtils.toInnerJoin(_query, PartListMaster.class, PartListMasterProjectLink.class,
+					WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", _idx, _idx_link);
+			QuerySpecUtils.toInnerJoin(_query, Project.class, PartListMasterProjectLink.class,
+					WTAttributeNameIfc.ID_NAME, "roleBObjectRef.key.id", _idx_p, _idx_link);
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KEK_NUMBER, kekNumber);
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KE_NUMBER, keNumber);
+			QuerySpecUtils.toTimeGreaterAndLess(_query, _idx_p, Project.class, Project.P_DATE, pdateFrom, pdateTo);
+
+			if (!StringUtils.isNull(customer_name)) {
+				CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "customerReference.key.id", customerCode);
+			}
+
+			if (!StringUtils.isNull(install_name)) {
+				CommonCode installCode = (CommonCode) CommonUtils.getObject(install_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "installReference.key.id", installCode);
+			}
+
+			if (!StringUtils.isNull(mak_name)) {
+				CommonCode makCode = (CommonCode) CommonUtils.getObject(mak_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "makReference.key.id", makCode);
+			}
+
+			if (!StringUtils.isNull(detail_name)) {
+				CommonCode detailCode = (CommonCode) CommonUtils.getObject(detail_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "detailReference.key.id", detailCode);
+			}
+
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.DESCRIPTION, description);
+			QueryResult group = PersistenceHelper.manager.find(_query);
 
 			int isNode = 1;
 			JSONArray children = new JSONArray();
+			JSONObject node = new JSONObject();
 			while (group.hasMoreElements()) {
 				PartListMasterProjectLink link = (PartListMasterProjectLink) group.nextElement();
 				PartListDTO dto = new PartListDTO(link);
+				node.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+				node.put("name", master.getName());
 				if (isNode == 1) {
 					node.put("poid", dto.getPoid());
 					node.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());
@@ -280,28 +339,27 @@ public class PartlistHelper {
 			t = new String[] { "전기_1차_수배", "전기_2차_수배" };
 			list = integratedData(p1, t);
 		}
-		
+
 		Map<String, Object> makList = new HashMap<>();
 		Map<String, Object> customerList = new HashMap<>();
 		Map<String, Object> keList = new HashMap<>();
 		Map<String, Object> pdateList = new HashMap<>();
 
-		
 		makList.put("engType", "막종 / 막종상세");
 		customerList.put("engType", "고객사 / 설치장소");
 		keList.put("engType", "KE 작번");
 		pdateList.put("engType", "발행일");
-		
+
 		makList.put("lotNo", "막종 / 막종상세");
 		customerList.put("lotNo", "고객사 / 설치장소");
 		keList.put("lotNo", "KE 작번");
 		pdateList.put("lotNo", "발행일");
-		
+
 		makList.put("unitName", "막종 / 막종상세");
 		customerList.put("unitName", "고객사 / 설치장소");
 		keList.put("unitName", "KE 작번");
 		pdateList.put("unitName", "발행일");
-		
+
 		makList.put("partNo", "막종 / 막종상세");
 		customerList.put("partNo", "고객사 / 설치장소");
 		keList.put("partNo", "KE 작번");
@@ -316,7 +374,8 @@ public class PartlistHelper {
 			keList.put("oid", oid);
 			pdateList.put("oid", oid);
 			makList.put("quantity" + (i + 1), project.getMak().getName() + " / " + project.getDetail().getName());
-			customerList.put("quantity" + (i + 1), project.getCustomer().getName() + " / " + project.getInstall().getName());
+			customerList.put("quantity" + (i + 1),
+					project.getCustomer().getName() + " / " + project.getInstall().getName());
 			keList.put("quantity" + (i + 1), project.getKeNumber());
 			pdateList.put("quantity" + (i + 1), CommonUtils.getPersistableTime(project.getPDate()));
 		}

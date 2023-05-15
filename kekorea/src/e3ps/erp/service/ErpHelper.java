@@ -538,7 +538,12 @@ public class ErpHelper {
 				StringBuffer sb = new StringBuffer();
 				sb.append("EXEC KEK_SPLMOutputRptDOProc ");
 				sb.append("'" + stdNo + "'");
-				st.executeUpdate(sb.toString());
+//				st.executeUpdate(sb.toString());
+				boolean isResult = st.execute(sb.toString());
+				if (!isResult) {
+					System.out.println("실패 했나?");
+				}
+
 				ErpHelper.service.writeLog("규격으로 ERP 부품 정보 가져오기 가져오기", sql.toString(), "", true, "제작사양서");
 			}
 
