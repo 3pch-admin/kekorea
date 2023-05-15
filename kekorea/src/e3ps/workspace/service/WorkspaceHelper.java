@@ -947,17 +947,14 @@ public class WorkspaceHelper {
 
 				CellRangeAddress region = new CellRangeAddress(rowIndex, rowIndex, 1, 3);
 				CellRangeAddress region1 = new CellRangeAddress(rowIndex, rowIndex, 4, 6);
-//				CellRangeAddress region2 = new CellRangeAddress(rowIndex, rowIndex, 7, 9);
-//				CellRangeAddress region3 = new CellRangeAddress(rowIndex, rowIndex, 11, 14);
-//
+				CellRangeAddress region2 = new CellRangeAddress(rowIndex, rowIndex, 7, 9);
+				CellRangeAddress region3 = new CellRangeAddress(rowIndex, rowIndex, 11, 14);
+
 				sheet.addMergedRegion(region);
 				sheet.addMergedRegion(region1);
-//				sheet.addMergedRegion(region2);
-//				sheet.addMergedRegion(region3);
+				sheet.addMergedRegion(region2);
+				sheet.addMergedRegion(region3);
 
-				System.out.println("number=" + number);
-				System.out.println("v=" + numberRule.getVersion());
-				System.out.println("name=" + name);
 
 				Cell cell = row.createCell(0);
 				cell.setCellStyle(cellStyle);
@@ -966,23 +963,44 @@ public class WorkspaceHelper {
 				cell = row.createCell(1);
 				cell.setCellStyle(cellStyle);
 				cell.setCellValue(numberRule.getMaster().getLotNo() + " / " + numberRule.getMaster().getUnitName());
-
+				
 				cell = row.createCell(2);
 				cell.setCellStyle(cellStyle);
-				cell.setCellValue(name);
-
 				cell = row.createCell(3);
 				cell.setCellStyle(cellStyle);
-				cell.setCellValue(number);
 
 				cell = row.createCell(4);
 				cell.setCellStyle(cellStyle);
-				cell.setCellValue(String.valueOf(numberRule.getVersion()));
-
+				cell.setCellValue(name);
+				
 				cell = row.createCell(5);
 				cell.setCellStyle(cellStyle);
-				cell.setCellValue("");
+				cell = row.createCell(6);
+				cell.setCellStyle(cellStyle);
 
+				cell = row.createCell(7);
+				cell.setCellStyle(cellStyle);
+				cell.setCellValue(number);
+				
+				cell = row.createCell(8);
+				cell.setCellStyle(cellStyle);
+				cell = row.createCell(9);
+				cell.setCellStyle(cellStyle);
+
+				cell = row.createCell(10);
+				cell.setCellStyle(cellStyle);
+				cell.setCellValue(String.valueOf(numberRule.getVersion()));
+
+				cell = row.createCell(11);
+				cell.setCellStyle(cellStyle);
+				cell.setCellValue(numberRule.getNote());				
+				cell = row.createCell(12);
+				cell.setCellStyle(cellStyle);
+				cell = row.createCell(13);
+				cell.setCellStyle(cellStyle);
+				cell = row.createCell(14);
+				cell.setCellStyle(cellStyle);
+				
 				rowNum++;
 				rowIndex++;
 			}

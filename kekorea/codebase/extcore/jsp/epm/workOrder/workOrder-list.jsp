@@ -493,7 +493,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/workOrder/list");
 				const field = [ "name", "kekNumber", "keNumber", "pdateFrom", "pdateTo", "customer_name", "install_name", "projectType", "machineOid", "elecOid", "softOid", "mak_name", "detail_name", "description", "creatorOid", "createdFrom", "createdTo", "psize" ];
 				params = toField(params, field);
