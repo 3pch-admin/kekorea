@@ -329,7 +329,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 					filterItemMoreMessage : "필터링 검색이 너무 많습니다. 검색을 이용해주세요.",
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-// 				loadGridData();
+				// 				loadGridData();
 				AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 				AUIGrid.bind(myGridID, "vScrollChange", function(event) {
 					hideContextMenu();
@@ -342,37 +342,11 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 
 			function loadGridData() {
 				const url = getCallUrl("/output/list");
-				const params = new Object();
-				const oid = document.getElementById("oid").value;
-				const name = document.getElementById("name").value;
-				const number = document.getElementById("number").value;
-				const content = document.getElementById("content").value;
-				const kekNumber = document.getElementById("kekNumber").value;
-				const keNumber = document.getElementById("keNumber").value;
-				const description = document.getElementById("description").value;
-				const creatorOid = document.getElementById("creatorOid").value;
-				const createdFrom = document.getElementById("createdFrom").value;
-				const createdTo = document.getElementById("createdTo").value;
-				const state = document.getElementById("state").value;
+				let params = new Object();
+				const field = [ "oid", "name", "number", "content", "kekNumber", "keNumber", "description", "creatorOid", "createdFrom", "createdTo", "state", "mak", "type", "psize" ];
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
-				const psize = document.getElementById("psize").value;
-				const mak = document.getElementById("mak").value;
-				const type = document.getElementById("type").value;
-				params.oid = oid;
-				params.name = name;
-				params.number = number;
-				params.content = content;
-				params.kekNumber = kekNumber;
-				params.keNumber = keNumber;
-				params.description = description;
-				params.creatorOid = creatorOid;
-				params.createdFrom = createdFrom;
-				params.createdTo = createdTo;
-				params.state = state
-				params.mak = mak;
+				params = toField(params, field);
 				params.latest = latest;
-				params.psize = psize;
-				params.type = type;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -410,7 +384,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 
 			function toggle() {
 				const iframe = parent.document.getElementById("content");
-// 				parent.openLayer();
+				// 				parent.openLayer();
 				iframe.src = getCallUrl("/output/old");
 			}
 

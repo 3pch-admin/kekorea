@@ -399,46 +399,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/epm/list");
-				const container = document.getElementById("container").value;
-				const fileName = document.getElementById("fileName").value;
-				const number = document.getElementById("number").value;
+				const field = [ "container", "fileName", "number", "oid", "state", "cadType", "createdFrom", "createdTo", "creatorOid", "modifierOid", "modifiedFrom", "modifiedTo", "material", "reference", "remark", "partCode", "partName", "psize" ];
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
-				const oid = document.getElementById("oid").value;
-				const state = document.getElementById("state").value;
-				const cadType = document.getElementById("cadType").value;
-				const createdFrom = document.getElementById("createdFrom").value;
-				const createdTo = document.getElementById("createdTo").value;
-				const creatorOid = document.getElementById("creatorOid").value;
-				const modifierOid = document.getElementById("modifierOid").value;
-				const material = document.getElementById("material").value;
-				const reference = document.getElementById("reference").value;
-				const remark = document.getElementById("remark").value;
-				const partCode = document.getElementById("partCode").value;
-				const partName = document.getElementById("partName").value;
-				const psize = document.getElementById("psize").value;
-				params.container = container;
-				params.number = number;
-				params.partCode = partCode;
-				params.partName = partName;
-				params.material = material;
-				params.cadType = cadType;
-				params.state = state;
-				params.fileName = fileName;
-				params.reference = reference
-				params.remark = remark;
-				params.material = material;
+				params = toField(params, field);
 				params.latest = latest;
-				params.oid = oid;
-				params.createdTo = createdTo
-				params.createdFrom = createdFrom;
-				params.modifierOid = modifierOid;
-				params.creatorOid = creatorOid;
-				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
-				console.log(params);
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;

@@ -64,7 +64,6 @@ public class TemplateHelper {
 			WTUser user = (WTUser) CommonUtils.getObject(modifierOid);
 			SearchCondition sc = new SearchCondition(Template.class, "updateUser.owner.key.id", "=",
 					user.getPersistInfo().getObjectIdentifier().getId());
-			;
 			query.appendWhere(sc, new int[] { idx });
 		}
 

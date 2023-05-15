@@ -71,10 +71,11 @@ public class MeetingHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		String description = (String) params.get("description");
+		String name = (String) params.get("name");
 		String kekNumber = (String) params.get("kekNumber");
 		String keNumber = (String) params.get("keNumber");
-		String userId = (String) params.get("userId");
+		String pdateFrom = (String) params.get("pdateFrom");
+		String pdateTo = (String) params.get("pdateTo");
 		String customer_name = (String) params.get("customer_name");
 		String install_name = (String) params.get("install_name");
 		String projectType = (String) params.get("projectType");
@@ -83,7 +84,10 @@ public class MeetingHelper {
 		String softOid = (String) params.get("softOid");
 		String mak_name = (String) params.get("mak_name");
 		String detail_name = (String) params.get("detail_name");
-		String name = (String) params.get("name");
+		String description = (String) params.get("content");
+		String creatorOid = (String) params.get("creatorOid");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Meeting.class, true);
@@ -116,7 +120,6 @@ public class MeetingHelper {
 
 			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KEK_NUMBER, kekNumber);
 			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KE_NUMBER, keNumber);
-			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.USER_ID, userId);
 
 			if (!StringUtils.isNull(customer_name)) {
 				CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer_name);

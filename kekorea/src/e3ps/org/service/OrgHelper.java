@@ -326,6 +326,7 @@ public class OrgHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(People.class, true);
 		query.appendOpenParen();
+		QuerySpecUtils.toBooleanAnd(query, idx, People.class, People.RESIGN, false);
 		QuerySpecUtils.toLikeAnd(query, idx, People.class, People.NAME, value);
 		QuerySpecUtils.toLikeOr(query, idx, People.class, People.ID, value);
 		query.appendCloseParen();

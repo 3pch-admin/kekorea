@@ -11,7 +11,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -32,9 +32,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</colgroup>
 			<tr>
 				<th>템플릿 명</th>
-				<td class="indent5">
-					<input type="text" name="name" id="name">
+				<td colspan="7" class="indent5">
+					<input type="text" name="name" id="name" class="width-600">
 				</td>
+			</tr>
+			<tr>
 				<th>작성자</th>
 				<td class="indent5">
 					<input type="text" name="creator" id="creator" data-multi="false">
@@ -47,12 +49,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					~
 					<input type="text" name="createdTo" id="createdTo" class="width-100">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('createdFrom', 'createdTo');">
-				</td>
-			</tr>
-			<tr>
-				<th>기간</th>
-				<td class="indent5">
-					<input type="text" name="duration" id="duration">
 				</td>
 				<th>수정자</th>
 				<td class="indent5">
@@ -227,14 +223,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/template/list");
-				const name = document.getElementById("name").value;
-				const duration = document.getElementById("duration").value;
-				const psize = document.getElementById("psize").value;
-				params.name = name;
-				params.duration = duration;
-				params.psize = psize;
+				const field = [ "name", "creatorOid", "createdFrom", "createdTo", "modifierOid", "modifiedFrom", "modifiedTo", "psize" ];
+				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

@@ -69,6 +69,34 @@ public class OutputHelper {
 		int idx = query.appendClassList(WTDocument.class, true);
 		int idx_m = query.appendClassList(WTDocumentMaster.class, false);
 
+		int idx_olink = query.appendClassList(OutputDocumentLink.class, false);
+		int idx_plink = query.appendClassList(OutputProjectLink.class, false);
+		int idx_o = query.appendClassList(Output.class, false);
+		int idx_p = query.appendClassList(Project.class, true);
+
+		query.appendOpenParen();
+
+		ClassAttribute roleAca = new ClassAttribute(Output.class, WTAttributeNameIfc.ID_NAME);
+		ClassAttribute roleBca = new ClassAttribute(WTDocument.class, WTAttributeNameIfc.ID_NAME);
+		SearchCondition sc = new SearchCondition(new ClassAttribute(OutputDocumentLink.class, "roleAObjectRef.key.id"),
+				"=", roleAca);
+		query.appendWhere(sc, new int[] { idx_olink, idx_o });
+		query.appendAnd();
+		sc = new SearchCondition(new ClassAttribute(OutputDocumentLink.class, "roleBObjectRef.key.id"), "=", roleBca);
+		query.appendWhere(sc, new int[] { idx_olink, idx });
+		query.appendAnd();
+
+		roleAca = new ClassAttribute(Output.class, WTAttributeNameIfc.ID_NAME);
+		roleBca = new ClassAttribute(Project.class, WTAttributeNameIfc.ID_NAME);
+
+		sc = new SearchCondition(new ClassAttribute(OutputProjectLink.class, "roleAObjectRef.key.id"), "=", roleAca);
+		query.appendWhere(sc, new int[] { idx_plink, idx_o });
+		query.appendAnd();
+		sc = new SearchCondition(new ClassAttribute(OutputProjectLink.class, "roleBObjectRef.key.id"), "=", roleBca);
+		query.appendWhere(sc, new int[] { idx_plink, idx_p });
+
+		query.appendCloseParen();
+
 		query.setAdvancedQueryEnabled(true);
 		query.setDescendantQuery(false);
 
@@ -80,52 +108,13 @@ public class OutputHelper {
 		QuerySpecUtils.toLikeAnd(query, idx, WTDocument.class, WTDocument.NUMBER, number);
 		QuerySpecUtils.toLikeAnd(query, idx, WTDocument.class, WTDocument.DESCRIPTION, content);
 
-		if (!StringUtils.isNull(kekNumber) || !StringUtils.isNull(keNumber) || !StringUtils.isNull(description)
-				|| !StringUtils.isNull(mak)) {
+		QuerySpecUtils.toLikeAnd(query, idx_p, Project.class, Project.KEK_NUMBER, kekNumber);
+		QuerySpecUtils.toLikeAnd(query, idx_p, Project.class, Project.KE_NUMBER, keNumber);
+		QuerySpecUtils.toLikeAnd(query, idx_p, Project.class, Project.DESCRIPTION, description);
 
-			if (query.getConditionCount() > 0) {
-				query.appendAnd();
-			}
-
-			int idx_olink = query.appendClassList(OutputDocumentLink.class, false);
-			int idx_plink = query.appendClassList(OutputProjectLink.class, false);
-			int idx_o = query.appendClassList(Output.class, false);
-			int idx_p = query.appendClassList(Project.class, true);
-
-			query.appendOpenParen();
-
-			ClassAttribute roleAca = new ClassAttribute(Output.class, WTAttributeNameIfc.ID_NAME);
-			ClassAttribute roleBca = new ClassAttribute(WTDocument.class, WTAttributeNameIfc.ID_NAME);
-			SearchCondition sc = new SearchCondition(
-					new ClassAttribute(OutputDocumentLink.class, "roleAObjectRef.key.id"), "=", roleAca);
-			query.appendWhere(sc, new int[] { idx_olink, idx_o });
-			query.appendAnd();
-			sc = new SearchCondition(new ClassAttribute(OutputDocumentLink.class, "roleBObjectRef.key.id"), "=",
-					roleBca);
-			query.appendWhere(sc, new int[] { idx_olink, idx });
-			query.appendAnd();
-
-			roleAca = new ClassAttribute(Output.class, WTAttributeNameIfc.ID_NAME);
-			roleBca = new ClassAttribute(Project.class, WTAttributeNameIfc.ID_NAME);
-
-			sc = new SearchCondition(new ClassAttribute(OutputProjectLink.class, "roleAObjectRef.key.id"), "=",
-					roleAca);
-			query.appendWhere(sc, new int[] { idx_plink, idx_o });
-			query.appendAnd();
-			sc = new SearchCondition(new ClassAttribute(OutputProjectLink.class, "roleBObjectRef.key.id"), "=",
-					roleBca);
-			query.appendWhere(sc, new int[] { idx_plink, idx_p });
-
-			query.appendCloseParen();
-
-			QuerySpecUtils.toLikeAnd(query, idx_p, Project.class, Project.KEK_NUMBER, kekNumber);
-			QuerySpecUtils.toLikeAnd(query, idx_p, Project.class, Project.KE_NUMBER, keNumber);
-			QuerySpecUtils.toLikeAnd(query, idx_p, Project.class, Project.DESCRIPTION, description);
-
-			if (!StringUtils.isNull(mak)) {
-				CommonCode makCode = (CommonCode) CommonUtils.getObject(mak);
-				QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "makReference.key.id", makCode);
-			}
+		if (!StringUtils.isNull(mak)) {
+			CommonCode makCode = (CommonCode) CommonUtils.getObject(mak);
+			QuerySpecUtils.toEqualsAnd(query, idx_p, Project.class, "makReference.key.id", makCode);
 		}
 
 		Folder folder = null;

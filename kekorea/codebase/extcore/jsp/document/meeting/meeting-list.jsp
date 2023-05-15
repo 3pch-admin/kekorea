@@ -48,20 +48,42 @@ String end = (String) request.getAttribute("end");
 				<td class="indent5">
 					<input type="text" name="name" id="name" class="width-200">
 				</td>
-				<th>회의록 내용</th>
-				<td class="indent5">
-					<input type="text" name="description" id="description" class="width-200">
-				</td>
 				<th>KEK 작번</th>
 				<td class="indent5">
-					<input type="text" name="kekNumber" id="kekNumber" class="width-200">
+					<input type="text" name="kekNumber" id="kekNumber">
 				</td>
 				<th>KE 작번</th>
 				<td class="indent5">
-					<input type="text" name="keNumber" id="keNumber" class="width-200">
+					<input type="text" name="keNumber" id="keNumber">
+				</td>
+				<th>발행일</th>
+				<td class="indent5">
+					<input type="text" name="pdateFrom" id="pdateFrom" class="width-100">
+					~
+					<input type="text" name="pdateTo" id="pdateTo" class="width-100">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('pdateFrom', 'pdateTo')">
 				</td>
 			</tr>
 			<tr>
+				<th>거래처</th>
+				<td class="indent5">
+					<select name="customer_name" id="customer_name" class="width-200">
+						<option value="">선택</option>
+						<%
+						for (Map customer : customers) {
+						%>
+						<option value="<%=customer.get("key")%>"><%=customer.get("value")%></option>
+						<%
+						}
+						%>
+					</select>
+				</td>
+				<th>설치장소</th>
+				<td class="indent5">
+					<select name="install_name" id="install_name" class="width-200">
+						<option value="">선택</option>
+					</select>
+				</td>
 				<th>막종</th>
 				<td class="indent5">
 					<select name="mak_name" id="mak_name" class="width-200">
@@ -80,25 +102,6 @@ String end = (String) request.getAttribute("end");
 				<th>막종상세</th>
 				<td class="indent5">
 					<select name="detail_name" id="detail_name" class="width-200">
-						<option value="">선택</option>
-					</select>
-				</td>
-				<th>거래처</th>
-				<td class="indent5">
-					<select name="customer_name" id="customer_name" class="width-200">
-						<option value="">선택</option>
-						<%
-						for (Map customer : customers) {
-						%>
-						<option value="<%=customer.get("key")%>"><%=customer.get("value")%></option>
-						<%
-						}
-						%>
-					</select>
-				</td>
-				<th>설치장소</th>
-				<td class="indent5">
-					<select name="install_name" id="install_name" class="width-200">
 						<option value="">선택</option>
 					</select>
 				</td>
@@ -136,7 +139,27 @@ String end = (String) request.getAttribute("end");
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('soft')">
 				</td>
 			</tr>
+			<tr>
+				<th>회의록 내용</th>
+				<td colspan="3" class="indent5">
+					<input type="text" name="content" id="content" class="width-500">
+				</td>
+				<th>작성자</th>
+				<td class="indent5">
+					<input type="text" name="creator" id="creator" data-multi="false">
+					<input type="hidden" name="creatorOid" id="creatorOid">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('creator')">
+				</td>
+				<th>작성일</th>
+				<td class="indent5">
+					<input type="text" name="createdFrom" id="createdFrom" class="width-100">
+					~
+					<input type="text" name="createdTo" id="createdTo" class="width-100">
+					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('createdFrom', 'createdTo')">
+				</td>
+			</tr>
 		</table>
+
 
 
 		<table class="button-table">
@@ -397,34 +420,10 @@ String end = (String) request.getAttribute("end");
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/meeting/list");
-				const kekNumber = document.getElementById("kekNumber").value;
-				const keNumber = document.getElementById("keNumber").value;
-				const customer_name = document.getElementById("customer_name").value;
-				const install_name = document.getElementById("install_name").value;
-				const projectType = document.getElementById("projectType").value;
-				const machineOid = document.getElementById("machineOid").value;
-				const elecOid = document.getElementById("elecOid").value;
-				const softOid = document.getElementById("softOid").value;
-				const mak_name = document.getElementById("mak_name").value;
-				const detail_name = document.getElementById("detail_name").value;
-				const description = document.getElementById("description").value;
-				const psize = document.getElementById("psize").value;
-				const name = document.getElementById("name").value;
-				params.name = name;
-				params.kekNumber = kekNumber;
-				params.keNumber = keNumber;
-				params.customer_name = customer_name;
-				params.install_name = install_name;
-				params.projectType = projectType;
-				params.machineOid = machineOid;
-				params.elecOid = elecOid;
-				params.softOid = softOid;
-				params.mak_name = mak_name;
-				params.detail_name = detail_name;
-				params.description = description;
-				params.psize = psize;
+				const field = [ "name", "kekNumber", "keNumber", "pdateFrom", "pdateTo", "customer_name", "install_name", "projectType", "machineOid", "elecOid", "softOid", "mak_name", "detail_name", "content", "creatorOid", "createdFrom", "createdTo", "psize" ];
+				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -485,7 +484,8 @@ String end = (String) request.getAttribute("end");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
-				const columns = loadColumnLayout("meeting-list");
+				toFocus("name");
+				const columns = loadColumnLayout("request-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({
@@ -493,6 +493,7 @@ String end = (String) request.getAttribute("end");
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
+				twindate("pdate");
 				$("#customer_name").bindSelect({
 					onchange : function() {
 						const oid = this.optionValue;
@@ -513,6 +514,8 @@ String end = (String) request.getAttribute("end");
 				finderUser("machine");
 				finderUser("elec");
 				finderUser("soft");
+				finderUser("creator");
+				twindate("created");
 				$("#mak_name").bindSelect({
 					onchange : function() {
 						const oid = this.optionValue;

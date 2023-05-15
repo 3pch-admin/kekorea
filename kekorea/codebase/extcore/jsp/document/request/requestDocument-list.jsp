@@ -159,7 +159,7 @@ ArrayList<Map<String, String>> projectTypes = (ArrayList<Map<String, String>>) r
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('createdFrom', 'createdTo')">
 				</td>
 				<th>작업 내용</th>
-				<td colspan="3" class="indent5">
+				<td class="indent5">
 					<input type="text" name="description" id="description" class="width-200">
 				</td>
 			</tr>
@@ -473,7 +473,7 @@ ArrayList<Map<String, String>> projectTypes = (ArrayList<Map<String, String>>) r
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/requestDocument/list");
 				const field = [ "name", "kekNumber", "keNumber", "pdateFrom", "pdateTo", "customer_name", "install_name", "projectType", "machineOid", "elecOid", "softOid", "mak_name", "detail_name", "description", "state", "creatorOid", "createdFrom", "createdTo", "psize" ];
 				params = toField(params, field);

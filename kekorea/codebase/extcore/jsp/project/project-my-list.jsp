@@ -382,7 +382,7 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 					},
 					editable : false
 				}, {
-					dataField : "machine",
+					dataField : "machine_oid",
 					headerText : "기계 담당자",
 					dataType : "string",
 					width : 100,
@@ -410,7 +410,7 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
 							for (let i = 0, len = machines.length; i < len; i++) {
-								if (machines[i] == newValue) {
+								if (machines[i]["name"] == newValue) {
 									isValid = true;
 									break;
 								}
@@ -432,7 +432,7 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 						return retStr == "" ? value : retStr;
 					},
 				}, {
-					dataField : "elec",
+					dataField : "elec_oid",
 					headerText : "전기 담당자",
 					dataType : "string",
 					width : 100,
@@ -460,7 +460,7 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
 							for (let i = 0, len = elecs.length; i < len; i++) {
-								if (elecs[i] == newValue) {
+								if (elecs[i]["name"] == newValue) {
 									isValid = true;
 									break;
 								}
@@ -482,7 +482,7 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 						return retStr == "" ? value : retStr;
 					},
 				}, {
-					dataField : "soft",
+					dataField : "soft_oid",
 					headerText : "SW 담당자",
 					dataType : "string",
 					width : 100,
@@ -510,7 +510,7 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
 							for (let i = 0, len = softs.length; i < len; i++) {
-								if (softs[i] == newValue) {
+								if (softs[i]["name"] == newValue) {
 									isValid = true;
 									break;
 								}

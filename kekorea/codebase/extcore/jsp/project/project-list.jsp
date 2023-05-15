@@ -24,7 +24,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -208,10 +208,13 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 		<script type="text/javascript">
 			let myGridID;
 			function _layout() {
-				const elecs = <%=elecs%>
-				const machines = <%=machines%>
-				const softs = <%=softs%>
-				return [ {
+				const elecs =
+		<%=elecs%>
+			const machines =
+		<%=machines%>
+			const softs =
+		<%=softs%>
+			return [ {
 					dataField : "state",
 					headerText : "진행상태",
 					dataType : "string",
@@ -374,7 +377,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 					},
 					editable : false
 				}, {
-					dataField : "machine_name",
+					dataField : "machine_oid",
 					headerText : "기계 담당자",
 					width : 100,
 					renderer : {
@@ -401,7 +404,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
 							for (let i = 0, len = machines.length; i < len; i++) {
-								if (machines[i]["oid"]== newValue) {
+								if (machines[i]["name"] == newValue) {
 									isValid = true;
 									break;
 								}
@@ -423,7 +426,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 						return retStr == "" ? value : retStr;
 					},
 				}, {
-					dataField : "elec_name",
+					dataField : "elec_oid",
 					headerText : "전기 담당자",
 					width : 100,
 					renderer : {
@@ -450,7 +453,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
 							for (let i = 0, len = elecs.length; i < len; i++) {
-								if (elecs[i]["oid"] == newValue) {
+								if (elecs[i]["name"] == newValue) {
 									isValid = true;
 									break;
 								}
@@ -472,7 +475,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 						return retStr == "" ? value : retStr;
 					},
 				}, {
-					dataField : "soft_name",
+					dataField : "soft_oid",
 					headerText : "SW 담당자",
 					dataType : "string",
 					width : 100,
@@ -500,7 +503,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
 							for (let i = 0, len = softs.length; i < len; i++) {
-								if (softs[i]["oid"] == newValue) {
+								if (softs[i]["name"] == newValue) {
 									isValid = true;
 									break;
 								}
@@ -665,8 +668,8 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 				params.psize = psize;
 				params.elecPrice = elecPrice;
 				params.machinePrice = machinePrice;
-				params.machine= machine;
-				params.soft= soft;
+				params.machine = machine;
+				params.soft = soft;
 				params.elec = elec;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -687,11 +690,11 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 					alert("변경된 내용이 없습니다.");
 					return false;
 				}
-				
+
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
 				}
-				
+
 				params.editRows = editRows;
 				parent.openLayer();
 				call(url, params, function(data) {
@@ -701,7 +704,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 					}
 				})
 			}
-			
+
 			function exportExcel() {
 				const exceptColumnFields = [ "kekProgress" ];
 				const sessionName = document.getElementById("sessionName").value;

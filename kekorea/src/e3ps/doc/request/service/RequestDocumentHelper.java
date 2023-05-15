@@ -173,8 +173,11 @@ public class RequestDocumentHelper {
 			JSONArray children = new JSONArray();
 			JSONObject node = new JSONObject();
 			while (group.hasMoreElements()) {
-				RequestDocumentProjectLink link = (RequestDocumentProjectLink) group.nextElement();
+				Object[] oo = (Object[]) group.nextElement();
+				RequestDocumentProjectLink link = (RequestDocumentProjectLink) oo[2];
 				RequestDocumentDTO dto = new RequestDocumentDTO(link);
+				node.put("oid", requestDocument.getPersistInfo().getObjectIdentifier().getStringValue());
+				node.put("name", requestDocument.getName());
 				if (isNode == 1) {
 					node.put("poid", dto.getPoid());
 					node.put("loid", link.getPersistInfo().getObjectIdentifier().getStringValue());

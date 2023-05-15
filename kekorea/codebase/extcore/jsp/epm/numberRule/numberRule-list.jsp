@@ -111,11 +111,10 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 				<td class="indent5">
 					<select name="state" id="state" class="width-200">
 						<option value="">선택</option>
-						<option value="INWORK">작업 중</option>
-						<option value="UNDERAPPROVAL">승인 중</option>
-						<option value="APPROVED">승인됨</option>
-						<option value="RETURN">반려됨</option>
-						<option value="WITHDRAWN">폐기</option>
+						<option value="작업 중">작업 중</option>
+						<option value="승인중">승인중</option>
+						<option value="승인됨">승인됨</option>
+						<option value="반려됨">반려됨</option>
 					</select>
 				</td>
 			</tr>
@@ -723,34 +722,12 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/numberRule/list");
-				const number = document.getElementById("number").value;
-				const name = document.getElementById("name").value;
-				const lotNo = document.getElementById("lotNo").value;
-				const unitName = document.getElementById("unitName").value;
-				const size = document.getElementById("size").value;
-				const state = document.getElementById("state").value;
-				const writtenDocuments_code = document.getElementById("writtenDocuments_code").value;
-				const creatorOid = document.getElementById("creatorOid").value;
-				const createdFrom = document.getElementById("createdFrom").value;
-				const createdTo = document.getElementById("createdTo").value;
-				const classificationWritingDepartments_code = document.getElementById("classificationWritingDepartments_code").value;
+				const field = [ "number", "name", "lotNo", "unitName", "size", "state", "writtenDocuments_code", "creatorOid", "createdFrom", "createdTo", "classificationWritingDepartments_code", "psize" ];
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
-				const psize = document.getElementById("psize").value;
+				params = toField(params, field);
 				params.latest = latest;
-				params.writtenDocuments_code = writtenDocuments_code;
-				params.classificationWritingDepartments_code = classificationWritingDepartments_code;
-				params.creatorOid = creatorOid;
-				params.createdFrom = createdFrom;
-				params.createdTo = createdTo;
-				params.state = state;
-				params.size = size;
-				params.name = name;
-				params.number = number;
-				params.lotNo = lotNo;
-				params.unitName = unitName;
-				params.psize = psize;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

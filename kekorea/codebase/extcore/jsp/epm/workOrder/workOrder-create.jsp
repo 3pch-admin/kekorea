@@ -10,8 +10,8 @@ String poid = (String) request.getAttribute("poid");
 JSONArray data = (JSONArray) request.getAttribute("data");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
-<input type="hidden" name="toid" id="toid" value="<%=toid%>">
-<input type="hidden" name="poid" id="poid" value="<%=poid%>">
+<input type="hidden" name="toid" id="toid" value="<%=toid != null ? toid : ""%>">
+<input type="hidden" name="poid" id="poid" value="<%=poid != null ? poid : ""%>">
 <style type="text/css">
 .preView {
 	background-color: #caf4fd;

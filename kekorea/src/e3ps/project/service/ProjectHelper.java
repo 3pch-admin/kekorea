@@ -48,6 +48,7 @@ import e3ps.project.task.service.TaskHelper;
 import e3ps.project.task.variable.TaskStateVariable;
 import e3ps.project.template.Template;
 import e3ps.project.variable.ProjectStateVariable;
+import e3ps.project.variable.ProjectUserTypeVariable;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.doc.WTDocument;
@@ -386,7 +387,8 @@ public class ProjectHelper {
 
 		if (!StringUtils.isNull(machineOid)) {
 			WTUser machine = (WTUser) CommonUtils.getObject(machineOid);
-			CommonCode machineCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+			CommonCode machineCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.MACHINE,
+					"USER_TYPE");
 			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
 			int idx_u = query.appendClassList(WTUser.class, false);
 
@@ -401,7 +403,7 @@ public class ProjectHelper {
 
 		if (!StringUtils.isNull(elecOid)) {
 			WTUser elec = (WTUser) CommonUtils.getObject(elecOid);
-			CommonCode elecCode = CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE");
+			CommonCode elecCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.ELEC, "USER_TYPE");
 			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
 			int idx_u = query.appendClassList(WTUser.class, false);
 
@@ -415,7 +417,7 @@ public class ProjectHelper {
 
 		if (!StringUtils.isNull(softOid)) {
 			WTUser soft = (WTUser) CommonUtils.getObject(softOid);
-			CommonCode softCode = CommonCodeHelper.manager.getCommonCode("SOFT", "USER_TYPE");
+			CommonCode softCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.SOFT, "USER_TYPE");
 			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
 			int idx_u = query.appendClassList(WTUser.class, false);
 
