@@ -1,29 +1,54 @@
 package e3ps;
 
-import e3ps.common.convert.ProcessOutputThread;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import wt.util.WTProperties;
 
 public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-		String a = "ASD.dwg";
-		System.out.println(a.substring(0, a.lastIndexOf(".")));
+//		String numberRulePath = WTProperties.getLocalProperties().getProperty("wt.codebase.location") + File.separator
+//				+ "extcore" + File.separator + "excelTemplate" + File.separator + "WORKORDER-TEMPLATE.xlsx";
+//		FileInputStream fis = new FileInputStream(numberRulePath);
+//		Workbook workbook = new XSSFWorkbook(fis);
 		
-//		Runtime rt = Runtime.getRuntime();
-//		String dwgFilePath = "C:\\NA-AF-STB301-013.A.2.dwg";
-//		String pdfFileName = "test.pdf";
-//		
-//		String exec1 = "C:\\Program Files (x86)\\AutoDWG\\AutoDWG DWG to PDF Converter 2023\\d2p.exe /InFile";
-//		String conFile = "C:\\\\Program Files (x86)\\\\AutoDWG\\\\AutoDWG DWG to PDF Converter 2023\\\\AutoDWGPdf.ddp";
-//
-//		String exec = exec1 + " " + dwgFilePath + " /OutFile " + pdfFileName + " /InConfigFile " + conFile;
-//		System.out.println(exec);
-//
-//		Process p = rt.exec(exec);
-//		ProcessOutputThread o = new ProcessOutputThread(p.getInputStream(), new StringBuffer());
-//		o.start();
-//		p.waitFor();
-//	
-		System.exit(0);
+		  Workbook workbook = new XSSFWorkbook();
+
+		// 엑셀 시트 생성
+		for (int i = 1; i <= 5; i++) {
+			String sheetName = "Sheet" + i;
+			Sheet sheet = workbook.createSheet(sheetName);
+
+			// 셀에 데이터 작성 예시
+			Row row = sheet.createRow(0);
+			Cell cell = row.createCell(0);
+			cell.setCellValue("Hello, Sheet " + i);
+		}
+
+		// 생성된 워크북을 파일로 저장
+		try (FileOutputStream outputStream = new FileOutputStream("D:" + File.separator + "output.xlsx")) {
+			workbook.write(outputStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// 워크북 닫기
+		try {
+			workbook.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("종료!");
 	}
 }
