@@ -509,6 +509,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
 					enableFilter : true,
+					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
