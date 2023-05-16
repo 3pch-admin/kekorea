@@ -635,7 +635,7 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/project/list");
-				const field = ["kekNumber","keNumber","pdateFrom","pdateTo","userId","kekState","model","customer_name","install_name","projectType","machineOid","elecOid","softOid","mak_name","detail_name","template","description","psize","elecPrice","totalPrice","machinePrice"];
+				const field = ["kekNumber","keNumber","pdateFrom","pdateTo","userId","kekState","model","customer_name","install_name","projectType","machineOid","elecOid","softOid","mak_name","detail_name","template","description","psize"];
 				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
