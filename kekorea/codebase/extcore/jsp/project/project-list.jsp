@@ -625,11 +625,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/project/list");
-<<<<<<< HEAD
 				const field = [ "kekNumber", "keNumber", "pdateFrom", "pdateTo", "userId", "kekState", "model", "customer_name", "install_name", "projectType", "machineOid", "elecOid", "softOid", "mak_name", "detail_name", "template", "description", "psize" ];
-=======
-				const field =["kekNumber","keNumber","pdateFrom","pdateTo","userId","kekState","model","customer_name","install_name","projectType","machineOid","elecOid","softOid","mak_name","detail_name","template","description","psize","machine","elec","soft"];
->>>>>>> 3388cbaa1992d533bed652f162baf9ff3717241e
 				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
