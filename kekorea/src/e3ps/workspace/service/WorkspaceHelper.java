@@ -22,6 +22,7 @@ import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.service.PartlistHelper;
 import e3ps.bom.tbom.TBOMMaster;
 import e3ps.bom.tbom.service.TBOMHelper;
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.IBAUtils;
 import e3ps.common.util.PageQueryUtils;
@@ -35,7 +36,9 @@ import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.korea.configSheet.service.ConfigSheetHelper;
 import e3ps.org.dto.UserDTO;
 import e3ps.project.Project;
+import e3ps.project.output.Output;
 import e3ps.project.output.service.OutputHelper;
+import e3ps.project.task.Task;
 import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.ApprovalLine;
@@ -43,6 +46,7 @@ import e3ps.workspace.ApprovalMaster;
 import e3ps.workspace.PersistableLineMasterLink;
 import e3ps.workspace.dto.ApprovalLineDTO;
 import net.sf.json.JSONArray;
+import wt.content.ContentHolder;
 import wt.doc.WTDocument;
 import wt.enterprise.Managed;
 import wt.epm.EPMDocument;
@@ -50,6 +54,7 @@ import wt.fc.PagingQueryResult;
 import wt.fc.Persistable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.lifecycle.LifeCycleManaged;
 import wt.org.WTUser;
 import wt.part.WTPart;
 import wt.query.QuerySpec;
@@ -827,13 +832,13 @@ public class WorkspaceHelper {
 	/**
 	 * 일괄격채 데이터 가져오기
 	 */
-	public ArrayList<Map<String, String>> contractData(ApprovalContract contract) throws Exception {
-		ArrayList<Map<String, String>> list = new ArrayList<>();
+	public ArrayList<Map<String, Object>> contractData(ApprovalContract contract) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		QueryResult result = PersistenceHelper.manager.navigate(contract, "persist",
 				ApprovalContractPersistableLink.class);
 		while (result.hasMoreElements()) {
 			Persistable per = (Persistable) result.nextElement();
-			Map<String, String> map = new HashMap<>();
+			Map<String, Object> map = new HashMap<>();
 			if (per instanceof EPMDocument) {
 				EPMDocument epm = (EPMDocument) per;
 				map.put("oid", epm.getPersistInfo().getObjectIdentifier().getStringValue());
@@ -874,6 +879,81 @@ public class WorkspaceHelper {
 						+ document.getIterationIdentifier().getSeries().getValue());
 				map.put("creator", document.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(document.getCreateTimestamp()));
+				list.add(map);
+			} else if (per instanceof Output) {
+
+				Output output = (Output) per;
+				Project project = output.getProject();
+				LifeCycleManaged lcm = output.getDocument();
+				Task task = output.getTask();
+
+				// 산출물 일괄결재
+				map.put("poid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("kekNumber", project.getKekNumber());
+				map.put("toid", task.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("taskName", task.getName());
+				map.put("contentHolder", (ContentHolder) lcm);
+				if (lcm instanceof ConfigSheet) {
+					ConfigSheet configSheet = (ConfigSheet) lcm;
+					map.put("oid", configSheet.getPersistInfo().getObjectIdentifier().getStringValue());
+					map.put("type", "CONFIG SHEET");
+					map.put("name", configSheet.getName());
+					map.put("state", configSheet.getLifeCycleState().getDisplay());
+					map.put("creator", configSheet.getCreatorFullName());
+					map.put("createdDate_txt", CommonUtils.getPersistableTime(configSheet.getCreateTimestamp()));
+					map.put("version", String.valueOf(configSheet.getVersion()));
+					map.put("primary", AUIGridUtils.primaryTemplate(configSheet));
+					map.put("secondary", AUIGridUtils.secondaryTemplate(configSheet));
+					// tbom
+				} else if (lcm instanceof TBOMMaster) {
+					TBOMMaster master = (TBOMMaster) lcm;
+					map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+					map.put("type", "T-BOM");
+					map.put("name", master.getName());
+					map.put("state", master.getLifeCycleState().getDisplay());
+					map.put("creator", master.getCreatorFullName());
+					map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+					map.put("version", String.valueOf(master.getVersion()));
+					map.put("primary", AUIGridUtils.primaryTemplate(master));
+					map.put("secondary", AUIGridUtils.secondaryTemplate(master));
+					// workorder
+				} else if (lcm instanceof WorkOrder) {
+					WorkOrder workOrder = (WorkOrder) lcm;
+					map.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
+					map.put("type", "도면일람표");
+					map.put("name", workOrder.getName());
+					map.put("state", workOrder.getLifeCycleState().getDisplay());
+					map.put("creator", workOrder.getCreatorFullName());
+					map.put("createdDate_txt", CommonUtils.getPersistableTime(workOrder.getCreateTimestamp()));
+					map.put("version", String.valueOf(workOrder.getVersion()));
+					map.put("primary", AUIGridUtils.primaryTemplate(workOrder));
+					map.put("secondary", AUIGridUtils.secondaryTemplate(workOrder));
+					// document
+				} else if (lcm instanceof WTDocument) {
+					WTDocument document = (WTDocument) lcm;
+					map.put("oid", document.getPersistInfo().getObjectIdentifier().getStringValue());
+					map.put("type", "산출물");
+					map.put("name", document.getName());
+					map.put("state", document.getLifeCycleState().getDisplay());
+					map.put("creator", document.getCreatorFullName());
+					map.put("createdDate_txt", CommonUtils.getPersistableTime(document.getCreateTimestamp()));
+					map.put("version", document.getVersionIdentifier().getSeries().getValue());
+					map.put("primary", AUIGridUtils.primaryTemplate(document));
+					map.put("secondary", AUIGridUtils.secondaryTemplate(document));
+					// partlist
+				} else if (lcm instanceof PartListMaster) {
+					PartListMaster master = (PartListMaster) lcm;
+					map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+					map.put("type", "수배표");
+					map.put("name", master.getName());
+					map.put("state", master.getLifeCycleState().getDisplay());
+					map.put("creator", master.getCreatorFullName());
+					map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+					map.put("version", master.getVersion());
+					map.put("primary", AUIGridUtils.primaryTemplate(master));
+					map.put("secondary", AUIGridUtils.secondaryTemplate(master));
+				}
+				list.add(map);
 			}
 		}
 		return list;
@@ -955,7 +1035,6 @@ public class WorkspaceHelper {
 				sheet.addMergedRegion(region2);
 				sheet.addMergedRegion(region3);
 
-
 				Cell cell = row.createCell(0);
 				cell.setCellStyle(cellStyle);
 				cell.setCellValue(String.valueOf(rowNum));
@@ -963,7 +1042,7 @@ public class WorkspaceHelper {
 				cell = row.createCell(1);
 				cell.setCellStyle(cellStyle);
 				cell.setCellValue(numberRule.getMaster().getLotNo() + " / " + numberRule.getMaster().getUnitName());
-				
+
 				cell = row.createCell(2);
 				cell.setCellStyle(cellStyle);
 				cell = row.createCell(3);
@@ -972,7 +1051,7 @@ public class WorkspaceHelper {
 				cell = row.createCell(4);
 				cell.setCellStyle(cellStyle);
 				cell.setCellValue(name);
-				
+
 				cell = row.createCell(5);
 				cell.setCellStyle(cellStyle);
 				cell = row.createCell(6);
@@ -981,7 +1060,7 @@ public class WorkspaceHelper {
 				cell = row.createCell(7);
 				cell.setCellStyle(cellStyle);
 				cell.setCellValue(number);
-				
+
 				cell = row.createCell(8);
 				cell.setCellStyle(cellStyle);
 				cell = row.createCell(9);
@@ -993,14 +1072,14 @@ public class WorkspaceHelper {
 
 				cell = row.createCell(11);
 				cell.setCellStyle(cellStyle);
-				cell.setCellValue(numberRule.getNote());				
+				cell.setCellValue(numberRule.getNote());
 				cell = row.createCell(12);
 				cell.setCellStyle(cellStyle);
 				cell = row.createCell(13);
 				cell.setCellStyle(cellStyle);
 				cell = row.createCell(14);
 				cell.setCellStyle(cellStyle);
-				
+
 				rowNum++;
 				rowIndex++;
 			}

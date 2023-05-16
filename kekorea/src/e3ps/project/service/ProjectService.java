@@ -55,4 +55,9 @@ public interface ProjectService {
 	 * 프로젝트 삭제
 	 */
 	public abstract void delete(String oid) throws Exception;
+
+	/**
+	 * 작번 산출물 일괄 결재
+	 */
+	public abstract void register(Map<String, Object> params) throws Exception;
 }

@@ -24,6 +24,7 @@ import e3ps.org.PeopleWTUserLink;
 import e3ps.part.kePart.KePart;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
+import e3ps.project.output.Output;
 import e3ps.project.task.Task;
 import e3ps.project.task.variable.TaskStateVariable;
 import e3ps.project.variable.ProjectStateVariable;
@@ -214,6 +215,10 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 						NumberRule numberRule = (NumberRule) per;
 						numberRule.setState(Constants.State.APPROVING);
 						PersistenceHelper.manager.modify(numberRule);
+					} else if (per instanceof Output) {
+						Output output = (Output) per;
+						LifeCycleManaged lcm = output.getDocument();
+						LifeCycleHelper.service.setLifeCycleState(lcm, State.toState("UNDERAPPROVAL"));
 					}
 
 				}

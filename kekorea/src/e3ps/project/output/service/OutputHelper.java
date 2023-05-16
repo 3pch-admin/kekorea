@@ -7,16 +7,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import e3ps.admin.commonCode.CommonCode;
+import e3ps.bom.partlist.PartListMaster;
+import e3ps.bom.tbom.TBOMMaster;
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.FolderUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.epm.workOrder.WorkOrder;
+import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
 import e3ps.project.output.OutputDocumentLink;
 import e3ps.project.output.OutputProjectLink;
 import e3ps.project.output.dto.OutputDTO;
+import e3ps.project.task.Task;
 import net.sf.json.JSONArray;
 import wt.clients.folder.FolderTaskLogic;
 import wt.doc.WTDocument;
@@ -26,6 +32,7 @@ import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.folder.Folder;
 import wt.folder.IteratedFolderMemberLink;
+import wt.lifecycle.LifeCycleManaged;
 import wt.query.ClassAttribute;
 import wt.query.QuerySpec;
 import wt.query.SearchCondition;
@@ -261,4 +268,86 @@ public class OutputHelper {
 		return list;
 	}
 
+	/**
+	 * 작번 모든 산출물 리스트
+	 */
+	public JSONArray outputTab(String oid) throws Exception {
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+
+		Project project = (Project) CommonUtils.getObject(oid);
+		QueryResult result = PersistenceHelper.manager.navigate(project, "output", OutputProjectLink.class);
+		while (result.hasMoreElements()) {
+			Output output = (Output) result.nextElement();
+			Task task = output.getTask();
+			LifeCycleManaged lcm = output.getDocument();
+			// 산출물 일괄결재
+			Map<String, Object> map = new HashMap<>();
+			map.put("poid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("kekNumber", project.getKekNumber());
+			map.put("toid", task.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("taskName", task.getName());
+			if (lcm instanceof ConfigSheet) {
+				ConfigSheet configSheet = (ConfigSheet) lcm;
+				map.put("oid", configSheet.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("type", "CONFIG SHEET");
+				map.put("name", configSheet.getName());
+				map.put("state", configSheet.getLifeCycleState().getDisplay());
+				map.put("creator", configSheet.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(configSheet.getCreateTimestamp()));
+				map.put("version", String.valueOf(configSheet.getVersion()));
+				map.put("primary", AUIGridUtils.primaryTemplate(configSheet));
+				map.put("secondary", AUIGridUtils.secondaryTemplate(configSheet));
+				// tbom
+			} else if (lcm instanceof TBOMMaster) {
+				TBOMMaster master = (TBOMMaster) lcm;
+				map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("type", "T-BOM");
+				map.put("name", master.getName());
+				map.put("state", master.getLifeCycleState().getDisplay());
+				map.put("creator", master.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+				map.put("version", String.valueOf(master.getVersion()));
+				map.put("primary", AUIGridUtils.primaryTemplate(master));
+				map.put("secondary", AUIGridUtils.secondaryTemplate(master));
+				// workorder
+			} else if (lcm instanceof WorkOrder) {
+				WorkOrder workOrder = (WorkOrder) lcm;
+				map.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("type", "도면일람표");
+				map.put("name", workOrder.getName());
+				map.put("state", workOrder.getLifeCycleState().getDisplay());
+				map.put("creator", workOrder.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(workOrder.getCreateTimestamp()));
+				map.put("version", String.valueOf(workOrder.getVersion()));
+				map.put("primary", AUIGridUtils.primaryTemplate(workOrder));
+				map.put("secondary", AUIGridUtils.secondaryTemplate(workOrder));
+				// document
+			} else if (lcm instanceof WTDocument) {
+				WTDocument document = (WTDocument) lcm;
+				map.put("oid", document.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("type", "산출물");
+				map.put("name", document.getName());
+				map.put("state", document.getLifeCycleState().getDisplay());
+				map.put("creator", document.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(document.getCreateTimestamp()));
+				map.put("version", document.getVersionIdentifier().getSeries().getValue());
+				map.put("primary", AUIGridUtils.primaryTemplate(document));
+				map.put("secondary", AUIGridUtils.secondaryTemplate(document));
+				// partlist
+			} else if (lcm instanceof PartListMaster) {
+				PartListMaster master = (PartListMaster) lcm;
+				map.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("type", "수배표");
+				map.put("name", master.getName());
+				map.put("state", master.getLifeCycleState().getDisplay());
+				map.put("creator", master.getCreatorFullName());
+				map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+				map.put("version", master.getVersion());
+				map.put("primary", AUIGridUtils.primaryTemplate(master));
+				map.put("secondary", AUIGridUtils.secondaryTemplate(master));
+			}
+			list.add(map);
+		}
+		return JSONArray.fromObject(list);
+	}
 }

@@ -35,13 +35,14 @@
 	<script type="text/javascript">
 		const cover = new ax5.ui.mask();
 		const iframe = document.getElementById("content");
+		const subLoc = document.getElementById("subLoc");
 		function moveToPage(obj, url, loc) {
-			let menu = document.getElementsByClassName("menu");
+			const menu = document.getElementsByClassName("menu");
 			for (let i = 0; i < menu.length; i++) {
 				menu[i].classList.remove("menu");
 			}
 			obj.classList.add("menu");
-			$("#subLoc").html(loc);
+			subLoc.innerHTML = loc;
 			iframe.src = "/Windchill/plm" + url;
 		}
 

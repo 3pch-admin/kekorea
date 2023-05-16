@@ -260,7 +260,8 @@
 									rowNumHeaderText : "번호",
 									showStateColumn : true,
 									showRowCheckColumn : true,
-									enableSorting : false
+									enableSorting : false,
+									selectionMode : "multipleCells"
 								}
 								myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 								AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRow);
@@ -387,11 +388,13 @@
 				createAUIGrid8(columns8);
 				AUIGrid.resize(myGridID);
 				AUIGrid.resize(myGridID8);
+				AUIGrid.resize(myGridID11);
 			});
 
 			window.addEventListener("resize", function() {
-				AUIGrid.bind(myGridID);
+				AUIGrid.resize(myGridID);
 				AUIGrid.resize(myGridID8);
+				AUIGrid.resize(myGridID11);
 			});
 		</script>
 	</form>

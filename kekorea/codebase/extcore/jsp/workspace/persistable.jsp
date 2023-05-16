@@ -1,3 +1,4 @@
+<%@page import="wt.content.ContentHolder"%>
 <%@page import="e3ps.bom.tbom.TBOMMasterProjectLink"%>
 <%@page import="e3ps.bom.tbom.service.TBOMHelper"%>
 <%@page import="e3ps.project.output.OutputProjectLink"%>
@@ -34,7 +35,7 @@ Persistable per = (Persistable) CommonUtils.getObject(oid);
 <%
 if (per instanceof ApprovalContract) {
 	ApprovalContract contract = (ApprovalContract) per;
-	ArrayList<Map<String, String>> list = WorkspaceHelper.manager.contractData(contract);
+	ArrayList<Map<String, Object>> list = WorkspaceHelper.manager.contractData(contract);
 	if (contract.getContractType().equals("EPMDOCUMENT")) {
 %>
 <!-- 일괄결재 도면 -->
@@ -69,8 +70,8 @@ if (per instanceof ApprovalContract) {
 		<th class="lb">작성일</th>
 	</tr>
 	<%
-	for (Map<String, String> map : list) {
-		if (map.get("oid").indexOf("EPMDocument") > -1) {
+	for (Map<String, Object> map : list) {
+		if (((String)map.get("oid")).indexOf("EPMDocument") > -1) {
 	%>
 	<tr>
 		<td class="indent5">
@@ -86,7 +87,7 @@ if (per instanceof ApprovalContract) {
 		<td class="center"><%=map.get("createdDate_txt")%></td>
 	</tr>
 	<%
-	}
+		}
 	}
 	%>
 </table>
@@ -127,8 +128,8 @@ if (per instanceof ApprovalContract) {
 		<th class="lb">작성일</th>
 	</tr>
 	<%
-	for (Map<String, String> map : list) {
-		if (map.get("oid").indexOf("NumberRule") > -1) {
+	for (Map<String, Object> map : list) {
+		if (((String)map.get("oid")).indexOf("NumberRule") > -1) {
 	%>
 	<tr>
 		<td class="center"><%=map.get("lotNo")%></td>
@@ -141,7 +142,90 @@ if (per instanceof ApprovalContract) {
 		<td class="center"><%=map.get("createdDate_txt")%></td>
 	</tr>
 	<%
+		}
 	}
+	%>
+</table>
+
+<%
+	} else if(contract.getContractType().equals("OUTPUT")) {
+%>
+<!-- 작번 산출물 문서 -->
+<table class="button-table">
+	<tr>
+		<td class="left">
+			<div class="header">
+				<img src="/Windchill/extcore/images/header.png">
+				작번 산출물 일괄 결재
+			</div>
+		</td>
+	</tr>
+</table>
+
+<table class="view-table">
+	<colgroup>
+		<col width="100">
+		<col width="130">
+		<col width="100">
+		<col width="*">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="130">
+		<col width="160">
+	</colgroup>
+	<tr>
+		<th class="lb">KEK 작번</th>
+		<th class="lb">태스크 명</th>
+		<th class="lb">산출물 타입</th>
+		<th class="lb">산출물 제목</th>
+		<th class="lb">상태</th>
+		<th class="lb">버전</th>
+		<th class="lb">작성자</th>
+		<th class="lb">작성일</th>
+		<th class="lb">주 첨부파일</th>
+		<th class="lb">첨부파일</th>
+	</tr>
+	<%
+	for (Map<String, Object> map : list) {
+		ContentHolder holder = (ContentHolder) map.get("contentHolder");
+		Map<String, Object> primary = ContentUtils.getPrimary(holder);
+		Vector<Map<String, Object>> secondarys = ContentUtils.getSecondary(holder);
+	%>
+	<tr>
+		<td class="center"><%=map.get("kekNumber")%></td>
+		<td class="center"><%=map.get("taskName")%></td>
+		<td class="center"><%=map.get("type")%></td>
+		<td class="indent5"><%=map.get("name")%></td>
+		<td class="center"><%=map.get("state")%></td>
+		<td class="center"><%=map.get("version")%></td>
+		<td class="center"><%=map.get("creator")%></td>
+		<td class="center"><%=map.get("createdDate_txt")%></td>
+		<td class="center">
+			<%
+				if(primary != null) {
+			%>
+			<a href="javascript:download('<%=primary.get("aoid")%>');">
+				<img src="<%=primary.get("fileIcon")%>">
+			</a>
+			<%
+				}
+			%>
+		</td>
+		<td class="center">
+		<%
+			for(Map<String, Object> secondary : secondarys) {
+		%>
+			<a href="javascript:download('<%=secondary.get("aoid")%>');">
+				<img src="<%=secondary.get("fileIcon")%>">
+			</a>
+		<%
+			}
+		%>		
+		</td>
+	</tr>
+	<%
 	}
 	%>
 </table>
@@ -179,7 +263,7 @@ if (per instanceof ApprovalContract) {
 		<th class="lb">작성일</th>
 	</tr>
 	<%
-	for (Map<String, String> map : list) {
+	for (Map<String, Object> map : list) {
 	%>
 	<tr>
 		<td class="center">

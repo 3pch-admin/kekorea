@@ -34,6 +34,9 @@ int taskType = (int) request.getAttribute("taskType");
 					<a href="#tabs-1">기본정보</a>
 				</li>
 				<li>
+					<a href="#tabs-2">산출물</a>
+				</li>				
+				<li>
 					<a href="#tabs-3">특이사항</a>
 				</li>
 				<li>
@@ -284,6 +287,9 @@ int taskType = (int) request.getAttribute("taskType");
 				%>
 			</div>
 
+			<div id="tabs-2">
+				<iframe style="height: 800px;" src="/Windchill/plm/project/outputTab?oid=<%=data.getOid()%>"></iframe>
+			</div>
 			<div id="tabs-3">
 				<iframe style="height: 800px;" src="/Windchill/plm/project/issueTab?oid=<%=data.getOid()%>"></iframe>
 			</div>

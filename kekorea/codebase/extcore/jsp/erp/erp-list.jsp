@@ -147,6 +147,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					showAutoNoDataMessage : false,
 					enableFilter : true,
 					enableMovingColumn : true,
+					selectionMode : "multipleCells",
 					showInlineFilter : true,
 					useContextMenu : true,
 					enableRightDownFocus : true,
@@ -168,7 +169,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/erp/list");
-				const field = ["psize"];
+				const field = [ "psize" ];
 				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();

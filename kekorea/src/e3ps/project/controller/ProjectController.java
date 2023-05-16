@@ -28,6 +28,7 @@ import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
+import e3ps.epm.service.EpmHelper;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.korea.cip.service.CipHelper;
 import e3ps.org.Department;
@@ -36,6 +37,7 @@ import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
 import e3ps.project.dto.ProjectDTO;
 import e3ps.project.issue.service.IssueHelper;
+import e3ps.project.output.service.OutputHelper;
 import e3ps.project.service.ProjectHelper;
 import e3ps.project.task.Task;
 import e3ps.project.task.dto.TaskDTO;
@@ -451,6 +453,20 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
+	@Description(value = "프로젝트 산출물 탭 페이지")
+	@GetMapping(value = "/outputTab")
+	public ModelAndView outputTab(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		JSONArray data = OutputHelper.manager.outputTab(oid);
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("data", data);
+		model.setViewName("/extcore/jsp/project/tab/project-output-tab.jsp");
+		return model;
+	}
+	
 	@Description(value = "프로젝트 수정 페이지")
 	@GetMapping(value = "/modify")
 	public ModelAndView modify(@RequestParam String oid) throws Exception {
@@ -524,5 +540,36 @@ public class ProjectController extends BaseController {
 		model.addObject("dto", dto);
 		model.setViewName("/extcore/jsp/project/task/project-task-view.jsp");
 		return model;
+	}
+
+	@Description(value = "작번 산출물 결재 페이지")
+	@GetMapping(value = "/register")
+	public ModelAndView register(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		Project project = (Project) CommonUtils.getObject(oid);
+		JSONArray data = ProjectHelper.manager.registerData(project);
+		model.addObject("project", project);
+		model.addObject("data", data);
+		model.addObject("oid", oid);
+		model.setViewName("/extcore/jsp/project/project-register.jsp");
+		return model;
+	}
+	
+
+	@Description(value = "작번 산출물 결재")
+	@PostMapping(value = "/register")
+	@ResponseBody
+	public Map<String, Object> register(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ProjectHelper.service.register(params);
+			result.put("result", SUCCESS);
+			result.put("msg", REGISTER_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("msg", e.toString());
+			result.put("result", FAIL);
+		}
+		return result;
 	}
 }

@@ -193,7 +193,7 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('project-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('project-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
-					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
+					<input type="button" value="결재" title="결재" class="blue" onclick="register();">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -608,10 +608,12 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 				const props = {
 					headerHeight : 30,
 					showRowNumColumn : true,
+					showRowCheckColumn : true,
+					rowCheckToRadio : true,
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "singleRow",
+					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,
@@ -635,7 +637,7 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/project/list");
-				const field = ["kekNumber","keNumber","pdateFrom","pdateTo","userId","kekState","model","customer_name","install_name","projectType","machineOid","elecOid","softOid","mak_name","detail_name","template","description","psize"];
+				const field = [ "kekNumber", "keNumber", "pdateFrom", "pdateTo", "userId", "kekState", "model", "customer_name", "install_name", "projectType", "machineOid", "elecOid", "softOid", "mak_name", "detail_name", "template", "description", "psize" ];
 				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -733,9 +735,18 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 				selectbox("psize");
 			});
 
-			function create() {
-				const url = getCallUrl("/project/create");
-				popup(url, 1200, 460);
+			function register() {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				const subLoc = parent.document.getElementById("subLoc");
+				if (checkedItems.length == 0) {
+					alert("작번을 선택하세요.");
+					return false;
+				}
+				subLoc.innerHTML = "작번 관리 > 작번 산출물 결재";
+				parent.openLayer();
+				const oid = checkedItems[0].item.oid;
+				const iframe = parent.document.getElementById("content");
+				iframe.src = getCallUrl("/project/register?oid=" + oid);
 			}
 
 			document.addEventListener("keydown", function(event) {
