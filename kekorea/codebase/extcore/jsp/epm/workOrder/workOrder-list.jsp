@@ -496,11 +496,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				let params = new Object();
 				const url = getCallUrl("/workOrder/list");
 				const field = [ "name", "kekNumber", "keNumber", "pdateFrom", "pdateTo", "customer_name", "install_name", "projectType", "machineOid", "elecOid", "softOid", "mak_name", "detail_name", "description", "creatorOid", "createdFrom", "createdTo", "psize" ];
-				params = toField(params, field);
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
+				params = toField(params, field);
 				params.latest = latest;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
+				console.log(params);
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;

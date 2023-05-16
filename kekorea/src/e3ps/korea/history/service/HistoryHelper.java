@@ -18,6 +18,7 @@ import e3ps.korea.history.ProjectHistoryLink;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.template.Template;
+import e3ps.project.variable.ProjectUserTypeVariable;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -88,7 +89,8 @@ public class HistoryHelper {
 
 		if (!StringUtils.isNull(machineOid)) {
 			WTUser machine = (WTUser) CommonUtils.getObject(machineOid);
-			CommonCode machineCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+			CommonCode machineCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.MACHINE,
+					"USER_TYPE");
 			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
 			int idx_u = query.appendClassList(WTUser.class, false);
 
@@ -97,13 +99,13 @@ public class HistoryHelper {
 			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 					"roleBObjectRef.key.id", idx_u, idx_plink);
 			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", machine);
-			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id",
 					machineCode);
 		}
 
 		if (!StringUtils.isNull(elecOid)) {
 			WTUser elec = (WTUser) CommonUtils.getObject(machineOid);
-			CommonCode elecCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+			CommonCode elecCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.ELEC, "USER_TYPE");
 			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
 			int idx_u = query.appendClassList(WTUser.class, false);
 
@@ -112,13 +114,12 @@ public class HistoryHelper {
 			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 					"roleBObjectRef.key.id", idx_u, idx_plink);
 			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", elec);
-			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
-					elecCode);
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id", elecCode);
 		}
 
 		if (!StringUtils.isNull(softOid)) {
-			WTUser soft = (WTUser) CommonUtils.getObject(machineOid);
-			CommonCode softCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
+			WTUser soft = (WTUser) CommonUtils.getObject(softOid);
+			CommonCode softCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.SOFT, "USER_TYPE");
 			int idx_plink = query.appendClassList(ProjectUserLink.class, false);
 			int idx_u = query.appendClassList(WTUser.class, false);
 
@@ -127,8 +128,7 @@ public class HistoryHelper {
 			QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 					"roleBObjectRef.key.id", idx_u, idx_plink);
 			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", soft);
-			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
-					softCode);
+			QuerySpecUtils.toEqualsAnd(query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id", softCode);
 		}
 
 		if (!StringUtils.isNull(mak_name)) {

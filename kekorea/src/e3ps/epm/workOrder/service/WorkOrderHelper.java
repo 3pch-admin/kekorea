@@ -166,12 +166,13 @@ public class WorkOrderHelper {
 				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 						"roleBObjectRef.key.id", idx_u, idx_plink);
 				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", machine);
-				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id",
 						machineCode);
 			}
 
 			if (!StringUtils.isNull(elecOid)) {
 				WTUser elec = (WTUser) CommonUtils.getObject(elecOid);
+				System.out.println("===여기");
 				CommonCode elecCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.ELEC, "USER_TYPE");
 				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
 				int idx_u = _query.appendClassList(WTUser.class, false);
@@ -181,7 +182,7 @@ public class WorkOrderHelper {
 				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 						"roleBObjectRef.key.id", idx_u, idx_plink);
 				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", elec);
-				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id",
 						elecCode);
 			}
 
@@ -196,7 +197,7 @@ public class WorkOrderHelper {
 				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 						"roleBObjectRef.key.id", idx_u, idx_plink);
 				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", soft);
-				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "projectUserTypeReference.key.id",
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id",
 						softCode);
 			}
 
