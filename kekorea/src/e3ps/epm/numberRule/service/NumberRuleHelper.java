@@ -14,7 +14,6 @@ import e3ps.common.util.StringUtils;
 import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.numberRule.NumberRuleMaster;
 import e3ps.epm.numberRule.dto.NumberRuleDTO;
-import e3ps.epm.workOrder.WorkOrder;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;

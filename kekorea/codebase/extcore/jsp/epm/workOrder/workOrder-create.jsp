@@ -53,6 +53,16 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				<col width="350">
 			</colgroup>
 			<tr>
+				<th class="req lb">도면일람표 번호</th>
+				<td colspan="5">
+					<jsp:include page="/extcore/jsp/common/numberRule-include.jsp">
+						<jsp:param value="" name="oid" />
+						<jsp:param value="false" name="multi"/>
+						<jsp:param value="create" name="mode" />
+					</jsp:include>
+				</td>
+			</tr>
+			<tr>
 				<th class="req lb">도면 일람표 명</th>
 				<td class="indent5">
 					<input type="text" name="name" id="name" class="width-200">
@@ -357,6 +367,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		const addRows = AUIGrid.getAddedRowItems(myGridID);
 		const addRows9 = AUIGrid.getAddedRowItems(myGridID9);
 		const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
+		const addRows11 = AUIGrid.getAddedRowItems(myGridID11);
 		const toid = document.getElementById("toid").value;
 		const poid = document.getElementById("poid").value;
 		const url = getCallUrl("/workOrder/create");
@@ -411,6 +422,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		params.progress = Number(progress);
 		params.addRows = addRows;
 		params.addRows9 = addRows9;
+		params.addRows11 = addRows11;
 		params.poid = poid;
 		params.toid = toid;
 		params.secondarys = toArray("secondarys");
@@ -419,17 +431,11 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
-				<%
-				if(!StringUtils.isNull(toid)) {
-				%>
+				<%if (!StringUtils.isNull(toid)) {%>
 				opener._reload();
-				<%
-					} else {
-				%>
+				<%} else {%>
 				opener.loadGridData();
-				<%
-					}
-				%>
+				<%}%>
 				self.close();
 			} else {
 				closeLayer();
@@ -487,19 +493,17 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		createAUIGrid(columns);
 		createAUIGrid9(columns9);
 		createAUIGrid8(columns8);
+		createAUIGrid11(columns11);
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
-
-		<%
-		if(data != null) {
-		%>
-		AUIGrid.bind(myGridID9, "beforeRemoveRow", auiBeforeRemoveRow);
-		AUIGrid.addRow(myGridID9, <%=data%>);
-		<%
-			}
-		%>
-		
-		// 진행율
+		AUIGrid.resize(myGridID11);
+		<%if (data != null) {%>
+			AUIGrid.bind(myGridID9, "beforeRemoveRow", auiBeforeRemoveRow);
+				AUIGrid.addRow(myGridID9,
+		<%=data%>
+			);
+		<%}%>
+	// 진행율
 		const field = document.getElementById("progress");
 		field.addEventListener("input", function(event) {
 			const value = event.target.value;
@@ -522,5 +526,6 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID8);
+		AUIGrid.resize(myGridID11);
 	});
 </script>

@@ -66,6 +66,11 @@ public class WorkOrderDTO {
 	private ArrayList<Map<String, String>> addRows9 = new ArrayList<>();
 
 	/**
+	 * 도번
+	 */
+	private ArrayList<Map<String, String>> addRows11 = new ArrayList<>();
+
+	/**
 	 * 태스크 변수
 	 */
 	private String toid;

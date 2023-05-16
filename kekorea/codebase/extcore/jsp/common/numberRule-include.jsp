@@ -5,6 +5,7 @@
 <%
 String oid = request.getParameter("oid");
 String mode = request.getParameter("mode");
+String multi = request.getParameter("multi");
 boolean isView = "view".equals(mode);
 boolean isCreate = "create".equals(mode);
 boolean isUpdate = "update".equals(mode);
@@ -174,7 +175,7 @@ boolean isUpdate = "update".equals(mode);
 		}
 
 		function insert11() {
-			const url = getCallUrl("/numberRule/popup?method=append11&multi=true");
+			const url = getCallUrl("/numberRule/popup?method=append11&multi=<%=multi%>");
 			popup(url, 1500, 600);
 		}
 
