@@ -4,8 +4,9 @@
 <%
 String oid = request.getParameter("oid");
 JSONArray jsonAuiHistory = WorkspaceHelper.manager.jsonAuiHistory(oid);
+boolean isMargin = Boolean.parseBoolean(request.getParameter("isMargin"));
 %>
-<div id="grid_wrap100" style="height: 350px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+<div id="grid_wrap100" style="height: 350px; border-top: 1px solid #3180c3; <%if(isMargin) {%> margin: 5px; <%}%>"></div>
 <script type="text/javascript">
 	let myGridID100;
 	const columns100 = [ {

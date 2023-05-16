@@ -75,7 +75,7 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 				<th class="lb">도면 일람표 제목</th>
 				<td class="indent5"><%=dto.getName()%></td>
 				<th>도면 일람표 번호</th>
-				<td class="indent5"><%=dto.getState()%></td>
+				<td class="indent5"><%=dto.getNumber()%></td>
 			</tr>
 			<tr>
 				<th class="lb">버전</th>
@@ -338,12 +338,14 @@ JSONArray history = (JSONArray) request.getAttribute("history");
 		<!-- 결재이력 -->
 		<jsp:include page="/extcore/jsp/common/approval-history.jsp">
 			<jsp:param value="<%=dto.getOid()%>" name="oid" />
+			<jsp:param value="false" name="isMargin"/>
 		</jsp:include>
 	</div>
 </div>
 <script type="text/javascript">
 	function view() {
-		const url = getCallUrl("/workOrder/view?oid=" + item.oid);
+		const oid = document.getElementById("loid").value;
+		const url = getCallUrl("/workOrder/view?oid=" + oid);
 		popup(url, 1600, 800);
 	}
 
