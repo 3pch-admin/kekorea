@@ -12,7 +12,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 <style type="text/css">
 .preView {
@@ -46,7 +46,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				</td>
 				<th>LOT NO</th>
 				<td class="indent5">
-					<input type="number" name="lotNo" id="lotNo" class="width-200">
+					<input type="text" name="lotNo" id="lotNo" class="width-200" maxlength="4">
 				</td>
 				<th>작성자</th>
 				<td class="indent5">
@@ -446,9 +446,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/keDrawing/list");
-				const field = ["name","lotNo","creatorOid","createdFrom","createdTo","keNumber","modifierOid","modifiedFrom","modifiedTo","psize"];
+				const field = [ "name", "creatorOid", "createdFrom", "createdTo", "keNumber", "modifierOid", "modifiedFrom", "modifiedTo", "psize" ];
+				const lotNo = document.getElementById("lotNo").value;
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				params = toField(params, field);
+				params.lotNo = Number(lotNo);
 				params.latest = latest;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -625,7 +627,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			function exportExcel() {
-				const exceptColumnFields = [ "preView", "button", "primary","latest" ];
+				const exceptColumnFields = [ "preView", "button", "primary", "latest" ];
 				const sessionName = document.getElementById("sessionName").value;
 				exportToExcel("KE 도면 리스트", "KE 도면", "KE 도면 리스트", exceptColumnFields, sessionName);
 			}

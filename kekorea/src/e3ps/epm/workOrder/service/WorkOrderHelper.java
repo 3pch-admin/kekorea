@@ -1,7 +1,5 @@
 package e3ps.epm.workOrder.service;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -59,7 +57,6 @@ import wt.queue.QueueHelper;
 import wt.services.ServiceFactory;
 import wt.session.SessionHelper;
 import wt.util.WTAttributeNameIfc;
-import wt.util.WTProperties;
 
 public class WorkOrderHelper {
 
@@ -470,8 +467,26 @@ public class WorkOrderHelper {
 		dataHeaderStyle.setFont(dataHeaderFont);
 
 		int columnWidth = 150;
-		for (int i = 1; i <= 5; i++) {
-			String sheetName = "Sheet" + i;
+
+		int size = list.size();
+		int loop = size / 45;
+		int gap = size % 45;
+		if (gap > 0) {
+			loop = loop + 1;
+		}
+
+		Project project = null;
+		QueryResult result = PersistenceHelper.manager.navigate(workOrder, "project", WorkOrderProjectLink.class);
+		if (result.hasMoreElements()) {
+			project = (Project) result.nextElement();
+		}
+
+		// 데이터 FOR 문 변수
+		int start = 0;
+		int end = 45;
+		
+		for (int i = 0; i < loop; i++) {
+			String sheetName = (i + 1) + "번 시트";
 
 			Sheet sheet = workbook.createSheet(sheetName);
 			sheet.setDisplayGridlines(false);
@@ -570,8 +585,25 @@ public class WorkOrderHelper {
 			cell.setCellStyle(dataHeaderStyle);
 
 			int rowIndex = 3;
-			for (int j = 1; j < 46; j++) {
+
+	
+			// for start
+			for (int j = start; j < end; j++) {
 				// 데이터 머지
+
+				WorkOrderDataLink data = (WorkOrderDataLink) list.get(j);
+				Persistable per = data.getData();
+				String name = "";
+				String number = "";
+				String current = "";
+				String lotNo = "";
+				if (per instanceof KeDrawing) {
+					KeDrawing keDrawing = (KeDrawing) per;
+					name = keDrawing.getMaster().getName();
+					number = keDrawing.getMaster().getKeNumber();
+					current = String.valueOf(keDrawing.getVersion());
+					lotNo = String.valueOf(keDrawing.getMaster().getLotNo());
+				}
 
 				CellRangeAddress dataValueMerge = new CellRangeAddress(rowIndex, rowIndex, 2, 9);
 				CellRangeAddress dataValueMerge1 = new CellRangeAddress(rowIndex, rowIndex, 10, 12);
@@ -584,9 +616,63 @@ public class WorkOrderHelper {
 				row = sheet.createRow(rowIndex);
 				cell = row.createCell(1);
 				cell.setCellStyle(dataHeaderStyle);
-				cell.setCellValue(j);
+				cell.setCellValue((j + 1));
+
+				cell = row.createCell(2);
+				cell.setCellStyle(dataHeaderStyle);
+				cell.setCellValue(name);
+				cell = row.createCell(3);
+				cell.setCellStyle(dataHeaderStyle);
+				cell = row.createCell(4);
+				cell.setCellStyle(dataHeaderStyle);
+				cell = row.createCell(5);
+				cell.setCellStyle(dataHeaderStyle);
+				cell = row.createCell(6);
+				cell.setCellStyle(dataHeaderStyle);
+				cell = row.createCell(7);
+				cell.setCellStyle(dataHeaderStyle);
+				cell = row.createCell(8);
+				cell.setCellStyle(dataHeaderStyle);
+				cell = row.createCell(9);
+				cell.setCellStyle(dataHeaderStyle);
+
+				cell = row.createCell(10);
+				cell.setCellStyle(dataHeaderStyle);
+				cell.setCellValue(number);
+				cell = row.createCell(11);
+				cell.setCellStyle(dataHeaderStyle);
+				cell = row.createCell(12);
+				cell.setCellStyle(dataHeaderStyle);
+
+				cell = row.createCell(13);
+				cell.setCellStyle(dataHeaderStyle);
+				cell.setCellValue(data.getRev());
+
+				cell = row.createCell(14);
+				cell.setCellStyle(dataHeaderStyle);
+				cell.setCellValue(current);
+
+				cell = row.createCell(15);
+				cell.setCellStyle(dataHeaderStyle);
+				cell.setCellValue(lotNo);
+
+				cell = row.createCell(16);
+				cell.setCellStyle(dataHeaderStyle);
+				cell.setCellValue(data.getNote());
+
+				cell = row.createCell(17);
+				cell.setCellStyle(dataHeaderStyle);
 
 				rowIndex++;
+			}
+
+			if (i == loop - 2) {
+				start += 45;
+				end += gap;
+			} else {
+				// 어차피 안돈다?
+				start += 45;
+				end += 45;
 			}
 
 			row = sheet.createRow(48);
@@ -659,7 +745,7 @@ public class WorkOrderHelper {
 
 				numericValue++;
 				footerIndex++;
-			}
+			} // end for
 
 			// 52행 시작
 			CellRangeAddress toleranceMerge = new CellRangeAddress(52, 52, 1, 3);
@@ -740,7 +826,7 @@ public class WorkOrderHelper {
 			sheet.addMergedRegion(modelValueMerge);
 			cell = row.createCell(3);
 			cell.setCellStyle(dataHeaderStyle);
-			cell.setCellValue("");
+			cell.setCellValue(project.getModel());
 			cell = row.createCell(4);
 			cell.setCellStyle(dataHeaderStyle);
 			cell = row.createCell(5);
@@ -843,7 +929,7 @@ public class WorkOrderHelper {
 			sheet.addMergedRegion(dwgNoValueMergre);
 			cell = row.createCell(14);
 			cell.setCellStyle(dataHeaderStyle);
-			cell.setCellValue("");
+			cell.setCellValue(workOrder.getNumber() + "(" + (i + 1) + "/" + loop + ")");
 			cell = row.createCell(15);
 			cell.setCellStyle(dataHeaderStyle);
 			cell = row.createCell(16);
@@ -853,7 +939,7 @@ public class WorkOrderHelper {
 			sheet.addMergedRegion(revMerge);
 			cell = row.createCell(17);
 			cell.setCellStyle(dataHeaderStyle);
-			cell.setCellValue("REV\n0");
+			cell.setCellValue("REV\n" + workOrder.getVersion());
 
 			// 55행 시작
 			CellRangeAddress approvedValueMerge = new CellRangeAddress(55, 56, 1, 2);
@@ -986,7 +1072,7 @@ public class WorkOrderHelper {
 			sheet.addMergedRegion(timeMerge);
 			cell = row.createCell(13);
 			cell.setCellStyle(dataHeaderStyle);
-			cell.setCellValue("오늘이다");
+			cell.setCellValue(CommonUtils.getPersistableTime(workOrder.getCreateTimestamp()));
 			cell = row.createCell(14);
 			cell.setCellStyle(dataHeaderStyle);
 			cell = row.createCell(15);
@@ -997,17 +1083,6 @@ public class WorkOrderHelper {
 			cell.setCellStyle(dataHeaderStyle);
 		}
 		return workbook;
-	}
-
-	/**
-	 * 엑셀 데이터 세팅 함수
-	 */
-	private void setCellValue(Row row, int index, String data, CellStyle style) {
-		Cell cell = row.getCell(index);
-		if (style != null) {
-			cell.setCellStyle(style);
-		}
-		cell.setCellValue(StringUtils.replaceToValue(data));
 	}
 
 	/**

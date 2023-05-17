@@ -17,6 +17,7 @@ import e3ps.doc.request.RequestDocumentProjectLink;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.numberRule.NumberRuleMaster;
+import e3ps.epm.workOrder.WorkOrder;
 import e3ps.erp.service.ErpHelper;
 import e3ps.org.Department;
 import e3ps.org.People;
@@ -199,6 +200,8 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 				if (persistable instanceof WTDocument) {
 					// 도번 결재 상태 변경건
 					observe((WTDocument) persistable, Constants.State.APPROVING);
+				} else if (persistable instanceof WorkOrder) {
+					observe((WorkOrder) persistable, Constants.State.APPROVING);
 				}
 
 				// 일괄결재..
@@ -244,6 +247,12 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 				trs.rollback();
 		}
 
+	}
+
+	private void observe(WorkOrder workOrder, String state) throws Exception {
+		NumberRule numberRule = workOrder.getNumberRule();
+		numberRule.setState(state);
+		PersistenceHelper.manager.modify(numberRule);
 	}
 
 	@Override
@@ -378,6 +387,10 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 				if (per instanceof LifeCycleManaged) {
 					State state = State.toState("APPROVED");
 					per = (Persistable) LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) per, state);
+
+					if (per instanceof WorkOrder) {
+						observe((WorkOrder) per, Constants.State.APPROVED);
+					}
 
 					if (per instanceof WTDocument) {
 						observe((WTDocument) per, Constants.State.APPROVED);
@@ -587,6 +600,10 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 
 				if (per instanceof WTDocument) {
 					observe((WTDocument) per, Constants.State.REJECT);
+				}
+
+				if (per instanceof WorkOrder) {
+					observe((WorkOrder) per, Constants.State.REJECT);
 				}
 
 			} else if (per instanceof ApprovalContract) {

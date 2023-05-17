@@ -1,10 +1,15 @@
 package e3ps.epm.workOrder;
 
+import com.ptc.windchill.annotations.metadata.Cardinality;
 import com.ptc.windchill.annotations.metadata.ColumnProperties;
+import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
+import com.ptc.windchill.annotations.metadata.GeneratedForeignKey;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
+import com.ptc.windchill.annotations.metadata.MyRole;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;
 
+import e3ps.epm.numberRule.NumberRule;
 import wt.content.ContentHolder;
 import wt.enterprise.Managed;
 import wt.util.WTException;
@@ -27,6 +32,19 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "workOrderType", type = String.class, javaDoc = "도면일람표 타입", constraints = @PropertyConstraints(required = true))
 
+		},
+
+		foreignKeys = {
+
+				@GeneratedForeignKey(name = "WorkOrderNumberRuleLink",
+
+						foreignKeyRole = @ForeignKeyRole(name = "numberRule", type = NumberRule.class,
+
+								constraints = @PropertyConstraints(required = true)),
+
+						myRole = @MyRole(name = "workOrder", cardinality = Cardinality.ONE)
+
+				)
 		}
 
 )

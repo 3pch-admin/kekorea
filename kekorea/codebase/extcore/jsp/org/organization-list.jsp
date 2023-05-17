@@ -233,7 +233,6 @@ JSONArray departments = JSONArray.fromObject(list);
 					headerText : "막종",
 					dataType : "string",
 					style : "aui-left",
-					width : 300,
 					renderer : {
 						type : "IconRenderer",
 						iconWidth : 16,

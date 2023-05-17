@@ -16,6 +16,7 @@ import e3ps.common.util.ContentUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.WorkOrderDataLink;
 import e3ps.epm.workOrder.WorkOrderProjectLink;
@@ -64,18 +65,23 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
 		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
 		ArrayList<Map<String, String>> addRows11 = dto.getAddRows11();
+		String number = addRows11.get(0).get("number");
 		ArrayList<String> secondarys = dto.getSecondarys();
 		String location = "/Default/프로젝트/" + workOrderType + "_도면일람표";
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
+			String noid = addRows11.get(0).get("oid");
+			NumberRule numberRule = (NumberRule) CommonUtils.getObject(noid);
+
 			WorkOrder workOrder = WorkOrder.newWorkOrder();
 			workOrder.setDescription(description);
 			workOrder.setName(name);
 			workOrder.setWorkOrderType(workOrderType);
 //			workOrder.setNumber(WorkOrderHelper.manager.getNextNumber("WORK-"));
-			workOrder.setNumber(addRows11.get(0).get("number"));
+			workOrder.setNumber(number);
+			workOrder.setNumberRule(numberRule);
 			workOrder.setVersion(1);
 			workOrder.setLatest(true);
 
@@ -111,16 +117,6 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 				PersistenceHelper.manager.save(applicationData);
 				ContentServerHelper.service.updateContent(workOrder, applicationData, vault.getPath());
 			}
-
-			Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
-			File tempFile = ContentUtils.getTempFile(workOrder.getName() + "_표지.xlsx");
-			FileOutputStream fos = new FileOutputStream(tempFile);
-			cover.write(fos);
-
-			ApplicationData data = ApplicationData.newApplicationData(workOrder);
-			data.setRole(ContentRoleType.PRIMARY);
-			PersistenceHelper.manager.save(data);
-			ContentServerHelper.service.updateContent(workOrder, data, tempFile.getAbsolutePath());
 
 			for (Map<String, String> addRow9 : addRows9) {
 				String oid = addRow9.get("oid");
@@ -183,6 +179,16 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 				ProjectHelper.service.calculation(project);
 				ProjectHelper.service.commit(project);
 			}
+
+			Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
+			File tempFile = ContentUtils.getTempFile(workOrder.getName() + "_표지.xlsx");
+			FileOutputStream fos = new FileOutputStream(tempFile);
+			cover.write(fos);
+
+			ApplicationData data = ApplicationData.newApplicationData(workOrder);
+			data.setRole(ContentRoleType.PRIMARY);
+			PersistenceHelper.manager.save(data);
+			ContentServerHelper.service.updateContent(workOrder, data, tempFile.getAbsolutePath());
 
 			WorkOrderHelper.manager.postAfterAction(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
 
