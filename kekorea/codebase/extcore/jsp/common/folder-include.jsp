@@ -36,11 +36,11 @@ String height = request.getParameter("height");
 // 		AUIGrid.bind(_myGridID, "selectionChange", auiGridSelectionChangeHandler);
 		AUIGrid.bind(_myGridID, "cellDoubleClick", auiCellDoubleClick);
 		AUIGrid.bind(_myGridID, "cellClick", auiCellClick);
-		AUIGrid.bind(myGridID, "ready", auiReadyHandler);
+		AUIGrid.bind(_myGridID, "ready", auiReadyHandler);
 	}
 
 	function auiReadyHandler() {
-		AUIGrid.showItemsOnDepth(myGridID, 2);
+		AUIGrid.showItemsOnDepth(_myGridID, 2);
 	}
 
 	
