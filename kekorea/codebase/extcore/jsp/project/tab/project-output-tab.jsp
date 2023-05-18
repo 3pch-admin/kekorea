@@ -94,7 +94,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				dataField : "primary",
 				headerText : "주 첨부파일",
 				dataType : "date",
-				width : 130,
+				width : 100,
 				filter : {
 					showIcon : false,
 					inline : false
@@ -122,8 +122,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					rowNumHeaderText : "번호",
 					selectionMode : "multipleCells",
 					showAutoNoDataMessage : false,
-					showRowCheckColumn : true,
-					showStateColumn : true,
 					enableFilter : true,
 					showInlineFilter : true,
 					filterLayerWidth : 320,
@@ -136,11 +134,11 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			document.addEventListener("DOMContentLoaded", function() {
 				// 화면 활성화시 불러오게 설정한다 속도 생각 
 				_createAUIGrid(_columns);
-				AUIGrid.resize(_myGridID3);
+				AUIGrid.resize(_myGridID);
 			})
 
 			window.addEventListener("resize", function() {
-				AUIGrid.resize(_myGridID3);
+				AUIGrid.resize(_myGridID);
 			});
 		</script>
 	</form>

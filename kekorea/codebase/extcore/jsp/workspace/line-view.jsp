@@ -57,7 +57,7 @@ String poid = (String) request.getAttribute("poid");
 	<div id="tabs-1">
 		<table class="view-table">
 			<colgroup>
-				<col width="10%">
+				<col width="130">
 				<col width="400">
 				<col width="130">
 				<col width="400">

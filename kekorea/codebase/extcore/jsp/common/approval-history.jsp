@@ -59,6 +59,7 @@ boolean isMargin = Boolean.parseBoolean(request.getParameter("isMargin"));
 			selectionMode : "multipleCells",
 			enableSorting : false,
 			showAutoNoDataMessage : false,
+			autoGridHeight : true
 		}
 		myGridID100 = AUIGrid.create("#grid_wrap100", columnLayout, props);
 		AUIGrid.setGridData(myGridID100, <%=jsonAuiHistory%>);

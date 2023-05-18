@@ -532,6 +532,8 @@ String woid = workOrder.getPersistInfo().getObjectIdentifier().getStringValue();
 } else if (per instanceof WTDocument) {
 WTDocument document = (WTDocument) per;
 String doid = document.getPersistInfo().getObjectIdentifier().getStringValue();
+Map<String, Object> primary = ContentUtils.getPrimary(document);
+Vector<Map<String, Object>> secondarys = ContentUtils.getSecondary(document);
 %>
 <!-- 산출물 -->
 <table class="button-table">
@@ -544,6 +546,54 @@ String doid = document.getPersistInfo().getObjectIdentifier().getStringValue();
 		</td>
 	</tr>
 </table>
+
+<table class="view-table">
+	<colgroup>
+		<col width="*">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="130">
+		<col width="160">		
+	</colgroup>
+	<tr>
+		<th class="lb">산출물 제목</th>
+		<th class="lb">버전</th>
+		<th class="lb">상태</th>
+		<th class="lb">작성자</th>
+		<th class="lb">작성일</th>
+		<th class="lb">주 첨부파일</th>
+		<th class="lb">첨부파일</th>		
+	</tr>
+	<tr>
+		<td class="indent5">
+			<a href="javascript:_detail('<%=doid%>');"><%=document.getName()%></a>
+		</td>
+		<td class="center"><%=CommonUtils.getFullVersion(document)%></td>
+		<td class="center"><%=document.getLifeCycleState().getDisplay()%></td>
+		<td class="center"><%=document.getCreatorFullName()%></td>
+		<td class="center"><%=CommonUtils.getPersistableTime(document.getCreateTimestamp())%></td>
+		<td class="center">
+			<a href="javascript:download('<%=primary.get("aoid")%>');">
+				<img src="<%=primary.get("fileIcon")%>">
+			</a>
+		</td>
+		<td class="center">
+		<%
+			for(Map<String, Object> secondary : secondarys) {
+		%>
+			<a href="javascript:download('<%=secondary.get("aoid")%>');">
+				<img src="<%=secondary.get("fileIcon")%>">
+			</a>
+		<%
+			}
+		%>		
+		</td>		
+	</tr>
+</table>
+
+
 
 <jsp:include page="/extcore/jsp/workspace/project.jsp">
 	<jsp:param value="<%=doid%>" name="oid" />
