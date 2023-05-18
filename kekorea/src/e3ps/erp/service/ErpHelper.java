@@ -152,12 +152,15 @@ public class ErpHelper {
 				if (rs.next()) {
 					result.put("unitName", (String) rs.getString(1));
 					unitCache.put(lotNo, result);
+				} else {
+					result.put("unitName", "ERP에 등록되지 않은 LOT NO입니다.");
 				}
 			} else {
 				result = cacheData;
 			}
 
-			ErpHelper.service.writeLog("LOT번호로 UNIT NAME 가져오기", sql.toString(), "", true, "KEK 도번");
+			// 실패시 로그만 생성하도록
+//			ErpHelper.service.writeLog("LOT번호로 UNIT NAME 가져오기", sql.toString(), "", true, "KEK 도번");
 		} catch (Exception e) {
 			e.printStackTrace();
 			ErpHelper.service.writeLog("LOT번호로 UNIT NAME 가져오기", sql.toString(), e.toString(), false, "KEK 도번");
