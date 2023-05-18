@@ -230,12 +230,15 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 			<li>
 				<a href="#">
 					<i class="fa fa-sitemap"></i>
-					<span class="nav-label">ERP 로그</span>
+					<span class="nav-label">시스템 로그</span>
 					<span class="fa arrow"></span>
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
 						<a onclick="moveToPage(this, '/erp/list', 'ERP 로그 > ERP 로그');">ERP 로그</a>
+					</li>
+					<li>
+						<a onclick="moveToPage(this, '/system/list', '에러 로그 > 에러 로그');">에러 로그</a>
 					</li>
 				</ul>
 			</li>
