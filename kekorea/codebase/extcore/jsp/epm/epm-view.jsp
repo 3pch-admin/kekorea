@@ -187,7 +187,7 @@ Vector<Map<String, Object>> secondary = (Vector<Map<String, Object>>) request.ge
 		</jsp:include>
 	</div>
 	<div id="tabs-4">
-		<div id="_grid_wrap" style="height: 460px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+		<div id="_grid_wrap" style="height: 460px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			const columns = [ {

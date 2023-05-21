@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.system.service.ErrorLogHelper;
 import e3ps.workspace.notice.Notice;
 import e3ps.workspace.notice.dto.NoticeDTO;
 import e3ps.workspace.notice.service.NoticeHelper;
@@ -55,6 +56,7 @@ public class NoticeController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/notice/list", "공지사항 조회 함수");
 		}
 		return result;
 	}
@@ -67,7 +69,7 @@ public class NoticeController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "공지사항 등록")
+	@Description(value = "공지사항 등록 함수")
 	@PostMapping(value = "/create")
 	@ResponseBody
 	public Map<String, Object> create(@RequestBody NoticeDTO dto) throws Exception {
@@ -80,11 +82,12 @@ public class NoticeController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/notice/create", "공지사항 등록 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "공지사항 그리드 저장 - 관리자용")
+	@Description(value = "공지사항 그리드 저장 함수")
 	@PostMapping(value = "/save")
 	@ResponseBody
 	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
@@ -111,6 +114,7 @@ public class NoticeController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/notice/save", "공지사항 그리드 저장 함수");
 		}
 		return result;
 	}
@@ -139,7 +143,7 @@ public class NoticeController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "공지사항 수정 페이지 등록")
+	@Description(value = "공지사항 수정 함수")
 	@PostMapping(value = "/modify")
 	@ResponseBody
 	public Map<String, Object> modify(@RequestBody NoticeDTO dto) throws Exception {
@@ -152,11 +156,12 @@ public class NoticeController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/notice/modify", "공지사항 수정 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "공지사항 삭제")
+	@Description(value = "공지사항 삭제 함수")
 	@ResponseBody
 	@GetMapping(value = "/delete")
 	public Map<String, Object> delete(@RequestParam String oid) throws Exception {
@@ -169,6 +174,7 @@ public class NoticeController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/notice/delete", "공지사항 삭제 함수");
 		}
 		return result;
 	}

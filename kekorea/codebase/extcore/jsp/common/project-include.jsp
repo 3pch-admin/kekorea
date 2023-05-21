@@ -11,7 +11,7 @@ boolean isCreate = "create".equals(mode);
 boolean isUpdate = "update".equals(mode);
 %>
 
-<div class="include">
+<div <%if(isCreate || isUpdate) { %> class="include" <%} %>>
 	<%
 	if (isCreate || isUpdate) {
 	%>
@@ -20,7 +20,7 @@ boolean isUpdate = "update".equals(mode);
 	<%
 	}
 	%>
-	<div id="grid_wrap9" style="height: <%=height%>px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+	<div id="grid_wrap9" style="height: <%=height%>px; border-top: 1px solid #3180c3; <%if(isCreate || isUpdate) {%> margin: 5px; <%}%>"></div>
 	<script type="text/javascript">
 		let myGridID9;
 		const columns9 = [ {

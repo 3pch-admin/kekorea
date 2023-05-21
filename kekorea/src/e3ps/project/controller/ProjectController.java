@@ -28,7 +28,6 @@ import e3ps.bom.tbom.service.TBOMHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
-import e3ps.epm.service.EpmHelper;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.korea.cip.service.CipHelper;
 import e3ps.org.Department;
@@ -53,7 +52,7 @@ import wt.session.SessionHelper;
 @RequestMapping(value = "/project/**")
 public class ProjectController extends BaseController {
 
-	@Description(value = "프로젝트 리스트 페이지")
+	@Description(value = "작번 리스트 페이지")
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -90,7 +89,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 리스트 가져 오는 함수")
+	@Description(value = "작번 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -102,7 +101,7 @@ public class ProjectController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
-			ErrorLogHelper.service.create(e.toString(), "/project/list", "프로젝트 리스트 함수");
+			ErrorLogHelper.service.create(e.toString(), "/project/list", "작번 조회 함수");
 		}
 		return result;
 	}
@@ -161,7 +160,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 등록 함수")
+	@Description(value = "작번 등록 함수")
 	@ResponseBody
 	@PostMapping(value = "/create")
 	public Map<String, Object> create(@RequestBody Map<String, Object> params) throws Exception {
@@ -174,12 +173,12 @@ public class ProjectController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
-			ErrorLogHelper.service.create(e.toString(), "/project/create", "프로젝트 등록 함수");
+			ErrorLogHelper.service.create(e.toString(), "/project/create", "작번 등록 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "프로젝트 생성 페이지")
+	@Description(value = "작번 등록 페이지")
 	@GetMapping(value = "/create")
 	public ModelAndView create() throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -195,7 +194,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 트리")
+	@Description(value = "작번 트리 함수")
 	@GetMapping(value = "/load")
 	@ResponseBody
 	public Map<String, Object> load(@RequestParam String oid) throws Exception {
@@ -208,14 +207,15 @@ public class ProjectController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/project/load", "작번 트리 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "프로젝트 트리 저장")
+	@Description(value = "작번 트리 저장 함수")
 	@PostMapping(value = "/treeSave")
 	@ResponseBody
-	public Map<String, Object> treeSave(@RequestBody Map<String, Object> params) {
+	public Map<String, Object> treeSave(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			ProjectHelper.service.treeSave(params);
@@ -225,11 +225,12 @@ public class ProjectController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/project/treeSave", "작번 트리 저장 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "프로젝트 추가 페이지")
+	@Description(value = "작번 추가 페이지")
 	@GetMapping(value = "/popup")
 	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -268,7 +269,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 프레임 페이지")
+	@Description(value = "작번 프레임 페이지")
 	@GetMapping(value = "/info")
 	public ModelAndView info(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -283,7 +284,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 정보 페이지")
+	@Description(value = "작번 정보 페이지")
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -301,7 +302,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "저장")
+	@Description(value = "작번 그리드 저장 함수")
 	@PostMapping(value = "/save")
 	@ResponseBody
 	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
@@ -327,11 +328,12 @@ public class ProjectController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/project/save", "작번 그리드 저장 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "프로젝트 담당자 수정 페이지")
+	@Description(value = "작번 담당자 수정 페이지")
 	@GetMapping(value = "/editUser")
 	public ModelAndView editUser(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -351,7 +353,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 담당자 수정 함수")
+	@Description(value = "작번 담당자 수정 함수")
 	@ResponseBody
 	@PostMapping(value = "/editUser")
 	public Map<String, Object> editUser(@RequestBody Map<String, Object> params) throws Exception {
@@ -364,11 +366,12 @@ public class ProjectController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/project/editUser", "작번 담당자 수정 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "프로젝트 금액 수정 페이지")
+	@Description(value = "작번 금액 수정 페이지")
 	@GetMapping(value = "/money")
 	public ModelAndView money(@RequestParam String oid, @RequestParam String money, @RequestParam String type)
 			throws Exception {
@@ -386,7 +389,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 금액 수정 함수")
+	@Description(value = "작번 금액 수정 함수")
 	@ResponseBody
 	@PostMapping(value = "/money")
 	public Map<String, Object> money(@RequestBody Map<String, Object> params) throws Exception {
@@ -399,11 +402,12 @@ public class ProjectController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/project/money", "작번 금액 수정 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "프로젝트 수배표 탭 페이지")
+	@Description(value = "작번 수배표 탭 페이지")
 	@GetMapping(value = "/partlistTab")
 	public ModelAndView partlistTab(@RequestParam String oid, @RequestParam String invoke) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -413,7 +417,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 T-BOM 탭 페이지")
+	@Description(value = "작번 T-BOM 탭 페이지")
 	@GetMapping(value = "/tbomTab")
 	public ModelAndView tbomTab(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -423,7 +427,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 도면일람표 탭 페이지")
+	@Description(value = "작번 도면일람표 탭 페이지")
 	@GetMapping(value = "/workOrderTab")
 	public ModelAndView workOrderTab(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -433,7 +437,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 CIP 탭 페이지")
+	@Description(value = "작번 CIP 탭 페이지")
 	@GetMapping(value = "/cipTab")
 	public ModelAndView cipTab(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -443,7 +447,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 특이사항 탭 페이지")
+	@Description(value = "작번 특이사항 탭 페이지")
 	@GetMapping(value = "/issueTab")
 	public ModelAndView issueTab(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -457,7 +461,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 산출물 탭 페이지")
+	@Description(value = "작번 산출물 탭 페이지")
 	@GetMapping(value = "/outputTab")
 	public ModelAndView outputTab(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -471,7 +475,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 수정 페이지")
+	@Description(value = "작번 수정 페이지")
 	@GetMapping(value = "/modify")
 	public ModelAndView modify(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -490,7 +494,7 @@ public class ProjectController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "프로젝트 수정 함수")
+	@Description(value = "작번 수정 함수")
 	@ResponseBody
 	@PostMapping(value = "/modify")
 	public Map<String, Object> modify(@RequestBody Map<String, Object> params) throws Exception {
@@ -503,11 +507,12 @@ public class ProjectController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/project/modify", "작번 수정 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "프로젝트 삭제 함수")
+	@Description(value = "작번 삭제 함수")
 	@ResponseBody
 	@PostMapping(value = "/delete")
 	public Map<String, Object> delete(@RequestParam String oid) throws Exception {
@@ -520,12 +525,12 @@ public class ProjectController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
-			ErrorLogHelper.service.create(e.toString(), "/project/delete", "프로젝트 삭제 함수");
+			ErrorLogHelper.service.create(e.toString(), "/project/delete", "작번 삭제 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "프로젝트 태스크 페이지")
+	@Description(value = "작번 태스크 페이지")
 	@GetMapping(value = "/task")
 	public ModelAndView task(@RequestParam String oid, @RequestParam String toid, @RequestParam String name)
 			throws Exception {
@@ -573,6 +578,7 @@ public class ProjectController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/project/register", "작번 산출물 결재 함수");
 		}
 		return result;
 	}

@@ -124,7 +124,7 @@ JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 	</div>
 	<div id="tabs-2">
 		<!-- 버전이력 쭉 쌓이게 autoGrid 설정 true -->
-		<div id="grid_wrap" style="height: 350px; border-top: 1px solid #3180c3; margin: 5px;"></div>
+		<div id="grid_wrap" style="height: 350px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID;
 			const columns = [ {
