@@ -23,6 +23,7 @@ import e3ps.project.task.dto.TaskDTO;
 import e3ps.project.template.Template;
 import e3ps.project.template.dto.TemplateDTO;
 import e3ps.project.template.service.TemplateHelper;
+import e3ps.system.service.ErrorLogHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -73,6 +74,7 @@ public class TemplateController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/template/create", "템플릿 등록 함수");
 		}
 		return result;
 	}
@@ -107,7 +109,7 @@ public class TemplateController extends BaseController {
 	@Description(value = "템플릿 트리 저장")
 	@PostMapping(value = "/treeSave")
 	@ResponseBody
-	public Map<String, Object> treeSave(@RequestBody Map<String, Object> params) {
+	public Map<String, Object> treeSave(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			TemplateHelper.service.treeSave(params);
@@ -117,6 +119,7 @@ public class TemplateController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/template/treeSave", "템플릿 트리 저장");
 		}
 		return result;
 	}

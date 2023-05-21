@@ -6,7 +6,6 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.project.Project;
 import e3ps.project.service.ProjectHelper;
-import e3ps.project.task.variable.TaskTypeVariable;
 import e3ps.project.variable.ProjectUserTypeVariable;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,10 +51,6 @@ public class ProjectDTO {
 	private String elec_oid;
 	private String soft_name;
 	private String soft_oid;
-
-	private int kekProgress;
-	private int machineProgress;
-	private int elecProgress;
 	private String kekState;
 
 	private String planStartDate_txt;
@@ -77,6 +72,8 @@ public class ProjectDTO {
 
 	private String template_oid;
 	private String template_txt;
+	
+	private int progress;
 
 	public ProjectDTO() {
 
@@ -143,9 +140,6 @@ public class ProjectDTO {
 			setSoft_oid(softUser.getPersistInfo().getObjectIdentifier().getStringValue());
 		}
 
-		setKekProgress(ProjectHelper.manager.getKekProgress(project));
-		setMachineProgress(ProjectHelper.manager.getTaskProgress(project, TaskTypeVariable.MACHINE));
-		setElecProgress(ProjectHelper.manager.getTaskProgress(project, TaskTypeVariable.ELEC));
 		setKekState(project.getKekState());
 
 		setPlanStartDate_txt(CommonUtils.getPersistableTime(project.getPlanStartDate()));
@@ -183,5 +177,6 @@ public class ProjectDTO {
 			setTemplate_oid(project.getTemplate().getPersistInfo().getObjectIdentifier().getStringValue());
 			setTemplate_txt(project.getTemplate().getName());
 		}
+		setProgress(project.getProgress());
 	}
 }

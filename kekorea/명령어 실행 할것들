@@ -13,9 +13,10 @@
 	- Shell -> ResourceBuild.bat wt.doc.**
 	- codebase -> ant -f MakeJar.xml
 	
-4. Queue 생성
+4. Queue 생성 - 프로세스 큐
 	- WorkOrderProcessQueue 큐 생성
 	- PdfProcessQueue 큐 생성
+	- ConvertToPdfProcessQueue 큐 생성
 	
 5. View 이름 변경
 	- Shell -> Windchill wt.vc.views.LoadViews

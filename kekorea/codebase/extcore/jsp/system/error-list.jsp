@@ -47,8 +47,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			<tr>
 				<td class="left">
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
-					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('cip-list');">
-					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('cip-list');">
+					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('system-list');">
+					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('system-list');">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -69,50 +69,23 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			let myGridID;
 			function _layout() {
 				return [ {
-					dataField : "sendResult",
-					headerText : "성공여부",
-					dataType : "boolean",
-					width : 60,
-					filter : {
-						showIcon : false,
-						inline : false
-					},
-					renderer : {
-						type : "CheckBoxEditRenderer",
-					}
-				}, {
-					dataField : "name",
-					headerText : "ERP 로그 제목",
+					dataField : "logType",
+					headerText : "에러구분",
 					dataType : "string",
-					width : 350,
+					width : 150
+				}, {
+					dataField : "errorMsg",
+					headerText : "에러메세지",
+					dataType : "string",
 					filter : {
 						showIcon : true,
 						inline : true
 					},
 				}, {
-					dataField : "sendType",
-					headerText : "ERP 로그 타입",
+					dataField : "callUrl",
+					headerText : "호출주소",
 					dataType : "string",
-					width : 150,
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "resultMsg",
-					headerText : "ERP 로그 메세지",
-					dataType : "string",
-					style : "aui-left",
-					filter : {
-						showIcon : true,
-						inline : true
-					},
-				}, {
-					dataField : "sendQuery",
-					headerText : "ERP 로그 쿼리",
-					dataType : "string",
-					style : "aui-left",
-					width : 350,
+					width : 180,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -168,7 +141,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 
 			function loadGridData() {
 				let params = new Object();
-				const url = getCallUrl("/erp/list");
+				const url = getCallUrl("/system/list");
 				const field = [ "psize" ];
 				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
@@ -193,7 +166,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
-				const columns = loadColumnLayout("cip-list");
+				const columns = loadColumnLayout("system-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
 				$("#headerMenu").menu({

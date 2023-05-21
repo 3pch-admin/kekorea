@@ -281,11 +281,11 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				int duration = node.getDuration();
 				boolean isNew = node.isNew();
 				ArrayList<TaskTreeNode> n = node.getChildren();
-				int sort = TaskHelper.manager.getSort(project, parentTask);
 				int allocate = node.getAllocate();
 				String taskType = node.getTaskType();
 				Task t = null;
 				if (isNew) {
+					int sort = TaskHelper.manager.getSort(project, parentTask);
 					t = Task.newTask();
 					t.setName(name);
 					t.setDepth(depth);
@@ -316,7 +316,6 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 					t.setPlanStartDate(project.getPlanStartDate());
 					t.setPlanEndDate(project.getPlanEndDate());
 					t.setDuration(DateUtils.getDuration(project.getPlanStartDate(), project.getPlanEndDate()));
-					t.setSort(sort);
 					t.setTaskType(CommonCodeHelper.manager.getCommonCode(taskType, "TASK_TYPE"));
 					PersistenceHelper.manager.modify(t);
 				}
@@ -432,6 +431,7 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 			}
 
 			int kekProgress = ProjectHelper.manager.getKekProgress(project);
+			project.setProgress(kekProgress);
 			project.setProgress(kekProgress);
 			PersistenceHelper.manager.modify(project);
 

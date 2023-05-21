@@ -1,3 +1,5 @@
+<%@page import="java.util.Map"%>
+<%@page import="java.util.Vector"%>
 <%@page import="wt.log4j.SystemOutFacade"%>
 <%@page import="java.sql.Timestamp"%>
 <%@page import="net.sf.json.JSONArray"%>
@@ -11,6 +13,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 JSONArray history = (JSONArray) request.getAttribute("history");
 boolean isAutoCad = (boolean) request.getAttribute("isAutoCad");
 boolean isCreo = (boolean) request.getAttribute("isCreo");
+Vector<Map<String, Object>> secondary = (Vector<Map<String, Object>>) request.getAttribute("secondary");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
@@ -92,8 +95,22 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 			<tr>
 				<th class="lb">수정자</th>
 				<td class="indent5"><%=dto.getModifier()%></td>
-				<th class="lb">수정일</th>
+				<th class="">수정일</th>
 				<td class="indent5"><%=dto.getModifiedDate_txt()%></td>
+			</tr>
+			<tr>
+				<th class="lb">첨부파일</th>
+				<td class="indent5" colspan="5">
+					<%
+					for (Map<String, Object> map : secondary) {
+					%>
+					<a href="javascript:download('<%=map.get("aoid")%>');">
+						<%=map.get("name")%>
+					</a>
+					<%
+					}
+					%>
+				</td>
 			</tr>
 			<tr>
 				<th class="lb">설명</th>
@@ -224,7 +241,9 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 					autoGridHeight : true,
 				}
 				myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-				AUIGrid.setGridData(myGridID, <%=versionHistory%>);
+				AUIGrid.setGridData(myGridID,
+		<%=versionHistory%>
+			);
 			}
 		</script>
 	</div>
@@ -240,6 +259,7 @@ boolean isCreo = (boolean) request.getAttribute("isCreo");
 		const url = getCallUrl("/aui/thumbnail?oid=" + oid);
 		popup(url, 1400, 600);
 	}
+
 	document.addEventListener("DOMContentLoaded", function() {
 		$("#tabs").tabs({
 			active : 0,

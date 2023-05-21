@@ -24,6 +24,7 @@ import e3ps.project.output.Output;
 import e3ps.project.output.dto.OutputDTO;
 import e3ps.project.output.service.OutputHelper;
 import e3ps.project.task.Task;
+import e3ps.system.service.ErrorLogHelper;
 import net.sf.json.JSONArray;
 import wt.doc.WTDocument;
 import wt.fc.Persistable;
@@ -165,6 +166,7 @@ public class OutputController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/output/connect", "태스트 / 산출물 링크등록 함수");
 		}
 		return result;
 	}

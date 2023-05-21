@@ -21,10 +21,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</div>
 		</td>
 		<td class="right">
+			<input type="button" value="수정" title="수정" onclick="modify();">
 			<%
 			if (isAdmin) {
 			%>
-			<input type="button" value="수정" title="수정" onclick="modify();">
 			<input type="button" value="삭제" title="삭제" class="red" onclick="_delete();">
 			<%
 			}

@@ -15,7 +15,7 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 		<ul class="nav metismenu" id="side-menu">
 			<li class="nav-header">
 				<div class="dropdown profile-element">
-					<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+					<a href="javascript:index();">
 						<span class="block m-t-xs font-bold"><%=data.getName()%></span>
 						<span class="text-muted text-xs block">
 							<font color="white"><%=data.getDepartment_name()%>-<%=data.getDuty()%></font>

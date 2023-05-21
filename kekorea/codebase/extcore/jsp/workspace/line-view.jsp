@@ -174,6 +174,8 @@ String poid = (String) request.getAttribute("poid");
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}
@@ -193,6 +195,8 @@ String poid = (String) request.getAttribute("poid");
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}
@@ -212,6 +216,8 @@ String poid = (String) request.getAttribute("poid");
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}
@@ -231,6 +237,8 @@ String poid = (String) request.getAttribute("poid");
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}

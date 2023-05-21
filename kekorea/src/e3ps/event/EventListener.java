@@ -9,13 +9,11 @@ import wt.lifecycle.LifeCycleManaged;
 import wt.lifecycle.LifeCycleServiceEvent;
 import wt.org.WTUser;
 import wt.services.ServiceEventListenerAdapter;
-import wt.vc.wip.WorkInProgressServiceEvent;
 
 public class EventListener extends ServiceEventListenerAdapter {
 
 	private static final String POST_STORE = PersistenceManagerEvent.POST_STORE;
 	private static final String POST_MODIFY = PersistenceManagerEvent.POST_MODIFY;
-	private static final String POST_CHECKIN = WorkInProgressServiceEvent.POST_CHECKIN;
 	private static final String STATE_CHANGE = LifeCycleServiceEvent.STATE_CHANGE;
 
 	public EventListener(String s) {
@@ -38,16 +36,15 @@ public class EventListener extends ServiceEventListenerAdapter {
 		}
 
 		if (target instanceof EPMDocument) {
-			if (POST_CHECKIN.equals(type)) {
-				EPMDocument epm = (EPMDocument) target;
-				System.out.println("epm=" + epm.getAuthoringApplication());
-				if (epm.getAuthoringApplication().toString().equals("ACAD")) {
-					System.out.println("AutoCAD 변환 시작!!");
-					EventHelper.service.convertAutoCADToPDF(epm);
+
+			if (POST_STORE.equals(type)) {
+				if (target instanceof EPMDocument) {
+					EPMDocument epm = (EPMDocument) target;
+					if (epm.getAuthoringApplication().toString().equals("ACAD")) {
+						System.out.println("AutoCAD 변환 시작!!");
+						EventHelper.manager.autoCadAfterAction(epm);
+					}
 				}
-			} else if(POST_STORE.equals(type)) {
-				EPMDocument epm = (EPMDocument) target;
-				System.out.println("epm11=" + epm.getAuthoringApplication());
 			}
 		}
 

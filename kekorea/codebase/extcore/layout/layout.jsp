@@ -75,6 +75,12 @@
 			document.execCommand("ClearAuthenticationCache");
 			document.location.href = "/Windchill/login/logout.jsp";
 		}
+		
+		function index() {
+			cover.open();
+			document.location.href = "/Windchill/plm/index";
+		}
+		
 	</script>
 </body>
 </html>

@@ -351,7 +351,7 @@ String end = (String)request.getAttribute("end");
 					inline : true
 				},
 			}, {
-				dataField : "kekProgress",
+				dataField : "progress",
 				headerText : "진행율",
 				postfix : "%",
 				width : 80,

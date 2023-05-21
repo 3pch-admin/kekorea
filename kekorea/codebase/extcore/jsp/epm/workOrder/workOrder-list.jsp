@@ -213,13 +213,28 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						showIcon : true,
 						inline : true
 					},
-				// 					cellMerge : true,
-				},
-				// 				{
-				// 				dataField:"oid",
-				// 				width : 100,
-				// 				},
-				{
+				}, {
+					dataField : "number",
+					headerText : "도면일람표 번호",
+					dataType : "string",
+					width : 130,
+					filter : {
+						showIcon : true,
+						inline : true
+					},
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.oid;
+							const url = getCallUrl("/workOrder/view?oid=" + item.oid);
+							popup(url, 1600, 800);
+						}
+					},
+					cellMerge : true,
+					mergeRef : "oid",
+					mergePolicy : "restrict"
+				}, {
 					dataField : "version",
 					headerText : "버전",
 					dataType : "string",

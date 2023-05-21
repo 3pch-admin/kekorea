@@ -24,6 +24,7 @@ import e3ps.project.task.service.TaskHelper;
 import e3ps.project.task.variable.TaskStateVariable;
 import e3ps.project.template.Template;
 import e3ps.project.template.TemplateUserLink;
+import e3ps.project.variable.ProjectUserTypeVariable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.WTUser;
@@ -94,17 +95,18 @@ public class StandardTemplateService extends StandardManager implements Template
 
 	private void saveUserLink(Template template, Template copy) throws Exception {
 
-		WTUser pm = TemplateHelper.manager.getUserType(copy, "PM");
+		WTUser pm = TemplateHelper.manager.getUserType(copy, ProjectUserTypeVariable.PM);
 		if (pm != null) {
 			TemplateUserLink link = TemplateUserLink.newTemplateUserLink(template, pm);
-			link.setUserType(CommonCodeHelper.manager.getCommonCode("PM", "USER_TYPE"));
+			link.setUserType(CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.PM, "USER_TYPE"));
 			PersistenceHelper.manager.save(link);
 		}
 
-		WTUser subPm = TemplateHelper.manager.getUserType(copy, "SUB_PM");
+		WTUser subPm = TemplateHelper.manager.getUserType(copy, ProjectUserTypeVariable.SUB_PM);
+		;
 		if (subPm != null) {
 			TemplateUserLink link = TemplateUserLink.newTemplateUserLink(template, subPm);
-			link.setUserType(CommonCodeHelper.manager.getCommonCode("SUB_PM", "USER_TYPE"));
+			link.setUserType(CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.SUB_PM, "USER_TYPE"));
 			PersistenceHelper.manager.save(link);
 		}
 	}
@@ -250,10 +252,10 @@ public class StandardTemplateService extends StandardManager implements Template
 				int allocate = node.getAllocate();
 				boolean isNew = node.isNew();
 				ArrayList<TaskTreeNode> n = node.getChildren();
-				int sort = TaskHelper.manager.getSort(template, parentTask);
 				String taskType = node.getTaskType();
 				Task t = null;
 				if (isNew) {
+					int sort = TaskHelper.manager.getSort(template, parentTask);
 					t = Task.newTask();
 					t.setName(name);
 					t.setDepth(depth);
@@ -282,7 +284,6 @@ public class StandardTemplateService extends StandardManager implements Template
 					t.setTemplate(template);
 					t.setPlanStartDate(template.getPlanStartDate());
 					t.setPlanEndDate(template.getPlanEndDate());
-					t.setSort(sort);
 					t.setTaskType(CommonCodeHelper.manager.getCommonCode(taskType, "TASK_TYPE"));
 					PersistenceHelper.manager.modify(t);
 				}

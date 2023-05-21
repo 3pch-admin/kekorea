@@ -44,6 +44,7 @@ import e3ps.project.task.dto.TaskDTO;
 import e3ps.project.task.service.TaskHelper;
 import e3ps.project.template.service.TemplateHelper;
 import e3ps.project.variable.ProjectUserTypeVariable;
+import e3ps.system.service.ErrorLogHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -101,6 +102,7 @@ public class ProjectController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/project/list", "프로젝트 리스트 함수");
 		}
 		return result;
 	}
@@ -172,6 +174,7 @@ public class ProjectController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/project/create", "프로젝트 등록 함수");
 		}
 		return result;
 	}
@@ -293,6 +296,7 @@ public class ProjectController extends BaseController {
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("dto", dto);
+		model.addObject("project", project);
 		model.setViewName("/extcore/jsp/project/project-view.jsp");
 		return model;
 	}
@@ -466,7 +470,7 @@ public class ProjectController extends BaseController {
 		model.setViewName("/extcore/jsp/project/tab/project-output-tab.jsp");
 		return model;
 	}
-	
+
 	@Description(value = "프로젝트 수정 페이지")
 	@GetMapping(value = "/modify")
 	public ModelAndView modify(@RequestParam String oid) throws Exception {
@@ -516,6 +520,7 @@ public class ProjectController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/project/delete", "프로젝트 삭제 함수");
 		}
 		return result;
 	}
@@ -554,7 +559,6 @@ public class ProjectController extends BaseController {
 		model.setViewName("/extcore/jsp/project/project-register.jsp");
 		return model;
 	}
-	
 
 	@Description(value = "작번 산출물 결재")
 	@PostMapping(value = "/register")

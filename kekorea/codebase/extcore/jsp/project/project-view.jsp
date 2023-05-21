@@ -1,3 +1,4 @@
+<%@page import="e3ps.project.service.ProjectHelper"%>
 <%@page import="e3ps.common.util.CommonUtils"%>
 <%@page import="e3ps.project.Project"%>
 <%@page import="java.util.ArrayList"%>
@@ -9,6 +10,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 ProjectDTO dto = (ProjectDTO) request.getAttribute("dto");
+Project project = (Project) request.getAttribute("project");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
@@ -85,7 +87,7 @@ ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 						<th class="rb">요구 납기일</th>
 						<td rowspan="4" class="tb-none bb-none" style="width: 30px;">&nbsp;</td>
 						<th rowspan="2">진행률</th>
-						<td rowspan="2" class="center"><%=dto.getKekProgress()%>%
+						<td rowspan="2" class="center"><%=ProjectHelper.manager.getKekProgress(project)%>%
 						</td>
 					</tr>
 					<tr>
@@ -103,7 +105,7 @@ ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 						<th class="rb">막종 / 막종상세</th>
 						<th class="rb" colspan="2">작업 내용</th>
 						<th>기계</th>
-						<td class="center"><%=dto.getMachineProgress()%>%
+						<td class="center"><%=ProjectHelper.manager.getMachineAllocateProgress(project)%>%
 						</td>
 					</tr>
 					<tr>
@@ -115,7 +117,7 @@ ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 							<%=dto.getDetail_name()%></td>
 						<td class="center" colspan="2"><%=dto.getDescription()%></td>
 						<th>전기</th>
-						<td class="center"><%=dto.getElecProgress()%>%
+						<td class="center"><%=ProjectHelper.manager.getElecAllocateProgress(project)%>%
 						</td>
 					</tr>
 					<%
@@ -141,7 +143,7 @@ ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 						<th class="rb">요구 납기일</th>
 						<td rowspan="4" class="tb-none bb-none" style="width: 30px;">&nbsp;</td>
 						<th rowspan="4">진행률</th>
-						<td rowspan="4" class="center"><%=dto.getKekProgress()%>%
+						<td rowspan="4" class="center"><%=ProjectHelper.manager.getKekProgress(project)%>%
 						</td>
 					</tr>
 					<tr>

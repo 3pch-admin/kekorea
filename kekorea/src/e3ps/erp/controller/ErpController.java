@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.erp.service.ErpHelper;
+import e3ps.system.service.ErrorLogHelper;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -35,7 +36,7 @@ public class ErpController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "ERP 로그 함수")
+	@Description(value = "ERP 로그 리스트")
 	@ResponseBody
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -47,6 +48,7 @@ public class ErpController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/erp/list", "ERP 로그 리스트");
 		}
 		return result;
 	}

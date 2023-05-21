@@ -11,7 +11,9 @@ import wt.util.WTException;
 @GenAsPersistable(superClass = WTObject.class, interfaces = { Ownable.class },
 
 		properties = {
-
+				
+				@GeneratedProperty(name="callUrl", type=String.class, constraints = @PropertyConstraints(required = true)),
+				
 				@GeneratedProperty(name = "errorMsg", type = String.class, constraints = @PropertyConstraints(upperLimit = 4000, required = true)),
 
 				@GeneratedProperty(name = "logType", type = String.class, constraints = @PropertyConstraints(required = true)) }

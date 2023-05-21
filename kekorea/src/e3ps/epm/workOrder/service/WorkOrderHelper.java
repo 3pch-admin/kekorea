@@ -42,6 +42,7 @@ import e3ps.project.ProjectUserLink;
 import e3ps.project.variable.ProjectUserTypeVariable;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import wt.epm.EPMAuthoringAppType;
 import wt.epm.EPMDocument;
 import wt.epm.EPMDocumentMaster;
 import wt.fc.PagingQueryResult;
@@ -221,6 +222,7 @@ public class WorkOrderHelper {
 				WorkOrderDTO dto = new WorkOrderDTO(link);
 				node.put("oid", workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
 				node.put("name", workOrder.getName());
+				node.put("number", workOrder.getNumber());
 				if (isNode == 1) {
 					node.put("poid", dto.getPoid());
 					node.put("projectType_name", dto.getProjectType_name());
@@ -330,6 +332,32 @@ public class WorkOrderHelper {
 		QueryResult qr = PersistenceHelper.manager.find(first);
 		if (qr.hasMoreElements()) {
 			Object[] obj = (Object[]) qr.nextElement();
+			EPMDocument epm = (EPMDocument) obj[0];
+			map.put("number", number);
+			map.put("name", IBAUtils.getStringValue(epm, "NAME_OF_PARTS"));
+			map.put("rev", Integer.parseInt(epm.getVersionIdentifier().getSeries().getValue()));
+			map.put("lotNo", "");
+			map.put("current", epm.getVersionIdentifier().getSeries().getValue());
+			map.put("ok", true);
+			map.put("preView", ContentUtils.getPreViewBase64(epm));
+			map.put("doid", epm.getPersistInfo().getObjectIdentifier().getStringValue());
+			return map;
+		}
+
+		QuerySpec second = new QuerySpec();
+		int _idx1 = second.appendClassList(EPMDocument.class, true);
+		int _idx2 = second.appendClassList(EPMDocumentMaster.class, false);
+
+		QuerySpecUtils.toCI(second, _idx1, EPMDocument.class);
+		QuerySpecUtils.toInnerJoin(second, EPMDocument.class, EPMDocumentMaster.class, "masterReference.key.id",
+				WTAttributeNameIfc.ID_NAME, _idx1, _idx2);
+		QuerySpecUtils.toLatest(second, _idx1, EPMDocument.class);
+		QuerySpecUtils.toEqualsAnd(second, _idx1, EPMDocument.class, EPMDocument.AUTHORING_APPLICATION, "ACAD");
+		QuerySpecUtils.toEqualsAnd(second, _idx1, EPMDocument.class, EPMDocument.DOC_TYPE, "CADCOMPONENT");
+		QuerySpecUtils.toIBAEqualsAnd(second, EPMDocument.class, _idx1, "DWG_No", number);
+		QueryResult rs = PersistenceHelper.manager.find(second);
+		if (rs.hasMoreElements()) {
+			Object[] obj = (Object[]) rs.nextElement();
 			EPMDocument epm = (EPMDocument) obj[0];
 			map.put("number", number);
 			map.put("name", IBAUtils.getStringValue(epm, "NAME_OF_PARTS"));
@@ -484,7 +512,7 @@ public class WorkOrderHelper {
 		// 데이터 FOR 문 변수
 		int start = 0;
 		int end = 45;
-		
+
 		for (int i = 0; i < loop; i++) {
 			String sheetName = (i + 1) + "번 시트";
 
@@ -586,7 +614,6 @@ public class WorkOrderHelper {
 
 			int rowIndex = 3;
 
-	
 			// for start
 			for (int j = start; j < end; j++) {
 				// 데이터 머지

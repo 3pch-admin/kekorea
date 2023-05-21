@@ -28,7 +28,7 @@ public class TaskHelper {
 	/**
 	 * 같은 레벨의 태스크 정렬 순거 가져오기
 	 */
-	public int getSort(Template template, Task task) throws Exception {
+	public int getSort(Template template, Task parentTask) throws Exception {
 		int sort = 1;
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Task.class, false);
@@ -42,8 +42,9 @@ public class TaskHelper {
 		QuerySpecUtils.toInnerJoin(query, Task.class, Template.class, "templateReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_t);
 		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "templateReference.key.id", template);
-		if (task != null) {
-			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, Task.DEPTH, task.getDepth());
+		if (parentTask != null) {
+			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id", parentTask);
+			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, Task.DEPTH, parentTask.getDepth() + 1);
 		}
 
 		QueryResult result = PersistenceServerHelper.manager.query(query);
@@ -145,7 +146,7 @@ public class TaskHelper {
 		return getSort(project, null);
 	}
 
-	public int getSort(Project project, Task task) throws Exception {
+	public int getSort(Project project, Task parentTask) throws Exception {
 		int sort = 1;
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Task.class, false);
@@ -159,8 +160,9 @@ public class TaskHelper {
 		QuerySpecUtils.toInnerJoin(query, Task.class, Project.class, "projectReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_t);
 		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "projectReference.key.id", project);
-		if (task != null) {
-			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, Task.DEPTH, task.getDepth());
+		if (parentTask != null) {
+			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id", parentTask);
+			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, Task.DEPTH, parentTask.getDepth() + 1);
 		}
 
 		QueryResult result = PersistenceServerHelper.manager.query(query);

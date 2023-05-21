@@ -567,7 +567,7 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 						inline : true
 					},
 				}, {
-					dataField : "kekProgress",
+					dataField : "progress",
 					headerText : "진행율",
 					postfix : "%",
 					width : 80,
@@ -630,10 +630,14 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
-					AUIGrid.removeAjaxLoader(myGridID);
-					document.getElementById("sessionid").value = data.sessionid;
-					document.getElementById("curPage").value = data.curPage;
-					AUIGrid.setGridData(myGridID, data.list);
+					if (data.result) {
+						AUIGrid.removeAjaxLoader(myGridID);
+						document.getElementById("sessionid").value = data.sessionid;
+						document.getElementById("curPage").value = data.curPage;
+						AUIGrid.setGridData(myGridID, data.list);
+					} else {
+						alert(data.msg);
+					}
 					parent.closeLayer();
 				});
 			}

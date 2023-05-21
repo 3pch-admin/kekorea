@@ -163,6 +163,15 @@ JSONArray pList = (JSONArray) request.getAttribute("pList");
 							headerText : "KE 작번",
 							dataType : "string",
 							width : 100,
+							renderer : {
+								type : "LinkRenderer",
+								baseUrl : "javascript",
+								jsCallback : function(rowIndex, columnIndex, value, item) {
+									const oid = item.oid;
+									const url = getCallUrl("/project/view?oid=" + oid);
+									popup(url);
+								}
+							},
 						}, {
 							dataField : "mak",
 							headerText : "막종",

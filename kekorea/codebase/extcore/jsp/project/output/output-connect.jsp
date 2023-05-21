@@ -343,7 +343,7 @@ String poid = (String) request.getAttribute("poid");
 	}
 
 	function loadGridData() {
-		const url = getCallUrl("/output/list");
+		const url = getCallUrl("/doc/list");
 		const params = new Object();
 		const oid = document.getElementById("oid").value;
 		const name = document.getElementById("name").value;
@@ -376,16 +376,20 @@ String poid = (String) request.getAttribute("poid");
 		AUIGrid.showAjaxLoader(myGridID);
 		parent.openLayer();
 		call(url, params, function(data) {
-			AUIGrid.removeAjaxLoader(myGridID);
-			AUIGrid.setGridData(myGridID, data.list);
-			document.getElementById("sessionid").value = data.sessionid;
-			document.getElementById("curPage").value = data.curPage;
+			if (data.result) {
+				AUIGrid.removeAjaxLoader(myGridID);
+				AUIGrid.setGridData(myGridID, data.list);
+				document.getElementById("sessionid").value = data.sessionid;
+				document.getElementById("curPage").value = data.curPage;
+			} else {
+				alert(data.msg);
+			}
 			parent.closeLayer();
 		});
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
-		document.getElementById("name").focus();
+		toFocus("name");
 		const columns = loadColumnLayout("document-list");
 		const contenxtHeader = genColumnHtml(columns);
 		$("#h_item_ul").append(contenxtHeader);
@@ -404,8 +408,8 @@ String poid = (String) request.getAttribute("poid");
 	});
 
 	function toggle() {
-// 		const url = getCallUrl("/output/");
-// 		document.location.href = url;
+		// 		const url = getCallUrl("/output/");
+		// 		document.location.href = url;
 	}
 
 	document.addEventListener("keydown", function(event) {

@@ -31,13 +31,13 @@ NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 	<tr>
 		<th class="req lb">공지사항 제목</th>
 		<td class="indent5">
-			<input type="text" name="name" id="name" class="width-500" value="<%=dto.getName()%>">
+			<input type="text" name="name" id="name" class="width-500" value="<%=dto.getName()%>" tabindex="1">
 		</td>
 	</tr>
 	<tr>
 		<th class="req lb">내용</th>
 		<td class="indent5">
-			<textarea name="description" id="description" rows="10"><%=dto.getDescription()%></textarea>
+			<textarea name="description" id="description" rows="10" tabindex="2"><%=dto.getDescription()%></textarea>
 		</td>
 	</tr>
 	<tr>
@@ -83,11 +83,13 @@ NoticeDTO dto = (NoticeDTO) request.getAttribute("dto");
 			if (data.result) {
 				opener.loadGridData();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
-		document.getElementById("name").focus();
+		toFocus("name");
 	})
 </script>

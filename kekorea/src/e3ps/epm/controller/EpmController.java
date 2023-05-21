@@ -2,6 +2,7 @@ package e3ps.epm.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.ContentUtils;
 import e3ps.epm.dto.EpmDTO;
 import e3ps.epm.service.EpmHelper;
 import net.sf.json.JSONArray;
@@ -100,6 +102,8 @@ public class EpmController extends BaseController {
 		JSONArray data = EpmHelper.manager.jsonAuiProject(dto.getOid());
 		boolean isAutoCad = dto.getApplicationType().equalsIgnoreCase("AUTOCAD");
 		boolean isCreo = dto.getApplicationType().equalsIgnoreCase("CREO");
+		Vector<Map<String, Object>> secondary = ContentUtils.getSecondary(epm);
+		model.addObject("secondary", secondary);
 		model.addObject("isAutoCad", isAutoCad);
 		model.addObject("isCreo", isCreo);
 		model.addObject("data", data);

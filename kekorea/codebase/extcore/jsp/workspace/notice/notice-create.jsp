@@ -26,13 +26,13 @@
 	<tr>
 		<th class="req lb">공지사항 제목</th>
 		<td class="indent5">
-			<input type="text" name="name" id="name" class="width-500">
+			<input type="text" name="name" id="name" class="width-500" tabindex="1">
 		</td>
 	</tr>
 	<tr>
 		<th class="req lb">내용</th>
 		<td class="indent5">
-			<textarea name="description" id="description" rows="10"></textarea>
+			<textarea name="description" id="description" rows="10" tabindex="2"></textarea>
 		</td>
 	</tr>
 	<tr>
@@ -79,6 +79,6 @@
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
-		document.getElementById("name").focus();
+		toFocus("name");)
 	})
 </script>

@@ -30,39 +30,39 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 	<tr>
 		<th class="req lb">KEK 작번</th>
 		<td class="indent5">
-			<input type="text" name="kekNumber" id="kekNumber" class="width-300" value="<%=dto.getKekNumber() %>">
+			<input type="text" name="kekNumber" id="kekNumber" class="width-300" value="<%=dto.getKekNumber() %>" tabindex="1">
 		</td>
 		<th class="req">작번 발행일</th>
 		<td class="indent5">
-			<input type="text" name="pdate" id="pdate" value="<%=dto.getPdate_txt() %>">
+			<input type="text" name="pdate" id="pdate" value="<%=dto.getPdate_txt() %>" tabindex="2">
 			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('pdate')">
 		</td>
 	</tr>
 	<tr>
 		<th class="req lb">KE 작번</th>
 		<td class="indent5">
-			<input type="text" name="keNumber" id="keNumber" value="<%=dto.getKeNumber() %>">
+			<input type="text" name="keNumber" id="keNumber" value="<%=dto.getKeNumber() %>" tabindex="3">
 		</td>
 		<th class="req">요구납기일</th>
 		<td class="indent5">
-			<input type="text" name="customDate" id="customDate" value="<%=dto.getCustomDate_txt() %>">
+			<input type="text" name="customDate" id="customDate" value="<%=dto.getCustomDate_txt() %>" tabindex="4">
 			<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('customDate')">
 		</td>
 	</tr>
 	<tr>
 		<th class="req lb">USER ID</th>
 		<td class="indent5">
-			<input type="text" name="userId" id="userId" class="width-300" value="<%=dto.getUserId() %>">
+			<input type="text" name="userId" id="userId" class="width-300" value="<%=dto.getUserId() %>" tabindex="5">
 		</td>
 		<th class="req">모델</th>
 		<td class="indent5">
-			<input type="text" name="model" id="model" class="width-300" value="<%=dto.getModel() %>">
+			<input type="text" name="model" id="model" class="width-300" value="<%=dto.getModel() %>" tabindex="6">
 		</td>
 	</tr>
 	<tr>
 		<th class="req lb">막종</th>
 		<td class="indent5">
-			<select name="mak" id="mak" class="width-200">
+			<select name="mak" id="mak" class="width-200" tabindex="7">
 				<option value="">선택</option>
 				<%
 				for (CommonCode mak : maks) {
@@ -76,7 +76,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 		</td>
 		<th class="req">막종상세</th>
 		<td class="indent5">
-			<select name="detail" id="detail" class="width-200">
+			<select name="detail" id="detail" class="width-200" tabindex="8">
 				<option value="">선택</option>
 			</select>
 		</td>
@@ -84,7 +84,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 	<tr>
 		<th class="req lb">거래처</th>
 		<td class="indent5">
-			<select name="customer" id="customer" class="width-200">
+			<select name="customer" id="customer" class="width-200" tabindex="9">
 				<option value="">선택</option>
 				<%
 				for (CommonCode customer : customers) {
@@ -98,7 +98,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 		</td>
 		<th class="req">설치 장소</th>
 		<td class="indent5">
-			<select name="install" id="install" class="width-200">
+			<select name="install" id="install" class="width-200" tabindex="10">
 				<option value="">선택</option>
 			</select>
 		</td>
@@ -106,7 +106,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 	<tr>
 		<th class="req lb">작번 유형</th>
 		<td class="indent5" colspan="3">
-			<select name="projectType" id="projectType" class="width-200">
+			<select name="projectType" id="projectType" class="width-200" tabindex="11">
 				<option value="">선택</option>
 				<%
 				for (CommonCode projectType : projectTypes) {
@@ -122,7 +122,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 	<tr>
 		<th class="lb">작업 내용</th>
 		<td colspan="3" class="indent5">
-			<textarea class="description" name="description" id="description" rows="9"></textarea>
+			<textarea class="description" name="description" id="description" rows="9"  tabindex="12"></textarea>
 		</td>
 	</tr>
 </table>
@@ -225,7 +225,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
-		document.getElementById("kekNumber").focus();
+		toFocus("kekNumber");
 		$("#mak").bindSelect({
 			onchange : function() {
 				const oid = this.optionValue;

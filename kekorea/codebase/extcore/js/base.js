@@ -291,3 +291,8 @@ function toField(params, arr) {
 	}
 	return params;
 }
+
+// 첨부파일 다운로드
+function download(oid) {
+	document.location.href = "/Windchill/plm/content/download?oid=" + oid;
+}

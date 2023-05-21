@@ -715,6 +715,7 @@ public class ProjectHelper {
 				map.put("creator", document.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(document.getCreateTimestamp()));
 				map.put("primary", AUIGridUtils.primaryTemplate(document));
+				map.put("secondary", AUIGridUtils.secondaryTemplate(document));
 			} else if (lcm instanceof Meeting) {
 				Meeting meeting = (Meeting) lcm;
 				map.put("oid", meeting.getPersistInfo().getObjectIdentifier().getStringValue());
@@ -722,6 +723,7 @@ public class ProjectHelper {
 				map.put("state", meeting.getLifeCycleState().getDisplay());
 				map.put("creator", meeting.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(meeting.getCreateTimestamp()));
+				map.put("primary", AUIGridUtils.primaryTemplate(meeting));
 				map.put("secondary", AUIGridUtils.secondaryTemplate(meeting));
 			} else if (lcm instanceof PartListMaster) {
 				PartListMaster master = (PartListMaster) lcm;
@@ -730,6 +732,7 @@ public class ProjectHelper {
 				map.put("state", master.getLifeCycleState().getDisplay());
 				map.put("creator", master.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+				map.put("primary", AUIGridUtils.primaryTemplate(master));
 				map.put("secondary", AUIGridUtils.secondaryTemplate(master));
 			} else if (lcm instanceof RequestDocument) {
 				RequestDocument requestDocument = (RequestDocument) lcm;
@@ -738,6 +741,7 @@ public class ProjectHelper {
 				map.put("state", requestDocument.getLifeCycleState().getDisplay());
 				map.put("creator", requestDocument.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(requestDocument.getCreateTimestamp()));
+				map.put("primary", AUIGridUtils.primaryTemplate(requestDocument));
 				map.put("secondary", AUIGridUtils.secondaryTemplate(requestDocument));
 			} else if (lcm instanceof WorkOrder) {
 				WorkOrder workOrder = (WorkOrder) lcm;
@@ -746,6 +750,7 @@ public class ProjectHelper {
 				map.put("state", workOrder.getLifeCycleState().getDisplay());
 				map.put("creator", workOrder.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(workOrder.getCreateTimestamp()));
+				map.put("primary", AUIGridUtils.primaryTemplate(workOrder));
 				map.put("secondary", AUIGridUtils.secondaryTemplate(workOrder));
 			} else if (lcm instanceof TBOMMaster) {
 				TBOMMaster master = (TBOMMaster) lcm;
@@ -754,6 +759,7 @@ public class ProjectHelper {
 				map.put("state", master.getLifeCycleState().getDisplay());
 				map.put("creator", master.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(master.getCreateTimestamp()));
+				map.put("primary", AUIGridUtils.primaryTemplate(master));
 				map.put("secondary", AUIGridUtils.secondaryTemplate(master));
 			} else if (lcm instanceof ConfigSheet) {
 				ConfigSheet configSheet = (ConfigSheet) lcm;
@@ -762,6 +768,7 @@ public class ProjectHelper {
 				map.put("state", configSheet.getLifeCycleState().getDisplay());
 				map.put("creator", configSheet.getCreatorFullName());
 				map.put("createdDate_txt", CommonUtils.getPersistableTime(configSheet.getCreateTimestamp()));
+				map.put("primary", AUIGridUtils.primaryTemplate(configSheet));
 				map.put("secondary", AUIGridUtils.secondaryTemplate(configSheet));
 			}
 			list.add(map);
@@ -1049,32 +1056,28 @@ public class ProjectHelper {
 		int idx_link = query.appendClassList(ProjectUserLink.class, false);
 		int idx_u = query.appendClassList(WTUser.class, false);
 
-		query.appendOpenParen();
 		QuerySpecUtils.toInnerJoin(query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 				"roleAObjectRef.key.id", idx, idx_link);
 		QuerySpecUtils.toInnerJoin(query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
 				"roleBObjectRef.key.id", idx_u, idx_link);
-		query.appendCloseParen();
-
 		QuerySpecUtils.toEqualsAnd(query, idx_link, ProjectUserLink.class, "roleBObjectRef.key.id", sessionUser);
-
-		CommonCode machineCode = CommonCodeHelper.manager.getCommonCode("MACHINE", "USER_TYPE");
-		CommonCode elecCode = CommonCodeHelper.manager.getCommonCode("ELEC", "USER_TYPE");
-		CommonCode softCode = CommonCodeHelper.manager.getCommonCode("SOFT", "USER_TYPE");
 
 		query.appendAnd();
 		query.appendOpenParen();
 
+		CommonCode machineCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.MACHINE, "USER_TYPE");
 		SearchCondition sc = new SearchCondition(ProjectUserLink.class, "userTypeReference.key.id", "=",
 				machineCode.getPersistInfo().getObjectIdentifier().getId());
 		query.appendWhere(sc, new int[] { idx_link });
 		query.appendOr();
 
+		CommonCode elecCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.ELEC, "USER_TYPE");
 		sc = new SearchCondition(ProjectUserLink.class, "userTypeReference.key.id", "=",
 				elecCode.getPersistInfo().getObjectIdentifier().getId());
 		query.appendWhere(sc, new int[] { idx_link });
 		query.appendOr();
 
+		CommonCode softCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.SOFT, "USER_TYPE");
 		sc = new SearchCondition(ProjectUserLink.class, "userTypeReference.key.id", "=",
 				softCode.getPersistInfo().getObjectIdentifier().getId());
 		query.appendWhere(sc, new int[] { idx_link });
@@ -1097,6 +1100,7 @@ public class ProjectHelper {
 			map.put("customer", project.getCustomer().getName());
 			map.put("install", project.getInstall().getName());
 			map.put("description", project.getDescription());
+			list.add(map);
 		}
 		return JSONArray.fromObject(list);
 	}

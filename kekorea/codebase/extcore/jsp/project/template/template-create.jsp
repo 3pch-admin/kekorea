@@ -29,13 +29,13 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 	<tr>
 		<th class="req lb">템플릿 명</th>
 		<td class="indent5">
-			<input type="text" name="name" id="name" class="width-500">
+			<input type="text" name="name" id="name" class="width-500" tabindex="1">
 		</td>
 	</tr>
 	<tr>
 		<th class="lb">참조 템플릿</th>
 		<td class="indent5">
-			<select name="reference" id="reference" class="width-400">
+			<select name="reference" id="reference" class="width-400"  tabindex="2">
 				<option value="">선택</option>
 				<%
 				for (HashMap<String, String> map : list) {
@@ -50,7 +50,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 	<tr>
 		<th class="lb">설명</th>
 		<td class="indent5">
-			<textarea name="description" id="description" rows="8"></textarea>
+			<textarea name="description" id="description" rows="8" tabindex="3"></textarea>
 		</td>
 	</tr>
 </table>
@@ -89,7 +89,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
+		toFocus("name");
 		selectbox("reference");
-		document.getElementById("name").focus();
 	})
 </script>
