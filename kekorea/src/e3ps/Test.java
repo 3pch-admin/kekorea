@@ -138,10 +138,13 @@ public class Test {
 
 			PersistenceHelper.manager.save(project);
 
-			Template t = (Template) CommonUtils.getObject("e3ps.project.template.Template:1297632");
+			Template t = (Template) CommonUtils.getObject("e3ps.project.template.Template:222105");
 			StandardProjectService service = new StandardProjectService();
 			service.copyTask(project, t);
 
+
+			System.out.println(i + "번째 완료!");
+			
 		}
 
 		System.out.println("완료..!");
