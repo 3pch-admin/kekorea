@@ -115,20 +115,11 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 					<!-- 						<a href="form_advanced.html">라이브러리 조회</a> -->
 					<!-- 					</li> -->
 					<li>
-						<a onclick="moveToPage(this, '/workOrder/list', '도면 관리 > 도면 일람표 조회');">도면 일람표 조회</a>
+						<a onclick="moveToPage(this, '/workOrder/list', '도면 관리 > 도면일람표 조회');">도면일람표 조회</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/epm/register', '도면 관리 > 도면 결재')">도면 결재</a>
 					</li>
-					<!-- 					<li> -->
-					<!-- 						<a href="form_file_upload.html">도면 출력</a> -->
-					<!-- 					</li> -->
-					<!-- 					<li> -->
-					<!-- 						<a href="form_editors.html">뷰어 등록</a> -->
-					<!-- 					</li> -->
-					<!-- 					<li> -->
-					<!-- 						<a href="form_autocomplete.html">뷰어 조회</a> -->
-					<!-- 					</li> -->
 				</ul>
 			</li>
 			<li>

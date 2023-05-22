@@ -25,6 +25,7 @@ import e3ps.org.Department;
 import e3ps.org.People;
 import e3ps.project.Project;
 import e3ps.project.task.Task;
+import e3ps.system.service.ErrorLogHelper;
 import net.sf.json.JSONArray;
 import wt.fc.Persistable;
 import wt.org.WTUser;
@@ -34,7 +35,7 @@ import wt.session.SessionHelper;
 @RequestMapping(value = "/partlist/**")
 public class PartlistController extends BaseController {
 
-	@Description(value = "수배표 조회 페이지")
+	@Description(value = "수배표 리스트 페이지")
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -46,7 +47,7 @@ public class PartlistController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "수배표 조회")
+	@Description(value = "수배표 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -58,6 +59,7 @@ public class PartlistController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/partlist/list", "수배표 조회 함수");
 		}
 		return result;
 	}
@@ -164,7 +166,7 @@ public class PartlistController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "수배표 등록")
+	@Description(value = "수배표 등록 함수")
 	@ResponseBody
 	@PostMapping(value = "/create")
 	public Map<String, Object> create(@RequestBody PartListDTO dto) throws Exception {
@@ -177,6 +179,7 @@ public class PartlistController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/partlist/create", "수배표 등록 함수");
 		}
 		return result;
 	}
@@ -207,7 +210,7 @@ public class PartlistController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "수배표 수정")
+	@Description(value = "수배표 수정 함수")
 	@ResponseBody
 	@PostMapping(value = "/modify")
 	public Map<String, Object> modify(@RequestBody PartListDTO dto) throws Exception {
@@ -220,11 +223,12 @@ public class PartlistController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/partlist/modify", "수배표 수정 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "수배표 삭제")
+	@Description(value = "수배표 삭제 함수")
 	@ResponseBody
 	@GetMapping(value = "/delete")
 	public Map<String, Object> delete(@RequestParam String oid) throws Exception {
@@ -237,6 +241,7 @@ public class PartlistController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/partlist/delete", "수배표 삭제 함수");
 		}
 		return result;
 	}
@@ -254,6 +259,7 @@ public class PartlistController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/partlist/disconnect", "수배표 태스크 연결 제거 함수");
 		}
 		return result;
 	}
@@ -283,7 +289,7 @@ public class PartlistController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "수배표 태스크에서 연결")
+	@Description(value = "수배표 태스크 연결 함수")
 	@PostMapping(value = "/connect")
 	@ResponseBody
 	public Map<String, Object> connect(@RequestBody Map<String, Object> params) throws Exception {
@@ -303,6 +309,7 @@ public class PartlistController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/partlist/connect", "수배표 태스크 연결 함수");
 		}
 		return result;
 	}

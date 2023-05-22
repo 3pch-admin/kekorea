@@ -11,7 +11,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -339,15 +339,19 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/partlist/list");
-				const field = ["psize"];
+				const field = [ "psize" ];
 				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
-					document.getElementById("sessionid").value = data.sessionid;
-					document.getElementById("curPage").value = data.curPage;
-					AUIGrid.setGridData(myGridID, data.list);
+					if (data.result) {
+						document.getElementById("sessionid").value = data.sessionid;
+						document.getElementById("curPage").value = data.curPage;
+						AUIGrid.setGridData(myGridID, data.list);
+					} else {
+						alert(data.msg);
+					}
 					parent.closeLayer();
 				});
 			}

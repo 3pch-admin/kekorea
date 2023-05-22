@@ -516,12 +516,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				params.latest = latest;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
-				console.log(params);
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
-					document.getElementById("sessionid").value = data.sessionid;
-					document.getElementById("curPage").value = data.curPage;
-					AUIGrid.setGridData(myGridID, data.list);
+					if (data.result) {
+						document.getElementById("sessionid").value = data.sessionid;
+						document.getElementById("curPage").value = data.curPage;
+						AUIGrid.setGridData(myGridID, data.list);
+					} else {
+						alert(data.msg);
+					}
 					parent.closeLayer();
 				});
 			}

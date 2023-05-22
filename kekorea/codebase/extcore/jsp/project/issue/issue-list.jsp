@@ -359,15 +359,19 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/issue/list");
-				const field =["name","content","description","kekNumber","keNumber","mak_name","creatorOid","createdFrom","createdTo","psize"];
+				const field = [ "name", "content", "description", "kekNumber", "keNumber", "mak_name", "creatorOid", "createdFrom", "createdTo", "psize" ];
 				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
-					document.getElementById("sessionid").value = data.sessionid;
-					document.getElementById("curPage").value = data.curPage;
-					AUIGrid.setGridData(myGridID, data.list);
+					if (data.result) {
+						document.getElementById("sessionid").value = data.sessionid;
+						document.getElementById("curPage").value = data.curPage;
+						AUIGrid.setGridData(myGridID, data.list);
+					} else {
+						alert(data.msg);
+					}
 					parent.closeLayer();
 				});
 			}

@@ -19,6 +19,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.epm.dto.EpmDTO;
 import e3ps.epm.service.EpmHelper;
+import e3ps.system.service.ErrorLogHelper;
 import net.sf.json.JSONArray;
 import wt.epm.EPMDocument;
 import wt.org.WTUser;
@@ -49,6 +50,7 @@ public class EpmController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/epm/register", "도면 결재 함수");
 		}
 		return result;
 	}
@@ -77,7 +79,7 @@ public class EpmController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "도면 조회 함수")
+	@Description(value = "KEK 도면 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -87,7 +89,9 @@ public class EpmController extends BaseController {
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
+			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/epm/list", "KEK 도면 조회 함수");
 		}
 		return result;
 	}

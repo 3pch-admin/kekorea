@@ -117,7 +117,8 @@ public class PartlistHelper {
 			JSONArray children = new JSONArray();
 			JSONObject node = new JSONObject();
 			while (group.hasMoreElements()) {
-				PartListMasterProjectLink link = (PartListMasterProjectLink) group.nextElement();
+				Object[] oo = (Object[]) group.nextElement();
+				PartListMasterProjectLink link = (PartListMasterProjectLink) oo[2];
 				PartListDTO dto = new PartListDTO(link);
 				node.put("oid", master.getPersistInfo().getObjectIdentifier().getStringValue());
 				node.put("name", master.getName());

@@ -27,22 +27,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="curPage" id="curPage">
 
-		<table class="search-table">
-			<colgroup>
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
-				<col width="130">
-				<col width="*">
-			</colgroup>
-			<tr>
-
-			</tr>
-		</table>
-
 		<table class="button-table">
 			<tr>
 				<td class="left">
@@ -77,6 +61,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					dataField : "errorMsg",
 					headerText : "에러메세지",
 					dataType : "string",
+					style : "aui-left",
 					filter : {
 						showIcon : true,
 						inline : true

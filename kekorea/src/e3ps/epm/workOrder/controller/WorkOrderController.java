@@ -26,6 +26,7 @@ import e3ps.org.Department;
 import e3ps.org.People;
 import e3ps.project.Project;
 import e3ps.project.task.Task;
+import e3ps.system.service.ErrorLogHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -34,7 +35,7 @@ import wt.session.SessionHelper;
 @RequestMapping(value = "/workOrder/**")
 public class WorkOrderController extends BaseController {
 
-	@Description(value = "작업지시서 리스트 페이지")
+	@Description(value = "도면일람표 리스트 페이지")
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -52,7 +53,7 @@ public class WorkOrderController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "작업지시서 리스트 가져 오는 함수")
+	@Description(value = "도면일람표 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -64,11 +65,12 @@ public class WorkOrderController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workOrder/list", "도면일람표 조회 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "작업지시서 등록 함수")
+	@Description(value = "도면일람표 등록 함수")
 	@ResponseBody
 	@PostMapping(value = "/create")
 	public Map<String, Object> create(@RequestBody WorkOrderDTO dto) throws Exception {
@@ -81,11 +83,12 @@ public class WorkOrderController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workOrder/create", "도면일람표 등록 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "작업지시서 생성 페이지")
+	@Description(value = "도면일람표 생성 페이지")
 	@GetMapping(value = "/create")
 	public ModelAndView create(@RequestParam(required = false) String poid, @RequestParam(required = false) String toid)
 			throws Exception {
@@ -124,7 +127,7 @@ public class WorkOrderController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "KE도면들 번호로 찾아오기 (KE OR EPM)")
+	@Description(value = "도면일람표에 첨부할 도면들 찾아오는(KEK, KE) 함수")
 	@ResponseBody
 	@GetMapping(value = "/getData")
 	public Map<String, Object> getData(@RequestParam String number) throws Exception {
@@ -136,11 +139,12 @@ public class WorkOrderController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workOrder/getData", "도면일람표에 첨부할 도면들 찾아오는(KEK, KE) 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "도면 일람표 정보 페이지")
+	@Description(value = "도면일람표 정보 페이지")
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -185,7 +189,7 @@ public class WorkOrderController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "도면 일람표 수정 & 개정 페이지")
+	@Description(value = "도면일람표 수정 & 개정 페이지")
 	@GetMapping(value = "/update")
 	public ModelAndView update(@RequestParam String oid, @RequestParam String mode) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -203,7 +207,7 @@ public class WorkOrderController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "도면일람표 수정 페이지 등록")
+	@Description(value = "도면일람표 수정 함수")
 	@PostMapping(value = "/modify")
 	@ResponseBody
 	public Map<String, Object> modify(@RequestBody WorkOrderDTO dto) throws Exception {
@@ -216,11 +220,12 @@ public class WorkOrderController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/workOrder/modify", "도면일람표 수정 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "도면일람표 개정")
+	@Description(value = "도면일람표 개정 함수")
 	@PostMapping(value = "/revise")
 	@ResponseBody
 	public Map<String, Object> revise(@RequestBody WorkOrderDTO dto) throws Exception {
@@ -233,6 +238,7 @@ public class WorkOrderController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/workOrder/revise", "도면일람표 개정 함수");
 		}
 		return result;
 	}
@@ -257,7 +263,7 @@ public class WorkOrderController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "도면일람표 태스크에서 연결")
+	@Description(value = "도면일람표 태스크 연결 함수")
 	@PostMapping(value = "/connect")
 	@ResponseBody
 	public Map<String, Object> connect(@RequestBody Map<String, Object> params) throws Exception {
@@ -277,6 +283,7 @@ public class WorkOrderController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workOrder/connect", "도면일람표 태스크 연결 함수");
 		}
 		return result;
 	}
