@@ -27,11 +27,11 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "keNumber", type = String.class, javaDoc = "KE 작번", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "userId", type = String.class, javaDoc = "USER ID", constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "userId", type = String.class, javaDoc = "USER ID"),
 
 				@GeneratedProperty(name = "model", type = String.class, javaDoc = "기종", constraints = @PropertyConstraints(required = true)),
 
-				@GeneratedProperty(name = "customDate", type = Timestamp.class, javaDoc = "요구납기일", constraints = @PropertyConstraints(required = true)),
+				@GeneratedProperty(name = "customDate", type = Timestamp.class, javaDoc = "요구납기일"),
 
 				@GeneratedProperty(name = "kekState", type = String.class, javaDoc = "작번 상태", constraints = @PropertyConstraints(required = true)),
 
@@ -63,7 +63,7 @@ import wt.util.WTException;
 
 						foreignKeyRole = @ForeignKeyRole(name = "customer", type = CommonCode.class,
 
-								constraints = @PropertyConstraints(required = true)),
+								constraints = @PropertyConstraints(required = false)),
 
 						myRole = @MyRole(name = "project", cardinality = Cardinality.ONE)),
 
@@ -71,7 +71,7 @@ import wt.util.WTException;
 
 						foreignKeyRole = @ForeignKeyRole(name = "install", type = CommonCode.class,
 
-								constraints = @PropertyConstraints(required = true)),
+								constraints = @PropertyConstraints(required = false)),
 
 						myRole = @MyRole(name = "project", cardinality = Cardinality.ONE)),
 
@@ -79,7 +79,7 @@ import wt.util.WTException;
 
 						foreignKeyRole = @ForeignKeyRole(name = "projectType", type = CommonCode.class,
 
-								constraints = @PropertyConstraints(required = true)),
+								constraints = @PropertyConstraints(required = false)),
 
 						myRole = @MyRole(name = "project", cardinality = Cardinality.ONE)),
 
@@ -87,7 +87,7 @@ import wt.util.WTException;
 
 						foreignKeyRole = @ForeignKeyRole(name = "mak", type = CommonCode.class,
 
-								constraints = @PropertyConstraints(required = true)),
+								constraints = @PropertyConstraints(required = false)),
 
 						myRole = @MyRole(name = "project", cardinality = Cardinality.ONE)),
 
@@ -95,7 +95,7 @@ import wt.util.WTException;
 
 						foreignKeyRole = @ForeignKeyRole(name = "detail", type = CommonCode.class,
 
-								constraints = @PropertyConstraints(required = true)),
+								constraints = @PropertyConstraints(required = false)),
 
 						myRole = @MyRole(name = "project", cardinality = Cardinality.ONE)),
 

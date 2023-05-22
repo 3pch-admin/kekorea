@@ -366,12 +366,12 @@ ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 						<td class="center"><%=p.getKekNumber()%></td>
 						<td class="center"><%=p.getProjectType().getName()%></td>
 						<td class="center"><%=p.getDescription()%></td>
-						<td class="center"><%=p.getMak().getName()%>
+						<td class="center"><%=p.getMak() != null ? p.getMak().getName() : ""%>
 							/
-							<%=p.getDetail().getName()%></td>
+							<%=p.getDetail() != null ? p.getDetail().getName() : ""%></td>
 						<td class="center"><%=p.getCustomer().getName()%>
 							/
-							<%=p.getInstall().getName()%></td>
+							<%=p.getInstall() != null ? p.getInstall().getName() : ""%></td>
 						<td class="center"><%=CommonUtils.getPersistableTime(p.getPDate())%></td>
 						<td class="center"><%=CommonUtils.getPersistableTime(p.getCustomDate())%></td>
 					</tr>

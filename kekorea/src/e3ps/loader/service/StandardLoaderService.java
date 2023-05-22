@@ -271,4 +271,23 @@ public class StandardLoaderService extends StandardManager implements LoaderServ
 				trs.rollback();
 		}
 	}
+
+	@Override
+	public void loaderProject(String excelPath) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+
+			trs.start();
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
 }

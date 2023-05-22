@@ -21,19 +21,19 @@ public class ProjectDTO {
 	private String projectType_name;
 	private String projectType_oid;
 	private boolean estimate = false;
-	private String customer_code;
-	private String customer_name;
+	private String customer_code = "";
+	private String customer_name = "";
 	private String customer_oid;
-	private String install_code;
-	private String install_name;
+	private String install_code = "";
+	private String install_name = "";
 	private String install_oid;
 	private String kekNumber;
 	private String keNumber;
-	private String mak_code;
-	private String mak_name;
+	private String mak_code = "";
+	private String mak_name = "";
 	private String mak_oid;
-	private String detail_name;
-	private String detail_code;
+	private String detail_name = "";
+	private String detail_code = "";
 	private String detail_oid;
 	private String userId;
 	private String description;
@@ -72,7 +72,7 @@ public class ProjectDTO {
 
 	private String template_oid;
 	private String template_txt;
-	
+
 	private int progress;
 
 	public ProjectDTO() {
@@ -94,18 +94,30 @@ public class ProjectDTO {
 		setProjectType_name(project.getProjectType().getName());
 		setProjectType_oid(project.getProjectType().getPersistInfo().getObjectIdentifier().getStringValue());
 		setEstimate(project.getProjectType().getCode().equals("견적"));
-		setCustomer_code(project.getCustomer().getCode());
-		setCustomer_name(project.getCustomer().getName());
-		setCustomer_oid(project.getCustomer().getPersistInfo().getObjectIdentifier().getStringValue());
-		setInstall_code(project.getInstall().getCode());
-		setInstall_name(project.getInstall().getName());
-		setInstall_oid(project.getInstall().getPersistInfo().getObjectIdentifier().getStringValue());
-		setMak_code(project.getMak().getCode());
-		setMak_name(project.getMak().getName());
-		setMak_oid(project.getMak().getPersistInfo().getObjectIdentifier().getStringValue());
-		setDetail_code(project.getDetail().getCode());
-		setDetail_name(project.getDetail().getName());
-		setDetail_oid(project.getDetail().getPersistInfo().getObjectIdentifier().getStringValue());
+
+		if (project.getCustomer() != null) {
+			setCustomer_code(project.getCustomer().getCode());
+			setCustomer_name(project.getCustomer().getName());
+			setCustomer_oid(project.getCustomer().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+
+		if (project.getInstall() != null) {
+			setInstall_code(project.getInstall().getCode());
+			setInstall_name(project.getInstall().getName());
+			setInstall_oid(project.getInstall().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+
+		if (project.getMak() != null) {
+			setMak_code(project.getMak().getCode());
+			setMak_name(project.getMak().getName());
+			setMak_oid(project.getMak().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+
+		if (project.getDetail() != null) {
+			setDetail_code(project.getDetail().getCode());
+			setDetail_name(project.getDetail().getName());
+			setDetail_oid(project.getDetail().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
 		setKekNumber(project.getKekNumber());
 		setKeNumber(project.getKeNumber());
 		setUserId(project.getUserId());

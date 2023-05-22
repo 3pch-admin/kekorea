@@ -18,6 +18,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.project.service.ProjectHelper;
 import e3ps.project.task.Task;
 import e3ps.project.task.dto.TaskTreeNode;
 import e3ps.project.task.service.TaskHelper;
@@ -27,6 +28,8 @@ import e3ps.project.template.TemplateUserLink;
 import e3ps.project.variable.ProjectUserTypeVariable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.org.OrganizationServicesHelper;
+import wt.org.OrganizationServicesServerHelper;
 import wt.org.WTUser;
 import wt.ownership.Ownership;
 import wt.pom.Transaction;
@@ -77,6 +80,16 @@ public class StandardTemplateService extends StandardManager implements Template
 				Template copy = (Template) CommonUtils.getObject(reference);
 				copyTask(template, copy);
 				saveUserLink(template, copy);
+			} else {
+				WTUser pm = OrganizationServicesHelper.manager.getUser(ProjectHelper.PM_ID);
+				TemplateUserLink plink = TemplateUserLink.newTemplateUserLink(template, pm);
+				plink.setUserType(CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.PM, "USER_TYPE"));
+				PersistenceHelper.manager.save(plink);
+
+				WTUser subPm = OrganizationServicesHelper.manager.getUser(ProjectHelper.PM_ID);
+				TemplateUserLink slink = TemplateUserLink.newTemplateUserLink(template, subPm);
+				slink.setUserType(CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.SUB_PM, "USER_TYPE"));
+				PersistenceHelper.manager.save(slink);
 			}
 
 			commit(template);
@@ -103,7 +116,6 @@ public class StandardTemplateService extends StandardManager implements Template
 		}
 
 		WTUser subPm = TemplateHelper.manager.getUserType(copy, ProjectUserTypeVariable.SUB_PM);
-		;
 		if (subPm != null) {
 			TemplateUserLink link = TemplateUserLink.newTemplateUserLink(template, subPm);
 			link.setUserType(CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.SUB_PM, "USER_TYPE"));
