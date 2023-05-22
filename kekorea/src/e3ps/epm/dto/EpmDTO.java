@@ -6,6 +6,7 @@ import java.util.HashMap;
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.IBAUtils;
+import e3ps.common.util.ThumnailUtils;
 import lombok.Getter;
 import lombok.Setter;
 import wt.epm.EPMDocument;
@@ -16,6 +17,7 @@ public class EpmDTO {
 
 	private String oid;
 	private String cadType;
+	private String thumnail_mini;
 	private String thumnail;
 	private String name;
 	private String version;
@@ -55,7 +57,8 @@ public class EpmDTO {
 		setOid(epm.getPersistInfo().getObjectIdentifier().getStringValue());
 		setCadType(epm.getDocType().getDisplay());
 		setApplicationType(epm.getAuthoringApplication().getDisplay());
-		setThumnail(AUIGridUtils.getThumnailSmall(epm));
+		setThumnail_mini(ThumnailUtils.getThumnail(epm.getPersistInfo().getObjectIdentifier().getStringValue())[1]);
+		setThumnail(ThumnailUtils.getThumnail(epm.getPersistInfo().getObjectIdentifier().getStringValue())[0]);
 		setName(epm.getName());
 		setVersion(CommonUtils.getFullVersion(epm));
 		setModifier(epm.getModifierFullName());

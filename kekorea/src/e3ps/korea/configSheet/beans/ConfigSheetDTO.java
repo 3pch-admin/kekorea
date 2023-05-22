@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Map;
 
+import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.korea.configSheet.ConfigSheet;
@@ -54,6 +55,7 @@ public class ConfigSheetDTO {
 
 	private boolean isEdit = false;
 	private boolean isRevise = false;
+	private String primary;
 
 	public ConfigSheetDTO() {
 
@@ -73,6 +75,7 @@ public class ConfigSheetDTO {
 		setRevise(configSheet.getLifeCycleState().toString().equals("APPROVED"));
 		setDataFields(configSheet.getDataFields());
 		setVersion(configSheet.getVersion());
+		setPrimary(AUIGridUtils.primaryTemplate(configSheet));
 	}
 
 	public ConfigSheetDTO(ConfigSheetProjectLink link) throws Exception {
@@ -85,10 +88,10 @@ public class ConfigSheetDTO {
 		setName(configSheet.getName());
 		setNumber(configSheet.getNumber());
 		setContent(StringUtils.replaceToValue(configSheet.getDescription()));
-		setCustomer_name(project.getCustomer().getName());
-		setInstall_name(project.getInstall().getName());
-		setMak_name(project.getMak().getName());
-		setDetail_name(project.getDetail().getName());
+		setCustomer_name(project.getCustomer() != null ? project.getCustomer().getName() : "");
+		setInstall_name(project.getInstall() != null ? project.getInstall().getName() : "");
+		setMak_name(project.getMak() != null ? project.getMak().getName() : "");
+		setDetail_name(project.getDetail() != null ? project.getDetail().getName() : "");
 		setKekNumber(project.getKekNumber());
 		setKeNumber(project.getKeNumber());
 		setUserId(project.getUserId());
@@ -106,5 +109,6 @@ public class ConfigSheetDTO {
 		setEdit(configSheet.getLifeCycleState().toString().equals("INWORK"));
 		setRevise(configSheet.getLifeCycleState().toString().equals("APPROVED"));
 		setDataFields(configSheet.getDataFields());
+		setPrimary(AUIGridUtils.primaryTemplate(configSheet));
 	}
 }

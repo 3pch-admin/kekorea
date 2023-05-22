@@ -173,7 +173,7 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 		}
 	}
 
-	public void copyTask(Project project, Template copy) throws Exception {
+	private void copyTask(Project project, Template copy) throws Exception {
 
 		ArrayList<Task> list = TemplateHelper.manager.recurciveTask(copy);
 		HashMap<Task, Task> parentMap = new HashMap<Task, Task>();

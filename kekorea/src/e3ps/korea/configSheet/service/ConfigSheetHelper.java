@@ -8,10 +8,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import e3ps.admin.commonCode.CommonCode;
+import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.admin.configSheetCode.ConfigSheetCode;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
+import e3ps.common.util.StringUtils;
 import e3ps.korea.configSheet.ColumnVariableLink;
 import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.korea.configSheet.ConfigSheetColumnData;
@@ -20,11 +23,14 @@ import e3ps.korea.configSheet.ConfigSheetVariable;
 import e3ps.korea.configSheet.ConfigSheetVariableLink;
 import e3ps.korea.configSheet.beans.ConfigSheetDTO;
 import e3ps.project.Project;
+import e3ps.project.ProjectUserLink;
+import e3ps.project.variable.ProjectUserTypeVariable;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.fc.PagingQueryResult;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
+import wt.org.WTUser;
 import wt.query.QuerySpec;
 import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
@@ -41,8 +47,45 @@ public class ConfigSheetHelper {
 	public Map<String, Object> list(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<>();
 
+		String name = (String) params.get("name");
+		String kekNumber = (String) params.get("kekNumber");
+		String keNumber = (String) params.get("keNumber");
+		String pdateFrom = (String) params.get("pdateFrom");
+		String pdateTo = (String) params.get("pdateTo");
+		String customer_name = (String) params.get("customer_name");
+		String install_name = (String) params.get("install_name");
+		String projectType = (String) params.get("projectType");
+		String machineOid = (String) params.get("machineOid");
+		String elecOid = (String) params.get("elecOid");
+		String softOid = (String) params.get("softOid");
+		String mak_name = (String) params.get("mak_name");
+		String detail_name = (String) params.get("detail_name");
+		String description = (String) params.get("description");
+		String creatorOid = (String) params.get("creatorOid");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
+		boolean latest = (boolean) params.get("latest");
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(ConfigSheet.class, true);
+		if (latest) {
+			QuerySpecUtils.toBooleanAnd(query, idx, ConfigSheet.class, ConfigSheet.LATEST, true);
+		} else {
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+			query.appendOpenParen();
+			SearchCondition sc = new SearchCondition(ConfigSheet.class, ConfigSheet.LATEST, SearchCondition.IS_TRUE);
+			query.appendWhere(sc, new int[] { idx });
+			QuerySpecUtils.toBooleanOr(query, idx, ConfigSheet.class, ConfigSheet.LATEST, false);
+			query.appendCloseParen();
+		}
+
+		QuerySpecUtils.toLikeAnd(query, idx, ConfigSheet.class, ConfigSheet.NAME, name);
+		QuerySpecUtils.toCreator(query, idx, ConfigSheet.class, creatorOid);
+		QuerySpecUtils.toTimeGreaterAndLess(query, idx, ConfigSheet.class, ConfigSheet.CREATE_TIMESTAMP, createdFrom,
+				createdTo);
+
 		QuerySpecUtils.toOrderBy(query, idx, ConfigSheet.class, ConfigSheet.CREATE_TIMESTAMP, true);
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
@@ -52,15 +95,104 @@ public class ConfigSheetHelper {
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
 			ConfigSheet configSheet = (ConfigSheet) obj[0];
-			JSONObject node = new JSONObject();
-			node.put("oid", configSheet.getPersistInfo().getObjectIdentifier().getStringValue());
-			node.put("name", configSheet.getName());
-			QueryResult group = PersistenceHelper.manager.navigate(configSheet, "project", ConfigSheetProjectLink.class,
-					false);
+
+			QuerySpec _query = new QuerySpec();
+			int _idx = _query.appendClassList(ConfigSheet.class, true);
+			int _idx_p = _query.appendClassList(Project.class, true);
+			int _idx_link = _query.appendClassList(ConfigSheetProjectLink.class, true);
+
+			QuerySpecUtils.toEqualsAnd(_query, _idx_link, ConfigSheetProjectLink.class, "roleAObjectRef.key.id",
+					configSheet);
+			QuerySpecUtils.toInnerJoin(_query, ConfigSheet.class, ConfigSheetProjectLink.class,
+					WTAttributeNameIfc.ID_NAME, "roleAObjectRef.key.id", _idx, _idx_link);
+			QuerySpecUtils.toInnerJoin(_query, Project.class, ConfigSheetProjectLink.class, WTAttributeNameIfc.ID_NAME,
+					"roleBObjectRef.key.id", _idx_p, _idx_link);
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KEK_NUMBER, kekNumber);
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.KE_NUMBER, keNumber);
+			QuerySpecUtils.toTimeGreaterAndLess(_query, _idx_p, Project.class, Project.P_DATE, pdateFrom, pdateTo);
+
+			if (!StringUtils.isNull(customer_name)) {
+				CommonCode customerCode = (CommonCode) CommonUtils.getObject(customer_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "customerReference.key.id", customerCode);
+			}
+
+			if (!StringUtils.isNull(install_name)) {
+				CommonCode installCode = (CommonCode) CommonUtils.getObject(install_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "installReference.key.id", installCode);
+			}
+
+			if (!StringUtils.isNull(projectType)) {
+				CommonCode projectTypeCode = (CommonCode) CommonUtils.getObject(projectType);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "projectTypeReference.key.id",
+						projectTypeCode);
+			}
+
+			if (!StringUtils.isNull(machineOid)) {
+				WTUser machine = (WTUser) CommonUtils.getObject(machineOid);
+				CommonCode machineCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.MACHINE,
+						"USER_TYPE");
+				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
+				int idx_u = _query.appendClassList(WTUser.class, false);
+
+				QuerySpecUtils.toInnerJoin(_query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleAObjectRef.key.id", _idx_p, idx_plink);
+				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleBObjectRef.key.id", idx_u, idx_plink);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", machine);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id",
+						machineCode);
+			}
+
+			if (!StringUtils.isNull(elecOid)) {
+				WTUser elec = (WTUser) CommonUtils.getObject(elecOid);
+				System.out.println("===여기");
+				CommonCode elecCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.ELEC, "USER_TYPE");
+				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
+				int idx_u = _query.appendClassList(WTUser.class, false);
+
+				QuerySpecUtils.toInnerJoin(_query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleAObjectRef.key.id", _idx_p, idx_plink);
+				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleBObjectRef.key.id", idx_u, idx_plink);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", elec);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id",
+						elecCode);
+			}
+
+			if (!StringUtils.isNull(softOid)) {
+				WTUser soft = (WTUser) CommonUtils.getObject(softOid);
+				CommonCode softCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.SOFT, "USER_TYPE");
+				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
+				int idx_u = _query.appendClassList(WTUser.class, false);
+
+				QuerySpecUtils.toInnerJoin(_query, Project.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleAObjectRef.key.id", _idx_p, idx_plink);
+				QuerySpecUtils.toInnerJoin(_query, WTUser.class, ProjectUserLink.class, WTAttributeNameIfc.ID_NAME,
+						"roleBObjectRef.key.id", idx_u, idx_plink);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "roleBObjectRef.key.id", soft);
+				QuerySpecUtils.toEqualsAnd(_query, idx_plink, ProjectUserLink.class, "userTypeReference.key.id",
+						softCode);
+			}
+
+			if (!StringUtils.isNull(mak_name)) {
+				CommonCode makCode = (CommonCode) CommonUtils.getObject(mak_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "makReference.key.id", makCode);
+			}
+
+			if (!StringUtils.isNull(detail_name)) {
+				CommonCode detailCode = (CommonCode) CommonUtils.getObject(detail_name);
+				QuerySpecUtils.toEqualsAnd(_query, _idx_p, Project.class, "detailReference.key.id", detailCode);
+			}
+
+			QuerySpecUtils.toLikeAnd(_query, _idx_p, Project.class, Project.DESCRIPTION, description);
+			QueryResult group = PersistenceHelper.manager.find(_query);
+
 			int isNode = 1;
 			JSONArray children = new JSONArray();
+			JSONObject node = new JSONObject();
 			while (group.hasMoreElements()) {
-				ConfigSheetProjectLink link = (ConfigSheetProjectLink) group.nextElement();
+				Object[] oo = (Object[]) group.nextElement();
+				ConfigSheetProjectLink link = (ConfigSheetProjectLink) oo[2];
 				ConfigSheetDTO dto = new ConfigSheetDTO(link);
 				if (isNode == 1) {
 					node.put("poid", dto.getPoid());
@@ -77,6 +209,7 @@ public class ConfigSheetHelper {
 					node.put("model", dto.getModel());
 					node.put("pdate_txt", dto.getPdate_txt());
 					node.put("creator", dto.getCreator());
+					node.put("primary", dto.getPrimary());
 					node.put("createdDate_txt", dto.getCreatedDate_txt());
 				} else {
 					JSONObject data = new JSONObject();
@@ -97,12 +230,15 @@ public class ConfigSheetHelper {
 					data.put("pdate_txt", dto.getPdate_txt());
 					data.put("creator", dto.getCreator());
 					data.put("createdDate_txt", dto.getCreatedDate_txt());
+					data.put("primary", dto.getPrimary());
 					children.add(data);
 				}
 				isNode++;
 			}
 			node.put("children", children);
-			list.add(node);
+			if (group.size() > 0) {
+				list.add(node);
+			}
 		}
 		map.put("list", list);
 		map.put("sessionid", pager.getSessionId());

@@ -430,6 +430,9 @@ String end = (String) request.getAttribute("end");
 					selectbox("psize");
 				});
 
+				const pdateFrom = document.getElementById("pdateFrom").value;
+				const pdateTo = document.getElementById("pdateTo").value;
+				const projectType = document.getElementById("projectType").value;
 				callChart(kekNumbers, pdateFrom, pdateTo, projectType, maks);
 			}
 

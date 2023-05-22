@@ -36,6 +36,7 @@ import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
 import e3ps.project.task.Task;
 import e3ps.project.template.service.TemplateHelper;
+import e3ps.system.service.ErrorLogHelper;
 import net.sf.json.JSONArray;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -52,6 +53,12 @@ public class ConfigSheetController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
+		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
+		model.addObject("customers", customers);
+		model.addObject("projectTypes", projectTypes);
+		model.addObject("maks", maks);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/korea/configSheet/configSheet-list.jsp");
@@ -70,6 +77,7 @@ public class ConfigSheetController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/configSheet/list", "CONFIG SHEET 조회 함수");
 		}
 		return result;
 	}
@@ -109,7 +117,7 @@ public class ConfigSheetController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "CONFIG SHEET 등록")
+	@Description(value = "CONFIG SHEET 등록 함수")
 	@PostMapping(value = "/create")
 	@ResponseBody
 	public Map<String, Object> create(@RequestBody ConfigSheetDTO dto) throws Exception {
@@ -122,6 +130,7 @@ public class ConfigSheetController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/configSheet/create", "CONFIG SHEET 등록 함수");
 		}
 		return result;
 	}
@@ -238,7 +247,7 @@ public class ConfigSheetController extends BaseController {
 		return result;
 	}
 
-	@Description(value = "CONFIG SHEET 그리드 저장 - 관리자용")
+	@Description(value = "CONFIG SHEET 그리드 저장 함수")
 	@PostMapping(value = "/save")
 	@ResponseBody
 	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
@@ -264,11 +273,13 @@ public class ConfigSheetController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/configSheet/save", "CONFIG SHEET 그리드 저장 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "CONFIG SHEET 삭제")
+	@Description(value = "CONFIG SHEET 삭제 함수")
 	@GetMapping(value = "/delete")
 	@ResponseBody
 	public Map<String, Object> delete(@RequestParam String oid) throws Exception {
@@ -281,6 +292,7 @@ public class ConfigSheetController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/configSheet/delete", "CONFIG SHEET 삭제 함수");
 		}
 		return result;
 	}
@@ -299,7 +311,7 @@ public class ConfigSheetController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "CONFIG SHEET 태스크에서 연결")
+	@Description(value = "CONFIG SHEET 태스크 연결 함수")
 	@PostMapping(value = "/connect")
 	@ResponseBody
 	public Map<String, Object> connect(@RequestBody Map<String, Object> params) throws Exception {
@@ -319,6 +331,7 @@ public class ConfigSheetController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/configSheet/connect", "CONFIG SHEET 태스크 연결 함수");
 		}
 		return result;
 	}
@@ -336,6 +349,7 @@ public class ConfigSheetController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/configSheet/disconnect", "CONFIG SHEET 태스크 연결 제거 함수");
 		}
 		return result;
 	}
@@ -359,7 +373,7 @@ public class ConfigSheetController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "CONFIF SHEET 수정 페이지 등록")
+	@Description(value = "CONFIF SHEET 수정 함수")
 	@PostMapping(value = "/modify")
 	@ResponseBody
 	public Map<String, Object> modify(@RequestBody Map<String, Object> params) throws Exception {
@@ -372,11 +386,12 @@ public class ConfigSheetController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/configSheet/modify", "CONFIG SHEET 수정 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "CONFIF SHEET 개정")
+	@Description(value = "CONFIF SHEET 개정 함수")
 	@PostMapping(value = "/revise")
 	@ResponseBody
 	public Map<String, Object> revise(@RequestBody Map<String, Object> params) throws Exception {
@@ -389,6 +404,7 @@ public class ConfigSheetController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/configSheet/revise", "CONFIG SHEET 개정 함수");
 		}
 		return result;
 	}

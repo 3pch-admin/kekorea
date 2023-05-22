@@ -205,7 +205,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			let myGridID;
 			function _layout() {
 				return [ {
-					dataField : "thumnail",
+					dataField : "thumnail_mini",
 					headerText : "",
 					dataType : "string",
 					width : 60,

@@ -391,7 +391,7 @@ ul, ol {
 
 	function load() {
 		const url = getCallUrl("/configSheet/copy?method=copy&multi=false");
-		popup(url, 1500, 700);
+		popup(url, 1600, 700);
 	}
 
 	function copy(data, callBack) {
