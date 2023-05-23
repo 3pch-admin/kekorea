@@ -7,6 +7,8 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 ConfigSheetDTO dto = (ConfigSheetDTO) request.getAttribute("dto");
 String oid = (String) request.getAttribute("oid");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+int latestVersion = (int) request.getAttribute("latestVersion");
+String loid = (String) request.getAttribute("loid");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <style type="text/css">
@@ -96,12 +98,12 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 			%>
 			<%
-			if (dto.isEdit() || isAdmin) {
+			if ((dto.isEdit() && dto.isLatest()) || isAdmin) {
 			%>
 			<input type="button" value="수정" title="수정" class="blue" onclick="update('modify');">
 			<%
 			}
-			if (dto.isRevise() || isAdmin) {
+			if ((dto.isRevise() && dto.isLatest()) || isAdmin) {
 			%>
 			<input type="button" value="개정" title="개정" class="blue" onclick="update('revise');">
 			<%
@@ -140,7 +142,16 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			<tr>
 				<th class="lb">상태</th>
 				<td class="indent5"><%=dto.getState()%></td>
-				<th>버전</th>
+				<th class="lb">버전</th>
+				<td class="indent5"><%=dto.getVersion()%>
+					(
+					<a href="javascript:view('<%=loid%>');">
+						<font color="red">
+							<b><%=latestVersion%></b>
+						</font>
+					</a>
+					)
+				</td>
 				<td class="indent5"><%=dto.getVersion()%></td>
 			</tr>
 			<tr>
@@ -203,7 +214,7 @@ for (int i = 0; i < dd.size(); i++) {
 	String dataFields = dd.get(i);%>
 			{
 				dataField : "<%=dataFields%>",
-				headerText : "1",
+				headerText : "사양<%=index%>",
 				dataType : "string",
 				width : 250,
 				renderer : {

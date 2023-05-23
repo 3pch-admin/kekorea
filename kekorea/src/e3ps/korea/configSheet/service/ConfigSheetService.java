@@ -38,10 +38,10 @@ public interface ConfigSheetService {
 	/**
 	 * CONFIG SHEET 수정
 	 */
-	public abstract void modify(Map<String, Object> params) throws Exception;
+	public abstract void modify(ConfigSheetDTO dto) throws Exception;
 
 	/**
 	 * CONFIG SHEET 개정
 	 */
-	public abstract void revise(Map<String, Object> params) throws Exception;
+	public abstract void revise(ConfigSheetDTO dto) throws Exception;
 }

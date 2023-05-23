@@ -239,6 +239,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "최신버전",
 					dataType : "boolean",
 					width : 80,
+					renderer : {
+						type : "CheckBoxEditRenderer"
+					},
 					filter : {
 						showIcon : false,
 						inline : false
@@ -384,7 +387,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					showRowCheckColumn : true,
 					showAutoNoDataMessage : false,
 					enableFilter : true,
-					selectionMode : "singleRow",
+					selectionMode : "multipleCells",
 					enableMovingColumn : true,
 					showInlineFilter : true,
 					useContextMenu : true,

@@ -448,6 +448,10 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 			trs.start();
 
 			TBOMMaster pre = (TBOMMaster) CommonUtils.getObject(dto.getOid());
+			String preName = pre.getName();
+			if(!preName.equals(dto.getName())) {
+				pre.setName(dto.getName());
+			}
 			pre.setLatest(false);
 			PersistenceHelper.manager.modify(pre);
 

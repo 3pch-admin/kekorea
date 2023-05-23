@@ -340,7 +340,6 @@ ul, ol {
 		AUIGrid.removeColumn(myGridID, "selectedIndex");
 	};
 
-
 	function auiPasteBeginHandler(event) {
 		const data = event.clipboardData;
 		let arr;
@@ -430,24 +429,6 @@ ul, ol {
 		return true;
 	}
 
-	function contextItemHandler(event) {
-		const item = new Object();
-		switch (event.contextIndex) {
-		case 0:
-			const selectedItems = AUIGrid.getSelectedItems(myGridID);
-			const rows = AUIGrid.getRowCount(myGridID);
-			if (rows === 1) {
-				alert("최 소 하나의 행이 존재해야합니다.");
-				return false;
-			}
-			for (let i = selectedItems.length - 1; i >= 0; i--) {
-				const rowIndex = selectedItems[i].rowIndex;
-				AUIGrid.removeRow(myGridID, rowIndex);
-			}
-			break;
-		}
-	}
-
 	function openTextarea(event) {
 		const dataField = event.dataField;
 		const obj = document.getElementById("textAreaWrap");
@@ -504,15 +485,6 @@ ul, ol {
 					itemListMap[categoryCode] = data.list;
 				}, "GET");
 			}
-			// 			if (specListMap.length === undefined) {
-			// 				const itemCode = item[i].item_code;
-			// 				if (itemCode !== "") {
-			// 					const url = getCallUrl("/configSheetCode/getChildrens?parentCode=" + itemCode + "&codeType=CATEGORY_ITEM");
-			// 					call(url, null, function(data) {
-			// 						specListMap[itemCode] = data.list;
-			// 					}, "GET");
-			// 				}
-			// 			}
 		}
 	}
 
@@ -533,23 +505,7 @@ ul, ol {
 				itemListMap[categoryCode] = data.list;
 			}, "GET");
 		}
-
-		// 		if (dataField === "item_code") {
-		// 			const itemCode = item.item_code;
-		// 			const url = getCallUrl("/commonCode/getChildrens?parentCode=" + itemCode + "&codeType=CATEGORY_ITEM");
-		// 			call(url, null, function(data) {
-		// 				specListMap[itemCode] = data.list;
-		// 			}, "GET");
-		// 		}
 	}
-
-	function deleteRow() {
-		const checked = AUIGrid.getCheckedRowItems(myGridID);
-		for (let i = checked.length - 1; i >= 0; i--) {
-			const rowIndex = checked[i].rowIndex;
-			AUIGrid.removeRow(myGridID, rowIndex);
-		}
-	};
 
 	function create() {
 		if (!confirm("등록 하시겠습니까?")) {

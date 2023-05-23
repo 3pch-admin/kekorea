@@ -79,7 +79,6 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			workOrder.setDescription(description);
 			workOrder.setName(name);
 			workOrder.setWorkOrderType(workOrderType);
-//			workOrder.setNumber(WorkOrderHelper.manager.getNextNumber("WORK-"));
 			workOrder.setNumber(number);
 			workOrder.setNumberRule(numberRule);
 			workOrder.setVersion(1);
@@ -428,6 +427,10 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			trs.start();
 
 			WorkOrder pre = (WorkOrder) CommonUtils.getObject(dto.getOid());
+			String preName = pre.getName();
+			if (!preName.equals(dto.getName())) {
+				pre.setName(dto.getName());
+			}
 			pre.setLatest(false);
 			PersistenceHelper.manager.modify(pre);
 
@@ -436,9 +439,9 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			workOrder.setName(name);
 			workOrder.setWorkOrderType(workOrderType);
 			workOrder.setNumber(pre.getNumber());
+			workOrder.setNumberRule(pre.getNumberRule());
 			workOrder.setVersion(pre.getVersion() + 1);
 			workOrder.setLatest(true);
-			workOrder.setNote(dto.getNote());
 			workOrder.setNote(dto.getNote());
 
 			Folder folder = FolderTaskLogic.getFolder(location, CommonUtils.getPDMLinkProductContainer());

@@ -28,6 +28,8 @@ import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.epm.workOrder.WorkOrder;
+import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.korea.configSheet.ConfigSheetProjectLink;
 import e3ps.korea.configSheet.beans.ConfigSheetDTO;
@@ -140,9 +142,12 @@ public class ConfigSheetController extends BaseController {
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
-		JSONArray data = ConfigSheetHelper.manager.loadBaseGridData(oid);
+		ConfigSheet latest = ConfigSheetHelper.manager.getLatest(configSheet);
+		JSONArray data = ConfigSheetHelper.manager.loadBaseGridData(oid, true);
 		ConfigSheetDTO dto = new ConfigSheetDTO(configSheet);
 		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("latestVersion", latest.getVersion());
+		model.addObject("loid", latest.getPersistInfo().getObjectIdentifier().getStringValue());
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("oid", oid);
 		model.addObject("data", data);
@@ -360,15 +365,15 @@ public class ConfigSheetController extends BaseController {
 	public ModelAndView update(@RequestParam String oid, @RequestParam String mode) throws Exception {
 		ModelAndView model = new ModelAndView();
 		ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
-		JSONArray data = ConfigSheetHelper.manager.loadBaseGridData(oid);
-//		JSONArray history = WorkspaceHelper.manager.jsonAuiHistory(configSheet);
+		JSONArray categorys = ConfigSheetCodeHelper.manager.parseJson("CATEGORY");
+		JSONArray data = ConfigSheetHelper.manager.loadBaseGridData(oid, false);
 		ConfigSheetDTO dto = new ConfigSheetDTO(configSheet);
 		boolean isAdmin = CommonUtils.isAdmin();
+		model.addObject("categorys", categorys);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("oid", oid);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
-//		model.addObject("history", history);
 		model.addObject("mode", mode);
 		model.setViewName("popup:/korea/configSheet/configSheet-update");
 		return model;
@@ -377,10 +382,10 @@ public class ConfigSheetController extends BaseController {
 	@Description(value = "CONFIF SHEET 수정 함수")
 	@PostMapping(value = "/modify")
 	@ResponseBody
-	public Map<String, Object> modify(@RequestBody Map<String, Object> params) throws Exception {
+	public Map<String, Object> modify(@RequestBody ConfigSheetDTO dto) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			ConfigSheetHelper.service.modify(params);
+			ConfigSheetHelper.service.modify(dto);
 			result.put("result", SUCCESS);
 			result.put("msg", MODIFY_MSG);
 		} catch (Exception e) {
@@ -395,10 +400,10 @@ public class ConfigSheetController extends BaseController {
 	@Description(value = "CONFIF SHEET 개정 함수")
 	@PostMapping(value = "/revise")
 	@ResponseBody
-	public Map<String, Object> revise(@RequestBody Map<String, Object> params) throws Exception {
+	public Map<String, Object> revise(@RequestBody ConfigSheetDTO dto) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			ConfigSheetHelper.service.revise(params);
+			ConfigSheetHelper.service.revise(dto);
 			result.put("result", SUCCESS);
 			result.put("msg", REVISE_MSG);
 		} catch (Exception e) {

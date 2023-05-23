@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import e3ps.common.util.ColumnParseUtils;
+import e3ps.common.util.AUILazyLoadUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.StringUtils;
 import wt.fc.PagingQueryResult;
@@ -34,7 +34,7 @@ public class AUIGridController extends BaseController {
 		int end = (int) params.get("end");
 		try {
 			PagingQueryResult qr = PagingSessionHelper.fetchPagingSession(start, end, sessionid);
-			ArrayList list = ColumnParseUtils.parse(qr);
+			ArrayList list = AUILazyLoadUtils.parse(qr);
 			result.put("list", list);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

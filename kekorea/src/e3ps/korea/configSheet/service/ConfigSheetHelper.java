@@ -15,6 +15,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
+import e3ps.epm.workOrder.WorkOrder;
 import e3ps.korea.configSheet.ColumnVariableLink;
 import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.korea.configSheet.ConfigSheetColumnData;
@@ -292,52 +293,54 @@ public class ConfigSheetHelper {
 	/**
 	 * 등록된 CONFIG SHEET 정보 가져오기
 	 */
-	public JSONArray loadBaseGridData(String oid) throws Exception {
+	public JSONArray loadBaseGridData(String oid, boolean isView) throws Exception {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
 
 		ArrayList<String> dataFields = configSheet.getDataFields();
 
-		QueryResult rs = PersistenceHelper.manager.navigate(configSheet, "project", ConfigSheetProjectLink.class);
-		Project project = null;
-		if (rs.hasMoreElements()) {
-			project = (Project) rs.nextElement();
-			Map<String, Object> makList = new HashMap<>();
-			Map<String, Object> customerList = new HashMap<>();
-			Map<String, Object> keList = new HashMap<>();
-			Map<String, Object> pdateList = new HashMap<>();
+		if (isView) {
+			QueryResult rs = PersistenceHelper.manager.navigate(configSheet, "project", ConfigSheetProjectLink.class);
+			Project project = null;
+			if (rs.hasMoreElements()) {
+				project = (Project) rs.nextElement();
+				Map<String, Object> makList = new HashMap<>();
+				Map<String, Object> customerList = new HashMap<>();
+				Map<String, Object> keList = new HashMap<>();
+				Map<String, Object> pdateList = new HashMap<>();
 
-			makList.put("category_name", "막종 / 막종상세");
-			customerList.put("category_name", "고객사 / 설치장소");
-			keList.put("category_name", "KE 작번");
-			pdateList.put("category_name", "발행일");
+				makList.put("category_name", "막종 / 막종상세");
+				customerList.put("category_name", "고객사 / 설치장소");
+				keList.put("category_name", "KE 작번");
+				pdateList.put("category_name", "발행일");
 
-			makList.put("item_name", "막종 / 막종상세");
-			customerList.put("item_name", "고객사 / 설치장소");
-			keList.put("item_name", "KE 작번");
-			pdateList.put("item_name", "발행일");
+				makList.put("item_name", "막종 / 막종상세");
+				customerList.put("item_name", "고객사 / 설치장소");
+				keList.put("item_name", "KE 작번");
+				pdateList.put("item_name", "발행일");
 
-			String mak = project.getMak() != null ? project.getMak().getName() : "";
-			String detail = project.getDetail() != null ? project.getDetail().getName() : "";
-			String customer = project.getCustomer() != null ? project.getCustomer().getName() : "";
-			String install = project.getInstall() != null ? project.getInstall().getName() : "";
+				String mak = project.getMak() != null ? project.getMak().getName() : "";
+				String detail = project.getDetail() != null ? project.getDetail().getName() : "";
+				String customer = project.getCustomer() != null ? project.getCustomer().getName() : "";
+				String install = project.getInstall() != null ? project.getInstall().getName() : "";
 
-			makList.put("spec", mak + " / " + detail);
-			customerList.put("spec", customer + " / " + install);
-			keList.put("spec", project.getKeNumber());
-			pdateList.put("spec", CommonUtils.getPersistableTime(project.getPDate()));
+				makList.put("spec", mak + " / " + detail);
+				customerList.put("spec", customer + " / " + install);
+				keList.put("spec", project.getKeNumber());
+				pdateList.put("spec", CommonUtils.getPersistableTime(project.getPDate()));
 
-			for (int i = 0; i < dataFields.size(); i++) {
-				makList.put("spec" + i, mak + " / " + detail);
-				customerList.put("spec" + i, customer + " / " + install);
-				keList.put("spec" + i, project.getKeNumber());
-				pdateList.put("spec" + i, CommonUtils.getPersistableTime(project.getPDate()));
+				for (int i = 0; i < dataFields.size(); i++) {
+					makList.put("spec" + i, mak + " / " + detail);
+					customerList.put("spec" + i, customer + " / " + install);
+					keList.put("spec" + i, project.getKeNumber());
+					pdateList.put("spec" + i, CommonUtils.getPersistableTime(project.getPDate()));
+				}
+
+				list.add(makList);
+				list.add(customerList);
+				list.add(keList);
+				list.add(pdateList);
 			}
-
-			list.add(makList);
-			list.add(customerList);
-			list.add(keList);
-			list.add(pdateList);
 		}
 
 		QuerySpec query = new QuerySpec();
@@ -612,5 +615,22 @@ public class ConfigSheetHelper {
 			list.add(project);
 		}
 		return list;
+	}
+
+	/**
+	 * 최신 CONFIG SHEET
+	 */
+	public ConfigSheet getLatest(ConfigSheet configSheet) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ConfigSheet.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, ConfigSheet.class, WorkOrder.NUMBER, configSheet.getNumber());
+		QuerySpecUtils.toBooleanAnd(query, idx, ConfigSheet.class, WorkOrder.LATEST, true);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			ConfigSheet latest = (ConfigSheet) obj[0];
+			return latest;
+		}
+		return null;
 	}
 }

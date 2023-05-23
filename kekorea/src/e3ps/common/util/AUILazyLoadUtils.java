@@ -7,6 +7,9 @@ import e3ps.admin.commonCode.dto.CommonCodeDTO;
 import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.dto.PartListDTO;
+import e3ps.bom.tbom.TBOMMaster;
+import e3ps.bom.tbom.TBOMMasterProjectLink;
+import e3ps.bom.tbom.dto.TBOMMasterDTO;
 import e3ps.doc.dto.DocumentDTO;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
@@ -14,6 +17,8 @@ import e3ps.doc.request.dto.RequestDocumentDTO;
 import e3ps.epm.dto.EpmDTO;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.dto.KeDrawingDTO;
+import e3ps.epm.workOrder.WorkOrder;
+import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.korea.cip.Cip;
 import e3ps.korea.cip.dto.CipDTO;
 import e3ps.part.dto.PartDTO;
@@ -27,7 +32,7 @@ import wt.fc.PagingQueryResult;
 import wt.fc.Persistable;
 import wt.part.WTPart;
 
-public class ColumnParseUtils {
+public class AUILazyLoadUtils {
 
 	public static ArrayList parse(PagingQueryResult qr) throws Exception {
 		ArrayList list = new ArrayList<>();
@@ -77,10 +82,25 @@ public class ColumnParseUtils {
 				KeDrawing keDrawing = (KeDrawing) per;
 				KeDrawingDTO data = parse(keDrawing);
 				list.add(data);
+			} else if (per instanceof TBOMMaster) {
+//				TBOMMasterProjectLink link = (TBOMMasterProjectLink)oo[2];
+//				TBOMMaster master = (TBOMMaster) per;
+//				TBOMMasterDTO data = parse(master);
+			} else if (per instanceof WorkOrder) {
+//				WorkOrder workOrder = (WorkOrder) per;
+//				WorkOrderDTO data = parse(workOrder);
 			}
 		}
 		return list;
 	}
+
+//	private static TBOMMasterDTO parse(TBOMMaster master) throws Exception {
+////		return new TBOMMasterDTO(master);
+//	}
+//
+//	private static WorkOrderDTO parse(WorkOrder workOrder) throws Exception {
+//		return new WorkOrderDTO(workOrder);
+//	}
 
 	/**
 	 * KE 도면 LAZY 로드

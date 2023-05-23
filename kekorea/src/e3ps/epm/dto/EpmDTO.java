@@ -54,11 +54,12 @@ public class EpmDTO {
 	}
 
 	public EpmDTO(EPMDocument epm) throws Exception {
+		String[] thum = ThumnailUtils.getThumnail(epm.getPersistInfo().getObjectIdentifier().getStringValue());
 		setOid(epm.getPersistInfo().getObjectIdentifier().getStringValue());
 		setCadType(epm.getDocType().getDisplay());
 		setApplicationType(epm.getAuthoringApplication().getDisplay());
-		setThumnail_mini(ThumnailUtils.getThumnail(epm.getPersistInfo().getObjectIdentifier().getStringValue())[1]);
-		setThumnail(ThumnailUtils.getThumnail(epm.getPersistInfo().getObjectIdentifier().getStringValue())[0]);
+		setThumnail_mini(thum[1]);
+		setThumnail(thum[0]);
 		setName(epm.getName());
 		setVersion(CommonUtils.getFullVersion(epm));
 		setModifier(epm.getModifierFullName());

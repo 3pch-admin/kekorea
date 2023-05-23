@@ -59,7 +59,6 @@ boolean isUpdate = "update".equals(mode);
 				showRowNumColumn : true,
 				rowNumHeaderText : "번호",
 				showAutoNoDataMessage : false,
-				showStateColumn : true,
 				showRowCheckColumn : true,
 				showAutoNoDataMessage : false,
 				enableRowCheckShiftKey : true,

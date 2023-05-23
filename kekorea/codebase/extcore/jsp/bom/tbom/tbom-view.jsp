@@ -83,7 +83,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				<th class="lb">버전</th>
 				<td class="indent5"><%=dto.getVersion()%>
 					(
-					<a href="javascript:view();">
+					<a href="javascript:view('<%=loid%>');">
 						<font color="red">
 							<b><%=latestVersion%></b>
 						</font>

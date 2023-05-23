@@ -184,7 +184,7 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 					ConfigSheetColumnData column = ConfigSheetColumnData.newConfigSheetColumnData();
 					column.setDataField(key);
 					column.setValue(addRow.get(key));
-					
+
 					PersistenceHelper.manager.save(column);
 
 					ColumnVariableLink ll = ColumnVariableLink.newColumnVariableLink(column, variable);
@@ -214,9 +214,7 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 
 			trs.commit();
 			trs = null;
-		} catch (
-
-		Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			trs.rollback();
 			throw e;
@@ -419,7 +417,7 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 	}
 
 	@Override
-	public void modify(Map<String, Object> params) throws Exception {
+	public void modify(ConfigSheetDTO dto) throws Exception {
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
@@ -438,10 +436,169 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 	}
 
 	@Override
-	public void revise(Map<String, Object> params) throws Exception {
+	public void revise(ConfigSheetDTO dto) throws Exception {
+		String name = dto.getName();
+		String description = dto.getDescription();
+		ArrayList<String> secondarys = dto.getSecondarys();
+		ArrayList<Map<String, String>> addRows = dto.getAddRows();
+		ArrayList<Map<String, String>> addRows9 = dto.getAddRows9();
+		ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
+		ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
+		ArrayList<Map<String, String>> receiveRows = dto.getReceiveRows();
+		int progress = dto.getProgress();
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
+
+			ConfigSheet pre = (ConfigSheet) CommonUtils.getObject(dto.getOid());
+
+			String preName = pre.getName();
+			if (!preName.equals(dto.getName())) {
+				pre.setName(dto.getName());
+			}
+			pre.setLatest(false);
+			PersistenceHelper.manager.modify(pre);
+
+			ConfigSheet configSheet = ConfigSheet.newConfigSheet();
+			configSheet.setName(name);
+			configSheet.setNumber(pre.getNumber());
+			configSheet.setDescription(description != null ? description : name);
+			configSheet.setLatest(true);
+			configSheet.setVersion(pre.getVersion() + 1);
+
+			Folder folder = FolderTaskLogic.getFolder("/Default/프로젝트/" + taskName,
+					CommonUtils.getPDMLinkProductContainer());
+			FolderHelper.assignLocation((FolderEntry) configSheet, folder);
+
+			PersistenceHelper.manager.save(configSheet);
+
+			for (int i = 0; secondarys != null && i < secondarys.size(); i++) {
+				String cacheId = (String) secondarys.get(i);
+				File vault = CommonContentHelper.manager.getFileFromCacheId(cacheId);
+				ApplicationData applicationData = ApplicationData.newApplicationData(configSheet);
+				applicationData.setRole(ContentRoleType.SECONDARY);
+				PersistenceHelper.manager.save(applicationData);
+				ContentServerHelper.service.updateContent(configSheet, applicationData, vault.getPath());
+			}
+
+			for (Map<String, String> addRow9 : addRows9) {
+				String oid = addRow9.get("oid");
+				Project project = (Project) CommonUtils.getObject(oid);
+
+				// 기계_수배표 전기_수배표
+				Task t = ProjectHelper.manager.getTaskByName(project, taskName);
+				if (t == null) {
+					throw new Exception(project.getKekNumber() + "작번에 " + taskName + " 태스크가 존재하지 않습니다.");
+				}
+
+				ConfigSheetProjectLink link = ConfigSheetProjectLink.newConfigSheetProjectLink(configSheet, project);
+				PersistenceHelper.manager.save(link);
+
+				// 산출물
+				Output output = Output.newOutput();
+				output.setName(configSheet.getName());
+				output.setLocation(configSheet.getLocation());
+				output.setTask(t);
+				output.setProject(project);
+				output.setDocument(configSheet);
+				output.setOwnership(CommonUtils.sessionOwner());
+				output = (Output) PersistenceHelper.manager.save(output);
+
+				// 태스크
+				if (t.getStartDate() == null) {
+					// 중복적으로 실제 시작일이 변경 되지 않게
+					t.setStartDate(DateUtils.getCurrentTimestamp());
+				}
+
+				if (progress >= 100) {
+					t.setEndDate(DateUtils.getCurrentTimestamp());
+					t.setState(TaskStateVariable.COMPLETE);
+					t.setProgress(100);
+				} else {
+					t.setState(TaskStateVariable.INWORK);
+					t.setProgress(progress);
+				}
+				t = (Task) PersistenceHelper.manager.modify(t);
+
+				// 시작이 된 흔적이 없을 경우
+				if (project.getStartDate() == null) {
+					project.setStartDate(DateUtils.getCurrentTimestamp());
+					project.setKekState(ProjectStateVariable.KEK_DESIGN_INWORK);
+					project.setState(ProjectStateVariable.INWORK);
+					project = (Project) PersistenceHelper.manager.modify(project);
+				}
+				ProjectHelper.service.calculation(project);
+				ProjectHelper.service.commit(project);
+			}
+
+			ArrayList<String> dataFields = new ArrayList<>();
+			int sort = 0;
+			for (Map<String, String> addRow : addRows) {
+				String category_code = addRow.get("category_code");
+				String item_code = addRow.get("item_code");
+				String note = addRow.get("note");
+				String apply = addRow.get("apply");
+
+				ConfigSheetCode category = null;
+				ConfigSheetCode item = null;
+				if (!StringUtils.isNull(category_code)) {
+					category = ConfigSheetCodeHelper.manager.getConfigSheetCode(category_code, "CATEGORY");
+				}
+				if (!StringUtils.isNull(item_code)) {
+					item = ConfigSheetCodeHelper.manager.getConfigSheetCode(item_code, "CATEGORY_ITEM");
+				}
+
+				ConfigSheetVariable variable = ConfigSheetVariable.newConfigSheetVariable();
+				variable.setCategory(category);
+				variable.setItem(item);
+				variable.setNote(note);
+				variable.setApply(apply);
+				variable.setSort(sort);
+				PersistenceHelper.manager.save(variable);
+
+				int ss = 0;
+				for (String key : addRow.keySet()) {
+					if (key.contains("spec")) {
+
+						if (!dataFields.contains(key)) {
+							dataFields.add(key);
+						}
+					}
+				}
+
+				int lastIndex = dataFields.size() - 1;
+				for (int i = 0; i < dataFields.size(); i++) {
+					String key = dataFields.get(i);
+					ConfigSheetColumnData column = ConfigSheetColumnData.newConfigSheetColumnData();
+					column.setDataField(key);
+					column.setValue(addRow.get(key));
+
+					PersistenceHelper.manager.save(column);
+
+					ColumnVariableLink ll = ColumnVariableLink.newColumnVariableLink(column, variable);
+					ll.setSort(ss);
+					if (i == lastIndex) {
+						ll.setLast(true);
+					} else {
+						ll.setLast(false);
+					}
+					PersistenceHelper.manager.save(ll);
+					ss++;
+				}
+
+				ConfigSheetVariableLink link = ConfigSheetVariableLink.newConfigSheetVariableLink(configSheet,
+						variable);
+				link.setSort(sort);
+				PersistenceHelper.manager.save(link);
+				sort++;
+			}
+
+			configSheet.setDataFields(dataFields);
+			PersistenceHelper.manager.modify(configSheet);
+
+			if (approvalRows.size() > 0) {
+				WorkspaceHelper.service.register(configSheet, agreeRows, approvalRows, receiveRows);
+			}
 
 			trs.commit();
 			trs = null;

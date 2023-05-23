@@ -993,18 +993,23 @@ public class ProjectHelper {
 			// TBOM
 		} else if (per instanceof TBOMMaster) {
 			return TBOMHelper.manager.jsonAuiProject(oid);
+			// 의뢰서
 		} else if (per instanceof RequestDocument) {
 			return RequestDocumentHelper.manager.jsonAuiProject(oid);
 			// 도면
 		} else if (per instanceof EPMDocument) {
 			return EpmHelper.manager.jsonAuiProject(oid);
 		} else if (per instanceof Output) {
+			// 산출물
 			return OutputHelper.manager.jsonAuiProject(oid);
 		} else if (per instanceof WTDocument) {
+			// 문서
 			return DocumentHelper.manager.jsonAuiProject(oid);
 		} else if (per instanceof ConfigSheet) {
+			// CONFIG SHEET
 			return ConfigSheetHelper.manager.jsonAuiProject(oid);
 		} else if (per instanceof Issue) {
+			// 특이사항
 			return IssueHelper.manager.jsonAuiProject(oid);
 		}
 		return new JSONArray();
