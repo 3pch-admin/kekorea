@@ -148,6 +148,7 @@ public class EpmController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/epm/append", "도면 결재시 도번 검증");
 		}
 		return result;
 	}

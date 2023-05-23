@@ -31,46 +31,46 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/notice/list', '나의 업무 > 공지사항');">공지사항</a>
+						<a onclick="moveToPage(this, '/notice/list', '> 나의 업무 > 공지사항');">공지사항</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/workspace/agree', '나의 업무 > 검토함');">
+						<a onclick="moveToPage(this, '/workspace/agree', '> 나의 업무 > 검토함');">
 							검토함
 							<span class="label label-info float-right"><%=count.get("agree") %></span>
 						</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/workspace/approval', '나의 업무 > 결재함');">
+						<a onclick="moveToPage(this, '/workspace/approval', '> 나의 업무 > 결재함');">
 							결재함
 							<span class="label label-info float-right"><%=count.get("approval") %></span>
 						</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/workspace/receive', '나의 업무 > 수신함');">
+						<a onclick="moveToPage(this, '/workspace/receive', '> 나의 업무 > 수신함');">
 							수신함
 							<span class="label label-info float-right"><%=count.get("receive") %></span>
 						</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/workspace/progress', '나의 업무 > 진행함');">
+						<a onclick="moveToPage(this, '/workspace/progress', '> 나의 업무 > 진행함');">
 							진행함
 							<span class="label label-info float-right"><%=count.get("progress") %></span>
 						</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/workspace/complete', '나의 업무 > 완료함');">
+						<a onclick="moveToPage(this, '/workspace/complete', '> 나의 업무 > 완료함');">
 							완료함
 							<span class="label label-info float-right"><%=count.get("complete") %></span>
 						</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/workspace/reject', '나의 업무 > 반려함');">
+						<a onclick="moveToPage(this, '/workspace/reject', '> 나의 업무 > 반려함');">
 							반려함
 							<span class="label label-info float-right"><%=count.get("reject") %></span>
 						</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/org/organization', '나의 업무 > 조직도');">조직도</a>
+						<a onclick="moveToPage(this, '/org/organization', '> 나의 업무 > 조직도');">조직도</a>
 					</li>
 				</ul>
 			</li>
@@ -82,16 +82,16 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/project/list', '작번 관리 > 작번 조회');">작번 조회</a>
+						<a onclick="moveToPage(this, '/project/list', '> 작번 관리 > 작번 조회');">작번 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/project/my', '나의 작번 > 나의 작번');">나의 작번</a>
+						<a onclick="moveToPage(this, '/project/my', '> 작번 관리 > 나의 작번');">나의 작번</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/template/list', '작번 관리 > 템플릿 조회');">템플릿 조회</a>
+						<a onclick="moveToPage(this, '/template/list', '> 작번 관리 > 템플릿 조회');">템플릿 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/issue/list', '작번 관리 > 특이사항 조회');">특이사항 조회</a>
+						<a onclick="moveToPage(this, '/issue/list', '> 작번 관리 > 특이사항 조회');">특이사항 조회</a>
 					</li>
 				</ul>
 			</li>
@@ -103,22 +103,22 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/keDrawing/list', '도면 관리 > KE 도면 조회');">KE 도면 조회</a>
+						<a onclick="moveToPage(this, '/keDrawing/list', '> 도면 관리 > KE 도면 조회');">KE 도면 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/numberRule/list', '도면 관리 > KEK 도번 조회');">KEK 도번 조회</a>
+						<a onclick="moveToPage(this, '/numberRule/list', '> 도면 관리 > KEK 도번 조회');">KEK 도번 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/epm/list', '도면 관리 > KEK 도면 조회');">KEK 도면 조회</a>
+						<a onclick="moveToPage(this, '/epm/list', '> 도면 관리 > KEK 도면 조회');">KEK 도면 조회</a>
 					</li>
 					<!-- 					<li> -->
 					<!-- 						<a href="form_advanced.html">라이브러리 조회</a> -->
 					<!-- 					</li> -->
 					<li>
-						<a onclick="moveToPage(this, '/workOrder/list', '도면 관리 > 도면일람표 조회');">도면일람표 조회</a>
+						<a onclick="moveToPage(this, '/workOrder/list', '> 도면 관리 > 도면일람표 조회');">도면일람표 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/epm/register', '도면 관리 > 도면 결재')">도면 결재</a>
+						<a onclick="moveToPage(this, '/epm/register', '> 도면 관리 > 도면 결재')">도면 결재</a>
 					</li>
 				</ul>
 			</li>
@@ -130,16 +130,16 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/part/list', '부품 관리 > 부품 조회');">부품 조회</a>
+						<a onclick="moveToPage(this, '/part/list', '> 부품 관리 > 부품 조회');">부품 조회</a>
 					</li>
 <!-- 					<li> -->
 <!-- 						<a href="profile.html">코드 생성</a> -->
 <!-- 					</li> -->
 					<li>
-						<a onclick="moveToPage(this, '/part/bundle', '부품 관리 > 부품 일괄 등록');">부품 일괄 등록</a>
+						<a onclick="moveToPage(this, '/part/bundle', '> 부품 관리 > 부품 일괄 등록');">부품 일괄 등록</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/part/spec', '부품 관리 > 제작사양서 등록');">제작사양서 등록</a>
+						<a onclick="moveToPage(this, '/part/spec', '> 부품 관리 > 제작사양서 등록');">제작사양서 등록</a>
 					</li>
 					<!-- 					<li> -->
 					<!-- 						<a href="contacts_2.html">제작사양서 등록</a> -->
@@ -148,7 +148,7 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 					<!-- 						<a href="projects.html">UNIT BOM 조회</a> -->
 					<!-- 					</li> -->
 					<li>
-						<a onclick="moveToPage(this, '/kePart/list', '부품 관리 > KE 부품 조회');">KE 부품 조회</a>
+						<a onclick="moveToPage(this, '/kePart/list', '> 부품 관리 > KE 부품 조회');">KE 부품 조회</a>
 					</li>
 					<!-- 					<li> -->
 					<!-- 						<a href="project_detail.html">UNIT BOM 등록</a> -->
@@ -166,19 +166,19 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/doc/list', '문서 관리 > 문서 조회');">문서 조회</a>
+						<a onclick="moveToPage(this, '/doc/list', '> 문서 관리 > 문서 조회');">문서 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/output/list', '문서 관리 > 산출물 조회');">산출물 조회</a>
+						<a onclick="moveToPage(this, '/output/list', '> 문서 관리 > 산출물 조회');">산출물 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/requestDocument/list', '문서 관리 > 의뢰서 조회');">의뢰서 조회</a>
+						<a onclick="moveToPage(this, '/requestDocument/list', '> 문서 관리 > 의뢰서 조회');">의뢰서 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/meeting/list', '문서 관리 > 회의록 조회');">회의록 조회</a>
+						<a onclick="moveToPage(this, '/meeting/list', '> 문서 관리 > 회의록 조회');">회의록 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/doc/register', '문서 관리 > 문서 결재');">문서 결재</a>
+						<a onclick="moveToPage(this, '/doc/register', '> 문서 관리 > 문서 결재');">문서 결재</a>
 					</li>
 				</ul>
 			</li>
@@ -190,10 +190,10 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/partlist/list', 'BOM 관리 > 수배표 조회');">수배표 조회</a>
+						<a onclick="moveToPage(this, '/partlist/list', '> BOM 관리 > 수배표 조회');">수배표 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/tbom/list', 'BOM 관리 > T-BOM 조회');">T-BOM 조회</a>
+						<a onclick="moveToPage(this, '/tbom/list', '> BOM 관리 > T-BOM 조회');">T-BOM 조회</a>
 					</li>
 				</ul>
 			</li>
@@ -205,16 +205,16 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/korea/list', '한국 생산 > 한국 생산');">한국 생산</a>
+						<a onclick="moveToPage(this, '/korea/list', '> 한국 생산 > 한국 생산');">한국 생산</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/configSheet/list', '한국 생산 > CONFIG SHEET 조회');">CONFIG SHEET 조회</a>
+						<a onclick="moveToPage(this, '/configSheet/list', '> 한국 생산 > CONFIG SHEET 조회');">CONFIG SHEET 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/cip/list', '한국 생산 > CIP 조회');">CIP 조회</a>
+						<a onclick="moveToPage(this, '/cip/list', '> 한국 생산 > CIP 조회');">CIP 조회</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/history/list', '한국 생산 > 이력 관리 조회');">이력 관리 조회</a>
+						<a onclick="moveToPage(this, '/history/list', '> 한국 생산 > 이력 관리 조회');">이력 관리 조회</a>
 					</li>
 				</ul>
 			</li>
@@ -226,10 +226,10 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/erp/list', 'ERP 로그 > ERP 로그');">ERP 로그</a>
+						<a onclick="moveToPage(this, '/erp/list', '> ERP 로그 > ERP 로그');">ERP 로그</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/system/list', '에러 로그 > 에러 로그');">에러 로그</a>
+						<a onclick="moveToPage(this, '/system/list', '> 에러 로그 > 에러 로그');">에러 로그</a>
 					</li>
 				</ul>
 			</li>
@@ -244,22 +244,19 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 				</a>
 				<ul class="nav nav-second-level collapse">
 					<li>
-						<a onclick="moveToPage(this, '/commonCode/list', '관리자 > 코드 관리');">코드 관리</a>
+						<a onclick="moveToPage(this, '/commonCode/list', '> 관리자 > 코드 관리');">코드 관리</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/specCode/list', '관리자 > 이력 관리 컬럼');">이력 관리 컬럼</a>
+						<a onclick="moveToPage(this, '/specCode/list', '> 관리자 > 이력 관리 컬럼');">이력 관리 컬럼</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/configSheetCode/list', '관리자 > CONFIG SHEET 카테고리');">CONFIG SHEET 카테고리</a>
+						<a onclick="moveToPage(this, '/configSheetCode/list', '> 관리자 > CONFIG SHEET 카테고리');">CONFIG SHEET 카테고리</a>
 					</li>
 					<li>
-						<a onclick="moveToPage(this, '/numberRuleCode/list', '관리자 > KEK 도번 관리');">KEK 도번 관리</a>
+						<a onclick="moveToPage(this, '/numberRuleCode/list', '> 관리자 > KEK 도번 관리');">KEK 도번 관리</a>
 					</li>
-					<!-- 					<li> -->
-					<!-- 						<a onclick="moveToPage(this, '/password/list', '관리자 > 비밀번호 세팅');">비밀번호 세팅</a> -->
-					<!-- 					</li> -->
 					<li>
-						<a onclick="moveToPage(this, '/meeting/template', '관리자 > 회의록 템플릿');">회의록 템플릿</a>
+						<a onclick="moveToPage(this, '/meeting/template', '> 관리자 > 회의록 템플릿');">회의록 템플릿</a>
 					</li>
 				</ul>
 			</li>

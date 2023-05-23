@@ -17,6 +17,7 @@ import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.doc.dto.DocumentDTO;
 import e3ps.doc.service.DocumentHelper;
+import e3ps.system.service.ErrorLogHelper;
 import net.sf.json.JSONArray;
 import wt.clients.folder.FolderTaskLogic;
 import wt.doc.WTDocument;
@@ -40,7 +41,7 @@ public class DocumentController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "문서 목록")
+	@Description(value = "문서 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -52,6 +53,7 @@ public class DocumentController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/doc/list", "문서 조회 함수");
 		}
 		return result;
 	}
@@ -64,7 +66,7 @@ public class DocumentController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "문서 등록")
+	@Description(value = "문서 등록 함수")
 	@ResponseBody
 	@PostMapping(value = "/create")
 	public Map<String, Object> create(@RequestBody DocumentDTO dto) throws Exception {
@@ -77,6 +79,7 @@ public class DocumentController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/doc/create", "문서 등록 함수");
 		}
 		return result;
 	}
@@ -103,7 +106,7 @@ public class DocumentController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "문서 결재")
+	@Description(value = "문서 결재 함수")
 	@PostMapping(value = "/register")
 	@ResponseBody
 	public Map<String, Object> register(@RequestBody Map<String, Object> params) throws Exception {
@@ -116,11 +119,12 @@ public class DocumentController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/doc/register", "문서 결재 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "문서 번호")
+	@Description(value = "문서 번호 세팅 함수")
 	@PostMapping(value = "/setNumber")
 	@ResponseBody
 	public Map<String, Object> setNumber(@RequestBody Map<String, Object> params) throws Exception {
@@ -133,11 +137,12 @@ public class DocumentController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/doc/setNumber", "문서 번호 세팅 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "문서 뷰")
+	@Description(value = "문서 정보 페이지")
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -192,7 +197,7 @@ public class DocumentController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "문서 수정")
+	@Description(value = "문서 수정 함수")
 	@ResponseBody
 	@PostMapping(value = "/modify")
 	public Map<String, Object> modify(@RequestBody DocumentDTO dto) throws Exception {
@@ -205,11 +210,12 @@ public class DocumentController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/doc/modify", "문서 수정 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "문서 개정")
+	@Description(value = "문서 개정 함수")
 	@ResponseBody
 	@PostMapping(value = "/revise")
 	public Map<String, Object> revise(@RequestBody DocumentDTO dto) throws Exception {
@@ -222,11 +228,12 @@ public class DocumentController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/doc/revise", "문서 수정 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "문서 삭제")
+	@Description(value = "문서 삭제 함수")
 	@ResponseBody
 	@GetMapping(value = "/delete")
 	public Map<String, Object> delete(@RequestParam String oid) throws Exception {
@@ -239,6 +246,7 @@ public class DocumentController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/doc/delete", "문서 수정 함수");
 		}
 		return result;
 	}

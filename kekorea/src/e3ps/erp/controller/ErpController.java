@@ -36,7 +36,7 @@ public class ErpController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "ERP 로그 리스트")
+	@Description(value = "ERP 로그 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -48,12 +48,12 @@ public class ErpController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
-			ErrorLogHelper.service.create(e.toString(), "/erp/list", "ERP 로그 리스트");
+			ErrorLogHelper.service.create(e.toString(), "/erp/list", "ERP 로그 조회 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "파트리스트 등록시 품목 정보 가져오기")
+	@Description(value = "수배표 등록시 품목 정보 가져오기")
 	@GetMapping(value = "/partListItemValue")
 	@ResponseBody
 	public Map<String, Object> partListItemValue(@RequestParam String partNo, @RequestParam String quantity)
@@ -70,6 +70,7 @@ public class ErpController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/erp/partListItemValue", "수배표 등록시 품목 정보 가져오기");
 		}
 		return result;
 	}
@@ -88,6 +89,7 @@ public class ErpController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/erp/validate", "수배표 YCODE 체크");
 		}
 		return result;
 	}
@@ -106,6 +108,7 @@ public class ErpController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/erp/getUnitName", "수배표 UNITNAME 가져오기");
 		}
 		return result;
 	}
@@ -125,6 +128,7 @@ public class ErpController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/erp/getErpItemByPartNoAndQuantity", "수배표 부품정보 가져오기");
 		}
 		return result;
 	}
@@ -143,6 +147,7 @@ public class ErpController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/erp/getErpItemBySpec", "규격으로 ERP 부품정보 가져오기");
 		}
 		return result;
 	}
@@ -161,6 +166,7 @@ public class ErpController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/erp/getErpItemByPartNo", "YCODE로 ERP 부품정보 가져오기");
 		}
 		return result;
 	}
