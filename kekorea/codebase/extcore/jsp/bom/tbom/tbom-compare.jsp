@@ -268,14 +268,7 @@ for (Project project : destList) {%>
 			enableRightDownFocus : true,
 			autoGridHeight : true,
 			enableCellMerge: true,
-			cellColMergeFunction: function (rowIndex, columnIndex, item) {
-				// item 에 noColMerge 가 true 인 행이 있다면 가로 병합 시키지 않음.
-// 				if (item.noColMerge === true) {
-// 					return false; // false 를 반환하면 해당 행은 가로 병합 하지 않습니다.
-// 				}
-				return true;
-			},
-			
+			fixedRowCount : 4,
 			rowStyleFunction : function(rowIndex, item) {
 				const value = item.lotNo;
 				if(value === "막종 / 막종상세") {

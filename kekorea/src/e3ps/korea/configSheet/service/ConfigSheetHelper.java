@@ -438,8 +438,14 @@ public class ConfigSheetHelper {
 			customerList.put("id", id);
 			keList.put("id", id);
 			pdateList.put("id", id);
-			makList.put("P" + (i + 1), project.getMak().getName() + " / " + project.getDetail().getName());
-			customerList.put("P" + (i + 1), project.getCustomer().getName() + " / " + project.getInstall().getName());
+
+			String mak = project.getMak() != null ? project.getMak().getName() : "";
+			String detail = project.getDetail() != null ? project.getDetail().getName() : "";
+			String customer = project.getCustomer() != null ? project.getCustomer().getName() : "";
+			String install = project.getInstall() != null ? project.getInstall().getName() : "";
+
+			makList.put("P" + (i + 1), mak + " / " + detail);
+			customerList.put("P" + (i + 1), customer + " / " + install);
 			keList.put("P" + (i + 1), project.getKeNumber());
 			pdateList.put("P" + (i + 1), CommonUtils.getPersistableTime(project.getPDate()));
 		}
@@ -473,6 +479,7 @@ public class ConfigSheetHelper {
 					QueryResult qr = PersistenceHelper.manager.navigate(project, "configSheet",
 							ConfigSheetProjectLink.class);
 					// 시트랑 프로젝트 연결 하나 일까???
+
 					if (qr.hasMoreElements()) {
 						ConfigSheet configSheet = (ConfigSheet) qr.nextElement();
 
@@ -502,6 +509,7 @@ public class ConfigSheetHelper {
 									variable);
 							QuerySpecUtils.toBooleanAnd(qs, idx_l, ColumnVariableLink.class, ColumnVariableLink.LAST,
 									true);
+
 							QueryResult rs = PersistenceHelper.manager.find(qs);
 
 							if (rs.hasMoreElements()) {
@@ -517,7 +525,7 @@ public class ConfigSheetHelper {
 			}
 		}
 		destList.remove(0);
-		System.out.println("CONFIG  SHEET비교 END = " + new Timestamp(new Date().getTime()));
+		System.out.println("CONFIG SHEET 비교 END = " + new Timestamp(new Date().getTime()));
 		return list;
 	}
 

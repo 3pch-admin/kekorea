@@ -228,6 +228,7 @@ for (Project project : destList) {
 			enableCellMerge : true,
 			fixedColumnCount : 3,
 			wordWrap : true,
+			fixedRowCount : 4,
 			rowStyleFunction : function(rowIndex, item) {
 				const value = item.category_code;
 				if (value === "CATEGORY_2") {
@@ -271,6 +272,7 @@ for (Project project : destList) {
 			}
 		}
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
+		console.log(data);
 		AUIGrid.setGridData(myGridID, data);
 		AUIGrid.bind(myGridID, "contextMenu", auiContextMenuHandler);
 		AUIGrid.bind(myGridID, "vScrollChange", function(event) {

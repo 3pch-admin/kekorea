@@ -217,15 +217,21 @@ public class HistoryHelper {
 			Project project = (Project) destList.get(i);
 			String oid = project.getPersistInfo().getObjectIdentifier().getStringValue();
 			long id = project.getPersistInfo().getObjectIdentifier().getId();
+
+			String mak = project.getMak() != null ? project.getMak().getName() : "";
+			String detail = project.getDetail() != null ? project.getDetail().getName() : "";
+			String customer = project.getCustomer() != null ? project.getCustomer().getName() : "";
+			String install = project.getInstall() != null ? project.getInstall().getName() : "";
+
 			makList.put("id", id);
 			makList.put("oid", oid);
 			makList.put("key", "막종 / 막종상세");
-			makList.put("P" + counter, project.getMak().getName() + " / " + project.getDetail().getName());
+			makList.put("P" + counter, mak + " / " + detail);
 
 			customerList.put("id", id);
 			customerList.put("oid", oid);
 			customerList.put("key", "고객사 / 설치장소");
-			customerList.put("P" + counter, project.getCustomer().getName() + " / " + project.getInstall().getName());
+			customerList.put("P" + counter, customer + " / " + install);
 
 			keList.put("id", id);
 			keList.put("oid", oid);

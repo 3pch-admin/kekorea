@@ -64,7 +64,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	</tr>
 </table>
 
-<div id="grid_wrap" style="height: 100px; border-top: 1px solid #3180c3;"></div>
+<div id="grid_wrap" style="height: 900px; border-top: 1px solid #3180c3;"></div>
 <script type="text/javascript">
 	let myGridID;
 	const data =
@@ -213,8 +213,9 @@ for (Project project : destList) {%>
 			showInlineFilter : true,
 			enableRightDownFocus : true,
 			fixedColumnCount : 3,
-			autoGridHeight : true,
+// 			autoGridHeight : true,
 			enableCellMerge: true,
+			fixedRowCount : 4,
 			rowStyleFunction : function(rowIndex, item) {
 				const value = item.lotNo;
 				if(value === "막종 / 막종상세") {

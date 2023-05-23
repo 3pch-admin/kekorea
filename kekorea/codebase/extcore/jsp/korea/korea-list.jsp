@@ -17,7 +17,7 @@ String end = (String) request.getAttribute("end");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1"></script>
 </head>
 <body>
@@ -383,7 +383,7 @@ String end = (String) request.getAttribute("end");
 				const url = getCallUrl("/configSheet/compare?oid=" + checkedItems[0].item.oid + "&compareArr=" + arr.join(","));
 				popup(url);
 			}
-			
+
 			function workOrderCompare() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				const arr = [];
@@ -401,7 +401,7 @@ String end = (String) request.getAttribute("end");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/korea/list");
-				const field =["psize","pdateFrom","pdateTo","projectType"];
+				const field = [ "psize", "pdateFrom", "pdateTo", "projectType" ];
 				const kekNumbers = [];
 				const kekNumber = document.getElementById("kekNumber").value;
 				const values = kekNumber.split(",");
@@ -422,12 +422,16 @@ String end = (String) request.getAttribute("end");
 				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
-					document.getElementById("sessionid").value = data.sessionid;
-					document.getElementById("curPage").value = data.curPage;
-					AUIGrid.setGridData(myGridID, data.list);
+					if (data.result) {
+						document.getElementById("sessionid").value = data.sessionid;
+						document.getElementById("curPage").value = data.curPage;
+						AUIGrid.setGridData(myGridID, data.list);
+						AUIGrid.resize(myGridID);
+						selectbox("psize");
+					} else {
+						alert(data.msg);
+					}
 					parent.closeLayer();
-					AUIGrid.resize(myGridID);
-					selectbox("psize");
 				});
 
 				const pdateFrom = document.getElementById("pdateFrom").value;

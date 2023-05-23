@@ -374,9 +374,14 @@ public class PartlistHelper {
 			customerList.put("oid", oid);
 			keList.put("oid", oid);
 			pdateList.put("oid", oid);
-			makList.put("quantity" + (i + 1), project.getMak().getName() + " / " + project.getDetail().getName());
-			customerList.put("quantity" + (i + 1),
-					project.getCustomer().getName() + " / " + project.getInstall().getName());
+
+			String mak = project.getMak() != null ? project.getMak().getName() : "";
+			String detail = project.getDetail() != null ? project.getDetail().getName() : "";
+			String customer = project.getCustomer() != null ? project.getCustomer().getName() : "";
+			String install = project.getInstall() != null ? project.getInstall().getName() : "";
+
+			makList.put("quantity" + (i + 1), mak + " / " + detail);
+			customerList.put("quantity" + (i + 1), customer + " / " + install);
 			keList.put("quantity" + (i + 1), project.getKeNumber());
 			pdateList.put("quantity" + (i + 1), CommonUtils.getPersistableTime(project.getPDate()));
 		}
@@ -391,11 +396,17 @@ public class PartlistHelper {
 		for (int i = 0; i < destList.size(); i++) {
 			Project project = (Project) destList.get(i);
 			Map<String, Object> mergedData = new HashMap<>();
+
+			String mak = project.getMak() != null ? project.getMak().getName() : "";
+			String detail = project.getDetail() != null ? project.getDetail().getName() : "";
+			String customer = project.getCustomer() != null ? project.getCustomer().getName() : "";
+			String install = project.getInstall() != null ? project.getInstall().getName() : "";
+
 			mergedData.put("key", "막종 / 막종상세");
-			mergedData.put("qty1", project.getMak().getName() + " / " + project.getDetail().getName());
+			mergedData.put("qty1", mak + " / " + detail);
 
 			mergedData.put("key", "고객사 / 설치장소");
-			mergedData.put("qty1", project.getCustomer().getName() + " / " + project.getInstall().getName());
+			mergedData.put("qty1", customer + " / " + install);
 
 			mergedData.put("key", "KE 작번");
 			mergedData.put("qty1", project.getKeNumber());

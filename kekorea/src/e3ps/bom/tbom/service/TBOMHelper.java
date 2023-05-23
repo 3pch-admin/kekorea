@@ -129,7 +129,8 @@ public class TBOMHelper {
 
 			if (!StringUtils.isNull(machineOid)) {
 				WTUser machine = (WTUser) CommonUtils.getObject(machineOid);
-				CommonCode machineCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.MACHINE, "USER_TYPE");
+				CommonCode machineCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.MACHINE,
+						"USER_TYPE");
 				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
 				int idx_u = _query.appendClassList(WTUser.class, false);
 
@@ -388,8 +389,14 @@ public class TBOMHelper {
 			customerList.put("oid", oid);
 			keList.put("oid", oid);
 			pdateList.put("oid", oid);
-			makList.put("qty" + (i + 1), project.getMak().getName() + " / " + project.getDetail().getName());
-			customerList.put("qty" + (i + 1), project.getCustomer().getName() + " / " + project.getInstall().getName());
+
+			String mak = project.getMak() != null ? project.getMak().getName() : "";
+			String detail = project.getDetail() != null ? project.getDetail().getName() : "";
+			String customer = project.getCustomer() != null ? project.getCustomer().getName() : "";
+			String install = project.getInstall() != null ? project.getInstall().getName() : "";
+
+			makList.put("qty" + (i + 1), mak + " / " + detail);
+			customerList.put("qty" + (i + 1), customer + " / " + install);
 			keList.put("qty" + (i + 1), project.getKeNumber());
 			pdateList.put("qty" + (i + 1), CommonUtils.getPersistableTime(project.getPDate()));
 		}

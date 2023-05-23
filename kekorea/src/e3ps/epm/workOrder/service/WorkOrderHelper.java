@@ -1148,8 +1148,13 @@ public class WorkOrderHelper {
 			keList.put("oid", oid);
 			pdateList.put("oid", oid);
 
-			makList.put("rev" + (i + 1), project.getMak().getName() + " / " + project.getDetail().getName());
-			customerList.put("rev" + (i + 1), project.getCustomer().getName() + " / " + project.getInstall().getName());
+			String mak = project.getMak() != null ? project.getMak().getName() : "";
+			String detail = project.getDetail() != null ? project.getDetail().getName() : "";
+			String customer = project.getCustomer() != null ? project.getCustomer().getName() : "";
+			String install = project.getInstall() != null ? project.getInstall().getName() : "";
+
+			makList.put("rev" + (i + 1), mak + " / " + detail);
+			customerList.put("rev" + (i + 1), customer + " / " + install);
 			keList.put("rev" + (i + 1), project.getKeNumber());
 			pdateList.put("rev" + (i + 1), CommonUtils.getPersistableTime(project.getPDate()));
 		}

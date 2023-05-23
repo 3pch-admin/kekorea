@@ -7,7 +7,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 JSONArray data = (JSONArray) request.getAttribute("data");
-System.out.println(data);
 Project p1 = (Project) request.getAttribute("p1");
 ArrayList<Project> destList = (ArrayList<Project>) request.getAttribute("destList");
 String oid = (String) request.getAttribute("oid");
@@ -78,7 +77,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 </table>
 
 
-<div id="grid_wrap" style="height: 100px; border-top: 1px solid #3180c3;"></div>
+<div id="grid_wrap" style="height: 900px; border-top: 1px solid #3180c3;"></div>
 <script type="text/javascript">
 	let myGridID;
 	const data = <%=data%>
@@ -146,7 +145,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			useContextMenu : true,
 			enableRightDownFocus : true,
 			fixedColumnCount : 2,
-			autoGridHeight : true,
+// 			autoGridHeight : true,
+			fixedRowCount : 4,
 			rowStyleFunction : function(rowIndex, item) {
 				const value = item.key;
 				if(value === "막종 / 막종상세") {
