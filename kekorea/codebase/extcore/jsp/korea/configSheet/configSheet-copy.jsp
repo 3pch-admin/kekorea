@@ -15,7 +15,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 String before = (String) request.getAttribute("before");
 String end = (String) request.getAttribute("end");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 <input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 <input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
@@ -405,61 +405,13 @@ String end = (String) request.getAttribute("end");
 		AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 			hideContextMenu(); 
 		});
-		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
-	}
-	
-	function auiCellClickHandler(event) {
-		const item = event.item;
-		rowIdField = AUIGrid.getProp(event.pid, "rowIdField");
-		rowId = item[rowIdField];
-		rowIdField = AUIGrid.getProp(event.pid, "rowIdField"); 
-		rowId = item[rowIdField];
-		if(AUIGrid.isCheckedRowById(event.pid, rowId)) {
-			AUIGrid.addUncheckedRowsByIds(event.pid, rowId);
-		} else {
-			AUIGrid.addCheckedRowsByIds(event.pid, rowId);
-		}
 	}
 	
 	function loadGridData() {
-		const params = new Object();
+		let params = new Object();
 		const url = getCallUrl("/project/list");
-		const kekNumber = document.getElementById("kekNumber").value;
-		const keNumber = document.getElementById("keNumber").value;
-		const pdateFrom = document.getElementById("pdateFrom").value;
-		const pdateTo = document.getElementById("pdateTo").value;
-		const userId = document.getElementById("userId").value;
-		const kekState = document.getElementById("kekState").value;
-		const model = document.getElementById("model").value;
-		const customer_name = document.getElementById("customer_name").value;
-		const install_name = document.getElementById("install_name").value;
-		const projectType = document.getElementById("projectType").value;
-		const machineOid = document.getElementById("machineOid").value;
-		const elecOid = document.getElementById("elecOid").value;
-		const softOid = document.getElementById("softOid").value;
-		const mak_name = document.getElementById("mak_name").value;
-		const detail_name = document.getElementById("detail_name").value;
-		const template = document.getElementById("template").value;
-		const description = document.getElementById("description").value;
-		const psize = document.getElementById("psize").value;
-		params.kekNumber = kekNumber;
-		params.keNumber = keNumber;
-		params.pdateFrom = pdateFrom;
-		params.pdateTo = pdateTo;
-		params.userId = userId;
-		params.kekState = kekState;
-		params.model = model;
-		params.customer_name = customer_name;
-		params.install_name = install_name;
-		params.projectType = projectType;
-		params.machineOid = machineOid;
-		params.elecOid = elecOid;
-		params.softOid = softOid;
-		params.mak_name = mak_name;
-		params.detail_name = detail_name;
-		params.template = template;
-		params.description = description;
-		params.psize = psize;
+		const field = [ "kekNumber", "keNumber", "pdateFrom", "pdateTo", "userId", "kekState", "model", "customer_name", "install_name", "projectType", "machineOid", "elecOid", "softOid", "mak_name", "detail_name", "template", "description", "psize" ];
+		params = toField(params, field);
 		AUIGrid.showAjaxLoader(myGridID);
 		openLayer();
 		call(url, params, function(data) {

@@ -95,10 +95,10 @@ public class ConfigSheetController extends BaseController {
 			Map<String, String> map = new HashMap<>();
 			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("projectType_name", project.getProjectType().getName());
-			map.put("customer_name", project.getCustomer().getName());
-			map.put("mak_name", project.getMak().getName());
-			map.put("detail_name", project.getDetail().getName());
-			map.put("install_name", project.getInstall().getName());
+			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
+			map.put("install_name", project.getInstall() != null ? project.getInstall().getName() : "");
 			map.put("kekNumber", project.getKekNumber());
 			map.put("keNumber", project.getKeNumber());
 			map.put("description", project.getDescription());
@@ -152,7 +152,7 @@ public class ConfigSheetController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "CONIFG SHEET 비교 페이지 공통 함수")
+	@Description(value = "CONIFG SHEET 비교 페이지")
 	@GetMapping(value = "/compare")
 	public ModelAndView compare(@RequestParam String oid, @RequestParam String compareArr) throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -216,7 +216,7 @@ public class ConfigSheetController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "CONFIG SHEET 복사하기")
+	@Description(value = "CONFIG SHEET 복사 함수")
 	@PostMapping(value = "/copy")
 	@ResponseBody
 	public Map<String, Object> copy(@RequestBody Map<String, Object> params) throws Exception {
@@ -243,6 +243,7 @@ public class ConfigSheetController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/configSheet/copy", "CONFIG SHEET 복사 함수");
 		}
 		return result;
 	}

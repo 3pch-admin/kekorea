@@ -10,6 +10,26 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <style type="text/css">
+.row_1 {
+	background-color: #fed7be;
+	font-weight: bold;
+}
+
+.row_2 {
+	background-color: #FFCCFF;
+	font-weight: bold;
+}
+
+.row_3 {
+	background-color: #CCFFCC;
+	font-weight: bold;
+}
+
+.row_4 {
+	background-color: #FFFFCC;
+	font-weight: bold;
+}
+
 .row1 {
 	background-color: #99CCFF;
 }
@@ -177,12 +197,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				mergeRef : "category_code",
 				mergePolicy : "restrict",
 			}, 
-			<%
-				int index = 0;
-				ArrayList<String> dd = dto.getDataFields();
-				for(int i=0; i<dd.size(); i++) {
-					String dataFields = dd.get(i);
-			%>
+			<%int index = 0;
+ArrayList<String> dd = dto.getDataFields();
+for (int i = 0; i < dd.size(); i++) {
+	String dataFields = dd.get(i);%>
 			{
 				dataField : "<%=dataFields%>",
 				headerText : "1",
@@ -190,11 +208,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				width : 250,
 				renderer : {
 					type : "Templaterenderer"
-				}
+				},
 			}, 
-			<%
-			}
-			%>
+			<%}%>
 			{
 				dataField : "note",
 				headerText : "NOTE",
@@ -216,8 +232,10 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					enableCellMerge : true,
 					enableSorting : false,
 					wordWrap : true,
+					fixedRowCount : 4,
 					rowStyleFunction : function(rowIndex, item) {
 						const value = item.category_code;
+						const name = item.category_name;
 						if (value === "CATEGORY_2") {
 							return "row1";
 						} else if (value === "CATEGORY_3") {
@@ -244,6 +262,16 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 							return "row11";
 						} else if (value === "CATEGORY_15") {
 							return "row12";
+						} 
+						
+						if(name === "막종 / 막종상세") {
+							return "row_1";
+						} else if(name === "고객사 / 설치장소") {
+							return "row_2";
+						} else if(name === "KE 작번") {
+							return "row_3";
+						} else if(name === "발행일") {
+							return "row_4";
 						}
 						return "";
 					}

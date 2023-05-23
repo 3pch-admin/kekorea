@@ -145,7 +145,6 @@ public class ConfigSheetHelper {
 
 			if (!StringUtils.isNull(elecOid)) {
 				WTUser elec = (WTUser) CommonUtils.getObject(elecOid);
-				System.out.println("===여기");
 				CommonCode elecCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.ELEC, "USER_TYPE");
 				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
 				int idx_u = _query.appendClassList(WTUser.class, false);
@@ -194,7 +193,12 @@ public class ConfigSheetHelper {
 				Object[] oo = (Object[]) group.nextElement();
 				ConfigSheetProjectLink link = (ConfigSheetProjectLink) oo[2];
 				ConfigSheetDTO dto = new ConfigSheetDTO(link);
+				node.put("oid", configSheet.getPersistInfo().getObjectIdentifier().getStringValue());
+				node.put("name", configSheet.getName());
+				node.put("number", configSheet.getNumber());
 				if (isNode == 1) {
+					node.put("version", configSheet.getVersion());
+					node.put("latest", configSheet.getLatest());
 					node.put("poid", dto.getPoid());
 					node.put("projectType_name", dto.getProjectType_name());
 					node.put("customer_name", dto.getCustomer_name());
@@ -214,6 +218,8 @@ public class ConfigSheetHelper {
 				} else {
 					JSONObject data = new JSONObject();
 					data.put("name", dto.getName());
+					data.put("version", configSheet.getVersion());
+					data.put("latest", configSheet.getLatest());
 					data.put("oid", dto.getOid());
 					data.put("poid", dto.getPoid());
 					data.put("projectType_name", dto.getProjectType_name());
@@ -290,11 +296,12 @@ public class ConfigSheetHelper {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
 		ConfigSheet configSheet = (ConfigSheet) CommonUtils.getObject(oid);
 
+		ArrayList<String> dataFields = configSheet.getDataFields();
+
 		QueryResult rs = PersistenceHelper.manager.navigate(configSheet, "project", ConfigSheetProjectLink.class);
 		Project project = null;
 		if (rs.hasMoreElements()) {
 			project = (Project) rs.nextElement();
-
 			Map<String, Object> makList = new HashMap<>();
 			Map<String, Object> customerList = new HashMap<>();
 			Map<String, Object> keList = new HashMap<>();
@@ -309,6 +316,23 @@ public class ConfigSheetHelper {
 			customerList.put("item_name", "고객사 / 설치장소");
 			keList.put("item_name", "KE 작번");
 			pdateList.put("item_name", "발행일");
+
+			String mak = project.getMak() != null ? project.getMak().getName() : "";
+			String detail = project.getDetail() != null ? project.getDetail().getName() : "";
+			String customer = project.getCustomer() != null ? project.getCustomer().getName() : "";
+			String install = project.getInstall() != null ? project.getInstall().getName() : "";
+
+			makList.put("spec", mak + " / " + detail);
+			customerList.put("spec", customer + " / " + install);
+			keList.put("spec", project.getKeNumber());
+			pdateList.put("spec", CommonUtils.getPersistableTime(project.getPDate()));
+
+			for (int i = 0; i < dataFields.size(); i++) {
+				makList.put("spec" + i, mak + " / " + detail);
+				customerList.put("spec" + i, customer + " / " + install);
+				keList.put("spec" + i, project.getKeNumber());
+				pdateList.put("spec" + i, CommonUtils.getPersistableTime(project.getPDate()));
+			}
 
 			list.add(makList);
 			list.add(customerList);
@@ -526,7 +550,7 @@ public class ConfigSheetHelper {
 			QueryResult qr = PersistenceHelper.manager.navigate(variable, "column", ColumnVariableLink.class);
 			while (qr.hasMoreElements()) {
 				ConfigSheetColumnData column = (ConfigSheetColumnData) qr.nextElement();
-				map.put(column.getDataField(), column.getValue());
+				map.put(column.getDataField(), column.getValue() != null ? column.getValue() : "");
 			}
 			map.put("note", variable.getNote());
 			map.put("apply", variable.getApply());

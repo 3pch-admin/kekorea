@@ -20,9 +20,9 @@ public class UserDTO {
 	private String name;
 	private String id;
 	private String email;
-	private String duty;
+	private String duty = "";
 	private String department_oid;
-	private String department_name;
+	private String department_name = "지정안됨";
 	private String department_code;
 	private Timestamp createdDate;
 	private boolean resign;

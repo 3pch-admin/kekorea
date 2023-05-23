@@ -24,6 +24,7 @@ import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.org.Department;
 import e3ps.org.service.OrgHelper;
+import e3ps.system.service.ErrorLogHelper;
 import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
@@ -49,7 +50,7 @@ public class WorkspaceController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "검토함 리스트 함수")
+	@Description(value = "검토함 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/agree")
 	public Map<String, Object> agree(@RequestBody Map<String, Object> params) throws Exception {
@@ -61,6 +62,7 @@ public class WorkspaceController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/agree", "검토함 조회 함수");
 		}
 		return result;
 	}
@@ -77,7 +79,7 @@ public class WorkspaceController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "결재함 리스트 함수")
+	@Description(value = "결재함 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/approval")
 	public Map<String, Object> approval(@RequestBody Map<String, Object> params) throws Exception {
@@ -89,6 +91,7 @@ public class WorkspaceController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/approval", "결재함 조회 함수");
 		}
 		return result;
 	}
@@ -105,7 +108,7 @@ public class WorkspaceController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "수신함 리스트 함수")
+	@Description(value = "수신함 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/receive")
 	public Map<String, Object> receive(@RequestBody Map<String, Object> params) throws Exception {
@@ -117,6 +120,7 @@ public class WorkspaceController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/receive", "수신함 조회 함수");
 		}
 		return result;
 	}
@@ -133,7 +137,7 @@ public class WorkspaceController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "진행함 리스트 함수")
+	@Description(value = "진행함 조회 함수")
 	@PostMapping(value = "/progress")
 	@ResponseBody
 	public Map<String, Object> progress(@RequestBody Map<String, Object> params) throws Exception {
@@ -145,6 +149,7 @@ public class WorkspaceController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/progress", "결재함 조회 함수");
 		}
 		return result;
 	}
@@ -161,7 +166,7 @@ public class WorkspaceController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "완료함 리스트 함수")
+	@Description(value = "완료함 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/complete")
 	public Map<String, Object> complete(@RequestBody Map<String, Object> params) throws Exception {
@@ -173,6 +178,7 @@ public class WorkspaceController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/complete", "완료함 조회 함수");
 		}
 		return result;
 	}
@@ -189,7 +195,7 @@ public class WorkspaceController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "반려함 리스트 함수")
+	@Description(value = "반려함 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/reject")
 	public Map<String, Object> reject(@RequestBody Map<String, Object> params) throws Exception {
@@ -201,6 +207,7 @@ public class WorkspaceController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/reject", "반려함 조회 함수");
 		}
 		return result;
 	}
@@ -245,7 +252,7 @@ public class WorkspaceController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "검토완료  함수")
+	@Description(value = "검토완료 함수")
 	@ResponseBody
 	@PostMapping(value = "/_agree")
 	public Map<String, Object> _agree(@RequestBody Map<String, Object> params) throws Exception {
@@ -258,6 +265,7 @@ public class WorkspaceController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/_agree", "검토완료 함수");
 		}
 		return result;
 	}
@@ -275,6 +283,7 @@ public class WorkspaceController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/_unagree", "검토반려 함수");
 		}
 		return result;
 	}
@@ -292,11 +301,12 @@ public class WorkspaceController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/_approval", "승인 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "반려  함수")
+	@Description(value = "반려 함수")
 	@ResponseBody
 	@PostMapping(value = "/_reject")
 	public Map<String, Object> _reject(@RequestBody Map<String, Object> params) throws Exception {
@@ -309,6 +319,7 @@ public class WorkspaceController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/_reject", "반려 함수");
 		}
 		return result;
 	}
@@ -326,6 +337,7 @@ public class WorkspaceController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/_receive", "수신확인 함수");
 		}
 		return result;
 	}
@@ -343,6 +355,7 @@ public class WorkspaceController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/reassign", "결재위임 함수");
 		}
 		return result;
 	}
@@ -352,10 +365,10 @@ public class WorkspaceController extends BaseController {
 	public ResponseEntity<byte[]> print(@RequestParam String oid) throws Exception {
 		ApprovalContract contract = (ApprovalContract) CommonUtils.getObject(oid);
 		Workbook cover = WorkspaceHelper.manager.print(oid);
-		
+
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		cover.write(byteArrayOutputStream);
-		
+
 		byte[] bytes = byteArrayOutputStream.toByteArray();
 		String name = URLEncoder.encode(contract.getName(), "UTF-8").replaceAll("\\+", "%20");
 

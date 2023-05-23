@@ -171,7 +171,6 @@ public class WorkOrderHelper {
 
 			if (!StringUtils.isNull(elecOid)) {
 				WTUser elec = (WTUser) CommonUtils.getObject(elecOid);
-				System.out.println("===여기");
 				CommonCode elecCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.ELEC, "USER_TYPE");
 				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
 				int idx_u = _query.appendClassList(WTUser.class, false);
