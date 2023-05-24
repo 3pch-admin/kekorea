@@ -23,6 +23,7 @@ import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.korea.cip.dto.CipDTO;
 import e3ps.korea.cip.service.CipHelper;
+import e3ps.system.service.ErrorLogHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -31,7 +32,7 @@ import wt.session.SessionHelper;
 @RequestMapping(value = "/cip/**")
 public class CipController extends BaseController {
 
-	@Description(value = "CIP 리스트 페이지")
+	@Description(value = "CIP 조회 페이지")
 	@GetMapping(value = "/list")
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
@@ -67,11 +68,13 @@ public class CipController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/cip/list", "CIP 조회 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "CIP 등록")
+	@Description(value = "CIP 그리드 저장 함수")
 	@PostMapping(value = "/save")
 	@ResponseBody
 	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
@@ -115,6 +118,7 @@ public class CipController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/cip/save", "CIP 그리드 저장 함수");
 		}
 		return result;
 	}
