@@ -107,14 +107,12 @@ public class EpmController extends BaseController {
 		JSONArray data = EpmHelper.manager.jsonAuiProject(dto.getOid());
 		boolean isAutoCad = dto.getApplicationType().equalsIgnoreCase("AUTOCAD");
 		boolean isCreo = dto.getApplicationType().equalsIgnoreCase("CREO");
-		String creoViewURL = ThumnailUtils.creoViewURL(epm);
 		Vector<Map<String, Object>> secondary = ContentUtils.getSecondary(epm);
 		model.addObject("secondary", secondary);
 		model.addObject("isAutoCad", isAutoCad);
 		model.addObject("isCreo", isCreo);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
-		model.addObject("creoViewURL", creoViewURL);
 		model.addObject("versionHistory", versionHistory);
 		model.setViewName("popup:/epm/epm-view");
 		return model;

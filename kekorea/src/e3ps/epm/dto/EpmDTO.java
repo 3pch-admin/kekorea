@@ -49,6 +49,8 @@ public class EpmDTO {
 	private String price;
 	private String currname;
 
+	private String creoViewURL;
+
 	public EpmDTO() {
 
 	}
@@ -71,6 +73,7 @@ public class EpmDTO {
 		setState(epm.getLifeCycleState().getDisplay());
 		setLocation(epm.getLocation());
 		setDescription(epm.getDescription());
+		setCreoViewURL(ThumnailUtils.creoViewURL(epm));
 		putAttr(epm);
 	}
 

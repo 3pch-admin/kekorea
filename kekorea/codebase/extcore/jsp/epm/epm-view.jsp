@@ -13,8 +13,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 JSONArray history = (JSONArray) request.getAttribute("history");
 boolean isAutoCad = (boolean) request.getAttribute("isAutoCad");
 boolean isCreo = (boolean) request.getAttribute("isCreo");
-String creoViewURL = (String) request.getAttribute("creoViewURL");
-out.println(creoViewURL);
+String creoViewURL = dto.getCreoViewURL();
 Vector<Map<String, Object>> secondary = (Vector<Map<String, Object>>) request.getAttribute("secondary");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
@@ -258,8 +257,8 @@ Vector<Map<String, Object>> secondary = (Vector<Map<String, Object>>) request.ge
 <script type="text/javascript">
 	function preView() {
 		const oid = document.getElementById("oid").value;
-		const url = getCallUrl("/aui/thumbnail?oid=" + oid);
-		popup(url, 1400, 600);
+		const url = "<%=creoViewURL%>";
+		popup(url, 600, 200);
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {

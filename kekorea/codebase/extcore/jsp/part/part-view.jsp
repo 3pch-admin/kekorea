@@ -6,6 +6,7 @@
 <%
 PartDTO dto = (PartDTO) request.getAttribute("dto");
 JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
+String creoViewURL = dto.getCreoViewURL();
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
@@ -319,8 +320,8 @@ JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 <script type="text/javascript">
 	function preView() {
 		const oid = document.getElementById("oid").value;
-		const url = getCallUrl("/aui/thumbnail?oid=" + oid);
-		popup(url, 1400, 600);
+		const url = "<%=creoViewURL%>";
+		popup(url, 600, 200);
 	}
 
 	function modify() {

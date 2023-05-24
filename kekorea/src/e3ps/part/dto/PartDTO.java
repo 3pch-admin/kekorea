@@ -9,6 +9,7 @@ import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
 import e3ps.common.util.IBAUtils;
+import e3ps.common.util.ThumnailUtils;
 import e3ps.part.service.PartHelper;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,6 +51,8 @@ public class PartDTO {
 	private String cusname;
 	private String price;
 	private String currname;
+	
+	private String creoViewURL;
 
 	public PartDTO() {
 
@@ -70,6 +73,7 @@ public class PartDTO {
 		setState(part.getLifeCycleState().getDisplay());
 		setLocation(part.getLocation());
 		setPreView(ContentUtils.getPreViewBase64(part));
+		setCreoViewURL(ThumnailUtils.creoViewURL(part));
 		putAttr(part);
 	}
 

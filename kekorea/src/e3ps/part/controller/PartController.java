@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.ThumnailUtils;
 import e3ps.part.dto.PartDTO;
 import e3ps.part.service.PartHelper;
 import net.sf.json.JSONArray;
