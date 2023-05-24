@@ -222,6 +222,9 @@ JSONArray pList = (JSONArray) request.getAttribute("pList");
 				createAUIGrid(columns);
 				_createAUIGrid(_columns);
 				_createAUIGrid_(_columns_);
+				AUIGrid.resize(myGridID);
+				AUIGrid.resize(_myGridID);
+				AUIGrid.resize(_myGridID_);
 			});
 
 			window.addEventListener("resize", function() {

@@ -13,6 +13,8 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 JSONArray history = (JSONArray) request.getAttribute("history");
 boolean isAutoCad = (boolean) request.getAttribute("isAutoCad");
 boolean isCreo = (boolean) request.getAttribute("isCreo");
+String creoViewURL = (String) request.getAttribute("creoViewURL");
+out.println(creoViewURL);
 Vector<Map<String, Object>> secondary = (Vector<Map<String, Object>>) request.getAttribute("secondary");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
