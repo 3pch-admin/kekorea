@@ -70,11 +70,8 @@ public class EventHelper {
 		QueryResult result = ContentHelper.service.getContentsByRole(epm, ContentRoleType.PRIMARY);
 		// dwg 파일 템프 폴더 다운로드..
 
-		System.out.println("result=" + result.size());
-
 		if (result.hasMoreElements()) {
 			ApplicationData data = (ApplicationData) result.nextElement();
-			System.out.println("파일 생성 안하노?");
 			byte[] buffer = new byte[10240];
 			InputStream is = ContentServerHelper.service.findLocalContentStream(data);
 			File write = new File(savePath + File.separator + epm.getCADName());

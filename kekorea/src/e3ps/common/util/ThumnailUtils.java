@@ -1,6 +1,7 @@
 package e3ps.common.util;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
@@ -10,15 +11,14 @@ import com.ptc.wvs.server.util.FileHelper;
 import com.ptc.wvs.server.util.PublishUtils;
 import com.ptc.wvs.server.util.Util;
 
-import e3ps.part.service.PartHelper;
+import net.sf.json.JSONArray;
+import wt.content.ApplicationData;
+import wt.content.ContentHelper;
 import wt.content.ContentHolder;
 import wt.content.ContentRoleType;
-import wt.epm.EPMDocument;
 import wt.fc.Persistable;
-import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.fc.ReferenceFactory;
-import wt.part.WTPart;
 import wt.representation.Representable;
 import wt.representation.Representation;
 import wt.util.WTProperties;
@@ -80,6 +80,9 @@ public class ThumnailUtils {
 		return list;
 	}
 
+	/**
+	 * 크레오 뷰 URL
+	 */
 	public static String creoViewURL(ContentHolder holder) throws Exception {
 		StringBuffer creoView = new StringBuffer();
 		Representable representable = PublishUtils.findRepresentable(holder);
@@ -106,6 +109,9 @@ public class ThumnailUtils {
 		return getMarkUpCreoViewUrl(holder, markUp);
 	}
 
+	/**
+	 * 마크업 크레오 뷰 URL
+	 */
 	public static String getMarkUpCreoViewUrl(ContentHolder holder, WTMarkUp markUp) throws Exception {
 		StringBuffer creoView = new StringBuffer();
 
@@ -120,9 +126,6 @@ public class ThumnailUtils {
 					"%22", "%5C%22");
 
 			String objref = PublishUtils.getRefFromObject(representation);
-
-			System.out.println("ob=" + objref);
-
 			String mkid = "OR:" + markUp.getPersistInfo().getObjectIdentifier().getStringValue();
 			String mkname = markUp.getName();
 			String doctype = "model";
@@ -139,24 +142,9 @@ public class ThumnailUtils {
 		return creoView.toString();
 	}
 
-	public static String[] getMarkUp(String oid) throws Exception {
-		ReferenceFactory rf = new ReferenceFactory();
-		WTMarkUp markUp = (WTMarkUp) rf.getReference(oid).getObject();
-		return getMarkUp(markUp);
-	}
-
-	public static String[] getMarkUp(WTMarkUp markUp) {
-		String[] data = new String[4];
-		String oid = markUp.getPersistInfo().getObjectIdentifier().getStringValue();
-		if (markUp != null) {
-
-			String thumnail = FileHelper.getViewContentURLForType(markUp, ContentRoleType.THUMBNAIL);
-			data[0] = thumnail;
-			data[1] = oid;
-		}
-		return data;
-	}
-
+	/**
+	 * 뷰어 가져오기 (도면 또는 부품)
+	 */
 	public static String[] getThumnail(String oid) throws Exception {
 		ReferenceFactory rf = new ReferenceFactory();
 		Persistable per = (Persistable) rf.getReference(oid).getObject();
@@ -171,12 +159,16 @@ public class ThumnailUtils {
 					ContentRoleType.THUMBNAIL_SMALL);
 
 			if (thumnail_mini == null) {
-				thumnail_mini = "/Windchill/jsp/images/productview_publish_24.png";
+				thumnail_mini = "/Windchill/extcore/images/productview_publish_24.png";
+			}
+
+			if (thumnail == null) {
+				thumnail = "/Windchill/extcore/images/productview_openin_250.png";
 			}
 
 			Representation representation = PublishUtils.getRepresentation(thum, true, null, false);
 			String copyTag = "";
-			if (thum != null) {
+			if (representation != null) {
 				copyTag = PublishUtils.getRefFromObject(representation);
 			}
 
@@ -189,74 +181,66 @@ public class ThumnailUtils {
 		return data;
 	}
 
-	public static boolean doPublisher(Map<String, Object> param) throws Exception {
+	/**
+	 * 뷰어 생성
+	 */
+	public static boolean doPublisher(String oid) throws Exception {
 		Publisher publisher = new Publisher();
 		PublishConfigSpec pcs = new PublishConfigSpec();
-
 		boolean viewableLink = true;
 		boolean forceRepublish = false;
-		String publishoid = (String) param.get("oid");
-		ReferenceFactory rf = new ReferenceFactory();
-		Persistable per = (Persistable) rf.getReference(publishoid).getObject();
-		if (per instanceof WTPart) {
-			WTPart part = (WTPart) per;
-			EPMDocument e = PartHelper.manager.getEPMDocument(part);
-			if (e == null) {
-
-			}
-		}
-
-		pcs.getEPMActiveNavigationCriteria(false, null);
-
-		boolean isPublished = publisher.doPublish(viewableLink, forceRepublish, publishoid,
+		boolean isPublished = publisher.doPublish(viewableLink, forceRepublish, oid,
 				pcs.getEPMActiveNavigationCriteria(false, null), pcs.getPartActiveNavigationCriteria(null), true, null,
 				null, pcs.getStructureType(), null, 1);
 
 		return isPublished;
 	}
 
-	public static boolean deletePublisher(Map<String, Object> param) throws Exception {
-		boolean isSuccess = false;
-		ReferenceFactory rf = new ReferenceFactory();
-		String oid = (String) param.get("oid");
-		ContentHolder holder = (ContentHolder) rf.getReference(oid).getObject();
+	/**
+	 * 마크업 데이터 AUI 그리드용
+	 */
+	public static JSONArray markUpData(String oid) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
 
-		Representation representation = PublishUtils.getRepresentation(holder);
+		ContentHolder holder = (ContentHolder) CommonUtils.getObject(oid);
 
-		if (representation != null) {
-			PersistenceHelper.manager.delete(representation);
-			isSuccess = true;
+		Vector<WTMarkUp> data = getMarkUpList(oid);
+		for (WTMarkUp markUp : data) {
+			Map<String, String> map = new HashMap<>();
+			String moid = markUp.getPersistInfo().getObjectIdentifier().getStringValue();
+			String thum = markUpThumnail(moid);
+			String creoViewURL = getMarkUpCreoViewUrl(holder, markUp);
+			map.put("creoViewURL", creoViewURL);
+			map.put("name", markUp.getName());
+			map.put("thumnail", thum);
+			map.put("creator", markUp.getOwnership().getOwner().getFullName());
+			map.put("createdDate_txt", CommonUtils.getPersistableTime(markUp.getCreateTimestamp(), 16));
+			map.put("description", markUp.getDescription());
+			list.add(map);
 		}
-		return isSuccess;
+		return JSONArray.fromObject(list);
 	}
 
-	public static boolean doPublisherMulti(Map<String, Object> param) throws Exception {
-		List<String> list = (List<String>) param.get("list");
-		Publisher publisher = new Publisher();
-		PublishConfigSpec pcs = new PublishConfigSpec();
-		boolean isPublished = false;
-		ReferenceFactory rf = new ReferenceFactory();
-		for (String publishoid : list) {
-
-			Persistable per = (Persistable) rf.getReference(publishoid).getObject();
-			if (per instanceof WTPart) {
-				WTPart part = (WTPart) per;
-				EPMDocument e = PartHelper.manager.getEPMDocument(part);
-				if (e == null) {
-//					continue;
-				}
-			}
-
-			boolean viewableLink = true;
-			boolean forceRepublish = false;
-
-			pcs.getEPMActiveNavigationCriteria(false, null);
-
-			isPublished = publisher.doPublish(viewableLink, forceRepublish, publishoid,
-					pcs.getEPMActiveNavigationCriteria(false, null), pcs.getPartActiveNavigationCriteria(null), true,
-					null, null, pcs.getStructureType(), null, 1);
+	/**
+	 * 마크업 썸네일
+	 */
+	public static String markUpThumnail(String oid) throws Exception {
+		WTMarkUp markUp = (WTMarkUp) CommonUtils.getObject(oid);
+		QueryResult result = ContentHelper.service.getContentsByRole(markUp, ContentRoleType.THUMBNAIL);
+		String hostName = WTProperties.getLocalProperties().getProperty("wt.rmi.server.hostname");
+		StringBuffer sb = new StringBuffer();
+		if (result.hasMoreElements()) {
+			ApplicationData data = (ApplicationData) result.nextElement();
+			sb.append("http://");
+			sb.append(hostName);
+			sb.append("/Windchill/servlet/WindchillAuthGW/wt.content.ContentHttp/viewContent/");
+			sb.append(data.getFileName());
+			sb.append("?u8&HttpOperationItem=");
+			sb.append(data.getPersistInfo().getObjectIdentifier().getStringValue());
+			sb.append("&ofn=" + data.getFileName() + "&ContentHolder=");
+			sb.append(oid);
+			sb.append("&forceDownload=true");
 		}
-		System.out.println(isPublished);
-		return isPublished;
+		return sb.toString();
 	}
 }

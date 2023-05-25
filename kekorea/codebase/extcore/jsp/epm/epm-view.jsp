@@ -48,6 +48,9 @@ Vector<Map<String, Object>> secondary = (Vector<Map<String, Object>>) request.ge
 		<li>
 			<a href="#tabs-5">결재이력</a>
 		</li>
+		<li>
+			<a href="#tabs-6">주석세트</a>
+		</li>		
 	</ul>
 	<div id="tabs-1">
 		<table class="view-table">
@@ -253,12 +256,25 @@ Vector<Map<String, Object>> secondary = (Vector<Map<String, Object>>) request.ge
 			<jsp:param value="<%=dto.getOid()%>" name="oid" />
 		</jsp:include>
 	</div>
+	<!-- 주석세트 -->
+	<div id="tabs-6">
+		<jsp:include page="/extcore/jsp/common/markup-include.jsp">
+			<jsp:param value="<%=dto.getOid()%>" name="oid" />
+		</jsp:include>
+	</div>
 </div>
 <script type="text/javascript">
 	function preView() {
 		const oid = document.getElementById("oid").value;
 		const url = "<%=creoViewURL%>";
-		popup(url, 600, 200);
+		if(url !== "") {
+			popup(url, 600, 200);
+		} else {
+			const callUrl = getCallUrl("/doPublish?oid=" + oid);
+			call(callUrl, null, function(data) {
+				alert(data.msg);
+			}, "GET");
+		}
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
@@ -291,20 +307,31 @@ Vector<Map<String, Object>> secondary = (Vector<Map<String, Object>>) request.ge
 						createAUIGrid100(columns100);
 					}
 					break;
+				case "tabs-6":
+					const isCreated20 = AUIGrid.isCreated(myGridID20);
+					if (isCreated20) {
+						AUIGrid.resize(myGridID20);
+					} else {
+						createAUIGrid20(columns20);
+					}
+					break;
 				}
 			}
 		});
 		createAUIGrid(columns);
 		createAUIGrid9(columns9);
 		createAUIGrid100(columns100);
+		createAUIGrid20(columns20);
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID100);
+		AUIGrid.resize(myGridID20);
 	});
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(myGridID9);
 		AUIGrid.resize(myGridID100);
+		AUIGrid.resize(myGridID20);
 	});
 </script>

@@ -382,6 +382,19 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu();
 				});
+				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+			}
+
+			function auiCellClickHandler(event) {
+				const dataField = event.dataField;
+				if (dataField === "thumnail_mini") {
+					const url = event.item.creoViewURL;
+					if (url !== "") {
+						popup(url, 600, 200);
+					} else {
+						alert("뷰어 생성하기!");
+					}
+				}
 			}
 
 			function loadGridData() {

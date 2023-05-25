@@ -14,8 +14,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.FolderUtils;
+import e3ps.common.util.ThumnailUtils;
 import e3ps.org.dto.UserDTO;
 import e3ps.project.service.ProjectHelper;
+import e3ps.system.service.ErrorLogHelper;
 import e3ps.workspace.notice.service.NoticeHelper;
 import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
@@ -103,5 +105,23 @@ public class IndexController extends BaseController {
 		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.setViewName("popup:/common/folder/folder-popup");
 		return model;
+	}
+
+	@Description(value = "뷰어 생성")
+	@GetMapping(value = "/doPublish")
+	@ResponseBody
+	public Map<String, Object> doPublish(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ThumnailUtils.doPublisher(oid);
+			result.put("msg", "워커에 제출 되었습니다.");
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/doPublish", "뷰어 생성");
+		}
+		return result;
 	}
 }

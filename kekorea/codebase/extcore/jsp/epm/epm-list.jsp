@@ -49,9 +49,40 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</colgroup>
 			<tr>
 				<th>도면분류</th>
-				<td colspan="7" class="indent5">
+				<td colspan="3" class="indent5">
 					<input type="hidden" name="location" id="location" value="<%=EpmHelper.DEFAULT_ROOT%>">
 					<span id="locationText"><%=EpmHelper.DEFAULT_ROOT%></span>
+				</td>
+				<th>상태</th>
+				<td class="indent5">
+					<select name="state" id="state" class="width-200">
+						<option value="">선택</option>
+						<option value="INWORK">작업 중</option>
+						<option value="UNDERAPPROVAL">승인 중</option>
+						<option value="APPROVED">승인됨</option>
+						<option value="RETURN">반려됨</option>
+					</select>
+				</td>
+				<th>버전</th>
+				<td colspan="5">
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="latest" value="true" checked="checked">
+						<div class="state p-success">
+							<label>
+								<b>최신버전</b>
+							</label>
+						</div>
+					</div>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="latest" value="">
+						<div class="state p-success">
+							<label>
+								<b>모든버전</b>
+							</label>
+						</div>
+					</div>
 				</td>
 			</tr>
 			<tr>
@@ -123,39 +154,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearFromTo('modifiedFrom', 'modifiedTo')">
 				</td>
 			</tr>
-			<tr>
-				<th>상태</th>
-				<td class="indent5">
-					<select name="state" id="state" class="width-200">
-						<option value="">선택</option>
-						<option value="INWORK">작업 중</option>
-						<option value="UNDERAPPROVAL">승인 중</option>
-						<option value="APPROVED">승인됨</option>
-						<option value="RETURN">반려됨</option>
-					</select>
-				</td>
-				<th>버전</th>
-				<td colspan="5">
-					&nbsp;
-					<div class="pretty p-switch">
-						<input type="radio" name="latest" value="true" checked="checked">
-						<div class="state p-success">
-							<label>
-								<b>최신버전</b>
-							</label>
-						</div>
-					</div>
-					&nbsp;
-					<div class="pretty p-switch">
-						<input type="radio" name="latest" value="">
-						<div class="state p-success">
-							<label>
-								<b>모든버전</b>
-							</label>
-						</div>
-					</div>
-				</td>
-			</tr>
 		</table>
 
 		<table class="button-table">
@@ -191,12 +189,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<jsp:param value="<%=EpmHelper.DEFAULT_ROOT%>" name="location" />
 						<jsp:param value="product" name="container" />
 						<jsp:param value="list" name="mode" />
-						<jsp:param value="595" name="height" />
+						<jsp:param value="630" name="height" />
 					</jsp:include>
 				</td>
 				<td>&nbsp;</td>
 				<td>
-					<div id="grid_wrap" style="height: 595px; border-top: 1px solid #3180c3;"></div>
+					<div id="grid_wrap" style="height: 630px; border-top: 1px solid #3180c3;"></div>
 					<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 				</td>
 			</tr>
@@ -212,8 +210,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					renderer : {
 						type : "ImageRenderer",
 						altField : null,
-						onClick : function(event) {
-						}
 					},
 					filter : {
 						showIcon : false,
@@ -396,6 +392,23 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu();
 				});
+				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+			}
+
+			function auiCellClickHandler(event) {
+				const dataField = event.dataField;
+				const oid = event.item.oid;
+				if (dataField === "thumnail_mini") {
+					const url = event.item.creoViewURL;
+					if (url !== "") {
+						popup(url, 600, 200);
+					} else {
+						const callUrl = getCallUrl("/doPublish?oid=" + oid);
+						call(callUrl, null, function(data) {
+							alert(data.msg);
+						}, "GET");
+					}
+				}
 			}
 
 			function loadGridData() {

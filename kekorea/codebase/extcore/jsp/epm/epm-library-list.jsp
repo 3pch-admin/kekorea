@@ -150,7 +150,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('library-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('library-list');">
-					<input type="button" value="부품" title="부품" class="blue" onclick="toggle('product');">
+					<input type="button" value="도면" title="도면" class="blue" onclick="toggle('product');">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -383,6 +383,23 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu();
 				});
+				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
+			}
+
+			function auiCellClickHandler(event) {
+				const dataField = event.dataField;
+				const oid = event.item.oid;
+				if (dataField === "thumnail_mini") {
+					const url = event.item.creoViewURL;
+					if (url !== "") {
+						popup(url, 600, 200);
+					} else {
+						const callUrl = getCallUrl("/doPublish?oid=" + oid);
+						call(callUrl, null, function(data) {
+							alert(data.msg);
+						}, "GET");
+					}
+				}
 			}
 
 			function loadGridData() {
@@ -413,6 +430,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				toFocus("number");
 				const columns = loadColumnLayout("library-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);
