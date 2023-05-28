@@ -274,7 +274,7 @@ String engType = (String)request.getAttribute("engType");
 				const lotNo = item.lotNo;
 				const quantity = item.quantity;
 				if (dataField === "lotNo") {
-					const url = getCallUrl("/erp/getUnitName?lotNo=" + lotNo);
+					const url = getCallUrl("/erp/getUnitName?lotNo=" + lotNo + "&callLoc=수배표");
 					call(url, null, function(data) {
 						if (data.result) {
 							const newItem = {
@@ -303,7 +303,7 @@ String engType = (String)request.getAttribute("engType");
 
 				if (dataField === "quantity") {
 					// 값이 있을 경우만
-					const url = getCallUrl("/erp/getErpItemByPartNoAndQuantity?partNo=" + partNo + "&quantity=" + quantity);
+					const url = getCallUrl("/erp/getErpItemByPartNoAndQuantity?partNo=" + partNo + "&quantity=" + quantity + "&callLoc=수배표");
 					call(url, null, function(data) {
 						if (data.result) {
 							const newItem = {

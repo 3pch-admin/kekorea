@@ -10,6 +10,7 @@ JSONArray maks = (JSONArray) request.getAttribute("maks");
 JSONArray installs = (JSONArray) request.getAttribute("installs");
 JSONArray customers = (JSONArray) request.getAttribute("customers");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
+boolean isSupervisor = (boolean) request.getAttribute("isSupervisor");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 ArrayList<Map<String, String>> customer_list = (ArrayList<Map<String, String>>) request.getAttribute("customer_list");
 ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) request.getAttribute("mak_list");
@@ -21,7 +22,7 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -35,13 +36,13 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 		<table class="search-table">
 			<colgroup>
 				<col width="130">
-				<col width="*">
+				<col width="300">
 				<col width="130">
-				<col width="*">
+				<col width="300">
 				<col width="130">
-				<col width="*">
+				<col width="300">
 				<col width="130">
-				<col width="*">
+				<col width="300">
 			</colgroup>
 			<tr>
 				<th>항목</th>
@@ -58,7 +59,7 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 				</td>
 				<th>적용/미적용</th>
 				<td class="indent5">
-					<select name="apply" id="apply" class="width-200"> 
+					<select name="apply" id="apply" class="width-200">
 						<option value="">선택</option>
 						<option value="적용완료">적용완료</option>
 						<option value="일부적용">일부적용</option>
@@ -140,7 +141,13 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('cip-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
+					<%
+						if(isSupervisor) {
+					%>
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
+					<%
+						}
+					%>
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">
@@ -155,7 +162,7 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 			</tr>
 		</table>
 
-		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
+		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
@@ -675,10 +682,10 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 			function auiCellEditBegin(event) {
 				const item = event.item;
 				const sessionId = document.getElementById("sessionId").value;
-// 				if (!checker(sessionId, item.creatorId)) {
-// 					alert("데이터 작성자가 아닙니다.");
-// 					return false;
-// 				}
+				// 				if (!checker(sessionId, item.creatorId)) {
+				// 					alert("데이터 작성자가 아닙니다.");
+				// 					return false;
+				// 				}
 			}
 
 			function auiCellClickHandler(event) {
@@ -717,15 +724,19 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/cip/list");
-				const field = ["item","improvements","improvement","apply","mak","detail","customer","install","creatorOid","createdFrom","createdTo","note","psize"];
+				const field = [ "item", "improvements", "improvement", "apply", "mak", "detail", "customer", "install", "creatorOid", "createdFrom", "createdTo", "note", "psize" ];
 				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
-					document.getElementById("sessionid").value = data.sessionid;
-					document.getElementById("curPage").value = data.curPage;
-					AUIGrid.setGridData(myGridID, data.list);
+					if (data.result) {
+						document.getElementById("sessionid").value = data.sessionid;
+						document.getElementById("curPage").value = data.curPage;
+						AUIGrid.setGridData(myGridID, data.list);
+					} else {
+						alert(data.msg);
+					}
 					parent.closeLayer();
 				});
 			}
@@ -757,8 +768,6 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 			function addRow() {
 				const item = new Object();
 				item.latest = true;
-				item.creator = document.getElementById("sessionName").value;
-				item.creatorId = document.getElementById("sessionId").value;
 				AUIGrid.addRow(myGridID, item, "first");
 			}
 
@@ -767,10 +776,10 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 				const sessionId = document.getElementById("sessionId").value;
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
 					const item = checkedItems[i].item;
-// 					if (!checker(sessionId, item.creatorId)) {
-// 						alert("데이터 작성자가 아닙니다.");
-// 						return false;
-// 					}
+					// 					if (!checker(sessionId, item.creatorId)) {
+					// 						alert("데이터 작성자가 아닙니다.");
+					// 						return false;
+					// 					}
 					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
@@ -903,6 +912,7 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
+				toFocus("item");
 				const columns = loadColumnLayout("cip-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

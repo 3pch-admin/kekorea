@@ -1,7 +1,5 @@
 package e3ps.erp;
 
-import com.ptc.windchill.annotations.metadata.ColumnProperties;
-import com.ptc.windchill.annotations.metadata.ColumnType;
 import com.ptc.windchill.annotations.metadata.GenAsPersistable;
 import com.ptc.windchill.annotations.metadata.GeneratedProperty;
 import com.ptc.windchill.annotations.metadata.PropertyConstraints;

@@ -1,3 +1,4 @@
+<%@page import="e3ps.doc.service.DocumentHelper"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.admin.commonCode.CommonCodeType"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -18,6 +19,14 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 <body>
 	<form>
 		<table class="search-table">
+			<colgroup>
+				<col width="150">
+				<col width="300">
+				<col width="150">
+				<col width="300">
+				<col width="150">
+				<col width="300">				
+			</colgroup>
 			<tr>
 				<th>코드 명</th>
 				<td class="indent5">
@@ -34,10 +43,6 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 						<%
 						for (CommonCodeType codeType : codeTypes) {
 							String value = codeType.toString();
-							if (value.equals("MAK_DETAIL") || value.equals("INSTALL") || value.equals("CATEGORY")
-							|| value.equals("CATEGORY_ITEM") || value.equals("CATEGORY_SPEC")) {
-								continue;
-							}
 						%>
 						<option value="<%=codeType.toString()%>"><%=codeType.getDisplay()%></option>
 						<%
@@ -87,7 +92,24 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 				</td>
 			</tr>
 		</table>
-		<div id="grid_wrap" style="height: 700px; border-top: 1px solid #3180c3;"></div>
+		<table>
+			<colgroup>
+				<col width="230">
+				<col width="10">
+				<col width="*">
+			</colgroup>
+			<tr>
+				<td valign="top">
+					<jsp:include page="/extcore/jsp/common/commonCode/codeTree-include.jsp">
+						<jsp:param value="700" name="height" />
+					</jsp:include>
+				</td>
+				<td valign="top">&nbsp;</td>
+				<td valign="top">
+					<div id="grid_wrap" style="height: 700px; border-top: 1px solid #3180c3;"></div>
+				</td>
+			</tr>
+		</table>
 	</form>
 </body>
 <script type="text/javascript">
@@ -282,7 +304,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 	function loadGridData() {
 		let params = new Object();
 		const url = getCallUrl("/commonCode/list");
-		const field = ["name","code","description","codeType"];
+		const field = [ "name", "code", "description", "codeType" ];
 		const enable = !!document.querySelector("input[name=enable]:checked").value;
 		params = toField(params, field);
 		params.enable = enable;
@@ -290,9 +312,13 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		parent.openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
-			$("input[name=sessionid]").val(data.sessionid);
-			$("input[name=curPage]").val(data.curPage);
-			AUIGrid.setGridData(myGridID, data.list);
+			if (data.result) {
+				$("input[name=sessionid]").val(data.sessionid);
+				$("input[name=curPage]").val(data.curPage);
+				AUIGrid.setGridData(myGridID, data.list);
+			} else {
+				alert(data.msg);
+			}
 			parent.closeLayer();
 		});
 	}
@@ -379,9 +405,12 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
-		document.getElementById("name").focus();
-		createAUIGrid(columns);
+		toFocus("name");
 		selectbox("codeType");
+		createAUIGrid(columns);
+		_createAUIGrid(_columns);
+		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
 	});
 
 	document.addEventListener("keydown", function(event) {
@@ -393,6 +422,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID);
+		AUIGrid.resize(_myGridID);
 	});
 </script>
 </html>

@@ -379,4 +379,109 @@ public class WorkspaceController extends BaseController {
 
 		return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
 	}
+
+	@Description(value = "개인결재선 조회 함수")
+	@ResponseBody
+	@PostMapping(value = "/loadLine")
+	public Map<String, Object> loadLine(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = WorkspaceHelper.manager.loadLine(params);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/loadLine", "개인결재선 조회 함수");
+		}
+		return result;
+	}
+
+	@Description(value = "개인결재선 저장 함수")
+	@ResponseBody
+	@PostMapping(value = "/save")
+	public Map<String, Object> save(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkspaceHelper.service.save(params);
+			result.put("result", SUCCESS);
+			result.put("msg", SAVE_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/save", "개인결재선 저장 함수");
+		}
+		return result;
+	}
+
+	@Description(value = "개인결재선 삭제 함수")
+	@ResponseBody
+	@GetMapping(value = "/delete")
+	public Map<String, Object> delete(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkspaceHelper.service.delete(oid);
+			result.put("result", SUCCESS);
+			result.put("msg", DELETE_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/delete", "개인결재선 삭제 함수");
+		}
+		return result;
+	}
+
+	@Description(value = "개인결재선 즐겨찾기 저장 함수")
+	@ResponseBody
+	@PostMapping(value = "/favorite")
+	public Map<String, Object> favorite(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkspaceHelper.service.favorite(params);
+			result.put("result", SUCCESS);
+			result.put("msg", SAVE_MSG);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/favorite", "개인결재선 즐겨찾기 저장 함수");
+		}
+		return result;
+	}
+
+	@Description(value = "개인결재선 즐겨찾기 불러오는 함수")
+	@ResponseBody
+	@PostMapping(value = "/loadFavorite")
+	public Map<String, Object> loadFavorite(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = WorkspaceHelper.manager.loadFavorite(params);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/loadFavorite", "개인결재선 즐겨찾기 불러오는 함수");
+		}
+		return result;
+	}
+	
+	@Description(value = "개인결재선 불러오는 함수")
+	@ResponseBody
+	@GetMapping(value = "/loadFavorite")
+	public Map<String, Object> loadFavorite(@RequestParam String oid) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = WorkspaceHelper.manager.loadFavorite(oid);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/loadFavorite", "개인결재선 불러오는 함수");
+		}
+		return result;
+	}
 }

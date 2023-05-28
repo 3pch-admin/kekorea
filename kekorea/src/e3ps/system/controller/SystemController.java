@@ -35,7 +35,7 @@ public class SystemController extends BaseController {
 	}
 	
 
-	@Description(value = "에러 로그 리스트 함수")
+	@Description(value = "에러 로그 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -47,7 +47,7 @@ public class SystemController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
-			ErrorLogHelper.service.create(e.toString(), "/system/list", "에러 로그 리스트 함수");
+			ErrorLogHelper.service.create(e.toString(), "/system/list", "에러 로그 조회 함수");
 		}
 		return result;
 	}

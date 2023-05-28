@@ -320,7 +320,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				// PDM 에 등록 안된 품목이다..
 				if (dataField === "spec" && !isNull(spec)) {
 					if (item.ycode !== undefined && item.ycode === false) {
-						const url = getCallUrl("/erp/getErpItemBySpec?spec=" + item.spec);
+						const url = getCallUrl("/erp/getErpItemBySpec?spec=" + item.spec + "&callLoc=제작사양서");
 						call(url, null, function(data) {
 							if (data.result) {
 								const newItem = {
@@ -341,7 +341,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				// PDM 에 데이터가 있다.
 				if (dataField === "number" && !isNull(number)) {
 					if (item.dwg !== undefined && item.dwg === false) {
-						const url = getCallUrl("/erp/getErpItemByPartNo?partNo=" + number);
+						const url = getCallUrl("/erp/getErpItemByPartNo?partNo=" + number +"&callLoc=제작사양서");
 						call(url, null, function(data) {
 							if (data.result) {
 								const newItem = {

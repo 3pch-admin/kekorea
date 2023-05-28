@@ -34,6 +34,7 @@ import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
+import e3ps.workspace.ApprovalUserLine;
 import e3ps.workspace.notification.service.NotificationHelper;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
@@ -786,6 +787,117 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 			throw e;
 		} finally {
 			System.out.println("롤백 안하나?" + trs);
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void save(Map<String, Object> params) throws Exception {
+		String name = (String) params.get("name");
+		ArrayList<Map<String, Object>> approvalList = (ArrayList<Map<String, Object>>) params.get("approvalList");
+		ArrayList<Map<String, Object>> agreeList = (ArrayList<Map<String, Object>>) params.get("agreeList");
+		ArrayList<Map<String, Object>> receiveList = (ArrayList<Map<String, Object>>) params.get("receiveList");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			ArrayList<String> _approvalList = new ArrayList<>();
+			ArrayList<String> _agreeList = new ArrayList<>();
+			ArrayList<String> _receiveList = new ArrayList<>();
+
+			ApprovalUserLine line = ApprovalUserLine.newApprovalUserLine();
+			line.setName(name);
+			line.setOwnership(CommonUtils.sessionOwner());
+
+			for (Map<String, Object> approval : approvalList) {
+				String oid = (String) approval.get("oid");
+				_approvalList.add(oid);
+			}
+
+			for (Map<String, Object> agree : agreeList) {
+				String oid = (String) agree.get("oid");
+				_agreeList.add(oid);
+			}
+
+			for (Map<String, Object> receive : receiveList) {
+				String oid = (String) receive.get("oid");
+				_receiveList.add(oid);
+			}
+			line.setFavorite(false);
+			line.setApprovalList(_approvalList);
+			line.setAgreeList(_agreeList);
+			line.setReceiveList(_receiveList);
+			PersistenceHelper.manager.save(line);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void delete(String oid) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			ApprovalUserLine line = (ApprovalUserLine) CommonUtils.getObject(oid);
+			PersistenceHelper.manager.delete(line);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void favorite(Map<String, Object> params) throws Exception {
+		String oid = (String) params.get("oid");
+		boolean checked = (boolean) params.get("checked");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			WTUser sessionUser = CommonUtils.sessionUser();
+
+			ApprovalUserLine line = (ApprovalUserLine) CommonUtils.getObject(oid);
+
+			QuerySpec query = new QuerySpec();
+			int idx = query.appendClassList(ApprovalUserLine.class, true);
+			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalUserLine.class, "ownership.owner.key.id", sessionUser);
+			QueryResult rs = PersistenceHelper.manager.find(query);
+			while (rs.hasMoreElements()) {
+				Object[] obj = (Object[]) rs.nextElement();
+				ApprovalUserLine aLine = (ApprovalUserLine) obj[0];
+				if (line.getPersistInfo().getObjectIdentifier().getId() == aLine.getPersistInfo().getObjectIdentifier()
+						.getId()) {
+					aLine.setFavorite(checked);
+				} else {
+					aLine.setFavorite(false);
+				}
+				PersistenceHelper.manager.modify(aLine);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
 			if (trs != null)
 				trs.rollback();
 		}

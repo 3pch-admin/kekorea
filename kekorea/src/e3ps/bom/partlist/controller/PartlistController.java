@@ -40,9 +40,11 @@ public class PartlistController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSuperviosr = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSuperviosr", isSuperviosr);
 		model.setViewName("/extcore/jsp/bom/partlist/partlist-list.jsp");
 		return model;
 	}
@@ -68,7 +70,6 @@ public class PartlistController extends BaseController {
 	@GetMapping(value = "/view")
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
-		boolean isAdmin = CommonUtils.isAdmin();
 		Persistable per = (Persistable) CommonUtils.getObject(oid);
 		PartListDTO dto = null;
 		if (per instanceof PartListMasterProjectLink) {
@@ -80,7 +81,12 @@ public class PartlistController extends BaseController {
 		}
 
 		JSONArray list = PartlistHelper.manager.getData(dto.getOid());
+		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSuperviosr = CommonUtils.isSupervisor();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSuperviosr", isSuperviosr);
 		model.addObject("dto", dto);
 		model.addObject("list", list);
 		model.setViewName("popup:/bom/partlist/partlist-view");
@@ -93,6 +99,8 @@ public class PartlistController extends BaseController {
 			throws Exception {
 		ModelAndView model = new ModelAndView();
 		Project p1 = (Project) CommonUtils.getObject(oid);
+		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSuperviosr = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		String[] compareOids = compareArr.split(",");
 		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
@@ -101,6 +109,8 @@ public class PartlistController extends BaseController {
 			destList.add(project);
 		}
 		ArrayList<Map<String, Object>> data = PartlistHelper.manager.compare(p1, destList, invoke);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSuperviosr", isSuperviosr);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("p1", p1);
 		model.addObject("oid", oid);
@@ -115,9 +125,11 @@ public class PartlistController extends BaseController {
 	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("method", method);
 		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.setViewName("popup:/bom/partlist/partlist-popup");
@@ -129,6 +141,9 @@ public class PartlistController extends BaseController {
 	public ModelAndView create(@RequestParam(required = false) String poid, @RequestParam(required = false) String toid)
 			throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		People people = CommonUtils.sessionPeople();
 		Department department = people.getDepartment();
 		String engType = "";
@@ -138,7 +153,9 @@ public class PartlistController extends BaseController {
 			engType = "전기";
 		}
 		model.addObject("engType", engType);
-
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		if (!StringUtils.isNull(poid)) {
 			Project project = (Project) CommonUtils.getObject(poid);
 			ArrayList<Map<String, String>> list = new ArrayList<>();
@@ -189,6 +206,8 @@ public class PartlistController extends BaseController {
 	public ModelAndView modify(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		PartListMaster master = (PartListMaster) CommonUtils.getObject(oid);
 		PartListDTO dto = new PartListDTO(master);
 		JSONArray list = PartlistHelper.manager.getData(dto.getOid());
@@ -201,6 +220,8 @@ public class PartlistController extends BaseController {
 		} else if (department.getCode().equals("ELEC")) {
 			engType = "전기";
 		}
+		model.addObject("isSupervisor", isSupervisor);
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("engType", engType);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("data", data);
@@ -268,7 +289,13 @@ public class PartlistController extends BaseController {
 	@GetMapping(value = "/moneyInfo")
 	public ModelAndView moneyInfo(@RequestParam String oid, @RequestParam String invoke) throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		JSONArray data = PartlistHelper.manager.partlistTab(oid, invoke);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("invoke", invoke);
 		model.addObject("data", data);
 		model.setViewName("popup:/bom/partlist/partlist-moneyInfo");
@@ -281,8 +308,10 @@ public class PartlistController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("toid", toid);
 		model.addObject("poid", poid);
 		model.setViewName("popup:/bom/partlist/partlist-connect");

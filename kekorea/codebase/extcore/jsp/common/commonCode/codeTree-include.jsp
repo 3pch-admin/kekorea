@@ -1,8 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-String location = request.getParameter("location");
-String container = request.getParameter("container");
-String mode = request.getParameter("mode");
 String height = request.getParameter("height");
 %>
 <!-- 폴더 그리드 리스트 -->
@@ -11,7 +8,7 @@ String height = request.getParameter("height");
 	let _myGridID;
 	const _columns = [ {
 		dataField : "name",
-		headerText : "폴더명",
+		headerText : "코드타입",
 		dataType : "string",
 		filter : {
 			showIcon : true,
@@ -21,7 +18,6 @@ String height = request.getParameter("height");
 
 	function _createAUIGrid(columnLayout) {
 		const props = {
-			rowIdField : "oid",
 			headerHeight : 30,
 			showRowNumColumn : true,
 			rowNumHeaderText : "번호",
@@ -32,9 +28,7 @@ String height = request.getParameter("height");
 			forceTreeView : true
 		}
 		_myGridID = AUIGrid.create("#_grid_wrap", columnLayout, props);
-		loadFolderTree();
-// 		AUIGrid.bind(_myGridID, "selectionChange", auiGridSelectionChangeHandler);
-		AUIGrid.bind(_myGridID, "cellDoubleClick", auiCellDoubleClick);
+		loadTree();
 		AUIGrid.bind(_myGridID, "cellClick", auiCellClick);
 		AUIGrid.bind(_myGridID, "ready", auiReadyHandler);
 	}
@@ -42,45 +36,34 @@ String height = request.getParameter("height");
 	function auiReadyHandler() {
 		AUIGrid.showItemsOnDepth(_myGridID, 2);
 	}
-
-	
-	function auiCellClick(event) {
-		const item = event.item;
-		const oid = item.oid;
-		const location = item.location;
-		document.getElementById("oid").value = oid;
-		document.getElementById("location").value = oid;
-		document.getElementById("locationText").innerText = location;
-	}
 	
 	let timerId = null;
-	function auiCellDoubleClick(event) {
-		<%if ("list".equals(mode)) {%>
-		// 500ms 보다 빠르게 그리드 선택자가 변경된다면 데이터 요청 안함
+	function auiCellClick(event) {
 		if (timerId) {
 			clearTimeout(timerId);
 		}
 
 		timerId = setTimeout(function () {
 			const primeCell = event.item;
-			const oid = primeCell.oid;
-			const location = primeCell.location;
-			document.getElementById("oid").value = oid;
-			document.getElementById("location").value = oid;
-			document.getElementById("locationText").innerText = location;
+			const codeType = primeCell.codeType;
+			
+			if(codeType === "DETAIL" || codeType === "INSTALL") {
+				AUIGrid.hideColumnByDataField(myGridID, "parent_name");	
+			} else {
+				AUIGrid.showColumnByDataField(myGridID, "parent_name");	
+			}
+			
+			$("#codeType").bindSelectSetValue(codeType);
 			loadGridData();
 		}, 500);  
-		<%}%>
 	}
 	
 	
-	function loadFolderTree() {
-		const location = decodeURIComponent("<%=location%>");
-		const url = getCallUrl("/loadFolderTree");
+	function loadTree() {
+		const url = getCallUrl("/commonCode/loadTree");
 		const params = new Object();
-		params.location = location;
-		params.container = "<%=container%>";
 		call(url, params, function(data) {
+			console.log(data);
 			AUIGrid.setGridData(_myGridID, data.list);
 		});
 	}

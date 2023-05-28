@@ -30,9 +30,12 @@ import wt.util.WTProperties;
 public class MailUtils {
 
 	public static final boolean isMail = true;
-	private static final String host = "kokusai-electric.com";
+//	private static final String host = "kokusai-electric.com";
 	private static final String port = "465";
 
+	private static final String host = "3pchain.co.kr";
+	
+	
 	private MailUtils() {
 
 	}
@@ -45,7 +48,7 @@ public class MailUtils {
 		message.setFrom(new InternetAddress(sessionUser.getEMail(), sessionUser.getFullName()));
 
 		InternetAddress to = new InternetAddress();
-		to = new InternetAddress("jhkim@e3ps.com");
+		to = new InternetAddress("jhkim@3pchain.co.kr");
 
 		message.setRecipient(Message.RecipientType.TO, to);
 		message.setSubject("비밀번호 초기화");

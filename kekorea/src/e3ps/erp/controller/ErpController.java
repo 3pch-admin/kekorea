@@ -29,8 +29,10 @@ public class ErpController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/erp/erp-list.jsp");
 		return model;
@@ -97,11 +99,11 @@ public class ErpController extends BaseController {
 	@Description(value = "수배표 UNITNAME 가져오기")
 	@GetMapping(value = "/getUnitName")
 	@ResponseBody
-	public Map<String, Object> getUnitName(@RequestParam int lotNo) throws Exception {
+	public Map<String, Object> getUnitName(@RequestParam int lotNo, @RequestParam String callLoc) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			if (ErpHelper.isOperation) {
-				result = ErpHelper.manager.getUnitName(lotNo);
+				result = ErpHelper.manager.getUnitName(lotNo, callLoc);
 			}
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
@@ -136,11 +138,11 @@ public class ErpController extends BaseController {
 	@Description(value = "규격으로 ERP 부품정보 가져오기")
 	@GetMapping(value = "/getErpItemBySpec")
 	@ResponseBody
-	public Map<String, Object> getErpItemBySpec(@RequestParam String spec) throws Exception {
+	public Map<String, Object> getErpItemBySpec(@RequestParam String spec, @RequestParam String callLoc) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			if (ErpHelper.isOperation) {
-				result = ErpHelper.manager.getErpItemBySpec(spec);
+				result = ErpHelper.manager.getErpItemBySpec(spec, callLoc);
 			}
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
@@ -155,11 +157,11 @@ public class ErpController extends BaseController {
 	@Description(value = "YCODE로 ERP 부품정보 가져오기")
 	@GetMapping(value = "/getErpItemByPartNo")
 	@ResponseBody
-	public Map<String, Object> getErpItemByPartNo(@RequestParam String partNo) throws Exception {
+	public Map<String, Object> getErpItemByPartNo(@RequestParam String partNo, @RequestParam String callLoc) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			if (ErpHelper.isOperation) {
-				result = ErpHelper.manager.getErpItemByPartNo(partNo);
+				result = ErpHelper.manager.getErpItemByPartNo(partNo, callLoc);
 			}
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

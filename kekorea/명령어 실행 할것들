@@ -1,5 +1,7 @@
 1. Apache 설정 변경
 	- HTTPServer 홈으로 이동
+	- HTTPServer -> conf -> templates -> webapp -> webAppAJPConf.template 오픈
+	- JkMount /@@WEB_APP_NAME@@/plm/* @@AJP_WORKER_NAME@@ 추가 
 	- ant -f webAppConfig.xml regenWebAppConf -DappName=Windchill -DprotocolAuthOnly=true 실행
 	
 2. ResourceBuild 실행

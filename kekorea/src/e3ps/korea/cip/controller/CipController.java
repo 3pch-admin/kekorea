@@ -44,8 +44,10 @@ public class CipController extends BaseController {
 		ArrayList<Map<String, String>> mak_list = CommonCodeHelper.manager.getValueMap("MAK");
 
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("mak_list", mak_list);
 		model.addObject("customer_list", customer_list);
 		model.addObject("sessionUser", sessionUser);

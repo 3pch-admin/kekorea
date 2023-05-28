@@ -6,7 +6,6 @@ import com.ptc.windchill.annotations.metadata.GenAsEnumeratedType;
 public class CommonCodeType extends _CommonCodeType {
 
 	public static final CommonCodeType CUSTOMER = toCommonCodeType("CUSTOMER");
-	public static final CommonCodeType STEP = toCommonCodeType("STEP");
 	public static final CommonCodeType INSTALL = toCommonCodeType("INSTALL");
 	public static final CommonCodeType PROJECT_TYPE = toCommonCodeType("PROJECT_TYPE");
 	public static final CommonCodeType MAK = toCommonCodeType("MAK");

@@ -12,6 +12,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 //import net.sf.json.JSONArray;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -45,36 +46,7 @@ public class CommonCodeHelper {
 		QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.DESCRIPTION, description);
 		QuerySpecUtils.toBooleanAnd(query, idx, CommonCode.class, CommonCode.ENABLE, enable);
 
-		if (!StringUtils.isNull(codeType)) {
-
-			if (codeType.equals("MAK")) {
-				if (query.getConditionCount() > 0) {
-					query.appendAnd();
-				}
-
-				query.appendOpenParen();
-				query.appendWhere(new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", "MAK"),
-						new int[] { idx });
-				query.appendOr();
-				query.appendWhere(new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", "MAK_DETAIL"),
-						new int[] { idx });
-				query.appendCloseParen();
-			} else if (codeType.equals("CUSTOMER")) {
-				if (query.getConditionCount() > 0) {
-					query.appendAnd();
-				}
-
-				query.appendOpenParen();
-				query.appendWhere(new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", "CUSTOMER"),
-						new int[] { idx });
-				query.appendOr();
-				query.appendWhere(new SearchCondition(CommonCode.class, CommonCode.CODE_TYPE, "=", "INSTALL"),
-						new int[] { idx });
-				query.appendCloseParen();
-			} else {
-				QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
-			}
-		}
+		QuerySpecUtils.toEqualsAnd(query, idx, CommonCode.class, CommonCode.CODE_TYPE, codeType);
 
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.CODE_TYPE, false);
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.SORT, false);
@@ -263,6 +235,30 @@ public class CommonCodeHelper {
 			map.put("value", commonCode.getName());
 			list.add(map);
 		}
+		return list;
+	}
+
+	/**
+	 * 코드타입 트리 가져오는 함수
+	 */
+	public JSONArray loadTree(Map<String, String> params) throws Exception {
+
+		JSONArray list = new JSONArray();
+		JSONObject rootNode = new JSONObject();
+		rootNode.put("codeType", "ROOT");
+		rootNode.put("name", "코드타입");
+
+		JSONArray children = new JSONArray();
+
+		CommonCodeType[] result = CommonCodeType.getCommonCodeTypeSet();
+		for (CommonCodeType type : result) {
+			JSONObject node = new JSONObject();
+			node.put("codeType", type.toString());
+			node.put("name", type.getDisplay());
+			children.add(node);
+		}
+		rootNode.put("children", children);
+		list.add(rootNode);
 		return list;
 	}
 }

@@ -746,7 +746,7 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 					alert("작번을 선택하세요.");
 					return false;
 				}
-				subLoc.innerHTML = "작번 관리 > 작번 산출물 결재";
+				subLoc.innerHTML = "> 작번 관리 > 작번 산출물 결재";
 				parent.openLayer();
 				const oid = checkedItems[0].item.oid;
 				const iframe = parent.document.getElementById("content");

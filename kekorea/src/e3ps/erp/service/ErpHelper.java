@@ -121,8 +121,10 @@ public class ErpHelper {
 				System.out.println("PART NO VALIDATE CACHE");
 				result = cacheData;
 			}
+			ErpHelper.service.writeLog("수배표 YCODE 체크", sql.toString(), "", true, "수배표");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("수배표 YCODE 체크", sql.toString(), e.toString(), false, "수배표");
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -134,7 +136,7 @@ public class ErpHelper {
 	/**
 	 * 수배표 UNITNAME 가져오기
 	 */
-	public Map<String, Object> getUnitName(int lotNo) throws Exception {
+	public Map<String, Object> getUnitName(int lotNo, String callLoc) throws Exception {
 		Map<String, Object> result = new HashMap<>();
 		StringBuffer sql = new StringBuffer();
 		Connection con = null;
@@ -159,11 +161,10 @@ public class ErpHelper {
 				result = cacheData;
 			}
 
-			// 실패시 로그만 생성하도록
-//			ErpHelper.service.writeLog("LOT번호로 UNIT NAME 가져오기", sql.toString(), "", true, "KEK 도번");
+			ErpHelper.service.writeLog("LOT번호로 UNIT NAME 가져오기", sql.toString(), "", true, callLoc);
 		} catch (Exception e) {
 			e.printStackTrace();
-			ErpHelper.service.writeLog("LOT번호로 UNIT NAME 가져오기", sql.toString(), e.toString(), false, "KEK 도번");
+			ErpHelper.service.writeLog("LOT번호로 UNIT NAME 가져오기", sql.toString(), e.toString(), false, callLoc);
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -173,7 +174,7 @@ public class ErpHelper {
 	}
 
 	/**
-	 * 부품수배표 부품정보 가져오기
+	 * 수배표 부품정보 가져오기
 	 */
 	public Map<String, Object> getErpItemByPartNoAndQuantity(String partNo, int quantity) throws Exception {
 		StringBuffer sql = new StringBuffer();
@@ -277,7 +278,7 @@ public class ErpHelper {
 	/**
 	 * 규격으로 ERP 부품정보 가져오기
 	 */
-	public Map<String, Object> getErpItemBySpec(String spec) throws Exception {
+	public Map<String, Object> getErpItemBySpec(String spec, String callLoc) throws Exception {
 		StringBuffer sql = new StringBuffer();
 		Map<String, Object> result = new HashMap<String, Object>(); // json
 		Connection con = null;
@@ -325,10 +326,10 @@ public class ErpHelper {
 				result.put("price", price);
 				result.put("currency", currency);
 			}
-			ErpHelper.service.writeLog("규격으로 ERP 부품 정보 가져오기 가져오기", sql.toString(), "", true, "제작사양서");
+			ErpHelper.service.writeLog("규격으로 ERP 부품 정보 가져오기 가져오기", sql.toString(), "", true, callLoc);
 		} catch (Exception e) {
 			e.printStackTrace();
-			ErpHelper.service.writeLog("규격으로 ERP 부품 정보 가져오기 가져오기", sql.toString(), e.toString(), false, "제작사양서");
+			ErpHelper.service.writeLog("규격으로 ERP 부품 정보 가져오기 가져오기", sql.toString(), e.toString(), false, callLoc);
 			if (con != null) {
 				con.close();
 			}
@@ -366,10 +367,11 @@ public class ErpHelper {
 	}
 
 	/**
-	 * PDM에 등록된 데이터 YCODE로 ERP에서 추가 정보 가져오기 ㄴ
+	 * PDM에 등록된 데이터 YCODE로 ERP에서 추가 정보 가져오기
 	 */
-	public Map<String, Object> getErpItemByPartNo(String partNo) throws Exception {
+	public Map<String, Object> getErpItemByPartNo(String partNo, String callLoc) throws Exception {
 		Map<String, Object> result = new HashMap<>();
+		StringBuffer sql = new StringBuffer();
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -379,7 +381,6 @@ public class ErpHelper {
 			con = dataSource.getConnection();
 			st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
 			sql.append("SELECT ITEMSEQ, ITEMNAME, SPEC");
 			sql.append(" FROM KEK_VDAITEM");
 			sql.append(" WHERE ITEMNO='" + partNo.trim() + "' AND SMSATAUSNAME != '폐기'");
@@ -417,8 +418,11 @@ public class ErpHelper {
 				result.put("standard", spec);
 				result.put("partName", itemName);
 			}
+			ErpHelper.service.writeLog(" PDM에 등록된 데이터 YCODE로 ERP에서 추가 정보 가져오기 ", sql.toString(), "", true, callLoc);
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog(" PDM에 등록된 데이터 YCODE로 ERP에서 추가 정보 가져오기 ", sql.toString(), e.toString(), false,
+					callLoc);
 			if (con != null) {
 				con.close();
 			}
@@ -485,7 +489,7 @@ public class ErpHelper {
 				sql.append("INSERT INTO KEK_TPJTOUTPUTRPTDO_IF (SEQ, STDNO, PJTSEQ, STDREPORTSEQ, REGDATE, USERID, ");
 				sql.append("REMARK, CREATE_TIME)");
 
-				int seq = getMaxSequence("KEK_TPJTOUTPUTRPTDO_IF");
+				int seq = getMaxSequence("KEK_TPJTOUTPUTRPTDO_IF", "산출물");
 				sql.append(" VALUES('" + seq + "', ");
 
 				String stdNo = document.getNumber();
@@ -547,14 +551,14 @@ public class ErpHelper {
 					System.out.println("실패 했나?");
 				}
 
-				ErpHelper.service.writeLog("규격으로 ERP 부품 정보 가져오기 가져오기", sql.toString(), "", true, "제작사양서");
+				ErpHelper.service.writeLog("산출물 정보 ERP 전송", sql.toString(), "", true, "산출물");
 			}
 
 			con.commit();
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			ErpHelper.service.writeLog("규격으로 ERP 부품 정보 가져오기 가져오기", errorQuery, e.toString(), false, "제작사양서");
+			ErpHelper.service.writeLog("산출물 정보 ERP 전송", errorQuery, e.toString(), false, "산출물");
 			con.rollback();
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
@@ -567,6 +571,7 @@ public class ErpHelper {
 	 * 프로젝트 산출물 물리파일 ERP 전송
 	 */
 	private void sendToErpFile(WTDocument document, Project project) throws Exception {
+		String errorQuery = "";
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -581,7 +586,7 @@ public class ErpHelper {
 			sql.append(
 					"INSERT INTO KEK_TPJTOUTPUTRPTDOFILE_IF (SEQ, STDNO, RPTFILENAME, CREATE_TIME, FILEEXT, FILESIZE)");
 
-			int seq = getMaxSequence("KEK_TPJTOUTPUTRPTDOFILE_IF");
+			int seq = getMaxSequence("KEK_TPJTOUTPUTRPTDOFILE_IF", "산출물");
 			sql.append(" VALUES('" + seq + "', ");
 
 			String stdNo = document.getNumber();
@@ -616,7 +621,12 @@ public class ErpHelper {
 
 			long fileSize = data != null ? data.getFileSize() : 0L;
 			sql.append("'" + fileSize + "');");
+
+			errorQuery = sql.toString();
+
 			st.executeUpdate(sql.toString());
+
+			ErpHelper.service.writeLog("산출물 물리파일 정보 ERP 전송", sql.toString(), "", true, "산출물");
 
 			// 첨부 파일 전송...
 			String dir = erpOutputDir;
@@ -640,6 +650,8 @@ public class ErpHelper {
 			con.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("산출물 물리파일 정보 ERP 전송", errorQuery, e.toString(), false, "산출물");
+			con.rollback();
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -660,21 +672,23 @@ public class ErpHelper {
 	/**
 	 * 테이블 최대 Sequence + 1 값 반환
 	 */
-	public int getMaxSequence(String table) throws Exception {
+	public int getMaxSequence(String table, String callLoc) throws Exception {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		String sql = "SELECT MAX(SEQ) FROM " + table;
 		try {
 
-			String sql = "SELECT MAX(SEQ) FROM " + table;
 			con = dataSource.getConnection();
 			st = con.createStatement();
 			rs = st.executeQuery(sql);
 			if (rs.next()) {
 				return rs.getInt(1) + 1;
 			}
+			ErpHelper.service.writeLog("ERP 테이블 Sequence 값 + 1 반환", sql, "", true, callLoc);
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("ERP 테이블 Sequence 값 + 1 반환", sql, e.toString(), false, callLoc);
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -688,6 +702,7 @@ public class ErpHelper {
 	 */
 	public Map<String, Object> getPjtInfoByKekNumber(String kekNumber) throws Exception {
 		Map<String, Object> data = new HashMap<>();
+		StringBuffer sql = new StringBuffer();
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -695,7 +710,6 @@ public class ErpHelper {
 			con = dataSource.getConnection();
 			st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
 			sql.append("SELECT PJTSEQ, PJTNAME, PJTNO FROM KEK_VPJTPROJECT WHERE PJTNO='" + kekNumber + "'");
 
 			rs = st.executeQuery(sql.toString());
@@ -707,8 +721,10 @@ public class ErpHelper {
 				data.put("pjtName", pjtName);
 				data.put("pjtNo", pjtNo);
 			}
+			ErpHelper.service.writeLog("ERP 테이블 Sequence 값 + 1 반환", sql.toString(), "", true, "산출물");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("ERP 테이블 Sequence 값 + 1 반환", sql.toString(), e.toString(), false, "산출물");
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -729,6 +745,7 @@ public class ErpHelper {
 	 */
 	public void sendToErp(PartListMaster master) throws Exception {
 		System.out.println("수배표 전송 START = " + new Timestamp(new Date().getTime()));
+		String errorQuery = "";
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -764,7 +781,7 @@ public class ErpHelper {
 					sql.append("ACCDATE, LOTSEQ, ITEMSEQ, MAKERSEQ, CUSTSEQ, UNITSEQ, CURRSEQ, QTY, EXRATE, ");
 					sql.append("AMT, REMARK, UMSUPPLYTYPE, PRICE, CREATE_TIME, APPUSERID )");
 
-					int seq = getMaxSequence("KEK_TPJTBOM_IF");
+					int seq = getMaxSequence("KEK_TPJTBOM_IF", "수배표");
 					sql.append(" VALUES('" + seq + "', ");
 					sql.append("'" + disNo + "', ");
 
@@ -824,9 +841,11 @@ public class ErpHelper {
 
 					String lastId = master.getLast();
 					sql.append("'" + lastId + "');");
-//					sendQuery += sql.toString() + "\n";
+
+					errorQuery = sql.toString();
 
 					st.executeUpdate(sql.toString());
+					ErpHelper.service.writeLog("수배표 ERP 전송", sql.toString(), "", true, "수배표");
 				}
 
 				StringBuffer sb = new StringBuffer();
@@ -836,13 +855,12 @@ public class ErpHelper {
 			con.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("수배표 ERP 전송", errorQuery, e.toString(), false, "수배표");
 			con.rollback();
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
 			ErpConnectionPool.free(con, st, rs);
-			// 수배표 전송 ERP 이력
-//			ErpHelper.service.save(master.getName(), sendResult, sendQuery, "수배표");
 		}
 		System.out.println("수배표 전송 END = " + new Timestamp(new Date().getTime()));
 	}
@@ -851,6 +869,7 @@ public class ErpHelper {
 	 * ERP LOT NO SEQ 가져오기
 	 */
 	public int getKekLotSeq(String lotNo) throws Exception {
+		StringBuffer sql = new StringBuffer();
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -858,16 +877,16 @@ public class ErpHelper {
 			con = dataSource.getConnection();
 			st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
-
 			sql.append("SELECT LOTSEQ FROM KEK_VDALOTNO WHERE LOTNO='" + lotNo + "'");
 
 			rs = st.executeQuery(sql.toString());
 			if (rs.next()) {
 				return (int) rs.getInt(1);
 			}
+			ErpHelper.service.writeLog("수배표 LOT SEQ", sql.toString(), "", true, "수배표");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("수배표 LOT SEQ", sql.toString(), e.toString(), false, "수배표");
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -883,19 +902,21 @@ public class ErpHelper {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		StringBuffer sql = new StringBuffer();
 		try {
 			con = dataSource.getConnection();
 			st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
 			sql.append("SELECT DESIGNTYPE FROM KEK_VDADESIGNTYPE WHERE DESIGNTYPENAME='" + engType + "'");
 
 			rs = st.executeQuery(sql.toString());
 			if (rs.next()) {
 				return (int) rs.getInt(1);
 			}
+			ErpHelper.service.writeLog("수배표 설계타입 SEQ", sql.toString(), "", true, "수배표");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("수배표 설계타입 SEQ", sql.toString(), e.toString(), false, "수배표");
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -915,12 +936,12 @@ public class ErpHelper {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		StringBuffer sql = new StringBuffer();
 		try {
 
 			con = dataSource.getConnection();
 			st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
 			sql.append("SELECT ITEMSEQ");
 			sql.append(" FROM KEK_VDAITEM");
 			sql.append(" WHERE ITEMNO='" + partNo + "'");
@@ -929,8 +950,10 @@ public class ErpHelper {
 			if (rs.next()) {
 				return (int) rs.getInt(1);
 			}
+			ErpHelper.service.writeLog("수배표 설계타입 SEQ", sql.toString(), "", true, "수배표");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("수배표 설계타입 SEQ", sql.toString(), "", true, "수배표");
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -946,20 +969,22 @@ public class ErpHelper {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		StringBuffer sql = new StringBuffer();
 		try {
 
 			con = dataSource.getConnection();
 			st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
 			sql.append("SELECT MAKERSEQ FROM KEK_VDAMAKER WHERE MAKERNAME='" + makerName + "'");
 
 			rs = st.executeQuery(sql.toString());
 			if (rs.next()) {
 				return (int) rs.getInt(1);
 			}
+			ErpHelper.service.writeLog("수배표 메이커 SEQ", sql.toString(), "", true, "수배표");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("수배표 메이커 SEQ", sql.toString(), e.toString(), false, "수배표");
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -972,20 +997,22 @@ public class ErpHelper {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		StringBuffer sql = new StringBuffer();
 		try {
 
 			con = dataSource.getConnection();
 			st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
 			sql.append("SELECT CUSTSEQ FROM KEK_VDAPURCUST WHERE CUSTNAME='" + customer + "'");
 
 			rs = st.executeQuery(sql.toString());
 			if (rs.next()) {
 				return (int) rs.getInt(1);
 			}
+			ErpHelper.service.writeLog("수배표 메이커 SEQ", sql.toString(), "", true, "수배표");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("수배표 메이커 SEQ", sql.toString(), e.toString(), false, "수배표");
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -1001,19 +1028,21 @@ public class ErpHelper {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		StringBuffer sql = new StringBuffer();
 		try {
 
 			con = dataSource.getConnection();
 			st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
 			sql.append("SELECT UNITSEQ FROM KEK_VDAUNIT WHERE UNITNAME='" + unitName + "'");
 			rs = st.executeQuery(sql.toString());
 			if (rs.next()) {
 				return (int) rs.getInt(1);
 			}
+			ErpHelper.service.writeLog("수배표 기준단위 SEQ", sql.toString(), "", true, "수배표");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("수배표 기준단위 SEQ", sql.toString(), e.toString(), false, "수배표");
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -1029,20 +1058,22 @@ public class ErpHelper {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		StringBuffer sql = new StringBuffer();
 		try {
 
 			con = dataSource.getConnection();
 			st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
 			sql.append("SELECT CURRSEQ FROM KEK_VDACURR WHERE CURRNAME='" + currency + "'");
 
 			rs = st.executeQuery(sql.toString());
 			if (rs.next()) {
 				return (int) rs.getInt(1);
 			}
+			ErpHelper.service.writeLog("수배표 통화 SEQ", sql.toString(), "", true, "수배표");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("수배표 통화 SEQ", sql.toString(), e.toString(), false, "수배표");
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -1058,20 +1089,22 @@ public class ErpHelper {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		StringBuffer sql = new StringBuffer();
 		try {
 
 			con = dataSource.getConnection();
 			st = con.createStatement();
 
-			StringBuffer sql = new StringBuffer();
 			sql.append("SELECT UMSUPPLYTYPE FROM KEK_VDASUPPLYTYPE WHERE UMSUPPLYTYPENAME='" + classification + "'");
 
 			rs = st.executeQuery(sql.toString());
 			if (rs.next()) {
 				return (int) rs.getInt(1);
 			}
+			ErpHelper.service.writeLog("수배표 조달구분 SEQ", sql.toString(), "", true, "수배표");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("수배표 조달구분 SEQ", sql.toString(), e.toString(), false, "수배표");
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -1088,12 +1121,11 @@ public class ErpHelper {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		StringBuffer sql = new StringBuffer();
 		try {
 
 			con = dataSource.getConnection();
 			st = con.createStatement();
-
-			StringBuffer sql = new StringBuffer();
 
 			int keyIdx = 1;
 			sql.append(
@@ -1105,7 +1137,7 @@ public class ErpHelper {
 			sql.append("" + addName + ", " + addExt + ", " + addSize + ", ");
 			sql.append("ISCODE)");
 
-			int seq = getMaxSequence("KEK_TDAITEM_IF");
+			int seq = getMaxSequence("KEK_TDAITEM_IF", "제작사양서");
 			sql.append(" VALUES('" + seq + "', ");
 
 			String partName = IBAUtils.getStringValue(part, "NAME_OF_PARTS");
@@ -1161,8 +1193,11 @@ public class ErpHelper {
 
 			partNo = savePartNo(part, spec);
 
+			ErpHelper.service.writeLog("ERP로 품목정보 전송", sql.toString(), "", true, "품목등록");
+
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("ERP로 품목정보 전송", sql.toString(), e.toString(), false, "품목등록");
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -1178,12 +1213,12 @@ public class ErpHelper {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		StringBuffer sql = new StringBuffer();
 		String partNo = "";
 		try {
 
 			con = dataSource.getConnection();
 			st = con.createStatement();
-			StringBuffer sql = new StringBuffer();
 			sql.append("SELECT PART_NO FROM KEK_TDAITEM_IF WHERE PART_SPEC='" + spec + "'");
 			rs = st.executeQuery(sql.toString());
 			if (rs.next()) {
@@ -1194,8 +1229,10 @@ public class ErpHelper {
 					IBAUtils.createIBA(part, "s", "PART_CODE", partNo);
 				}
 			}
+			ErpHelper.service.writeLog("ERP 품목정보 조회후 IBA 세팅", sql.toString(), "", true, "품목등록");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("RP 품목정보 조회후 IBA 세팅", sql.toString(), e.toString(), false, "품목등록");
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {
@@ -1213,6 +1250,7 @@ public class ErpHelper {
 		ResultSet rs = null;
 		ArrayList<WTDocument> list = new ArrayList<>();
 		String partNo = "";
+		StringBuffer sql = new StringBuffer();
 		try {
 
 			con = dataSource.getConnection();
@@ -1220,7 +1258,7 @@ public class ErpHelper {
 			con.setAutoCommit(false);
 
 			int keyIdx = 1;
-			StringBuffer sql = new StringBuffer();
+
 			sql.append(
 					"INSERT INTO KEK_TDAITEM_IF (SEQ, PART_NAME, PART_SPEC, UNITSEQ, MAKERSEQ, USERID, PRICE, CURRSEQ, CUSTSEQ, ");
 			sql.append("CREATE_DATE,");
@@ -1243,7 +1281,7 @@ public class ErpHelper {
 
 			sql.append("ISCODE)");
 
-			int seq = getMaxSequence("KEK_TDAITEM_IF");
+			int seq = getMaxSequence("KEK_TDAITEM_IF", "제작사양서");
 			sql.append(" VALUES('" + seq + "', ");
 
 			String partName = IBAUtils.getStringValue(part, "NAME_OF_PARTS");
@@ -1309,8 +1347,11 @@ public class ErpHelper {
 			partNo = savePartNo(part, spec);
 
 			con.commit();
+
+			ErpHelper.service.writeLog("ERP로 품목정보 전송", sql.toString(), "", true, "품목등록");
 		} catch (Exception e) {
 			e.printStackTrace();
+			ErpHelper.service.writeLog("ERP로 품목정보 전송", sql.toString(), e.toString(), false, "품목등록");
 			ErpConnectionPool.free(con, st, rs);
 			throw e;
 		} finally {

@@ -25,10 +25,6 @@ public interface OrgService {
 
 	public abstract Map<String, Object> initPasswordAction(Map<String, Object> param) throws WTException;;
 
-	public abstract Map<String, Object> saveUserLineAction(Map<String, Object> param) throws WTException;
-
-	public abstract Map<String, Object> deleteUserLineAction(Map<String, Object> param) throws WTException;
-
 	/**
 	 * 사용자 정보 저장 그리드 용
 	 */

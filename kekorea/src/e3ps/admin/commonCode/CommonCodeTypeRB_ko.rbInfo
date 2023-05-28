@@ -25,30 +25,26 @@ ResourceInfo.deprecated=false
 CUSTOMER.value=\uac70\ub798\ucc98
 CUSTOMER.sort=1
 
-#단계구분
-STEP.value=\uB2E8\uACC4\uAD6C\uBD84
-STEP.sort=2
-
 #설치장소
 INSTALL.value=\uC124\uCE58\uC7A5\uC18C
-INSTALL.sort=3
+INSTALL.sort=2
 
 #프로젝트유형
 PROJECT_TYPE.value=\uD504\uB85C\uC81D\uD2B8\uC720\uD615
-PROJECT_TYPE.sort=4
+PROJECT_TYPE.sort=3
 
 #막종
 MAK.value=\ub9c9\uc885
-MAK.sort=5
+MAK.sort=4
 
 #태스크 타입
 TASK_TYPE.value=\ud0dc\uc2a4\ud06c\ud0c0\uc785
-TASK_TYPE.sort=6
+TASK_TYPE.sort=5
 
 #막종상세
 MAK_DETAIL.value=\ub9c9\uc885\uc0c1\uc138
-MAK_DETAIL.sort=7
+MAK_DETAIL.sort=6
 
 #프로젝트유저타입
 USER_TYPE.value=\ud504\ub85c\uc81d\ud2b8\uc720\uc800\ud0c0\uc785
-USER_TYPE.sort=8
+USER_TYPE.sort=7

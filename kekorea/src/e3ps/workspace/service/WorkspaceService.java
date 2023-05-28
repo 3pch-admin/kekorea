@@ -49,4 +49,19 @@ public interface WorkspaceService {
 	 * 자가결재
 	 */
 	public abstract void self(String oid) throws Exception;
+
+	/**
+	 * 개인결재선 저장
+	 */
+	public abstract void save(Map<String, Object> params) throws Exception;
+
+	/**
+	 * 개인결재선 삭제
+	 */
+	public abstract void delete(String oid) throws Exception;
+
+	/**
+	 * 개인결재선 즐겨찾기 저장
+	 */
+	public abstract void favorite(Map<String, Object> params) throws Exception;
 }

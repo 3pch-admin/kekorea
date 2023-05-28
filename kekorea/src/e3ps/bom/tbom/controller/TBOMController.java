@@ -23,6 +23,7 @@ import e3ps.common.util.CommonUtils;
 import e3ps.common.util.StringUtils;
 import e3ps.project.Project;
 import e3ps.project.task.Task;
+import e3ps.system.service.ErrorLogHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -36,6 +37,7 @@ public class TBOMController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
 		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
@@ -45,11 +47,12 @@ public class TBOMController extends BaseController {
 		model.addObject("maks", maks);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		model.setViewName("/extcore/jsp/bom/tbom/tbom-list.jsp");
 		return model;
 	}
 
-	@Description(value = "T-BOM 조회")
+	@Description(value = "T-BOM 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -59,8 +62,9 @@ public class TBOMController extends BaseController {
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
-			result.put("result", false);
+			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/tbom/list", "T-BOM 조회 함수");
 		}
 		return result;
 	}
@@ -70,6 +74,9 @@ public class TBOMController extends BaseController {
 	public ModelAndView create(@RequestParam(required = false) String poid, @RequestParam(required = false) String toid)
 			throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		if (!StringUtils.isNull(poid) && !StringUtils.isNull(toid)) {
 			Project project = (Project) CommonUtils.getObject(poid);
 			ArrayList<Map<String, String>> data = new ArrayList<>();
@@ -91,6 +98,9 @@ public class TBOMController extends BaseController {
 			model.addObject("poid", poid);
 			model.addObject("data", JSONArray.fromObject(data));
 		}
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
+		model.addObject("sessionUser", sessionUser);
 		model.setViewName("popup:/bom/tbom/tbom-create");
 		return model;
 	}
@@ -108,11 +118,12 @@ public class TBOMController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/tbom/create", "T-BOM 등록 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "KE부품 번호로 찾아오기 (KE OR EPM)")
+	@Description(value = "부품 번호로 (KE OR EPM) 찾아오는 함수")
 	@ResponseBody
 	@GetMapping(value = "/getData")
 	public Map<String, Object> getData(@RequestParam String number) throws Exception {
@@ -124,6 +135,7 @@ public class TBOMController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/tbom/getData", "부품 번호로 (KE OR EPM) 찾아오는 함수");
 		}
 		return result;
 	}
@@ -141,6 +153,7 @@ public class TBOMController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/tbom/save", "T-BOM 그리드 저장 함수");
 		}
 		return result;
 	}
@@ -156,9 +169,13 @@ public class TBOMController extends BaseController {
 		JSONArray list = TBOMHelper.manager.jsonAuiProject(oid);
 		JSONArray data = TBOMHelper.manager.getData(master);
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("latestVersion", latest.getVersion());
 		model.addObject("loid", latest.getPersistInfo().getObjectIdentifier().getStringValue());
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
+		model.addObject("sessionUser", sessionUser);
 		model.addObject("data", data);
 		model.addObject("list", list);
 		model.addObject("dto", dto);
@@ -180,6 +197,7 @@ public class TBOMController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/tbom/disconnect", "T-BOM 태스크 연결 제거 함수");
 		}
 		return result;
 	}
@@ -189,9 +207,11 @@ public class TBOMController extends BaseController {
 	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("method", method);
 		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.setViewName("popup:/bom/tbom/tbom-popup");
@@ -202,6 +222,9 @@ public class TBOMController extends BaseController {
 	@GetMapping(value = "/compare")
 	public ModelAndView compare(@RequestParam String oid, @RequestParam String compareArr) throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 
 		String[] compareOids = compareArr.split(",");
 		ArrayList<Project> destList = new ArrayList<>(compareOids.length);
@@ -212,6 +235,9 @@ public class TBOMController extends BaseController {
 
 		Project p1 = (Project) CommonUtils.getObject(oid);
 		ArrayList<Map<String, Object>> data = TBOMHelper.manager.compare(p1, destList);
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("p1", p1);
 		model.addObject("destList", destList);
 		model.addObject("oid", oid);
@@ -230,8 +256,10 @@ public class TBOMController extends BaseController {
 		JSONArray list = TBOMHelper.manager.jsonAuiProject(oid);
 		JSONArray data = TBOMHelper.manager.getData(master);
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		model.addObject("isAdmin", isAdmin);
 		WTUser sessionUser = CommonUtils.sessionUser();
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("list", list);
@@ -242,7 +270,7 @@ public class TBOMController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "T-BOM 수정 페이지 등록")
+	@Description(value = "T-BOM 수정 함수")
 	@PostMapping(value = "/modify")
 	@ResponseBody
 	public Map<String, Object> modify(@RequestBody TBOMDTO dto) throws Exception {
@@ -254,6 +282,8 @@ public class TBOMController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/tbom/modify", "T-BOM 수정 함수");
 		}
 		return result;
 	}
@@ -271,11 +301,12 @@ public class TBOMController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/tbom/delete", "T-BOM 삭제 함수");
 		}
 		return result;
 	}
 
-	@Description(value = "T-BOM 개정")
+	@Description(value = "T-BOM 개정 함수")
 	@PostMapping(value = "/revise")
 	@ResponseBody
 	public Map<String, Object> revise(@RequestBody TBOMDTO dto) throws Exception {
@@ -287,6 +318,8 @@ public class TBOMController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/tbom/revise", "T-BOM 개정 함수");
 		}
 		return result;
 	}
@@ -297,7 +330,9 @@ public class TBOMController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("toid", toid);
 		model.addObject("poid", poid);
@@ -305,7 +340,7 @@ public class TBOMController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "산출물 태스크에서 T-BOM 연결")
+	@Description(value = "산출물 태스크 T-BOM 연결 함수")
 	@PostMapping(value = "/connect")
 	@ResponseBody
 	public Map<String, Object> connect(@RequestBody Map<String, Object> params) throws Exception {
@@ -325,8 +360,8 @@ public class TBOMController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/tbom/connect", "산출물 태스크 T-BOM 연결 함수");
 		}
 		return result;
 	}
-
 }

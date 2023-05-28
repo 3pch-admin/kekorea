@@ -34,6 +34,7 @@ import e3ps.epm.workOrder.WorkOrder;
 import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.korea.configSheet.service.ConfigSheetHelper;
+import e3ps.org.People;
 import e3ps.org.dto.UserDTO;
 import e3ps.project.Project;
 import e3ps.project.output.Output;
@@ -43,6 +44,7 @@ import e3ps.workspace.ApprovalContract;
 import e3ps.workspace.ApprovalContractPersistableLink;
 import e3ps.workspace.ApprovalLine;
 import e3ps.workspace.ApprovalMaster;
+import e3ps.workspace.ApprovalUserLine;
 import e3ps.workspace.PersistableLineMasterLink;
 import e3ps.workspace.dto.ApprovalLineDTO;
 import net.sf.json.JSONArray;
@@ -1106,5 +1108,113 @@ public class WorkspaceHelper {
 			return OutputHelper.manager.getProjects((WTDocument) per);
 		}
 		return null;
+	}
+
+	/**
+	 * 개인결재선 조회 함수
+	 */
+	public Map<String, Object> loadLine(Map<String, Object> params) throws Exception {
+		String name = (String) params.get("name");
+		Map<String, Object> result = new HashMap<>();
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		WTUser sessionUser = CommonUtils.sessionUser();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ApprovalUserLine.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalUserLine.class, "ownership.owner.key.id", sessionUser);
+		QuerySpecUtils.toLikeAnd(query, idx, ApprovalUserLine.class, ApprovalUserLine.NAME, name);
+		QuerySpecUtils.toOrderBy(query, idx, ApprovalUserLine.class, ApprovalUserLine.NAME, false);
+		QueryResult rs = PersistenceHelper.manager.find(query);
+		while (rs.hasMoreElements()) {
+			Object[] obj = (Object[]) rs.nextElement();
+			ApprovalUserLine line = (ApprovalUserLine) obj[0];
+			Map<String, Object> map = new HashMap<>();
+			map.put("oid", line.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("name", line.getName());
+			map.put("favorite", line.getFavorite());
+			list.add(map);
+		}
+		result.put("list", list);
+		return result;
+	}
+
+	/**
+	 * 개인결재선 즐겨찾기 불러오는 함수
+	 */
+	public Map<String, Object> loadFavorite(Map<String, Object> params) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+
+		WTUser sessionUser = CommonUtils.sessionUser();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ApprovalUserLine.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalUserLine.class, "ownership.owner.key.id", sessionUser);
+		QuerySpecUtils.toBooleanAnd(query, idx, ApprovalUserLine.class, ApprovalUserLine.FAVORITE, true);
+		QueryResult rs = PersistenceHelper.manager.find(query);
+
+		ArrayList<UserDTO> approval = new ArrayList<>();
+		ArrayList<UserDTO> agree = new ArrayList<>();
+		ArrayList<UserDTO> receive = new ArrayList<>();
+
+		if (rs.hasMoreElements()) {
+			Object[] obj = (Object[]) rs.nextElement();
+			ApprovalUserLine line = (ApprovalUserLine) obj[0];
+			ArrayList<String> approvalList = (ArrayList<String>) line.getApprovalList();
+			for (String oid : approvalList) {
+				People p = (People) CommonUtils.getObject(oid);
+				UserDTO dto = new UserDTO(p);
+				approval.add(dto);
+			}
+			ArrayList<String> agreeList = (ArrayList<String>) line.getAgreeList();
+			for (String oid : agreeList) {
+				People p = (People) CommonUtils.getObject(oid);
+				UserDTO dto = new UserDTO(p);
+				agree.add(dto);
+			}
+			ArrayList<String> receiveList = (ArrayList<String>) line.getReceiveList();
+			for (String oid : receiveList) {
+				People p = (People) CommonUtils.getObject(oid);
+				UserDTO dto = new UserDTO(p);
+				receive.add(dto);
+			}
+		}
+
+		map.put("approval", approval);
+		map.put("agree", agree);
+		map.put("receive", receive);
+		return map;
+	}
+
+	/**
+	 * 개인결재선 불러오는 함수
+	 */
+	public Map<String, Object> loadFavorite(String _oid) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		ArrayList<UserDTO> approval = new ArrayList<>();
+		ArrayList<UserDTO> agree = new ArrayList<>();
+		ArrayList<UserDTO> receive = new ArrayList<>();
+		ApprovalUserLine line = (ApprovalUserLine) CommonUtils.getObject(_oid);
+		ArrayList<String> approvalList = (ArrayList<String>) line.getApprovalList();
+		for (String oid : approvalList) {
+			People p = (People) CommonUtils.getObject(oid);
+			UserDTO dto = new UserDTO(p);
+			approval.add(dto);
+		}
+		ArrayList<String> agreeList = (ArrayList<String>) line.getAgreeList();
+		for (String oid : agreeList) {
+			People p = (People) CommonUtils.getObject(oid);
+			UserDTO dto = new UserDTO(p);
+			agree.add(dto);
+		}
+		ArrayList<String> receiveList = (ArrayList<String>) line.getReceiveList();
+		for (String oid : receiveList) {
+			People p = (People) CommonUtils.getObject(oid);
+			UserDTO dto = new UserDTO(p);
+			receive.add(dto);
+		}
+		map.put("approval", approval);
+		map.put("agree", agree);
+		map.put("receive", receive);
+		return map;
 	}
 }

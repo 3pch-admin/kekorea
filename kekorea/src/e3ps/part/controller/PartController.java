@@ -15,9 +15,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.common.util.ThumnailUtils;
 import e3ps.part.dto.PartDTO;
 import e3ps.part.service.PartHelper;
+import e3ps.system.service.ErrorLogHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.part.WTPart;
@@ -32,9 +32,11 @@ public class PartController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSuperviosr = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
-		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSuperviosr", isSuperviosr);
 		model.setViewName("/extcore/jsp/part/part-list.jsp");
 		return model;
 	}
@@ -44,14 +46,16 @@ public class PartController extends BaseController {
 	public ModelAndView library() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSuperviosr = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSuperviosr", isSuperviosr);
 		model.setViewName("/extcore/jsp/part/part-library-list.jsp");
 		return model;
 	}
 
-	@Description(value = "부품 조회")
+	@Description(value = "부품 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -63,6 +67,7 @@ public class PartController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/part/list", "부품 조회 함수");
 		}
 		return result;
 	}
@@ -72,14 +77,16 @@ public class PartController extends BaseController {
 	public ModelAndView bundle() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		model.setViewName("/extcore/jsp/part/part-bundle.jsp");
 		return model;
 	}
 
-	@Description(value = "부품 일괄 등록")
+	@Description(value = "부품 일괄 등록 함수")
 	@PostMapping(value = "/bundle")
 	@ResponseBody
 	public Map<String, Object> bundle(@RequestBody Map<String, Object> params) throws Exception {
@@ -92,6 +99,7 @@ public class PartController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/part/bundle", "부품 일괄 등록 함수");
 		}
 		return result;
 	}
@@ -105,9 +113,10 @@ public class PartController extends BaseController {
 			result = PartHelper.manager.bundleValidatorNumber(number);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
-			e.printStackTrace();
+			ErrorLogHelper.service.create(e.toString(), "/part/bundleValidatorNumber", "부품 일괄 등록 IBA PART_CODE 검증 함수");
 		}
 		return result;
 	}
@@ -121,9 +130,10 @@ public class PartController extends BaseController {
 			result = PartHelper.manager.bundleValidatorSpec(spec);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
+			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
-			e.printStackTrace();
+			ErrorLogHelper.service.create(e.toString(), "/part/bundleValidatorSpec", "부품 일괄 등록 WTPART Number 검증 함수");
 		}
 		return result;
 	}
@@ -135,6 +145,10 @@ public class PartController extends BaseController {
 		WTPart part = (WTPart) CommonUtils.getObject(oid);
 		PartDTO dto = new PartDTO(part);
 		JSONArray versionHistory = PartHelper.manager.versionHistory(part);
+		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("dto", dto);
 		model.addObject("versionHistory", versionHistory);
 		model.setViewName("popup:/part/part-view");
@@ -146,14 +160,17 @@ public class PartController extends BaseController {
 	public ModelAndView spec() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("/extcore/jsp/part/part-spec.jsp");
 		return model;
 	}
 
-	@Description(value = "제작사양서 등록")
+	@Description(value = "제작사양서 등록 함수")
 	@PostMapping(value = "/spec")
 	@ResponseBody
 	public Map<String, Object> spec(@RequestBody Map<String, Object> params) throws Exception {
@@ -166,6 +183,7 @@ public class PartController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/part/spec", "제작사양서 등록 함수");
 		}
 		return result;
 	}
@@ -175,7 +193,9 @@ public class PartController extends BaseController {
 	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("method", method);
@@ -190,6 +210,10 @@ public class PartController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		WTPart part = (WTPart) CommonUtils.getObject(oid);
 		PartDTO dto = new PartDTO(part);
+		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("dto", dto);
 		model.setViewName("popup:/part/part-modify");
 		return model;

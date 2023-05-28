@@ -24,6 +24,7 @@ import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.org.dto.UserDTO;
 import e3ps.org.service.OrgHelper;
+import e3ps.system.service.ErrorLogHelper;
 import net.sf.json.JSONArray;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
@@ -60,6 +61,24 @@ public class OrgController extends BaseController {
 			e.printStackTrace();
 			result.put("msg", e.toString());
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/org/list", "사용자 조회 함수");
+		}
+		return result;
+	}
+
+	@Description(value = "사용자 조회 함수 - 결재선 지정")
+	@PostMapping(value = "/loadUser")
+	@ResponseBody
+	public Map<String, Object> loadUser(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			result = OrgHelper.manager.loadUser(params);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("msg", e.toString());
+			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/org/list", "사용자 조회 함수 - 결재선 지정");
 		}
 		return result;
 	}

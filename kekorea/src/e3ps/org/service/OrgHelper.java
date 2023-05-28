@@ -421,4 +421,44 @@ public class OrgHelper {
 		return list;
 	}
 
+	/**
+	 * 사용자 조회 함수 - 결재선 지정
+	 */
+	public Map<String, Object> loadUser(Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<>();
+		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		String key = (String) params.get("key");
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(People.class, true);
+		int idx_w = query.appendClassList(WTUser.class, true);
+
+		QuerySpecUtils.toInnerJoin(query, People.class, WTUser.class, "wtUserReference.key.id",
+				WTAttributeNameIfc.ID_NAME, idx, idx_w);
+
+		if (!StringUtils.isNull(key)) {
+			query.appendOpenParen();
+			QuerySpecUtils.toLikeOr(query, idx, People.class, People.NAME, key);
+			QuerySpecUtils.toLikeOr(query, idx, People.class, People.ID, key);
+			query.appendCloseParen();
+		}
+
+		QuerySpecUtils.toBooleanAnd(query, idx, People.class, People.RESIGN, false);
+		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, false);
+		QueryResult rs = PersistenceHelper.manager.find(query);
+		while (rs.hasMoreElements()) {
+			Object[] obj = (Object[]) rs.nextElement();
+			People people = (People) obj[0];
+			WTUser wtUser = (WTUser) obj[1];
+			Map<String, Object> map = new HashMap();
+			map.put("name", people.getName());
+			map.put("oid", people.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("woid", wtUser.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("duty", people.getDuty() != null ? people.getDuty() : "지정안됨");
+			map.put("department_name", people.getDepartment() != null ? people.getDepartment().getName() : "지정안됨");
+			list.add(map);
+		}
+		result.put("list", list);
+		return result;
+	}
 }

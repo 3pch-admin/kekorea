@@ -34,6 +34,25 @@ public class CommonUtils {
 	}
 
 	/**
+	 * 최고 관리자 확인 함수
+	 */
+	public static boolean isSupervisor() throws Exception {
+		WTUser user = sessionUser();
+		return isSupervisor(user);
+	}
+
+	/**
+	 * 최고 관리자 확인 함수
+	 */
+	private static boolean isSupervisor(WTUser user) throws Exception {
+		String id = user.getName();
+		if ("wcadmin".equals(id)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * 관리자 그룹인지 확인 하는 함수
 	 */
 	public static boolean isAdmin() throws Exception {
@@ -44,7 +63,7 @@ public class CommonUtils {
 	 * 관리자 인지 확인 하는 함수
 	 */
 	public static boolean isMember(String group) throws Exception {
-		WTUser user = (wt.org.WTUser) SessionHelper.manager.getPrincipal();
+		WTUser user = (WTUser) SessionHelper.manager.getPrincipal();
 		return isMember(group, user);
 	}
 

@@ -560,7 +560,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 
 				const lotNo = item.lotNo;
 				if (dataField === "lotNo") {
-					const url = getCallUrl("/erp/getUnitName?lotNo=" + lotNo);
+					const url = getCallUrl("/erp/getUnitName?lotNo=" + lotNo + "&callLoc=KEK 도번");
 					parent.openLayer();
 					call(url, null, function(data) {
 						if (data.result) {

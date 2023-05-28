@@ -17,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
-import e3ps.common.util.ThumnailUtils;
 import e3ps.epm.dto.EpmDTO;
 import e3ps.epm.service.EpmHelper;
 import e3ps.system.service.ErrorLogHelper;
@@ -25,7 +24,6 @@ import net.sf.json.JSONArray;
 import wt.epm.EPMDocument;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
-import wt.viewmarkup.WTMarkUp;
 
 @Controller
 @RequestMapping(value = "/epm/**")
@@ -35,11 +33,17 @@ public class EpmController extends BaseController {
 	@GetMapping(value = "/register")
 	public ModelAndView register() throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSuperviosr = CommonUtils.isSupervisor();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSuperviosr", isSuperviosr);
 		model.setViewName("/extcore/jsp/epm/epm-register.jsp");
 		return model;
 	}
 
-	@Description(value = "도면 결재")
+	@Description(value = "도면 결재 함수")
 	@PostMapping(value = "/register")
 	@ResponseBody
 	public Map<String, Object> register(@RequestBody Map<String, Object> params) throws Exception {
@@ -62,9 +66,11 @@ public class EpmController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSuperviosr = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSuperviosr", isSuperviosr);
 		model.setViewName("/extcore/jsp/epm/epm-list.jsp");
 		return model;
 	}
@@ -74,9 +80,11 @@ public class EpmController extends BaseController {
 	public ModelAndView library() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSuperviosr = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSuperviosr", isSuperviosr);
 		model.setViewName("/extcore/jsp/epm/epm-library-list.jsp");
 		return model;
 	}
@@ -109,6 +117,12 @@ public class EpmController extends BaseController {
 		boolean isAutoCad = dto.getApplicationType().equalsIgnoreCase("AUTOCAD");
 		boolean isCreo = dto.getApplicationType().equalsIgnoreCase("CREO");
 		Vector<Map<String, Object>> secondary = ContentUtils.getSecondary(epm);
+		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSuperviosr = CommonUtils.isSupervisor();
+		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSuperviosr", isSuperviosr);
 		model.addObject("secondary", secondary);
 		model.addObject("isAutoCad", isAutoCad);
 		model.addObject("isCreo", isCreo);
@@ -124,11 +138,13 @@ public class EpmController extends BaseController {
 	public ModelAndView popup(@RequestParam String method, @RequestParam String multi) throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSuperviosr = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
+		model.addObject("sessionUser", sessionUser);
+		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSuperviosr", isSuperviosr);
 		model.addObject("multi", Boolean.parseBoolean(multi));
 		model.addObject("method", method);
-		model.addObject("isAdmin", isAdmin);
-		model.addObject("sessionUser", sessionUser);
 		model.setViewName("popup:/epm/epm-popup");
 		return model;
 	}

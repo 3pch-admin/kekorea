@@ -7,6 +7,7 @@ import java.io.InputStream;
 import com.ptc.wvs.server.util.FileHelper;
 import com.ptc.wvs.server.util.PublishUtils;
 
+import e3ps.common.mail.MailUtils;
 import e3ps.common.util.CommonUtils;
 import wt.content.ApplicationData;
 import wt.content.ContentHelper;
@@ -25,24 +26,7 @@ public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-		String oid = "wt.viewmarkup.WTMarkUp:1495121";
-		WTMarkUp markUp = (WTMarkUp) CommonUtils.getObject(oid);
-
-		QueryResult result = ContentHelper.service.getContentsByRole(markUp, ContentRoleType.THUMBNAIL);
-		String hostName = WTProperties.getLocalProperties().getProperty("wt.rmi.server.hostname");
-		StringBuffer sb = new StringBuffer();
-		if (result.hasMoreElements()) {
-			ApplicationData data = (ApplicationData) result.nextElement();
-			sb.append("http://");
-			sb.append(hostName);
-			sb.append("/Windchill/servlet/WindchillAuthGW/wt.content.ContentHttp/viewContent/");
-			sb.append(data.getFileName());
-			sb.append("?u8&HttpOperationItem=");
-			sb.append(data.getPersistInfo().getObjectIdentifier().getStringValue());
-			sb.append("&ofn=" + data.getFileName() + "&ContentHolder=");
-			sb.append(oid);
-			sb.append("&forceDownload=true");
-		}
+		MailUtils.test();
 
 		System.exit(0);
 	}

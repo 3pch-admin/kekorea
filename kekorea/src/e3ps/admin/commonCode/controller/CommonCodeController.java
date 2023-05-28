@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import e3ps.admin.commonCode.CommonCodeType;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
+import e3ps.system.service.ErrorLogHelper;
 import net.sf.json.JSONArray;
 
 @Controller
@@ -35,7 +36,7 @@ public class CommonCodeController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "코드 관리 리스트 가져 오는 함수")
+	@Description(value = "코드 관리 조회 함수")
 	@ResponseBody
 	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
@@ -47,6 +48,7 @@ public class CommonCodeController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/commonCode/list", "코드 관리 조회 함수");
 		}
 		return result;
 	}
@@ -64,6 +66,7 @@ public class CommonCodeController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/commonCode/create", "코드 관리 등록 함수");
 		}
 		return result;
 	}
@@ -83,6 +86,7 @@ public class CommonCodeController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/commonCode/getChildrens", "코드의 자식 코드 가져오는 함수");
 		}
 		return result;
 	}
@@ -100,6 +104,25 @@ public class CommonCodeController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/commonCode/getChildrens", "코드의 자식 코드 가져오는 함수 AXISJ");
+		}
+		return result;
+	}
+
+	@Description(value = "코드타입 트리 구조 가져오는 함수")
+	@PostMapping(value = "/loadTree")
+	@ResponseBody
+	public Map<String, Object> loadTree(@RequestBody Map<String, String> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			JSONArray list = CommonCodeHelper.manager.loadTree(params);
+			result.put("list", list);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/commonCode/loadTree", "코드타입 트리 구조 가져오는 함수");
 		}
 		return result;
 	}
