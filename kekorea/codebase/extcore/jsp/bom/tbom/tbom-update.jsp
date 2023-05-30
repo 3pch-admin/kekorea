@@ -66,6 +66,7 @@ if ("modify".equals(mode)) {
 				<td colspan="3">
 					<jsp:include page="/extcore/jsp/common/project-include.jsp">
 						<jsp:param value="<%=dto.getOid() %>" name="oid" />
+						<jsp:param value="false" name="multi"/>
 						<jsp:param value="update" name="mode" />
 					</jsp:include>
 				</td>

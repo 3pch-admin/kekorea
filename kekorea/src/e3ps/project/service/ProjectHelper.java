@@ -1097,10 +1097,10 @@ public class ProjectHelper {
 			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("kekNumber", project.getKekNumber());
 			map.put("keNumber", project.getKeNumber());
-			map.put("mak", project.getMak().getName());
-			map.put("detail", project.getDetail().getName());
-			map.put("customer", project.getCustomer().getName());
-			map.put("install", project.getInstall().getName());
+			map.put("mak", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("detail", project.getDetail() != null ? project.getDetail().getName() : "");
+			map.put("customer", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("install", project.getInstall() != null ? project.getInstall().getName() : "");
 			map.put("description", project.getDescription());
 			list.add(map);
 		}

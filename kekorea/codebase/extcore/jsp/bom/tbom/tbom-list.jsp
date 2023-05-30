@@ -290,7 +290,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const oid = item.poid;
+							const url = getCallUrl("/project/info?oid=" + oid);
+							popup(url);
 						}
 					},
 					filter : {
@@ -302,6 +304,15 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					headerText : "KE 작번",
 					dataType : "string",
 					width : 100,
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.poid;
+							const url = getCallUrl("/project/info?oid=" + oid);
+							popup(url);
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true

@@ -463,8 +463,7 @@ String oid = (String) request.getAttribute("oid");
 							function _createAUIGrid1(columnLayout) {
 								const props = {
 									headerHeight : 30,
-									showRowNumColumn : true,
-									rowNumHeaderText : "번호",
+									showRowNumColumn : false,
 									selectionMode : "multipleCells",
 									showAutoNoDataMessage : false,
 									showRowCheckColumn : true,
@@ -630,8 +629,7 @@ String oid = (String) request.getAttribute("oid");
 							function _createAUIGrid3(columnLayout) {
 								const props = {
 									headerHeight : 30,
-									showRowNumColumn : true,
-									rowNumHeaderText : "번호",
+									showRowNumColumn : false,
 									selectionMode : "multipleCells",
 									showAutoNoDataMessage : false,
 									showRowCheckColumn : true,

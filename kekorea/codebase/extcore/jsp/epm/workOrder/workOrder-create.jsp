@@ -63,9 +63,9 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				</td>
 			</tr>
 			<tr>
-				<th class="req lb">도면 일람표 명</th>
+				<th class="req lb">도면 일람표 제목</th>
 				<td class="indent5">
-					<input type="text" name="name" id="name" class="width-200">
+					<input type="text" name="name" id="name" class="width-300">
 				</td>
 				<th>설계구분</th>
 				<td class="indent5">

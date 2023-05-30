@@ -164,9 +164,9 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('numberRule-list');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
-					<input type="button" value="결재" title="결재" onclick="register();">
-					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
+<!-- 					<input type="button" value="결재" title="결재" onclick="register();"> -->
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
+					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 				</td>
 				<td class="right">
 					<select name="psize" id="psize">

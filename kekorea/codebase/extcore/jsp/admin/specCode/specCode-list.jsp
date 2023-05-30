@@ -36,9 +36,6 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			const list = [ {
 				key : "SPEC",
 				value : "사양"
-			}, {
-				key : "OPTION",
-				value : "옵션"
 			} ]
 
 			const columns = [ {

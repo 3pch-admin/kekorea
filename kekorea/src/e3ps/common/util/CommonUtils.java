@@ -46,7 +46,7 @@ public class CommonUtils {
 	 */
 	private static boolean isSupervisor(WTUser user) throws Exception {
 		String id = user.getName();
-		if ("wcadmin".equals(id)) {
+		if ("Administrator".equals(id)) {
 			return true;
 		}
 		return false;

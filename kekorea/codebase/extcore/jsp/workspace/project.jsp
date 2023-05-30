@@ -51,10 +51,10 @@
 			<a href="javascript:_detail('<%=poid%>');"><%=project.getKeNumber()%></a>
 		</td>
 		<td class="center"><%=project.getProjectType().getName()%></td>
-		<td class="center"><%=project.getCustomer().getName()%></td>
-		<td class="center"><%=project.getInstall().getName()%></td>
-		<td class="center"><%=project.getMak().getName()%></td>
-		<td class="center"><%=project.getDetail().getName()%></td>
+		<td class="center"><%=project.getCustomer() != null ? project.getCustomer().getName() : ""%></td>
+		<td class="center"><%=project.getInstall() != null ? project.getInstall().getName() : ""%></td>
+		<td class="center"><%=project.getMak() != null ? project.getMak().getName() : ""%></td>
+		<td class="center"><%=project.getDetail() != null ? project.getDetail().getName() : ""%></td>
 		<td class="indent5"><%=project.getDescription()%></td>
 	</tr>
 	<%

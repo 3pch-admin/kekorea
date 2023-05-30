@@ -512,6 +512,10 @@ public class WorkOrderHelper {
 		int start = 0;
 		int end = 45;
 
+		if (list.size() < 45) {
+			end = list.size();
+		}
+
 		for (int i = 0; i < loop; i++) {
 			String sheetName = (i + 1) + "번 시트";
 

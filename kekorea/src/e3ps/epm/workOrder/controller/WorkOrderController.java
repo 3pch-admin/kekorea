@@ -107,10 +107,10 @@ public class WorkOrderController extends BaseController {
 			Map<String, String> map = new HashMap<>();
 			map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("projectType_name", project.getProjectType().getName());
-			map.put("customer_name", project.getCustomer().getName());
-			map.put("mak_name", project.getMak().getName());
-			map.put("detail_name", project.getDetail().getName());
-			map.put("install_name", project.getInstall().getName());
+			map.put("customer_name", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("mak_name", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("detail_name", project.getDetail() != null ? project.getDetail().getName() : "");
+			map.put("install_name", project.getInstall() != null ? project.getInstall().getName() : "");
 			map.put("kekNumber", project.getKekNumber());
 			map.put("keNumber", project.getKeNumber());
 			map.put("description", project.getDescription());

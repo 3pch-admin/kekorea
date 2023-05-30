@@ -87,7 +87,7 @@ ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 						<th class="rb">요구 납기일</th>
 						<td rowspan="4" class="tb-none bb-none" style="width: 30px;">&nbsp;</td>
 						<th rowspan="2">진행률</th>
-						<td rowspan="2" class="center"><%=ProjectHelper.manager.getKekProgress(project)%>%
+						<td rowspan="2" class="center"><%=dto.getProgress()%> <%//=ProjectHelper.manager.getKekProgress(project)%>%
 						</td>
 					</tr>
 					<tr>
@@ -143,7 +143,7 @@ ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
 						<th class="rb">요구 납기일</th>
 						<td rowspan="4" class="tb-none bb-none" style="width: 30px;">&nbsp;</td>
 						<th rowspan="4">진행률</th>
-						<td rowspan="4" class="center"><%=ProjectHelper.manager.getKekProgress(project)%>%
+						<td rowspan="4" class="center"><%=dto.getProgress()%><%//=ProjectHelper.manager.getKekProgress(project)%>%
 						</td>
 					</tr>
 					<tr>

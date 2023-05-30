@@ -109,12 +109,11 @@
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
-					rowHeight : 30,
 					showRowNumColumn : true,
 					showRowCheckColumn : true,
+					showAutoNoDataMessage : false,
 					showStateColumn : true,
 					rowNumHeaderText : "번호",
-					noDataMessage : "검색 결과가 없습니다.",
 					enableFilter : true,
 					selectionMode : "multipleCells",
 					enableMovingColumn : true,

@@ -60,7 +60,7 @@ String compareArr = (String) request.getAttribute("compareArr");
 </table>
 
 
-<div id="grid_wrap" style="height: 100px; border-top: 1px solid #3180c3;"></div>
+<div id="grid_wrap" style="height: 900px; border-top: 1px solid #3180c3;"></div>
 <%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 <script type="text/javascript">
 	let myGridID;
@@ -266,7 +266,7 @@ for (Project project : destList) {%>
 			showInlineFilter : true,
 			useContextMenu : true,
 			enableRightDownFocus : true,
-			autoGridHeight : true,
+// 			autoGridHeight : true,
 			enableCellMerge: true,
 			fixedRowCount : 4,
 			rowStyleFunction : function(rowIndex, item) {
