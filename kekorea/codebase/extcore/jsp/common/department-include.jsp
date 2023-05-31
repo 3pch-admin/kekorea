@@ -70,7 +70,7 @@ String height = request.getParameter("height");
 			const name = item.name;
 			document.getElementById("oid").value = oid;
 			document.getElementById("departmentText").innerText = name;
-// 			loadGridData();
+			loadGridData();
 		}, 500);  
 		<%}%>
 	}
