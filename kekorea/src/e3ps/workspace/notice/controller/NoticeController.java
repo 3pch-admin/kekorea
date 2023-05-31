@@ -37,9 +37,11 @@ public class NoticeController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		model.setViewName("/extcore/jsp/workspace/notice/notice-list.jsp");
 		return model;
 	}
@@ -124,9 +126,11 @@ public class NoticeController extends BaseController {
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		Notice notice = (Notice) CommonUtils.getObject(oid);
 		NoticeDTO dto = new NoticeDTO(notice);
 		model.addObject("dto", dto);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("isAdmin", isAdmin);
 		model.setViewName("popup:/workspace/notice/notice-view");
 		return model;
@@ -136,9 +140,13 @@ public class NoticeController extends BaseController {
 	@GetMapping(value = "/modify")
 	public ModelAndView modify(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
+		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		Notice notice = (Notice) CommonUtils.getObject(oid);
 		NoticeDTO dto = new NoticeDTO(notice);
 		model.addObject("dto", dto);
+		model.addObject("isSupervisor", isSupervisor);
+		model.addObject("isAdmin", isAdmin);
 		model.setViewName("popup:/workspace/notice/notice-modify");
 		return model;
 	}

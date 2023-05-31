@@ -127,6 +127,33 @@ public class QuerySpecUtils {
 	}
 
 	/**
+	 * 쿼리문에 equals 조건 추가
+	 */
+	public static void toEquals(QuerySpec query, int idx, Class clazz, String column, Object value) throws Exception {
+		if (value == null) {
+			return;
+		}
+
+		SearchCondition sc = null;
+		if (value instanceof String) {
+			String param = (String) value;
+			if (StringUtils.isNull(param)) {
+				return;
+			}
+			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, param);
+		} else if (value instanceof Long) {
+			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (long) value);
+		} else if (value instanceof Integer) {
+			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, (int) value);
+		} else if (value instanceof Persistable) {
+			Persistable per = (Persistable) value;
+			long id = per.getPersistInfo().getObjectIdentifier().getId();
+			sc = new SearchCondition(clazz, column, SearchCondition.EQUAL, id);
+		}
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	/**
 	 * 쿼리문에 equals (or) 조건 추가
 	 */
 	public static void toEqualsOr(QuerySpec query, int idx, Class clazz, String column, Object value) throws Exception {

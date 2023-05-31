@@ -291,8 +291,14 @@ public class ProjectController extends BaseController {
 		Project project = (Project) CommonUtils.getObject(oid);
 		ProjectDTO dto = new ProjectDTO(project);
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		ArrayList<Project> list = ProjectHelper.manager.getReferenceBy(project);
+		int mProgress = ProjectHelper.manager.getMachineAllocateProgress(project);
+		int eProgress = ProjectHelper.manager.getElecAllocateProgress(project);
+		model.addObject("mProgress", mProgress);
+		model.addObject("eProgress", eProgress);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("list", list);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);

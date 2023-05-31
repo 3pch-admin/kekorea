@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+boolean isSupervisor = (boolean) request.getAttribute("isSupervisor");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
 <!DOCTYPE html>
@@ -64,7 +65,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('notice-list');">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 					<%
-					if (isAdmin) {
+					if (isSupervisor) {
 					%>
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
