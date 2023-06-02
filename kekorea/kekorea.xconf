@@ -9,7 +9,18 @@
    <Property name="wt.auth.handler" overridable="true"
              targetFile="codebase/wt.properties"
              value="wt.httpgw.HTTPAuthentication"/>             
-             
+   
+   <!-- Vault -->
+   <Property name="wt.fv.useVaultsForAllContent" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="true"/>   
+   <Property name="wt.fv.useFvFileThreshold" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="true"/>                
+   <Property name="wt.fv.fvFileThreshold" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="20000"/>             
+                
    <!-- Service -->          
    <Property name="wt.services.service.90000" overridable="true"
              targetFile="codebase/wt.properties"
