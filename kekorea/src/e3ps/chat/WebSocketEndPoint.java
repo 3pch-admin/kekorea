@@ -4,8 +4,10 @@ import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
 import javax.websocket.MessageHandler;
 import javax.websocket.Session;
+import javax.websocket.server.ServerEndpoint;
 
-public class WebSocketHandler extends Endpoint {
+@ServerEndpoint(value = "/websocket-endpoint")
+public class WebSocketEndPoint extends Endpoint {
 
 	@Override
 	public void onOpen(Session session, EndpointConfig config) {
