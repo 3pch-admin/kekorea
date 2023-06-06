@@ -79,7 +79,6 @@ public class CommonCodeController extends BaseController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			ArrayList<Map<String, Object>> childrens = CommonCodeHelper.manager.getChildrens(parentCode, codeType);
-			System.out.println(childrens);
 			result.put("list", childrens);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

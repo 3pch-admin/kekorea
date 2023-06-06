@@ -74,6 +74,11 @@ public class ProjectController extends BaseController {
 		JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
 		JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
 
+		JSONArray maksJson = CommonCodeHelper.manager.parseJson("MAK");
+		JSONArray customersJson = CommonCodeHelper.manager.parseJson("CUSTOMER");
+		
+		model.addObject("maksJson", maksJson);
+		model.addObject("customersJson", customersJson);
 		model.addObject("elecs", elecs);
 		model.addObject("softs", softs);
 		model.addObject("machines", machines);

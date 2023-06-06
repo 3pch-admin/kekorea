@@ -16,6 +16,9 @@ String end = (String) request.getAttribute("end");
 JSONArray machines = (JSONArray) request.getAttribute("machines");
 JSONArray elecs = (JSONArray) request.getAttribute("elecs");
 JSONArray softs = (JSONArray) request.getAttribute("softs");
+JSONArray maksJson = (JSONArray) request.getAttribute("maksJson");
+JSONArray customersJson = (JSONArray) request.getAttribute("customersJson");
+JSONArray projectTypesJson = JSONArray.fromObject(projectTypes);
 %>
 <!DOCTYPE html>
 <html>
@@ -207,14 +210,16 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
+			const elecs = <%=elecs%>
+			const machines = <%=machines%>
+			const softs = <%=softs%>
+			const customers = <%=customersJson%>
+			const maks = <%=maksJson%>
+			const projectTypes = <%=projectTypesJson%>
+			let detailMap = {};
+			let installMap = {};
 			function _layout() {
-				const elecs =
-		<%=elecs%>
-			const machines =
-		<%=machines%>
-			const softs =
-		<%=softs%>
-			return [ {
+				return [ {
 					dataField : "state",
 					headerText : "진행상태",
 					dataType : "string",
@@ -228,55 +233,312 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 					},
 					editable : false
 				}, {
-					dataField : "projectType_name",
+					dataField : "projectType_oid",
 					headerText : "작번유형",
 					dataType : "string",
 					width : 80,
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16,
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+						},
+						onClick : function(event) {
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true,
+						autoEasyMode : true,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						list : projectTypes,
+						keyField : "key",
+						valueField : "value",
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							let isValid = false;
+							for (let i = 0, len = projectTypes.length; i < len; i++) {
+								if (projectTypes[i]["value"] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						}
+					},
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
+						for (let i = 0, len = projectTypes.length; i < len; i++) {
+							if (projectTypes[i]["key"] == value) {
+								retStr = projectTypes[i]["value"];
+								break;
+							}
+						}
+						return retStr == "" ? value : retStr;
+					},					
 					filter : {
 						showIcon : true,
 						inline : true
 					},
-					editable : false
+					editable : true
 				}, {
-					dataField : "customer_name",
+					dataField : "customer_code",
 					headerText : "거래처",
 					dataType : "string",
 					width : 100,
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16,
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+						},
+						onClick : function(event) {
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true,
+						autoEasyMode : true,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						list : customers,
+						keyField : "key",
+						valueField : "value",
+						descendants : [ "install_code" ],
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							let isValid = false;
+							for (let i = 0, len = customers.length; i < len; i++) {
+								if (customers[i]["value"] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						}
+					},
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
+						for (let i = 0, len = customers.length; i < len; i++) {
+							if (customers[i]["key"] == value) {
+								retStr = customers[i]["value"];
+								break;
+							}
+						}
+						return retStr == "" ? value : retStr;
+					},						
 					filter : {
 						showIcon : true,
 						inline : true
 					},
-					editable : false
+					editable : true
 				}, {
-					dataField : "install_name",
+					dataField : "install_code",
 					headerText : "설치장소",
 					dataType : "string",
 					width : 100,
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16,
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+						},
+						onClick : function(event) {
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true,
+						autoEasyMode : true,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						keyField : "key",
+						valueField : "value",
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							const param = item.customer_code;
+							const dd = installMap[param];
+							if (dd === undefined)
+								return;
+							let isValid = false;
+							for (let i = 0, len = dd.length; i < len; i++) {
+								if (dd[i]["value"] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						},
+						listFunction : function(rowIndex, columnIndex, item, dataField) {
+							const param = item.customer_code;
+							const dd = installMap[param];
+							if (dd === undefined) {
+								return [];
+							}
+							return dd;
+						},
+					},
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
+						const param = item.customer_code;
+						const dd = installMap[param];
+						if (dd === undefined)
+							return value;
+						for (let i = 0, len = dd.length; i < len; i++) {
+							if (dd[i]["key"] == value) {
+								retStr = dd[i]["value"];
+								break;
+							}
+						}
+						return retStr == "" ? value : retStr;
+					},					
 					filter : {
 						showIcon : true,
 						inline : true
 					},
-					editable : false
+					editable : true
 				}, {
-					dataField : "mak_name",
+					dataField : "mak_code",
 					headerText : "막종",
 					dataType : "string",
 					width : 100,
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16,
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+						},
+						onClick : function(event) {
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true,
+						autoEasyMode : true,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						list : maks,
+						keyField : "key",
+						valueField : "value",
+						descendants : [ "detail_code" ],
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							let isValid = false;
+							for (let i = 0, len = maks.length; i < len; i++) {
+								if (maks[i]["value"] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						}
+					},
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
+						for (let i = 0, len = maks.length; i < len; i++) {
+							if (maks[i]["key"] == value) {
+								retStr = maks[i]["value"];
+								break;
+							}
+						}
+						return retStr == "" ? value : retStr;
+					},						
 					filter : {
 						showIcon : true,
 						inline : true
 					},
-					editable : false
+					editable : true
 				}, {
-					dataField : "detail_name",
+					dataField : "detail_code",
 					headerText : "막종상세",
 					dataType : "string",
 					width : 100,
+					renderer : {
+						type : "IconRenderer",
+						iconWidth : 16,
+						iconHeight : 16,
+						iconPosition : "aisleRight",
+						iconTableRef : {
+							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+						},
+						onClick : function(event) {
+							AUIGrid.openInputer(event.pid);
+						}
+					},
+					editRenderer : {
+						type : "ComboBoxRenderer",
+						autoCompleteMode : true,
+						autoEasyMode : true,
+						matchFromFirst : false,
+						showEditorBtnOver : false,
+						keyField : "key",
+						valueField : "value",
+						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
+							const param = item.mak_code;
+							const dd = detailMap[param];
+							if (dd === undefined)
+								return;
+							let isValid = false;
+							for (let i = 0, len = dd.length; i < len; i++) {
+								if (dd[i]["value"] == newValue) {
+									isValid = true;
+									break;
+								}
+							}
+							return {
+								"validate" : isValid,
+								"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
+							};
+						},
+						listFunction : function(rowIndex, columnIndex, item, dataField) {
+							const param = item.mak_code;
+							const dd = detailMap[param];
+							if (dd === undefined) {
+								return [];
+							}
+							return dd;
+						},
+					},
+					labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+						let retStr = "";
+						const param = item.mak_code;
+						const dd = detailMap[param];
+						if (dd === undefined)
+							return value;
+						for (let i = 0, len = dd.length; i < len; i++) {
+							if (dd[i]["key"] == value) {
+								retStr = dd[i]["value"];
+								break;
+							}
+						}
+						return retStr == "" ? value : retStr;
+					},					
 					filter : {
 						showIcon : true,
 						inline : true
 					},
-					editable : false
+					editable : true
 				}, {
 					dataField : "kekNumber",
 					headerText : "KEK 작번",
@@ -620,6 +882,60 @@ JSONArray softs = (JSONArray) request.getAttribute("softs");
 				AUIGrid.bind(myGridID, "hScrollChange", function(event) {
 					hideContextMenu();
 				});
+				
+				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+				AUIGrid.bind(myGridID, "ready", readyHandler);
+			}
+			
+			
+			function readyHandler() {
+				const item = AUIGrid.getGridData(myGridID);
+				for (let i = 0; i < item.length; i++) {
+					if (detailMap.length === undefined) {
+						const mak = item[i].mak_code;
+						const url = getCallUrl("/commonCode/getChildrens?parentCode=" + mak + "&codeType=MAK");
+						call(url, null, function(data) {
+							detailMap[mak] = data.list;
+						}, "GET");
+					}
+
+					if (installMap.length === undefined) {
+						const customer = item[i].customer_code;
+						const url = getCallUrl("/commonCode/getChildrens?parentCode=" + customer + "&codeType=CUSTOMER");
+						call(url, null, function(data) {
+							installMap[customer] = data.list;
+						}, "GET");
+					}
+				}
+			}
+
+			function auiCellEditEndHandler(event) {
+				const dataField = event.dataField;
+				const item = event.item;
+				const rowIndex = event.rowIndex;
+				if (dataField === "mak_code") {
+					const item = {
+							detail_code : ""
+					}
+					AUIGrid.updateRow(myGridID, item, rowIndex);
+					const mak = item.mak_code;
+					const url = getCallUrl("/commonCode/getChildrens?parentCode=" + mak + "&codeType=MAK");
+					call(url, null, function(data) {
+						detailMap[mak] = data.list;
+					}, "GET");
+				}
+
+				if (dataField === "customer_code") {
+					const item = {
+							install_code : ""
+					}
+					AUIGrid.updateRow(myGridID, item, rowIndex);
+					const customer = item.customer_code;
+					const url = getCallUrl("/commonCode/getChildrens?parentCode=" + customer + "&codeType=CUSTOMER");
+					call(url, null, function(data) {
+						installMap[customer] = data.list;
+					}, "GET");
+				}
 			}
 
 			function loadGridData() {

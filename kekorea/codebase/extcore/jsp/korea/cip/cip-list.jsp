@@ -7,7 +7,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 JSONArray maks = (JSONArray) request.getAttribute("maks");
-JSONArray installs = (JSONArray) request.getAttribute("installs");
 JSONArray customers = (JSONArray) request.getAttribute("customers");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 boolean isSupervisor = (boolean) request.getAttribute("isSupervisor");
@@ -166,12 +165,8 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
-			const maks =
-		<%=maks%>
-			const installs =
-		<%=installs%>
-			const customers =
-		<%=customers%>
+			const maks = <%=maks%>
+			const customers = <%=customers%>
 			let recentGridItem = null;
 			let detailMap = {};
 			let installMap = {};
@@ -705,6 +700,10 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 				const item = event.item;
 				const rowIndex = event.rowIndex;
 				if (dataField === "mak_code") {
+					const item = {
+							detail_code : ""
+					}
+					AUIGrid.updateRow(myGridID, item, rowIndex);
 					const mak = item.mak_code;
 					const url = getCallUrl("/commonCode/getChildrens?parentCode=" + mak + "&codeType=MAK");
 					call(url, null, function(data) {
@@ -713,6 +712,10 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 				}
 
 				if (dataField === "customer_code") {
+					const item = {
+							install_code : ""
+					}
+					AUIGrid.updateRow(myGridID, item, rowIndex);
 					const customer = item.customer_code;
 					const url = getCallUrl("/commonCode/getChildrens?parentCode=" + customer + "&codeType=CUSTOMER");
 					call(url, null, function(data) {

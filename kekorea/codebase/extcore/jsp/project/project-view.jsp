@@ -14,8 +14,8 @@ Project project = (Project) request.getAttribute("project");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 ArrayList<Project> list = (ArrayList<Project>) request.getAttribute("list");
-int eProgress = (int) request.getAttribute("eProgress");
-int mProgress = (int) request.getAttribute("mProgress");
+int eeProgress = (int) request.getAttribute("eProgress");
+int mmProgress = (int) request.getAttribute("mProgress");
 %>
 <!DOCTYPE html>
 <html>
@@ -107,7 +107,7 @@ int mProgress = (int) request.getAttribute("mProgress");
 						<th class="rb">막종 / 막종상세</th>
 						<th class="rb" colspan="2">작업 내용</th>
 						<th>기계</th>
-						<td class="center"><%=mProgress%>%
+						<td class="center"><%=mmProgress%>%
 						</td>
 					</tr>
 					<tr>
@@ -119,7 +119,7 @@ int mProgress = (int) request.getAttribute("mProgress");
 							<%=dto.getDetail_name()%></td>
 						<td class="center" colspan="2"><%=dto.getDescription()%></td>
 						<th>전기</th>
-						<td class="center"><%=eProgress%>%
+						<td class="center"><%=eeProgress%>%
 						</td>
 					</tr>
 					<%

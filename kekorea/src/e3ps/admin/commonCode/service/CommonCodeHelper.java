@@ -10,14 +10,12 @@ import e3ps.admin.commonCode.CommonCodeType;
 import e3ps.admin.commonCode.dto.CommonCodeDTO;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.common.util.StringUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 //import net.sf.json.JSONArray;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.query.QuerySpec;
-import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 
 public class CommonCodeHelper {
@@ -156,6 +154,7 @@ public class CommonCodeHelper {
 	 */
 	public ArrayList<Map<String, Object>> getChildrens(String parentCode, String codeType) throws Exception {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
+		System.out.println("codeType=" + codeType);
 		CommonCode parent = getCommonCode(parentCode, codeType);
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
@@ -232,7 +231,7 @@ public class CommonCodeHelper {
 			Map<String, String> map = new HashMap<>();
 			CommonCode commonCode = (CommonCode) obj[0];
 			map.put("key", commonCode.getPersistInfo().getObjectIdentifier().getStringValue());
-			map.put("value", commonCode.getName());
+			map.put("value", commonCode.getCode());
 			list.add(map);
 		}
 		return list;

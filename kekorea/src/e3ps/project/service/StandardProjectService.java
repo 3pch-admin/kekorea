@@ -455,6 +455,12 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 			for (ProjectDTO edit : editRows) {
 				String oid = edit.getOid();
 
+				String projectType_code = edit.getProjectType_code();
+				String customer_code = edit.getCustomer_code();
+				String mak_code = edit.getMak_code();
+				String detail_code = edit.getDetail_code();
+				String install_code = edit.getInstall_code();
+
 				double elecPrice = edit.getElecPrice();
 				double machinePrice = edit.getMachinePrice();
 
@@ -462,6 +468,33 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				project.setElecPrice(elecPrice);
 				project.setMachinePrice(machinePrice);
 				PersistenceHelper.manager.modify(project);
+
+				if (!StringUtils.isNull(projectType_code)) {
+					CommonCode projectTypeCode = CommonCodeHelper.manager.getCommonCode(projectType_code,
+							"PROJECT_TYPE");
+					project.setProjectType(projectTypeCode);
+				}
+
+				if (!StringUtils.isNull(customer_code)) {
+					CommonCode customerCode = CommonCodeHelper.manager.getCommonCode(customer_code, "CUSTOMER");
+					project.setCustomer(customerCode);
+				}
+
+				if (!StringUtils.isNull(mak_code)) {
+					CommonCode makCode = CommonCodeHelper.manager.getCommonCode(mak_code, "MAK");
+					project.setMak(makCode);
+				}
+
+				if (!StringUtils.isNull(install_code)) {
+					CommonCode installCode = CommonCodeHelper.manager.getCommonCode(install_code, "INSTALL");
+					project.setInstall(installCode);
+					;
+				}
+
+				if (!StringUtils.isNull(detail_code)) {
+					CommonCode detailCode = CommonCodeHelper.manager.getCommonCode(detail_code, "MAK_DETAIL");
+					project.setDetail(detailCode);
+				}
 
 				String machine_oid = edit.getMachine_oid();
 				if (!StringUtils.isNull(machine_oid)) {

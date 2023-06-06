@@ -38,7 +38,6 @@ public class CipController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		JSONArray maks = CommonCodeHelper.manager.parseJson("MAK");
 		JSONArray customers = CommonCodeHelper.manager.parseJson("CUSTOMER");
-		JSONArray installs = CommonCodeHelper.manager.parseJson("INSTALL");
 
 		ArrayList<Map<String, String>> customer_list = CommonCodeHelper.manager.getValueMap("CUSTOMER");
 		ArrayList<Map<String, String>> mak_list = CommonCodeHelper.manager.getValueMap("MAK");
@@ -53,7 +52,6 @@ public class CipController extends BaseController {
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("maks", maks);
-		model.addObject("installs", installs);
 		model.addObject("customers", customers);
 		model.setViewName("/extcore/jsp/korea/cip/cip-list.jsp");
 		return model;
