@@ -10,6 +10,11 @@
              targetFile="codebase/wt.properties"
              value="wt.httpgw.HTTPAuthentication"/>             
    
+   <!-- WebSocket -->
+   <Property name="wt.net.websockets.enabled" overridable="true"
+             targetFile="codebase/wt.properties"
+             value="true"/>             
+   
    <!-- Vault -->
    <Property name="wt.fv.useVaultsForAllContent" overridable="true"
              targetFile="codebase/wt.properties"

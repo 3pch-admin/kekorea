@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -75,12 +76,11 @@
 			document.execCommand("ClearAuthenticationCache");
 			document.location.href = "/Windchill/login/logout.jsp";
 		}
-		
+
 		function index() {
 			cover.open();
 			document.location.href = "/Windchill/plm/index";
 		}
-		
 	</script>
 </body>
 </html>

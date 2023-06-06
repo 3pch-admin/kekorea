@@ -1,4 +1,6 @@
 eclipse.preferences.version=1
+encoding//codebase/config/kekorea/i18n/kekorea-message_jp.properties=UTF-8
+encoding//codebase/config/kekorea/i18n/kekorea-message_ko.properties=UTF-8
 encoding//codebase/extcore/jsp/epm/epm-list.jsp=UTF-8
 encoding//src/e3ps/workspace/notice/dto/NoticeDTO.java=UTF-8
 encoding//wtCustom/wt/doc/DocumentTypeRB_ko.rbInfo=UTF-8

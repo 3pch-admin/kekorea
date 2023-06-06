@@ -687,6 +687,16 @@
 		<servlet-class>com.ptc.odata.windchill.servlet.WcRestServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	
+	<servlet>
+	    <servlet-name>websocketServlet</servlet-name>
+	    <servlet-class>org.apache.tomcat.websocket.server.WsHttpUpgradeHandler</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+	    <servlet-name>websocketServlet</servlet-name>
+	    <url-pattern>/websocket-endpoint</url-pattern>
+	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>IE</servlet-name>
