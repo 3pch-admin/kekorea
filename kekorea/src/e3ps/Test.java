@@ -59,13 +59,15 @@ public class Test {
 			String keNumber = "";
 			String kekNumber = "";
 
-			if (row.getCell(8) != null && (row.getCell(8).getCellTypeEnum() == CellType.NUMERIC)) {
+			//numeric
+			if (row.getCell(8) != null && (row.getCell(8).getCellType() == 0)) {
 				keNumber = String.valueOf(row.getCell(8).getNumericCellValue());
 			} else {
 				keNumber = row.getCell(8) != null ? row.getCell(8).getStringCellValue() : "공백데이터";
 			}
 
-			if (row.getCell(9) != null && (row.getCell(9).getCellTypeEnum() == CellType.NUMERIC)) {
+			// numeric
+			if (row.getCell(9) != null && (row.getCell(9).getCellType() == 0)) {
 				kekNumber = String.valueOf(row.getCell(9).getNumericCellValue());
 			} else {
 				kekNumber = row.getCell(9) != null ? row.getCell(9).getStringCellValue() : "공백데이터";
@@ -142,9 +144,8 @@ public class Test {
 			StandardProjectService service = new StandardProjectService();
 			service.copyTask(project, t);
 
-
 			System.out.println(i + "번째 완료!");
-			
+
 		}
 
 		System.out.println("완료..!");
