@@ -914,26 +914,26 @@ JSONArray projectTypesJson = JSONArray.fromObject(projectTypes);
 				const item = event.item;
 				const rowIndex = event.rowIndex;
 				if (dataField === "mak_code") {
-					const item = {
-							detail_code : ""
-					}
-					AUIGrid.updateRow(myGridID, item, rowIndex);
 					const mak = item.mak_code;
 					const url = getCallUrl("/commonCode/getChildrens?parentCode=" + mak + "&codeType=MAK");
 					call(url, null, function(data) {
 						detailMap[mak] = data.list;
+						const item = {
+								detail_code : ""
+						}
+						AUIGrid.updateRow(myGridID, item, rowIndex);
 					}, "GET");
 				}
 
 				if (dataField === "customer_code") {
-					const item = {
-							install_code : ""
-					}
-					AUIGrid.updateRow(myGridID, item, rowIndex);
 					const customer = item.customer_code;
 					const url = getCallUrl("/commonCode/getChildrens?parentCode=" + customer + "&codeType=CUSTOMER");
 					call(url, null, function(data) {
 						installMap[customer] = data.list;
+						const item = {
+								install_code : ""
+						}
+						AUIGrid.updateRow(myGridID, item, rowIndex);
 					}, "GET");
 				}
 			}
