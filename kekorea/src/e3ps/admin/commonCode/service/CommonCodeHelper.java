@@ -154,7 +154,6 @@ public class CommonCodeHelper {
 	 */
 	public ArrayList<Map<String, Object>> getChildrens(String parentCode, String codeType) throws Exception {
 		ArrayList<Map<String, Object>> list = new ArrayList<>();
-		System.out.println("codeType=" + codeType);
 		CommonCode parent = getCommonCode(parentCode, codeType);
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
