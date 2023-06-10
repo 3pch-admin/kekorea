@@ -13,7 +13,7 @@ public interface LoaderService {
 	/**
 	 * 거래처, 설치장소 로더
 	 */
-	public abstract void loadeInstall(String customer, String install) throws Exception;
+	public abstract void loaderInstall(String customer, String install) throws Exception;
 
 	/**
 	 * 부서 로더
@@ -37,9 +37,12 @@ public interface LoaderService {
 
 	/**
 	 * 프로젝트 데이터 로더
-	 * 
-	 * @throws Exception
 	 */
 	public abstract void loaderProject(String excelPath) throws Exception;
+
+	/**
+	 * 거래처 로더
+	 */
+	public abstract void loaderCustomer() throws Exception;
 
 }

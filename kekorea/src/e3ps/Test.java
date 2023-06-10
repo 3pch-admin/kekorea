@@ -46,6 +46,13 @@ public class Test {
 			project.setDuration((int) duration);
 			project.setElecPrice(elecPrice);
 
+			
+			if (DateUtil.isCellDateFormatted(row.getCell(1))) {
+				Date date = row.getCell(21).getDateCellValue();
+				String customDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+				project.setCustomDate(DateUtils.convertDate(customDate));;
+			}
+			
 			if (DateUtil.isCellDateFormatted(row.getCell(6))) {
 				Date date = row.getCell(6).getDateCellValue();
 				String endDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
@@ -59,7 +66,7 @@ public class Test {
 			String keNumber = "";
 			String kekNumber = "";
 
-			//numeric
+			// numeric
 			if (row.getCell(8) != null && (row.getCell(8).getCellType() == 0)) {
 				keNumber = String.valueOf(row.getCell(8).getNumericCellValue());
 			} else {
@@ -138,9 +145,10 @@ public class Test {
 			project.setKekState(kekState);
 			project.setState(state);
 
-			PersistenceHelper.manager.save(project);
+			project = (Project) PersistenceHelper.manager.save(project);
+			project = (Project) PersistenceHelper.manager.refresh(project);
 
-			Template t = (Template) CommonUtils.getObject("e3ps.project.template.Template:222105");
+			Template t = (Template) CommonUtils.getObject("e3ps.project.template.Template:1297632");
 			StandardProjectService service = new StandardProjectService();
 			service.copyTask(project, t);
 

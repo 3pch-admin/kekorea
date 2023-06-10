@@ -43,7 +43,7 @@ public class InstallLoader {
 				String install = row.getCell(1).getStringCellValue();
 
 				if (!StringUtils.isNull(customer) && !StringUtils.isNull(install)) {
-					LoaderHelper.service.loadeInstall(customer, install);
+					LoaderHelper.service.loaderInstall(customer, install);
 				}
 			}
 		} catch (Exception e) {

@@ -175,7 +175,6 @@ JSONArray departments = JSONArray.fromObject(list);
 		dataField : "email",
 		headerText : "이메일",
 		dataType : "string",
-		width : 250,
 		style : "aui-left",
 		filter : {
 			showIcon : true,
@@ -233,23 +232,21 @@ JSONArray departments = JSONArray.fromObject(list);
 	function loadGridData() {
 		const params = new Object();
 		const url = getCallUrl("/org/list");
-		const userName = document.getElementById("userName").value;
-		const userId = document.getElementById("userId").value;
+		const field = ["userName","userId","oid","psize"];
 		const resign = !!document.querySelector("input[name=resign]:checked").value;
-		const oid = document.getElementById("oid").value;
-		const psize = document.getElementById("psize").value;
-		params.userName = userName;
-		params.userId = userId;
+		params = toField(params, field);
 		params.resign = resign;
-		params.psize = psize;
-		params.oid = oid;
 		AUIGrid.showAjaxLoader(myGridID);
 		openLayer();
 		call(url, params, function(data) {
 			AUIGrid.removeAjaxLoader(myGridID);
-			document.getElementById("sessionid").value = data.sessionid;
-			document.getElementById("curPage").value = data.curPage;
-			AUIGrid.setGridData(myGridID, data.list);
+			if (data.result) {
+				document.getElementById("sessionid").value = data.sessionid;
+				document.getElementById("curPage").value = data.curPage;
+				AUIGrid.setGridData(myGridID, data.list);
+			} else {
+				alert(data.msg);
+			}
 			closeLayer();
 		});
 	}

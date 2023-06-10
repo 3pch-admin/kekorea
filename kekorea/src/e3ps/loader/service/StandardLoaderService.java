@@ -68,12 +68,37 @@ public class StandardLoaderService extends StandardManager implements LoaderServ
 	}
 
 	@Override
-	public void loadeInstall(String customer, String install) throws Exception {
+	public void loaderInstall(String customer, String install) throws Exception {
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
-			CommonCode customerCode = CommonCodeHelper.manager.getCommonCode(customer, "CUSTOMER");
+			String code = null;
+			if (customer.equalsIgnoreCase("SAMSUNG")) {
+				code = "SAMSUNG";
+			} else if (customer.equalsIgnoreCase("HYNIX")) {
+				code = "SKHynix";
+			} else if (customer.equalsIgnoreCase("DB HiTek")) {
+				code = "DB HiTek";
+			} else if (customer.equalsIgnoreCase("GROBAL FOUNDRIES")) {
+				code = "GrobalFoundries";
+			} else if (customer.equalsIgnoreCase("KOKUSAI ELECTRIC")) {
+				code = "KE";
+			} else if (customer.equalsIgnoreCase("HITACHI KOKUSAI ELECTRIC")) {
+				code = "KE";
+			} else if (customer.equalsIgnoreCase("KE Semiconductor Equipment (Shanghai) Co., Ltd")) {
+				code = "KESH";
+			} else if (customer.equalsIgnoreCase("HITACHI KOKUSAI ELECTRIC(SHANGHAI)CO.,LTD.")) {
+				code = "KESH";
+			} else if (customer.equalsIgnoreCase("KEK")) {
+				code = "KEK";
+			} else if (customer.equalsIgnoreCase("국가핵융합연구소")) {
+				code = "국가핵융합연구소";
+			} else if (customer.equalsIgnoreCase("기타")) {
+				code = "기타";
+			}
+
+			CommonCode customerCode = CommonCodeHelper.manager.getCommonCode(code, "CUSTOMER");
 			CommonCode installCode = CommonCodeHelper.manager.getCommonCode(install, "INSTALL");
 
 			if (customerCode == null) {
@@ -278,6 +303,51 @@ public class StandardLoaderService extends StandardManager implements LoaderServ
 		try {
 
 			trs.start();
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void loaderCustomer() throws Exception {
+		String[] codes = new String[] { "SAMSUNG", "SKHynix", "DB HiTek", "GrobalFoundries", "KE", "KESH", "KEK",
+				"국가핵융합연구소", "기타" };
+		Transaction trs = new Transaction();
+		try {
+
+			for (int i = 0; i < codes.length; i++) {
+				String code = codes[i];
+
+				CommonCode customerCode = CommonCodeHelper.manager.getCommonCode(code, "CUSTOMER");
+				if (customerCode == null) {
+					customerCode = CommonCode.newCommonCode();
+					customerCode.setCode(code);
+					customerCode.setName(code);
+					customerCode.setDescription(code);
+					customerCode.setCodeType(CommonCodeType.toCommonCodeType("CUSTOMER"));
+					customerCode.setSort(i);
+					customerCode.setEnable(true);
+					customerCode.setOwnership(CommonUtils.sessionOwner());
+					PersistenceHelper.manager.save(customerCode);
+				} else {
+					customerCode.setCode(code);
+					customerCode.setName(code);
+					customerCode.setDescription(code);
+					customerCode.setCodeType(CommonCodeType.toCommonCodeType("CUSTOMER"));
+					customerCode.setSort(i);
+					customerCode.setEnable(true);
+					customerCode.setOwnership(CommonUtils.sessionOwner());
+					PersistenceHelper.manager.modify(customerCode);
+				}
+			}
 
 			trs.commit();
 			trs = null;
