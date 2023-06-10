@@ -230,7 +230,7 @@ JSONArray departments = JSONArray.fromObject(list);
 	}
 
 	function loadGridData() {
-		const params = new Object();
+		let params = new Object();
 		const url = getCallUrl("/org/list");
 		const field = ["userName","userId","oid","psize"];
 		const resign = !!document.querySelector("input[name=resign]:checked").value;

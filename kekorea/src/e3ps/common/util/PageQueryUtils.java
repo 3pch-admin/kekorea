@@ -9,7 +9,7 @@ import wt.query.QuerySpec;
 
 public class PageQueryUtils {
 
-	int psize = 100;
+	int psize = 30;
 	int cpage = 1;
 	int total = 0;
 	int pageCount = 10;
