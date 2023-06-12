@@ -215,6 +215,7 @@ function requestAdditionalData() {
 	}
 
 	call(url, params, function(data) {
+		console.log(data);
 		if (data.list.length == 0) {
 			last = true;
 		} else {
