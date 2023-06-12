@@ -22,7 +22,7 @@ String end = (String) request.getAttribute("end");
 </head>
 <body>
 	<form>
-		<input type="hidden" name="sessionid" id="sessionid">
+		<input type="hidden" name="sessionid" id="sessionid"><input type="hidden" name="lastNum" id="lastNum">
 		<input type="hidden" name="curPage" id="curPage">
 
 		<table class="search-table">

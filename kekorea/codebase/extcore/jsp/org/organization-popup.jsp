@@ -14,7 +14,7 @@ JSONArray departments = JSONArray.fromObject(list);
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
-<input type="hidden" name="sessionid" id="sessionid">
+<input type="hidden" name="sessionid" id="sessionid"><input type="hidden" name="lastNum" id="lastNum">
 <input type="hidden" name="curPage" id="curPage">
 <input type="hidden" name="lastNum" id="lastNum">
 <input type="hidden" name="oid" id="oid">
@@ -101,7 +101,7 @@ JSONArray departments = JSONArray.fromObject(list);
 		</td>
 		<td>&nbsp;</td>
 		<td valign="top">
-			<div id="grid_wrap" style="height: 200px; border-top: 1px solid #3180c3;"></div>
+			<div id="grid_wrap" style="height: 465px; border-top: 1px solid #3180c3;"></div>
 		</td>
 	</tr>
 </table>

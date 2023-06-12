@@ -24,7 +24,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
-		<input type="hidden" name="sessionid" id="sessionid">
+		<input type="hidden" name="sessionid" id="sessionid"><input type="hidden" name="lastNum" id="lastNum">
 		<input type="hidden" name="curPage" id="curPage">
 
 		<table class="search-table">
