@@ -113,7 +113,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
-					<select name="psize" id="psize">
+					<select name="_psize" id="_psize">
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -307,7 +307,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/doc/list");
-				const field = ["psize","oid","name","number","description","state","creatorOid","createdFrom","createdTo"];
+				const field = ["_psize","oid","name","number","description","state","creatorOid","createdFrom","createdTo"];
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				params = toField(params, field);
 				params.latest = latest;
@@ -342,7 +342,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				selectbox("state");
 				finderUser("creator");
 				twindate("created");
-				selectbox("psize");
+				selectbox("_psize");
 			});
 
 			function exportExcel() {

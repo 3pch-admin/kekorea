@@ -166,7 +166,7 @@ String toid = (String) request.getAttribute("toid");
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 		<td class="right">
-			<select name="psize" id="psize">
+			<select name="_psize" id="_psize">
 				<option value="30">30</option>
 				<option value="50">50</option>
 				<option value="100">100</option>
@@ -402,7 +402,7 @@ String toid = (String) request.getAttribute("toid");
 		const mak_name = document.getElementById("mak_name").value;
 		const detail_name = document.getElementById("detail_name").value;
 		const description = document.getElementById("description").value;
-		const psize = document.getElementById("psize").value;
+		const psize = document.getElementById("_psize").value;
 		const name = document.getElementById("name").value;
 		params.name = name;
 		params.kekNumber = kekNumber;
@@ -480,7 +480,7 @@ String toid = (String) request.getAttribute("toid");
 			}
 		})
 		selectbox("detail_name");
-		selectbox("psize");
+		selectbox("_psize");
 	});
 
 	document.addEventListener("keydown", function(event) {

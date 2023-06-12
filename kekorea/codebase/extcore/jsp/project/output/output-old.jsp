@@ -146,7 +146,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 					<input type="button" value="NEW" title="NEW" onclick="toggle();">
 				</td>
 				<td class="right">
-					<select name="psize" id="psize">
+					<select name="_psize" id="_psize">
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -353,7 +353,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 				let params = new Object();
 				const url = getCallUrl("/output/list");
 				const field =["oid","name","number","content","kekNumber","keNumber","description"
-									,"creatorOid","createdFrom","createdTo","state","psize","type","mak"];
+									,"creatorOid","createdFrom","createdTo","state","_psize","type","mak"];
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				params = toField(params, field);
 				params.latest = latest;
@@ -384,7 +384,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 				selectbox("state");
 				finderUser("creator");
 				twindate("created");
-				selectbox("psize");
+				selectbox("_psize");
 			});
 
 			function toggle() {

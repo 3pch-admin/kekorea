@@ -58,7 +58,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('agree-list');">
 				</td>
 				<td class="right">
-					<select name="psize" id="psize">
+					<select name="_psize" id="_psize">
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -215,7 +215,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/workspace/agree");
-				const field = ["approvalTitle","psize","submiterOid","receiveFrom","receiveTo"];
+				const field = ["approvalTitle","_psize","submiterOid","receiveFrom","receiveTo"];
 				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -246,7 +246,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				AUIGrid.resize(myGridID);
 				finderUser("submiter");
 				twindate("receive");
-				selectbox("psize");
+				selectbox("_psize");
 			});
 
 			document.addEventListener("keydown", function(event) {

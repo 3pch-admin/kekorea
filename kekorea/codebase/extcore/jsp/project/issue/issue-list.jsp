@@ -116,7 +116,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 					%>
 				</td>
 				<td class="right">
-					<select name="psize" id="psize">
+					<select name="_psize" id="_psize">
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -359,7 +359,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/issue/list");
-				const field = [ "name", "content", "description", "kekNumber", "keNumber", "mak_name", "creatorOid", "createdFrom", "createdTo", "psize" ];
+				const field = [ "name", "content", "description", "kekNumber", "keNumber", "mak_name", "creatorOid", "createdFrom", "createdTo", "_psize" ];
 				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -433,7 +433,7 @@ ArrayList<Map<String, String>> maks = (ArrayList<Map<String, String>>) request.g
 				AUIGrid.resize(myGridID);
 				finderUser("creator");
 				twindate("created");
-				selectbox("psize");
+				selectbox("_psize");
 				selectbox("mak_name");
 			});
 

@@ -56,7 +56,7 @@ String poid = (String) request.getAttribute("poid");
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 		<td class="right">
-			<select name="psize" id="psize">
+			<select name="_psize" id="_psize">
 				<option value="30">30</option>
 				<option value="50">50</option>
 				<option value="100">100</option>
@@ -267,7 +267,7 @@ String poid = (String) request.getAttribute("poid");
 	function loadGridData() {
 		const url = getCallUrl("/configSheet/list");
 		const params = new Object();
-		const psize = document.getElementById("psize").value;
+		const psize = document.getElementById("_psize").value;
 		params.psize = psize;
 		AUIGrid.showAjaxLoader(myGridID);
 		parent.openLayer();
@@ -313,7 +313,7 @@ String poid = (String) request.getAttribute("poid");
 		createAUIGrid(columns);
 		finderUser("creator");
 		twindate("created");
-		selectbox("psize");
+		selectbox("_psize");
 	});
 
 	document.addEventListener("keydown", function(event) {

@@ -160,7 +160,7 @@ String method = (String) request.getAttribute("method");
 			<!-- 					<input type="button" value="라이브러리" title="라이브러리" class="blue" onclick="toggle('library');"> -->
 		</td>
 		<td class="right">
-			<select name="psize" id="psize">
+			<select name="_psize" id="_psize">
 				<option value="30">30</option>
 				<option value="50">50</option>
 				<option value="100">100</option>
@@ -400,11 +400,11 @@ opener.<%=method%>(arr, function(result) {
 function loadGridData() {
 	const params = new Object();
 	const url = getCallUrl("/epm/list");
-	const container = document.getElementById("psize").value;
+	const container = document.getElementById("_psize").value;
 	const fileName = document.getElementById("fileName").value;
 	const latest = !!document.querySelector("input[name=latest]:checked").value;
 	const oid = document.getElementById("oid").value;
-	const psize = document.getElementById("psize").value;
+	const psize = document.getElementById("_psize").value;
 	params.container = container;
 	params.fileName = fileName;
 	params.latest = latest;
@@ -432,7 +432,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	_createAUIGrid(_columns);
 	AUIGrid.resize(myGridID);
 	AUIGrid.resize(_myGridID);
-	selectbox("psize");
+	selectbox("_psize");
 	selectbox("state");
 	selectbox("cadType");
 	finderUser("creator");

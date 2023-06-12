@@ -165,7 +165,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<input type="button" value="라이브러리" title="라이브러리" class="blue" onclick="toggle('library');">
 				</td>
 				<td class="right">
-					<select name="psize" id="psize">
+					<select name="_psize" id="_psize">
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -414,7 +414,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/epm/list");
-				const field = [ "container", "fileName", "number", "oid", "state", "cadType", "createdFrom", "createdTo", "creatorOid", "modifierOid", "modifiedFrom", "modifiedTo", "material", "reference", "remark", "partCode", "partName", "psize" ];
+				const field = [ "container", "fileName", "number", "oid", "state", "cadType", "createdFrom", "createdTo", "creatorOid", "modifierOid", "modifiedFrom", "modifiedTo", "material", "reference", "remark", "partCode", "partName", "_psize" ];
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				params = toField(params, field);
 				params.latest = latest;
@@ -456,7 +456,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				_createAUIGrid(_columns);
 				AUIGrid.resize(myGridID);
 				AUIGrid.resize(_myGridID);
-				selectbox("psize");
+				selectbox("_psize");
 				selectbox("state");
 				selectbox("cadType");
 				finderUser("creator");

@@ -153,7 +153,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
 		<td class="right">
-			<select name="psize" id="psize">
+			<select name="_psize" id="_psize">
 				<option value="30">30</option>
 				<option value="50">50</option>
 				<option value="100">100</option>
@@ -518,7 +518,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 	function loadGridData() {
 		let params = new Object();
 		const url = getCallUrl("/numberRule/list");
-		const field = [ "number", "name", "lotNo", "unitName", "size", "state", "writtenDocuments_code", "creatorOid", "createdFrom", "createdTo", "classificationWritingDepartments_code", "psize" ];
+		const field = [ "number", "name", "lotNo", "unitName", "size", "state", "writtenDocuments_code", "creatorOid", "createdFrom", "createdTo", "classificationWritingDepartments_code", "_psize" ];
 		const latest = !!document.querySelector("input[name=latest]:checked").value;
 		params = toField(params, field);
 		params.latest = latest;
@@ -565,7 +565,7 @@ boolean multi = (boolean) request.getAttribute("multi");
 		});
 		createAUIGrid(columns);
 		AUIGrid.resize(myGridID);
-		selectbox("psize");
+		selectbox("_psize");
 		selectbox("businessSector");
 		selectbox("state");
 		selectbox("size");

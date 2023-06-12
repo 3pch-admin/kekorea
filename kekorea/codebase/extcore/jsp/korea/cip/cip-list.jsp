@@ -149,7 +149,7 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 					%>
 				</td>
 				<td class="right">
-					<select name="psize" id="psize">
+					<select name="_psize" id="_psize">
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -727,7 +727,7 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/cip/list");
-				const field = [ "item", "improvements", "improvement", "apply", "mak", "detail", "customer", "install", "creatorOid", "createdFrom", "createdTo", "note", "psize" ];
+				const field = [ "item", "improvements", "improvement", "apply", "mak", "detail", "customer", "install", "creatorOid", "createdFrom", "createdTo", "note", "_psize" ];
 				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -959,7 +959,7 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 					}
 				})
 				selectbox("install");
-				selectbox("psize");
+				selectbox("_psize");
 			});
 
 			document.addEventListener("keydown", function(event) {

@@ -138,7 +138,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					%>
 				</td>
 				<td class="right">
-					<select name="psize" id="psize">
+					<select name="_psize" id="_psize">
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -470,7 +470,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/kePart/list");
-				const field =["lotNo","keNumber","name","code","model","state","creatorOid","createdFrom","createdTo","modifierOid","modifiedFrom","modifiedTo","psize"];
+				const field =["lotNo","keNumber","name","code","model","state","creatorOid","createdFrom","createdTo","modifierOid","modifiedFrom","modifiedTo","_psize"];
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				params = toField(params, field);
 				params.latest = latest;
@@ -659,7 +659,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				twindate("created");
 				finderUser("modifier");
 				twindate("modified");
-				selectbox("psize");
+				selectbox("_psize");
 			});
 
 			document.addEventListener("keydown", function(event) {

@@ -177,7 +177,7 @@ String poid = (String) request.getAttribute("poid");
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 		<td class="right">
-			<select name="psize" id="psize">
+			<select name="_psize" id="_psize">
 				<option value="30">30</option>
 				<option value="50">50</option>
 				<option value="100">100</option>
@@ -466,7 +466,7 @@ String poid = (String) request.getAttribute("poid");
 		const detail_name = document.getElementById("detail_name").value;
 		const description = document.getElementById("description").value;
 		const latest = !!document.querySelector("input[name=latest]:checked").value;
-		const psize = document.getElementById("psize").value;
+		const psize = document.getElementById("_psize").value;
 		params.kekNumber = kekNumber;
 		params.keNumber = keNumber;
 		params.pdateFrom = pdateFrom;
@@ -565,7 +565,7 @@ String poid = (String) request.getAttribute("poid");
 			}
 		})
 		selectbox("detail_name");
-		selectbox("psize");
+		selectbox("_psize");
 	});
 	document.addEventListener("keydown", function(event) {
 		const keyCode = event.keyCode || event.which;

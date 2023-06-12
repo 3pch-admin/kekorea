@@ -99,7 +99,7 @@ String method = (String) request.getAttribute("method");
 			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
 		<td class="right">
-			<select name="psize" id="psize">
+			<select name="_psize" id="_psize">
 				<option value="30">30</option>
 				<option value="50">50</option>
 				<option value="100">100</option>
@@ -307,7 +307,7 @@ String method = (String) request.getAttribute("method");
 	function loadGridData() {
 		const url = getCallUrl("/doc/list");
 		const params = new Object();
-		const psize = document.getElementById("psize").value;
+		const psize = document.getElementById("_psize").value;
 		const oid = document.getElementById("oid").value;
 		const name = document.getElementById("name").value;
 		const number = document.getElementById("number").value;
@@ -351,7 +351,7 @@ String method = (String) request.getAttribute("method");
 		selectbox("state");
 		finderUser("creator");
 		twindate("created");
-		selectbox("psize");
+		selectbox("_psize");
 	});
 
 	document.addEventListener("keydown", function(event) {

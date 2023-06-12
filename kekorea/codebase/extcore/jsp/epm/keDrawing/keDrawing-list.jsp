@@ -122,7 +122,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					%>
 				</td>
 				<td class="right">
-					<select name="psize" id="psize">
+					<select name="_psize" id="_psize">
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -446,7 +446,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/keDrawing/list");
-				const field = [ "name", "creatorOid", "createdFrom", "createdTo", "keNumber", "modifierOid", "modifiedFrom", "modifiedTo", "psize" ];
+				const field = [ "name", "creatorOid", "createdFrom", "createdTo", "keNumber", "modifierOid", "modifiedFrom", "modifiedTo", "_psize" ];
 				const lotNo = document.getElementById("lotNo").value;
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				params = toField(params, field);
@@ -646,7 +646,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				twindate("created");
 				finderUser("modifier");
 				twindate("modified");
-				selectbox("psize");
+				selectbox("_psize");
 			});
 
 			document.addEventListener("keydown", function(event) {

@@ -194,7 +194,7 @@ JSONArray projectTypesJson = JSONArray.fromObject(projectTypes);
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>
 				<td class="right">
-					<select name="psize" id="psize">
+					<select name="_psize" id="_psize">
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -941,10 +941,11 @@ JSONArray projectTypesJson = JSONArray.fromObject(projectTypes);
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/project/list");
-				const field = [ "kekNumber", "keNumber", "pdateFrom", "pdateTo", "userId", "kekState", "model", "customer_name", "install_name", "projectType", "machineOid", "elecOid", "softOid", "mak_name", "detail_name", "template", "description", "psize" ];
+				const field = [ "kekNumber", "keNumber", "pdateFrom", "pdateTo", "userId", "kekState", "model", "customer_name", "install_name", "projectType", "machineOid", "elecOid", "softOid", "mak_name", "detail_name", "template", "description", "_psize" ];
 				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
+				console.log(params);
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					if (data.result) {
@@ -1036,7 +1037,7 @@ JSONArray projectTypesJson = JSONArray.fromObject(projectTypes);
 				})
 				selectbox("detail_name");
 				selectbox("template");
-				selectbox("psize");
+				selectbox("_psize");
 			});
 
 			function create() {

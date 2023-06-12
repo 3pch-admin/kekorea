@@ -73,7 +73,7 @@ JSONArray departments = JSONArray.fromObject(list);
 			<input type="button" value="닫기" title="닫기" class="blue" onclick="self.close();">
 		</td>
 		<td class="right">
-			<select name="psize" id="psize">
+			<select name="_psize" id="_psize">
 				<option value="30">30</option>
 				<option value="50">50</option>
 				<option value="100">100</option>
@@ -92,15 +92,15 @@ JSONArray departments = JSONArray.fromObject(list);
 		<col width="*">
 	</colgroup>
 	<tr>
-		<td>
+		<td valign="top">
 			<jsp:include page="/extcore/jsp/common/department-include.jsp">
 				<jsp:param value="list" name="mode" />
 				<jsp:param value="465" name="height" />
 			</jsp:include>
 		</td>
 		<td>&nbsp;</td>
-		<td>
-			<div id="grid_wrap" style="height: 465px; border-top: 1px solid #3180c3;"></div>
+		<td valign="top">
+			<div id="grid_wrap" style="height: 200px; border-top: 1px solid #3180c3;"></div>
 		</td>
 	</tr>
 </table>
@@ -232,7 +232,7 @@ JSONArray departments = JSONArray.fromObject(list);
 	function loadGridData() {
 		let params = new Object();
 		const url = getCallUrl("/org/list");
-		const field = ["userName","userId","oid","psize"];
+		const field = ["userName","userId","oid","_psize"];
 		const resign = !!document.querySelector("input[name=resign]:checked").value;
 		params = toField(params, field);
 		params.resign = resign;
@@ -268,7 +268,7 @@ JSONArray departments = JSONArray.fromObject(list);
 		_createAUIGrid(_columns); // 트리
 		AUIGrid.resize(myGridID);
 		AUIGrid.resize(_myGridID); // 트리
-		selectbox("psize");
+		selectbox("_psize");
 	});
 	
 	document.addEventListener("keydown", function(event) {

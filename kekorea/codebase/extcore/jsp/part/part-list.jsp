@@ -148,7 +148,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<input type="button" value="라이브러리" title="라이브러리" class="blue" onclick="toggle('product');">
 				</td>
 				<td class="right">
-					<select name="psize" id="psize">
+					<select name="_psize" id="_psize">
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -400,9 +400,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/part/list");
-				const field = ["psize","oid","name","partCode","partName","number","material","remarks","maker","creatorOid","createdFrom","createdTo","modifier","modifiedFrom","modifiedTo","state"];
-				const psize = document.getElementById("psize").value;
-// 				const container = document.getElementById("psize").value;
+				const field = ["_psize","oid","name","partCode","partName","number","material","remarks","maker","creatorOid","createdFrom","createdTo","modifier","modifiedFrom","modifiedTo","state"];
+				const psize = document.getElementById("_psize").value;
+// 				const container = document.getElementById("_psize").value;
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 // 				params.container = container;
 				params = toField(params, field);
@@ -442,7 +442,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				AUIGrid.resize(myGridID);
 				AUIGrid.resize(_myGridID);
 				selectbox("state");
-				selectbox("psize");
+				selectbox("_psize");
 				selectbox("state");
 				finderUser("creator");
 				finderUser("modifier");

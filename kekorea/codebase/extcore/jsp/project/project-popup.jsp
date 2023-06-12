@@ -175,7 +175,7 @@ String end = (String) request.getAttribute("end");
 			<input type="button" value="닫기" title="닫기" class="red" onclick="self.close();">
 		</td>
 		<td class="right">
-			<select name="psize" id="psize">
+			<select name="_psize" id="_psize">
 				<option value="30">30</option>
 				<option value="50">50</option>
 				<option value="100">100</option>
@@ -410,7 +410,7 @@ String end = (String) request.getAttribute("end");
 	function loadGridData() {
 		let params = new Object();
 		const url = getCallUrl("/project/list");
-		const field = [ "kekNumber", "keNumber", "pdateFrom", "pdateTo", "userId", "kekState", "model", "customer_name", "install_name", "projectType", "machineOid", "elecOid", "softOid", "mak_name", "detail_name", "template", "description", "psize" ];
+		const field = [ "kekNumber", "keNumber", "pdateFrom", "pdateTo", "userId", "kekState", "model", "customer_name", "install_name", "projectType", "machineOid", "elecOid", "softOid", "mak_name", "detail_name", "template", "description", "_psize" ];
 		params = toField(params, field);
 		AUIGrid.showAjaxLoader(myGridID);
 		openLayer();
@@ -489,7 +489,7 @@ String end = (String) request.getAttribute("end");
 		})
 		selectbox("detail_name");
 		selectbox("template");
-		selectbox("psize");
+		selectbox("_psize");
 	});
 
 	document.addEventListener("keydown", function(event) {

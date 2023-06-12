@@ -44,10 +44,10 @@ public class PageQueryUtils {
 			cpage = "1";
 		}
 
-		String psize = (String) this.param.get("psize");
+		String psize = (String) this.param.get("_psize");
 		System.out.println("pzie=" + psize);
 		if (StringUtils.isNull(psize)) {
-			psize = "100";
+			psize = "30";
 		}
 
 		this.cpage = Integer.parseInt(cpage);

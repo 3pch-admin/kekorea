@@ -169,7 +169,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 				</td>
 				<td class="right">
-					<select name="psize" id="psize">
+					<select name="_psize" id="_psize">
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -725,7 +725,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/numberRule/list");
-				const field = [ "number", "name", "lotNo", "unitName", "size", "state", "writtenDocuments_code", "creatorOid", "createdFrom", "createdTo", "classificationWritingDepartments_code", "psize" ];
+				const field = [ "number", "name", "lotNo", "unitName", "size", "state", "writtenDocuments_code", "creatorOid", "createdFrom", "createdTo", "classificationWritingDepartments_code", "_psize" ];
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				params = toField(params, field);
 				params.latest = latest;
@@ -779,7 +779,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 				});
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				selectbox("psize");
+				selectbox("_psize");
 				selectbox("state");
 				selectbox("size");
 				selectbox("writtenDocuments_code");

@@ -97,7 +97,7 @@ String end = (String) request.getAttribute("end");
 					<input type="button" value="이력비교" title="이력비교" class="orange" onclick="historyCompare();">
 				</td>
 				<td class="right">
-					<select name="psize" id="psize">
+					<select name="_psize" id="_psize">
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -401,7 +401,7 @@ String end = (String) request.getAttribute("end");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/korea/list");
-				const field = [ "psize", "pdateFrom", "pdateTo", "projectType" ];
+				const field = [ "_psize", "pdateFrom", "pdateTo", "projectType" ];
 				const kekNumbers = [];
 				const kekNumber = document.getElementById("kekNumber").value;
 				const values = kekNumber.split(",");
@@ -427,7 +427,7 @@ String end = (String) request.getAttribute("end");
 						document.getElementById("curPage").value = data.curPage;
 						AUIGrid.setGridData(myGridID, data.list);
 						AUIGrid.resize(myGridID);
-						selectbox("psize");
+						selectbox("_psize");
 					} else {
 						alert(data.msg);
 					}
@@ -457,7 +457,7 @@ String end = (String) request.getAttribute("end");
 				selectbox("projectType");
 				createAUIGrid(columns);
 				AUIGrid.resize(myGridID);
-				selectbox("psize");
+				selectbox("_psize");
 			})
 
 			document.addEventListener("keydown", function(event) {

@@ -83,7 +83,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					%>
 				</td>
 				<td class="right">
-					<select name="psize" id="psize">
+					<select name="_psize" id="_psize">
 						<option value="30">30</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
@@ -225,7 +225,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/template/list");
-				const field = [ "name", "creatorOid", "createdFrom", "createdTo", "modifierOid", "modifiedFrom", "modifiedTo", "psize" ];
+				const field = [ "name", "creatorOid", "createdFrom", "createdTo", "modifierOid", "modifiedFrom", "modifiedTo", "_psize" ];
 				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
@@ -299,7 +299,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				twindate("created");
 				finderUser("modifier");
 				twindate("modified");
-				selectbox("psize");
+				selectbox("_psize");
 			});
 
 			function exportExcel() {

@@ -203,12 +203,17 @@ function requestAdditionalData() {
 	const params = new Object();
 	const curPage = document.getElementById("curPage").value
 	const sessionid = document.getElementById("sessionid").value;
-//	const psize = document.getElementById("psize").value;
+	//	const psize = document.getElementById("psize").value;
 	params.sessionid = sessionid;
-	params.start = Number(curPage * 50);
-	params.end = Number((curPage * 50) + 50);
+	params.start = parseInt(curPage * 50);
+	params.end = parseInt((curPage * 50) + 50);
 	AUIGrid.showAjaxLoader(myGridID);
-	parent.openLayer();
+	if (opener !== null) {
+		openLayer();
+	} else {
+		parent.openLayer();
+	}
+
 	call(url, params, function(data) {
 		if (data.list.length == 0) {
 			last = true;
@@ -217,7 +222,11 @@ function requestAdditionalData() {
 			document.getElementById("curPage").value = parseInt(curPage) + 1;
 		}
 		AUIGrid.removeAjaxLoader(myGridID);
-		parent.closeLayer();
+		if (opener !== null) {
+			closeLayer();
+		} else {
+			parent.closeLayer();
+		}
 	})
 }
 
