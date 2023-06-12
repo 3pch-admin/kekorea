@@ -114,7 +114,8 @@ public class RequestDocumentHelper {
 
 			if (!StringUtils.isNull(machineOid)) {
 				WTUser machine = (WTUser) CommonUtils.getObject(machineOid);
-				CommonCode machineCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.MACHINE, "USER_TYPE");
+				CommonCode machineCode = CommonCodeHelper.manager.getCommonCode(ProjectUserTypeVariable.MACHINE,
+						"USER_TYPE");
 				int idx_plink = _query.appendClassList(ProjectUserLink.class, false);
 				int idx_u = _query.appendClassList(WTUser.class, false);
 
@@ -261,9 +262,8 @@ public class RequestDocumentHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Project.class, true);
 		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, Project.KEK_NUMBER, kekNumber);
-		CommonCode projectTypeCode = CommonCodeHelper.manager.getCommonCode(projectType_code, "PROJECT_TYPE");
-		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "projectTypeReference.key.id",
-				projectTypeCode.getPersistInfo().getObjectIdentifier().getId());
+		CommonCode projectTypeCode = (CommonCode) CommonUtils.getObject(projectType_code);
+		QuerySpecUtils.toEqualsAnd(query, idx, Project.class, "projectTypeReference.key.id", projectTypeCode);
 		QueryResult qr = PersistenceHelper.manager.find(query);
 		result.put("validate", qr.size() > 0 ? true : false);
 		return result;

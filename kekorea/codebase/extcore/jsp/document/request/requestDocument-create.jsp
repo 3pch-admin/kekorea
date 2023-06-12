@@ -150,6 +150,16 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 							break;
 						}
 					}
+					
+					if (fromClipboard) {
+						for (let i = 0, len = projectTypes.length; i < len; i++) {
+							if (projectTypes[i]["key"] == newValue) {
+								isValid = true;
+								break;
+							}
+						}
+					}
+					
 					return {
 						"validate" : isValid,
 						"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
@@ -727,6 +737,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 					const url = getCallUrl("/requestDocument/validate");
 					params.kekNumber = item.kekNumber;
 					params.projectType_code = item.projectType_code;
+					openLayer();
 					call(url, params, function(data) {
 						if (data.validate) {
 							alert(rowIndex + "행에 입력한 작번은 이미 등록되어있습니다.");
@@ -735,6 +746,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 							AUIGrid.updateRow(myGridID, item, rowIndex);
 							return false;
 						}
+						closeLayer();
 					})
 				}
 			}

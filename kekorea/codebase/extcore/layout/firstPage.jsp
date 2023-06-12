@@ -154,7 +154,7 @@ JSONArray pList = (JSONArray) request.getAttribute("pList");
 								baseUrl : "javascript",
 								jsCallback : function(rowIndex, columnIndex, value, item) {
 									const oid = item.oid;
-									const url = getCallUrl("/project/view?oid=" + oid);
+									const url = getCallUrl("/project/info?oid=" + oid);
 									popup(url);
 								}
 							},

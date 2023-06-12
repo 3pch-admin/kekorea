@@ -214,29 +214,19 @@ public class StandardRequestDocumentService extends StandardManager implements R
 
 				Project project = Project.newProject();
 
-				if (!StringUtils.isNull(projectType_code)) {
-					projectTypeCode = CommonCodeHelper.manager.getCommonCode(projectType_code, "PROJECT_TYPE");
-				}
+				projectTypeCode = (CommonCode) CommonUtils.getObject(projectType_code);
 				project.setProjectType(projectTypeCode);
 
-				if (!StringUtils.isNull(customer_code)) {
-					customerCode = CommonCodeHelper.manager.getCommonCode(customer_code, "CUSTOMER");
-				}
+				customerCode = CommonCodeHelper.manager.getCommonCode(customer_code, "CUSTOMER");
 				project.setCustomer(customerCode);
 
-				if (!StringUtils.isNull(install_code)) {
-					installCode = CommonCodeHelper.manager.getCommonCode(install_code, "INSTALL");
-				}
+				installCode = CommonCodeHelper.manager.getCommonCode(install_code, "INSTALL");
 				project.setInstall(installCode);
 
-				if (!StringUtils.isNull(mak_code)) {
-					makCode = CommonCodeHelper.manager.getCommonCode(mak_code, "MAK");
-				}
+				makCode = CommonCodeHelper.manager.getCommonCode(mak_code, "MAK");
 				project.setMak(makCode);
 
-				if (!StringUtils.isNull(detail_code)) {
-					detailCode = CommonCodeHelper.manager.getCommonCode(detail_code, "MAK_DETAIL");
-				}
+				detailCode = CommonCodeHelper.manager.getCommonCode(detail_code, "MAK_DETAIL");
 				project.setDetail(detailCode);
 
 				project.setKekNumber(kekNumber);
