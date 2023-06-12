@@ -137,7 +137,7 @@ public class OrgController extends BaseController {
 	public Map<String, Object> loadDepartmentTree(@RequestBody Map<String, String> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			net.sf.json.JSONArray list = OrgHelper.manager.loadDepartmentTree(params);
+			JSONArray list = OrgHelper.manager.loadDepartmentTree(params);
 			result.put("list", list);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

@@ -163,9 +163,28 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						}
 					}
 					myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
-					readyHandler();
+					// 					readyHandler();
+					loadTaskTree();
 					AUIGrid.bind(myGridID, "selectionChange", auiGridSelectionChangeHandler);
 					AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBegin);
+				}
+
+				function loadTaskTree() {
+					const oid = document.getElementById("oid").value;
+					const url = getCallUrl("/project/load");
+					const params = new Object();
+					params.oid = oid;
+					AUIGrid.showAjaxLoader(myGridID);
+					openLayer();
+					call(url, params, function(data) {
+						AUIGrid.removeAjaxLoader(myGridID);
+						if (data.result) {
+							AUIGrid.setGridData(myGridID, data.list);
+						} else {
+							alert(data.msg);
+						}
+						closeLayer();
+					});
 				}
 
 				function auiCellEditBegin(event) {
@@ -175,11 +194,6 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					if (type === "project") {
 						return false;
 					}
-
-// 					if (taskType === "NORMAL" || taskType === "T-BOM") {
-// 						return false;
-// 					}
-
 					return true;
 				}
 
@@ -331,7 +345,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 		}, "GET");
 	}
-	
+
 	document.addEventListener("DOMContentLoaded", function() {
 		createAUIGrid(columns);
 		AUIGrid.resize(myGridID);

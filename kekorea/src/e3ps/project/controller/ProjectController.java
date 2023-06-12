@@ -201,12 +201,13 @@ public class ProjectController extends BaseController {
 	}
 
 	@Description(value = "작번 트리 함수")
-	@GetMapping(value = "/load")
+	@PostMapping(value = "/load")
 	@ResponseBody
-	public Map<String, Object> load(@RequestParam String oid) throws Exception {
+	public Map<String, Object> load(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			System.out.println("트리 START = " + new Timestamp(new Date().getTime()));
+			String oid = (String) params.get("oid");
 			JSONArray list = ProjectHelper.manager.load(oid);
 			System.out.println("트리 END = " + new Timestamp(new Date().getTime()));
 			result.put("list", list);
