@@ -96,7 +96,7 @@ public class ProjectHelper {
 		int progress = 0;
 
 		ArrayList<Task> list = new ArrayList<Task>();
-		list = recurciveTask(project);
+		list = recurciveTask(project, 2);
 
 		int sumAllocate = 0;
 		int sumProgress = 0;
@@ -134,7 +134,7 @@ public class ProjectHelper {
 
 		ArrayList<Task> list = new ArrayList<Task>();
 
-		list = recurciveTask(project);
+		list = recurciveTask(project, 2);
 
 		int sumAllocate = 0;
 		int sumProgress = 0;
@@ -812,6 +812,30 @@ public class ProjectHelper {
 			kekProgress = sumProgress / sumAllocate;
 		}
 		return kekProgress;
+	}
+
+	/**
+	 * 진행율 위한 태스크 수집 함수
+	 */
+	public ArrayList<Task> recurciveTask(Project project, int depth) throws Exception {
+		ArrayList<Task> list = new ArrayList<Task>();
+
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(Task.class, true);
+
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "projectReference.key.id",
+				project.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id", 0L);
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, Task.DEPTH, depth);
+
+		QuerySpecUtils.toOrderBy(query, idx, Task.class, Task.SORT, false);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		while (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			Task task = (Task) obj[0];
+			list.add(task);
+		}
+		return list;
 	}
 
 	/**

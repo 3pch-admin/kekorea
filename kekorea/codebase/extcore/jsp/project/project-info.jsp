@@ -259,12 +259,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				function readyHandler() {
 					const oid = document.getElementById("oid").value;
 					const url = getCallUrl("/project/load?oid=" + oid);
+					AUIGrid.showAjaxLoader(myGridID);
 					openLayer();
 					call(url, null, function(data) {
+						AUIGrid.removeAjaxLoader(myGridID);
 						if (data.result) {
 							AUIGrid.setGridData(myGridID, data.list);
-							closeLayer();
+						} else {
+							alert(data.msg);
 						}
+						closeLayer();
 					}, "GET");
 				}
 
@@ -330,6 +334,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 	
 	document.addEventListener("DOMContentLoaded", function() {
 		createAUIGrid(columns);
+		AUIGrid.resize(myGridID);
 	})
 
 	window.addEventListener("resize", function() {

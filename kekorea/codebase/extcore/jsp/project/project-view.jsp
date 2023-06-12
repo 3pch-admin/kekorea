@@ -507,7 +507,8 @@ int mmProgress = (int) request.getAttribute("mProgress");
 
 			document.addEventListener("DOMContentLoaded", function() {
 				$("#tabs").tabs();
-				parent.parent.closeLayer();
+				// 태스크 트리가 늦게 로딩된다...
+// 				parent.parent.closeLayer();
 			})
 		</script>
 	</form>
