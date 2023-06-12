@@ -387,8 +387,6 @@ public class OrgHelper {
 		QuerySpecUtils.toBooleanAnd(query, idx, People.class, People.RESIGN, resign);
 		QuerySpecUtils.toOrderBy(query, idx, People.class, People.NAME, false);
 
-		System.out.println(query);
-		
 		PageQueryUtils pager = new PageQueryUtils(params, query);
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {

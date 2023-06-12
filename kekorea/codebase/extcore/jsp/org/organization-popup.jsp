@@ -16,6 +16,7 @@ JSONArray departments = JSONArray.fromObject(list);
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 <input type="hidden" name="sessionid" id="sessionid">
 <input type="hidden" name="curPage" id="curPage">
+<input type="hidden" name="lastNum" id="lastNum">
 <input type="hidden" name="oid" id="oid">
 <table class="search-table">
 	<colgroup>
@@ -212,7 +213,7 @@ JSONArray departments = JSONArray.fromObject(list);
 			showRowNumColumn : true,
 			showRowCheckColumn : true,
 			rowNumHeaderText : "번호",
-			noDataMessage : "검색 결과가 없습니다.",
+			showAutoNoDataMessage : false,
 			enableFilter : true,
 			selectionMode : "multipleCells",
 			showInlineFilter : true,
@@ -236,7 +237,6 @@ JSONArray departments = JSONArray.fromObject(list);
 		const resign = !!document.querySelector("input[name=resign]:checked").value;
 		params = toField(params, field);
 		params.resign = resign;
-		console.log(params);
 		AUIGrid.showAjaxLoader(myGridID);
 		openLayer();
 		call(url, params, function(data) {
@@ -244,6 +244,7 @@ JSONArray departments = JSONArray.fromObject(list);
 			if (data.result) {
 				document.getElementById("sessionid").value = data.sessionid;
 				document.getElementById("curPage").value = data.curPage;
+				document.getElementById("lastNum").value = data.list.length;
 				AUIGrid.setGridData(myGridID, data.list);
 			} else {
 				alert(data.msg);

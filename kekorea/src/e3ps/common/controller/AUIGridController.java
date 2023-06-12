@@ -34,7 +34,6 @@ public class AUIGridController extends BaseController {
 		int end = (int) params.get("end");
 		try {
 			PagingQueryResult qr = PagingSessionHelper.fetchPagingSession(start, end, sessionid);
-			System.out.println("qr="+qr.size());
 			ArrayList list = AUILazyLoadUtils.parse(qr);
 			result.put("list", list);
 			result.put("result", SUCCESS);
