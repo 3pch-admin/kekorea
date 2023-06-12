@@ -58,13 +58,15 @@ DecimalFormat df = new DecimalFormat("#,##0");
 		const params = new Object();
 		params.oid = oid;
 		params.type = type;
-		params.money = Number(money.value.replaceAll(",", ""));
+		params.money = parseInt(money.value.replaceAll(",", ""));
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
 				opener.document.location.reload();
 				self.close();
+			} else {
+				closeLayer();
 			}
 		})
 	}

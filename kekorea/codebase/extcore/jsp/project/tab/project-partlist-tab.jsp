@@ -16,14 +16,38 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
+<style type="text/css">
+.cell1 {
+	background: #d3ffa8;
+	font-weight: bold;
+}
+
+.cell2 {
+	background: #cacaff;
+	font-weight: bold;
+}
+
+.cell3 {
+	background: #ffacac;
+	font-weight: bold;
+}
+
+.cell4 {
+	background: #fdf4bb;
+	font-weight: bold;
+}
+
+
+</style>
 </head>
 <body>
 	<form>
 		<div id="grid_wrap4" style="height: 780px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID4;
-			const data = <%=data%>
+			const data =
+		<%=data%>
 			const columns4 = [ {
 				dataField : "engType",
 				headerText : "설계구분",
@@ -33,6 +57,18 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 					showIcon : true,
 					inline : true
 				},
+				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+					if (value === "기계_1차_수배") {
+						return "cell1";
+					} else if (value === "기계_2차_수배") {
+						return "cell2";
+					} else if(value === "전기_1차_수배") {
+						return "cell3";
+					} else if(value === "전기_2차_수배") {
+						return "cell4";
+					}
+					return null;
+				}
 			}, {
 				dataField : "lotNo",
 				headerText : "LOT_NO",
@@ -246,8 +282,6 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				AUIGrid.setFooter(myGridID4, footerLayout4);
 				AUIGrid.setGridData(myGridID4, data);
 			}
-
-
 
 			document.addEventListener("DOMContentLoaded", function() {
 				createAUIGrid4(columns4);

@@ -83,7 +83,7 @@
 	function create() {
 		const toid = document.getElementById("oid").value;
 		const poid = document.getElementById("poid").value;
-		const url = getCallUrl("/meeting/create?toid=" + toid + "&poid=" + poid);
+		const url = getCallUrl("/tbom/create?toid=" + toid + "&poid=" + poid);
 		popup(url);
 	}
 

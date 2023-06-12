@@ -152,11 +152,11 @@ if ("modify".equals(mode)) {
 			return false;
 		}
 		
-		if(addRows11.length === 0) {
-			alert("도번을 추가하세요.");
-			insert11();
-			return false;
-		}
+// 		if(addRows11.length === 0) {
+// 			alert("도번을 추가하세요.");
+// 			insert11();
+// 			return false;
+// 		}
 
 		if (addRows9.length === 0) {
 			alert("하나 이상의 작번이 추가되어야 합니다.");

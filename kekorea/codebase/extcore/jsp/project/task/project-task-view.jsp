@@ -325,7 +325,7 @@ int taskType = (int) request.getAttribute("taskType");
 
 			function _reload() {
 				document.location.reload();
-				parent.readyHandler();
+				parent.loadTaskTree();
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {

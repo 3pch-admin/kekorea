@@ -362,7 +362,17 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
+				<%
+					if(!StringUtils.isNull(toid)) {
+				%>
+				opener._reload();
+				<%
+					} else {
+				%>
 				opener.loadGridData();
+				<%
+					}
+				%>
 				self.close();
 			} else {
 				closeLayer();

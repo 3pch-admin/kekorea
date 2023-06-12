@@ -235,7 +235,7 @@ public static void assemblyPart(EPMDocument ee, int findNumber) throws Exception
 			// prePart...
 			long compID = part.getPersistInfo().getObjectIdentifier().getId();
 			// newPart
-			WTPart newPart =getPart(epm);
+			WTPart newPart = getPart(epm);
 			long newID = newPart.getPersistInfo().getObjectIdentifier().getId();
 			if (compID == newID) {
 				WTPartUsageLink link = compLink.get(epm.getNumber());

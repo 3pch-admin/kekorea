@@ -278,7 +278,7 @@ String toid = (String) request.getAttribute("toid");
 				};
 				myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 				readyHandler();
-// 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRow);
 			}
 

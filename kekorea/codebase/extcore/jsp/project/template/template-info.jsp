@@ -363,6 +363,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 	document.addEventListener("DOMContentLoaded", function() {
 		createAUIGrid(columns);
+		AUIGrid.resize(myGridID);
 	})
 
 	window.addEventListener("resize", function() {

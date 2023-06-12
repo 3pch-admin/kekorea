@@ -251,7 +251,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					call(url, params, function(data) {
 						alert(data.msg);
 						if (data.result) {
-							readyHandler();
+							loadTaskTree();
 						} else {
 							closeLayer();
 						}
@@ -270,21 +270,21 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					AUIGrid.addTreeRow(myGridID, newItem, parentRowId, selection);
 				}
 
-				function readyHandler() {
-					const oid = document.getElementById("oid").value;
-					const url = getCallUrl("/project/load?oid=" + oid);
-					AUIGrid.showAjaxLoader(myGridID);
-					openLayer();
-					call(url, null, function(data) {
-						AUIGrid.removeAjaxLoader(myGridID);
-						if (data.result) {
-							AUIGrid.setGridData(myGridID, data.list);
-						} else {
-							alert(data.msg);
-						}
-						closeLayer();
-					}, "GET");
-				}
+// 				function readyHandler() {
+// 					const oid = document.getElementById("oid").value;
+// 					const url = getCallUrl("/project/load?oid=" + oid);
+// 					AUIGrid.showAjaxLoader(myGridID);
+// 					openLayer();
+// 					call(url, null, function(data) {
+// 						AUIGrid.removeAjaxLoader(myGridID);
+// 						if (data.result) {
+// 							AUIGrid.setGridData(myGridID, data.list);
+// 						} else {
+// 							alert(data.msg);
+// 						}
+// 						closeLayer();
+// 					}, "GET");
+// 				}
 
 				function addTreeRow(item) {
 					const parentRowId = item._$uid;

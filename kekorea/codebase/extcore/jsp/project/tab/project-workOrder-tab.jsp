@@ -16,6 +16,17 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
+<style type="text/css">
+.cell1 {
+	background: #ffacac;
+	font-weight: bold;
+}
+
+.cell2 {
+	background: #fdf4bb;
+	font-weight: bold;
+}
+</style>
 </head>
 <body>
 	<form>
@@ -27,6 +38,14 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				dataField : "workOrderType",
 				headerText : "설계구분",
 				width : 100,
+				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+					if (value === "기계") {
+						return "cell1";
+					} else if (value === "전기") {
+						return "cell2";
+					}
+					return null;
+				},
 				filter : {
 					showIcon : true,
 					inline : true

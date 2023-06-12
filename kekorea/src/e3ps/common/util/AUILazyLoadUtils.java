@@ -25,6 +25,8 @@ import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.beans.KePartDTO;
 import e3ps.project.Project;
 import e3ps.project.dto.ProjectDTO;
+import e3ps.workspace.notice.Notice;
+import e3ps.workspace.notice.dto.NoticeDTO;
 import wt.doc.WTDocument;
 import wt.epm.EPMDocument;
 import wt.fc.PagingQueryResult;
@@ -45,6 +47,10 @@ public class AUILazyLoadUtils {
 			if (per instanceof RequestDocument) {
 				RequestDocumentProjectLink link = (RequestDocumentProjectLink) obj[1];
 				RequestDocumentDTO data = parse(link);
+				list.add(data);
+			} else if (per instanceof Notice) {
+				Notice notice = (Notice) per;
+				NoticeDTO data = parse(notice);
 				list.add(data);
 				// 문서
 			} else if (per instanceof WTDocument) {
@@ -106,6 +112,13 @@ public class AUILazyLoadUtils {
 //	private static WorkOrderDTO parse(WorkOrder workOrder) throws Exception {
 //		return new WorkOrderDTO(workOrder);
 //	}
+
+	/**
+	 * 공지사항 LAZY 로드
+	 */
+	private static NoticeDTO parse(Notice notice) throws Exception {
+		return new NoticeDTO(notice);
+	}
 
 	/**
 	 * 사용자 LAZY 로드

@@ -69,7 +69,7 @@ String number = (String) request.getAttribute("number");
 		</td>
 	</tr>
 	<tr>
-		<th class="req lb">도번</th>
+		<th class="lb">도번</th>
 		<td colspan="3">
 			<jsp:include page="/extcore/jsp/common/numberRule-include.jsp">
 				<jsp:param value="" name="oid" />
@@ -150,11 +150,11 @@ String number = (String) request.getAttribute("number");
 			return false;
 		}
 		
-		if(addRows11.length === 0) {
-			alert("도번을 추가하세요.");
-			insert11();
-			return false;
-		}
+// 		if(addRows11.length === 0) {
+// 			alert("도번을 추가하세요.");
+// 			insert11();
+// 			return false;
+// 		}
 
 		if (addRows9.length === 0) {
 			alert("하나 이상의 작번이 추가되어야 합니다.");
@@ -192,7 +192,17 @@ String number = (String) request.getAttribute("number");
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
-				opener.document.location.reload();
+				<%
+				if(!StringUtils.isNull(toid)) {
+				%>
+				opener._reload();
+				<%
+					} else {
+				%>
+				opener.loadGridData();
+				<%
+					}
+				%>
 				self.close();
 			} else {
 				closeLayer();

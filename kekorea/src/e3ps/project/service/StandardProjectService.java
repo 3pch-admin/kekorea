@@ -634,16 +634,28 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 	public void money(Map<String, Object> params) throws Exception {
 		String oid = (String) params.get("oid");
 		String type = (String) params.get("type");
-		int money = (int) params.get("money");
+		Object money = params.get("money");
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
 
 			Project project = (Project) CommonUtils.getObject(oid);
 			if ("m".equals(type)) {
-				project.setMachinePrice((double) money);
+				if (money instanceof Long) {
+					long value = (long) money;
+					project.setMachinePrice((double) value);
+				} else if (money instanceof Integer) {
+					int value = (int) money;
+					project.setMachinePrice((double) value);
+				}
 			} else if ("e".equals(type)) {
-				project.setElecPrice((double) money);
+				if (money instanceof Long) {
+					long value = (long) money;
+					project.setMachinePrice((double) value);
+				} else if (money instanceof Integer) {
+					int value = (int) money;
+					project.setElecPrice((double) value);
+				}
 			}
 			PersistenceHelper.manager.modify(project);
 
