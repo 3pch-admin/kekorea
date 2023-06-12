@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -30,6 +29,7 @@ import e3ps.doc.request.service.RequestDocumentHelper;
 import e3ps.org.service.OrgHelper;
 import e3ps.project.Project;
 import e3ps.project.template.service.TemplateHelper;
+import e3ps.system.service.ErrorLogHelper;
 import net.sf.json.JSONArray;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
@@ -60,7 +60,7 @@ public class RequestDocumentController extends BaseController {
 
 	@Description(value = "의뢰서 조회 함수")
 	@ResponseBody
-	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	@PostMapping(value = "/list")
 	public Map<String, Object> list(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -69,6 +69,8 @@ public class RequestDocumentController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/requestDocument/list", "의뢰서 조회 함수");
 		}
 		return result;
 	}
@@ -100,6 +102,7 @@ public class RequestDocumentController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", FAIL);
+			ErrorLogHelper.service.create(e.toString(), "/requestDocument/save", "의뢰서 그리드 저장 함수");
 		}
 		return result;
 	}
@@ -128,6 +131,7 @@ public class RequestDocumentController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/requestDocument/create", "의뢰서 등록 함수");
 		}
 		return result;
 	}
@@ -171,6 +175,7 @@ public class RequestDocumentController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/requestDocument/validate", "의뢰서 등록 검증 함수");
 		}
 		return result;
 	}
@@ -188,6 +193,7 @@ public class RequestDocumentController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/requestDocument/disconnect", "의뢰서 태스크 연결 제거 함수");
 		}
 		return result;
 	}
@@ -205,6 +211,7 @@ public class RequestDocumentController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/requestDocument/delete", "의뢰서 삭제 함수");
 		}
 		return result;
 	}
@@ -236,7 +243,7 @@ public class RequestDocumentController extends BaseController {
 		return model;
 	}
 
-	@Description(value = "의뢰서 태스크에서 연결")
+	@Description(value = "의뢰서 태스크 연결 연결")
 	@PostMapping(value = "/connect")
 	@ResponseBody
 	public Map<String, Object> connect(@RequestBody Map<String, Object> params) throws Exception {
@@ -256,6 +263,7 @@ public class RequestDocumentController extends BaseController {
 			e.printStackTrace();
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/requestDocument/connect", "의뢰서 태스크 연결 함수");
 		}
 		return result;
 	}
