@@ -124,11 +124,9 @@ public class TaskHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(Task.class, true);
 
-		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "projectReference.key.id",
-				project.getPersistInfo().getObjectIdentifier().getId());
+		QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "projectReference.key.id", project);
 		if (parentTask != null) {
-			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id",
-					parentTask.getPersistInfo().getObjectIdentifier().getId());
+			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id", parentTask);
 		} else {
 			QuerySpecUtils.toEqualsAnd(query, idx, Task.class, "parentTaskReference.key.id", 0L);
 		}

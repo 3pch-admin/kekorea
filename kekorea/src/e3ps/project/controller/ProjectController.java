@@ -3,6 +3,7 @@ package e3ps.project.controller;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -76,7 +77,7 @@ public class ProjectController extends BaseController {
 
 		JSONArray maksJson = CommonCodeHelper.manager.parseJson("MAK");
 		JSONArray customersJson = CommonCodeHelper.manager.parseJson("CUSTOMER");
-		
+
 		model.addObject("maksJson", maksJson);
 		model.addObject("customersJson", customersJson);
 		model.addObject("elecs", elecs);
@@ -205,7 +206,9 @@ public class ProjectController extends BaseController {
 	public Map<String, Object> load(@RequestParam String oid) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+			System.out.println("트리 START = " + new Timestamp(new Date().getTime()));
 			JSONArray list = ProjectHelper.manager.load(oid);
+			System.out.println("트리 END = " + new Timestamp(new Date().getTime()));
 			result.put("list", list);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
