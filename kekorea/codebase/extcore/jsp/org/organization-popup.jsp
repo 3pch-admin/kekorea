@@ -225,6 +225,7 @@ JSONArray departments = JSONArray.fromObject(list);
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		loadGridData();
 		AUIGrid.bind(myGridID, "vScrollChange", function(event) {
+			alert("C");
 			vScrollChangeHandler(event);
 		});
 	}
@@ -275,10 +276,6 @@ JSONArray departments = JSONArray.fromObject(list);
 		if (keyCode === 13) {
 			loadGridData();
 		}
-	})
-
-	document.addEventListener("click", function(event) {
-		hideContextMenu();
 	})
 
 	window.addEventListener("resize", function() {
