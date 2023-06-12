@@ -45,7 +45,7 @@ public class PageQueryUtils {
 		}
 
 		String psize = (String) this.param.get("psize");
-
+		System.out.println("pzie=" + psize);
 		if (StringUtils.isNull(psize)) {
 			psize = "100";
 		}
