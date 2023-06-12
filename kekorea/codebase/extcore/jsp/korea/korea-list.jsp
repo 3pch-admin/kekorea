@@ -424,7 +424,7 @@ String end = (String) request.getAttribute("end");
 					AUIGrid.removeAjaxLoader(myGridID);
 					if (data.result) {
 						document.getElementById("sessionid").value = data.sessionid;
-						document.getElementById("curPage").value = data.curPage;
+						document.getElementById("curPage").value = data.curPage;document.getElementById("lastNum").value = data.list.length;
 						AUIGrid.setGridData(myGridID, data.list);
 						AUIGrid.resize(myGridID);
 						selectbox("_psize");

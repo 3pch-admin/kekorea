@@ -27,7 +27,8 @@ JSONArray departments = JSONArray.fromObject(list);
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
-		<input type="hidden" name="sessionid" id="sessionid"><input type="hidden" name="lastNum" id="lastNum">
+		<input type="hidden" name="sessionid" id="sessionid">
+		<input type="hidden" name="lastNum" id="lastNum">
 		<input type="hidden" name="curPage" id="curPage">
 		<input type="hidden" name="oid" id="oid">
 
@@ -122,8 +123,10 @@ JSONArray departments = JSONArray.fromObject(list);
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
-			const maks = <%=maks%>
-			const departments = <%=departments%>
+			const maks =
+		<%=maks%>
+			const departments =
+		<%=departments%>
 			const dutys = [ "사장", "부사장", "PL", "TL" ];
 			function _layout() {
 				return [ {
@@ -359,6 +362,7 @@ JSONArray departments = JSONArray.fromObject(list);
 					if (data.result) {
 						document.getElementById("sessionid").value = data.sessionid;
 						document.getElementById("curPage").value = data.curPage;
+						document.getElementById("lastNum").value = data.list.length;
 						AUIGrid.setGridData(myGridID, data.list);
 					} else {
 						alert(data.msg);

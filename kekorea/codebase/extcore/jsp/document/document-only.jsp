@@ -293,7 +293,7 @@ String loc = (String) request.getAttribute("loc");
 			AUIGrid.removeAjaxLoader(myGridID);
 			AUIGrid.setGridData(myGridID, data.list);
 			document.getElementById("sessionid").value = data.sessionid;
-			document.getElementById("curPage").value = data.curPage;
+			document.getElementById("curPage").value = data.curPage;document.getElementById("lastNum").value = data.list.length;
 			parent.closeLayer();
 		});
 	}

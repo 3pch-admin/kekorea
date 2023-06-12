@@ -480,7 +480,7 @@ ArrayList<Map<String, String>> projectTypes = (ArrayList<Map<String, String>>) r
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
-					document.getElementById("curPage").value = data.curPage;
+					document.getElementById("curPage").value = data.curPage;document.getElementById("lastNum").value = data.list.length;
 					document.getElementById("sessionid").value = data.sessionid;
 					AUIGrid.setGridData(myGridID, data.list);
 					AUIGrid.removeAjaxLoader(myGridID);

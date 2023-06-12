@@ -735,7 +735,7 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 					AUIGrid.removeAjaxLoader(myGridID);
 					if (data.result) {
 						document.getElementById("sessionid").value = data.sessionid;
-						document.getElementById("curPage").value = data.curPage;
+						document.getElementById("curPage").value = data.curPage;document.getElementById("lastNum").value = data.list.length;
 						AUIGrid.setGridData(myGridID, data.list);
 					} else {
 						alert(data.msg);

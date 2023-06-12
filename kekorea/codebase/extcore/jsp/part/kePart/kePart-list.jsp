@@ -479,7 +479,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
-					document.getElementById("curPage").value = data.curPage;
+					document.getElementById("curPage").value = data.curPage;document.getElementById("lastNum").value = data.list.length;
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
