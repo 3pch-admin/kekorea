@@ -205,8 +205,8 @@ function requestAdditionalData() {
 	const sessionid = document.getElementById("sessionid").value;
 	const psize = document.getElementById("psize").value;
 	params.sessionid = sessionid;
-	params.start = (curPage * psize);
-	params.end = (curPage * psize) + psize;
+	params.start = (curPage * Number(psize));
+	params.end = (curPage * Number(psize)) + Number(psize);
 	AUIGrid.showAjaxLoader(myGridID);
 	parent.openLayer();
 	call(url, params, function(data) {
