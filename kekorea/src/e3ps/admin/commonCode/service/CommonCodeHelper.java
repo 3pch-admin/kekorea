@@ -16,6 +16,7 @@ import net.sf.json.JSONObject;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.query.QuerySpec;
+import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 
 public class CommonCodeHelper {
@@ -119,6 +120,16 @@ public class CommonCodeHelper {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);
 		QuerySpecUtils.toLikeAnd(query, idx, CommonCode.class, CommonCode.CODE, term);
+
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+
+		query.appendOpenParen();
+		QuerySpecUtils.toEquals(query, idx, CommonCode.class, CommonCode.CODE_TYPE, "MAK");
+		QuerySpecUtils.toEqualsOr(query, idx, CommonCode.class, CommonCode.CODE_TYPE, "CUSTOMER");
+		query.appendCloseParen();
+
 		QuerySpecUtils.toOrderBy(query, idx, CommonCode.class, CommonCode.NAME, false);
 
 		QueryResult result = PersistenceHelper.manager.find(query);
@@ -134,6 +145,9 @@ public class CommonCodeHelper {
 		return list;
 	}
 
+	/**
+	 * 코드 & 코드타입으로 코드 객체 찾아오기
+	 */
 	public CommonCode getCommonCode(String code, String codeType) throws Exception {
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(CommonCode.class, true);

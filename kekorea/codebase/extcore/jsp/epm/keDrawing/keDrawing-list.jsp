@@ -492,10 +492,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function attach(data) {
 				const name = data.name;
-				if (name.length !== 18) {
-					alert("도면파일 이름명을 체크하세요. \nDWG NO : 10자리, 버전 3자리의 양식을 맞춰주세요.");
-					return false;
-				}
+// 				if (name.length !== 18) {
+// 					alert("도면파일 이름명을 체크하세요. \nDWG NO : 10자리, 버전 3자리의 양식을 맞춰주세요.");
+// 					return false;
+// 				}
 				const start = name.indexOf("-");
 				if (start <= -1) {
 					alert("도면파일 이름의 양식이 맞지 않습니다.\nDWG NO-버전 형태의 파일명만 허용됩니다.");
@@ -512,10 +512,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					return false;
 				}
 				const number = name.substring(0, start);
-				if (number.length !== 10) {
-					alert("도면파일의 DWG NO의 자리수를 확인해주세요. 등록가능한 도번의 자리수는 10자리여야 합니다.");
-					return false;
-				}
+// 				if (number.length !== 10) {
+// 					alert("도면파일의 DWG NO의 자리수를 확인해주세요. 등록가능한 도번의 자리수는 10자리여야 합니다.");
+// 					return false;
+// 				}
 				const version = name.substring(start + 1, end);
 				if (version.length !== 3) {
 					alert("도면파일의 버전 자리수를 확인해주세요. 등록가능한 버전의 자리수는 3자리여야 합니다.");

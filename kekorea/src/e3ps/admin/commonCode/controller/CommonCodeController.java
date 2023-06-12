@@ -125,4 +125,22 @@ public class CommonCodeController extends BaseController {
 		}
 		return result;
 	}
+
+	@Description(value = "상위 코드 검색 함수")
+	@ResponseBody
+	@PostMapping(value = "/remoter")
+	public Map<String, Object> remoter(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			ArrayList<Map<String, Object>> list = CommonCodeHelper.manager.remoter(params);
+			result.put("list", list);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/commonCode/remoter", "상위 코드 검색 함수");
+		}
+		return result;
+	}
 }

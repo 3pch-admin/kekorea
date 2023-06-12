@@ -46,11 +46,10 @@ String height = request.getParameter("height");
 		timerId = setTimeout(function () {
 			const primeCell = event.item;
 			const codeType = primeCell.codeType;
-			
-			if(codeType === "DETAIL" || codeType === "INSTALL") {
-				AUIGrid.hideColumnByDataField(myGridID, "parent_name");	
-			} else {
+			if(codeType === "MAK_DETAIL" || codeType === "INSTALL") {
 				AUIGrid.showColumnByDataField(myGridID, "parent_name");	
+			} else {
+				AUIGrid.hideColumnByDataField(myGridID, "parent_name");	
 			}
 			
 			$("#codeType").bindSelectSetValue(codeType);

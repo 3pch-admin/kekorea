@@ -132,10 +132,24 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		headerText : "코드 타입",
 		dataType : "string",
 		width : 200,
+		renderer : {
+			type : "IconRenderer",
+			iconWidth : 16,
+			iconHeight : 16,
+			iconPosition : "aisleRight",
+			iconTableRef : {
+				"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
+			},
+			onClick : function(event) {
+				AUIGrid.openInputer(event.pid);
+			}
+		},
 		editRenderer : {
 			type : "ComboBoxRenderer",
 			autoCompleteMode : true,
-			showEditorBtnOver : true,
+			autoEasyMode : true,
+			matchFromFirst : false,
+			showEditorBtnOver : false,
 			list : jsonList,
 			keyField : "key",
 			valueField : "value",
@@ -179,10 +193,9 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 					return;
 				}
 				// 데이터 요청
-				let url = getCallUrl("/commonCode/remoter");
-				let params = new Object();
+				const url = getCallUrl("/commonCode/remoter");
+				const params = new Object();
 				params.term = request.term;
-				params.target = "code";
 				call(url, params, function(data) {
 					parentList = data.list;
 					response(data.list);
@@ -281,7 +294,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 	}
 
 	function auiCellEditHandler(event) {
-		if (event.dataField === "parentName") {
+		if (event.dataField === "parent_name") {
 			const item = getItem(event.value);
 			const poid = item.key;
 			AUIGrid.updateRow(myGridID, {
@@ -395,6 +408,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		params.removeRows = removeRows;
 		params.editRows = editRows;
 		parent.openLayer();
+		console.log(params);
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
