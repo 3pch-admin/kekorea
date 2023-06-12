@@ -107,7 +107,7 @@ String oid = (String) request.getAttribute("oid");
 								dataType : "string",
 								width : 100,
 							}, {
-								dataField : "department",
+								dataField : "department_name",
 								headerText : "부서",
 								dataType : "string",
 							} ]

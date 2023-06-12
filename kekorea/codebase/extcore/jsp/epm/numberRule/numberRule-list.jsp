@@ -139,7 +139,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 						<input type="radio" name="latest" value="true" checked="checked">
 						<div class="state p-success">
 							<label>
-								<b>죄신버전</b>
+								<b>최신버전</b>
 							</label>
 						</div>
 					</div>
