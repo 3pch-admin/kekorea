@@ -39,7 +39,8 @@ public class CommonCodeDTO {
 		setCode(commonCode.getCode());
 		setCodeType(commonCode.getCodeType().toString());
 		if (commonCode.getParent() != null) {
-			setParent_name(commonCode.getParent().getName() + " [" + commonCode.getCodeType().getDisplay() + "]");
+			setParent_name(
+					commonCode.getParent().getName() + " [" + commonCode.getParent().getCodeType().getDisplay() + "]");
 			setParent_code(commonCode.getParent().getCode());
 			setParent_code_type(commonCode.getParent().getCodeType().toString());
 			setParent_oid(commonCode.getParent().getPersistInfo().getObjectIdentifier().getStringValue());
