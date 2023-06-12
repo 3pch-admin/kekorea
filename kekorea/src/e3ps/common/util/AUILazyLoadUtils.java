@@ -8,8 +8,6 @@ import e3ps.bom.partlist.PartListMaster;
 import e3ps.bom.partlist.PartListMasterProjectLink;
 import e3ps.bom.partlist.dto.PartListDTO;
 import e3ps.bom.tbom.TBOMMaster;
-import e3ps.bom.tbom.TBOMMasterProjectLink;
-import e3ps.bom.tbom.dto.TBOMMasterDTO;
 import e3ps.doc.dto.DocumentDTO;
 import e3ps.doc.request.RequestDocument;
 import e3ps.doc.request.RequestDocumentProjectLink;
@@ -18,9 +16,10 @@ import e3ps.epm.dto.EpmDTO;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.epm.workOrder.WorkOrder;
-import e3ps.epm.workOrder.dto.WorkOrderDTO;
 import e3ps.korea.cip.Cip;
 import e3ps.korea.cip.dto.CipDTO;
+import e3ps.org.People;
+import e3ps.org.dto.UserDTO;
 import e3ps.part.dto.PartDTO;
 import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.beans.KePartDTO;
@@ -39,6 +38,8 @@ public class AUILazyLoadUtils {
 		while (qr.hasMoreElements()) {
 			Object[] obj = (Object[]) qr.nextElement();
 			Persistable per = (Persistable) obj[0];
+
+			System.out.println("Lazy Loading Data Class = " + per.getClass().getName());
 
 			// 의뢰서
 			if (per instanceof RequestDocument) {
@@ -89,6 +90,10 @@ public class AUILazyLoadUtils {
 			} else if (per instanceof WorkOrder) {
 //				WorkOrder workOrder = (WorkOrder) per;
 //				WorkOrderDTO data = parse(workOrder);
+			} else if (per instanceof People) {
+				People people = (People) per;
+				UserDTO data = parse(people);
+				list.add(data);
 			}
 		}
 		return list;
@@ -101,6 +106,13 @@ public class AUILazyLoadUtils {
 //	private static WorkOrderDTO parse(WorkOrder workOrder) throws Exception {
 //		return new WorkOrderDTO(workOrder);
 //	}
+
+	/**
+	 * 사용자 LAZY 로드
+	 */
+	private static UserDTO parse(People people) throws Exception {
+		return new UserDTO(people);
+	}
 
 	/**
 	 * KE 도면 LAZY 로드
