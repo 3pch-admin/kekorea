@@ -122,10 +122,8 @@ JSONArray departments = JSONArray.fromObject(list);
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
 			let myGridID;
-			const maks =
-		<%=maks%>
-			const departments =
-		<%=departments%>
+			const maks = <%=maks%>
+			const departments = <%=departments%>
 			const dutys = [ "사장", "부사장", "PL", "TL" ];
 			function _layout() {
 				return [ {
@@ -138,7 +136,7 @@ JSONArray departments = JSONArray.fromObject(list);
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-// 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							// 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
 						}
 					},
 					filter : {
@@ -155,7 +153,7 @@ JSONArray departments = JSONArray.fromObject(list);
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-// 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							// 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
 						}
 					},
 					filter : {
@@ -350,7 +348,7 @@ JSONArray departments = JSONArray.fromObject(list);
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/org/list");
-				const field = ["userName","userId","oid","psize"];
+				const field = [ "userName", "userId", "oid", "psize" ];
 				const resign = !!document.querySelector("input[name=resign]:checked").value;
 				params = toField(params, field);
 				params.resign = resign;
@@ -358,7 +356,7 @@ JSONArray departments = JSONArray.fromObject(list);
 				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
-					if(data.result) {
+					if (data.result) {
 						document.getElementById("sessionid").value = data.sessionid;
 						document.getElementById("curPage").value = data.curPage;
 						AUIGrid.setGridData(myGridID, data.list);

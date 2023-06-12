@@ -236,6 +236,7 @@ JSONArray departments = JSONArray.fromObject(list);
 		const resign = !!document.querySelector("input[name=resign]:checked").value;
 		params = toField(params, field);
 		params.resign = resign;
+		console.log(params);
 		AUIGrid.showAjaxLoader(myGridID);
 		openLayer();
 		call(url, params, function(data) {
