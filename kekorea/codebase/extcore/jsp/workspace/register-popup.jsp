@@ -858,7 +858,7 @@ function _save() {
 	call(url, params, function(data) {
 		alert(data.msg);
 		if(data.result) {
-			name.value = "";
+			document.getElementById("name").value = "";
 			loadGridLine();
 		} else {
 			AUIGrid.removeAjaxLoader(_$myGridID3);

@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.org.Department;
 import e3ps.org.service.OrgHelper;
 import e3ps.system.service.ErrorLogHelper;
@@ -415,6 +416,13 @@ public class WorkspaceController extends BaseController {
 	public Map<String, Object> save(@RequestBody Map<String, Object> params) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+
+			result = WorkspaceHelper.manager.validate(params);
+			if ((boolean) result.get("validate")) {
+				result.put("result", FAIL);
+				return result;
+			}
+
 			WorkspaceHelper.service.save(params);
 			result.put("result", SUCCESS);
 			result.put("msg", SAVE_MSG);

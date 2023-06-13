@@ -40,20 +40,21 @@ String oid = request.getParameter("oid");
 					secondaryTag.type = "hidden";
 					secondaryTag.name = "secondarys";
 					secondaryTag.value = this[i].cacheId;
-					secondaryTag.id = this[i].tagId;
+					secondaryTag.id = this[i]._id_;
 					form.appendChild(secondaryTag);
 				}
 				closeLayer();
 			},
 			onDelete : function() {
-				const key = this.file.tagId;
+				const key = this.file._id_;
 				const el = document.getElementById(key);
 				el.parentNode.removeChild(el);
 			}
 		})
 		
 		new AXReq("/Windchill/plm/content/list", {
-			pars : "oid=<%=oid%>&roleType=secondary",
+			pars : "oid=<%=oid%>
+	&roleType=secondary",
 			onsucc : function(res) {
 				if (!res.e) {
 					const form = document.querySelector("form");
@@ -62,7 +63,7 @@ String oid = request.getParameter("oid");
 					for (let i = 0; i < len; i++) {
 						const secondaryTag = document.createElement("input");
 						secondaryTag.type = "hidden";
-						secondaryTag.id = data[i].tagId;
+						secondaryTag.id = data[i]._id_;
 						secondaryTag.name = "secondarys";
 						secondaryTag.value = data[i].cacheId;
 						form.appendChild(secondaryTag);
@@ -73,4 +74,19 @@ String oid = request.getParameter("oid");
 		});
 	}
 	load();
+
+	function deleteAllFiles() {
+		const secondarys = document.getElementsByName("secondarys");
+		for (let i = secondarys.length - 1; i >= 0; i--) {
+			const tag = secondarys[i];
+			tag.parentNode.removeChild(tag);
+		}
+
+		var l = $("form:eq(0)").find("div.readyselect");
+		$.each(l, function(idx) {
+			var fid = l.eq(idx).attr("id");
+			secondary.removeUploadedList(fid);
+			l.eq(idx).hide();
+		})
+	}
 </script>

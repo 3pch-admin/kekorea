@@ -1225,4 +1225,25 @@ public class WorkspaceHelper {
 		map.put("receive", receive);
 		return map;
 	}
+
+	/**
+	 * 개인결재선 중복 체크
+	 */
+	public Map<String, Object> validate(Map<String, Object> params) throws Exception {
+		String name = (String) params.get("name");
+		Map<String, Object> result = new HashMap<>();
+		WTUser sessionUser = CommonUtils.sessionUser();
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(ApprovalUserLine.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalUserLine.class, ApprovalUserLine.NAME, name);
+		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalUserLine.class, "ownership.owner.key.id", sessionUser);
+		QueryResult qr = PersistenceHelper.manager.find(query);
+		if (qr.size() > 0) {
+			result.put("validate", true);
+			result.put("msg", "중복된 개인결재선 이름입니다.");
+			return result;
+		}
+		result.put("validate", false);
+		return result;
+	}
 }

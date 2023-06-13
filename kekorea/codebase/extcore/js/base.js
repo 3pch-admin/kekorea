@@ -296,3 +296,17 @@ function toField(params, arr) {
 function download(oid) {
 	document.location.href = "/Windchill/plm/content/download?oid=" + oid;
 }
+
+// 첨부파일 일괄삭제
+//function deleteAllFiles() {
+//	const primarys = document.getElementsByName("primarys");
+//	for (let i = primarys.length - 1; i >= 0; i--) {
+//		const primary = primarys[i];
+//		primary.parentNode.removeChild(primary);
+//	}
+//	const secondarys = document.getElementsByName("secondarys");
+//	for (let i = secondarys.length - 1; i >= 0; i--) {
+//		const secondary = secondarys[i];
+//		secondary.parentNode.removeChild(secondary);
+//	}
+//}
