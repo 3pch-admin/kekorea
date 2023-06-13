@@ -128,7 +128,7 @@ public class StandardTaskService extends StandardManager implements TaskService 
 			}
 
 			ProjectHelper.service.calculation(project);
-			ProjectHelper.service.commit(project);
+//			ProjectHelper.service.commit(project);
 
 			trs.commit();
 			trs = null;

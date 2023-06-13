@@ -148,7 +148,7 @@ public class StandardOutputService extends StandardManager implements OutputServ
 
 				// 프로젝트 전체 진행율 조정
 				ProjectHelper.service.calculation(project);
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.commit(project);
 			}
 
 			// 결재시작
@@ -216,7 +216,7 @@ public class StandardOutputService extends StandardManager implements OutputServ
 
 				// 프로젝트 전체 진행율 조정
 				ProjectHelper.service.calculation(project);
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.commit(project);
 			}
 
 			map.put("exist", false);
@@ -405,7 +405,7 @@ public class StandardOutputService extends StandardManager implements OutputServ
 
 				// 프로젝트 전체 진행율 조정
 				ProjectHelper.service.calculation(project);
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.commit(project);
 			}
 
 			if (isSelf) {
@@ -538,7 +538,7 @@ public class StandardOutputService extends StandardManager implements OutputServ
 
 				// 프로젝트 전체 진행율 조정
 				ProjectHelper.service.calculation(project);
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.commit(project);
 			}
 
 			if (isSelf) {

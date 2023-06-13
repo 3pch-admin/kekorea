@@ -58,6 +58,7 @@ public class ProjectController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 
 		Calendar calendar = Calendar.getInstance();
@@ -91,6 +92,7 @@ public class ProjectController extends BaseController {
 		model.addObject("end", end);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		model.setViewName("/extcore/jsp/project/project-list.jsp");
 		return model;
 	}
@@ -117,6 +119,7 @@ public class ProjectController extends BaseController {
 	public ModelAndView my() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MONTH, -4);
@@ -148,6 +151,7 @@ public class ProjectController extends BaseController {
 		if (department.getName().equals("SW설계")) {
 			isSw = true;
 		}
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("isMachine", isMachine);
 		model.addObject("isElec", isElec);
 		model.addObject("isSw", isSw);
@@ -284,9 +288,11 @@ public class ProjectController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		JSONArray list = CommonCodeHelper.manager.parseJson("TASK_TYPE");
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("list", list);
 		model.addObject("oid", oid);
 		model.setViewName("popup:/project/project-info");
@@ -468,10 +474,12 @@ public class ProjectController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		JSONArray data = IssueHelper.manager.issueTab(oid);
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("data", data);
+		model.addObject("isSupervisor", isSupervisor);
 		model.setViewName("/extcore/jsp/project/tab/project-issue-tab.jsp");
 		return model;
 	}
@@ -482,10 +490,12 @@ public class ProjectController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		JSONArray data = OutputHelper.manager.outputTab(oid);
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("data", data);
+		model.addObject("isSupervisor", isSupervisor);
 		model.setViewName("/extcore/jsp/project/tab/project-output-tab.jsp");
 		return model;
 	}
@@ -555,6 +565,7 @@ public class ProjectController extends BaseController {
 		ProjectDTO data = new ProjectDTO(project);
 		TaskDTO dto = new TaskDTO(task);
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		int taskType = TaskHelper.manager.getTaskType(name);
 		model.addObject("taskType", taskType);
@@ -563,6 +574,7 @@ public class ProjectController extends BaseController {
 		model.addObject("project", project);
 		model.addObject("data", data);
 		model.addObject("dto", dto);
+		model.addObject("isSupervisor", isSupervisor);
 		model.setViewName("/extcore/jsp/project/task/project-task-view.jsp");
 		return model;
 	}

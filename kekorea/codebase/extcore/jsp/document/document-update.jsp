@@ -55,7 +55,7 @@ if ("modify".equals(mode)) {
 		</td>
 	</tr>
 	<tr>
-		<th class="req lb">도번</th>
+		<th class="lb">도번</th>
 		<td colspan="3">
 			<jsp:include page="/extcore/jsp/common/numberRule-include.jsp">
 				<jsp:param value="<%=dto.getOid()%>" name="oid" />
@@ -137,11 +137,11 @@ if ("modify".equals(mode)) {
 			return false;
 		}
 		
-		if(addRows11.length === 0) {
-			alert("도번을 추가하세요.");
-			insert11();
-			return false;
-		}
+// 		if(addRows11.length === 0) {
+// 			alert("도번을 추가하세요.");
+// 			insert11();
+// 			return false;
+// 		}
 		
 		if(primarys.length === 0) {
 			alert("첨부파일을 선택하세요.");

@@ -102,7 +102,7 @@ boolean isUpdate = "update".equals(mode);
 
 		function insert7() {
 			const url = getCallUrl("/part/popup?method=append&multi=true");
-			popup(url, 1500, 700);
+			popup(url, 1500, 800);
 		}
 
 		function append(data, callBack) {

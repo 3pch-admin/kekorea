@@ -431,6 +431,7 @@ public class StandardProjectService extends StandardManager implements ProjectSe
 				project.setDuration(duration);
 			}
 
+			// ???있어야 하나..
 			int kekProgress = ProjectHelper.manager.getKekProgress(project);
 			project.setProgress(kekProgress);
 			PersistenceHelper.manager.modify(project);

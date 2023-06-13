@@ -164,12 +164,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				<jsp:param value="<%=PartHelper.DEFAULT_ROOT%>" name="location" />
 				<jsp:param value="product" name="container" />
 				<jsp:param value="list" name="mode" />
-				<jsp:param value="670" name="height" />
+				<jsp:param value="550" name="height" />
 			</jsp:include>
 		</td>
 		<td>&nbsp;</td>
 		<td>
-			<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
+			<div id="grid_wrap" style="height: 550px; border-top: 1px solid #3180c3;"></div>
 			<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		</td>
 	</tr>

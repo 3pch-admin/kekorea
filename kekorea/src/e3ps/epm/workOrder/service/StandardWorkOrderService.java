@@ -176,7 +176,7 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 					project = (Project) PersistenceHelper.manager.modify(project);
 				}
 				ProjectHelper.service.calculation(project);
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.commit(project);
 			}
 
 			Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
@@ -347,7 +347,7 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 					project = (Project) PersistenceHelper.manager.modify(project);
 				}
 				ProjectHelper.service.calculation(project);
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.commit(project);
 			}
 
 			// PDF 병합
@@ -541,7 +541,7 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 					project = (Project) PersistenceHelper.manager.modify(project);
 				}
 				ProjectHelper.service.calculation(project);
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.commit(project);
 			}
 
 			WorkOrderHelper.manager.postAfterAction(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
@@ -614,7 +614,7 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 
 				// 프로젝트 전체 진행율 조정
 				ProjectHelper.service.calculation(project);
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.commit(project);
 			}
 
 			map.put("exist", false);

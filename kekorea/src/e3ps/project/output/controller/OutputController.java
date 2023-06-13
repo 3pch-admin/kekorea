@@ -1,6 +1,8 @@
 package e3ps.project.output.controller;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -119,7 +121,9 @@ public class OutputController extends BaseController {
 	public Map<String, Object> create(@RequestBody OutputDTO dto) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+			System.out.println("산출물 START = " + new Timestamp(new Date().getTime()));
 			OutputHelper.service.create(dto);
+			System.out.println("산출물 END = " + new Timestamp(new Date().getTime()));
 			result.put("msg", SAVE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {

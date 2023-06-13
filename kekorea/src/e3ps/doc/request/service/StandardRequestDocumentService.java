@@ -356,7 +356,7 @@ public class StandardRequestDocumentService extends StandardManager implements R
 				PersistenceHelper.manager.save(link);
 
 				// 계산
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.commit(project);
 			}
 
 		} catch (Exception e) {
@@ -560,7 +560,7 @@ public class StandardRequestDocumentService extends StandardManager implements R
 
 				// 프로젝트 전체 진행율 조정
 				ProjectHelper.service.calculation(project);
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.commit(project);
 			}
 
 			map.put("exist", false);

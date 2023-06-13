@@ -161,7 +161,7 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 					project = (Project) PersistenceHelper.manager.modify(project);
 				}
 				ProjectHelper.service.calculation(project);
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.commit(project);
 			}
 
 			trs.commit();
@@ -354,7 +354,7 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 					project = (Project) PersistenceHelper.manager.modify(project);
 				}
 				ProjectHelper.service.calculation(project);
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.commit(project);
 			}
 
 			trs.commit();
@@ -420,7 +420,7 @@ public class StandardMeetingService extends StandardManager implements MeetingSe
 
 				// 프로젝트 전체 진행율 조정
 				ProjectHelper.service.calculation(project);
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.commit(project);
 			}
 
 			map.put("exist", false);

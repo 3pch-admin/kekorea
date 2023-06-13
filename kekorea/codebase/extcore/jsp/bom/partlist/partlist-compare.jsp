@@ -335,6 +335,7 @@ for (Project project : destList) {%>
 				return "";
 			}			
 		}
+		console.log(data);
 		myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 		AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 		AUIGrid.setGridData(myGridID, data);

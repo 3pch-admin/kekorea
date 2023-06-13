@@ -26,6 +26,11 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 	background: #fdf4bb;
 	font-weight: bold;
 }
+
+.preView {
+	background-color: #caf4fd;
+	cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -33,7 +38,8 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 		<div id="grid_wrap9" style="height: 780px; border-top: 1px solid #3180c3;"></div>
 		<script type="text/javascript">
 			let myGridID9;
-			const data = <%=data%>
+			const data =
+		<%=data%>
 			const columns9 = [ {
 				dataField : "workOrderType",
 				headerText : "설계구분",
@@ -54,6 +60,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				dataField : "preView",
 				headerText : "미리보기",
 				width : 80,
+				style : "preView",
 				renderer : {
 					type : "ImageRenderer",
 					altField : null,
@@ -68,6 +75,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				headerText : "DRAWING TITLE",
 				dataType : "string",
 				style : "aui-left",
+				width : 250,
 				filter : {
 					showIcon : true,
 					inline : true
@@ -196,6 +204,17 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 				};
 				myGridID9 = AUIGrid.create("#grid_wrap9", columnLayout, props);
 				AUIGrid.setGridData(myGridID9, data);
+				AUIGrid.bind(myGridID9, "cellClick", auiCellClickHandler);
+			}
+
+			function auiCellClickHandler(event) {
+				const dataField = event.dataField;
+				const oid = event.item.doid;
+				const preView = event.item.preView;
+				if (dataField === "preView") {
+					const url = getCallUrl("/aui/thumbnail?oid=" + oid);
+					popup(url);
+				}
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
