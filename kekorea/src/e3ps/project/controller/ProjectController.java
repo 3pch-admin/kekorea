@@ -309,10 +309,10 @@ public class ProjectController extends BaseController {
 		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		ArrayList<Project> list = ProjectHelper.manager.getReferenceBy(project);
-		int mProgress = ProjectHelper.manager.getMachineAllocateProgress(project);
-		int eProgress = ProjectHelper.manager.getElecAllocateProgress(project);
-		model.addObject("mProgress", mProgress);
-		model.addObject("eProgress", eProgress);
+//		int mProgress = ProjectHelper.manager.getMachineAllocateProgress(project);
+//		int eProgress = ProjectHelper.manager.getElecAllocateProgress(project);
+		model.addObject("mProgress", 0);
+		model.addObject("eProgress", 0);
 		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("list", list);
 		model.addObject("sessionUser", sessionUser);

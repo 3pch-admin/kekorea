@@ -152,7 +152,6 @@ String loid = (String) request.getAttribute("loid");
 					</a>
 					)
 				</td>
-				<td class="indent5"><%=dto.getVersion()%></td>
 			</tr>
 			<tr>
 				<th class="lb">작성자</th>
