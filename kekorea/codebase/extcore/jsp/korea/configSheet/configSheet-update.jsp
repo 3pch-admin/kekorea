@@ -154,7 +154,7 @@ ul, ol {
 					<jsp:include page="/extcore/jsp/common/project-include.jsp">
 						<jsp:param value="<%=dto.getOid()%>" name="oid" />
 						<jsp:param value="update" name="mode" />
-						<jsp:param value="false" name="multi" />
+						<jsp:param value="true" name="multi" />
 					</jsp:include>
 				</td>
 			</tr>
