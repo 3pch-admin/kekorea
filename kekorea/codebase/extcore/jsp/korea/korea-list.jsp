@@ -447,11 +447,12 @@ String end = (String) request.getAttribute("end");
 				chart.src = url;
 			}
 
-			document.getElementById("kekNumber").addEventListener("input", function() {
-				this.value = this.value.toUpperCase().replace(/[^a-zA-Z0-9]/g, "");
-			});
+// 			document.getElementById("kekNumber").addEventListener("input", function() {
+// 				this.value = this.value.toUpperCase()s.replace(/[^a-zA-Z0-9]/g, "");
+// 			});
 
 			document.addEventListener("DOMContentLoaded", function() {
+				toFocus("kekNumber");
 				document.getElementById("kekNumber").focus();
 				twindate("pdate");
 				selectbox("projectType");

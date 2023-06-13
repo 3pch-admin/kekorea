@@ -393,29 +393,30 @@ public class PartlistHelper {
 
 		destList.remove(0);
 
-		for (int i = 0; i < destList.size(); i++) {
-			Project project = (Project) destList.get(i);
-			Map<String, Object> mergedData = new HashMap<>();
-
-			String mak = project.getMak() != null ? project.getMak().getName() : "";
-			String detail = project.getDetail() != null ? project.getDetail().getName() : "";
-			String customer = project.getCustomer() != null ? project.getCustomer().getName() : "";
-			String install = project.getInstall() != null ? project.getInstall().getName() : "";
-
-			mergedData.put("key", "막종 / 막종상세");
-			mergedData.put("qty1", mak + " / " + detail);
-
-			mergedData.put("key", "고객사 / 설치장소");
-			mergedData.put("qty1", customer + " / " + install);
-
-			mergedData.put("key", "KE 작번");
-			mergedData.put("qty1", project.getKeNumber());
-
-			mergedData.put("key", "발행일");
-			mergedData.put("qty1", CommonUtils.getPersistableTime(project.getPDate()));
-
-			mergedList.add(mergedData);
-		}
+		// ?? 이게 뭐지...
+//		for (int i = 0; i < destList.size(); i++) {
+//			Project project = (Project) destList.get(i);
+//			Map<String, Object> mergedData = new HashMap<>();
+//
+//			String mak = project.getMak() != null ? project.getMak().getName() : "";
+//			String detail = project.getDetail() != null ? project.getDetail().getName() : "";
+//			String customer = project.getCustomer() != null ? project.getCustomer().getName() : "";
+//			String install = project.getInstall() != null ? project.getInstall().getName() : "";
+//
+//			mergedData.put("key", "막종 / 막종상세");
+//			mergedData.put("qty1", mak + " / " + detail);
+//
+//			mergedData.put("key", "고객사 / 설치장소");
+//			mergedData.put("qty1", customer + " / " + install);
+//
+//			mergedData.put("key", "KE 작번");
+//			mergedData.put("qty1", project.getKeNumber());
+//
+//			mergedData.put("key", "발행일");
+//			mergedData.put("qty1", CommonUtils.getPersistableTime(project.getPDate()));
+//
+//			mergedList.add(mergedData);
+//		}
 
 		// list1의 데이터를 먼저 추가
 		for (Map<String, Object> data : list) {

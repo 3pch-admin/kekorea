@@ -25,7 +25,7 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 				<col width="150">
 				<col width="300">
 				<col width="150">
-				<col width="300">				
+				<col width="300">
 			</colgroup>
 			<tr>
 				<th>코드 명</th>
@@ -265,6 +265,18 @@ JSONArray jsonList = (JSONArray) request.getAttribute("jsonList");
 		myGridID = AUIGrid.create("#grid_wrap", columns, props);
 		loadGridData();
 		AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditHandler);
+		AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBeginHandler);
+	}
+
+	function auiCellEditBeginHandler(event) {
+		const codeType = event.item.codeType;
+		const dataField = event.dataField;
+		if (codeType !== "INSTALL" && codeType !== "MAK_DETAIL") {
+			if (dataField === "parent_name") {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	function contextItemHandler(event) {
