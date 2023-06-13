@@ -161,7 +161,7 @@ ul, ol {
 			<tr>
 				<th class="lb">설명</th>
 				<td class="indent5">
-					<textarea name="description" id="description" rows="6"><%=dto.getDescription() != null ? dto.getDescription() : ""%></textarea>
+					<textarea name="description" id="description" rows="6"><%=dto.getContent() != null ? dto.getContent() : ""%></textarea>
 				</td>
 			</tr>
 			<tr>
