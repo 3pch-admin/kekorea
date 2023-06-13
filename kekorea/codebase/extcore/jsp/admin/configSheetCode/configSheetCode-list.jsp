@@ -53,7 +53,7 @@
 				width : 130,
 				editRenderer : {
 					type : "InputEditRenderer",
-					regExp : "^[a-zA-Z0-9-]+$",
+// 					regExp : "^[a-zA-Z0-9-]+$",
 					autoUpperCase : true
 				},
 				filter : {
