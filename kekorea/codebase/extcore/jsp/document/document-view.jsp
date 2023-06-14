@@ -50,9 +50,9 @@ JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 		<table class="view-table">
 			<colgroup>
 				<col width="150">
-				<col width="600">
+				<col width="500">
 				<col width="150">
-				<col width="600">
+				<col width="500">
 			</colgroup>
 			<tr>
 				<th class="lb">문서제목</th>
