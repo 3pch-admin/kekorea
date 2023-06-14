@@ -623,7 +623,7 @@ Vector<Map<String, Object>> secondarys = ContentUtils.getSecondary(document);
 			url += "/configSheet/view?oid=" + oid;
 			popup(url);
 		} else if(oid.indexOf("WTDocument") > -1) {
-			url += "/doc/view?oid=" + oid;
+			url += "/output/view?oid=" + oid;
 			popup(url, 1600, 800);
 		}
 	}
