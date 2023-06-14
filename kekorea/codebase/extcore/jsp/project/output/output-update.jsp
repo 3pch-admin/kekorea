@@ -194,7 +194,7 @@ if ("modify".equals(mode)) {
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
-				opener.document.location.reload();
+// 				opener.document.location.reload();
 				self.close();
 			} else {
 				closeLayer();
