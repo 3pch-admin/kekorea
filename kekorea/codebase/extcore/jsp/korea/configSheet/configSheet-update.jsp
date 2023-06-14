@@ -509,22 +509,42 @@ ul, ol {
 
 	function <%=mode%>() {
 		
-		if (!confirm("<%=title%> 하시겠습니까?")) {
-			return false;
-		}
-		
 		const url = getCallUrl("/configSheet/<%=mode%>");
 		const params = new Object();
 		const oid = document.getElementById("oid").value;
 		const addRows = AUIGrid.getGridData(myGridID);
 		const addRows9 = AUIGrid.getGridData(myGridID9);
 		const addRows8 = AUIGrid.getGridData(myGridID8);
+		const name = document.getElementById("name");
+		
+		if (isNull(name.value)) {
+			alert("CONFIG SHEET 제목을 입력하세요.");
+			name.focus();
+			return false;
+		}
+		
+		if (addRows9.length === 0) {
+			alert("최소 하나이상의 작번을 추가하세요.");
+			insert9();
+			return false;
+		}
 
+		if (addRows8.length === 0) {
+			alert("결재선을 지정하세요.");
+			_register();
+			return false;
+		}
+		
 		addRows.sort(function(a, b) {
 			return a.sort - b.sort;
 		});
 
-		params.name = document.getElementById("name").value;
+		
+		if (!confirm("<%=title%> 하시겠습니까?")) {
+			return false;
+		}
+		
+		params.name = name.value;
 		params.description = document.getElementById("description").value;
 		params.addRows = addRows;
 		params.addRows9 = addRows9;

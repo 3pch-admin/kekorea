@@ -385,7 +385,7 @@ JSONArray data = (JSONArray) request.getAttribute("data");
 
 		if (addRows9.length === 0) {
 			alert("최소 하나이상의 작번을 추가하세요.");
-			_insert();
+			insert9();
 			return false;
 		}
 
