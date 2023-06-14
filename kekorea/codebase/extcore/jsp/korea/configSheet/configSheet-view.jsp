@@ -12,6 +12,12 @@ String loid = (String) request.getAttribute("loid");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <style type="text/css">
+.comp {
+	background: yellow;
+	color: red;
+	font-weight: bold;
+}
+
 .row_1 {
 	background-color: #fed7be;
 	font-weight: bold;
@@ -207,20 +213,27 @@ String loid = (String) request.getAttribute("loid");
 				mergeRef : "category_code",
 				mergePolicy : "restrict",
 			}, 
-			<%int index = 0;
-ArrayList<String> dd = dto.getDataFields();
-for (int i = 0; i < dd.size(); i++) {
-	String dataFields = dd.get(i);%>
+			<%
+				int index = 0;
+				ArrayList<String> dd = dto.getDataFields();
+				for (int i = 0; i < dd.size(); i++) {
+					String dataFields = dd.get(i);%>
 			{
 				dataField : "<%=dataFields%>",
 				headerText : "사양<%=index%>",
 				dataType : "string",
 				width : 250,
+				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
+// 					return "comp";
+				},				
 				renderer : {
 					type : "Templaterenderer"
 				},
 			}, 
-			<%}%>
+			<%
+				index++;
+				}
+			%>
 			{
 				dataField : "note",
 				headerText : "NOTE",

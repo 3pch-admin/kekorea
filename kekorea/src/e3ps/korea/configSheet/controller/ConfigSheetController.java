@@ -28,8 +28,6 @@ import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.common.util.StringUtils;
-import e3ps.epm.workOrder.WorkOrder;
-import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.korea.configSheet.ConfigSheet;
 import e3ps.korea.configSheet.ConfigSheetProjectLink;
 import e3ps.korea.configSheet.beans.ConfigSheetDTO;
@@ -293,7 +291,7 @@ public class ConfigSheetController extends BaseController {
 		try {
 			ConfigSheetHelper.service.delete(oid);
 			result.put("result", SUCCESS);
-			result.put("msg", SAVE_MSG);
+			result.put("msg", DELETE_MSG);
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("msg", e.toString());
