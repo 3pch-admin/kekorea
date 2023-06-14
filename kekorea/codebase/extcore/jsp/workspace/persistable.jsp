@@ -71,7 +71,7 @@ if (per instanceof ApprovalContract) {
 	</tr>
 	<%
 	for (Map<String, Object> map : list) {
-		if (((String)map.get("oid")).indexOf("EPMDocument") > -1) {
+		if (((String) map.get("oid")).indexOf("EPMDocument") > -1) {
 	%>
 	<tr>
 		<td class="indent5">
@@ -87,7 +87,7 @@ if (per instanceof ApprovalContract) {
 		<td class="center"><%=map.get("createdDate_txt")%></td>
 	</tr>
 	<%
-		}
+	}
 	}
 	%>
 </table>
@@ -129,7 +129,7 @@ if (per instanceof ApprovalContract) {
 	</tr>
 	<%
 	for (Map<String, Object> map : list) {
-		if (((String)map.get("oid")).indexOf("NumberRule") > -1) {
+		if (((String) map.get("oid")).indexOf("NumberRule") > -1) {
 	%>
 	<tr>
 		<td class="center"><%=map.get("lotNo")%></td>
@@ -142,13 +142,13 @@ if (per instanceof ApprovalContract) {
 		<td class="center"><%=map.get("createdDate_txt")%></td>
 	</tr>
 	<%
-		}
+	}
 	}
 	%>
 </table>
 
 <%
-	} else if(contract.getContractType().equals("OUTPUT")) {
+} else if (contract.getContractType().equals("OUTPUT")) {
 %>
 <!-- 작번 산출물 문서 -->
 <table class="button-table">
@@ -204,25 +204,25 @@ if (per instanceof ApprovalContract) {
 		<td class="center"><%=map.get("createdDate_txt")%></td>
 		<td class="center">
 			<%
-				if(primary != null) {
+			if (primary != null) {
 			%>
 			<a href="javascript:download('<%=primary.get("aoid")%>');">
 				<img src="<%=primary.get("fileIcon")%>">
 			</a>
 			<%
-				}
+			}
 			%>
 		</td>
 		<td class="center">
-		<%
-			for(Map<String, Object> secondary : secondarys) {
-		%>
+			<%
+			for (Map<String, Object> secondary : secondarys) {
+			%>
 			<a href="javascript:download('<%=secondary.get("aoid")%>');">
 				<img src="<%=secondary.get("fileIcon")%>">
 			</a>
-		<%
+			<%
 			}
-		%>		
+			%>
 		</td>
 	</tr>
 	<%
@@ -555,7 +555,7 @@ Vector<Map<String, Object>> secondarys = ContentUtils.getSecondary(document);
 		<col width="100">
 		<col width="100">
 		<col width="130">
-		<col width="160">		
+		<col width="160">
 	</colgroup>
 	<tr>
 		<th class="lb">산출물 제목</th>
@@ -564,7 +564,7 @@ Vector<Map<String, Object>> secondarys = ContentUtils.getSecondary(document);
 		<th class="lb">작성자</th>
 		<th class="lb">작성일</th>
 		<th class="lb">주 첨부파일</th>
-		<th class="lb">첨부파일</th>		
+		<th class="lb">첨부파일</th>
 	</tr>
 	<tr>
 		<td class="indent5">
@@ -580,16 +580,16 @@ Vector<Map<String, Object>> secondarys = ContentUtils.getSecondary(document);
 			</a>
 		</td>
 		<td class="center">
-		<%
-			for(Map<String, Object> secondary : secondarys) {
-		%>
+			<%
+			for (Map<String, Object> secondary : secondarys) {
+			%>
 			<a href="javascript:download('<%=secondary.get("aoid")%>');">
 				<img src="<%=secondary.get("fileIcon")%>">
 			</a>
-		<%
+			<%
 			}
-		%>		
-		</td>		
+			%>
+		</td>
 	</tr>
 </table>
 
@@ -618,6 +618,12 @@ Vector<Map<String, Object>> secondarys = ContentUtils.getSecondary(document);
 			popup(url, 1500, 700);
 		} else if (oid.indexOf("WorkOrder") > -1) {
 			url += "/workOrder/view?oid=" + oid;
+			popup(url, 1600, 800);
+		} else if (oid.indexOf("ConfigSheet") > -1) {
+			url += "/configSheet/view?oid=" + oid;
+			popup(url);
+		} else if(oid.indexOf("WTDocument") > -1) {
+			url += "/doc/view?oid=" + oid;
 			popup(url, 1600, 800);
 		}
 	}
