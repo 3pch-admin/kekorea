@@ -319,8 +319,8 @@ public class StandardPartlistService extends StandardManager implements Partlist
 					project = (Project) PersistenceHelper.manager.modify(project);
 				}
 
-				ProjectHelper.service.calculation(project);
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.calculation(project);
+//				ProjectHelper.service.commit(project);
 			}
 
 			master.setTotalPrice(totalPrice);
@@ -533,7 +533,7 @@ public class StandardPartlistService extends StandardManager implements Partlist
 					project = (Project) PersistenceHelper.manager.modify(project);
 				}
 
-				ProjectHelper.service.calculation(project);
+//				ProjectHelper.service.calculation(project);
 				ProjectHelper.service.commit(project);
 			}
 
@@ -698,8 +698,8 @@ public class StandardPartlistService extends StandardManager implements Partlist
 					project = (Project) PersistenceHelper.manager.modify(project);
 				}
 
-				ProjectHelper.service.calculation(project);
-				ProjectHelper.service.commit(project);
+//				ProjectHelper.service.calculation(project);
+//				ProjectHelper.service.commit(project);
 
 				mm.setTotalPrice(totalPrice);
 				PersistenceHelper.manager.modify(mm);

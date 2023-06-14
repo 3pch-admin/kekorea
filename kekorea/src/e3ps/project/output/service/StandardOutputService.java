@@ -147,7 +147,7 @@ public class StandardOutputService extends StandardManager implements OutputServ
 				PersistenceHelper.manager.modify(t);
 
 				// 프로젝트 전체 진행율 조정
-				ProjectHelper.service.calculation(project);
+//				ProjectHelper.service.calculation(project);
 //				ProjectHelper.service.commit(project);
 			}
 
@@ -215,7 +215,7 @@ public class StandardOutputService extends StandardManager implements OutputServ
 				PersistenceHelper.manager.modify(task);
 
 				// 프로젝트 전체 진행율 조정
-				ProjectHelper.service.calculation(project);
+//				ProjectHelper.service.calculation(project);
 //				ProjectHelper.service.commit(project);
 			}
 
@@ -404,7 +404,7 @@ public class StandardOutputService extends StandardManager implements OutputServ
 				PersistenceHelper.manager.modify(t);
 
 				// 프로젝트 전체 진행율 조정
-				ProjectHelper.service.calculation(project);
+//				ProjectHelper.service.calculation(project);
 //				ProjectHelper.service.commit(project);
 			}
 
@@ -537,7 +537,7 @@ public class StandardOutputService extends StandardManager implements OutputServ
 				PersistenceHelper.manager.modify(t);
 
 				// 프로젝트 전체 진행율 조정
-				ProjectHelper.service.calculation(project);
+//				ProjectHelper.service.calculation(project);
 //				ProjectHelper.service.commit(project);
 			}
 
