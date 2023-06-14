@@ -471,9 +471,9 @@ String engType = (String)request.getAttribute("engType");
 			return false;
 		}
 
-		if (_addRows.length === 0) {
+		if (addRows9.length === 0) {
 			alert("최소 하나 이상의 작번을 추가하세요.");
-			_insert();
+			insert9();
 			return false;
 		}
 
@@ -511,7 +511,7 @@ String engType = (String)request.getAttribute("engType");
 			}
 		}
 
-		if (_addRows_.length === 0) {
+		if (addRows8.length === 0) {
 			alert("결재선을 지정하세요.");
 			_register();
 			return false;
