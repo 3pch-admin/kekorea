@@ -448,8 +448,8 @@ String engType = (String)request.getAttribute("engType");
 		const url = getCallUrl("/partlist/modify");
 		const oid = document.getElementById("oid").value;
 		const addRows = AUIGrid.getGridData(myGridID);
-		const _addRows = AUIGrid.getGridData(_myGridID);
-		const _addRows_ = AUIGrid.getGridData(_myGridID_);
+		const addRows9 = AUIGrid.getGridData(myGridID9);
+		const addRows8 = AUIGrid.getGridData(myGridID8);
 		const name = document.getElementById("name");
 		const engType = document.getElementById("engType").value;
 		const description = document.getElementById("description");
@@ -526,13 +526,13 @@ String engType = (String)request.getAttribute("engType");
 		}
 		params.oid = oid;
 		params.addRows = addRows;
-		params._addRows = _addRows;
+		params.addRows9 = addRows9;
 		params.name = name.value;
 		params.engType = engType;
 		params.description = description.value;
 		params.progress = Number(progress);
 		params.secondarys = toArray("secondarys");
-		toRegister(params, _addRows_);
+		toRegister(params, addRows8);
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
