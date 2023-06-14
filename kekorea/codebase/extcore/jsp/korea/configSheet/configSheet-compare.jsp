@@ -124,6 +124,7 @@ ArrayList<Map<String, String>> fixedList = (ArrayList<Map<String, String>>) requ
 <script type="text/javascript">
 	let myGridID;
 	const data = <%=data%>
+	console.log(data);
 	function _layout() {
 		return [ {
 			dataField : "category_name",
