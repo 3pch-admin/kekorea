@@ -53,8 +53,7 @@ String oid = request.getParameter("oid");
 		})
 		
 		new AXReq("/Windchill/plm/content/list", {
-			pars : "oid=<%=oid%>
-	&roleType=secondary",
+			pars : "oid=<%=oid%>&roleType=secondary",
 			onsucc : function(res) {
 				if (!res.e) {
 					const form = document.querySelector("form");
