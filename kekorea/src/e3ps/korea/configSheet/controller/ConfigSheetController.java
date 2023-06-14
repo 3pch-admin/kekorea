@@ -123,6 +123,29 @@ public class ConfigSheetController extends BaseController {
 	public Map<String, Object> create(@RequestBody ConfigSheetDTO dto) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+
+			ArrayList<Map<String, String>> addRows9 = dto.getAddRows9();
+
+			boolean isValidate = false;
+			for (Map<String, String> addRow9 : addRows9) {
+				String oid = addRow9.get("oid");
+				Project project = (Project) CommonUtils.getObject(oid);
+
+				QueryResult rs = PersistenceHelper.manager.navigate(project, "configSheet",
+						ConfigSheetProjectLink.class);
+
+				if (rs.size() > 0) {
+					isValidate = true;
+					break;
+				}
+			}
+
+			if (isValidate) {
+				result.put("msg", "이미 해당 작번엔 CONFIG SHEET가 등록 되어있습니다.");
+				result.put("result", FAIL);
+				return result;
+			}
+
 			ConfigSheetHelper.service.create(dto);
 			result.put("result", SUCCESS);
 			result.put("msg", SAVE_MSG);

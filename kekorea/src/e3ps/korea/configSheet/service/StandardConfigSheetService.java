@@ -290,7 +290,7 @@ public class StandardConfigSheetService extends StandardManager implements Confi
 				PersistenceHelper.manager.delete(variable);
 				PersistenceHelper.manager.delete(link);
 			}
-			
+
 			WorkspaceHelper.manager.deleteAllLines(configSheet);
 
 			PersistenceHelper.manager.delete(configSheet);

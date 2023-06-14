@@ -265,7 +265,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		call(url, null, function(data) {
 			alert(data.msg);
 			if (data.result) {
-				opener.loadGridData();
+// 				opener.loadGridData();
 				self.close();
 			} else {
 				closeLayer();

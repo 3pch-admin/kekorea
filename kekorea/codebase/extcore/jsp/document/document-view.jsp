@@ -241,7 +241,7 @@ JSONArray versionHistory = (JSONArray) request.getAttribute("versionHistory");
 		call(url, null, function(data) {
 			alert(data.msg);
 			if (data.result) {
-				opener.loadGridData();
+// 				opener.loadGridData();
 				self.close();
 			} else {
 				closeLayer();
