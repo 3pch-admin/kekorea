@@ -514,7 +514,7 @@ public class ConfigSheetHelper {
 									true);
 
 							QueryResult rs = PersistenceHelper.manager.find(qs);
-
+							System.out.println("qr=" + qr.size());
 							if (rs.hasMoreElements()) {
 								Object[] oo = (Object[]) rs.nextElement();
 								ColumnVariableLink ll = (ColumnVariableLink) oo[0];
