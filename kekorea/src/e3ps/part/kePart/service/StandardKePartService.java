@@ -31,7 +31,7 @@ public class StandardKePartService extends StandardManager implements KePartServ
 	}
 
 	@Override
-	public void create(HashMap<String, List<KePartDTO>> dataMap) throws Exception {
+	public void save(HashMap<String, List<KePartDTO>> dataMap) throws Exception {
 		List<KePartDTO> addRows = dataMap.get("addRows");
 		List<KePartDTO> editRows = dataMap.get("editRows");
 		List<KePartDTO> removeRows = dataMap.get("removeRows");

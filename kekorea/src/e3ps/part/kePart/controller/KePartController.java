@@ -65,8 +65,8 @@ public class KePartController extends BaseController {
 
 	@Description(value = "KE 부품 등록 함수")
 	@ResponseBody
-	@PostMapping(value = "/create")
-	public Map<String, Object> create(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
+	@PostMapping(value = "/save")
+	public Map<String, Object> save(@RequestBody Map<String, ArrayList<LinkedHashMap<String, Object>>> params)
 			throws Exception {
 		ArrayList<LinkedHashMap<String, Object>> addRows = params.get("addRows");
 		ArrayList<LinkedHashMap<String, Object>> editRows = params.get("editRows");
@@ -111,7 +111,7 @@ public class KePartController extends BaseController {
 				return result;
 			}
 
-			KePartHelper.service.create(dataMap);
+			KePartHelper.service.save(dataMap);
 			result.put("msg", SAVE_MSG);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
@@ -195,6 +195,14 @@ public class KePartController extends BaseController {
 		JSONArray list = KePartHelper.manager.history(master);
 		model.addObject("list", list);
 		model.setViewName("popup:/part/kePart/kePart-history");
+		return model;
+	}
+
+	@Description(value = "KE 부품 등록 페이지")
+	@GetMapping(value = "/create")
+	public ModelAndView create() throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("popup:/part/kePart/kePart-create");
 		return model;
 	}
 }

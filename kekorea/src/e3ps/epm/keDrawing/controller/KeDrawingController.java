@@ -212,4 +212,12 @@ public class KeDrawingController extends BaseController {
 		model.setViewName("popup:/epm/keDrawing/keDrawing-view");
 		return model;
 	}
+	
+	@Description(value = "KE 도면 등록 페이지")
+	@GetMapping(value = "/create")
+	public ModelAndView create() throws Exception {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("popup:/epm/keDrawing/keDrawing-create");
+		return model;
+	}
 }

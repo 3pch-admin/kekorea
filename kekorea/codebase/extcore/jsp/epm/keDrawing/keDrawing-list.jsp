@@ -112,7 +112,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('keDrawing-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('keDrawing-list');">
-					<input type="button" value="저장" title="저장" onclick="create();">
+					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
+					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
@@ -409,7 +410,12 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					var selectedItems = AUIGrid.getSelectedItems(event.pid);
 					var rowIndex = selectedItems[0].rowIndex;
 					if (rowIndex === AUIGrid.getRowCount(event.pid) - 1) { // 마지막 행인지 여부 
-						AUIGrid.addRow(event.pid, {}); // 행 추가
+						const item = {
+							latest : true,
+							preView : null,
+							state : "사용"
+						};
+						AUIGrid.addRow(event.pid, item); // 행 추가
 						return false; // 엔터 키의 기본 행위 안함.
 					}
 				}
@@ -545,7 +551,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				});
 			}
 
-			function create() {
+			function save() {
 				const url = getCallUrl("/keDrawing/save");
 				const params = new Object();
 				const addRows = AUIGrid.getAddedRowItems(myGridID);
@@ -638,6 +644,11 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				p.list = checkedItems;
 			}
 
+			function create() {
+				const url = getCallUrl("/keDrawing/create");
+				popup(url, 1600, 650);
+			}
+
 			function exportExcel() {
 				const exceptColumnFields = [ "preView", "button", "primary", "latest" ];
 				const sessionName = document.getElementById("sessionName").value;
@@ -645,7 +656,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			}
 
 			document.addEventListener("DOMContentLoaded", function() {
-				document.getElementById("name").focus();
+				toFocus("name");
 				const columns = loadColumnLayout("keDrawing-list");
 				const contenxtHeader = genColumnHtml(columns);
 				$("#h_item_ul").append(contenxtHeader);

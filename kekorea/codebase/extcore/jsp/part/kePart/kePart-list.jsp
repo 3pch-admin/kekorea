@@ -128,7 +128,8 @@ boolean isSupervisor = (boolean) request.getAttribute("isSupervisor");
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('kePart-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('kePart-list');">
-					<input type="button" value="저장" title="저장" onclick="create();">
+					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
+					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
@@ -447,7 +448,12 @@ boolean isSupervisor = (boolean) request.getAttribute("isSupervisor");
 					var selectedItems = AUIGrid.getSelectedItems(event.pid);
 					var rowIndex = selectedItems[0].rowIndex;
 					if (rowIndex === AUIGrid.getRowCount(event.pid) - 1) { // 마지막 행인지 여부 
-						AUIGrid.addRow(event.pid, {}); // 행 추가
+						const item = {
+							latest : true,
+							state : "사용",
+							version : 1
+						};
+						AUIGrid.addRow(event.pid, item); // 행 추가
 						return false; // 엔터 키의 기본 행위 안함.
 					}
 				}
@@ -496,8 +502,8 @@ boolean isSupervisor = (boolean) request.getAttribute("isSupervisor");
 				});
 			}
 
-			function create() {
-				const url = getCallUrl("/kePart/create");
+			function save() {
+				const url = getCallUrl("/kePart/save");
 				const params = new Object();
 				const addRows = AUIGrid.getAddedRowItems(myGridID);
 				const removeRows = AUIGrid.getRemovedItems(myGridID);
@@ -648,6 +654,11 @@ boolean isSupervisor = (boolean) request.getAttribute("isSupervisor");
 				}
 				const panel = popup("/Windchill/plm/kePart/revise", 1600, 550);
 				panel.list = checkedItems;
+			}
+
+			function create() {
+				const url = getCallUrl("/kePart/create");
+				popup(url, 1600, 650);
 			}
 
 			function exportExcel() {
