@@ -23,6 +23,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<input type="hidden" name="sessionid" id="sessionid">
 		<input type="hidden" name="lastNum" id="lastNum">
 		<input type="hidden" name="curPage" id="curPage">
+		<input type="hidden" name="isSupervisor" id="isSupervisor" value="<%=isSupervisor %>">
 
 		<table class="search-table">
 			<colgroup>
@@ -65,14 +66,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('notice-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('notice-list');">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
-					<%
-					if (isSupervisor) {
-					%>
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
-					<%
-					}
-					%>
 				</td>
 				<td class="right">
 					<select name="_psize" id="_psize">
@@ -231,13 +226,16 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function deleteRow() {
 				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
 				const sessionId = document.getElementById("sessionId").value;
+				const isSupervisor = document.getElementById("isSupervisor").value; // 최상위 관리자 체크
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
 					const item = checkedItems[i].item;
+					const rowIndex = checkedItems[i].rowIndex;
+// 					alert(Boolean(isSupervisor));
+					console.log(typeof isSupervisor);
 					if (!isNull(item.creatorId) && !checker(sessionId, item.creatorId)) {
-						alert("데이터 작성자가 아닙니다.");
+						alert(rowIndex + "행 데이터의 작성자가 아닙니다.");
 						return false;
 					}
-					const rowIndex = checkedItems[i].rowIndex;
 					AUIGrid.removeRow(myGridID, rowIndex);
 				}
 			}

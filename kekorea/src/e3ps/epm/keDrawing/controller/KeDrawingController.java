@@ -39,7 +39,9 @@ public class KeDrawingController extends BaseController {
 		ModelAndView model = new ModelAndView();
 		WTUser sessionUser = CommonUtils.sessionUser();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		Timestamp time = new Timestamp(new Date().getTime());
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("time", time);
 		model.addObject("isAdmin", isAdmin);
 		model.addObject("sessionUser", sessionUser);

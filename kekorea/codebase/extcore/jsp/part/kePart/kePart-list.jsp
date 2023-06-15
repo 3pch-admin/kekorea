@@ -7,6 +7,7 @@
 <%
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+boolean isSupervisor = (boolean) request.getAttribute("isSupervisor");
 %>
 <!DOCTYPE html>
 <html>
@@ -15,7 +16,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 </head>
 <body>
@@ -23,7 +24,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
-		<input type="hidden" name="sessionid" id="sessionid"><input type="hidden" name="lastNum" id="lastNum">
+		<input type="hidden" name="sessionid" id="sessionid">
+		<input type="hidden" name="lastNum" id="lastNum">
 		<input type="hidden" name="curPage" id="curPage">
 
 		<table class="search-table">
@@ -129,13 +131,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<input type="button" value="저장" title="저장" onclick="create();">
 					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
-					<%
-					if (isAdmin) {
-					%>
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
-					<%
-					}
-					%>
 				</td>
 				<td class="right">
 					<select name="_psize" id="_psize">
@@ -442,6 +438,20 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				});
 				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRowHandler);
 				AUIGrid.bind(myGridID, "pasteEnd", auiPasteEnd);
+				AUIGrid.bind(myGridID, "keyDown", auiKeyDownHandler);
+			}
+
+			// enter 키 행 추가
+			function auiKeyDownHandler(event) {
+				if (event.keyCode == 13) { // 엔터 키
+					var selectedItems = AUIGrid.getSelectedItems(event.pid);
+					var rowIndex = selectedItems[0].rowIndex;
+					if (rowIndex === AUIGrid.getRowCount(event.pid) - 1) { // 마지막 행인지 여부 
+						AUIGrid.addRow(event.pid, {}); // 행 추가
+						return false; // 엔터 키의 기본 행위 안함.
+					}
+				}
+				return true; // 기본 행위 유지
 			}
 
 			function auiBeforeRemoveRowHandler(event) {
@@ -470,7 +480,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/kePart/list");
-				const field =["lotNo","keNumber","name","code","model","state","creatorOid","createdFrom","createdTo","modifierOid","modifiedFrom","modifiedTo","_psize"];
+				const field = [ "lotNo", "keNumber", "name", "code", "model", "state", "creatorOid", "createdFrom", "createdTo", "modifierOid", "modifiedFrom", "modifiedTo", "_psize" ];
 				const latest = !!document.querySelector("input[name=latest]:checked").value;
 				params = toField(params, field);
 				params.latest = latest;
@@ -479,7 +489,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
-					document.getElementById("curPage").value = data.curPage;document.getElementById("lastNum").value = data.list.length;
+					document.getElementById("curPage").value = data.curPage;
+					document.getElementById("lastNum").value = data.list.length;
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
@@ -589,7 +600,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
 					const item = checkedItems[i].item;
 					const rowIndex = checkedItems[i].rowIndex;
-					if ((!isNull(item.creatorId) && !checker(sessionId, item.creatorId)) || (!isNull(item.modifierId) && !checker(sessionId, item.modifierId))) {
+					if ((!isNull(item.creatorId) && !checker(sessionId, item.creatorId))) {
+						// 					if ((!isNull(item.creatorId) && !checker(sessionId, item.creatorId)) || (!isNull(item.modifierId) && !checker(sessionId, item.modifierId))) {
 						alert(rowIndex + "행 데이터의 작성자 혹은 수정자가 아닙니다.");
 						return false;
 					}
@@ -639,7 +651,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 			}
 
 			function exportExcel() {
-				const exceptColumnFields = [ "button", "primary","latest" ];
+				const exceptColumnFields = [ "button", "primary", "latest" ];
 				const sessionName = document.getElementById("sessionName").value;
 				exportToExcel("KE 부품 리스트", "KE 부품", "KE 부품 리스트", exceptColumnFields, sessionName);
 			}

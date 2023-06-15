@@ -11,6 +11,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.ptc.wa.licensing.LicensingHelper;
+
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.util.CommonUtils;
@@ -26,6 +28,9 @@ public class Test {
 
 	public static void main(String[] args) throws Exception {
 
+		
+		LicensingHelper.getTotalActiveUsersCount()
+		
 		File file = new File(args[0]);
 
 		Workbook workbook = new XSSFWorkbook(file);

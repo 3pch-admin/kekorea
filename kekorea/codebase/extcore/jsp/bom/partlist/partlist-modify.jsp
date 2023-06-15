@@ -261,9 +261,22 @@ String engType = (String)request.getAttribute("engType");
 				readyHandler();
 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
 				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRow);
-				AUIGrid.setGridData(myGridID,
-		<%=list%>
-			);
+				AUIGrid.bind(myGridID, "keyDown", auiKeyDownHandler);
+				AUIGrid.setGridData(myGridID, <%=list%>);
+			}
+			
+			
+			// enter 키 행 추가
+			function auiKeyDownHandler(event) {
+				if (event.keyCode == 13) { // 엔터 키
+					var selectedItems = AUIGrid.getSelectedItems(event.pid);
+					var rowIndex = selectedItems[0].rowIndex;
+					if (rowIndex === AUIGrid.getRowCount(event.pid) - 1) { // 마지막 행인지 여부 
+						AUIGrid.addRow(event.pid, {}); // 행 추가
+						return false; // 엔터 키의 기본 행위 안함.
+					}
+				}
+				return true; // 기본 행위 유지
 			}
 
 			function auiCellEditEndHandler(event) {

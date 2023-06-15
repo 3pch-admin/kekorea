@@ -3,6 +3,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 boolean isAdmin = (boolean) request.getAttribute("isAdmin");
+boolean isSupervisor = (boolean) request.getAttribute("isSupervisor");
 WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 %>
 <!DOCTYPE html>
@@ -26,7 +27,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
-		<input type="hidden" name="sessionid" id="sessionid"><input type="hidden" name="lastNum" id="lastNum">
+		<input type="hidden" name="sessionid" id="sessionid">
+		<input type="hidden" name="lastNum" id="lastNum">
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
 			<colgroup>
@@ -113,13 +115,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<input type="button" value="저장" title="저장" onclick="create();">
 					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
-					<%
-					if (isAdmin) {
-					%>
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
-					<%
-					}
-					%>
 				</td>
 				<td class="right">
 					<select name="_psize" id="_psize">
@@ -404,6 +400,20 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				AUIGrid.bind(myGridID, "beforeRemoveRow", auiBeforeRemoveRowHandler);
 				AUIGrid.bind(myGridID, "cellClick", auiCellClickHandler);
 				AUIGrid.bind(myGridID, "pasteEnd", auiPasteEnd);
+				AUIGrid.bind(myGridID, "keyDown", auiKeyDownHandler);
+			}
+
+			// enter 키 행 추가
+			function auiKeyDownHandler(event) {
+				if (event.keyCode == 13) { // 엔터 키
+					var selectedItems = AUIGrid.getSelectedItems(event.pid);
+					var rowIndex = selectedItems[0].rowIndex;
+					if (rowIndex === AUIGrid.getRowCount(event.pid) - 1) { // 마지막 행인지 여부 
+						AUIGrid.addRow(event.pid, {}); // 행 추가
+						return false; // 엔터 키의 기본 행위 안함.
+					}
+				}
+				return true; // 기본 행위 유지
 			}
 
 			function auiPasteEnd(event) {
@@ -457,7 +467,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
-					document.getElementById("curPage").value = data.curPage;document.getElementById("lastNum").value = data.list.length;
+					document.getElementById("curPage").value = data.curPage;
+					document.getElementById("lastNum").value = data.list.length;
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
@@ -478,8 +489,9 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				for (let i = checkedItems.length - 1; i >= 0; i--) {
 					const item = checkedItems[i].item;
 					const rowIndex = checkedItems[i].rowIndex;
-					if ((!isNull(item.creatorId) && !checker(sessionId, item.creatorId)) || (!isNull(item.modifierId) && !checker(sessionId, item.modifierId))) {
-						alert(rowIndex + "행 데이터의 작성자 혹은 수정자가 아닙니다.");
+					// 					if ((!isNull(item.creatorId) && !checker(sessionId, item.creatorId)) || (!isNull(item.modifierId) && !checker(sessionId, item.modifierId))) {
+					if ((!isNull(item.creatorId) && !checker(sessionId, item.creatorId))) {
+						alert(rowIndex + "행 데이터의 작성자가 아닙니다.");
 						return false;
 					}
 					if (!item.latest) {
@@ -492,10 +504,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 			function attach(data) {
 				const name = data.name;
-// 				if (name.length !== 18) {
-// 					alert("도면파일 이름명을 체크하세요. \nDWG NO : 10자리, 버전 3자리의 양식을 맞춰주세요.");
-// 					return false;
-// 				}
+				// 				if (name.length !== 18) {
+				// 					alert("도면파일 이름명을 체크하세요. \nDWG NO : 10자리, 버전 3자리의 양식을 맞춰주세요.");
+				// 					return false;
+				// 				}
 				const start = name.indexOf("-");
 				if (start <= -1) {
 					alert("도면파일 이름의 양식이 맞지 않습니다.\nDWG NO-버전 형태의 파일명만 허용됩니다.");
@@ -512,10 +524,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					return false;
 				}
 				const number = name.substring(0, start);
-// 				if (number.length !== 10) {
-// 					alert("도면파일의 DWG NO의 자리수를 확인해주세요. 등록가능한 도번의 자리수는 10자리여야 합니다.");
-// 					return false;
-// 				}
+				// 				if (number.length !== 10) {
+				// 					alert("도면파일의 DWG NO의 자리수를 확인해주세요. 등록가능한 도번의 자리수는 10자리여야 합니다.");
+				// 					return false;
+				// 				}
 				const version = name.substring(start + 1, end);
 				if (version.length !== 3) {
 					alert("도면파일의 버전 자리수를 확인해주세요. 등록가능한 버전의 자리수는 3자리여야 합니다.");
