@@ -549,7 +549,7 @@ span.text {
 }
 
 span.inactive {
-/* 	z-index: 99999; */
+	/* 	z-index: 99999; */
 	position: relative;
 	text-align: center !important;
 	height: 23px;
@@ -560,7 +560,7 @@ span.inactive {
 }
 
 span.active {
-/* 	z-index: 99999; */
+	/* 	z-index: 99999; */
 	position: relative;
 	text-align: center !important;
 	height: 23px;
@@ -606,5 +606,35 @@ img.edit {
 .search-table img.delete {
 	position: relative;
 	top: 3px;
+	cursor: pointer;
+}
+
+/** 메뉴얼 동영상 모달 CSS **/
+.video-modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+}
+
+.close {
+	position: absolute;
+	top: 15px;
+	right: 35px;
+	color: #f1f1f1;
+	font-size: 40px;
+	font-weight: bold;
 	cursor: pointer;
 }
