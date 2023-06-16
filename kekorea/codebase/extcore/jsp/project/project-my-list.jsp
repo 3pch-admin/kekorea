@@ -37,7 +37,8 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
-		<input type="hidden" name="sessionid" id="sessionid"><input type="hidden" name="lastNum" id="lastNum">
+		<input type="hidden" name="sessionid" id="sessionid">
+		<input type="hidden" name="lastNum" id="lastNum">
 		<input type="hidden" name="curPage" id="curPage">
 
 		<table class="search-table">
@@ -192,6 +193,7 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('project-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('project-list');">
+					<img src="/Windchill/extcore/images/help.gif" title="메뉴얼 재생" onclick="play('test.mp4');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="결재" title="결재" class="blue" onclick="register();">
 				</td>
@@ -207,6 +209,9 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 				</td>
 			</tr>
 		</table>
+
+		<!-- 메뉴얼 비디오 구간 -->
+		<%@include file="/extcore/jsp/common/video-layer.jsp"%>
 
 		<div id="grid_wrap" style="height: 635px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
@@ -645,7 +650,8 @@ boolean isSw = (boolean) request.getAttribute("isSw");
 					AUIGrid.removeAjaxLoader(myGridID);
 					if (data.result) {
 						document.getElementById("sessionid").value = data.sessionid;
-						document.getElementById("curPage").value = data.curPage;document.getElementById("lastNum").value = data.list.length;
+						document.getElementById("curPage").value = data.curPage;
+						document.getElementById("lastNum").value = data.list.length;
 						AUIGrid.setGridData(myGridID, data.list);
 					} else {
 						alert(data.msg);

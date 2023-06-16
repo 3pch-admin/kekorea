@@ -35,5 +35,6 @@
 		modalLayer.style.display = "none";
 		videoPlayer.pause();
 		videoPlayer.currentTime = 0;
+		AUIGrid.resize(myGridID);
 	}
 </script>

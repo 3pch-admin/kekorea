@@ -24,7 +24,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
-		<input type="hidden" name="sessionid" id="sessionid"><input type="hidden" name="lastNum" id="lastNum">
+		<input type="hidden" name="sessionid" id="sessionid">
+		<input type="hidden" name="lastNum" id="lastNum">
 		<input type="hidden" name="curPage" id="curPage">
 
 		<table class="button-table">
@@ -33,6 +34,7 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('system-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('system-list');">
+					<img src="/Windchill/extcore/images/help.gif" title="메뉴얼 재생" onclick="play('test.mp4');">
 				</td>
 				<td class="right">
 					<select name="_psize" id="_psize">
@@ -46,6 +48,9 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 				</td>
 			</tr>
 		</table>
+
+		<!-- 메뉴얼 비디오 구간 -->
+		<%@include file="/extcore/jsp/common/video-layer.jsp"%>
 
 		<div id="grid_wrap" style="height: 775px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
@@ -135,7 +140,8 @@ boolean isAdmin = (boolean) request.getAttribute("isAdmin");
 					if (data.result) {
 						AUIGrid.removeAjaxLoader(myGridID);
 						document.getElementById("sessionid").value = data.sessionid;
-						document.getElementById("curPage").value = data.curPage;document.getElementById("lastNum").value = data.list.length;
+						document.getElementById("curPage").value = data.curPage;
+						document.getElementById("lastNum").value = data.list.length;
 						AUIGrid.setGridData(myGridID, data.list);
 					} else {
 						alert(data.msg);

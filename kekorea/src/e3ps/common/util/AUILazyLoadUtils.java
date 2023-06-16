@@ -16,6 +16,8 @@ import e3ps.epm.dto.EpmDTO;
 import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.keDrawing.dto.KeDrawingDTO;
 import e3ps.epm.workOrder.WorkOrder;
+import e3ps.erp.ErpSendHistory;
+import e3ps.erp.dto.ErpDTO;
 import e3ps.korea.cip.Cip;
 import e3ps.korea.cip.dto.CipDTO;
 import e3ps.org.People;
@@ -25,6 +27,8 @@ import e3ps.part.kePart.KePart;
 import e3ps.part.kePart.beans.KePartDTO;
 import e3ps.project.Project;
 import e3ps.project.dto.ProjectDTO;
+import e3ps.system.ErrorLog;
+import e3ps.system.dto.ErrorLogDTO;
 import e3ps.workspace.notice.Notice;
 import e3ps.workspace.notice.dto.NoticeDTO;
 import wt.doc.WTDocument;
@@ -40,8 +44,6 @@ public class AUILazyLoadUtils {
 		while (qr.hasMoreElements()) {
 			Object[] obj = (Object[]) qr.nextElement();
 			Persistable per = (Persistable) obj[0];
-
-			System.out.println("Lazy Loading Data Class = " + per.getClass().getName());
 
 			// 의뢰서
 			if (per instanceof RequestDocument) {
@@ -100,18 +102,32 @@ public class AUILazyLoadUtils {
 				People people = (People) per;
 				UserDTO data = parse(people);
 				list.add(data);
+			} else if (per instanceof ErpSendHistory) {
+				ErpSendHistory erpSendHistory = (ErpSendHistory) per;
+				ErpDTO data = parse(erpSendHistory);
+				list.add(data);
+			} else if (per instanceof ErrorLog) {
+				ErrorLog errorLog = (ErrorLog) per;
+				ErrorLogDTO data = parse(errorLog);
+				list.add(data);
 			}
 		}
 		return list;
 	}
 
-//	private static TBOMMasterDTO parse(TBOMMaster master) throws Exception {
-////		return new TBOMMasterDTO(master);
-//	}
-//
-//	private static WorkOrderDTO parse(WorkOrder workOrder) throws Exception {
-//		return new WorkOrderDTO(workOrder);
-//	}
+	/**
+	 * 시스템 로그
+	 */
+	private static ErrorLogDTO parse(ErrorLog errorLog) throws Exception {
+		return new ErrorLogDTO(errorLog);
+	}
+
+	/**
+	 * ERP 로그
+	 */
+	private static ErpDTO parse(ErpSendHistory erpSendHistory) throws Exception {
+		return new ErpDTO(erpSendHistory);
+	}
 
 	/**
 	 * 공지사항 LAZY 로드

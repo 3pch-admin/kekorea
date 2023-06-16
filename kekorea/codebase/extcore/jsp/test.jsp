@@ -1,3 +1,4 @@
+<%@page import="wt.vc.config.LatestConfigSpec"%>
 <%@page import="wt.epm.build.EPMBuildHistory"%>
 <%@page import="wt.epm.build.EPMBuildRule"%>
 <%@page import="wt.vc.VersionControlHelper"%>
@@ -70,7 +71,8 @@ OrderBy by = new OrderBy(ca, false);
 query.appendOrderBy(by, new int[]{0});
 // QuerySpecUtils.toOrderBy(query, 0, EPMMemberLink.class, EPMMemberLink.COMP_NUMBER, false);
 
-EPMAsStoredConfigSpec spec = EPMAsStoredConfigSpec.newEPMAsStoredConfigSpec(top);
+// EPMAsStoredConfigSpec spec = EPMAsStoredConfigSpec.newEPMAsStoredConfigSpec(top);
+LatestConfigSpec spec = new LatestConfigSpec();
 
 QueryResult qr = EPMStructureHelper.service.navigateUsesToIteration(top, query, false, spec);
 

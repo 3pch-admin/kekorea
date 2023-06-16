@@ -116,8 +116,14 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
+					<%
+						if(isSupervisor) {
+					%>
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
+					<%
+						}
+					%>
 				</td>
 				<td class="right">
 					<select name="_psize" id="_psize">

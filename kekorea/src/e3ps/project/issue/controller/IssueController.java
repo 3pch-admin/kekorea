@@ -40,10 +40,12 @@ public class IssueController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
 		model.addObject("maks", maks);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor");
 		model.addObject("sessionUser", sessionUser);
 		model.setViewName("/extcore/jsp/project/issue/issue-list.jsp");
 		return model;

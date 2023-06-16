@@ -47,11 +47,13 @@ public class NumberRuleController extends BaseController {
 		JSONArray classificationWritingDepartments = NumberRuleCodeHelper.manager
 				.parseJson("CLASSIFICATION_WRITING_DEPARTMENT");
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor= CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		Timestamp time = new Timestamp(new Date().getTime());
 		model.addObject("time", time);
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("drawingCompanys", drawingCompanys);
 		model.addObject("writtenDocuments", writtenDocuments);
 		model.addObject("businessSectors", businessSectors);

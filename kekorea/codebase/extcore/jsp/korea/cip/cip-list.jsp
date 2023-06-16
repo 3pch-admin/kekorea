@@ -29,7 +29,8 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
-		<input type="hidden" name="sessionid" id="sessionid"><input type="hidden" name="lastNum" id="lastNum">
+		<input type="hidden" name="sessionid" id="sessionid">
+		<input type="hidden" name="lastNum" id="lastNum">
 		<input type="hidden" name="curPage" id="curPage">
 
 		<table class="search-table">
@@ -138,14 +139,15 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('cip-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('cip-list');">
+					<img src="/Windchill/extcore/images/help.gif" title="메뉴얼 재생" onclick="play('test.mp4');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<%
-						if(isSupervisor) {
+					if (isSupervisor) {
 					%>
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 					<%
-						}
+					}
 					%>
 				</td>
 				<td class="right">
@@ -160,6 +162,9 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 				</td>
 			</tr>
 		</table>
+
+		<!-- 메뉴얼 비디오 구간 -->
+		<%@include file="/extcore/jsp/common/video-layer.jsp"%>
 
 		<div id="grid_wrap" style="height: 670px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
@@ -700,13 +705,13 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 				const item = event.item;
 				const rowIndex = event.rowIndex;
 				if (dataField === "mak_code") {
-					
+
 					const mak = item.mak_code;
 					const url = getCallUrl("/commonCode/getChildrens?parentCode=" + mak + "&codeType=MAK");
 					call(url, null, function(data) {
 						detailMap[mak] = data.list;
 						const item = {
-								detail_code : ""
+							detail_code : ""
 						}
 						AUIGrid.updateRow(myGridID, item, rowIndex);
 					}, "GET");
@@ -718,7 +723,7 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 					call(url, null, function(data) {
 						installMap[customer] = data.list;
 						const item = {
-								install_code : ""
+							install_code : ""
 						}
 						AUIGrid.updateRow(myGridID, item, rowIndex);
 					}, "GET");
@@ -736,7 +741,8 @@ ArrayList<Map<String, String>> mak_list = (ArrayList<Map<String, String>>) reque
 					AUIGrid.removeAjaxLoader(myGridID);
 					if (data.result) {
 						document.getElementById("sessionid").value = data.sessionid;
-						document.getElementById("curPage").value = data.curPage;document.getElementById("lastNum").value = data.list.length;
+						document.getElementById("curPage").value = data.curPage;
+						document.getElementById("lastNum").value = data.list.length;
 						AUIGrid.setGridData(myGridID, data.list);
 					} else {
 						alert(data.msg);

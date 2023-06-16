@@ -680,7 +680,10 @@ public class WorkspaceHelper {
 			map.put("name", approvalLine.getName());
 			map.put("oid", approvalLine.getPersistInfo().getObjectIdentifier().getStringValue());
 			map.put("poid",
-					approvalLine.getMaster().getPersist().getPersistInfo().getObjectIdentifier().getStringValue());
+					approvalLine.getMaster().getPersist() != null
+							? approvalLine.getMaster().getPersist().getPersistInfo().getObjectIdentifier()
+									.getStringValue()
+							: "");
 			map.put("createdDate_txt", CommonUtils.getPersistableTime(approvalLine.getCreateTimestamp(), 16));
 			list.add(map);
 		}

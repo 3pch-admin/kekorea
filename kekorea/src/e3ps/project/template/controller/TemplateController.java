@@ -38,9 +38,11 @@ public class TemplateController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
+		model.addObject("isSupervisor", isSupervisor);
 		model.setViewName("/extcore/jsp/project/template/template-list.jsp");
 		return model;
 	}
