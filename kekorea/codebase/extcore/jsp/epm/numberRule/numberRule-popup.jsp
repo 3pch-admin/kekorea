@@ -540,10 +540,10 @@ boolean multi = (boolean) request.getAttribute("multi");
 			return false;
 		}
 
-		if(checkedItems[0].item.state !== "작업 중") {
-			alert("작업 중 상태의 도번만 추가가 가능합니다.");
-			return false;
-		}
+// 		if(checkedItems[0].item.state !== "작업 중") {
+// 			alert("작업 중 상태의 도번만 추가가 가능합니다.");
+// 			return false;
+// 		}
 		
 		// 승인된 도면 추가 못하게 설정
 		

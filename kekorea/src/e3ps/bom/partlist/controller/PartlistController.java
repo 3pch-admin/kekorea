@@ -40,11 +40,11 @@ public class PartlistController extends BaseController {
 	public ModelAndView list() throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
-		boolean isSuperviosr = CommonUtils.isSupervisor();
+		boolean isSupervisor = CommonUtils.isSupervisor();
 		WTUser sessionUser = (WTUser) SessionHelper.manager.getPrincipal();
 		model.addObject("sessionUser", sessionUser);
 		model.addObject("isAdmin", isAdmin);
-		model.addObject("isSuperviosr", isSuperviosr);
+		model.addObject("isSupervisor", isSupervisor);
 		model.setViewName("/extcore/jsp/bom/partlist/partlist-list.jsp");
 		return model;
 	}

@@ -190,7 +190,7 @@ JSONArray projectTypesJson = JSONArray.fromObject(projectTypes);
 					<img src="/Windchill/extcore/images/fileicon/file_excel.gif" title="엑셀 다운로드" onclick="exportExcel();">
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('project-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('project-list');">
-					<img src="/Windchill/extcore/images/help.gif" title="메뉴얼 재생" onclick="play('test.mp4');">
+					<img src="/Windchill/extcore/images/help.gif" title="메뉴얼 재생" onclick="play('test1.mp4');">
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
 				</td>

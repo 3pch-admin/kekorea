@@ -217,14 +217,19 @@ String loid = (String) request.getAttribute("loid");
 				int index = 0;
 				ArrayList<String> dd = dto.getDataFields();
 				for (int i = 0; i < dd.size(); i++) {
-					String dataFields = dd.get(i);%>
+					String dataFields = dd.get(i);
+					String key = dd.get(0);
+				%>
 			{
 				dataField : "<%=dataFields%>",
 				headerText : "사양<%=index%>",
 				dataType : "string",
 				width : 250,
 				styleFunction : function(rowIndex, columnIndex, value, headerText, item, dataField) {
-// 					return "comp";
+					const vv = item.<%=key%>;
+					if(vv !== value) {
+						return "comp";
+					}
 				},				
 				renderer : {
 					type : "Templaterenderer"

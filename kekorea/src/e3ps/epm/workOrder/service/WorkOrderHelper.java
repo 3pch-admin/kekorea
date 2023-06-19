@@ -12,7 +12,10 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Footer;
+import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -42,7 +45,6 @@ import e3ps.project.ProjectUserLink;
 import e3ps.project.variable.ProjectUserTypeVariable;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import wt.epm.EPMAuthoringAppType;
 import wt.epm.EPMDocument;
 import wt.epm.EPMDocumentMaster;
 import wt.fc.PagingQueryResult;
@@ -521,6 +523,26 @@ public class WorkOrderHelper {
 
 			Sheet sheet = workbook.createSheet(sheetName);
 			sheet.setDisplayGridlines(false);
+			
+			Header header = sheet.getHeader();
+			Footer footer = sheet.getFooter();
+			
+			
+			// 헤더 폰트
+			Font headerRightFont = workbook.createFont();
+			headerRightFont.setBold(true);
+			
+			Font headerLeftFont = workbook.createFont();
+			headerLeftFont.setBold(true);
+			headerLeftFont.setColor(IndexedColors.RED.getIndex());
+			headerLeftFont.setUnderline(Font.U_SINGLE);
+			
+			header.setLeft("KOKUSAI ELECTRIC");
+			
+			header.setRight("CONFIDENTIAL");
+
+			footer.setRight("국제엘렉트릭코리아(주)");
+			
 			// 헤더 머지
 			CellRangeAddress headerMerge = new CellRangeAddress(0, 0, 1, 17);
 			sheet.addMergedRegion(headerMerge);
