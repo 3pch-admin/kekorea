@@ -11,7 +11,8 @@ ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
 Persistable per = (Persistable) request.getAttribute("per");
 String poid = (String) request.getAttribute("poid");
 %>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
+<script type="text/javascript" src="/Windchill/extcore/js/auigrid.js?v=1010"></script>
 <input type="hidden" name="oid" id="oid" value="<%=dto.getOid()%>">
 <input type="hidden" name="poid" id="poid" value="<%=poid%>">
 <table class="button-table">
@@ -99,15 +100,24 @@ String poid = (String) request.getAttribute("poid");
 					} else {
 						createAUIGrid100(columns100);
 					}
+					const isCreated = AUIGrid.isCreated(columns);
+					if (isCreated) {
+						AUIGrid.resize(myGridID);
+					} else {
+						createAUIGrid(columns);
+					}
 					break;
 				}
 			}
 		});
 		createAUIGrid100(columns100);
 		AUIGrid.resize(myGridID100);
+		createAUIGrid(columns);
+		AUIGrid.resize(myGridID);
 	})
 
 	window.addEventListener("resize", function() {
 		AUIGrid.resize(myGridID100);
+		AUIGrid.resize(myGridID);
 	});
 </script>

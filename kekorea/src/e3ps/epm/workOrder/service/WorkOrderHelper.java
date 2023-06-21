@@ -1696,14 +1696,24 @@ public class WorkOrderHelper {
 	/**
 	 * 도면 일람표 프로젝트 가져오기
 	 */
-	public ArrayList<Project> getProjects(WorkOrder workOrder) throws Exception {
-		ArrayList<Project> list = new ArrayList<>();
+	public JSONArray getProjects(WorkOrder workOrder) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
 		QueryResult result = PersistenceHelper.manager.navigate(workOrder, "project", WorkOrderProjectLink.class);
 		while (result.hasMoreElements()) {
 			Project project = (Project) result.nextElement();
-			list.add(project);
+			Map<String, String> map = new HashMap<>();map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+			map.put("kekNumber", project.getKekNumber());
+			map.put("keNumber", project.getKeNumber());
+			map.put("projectType", project.getProjectType().getName());
+			map.put("customer", project.getCustomer() != null ? project.getCustomer().getName() : "");
+			map.put("install", project.getInstall() != null ? project.getInstall().getName() : "");
+			map.put("mak", project.getMak() != null ? project.getMak().getName() : "");
+			map.put("detail", project.getDetail() != null ? project.getDetail().getName() : "");
+			map.put("description", project.getDescription());
+			map.put("pDate_txt", project.getPDate() != null ? project.getPDate().toString().substring(0, 10) : "");
+			list.add(map);
 		}
-		return list;
+		return JSONArray.fromObject(list);
 	}
 
 	/**

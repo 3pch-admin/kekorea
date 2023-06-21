@@ -253,8 +253,8 @@ public class OutputHelper {
 	/**
 	 * 산출물과 관련된 작번들
 	 */
-	public ArrayList<Project> getProjects(WTDocument document) throws Exception {
-		ArrayList<Project> list = new ArrayList<>();
+	public JSONArray getProjects(WTDocument document) throws Exception {
+		ArrayList<Map<String, String>> list = new ArrayList<>();
 		QueryResult result = PersistenceHelper.manager.navigate(document, "output", OutputDocumentLink.class);
 		while (result.hasMoreElements()) {
 			Output output = (Output) result.nextElement();
@@ -262,10 +262,21 @@ public class OutputHelper {
 			QueryResult qr = PersistenceHelper.manager.navigate(output, "project", OutputProjectLink.class);
 			while (qr.hasMoreElements()) {
 				Project project = (Project) qr.nextElement();
-				list.add(project);
+				Map<String, String> map = new HashMap<>();
+				map.put("oid", project.getPersistInfo().getObjectIdentifier().getStringValue());
+				map.put("kekNumber", project.getKekNumber());
+				map.put("keNumber", project.getKeNumber());
+				map.put("projectType", project.getProjectType().getName());
+				map.put("customer", project.getCustomer() != null ? project.getCustomer().getName() : "");
+				map.put("install", project.getInstall() != null ? project.getInstall().getName() : "");
+				map.put("mak", project.getMak() != null ? project.getMak().getName() : "");
+				map.put("detail", project.getDetail() != null ? project.getDetail().getName() : "");
+				map.put("description", project.getDescription());
+				map.put("pDate_txt", project.getPDate() != null ? project.getPDate().toString().substring(0, 10) : "");
+				list.add(map);
 			}
 		}
-		return list;
+		return JSONArray.fromObject(list);
 	}
 
 	/**

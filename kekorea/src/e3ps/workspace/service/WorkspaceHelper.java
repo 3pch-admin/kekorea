@@ -37,6 +37,7 @@ import e3ps.korea.configSheet.service.ConfigSheetHelper;
 import e3ps.org.People;
 import e3ps.org.dto.UserDTO;
 import e3ps.project.Project;
+import e3ps.project.dto.ProjectDTO;
 import e3ps.project.output.Output;
 import e3ps.project.output.service.OutputHelper;
 import e3ps.project.task.Task;
@@ -1132,7 +1133,7 @@ public class WorkspaceHelper {
 	/**
 	 * 결재시 관련 작번
 	 */
-	public ArrayList<Project> getProjects(String oid) throws Exception {
+	public JSONArray getProjects(String oid) throws Exception {
 		Persistable per = CommonUtils.getObject(oid);
 		if (per instanceof TBOMMaster) {
 			return TBOMHelper.manager.getProjects((TBOMMaster) per);
