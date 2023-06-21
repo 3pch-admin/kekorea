@@ -29,7 +29,6 @@ import e3ps.project.variable.ProjectUserTypeVariable;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.org.OrganizationServicesHelper;
-import wt.org.OrganizationServicesServerHelper;
 import wt.org.WTUser;
 import wt.ownership.Ownership;
 import wt.pom.Transaction;

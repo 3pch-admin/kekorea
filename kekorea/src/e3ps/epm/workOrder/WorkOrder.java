@@ -30,7 +30,13 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "number", type = String.class, constraints = @PropertyConstraints(required = true), columnProperties = @ColumnProperties(columnName = "WorkOrderNumber")),
 
-				@GeneratedProperty(name = "workOrderType", type = String.class, javaDoc = "도면일람표 타입", constraints = @PropertyConstraints(required = true))
+				@GeneratedProperty(name = "workOrderType", type = String.class, javaDoc = "도면일람표 타입", constraints = @PropertyConstraints(required = true)),
+
+				@GeneratedProperty(name = "approved", type = String.class),
+
+				@GeneratedProperty(name = "judged", type = String.class),
+
+				@GeneratedProperty(name = "checekd", type = String.class)
 
 		},
 
@@ -44,8 +50,7 @@ import wt.util.WTException;
 
 						myRole = @MyRole(name = "workOrder", cardinality = Cardinality.ONE)
 
-				)
-		}
+				) }
 
 )
 public class WorkOrder extends _WorkOrder {

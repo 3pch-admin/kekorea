@@ -44,6 +44,7 @@ public class WorkOrderDTO {
 	private int version;
 	private String note;
 	private String thumbnail;
+	private String additional;
 	private String icons;
 	private boolean latest;
 
@@ -97,6 +98,7 @@ public class WorkOrderDTO {
 		setRevise(workOrder.getLifeCycleState().toString().equals("APPROVED"));
 		setNote(workOrder.getNote());
 		setThumbnail(AUIGridUtils.thumbnailTemplate(workOrder));
+		setAdditional(AUIGridUtils.additionalTemplate(workOrder));
 		setIcons(AUIGridUtils.secondaryTemplate(workOrder));
 		setLatest(workOrder.getLatest());
 	}
@@ -152,6 +154,7 @@ public class WorkOrderDTO {
 		setRevise(workOrder.getLifeCycleState().toString().equals("APPROVED"));
 		setNote(workOrder.getNote());
 		setThumbnail(AUIGridUtils.thumbnailTemplate(workOrder));
+		setAdditional(AUIGridUtils.additionalTemplate(workOrder));
 		setIcons(AUIGridUtils.secondaryTemplate(workOrder));
 		setLatest(workOrder.getLatest());
 	}

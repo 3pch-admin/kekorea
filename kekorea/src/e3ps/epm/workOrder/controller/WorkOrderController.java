@@ -76,6 +76,21 @@ public class WorkOrderController extends BaseController {
 	public Map<String, Object> create(@RequestBody WorkOrderDTO dto) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+
+			ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
+			ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
+			if (approvalRows.size() > 1) {
+				result.put("result", FAIL);
+				result.put("msg", "도면일람표의 결재자는 1명이사이 될 수 없습니다.");
+				return result;
+			}
+
+			if (agreeRows.size() > 2) {
+				result.put("result", FAIL);
+				result.put("msg", "도면일람표의 검토자는 2명이상이 될 수 없습니다.");
+				return result;
+			}
+
 			WorkOrderHelper.service.create(dto);
 			result.put("msg", SAVE_MSG);
 			result.put("result", SUCCESS);
@@ -213,6 +228,20 @@ public class WorkOrderController extends BaseController {
 	public Map<String, Object> modify(@RequestBody WorkOrderDTO dto) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+
+			ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
+			ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
+			if (approvalRows.size() > 1) {
+				result.put("result", FAIL);
+				result.put("msg", "도면일람표의 결재자는 1명이사이 될 수 없습니다.");
+				return result;
+			}
+
+			if (agreeRows.size() > 2) {
+				result.put("result", FAIL);
+				result.put("msg", "도면일람표의 검토자는 2명이상이 될 수 없습니다.");
+				return result;
+			}
 			WorkOrderHelper.service.modify(dto);
 			result.put("result", SUCCESS);
 			result.put("msg", MODIFY_MSG);
@@ -231,6 +260,20 @@ public class WorkOrderController extends BaseController {
 	public Map<String, Object> revise(@RequestBody WorkOrderDTO dto) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+
+			ArrayList<Map<String, String>> agreeRows = dto.getAgreeRows();
+			ArrayList<Map<String, String>> approvalRows = dto.getApprovalRows();
+			if (approvalRows.size() > 1) {
+				result.put("result", FAIL);
+				result.put("msg", "도면일람표의 결재자는 1명이상이 될 수 없습니다.");
+				return result;
+			}
+
+			if (agreeRows.size() > 2) {
+				result.put("result", FAIL);
+				result.put("msg", "도면일람표의 검토자는 2명이상이 될 수 없습니다.");
+				return result;
+			}
 			WorkOrderHelper.service.revise(dto);
 			result.put("result", SUCCESS);
 			result.put("msg", REVISE_MSG);

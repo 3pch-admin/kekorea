@@ -15,6 +15,7 @@ JSONArray machines = (JSONArray) request.getAttribute("machines");
 JSONArray maks = (JSONArray) request.getAttribute("maks");
 JSONArray installs = (JSONArray) request.getAttribute("installs");
 JSONArray customers = (JSONArray) request.getAttribute("customers");
+JSONArray details = (JSONArray) request.getAttribute("details");
 JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 %>
 <%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
@@ -100,20 +101,14 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 	</div>
 	<script type="text/javascript">
 		let myGridID;
-		const maks =
-	<%=maks%>
-		const installs =
-	<%=installs%>
-		const customers =
-	<%=customers%>
-		const elecs =
-	<%=elecs%>
-		const machines =
-	<%=machines%>
-		const softs =
-	<%=softs%>
-		const projectTypes =
-	<%=projectTypes%>
+		const maks = <%=maks%>
+		const installs = <%=installs%>
+		const details = <%=details%>
+		const customers = <%=customers%>
+		const elecs = <%=elecs%>
+		const machines = <%=machines%>
+		const softs = <%=softs%>
+		const projectTypes = <%=projectTypes%>
 		let detailMap = {};
 		let installMap = {};
 		const columns = [ {
@@ -229,7 +224,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 		}, {
 			dataField : "install_code",
 			headerText : "설치장소",
-			width : 150,
+			width : 100,
 			renderer : {
 				type : "IconRenderer",
 				iconWidth : 16,
@@ -248,11 +243,15 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				autoEasyMode : true,
 				matchFromFirst : false,
 				showEditorBtnOver : false,
+				list : installs,
 				keyField : "key",
 				valueField : "value",
 				validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 					const param = item.customer_code;
-					const dd = installMap[param];
+					let dd = installMap[param];
+					if(dd === undefined) {
+						dd = installs;
+					}
 					let isValid = false;
 					for (let i = 0, len = dd.length; i < len; i++) {
 						if (dd[i]["value"] == newValue) {
@@ -269,7 +268,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 					const param = item.customer_code;
 					const dd = installMap[param];
 					if (dd === undefined) {
-						return [];
+						return installs;
 					}
 					return dd;
 				},
@@ -277,9 +276,11 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
 				let retStr = "";
 				const param = item.customer_code;
-				const dd = installMap[param];
-				if (dd === undefined)
-					return value;
+				let dd = installMap[param];
+				if (dd === undefined) {
+					dd = installs;
+				}
+// 					return value;
 				for (let i = 0, len = dd.length; i < len; i++) {
 					if (dd[i]["key"] == value) {
 						retStr = dd[i]["value"];
@@ -363,18 +364,22 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				autoEasyMode : true,
 				matchFromFirst : false,
 				showEditorBtnOver : false,
+				list : details,
 				keyField : "key",
 				valueField : "value",
 				validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 					const param = item.mak_code;
-					const dd = detailMap[param];
+					let dd = detailMap[param];
+					if(dd === undefined) {
+						dd = details;
+					}
 					let isValid = false;
-					for (let i = 0, len = dd.length; i < len; i++) {
+						for (let i = 0, len = dd.length; i < len; i++) {
 						if (dd[i]["value"] == newValue) {
 							isValid = true;
 							break;
 						}
-					}
+				}
 					return {
 						"validate" : isValid,
 						"message" : "리스트에 있는 값만 선택(입력) 가능합니다."
@@ -384,17 +389,18 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 					var param = item.mak_code;
 					var dd = detailMap[param];
 					if (dd === undefined) {
-						return [];
+						return details;
 					}
 					return dd;
 				},
 			},
 			labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
 				let retStr = "";
-				let param = item.mak_code;
+				const param = item.mak_code;
 				let dd = detailMap[param];
-				if (dd === undefined)
-					return value;
+				if (dd === undefined) {
+					dd = details;
+				}
 				for (let i = 0, len = dd.length; i < len; i++) {
 					if (dd[i]["key"] == value) {
 						retStr = dd[i]["value"];
@@ -674,6 +680,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				useContextMenu : true,
 				enableRightDownFocus : true,
 				$compaEventOnPaste : true,
+				fillColumnSizeMode : true,
 				contextMenuItems : [ {
 					label : "선택된 행 이전 추가",
 					callback : contextItemHandler
@@ -690,6 +697,21 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			myGridID = AUIGrid.create("#grid_wrap", columnLayout, props);
 			readyHandler();
 			AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+			AUIGrid.bind(myGridID, "keyDown", auiKeyDownHandler);
+		}
+		
+		
+		// enter 키 행 추가
+		function auiKeyDownHandler(event) {
+			if (event.keyCode == 13) { // 엔터 키
+				var selectedItems = AUIGrid.getSelectedItems(event.pid);
+				var rowIndex = selectedItems[0].rowIndex;
+				if (rowIndex === AUIGrid.getRowCount(event.pid) - 1) { // 마지막 행인지 여부 
+					AUIGrid.addRow(event.pid, {}); // 행 추가
+					return false; // 엔터 키의 기본 행위 안함.
+				}
+			}
+			return true; // 기본 행위 유지
 		}
 
 		function contextItemHandler(event) {

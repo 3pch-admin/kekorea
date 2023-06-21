@@ -1,36 +1,27 @@
 package e3ps;
 
-import java.lang.reflect.Method;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
-import javax.websocket.DeploymentException;
-import javax.websocket.server.ServerContainer;
-import javax.websocket.server.ServerEndpointConfig;
-
-import e3ps.chat.WebSocketEndPoint;
+import com.aspose.cells.FileFormatType;
 
 public class Test2 {
 
 	public static void main(String[] args) throws Exception {
 
-		ServerContainer serverContainer = (ServerContainer) getServerContainer();
 		try {
-			ServerEndpointConfig endpointConfig = ServerEndpointConfig.Builder
-					.create(WebSocketEndPoint.class, "/websocket-endpoint").build();
-			System.out.println(endpointConfig);
-			serverContainer.addEndpoint(endpointConfig);
-		} catch (DeploymentException e) {
+			// 엑셀 파일 읽기
+			FileInputStream excelFile = new FileInputStream(new File("D:" + File.separator + "test1.xls"));
+			File pdfFile = new File("D:" + File.separator + "output.pdf");
+			com.aspose.cells.Workbook wb = new com.aspose.cells.Workbook(excelFile);
+			FileOutputStream fospdf = new FileOutputStream(pdfFile);
+			wb.save(fospdf, FileFormatType.PDF);
+
+			System.out.println("Excel 파일이 PDF로 변환되었습니다.");
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	private static Object getServerContainer() {
-        try {
-            Class<?> serverContainerClass = Class.forName("org.eclipse.jetty.websocket.jsr356.server.ServerContainer");
-            Method getServerContainerMethod = serverContainerClass.getMethod("getServerContainer");
-            return (ServerContainer) getServerContainerMethod.invoke(null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
 	}
 }

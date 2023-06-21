@@ -67,7 +67,7 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 			TBOMMaster master = TBOMMaster.newTBOMMaster();
 			master.setNumber(number);
 			master.setName(name);
-			master.setVersion(1);
+			master.setVersion(0);
 			master.setLatest(true);
 			master.setDescription(description);
 			FolderHelper.assignLocation((FolderEntry) master, folder);
@@ -449,7 +449,7 @@ public class StandardTBOMService extends StandardManager implements TBOMService 
 
 			TBOMMaster pre = (TBOMMaster) CommonUtils.getObject(dto.getOid());
 			String preName = pre.getName();
-			if(!preName.equals(dto.getName())) {
+			if (!preName.equals(dto.getName())) {
 				pre.setName(dto.getName());
 			}
 			pre.setLatest(false);

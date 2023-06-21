@@ -16,7 +16,6 @@ import net.sf.json.JSONObject;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
 import wt.query.QuerySpec;
-import wt.query.SearchCondition;
 import wt.services.ServiceFactory;
 
 public class CommonCodeHelper {

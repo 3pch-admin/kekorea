@@ -22,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
-import e3ps.epm.keDrawing.service.KeDrawingHelper;
 import e3ps.org.Department;
 import e3ps.org.service.OrgHelper;
 import e3ps.system.service.ErrorLogHelper;
@@ -501,6 +500,24 @@ public class WorkspaceController extends BaseController {
 			result.put("result", FAIL);
 			result.put("msg", e.toString());
 			ErrorLogHelper.service.create(e.toString(), "/workspace/loadFavorite", "개인결재선 불러오는 함수");
+		}
+		return result;
+	}
+
+	@Description(value = "결재 초기화 함수")
+	@ResponseBody
+	@PostMapping(value = "/_reset")
+	public Map<String, Object> _reset(@RequestBody Map<String, Object> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			WorkspaceHelper.service._reset(params);
+			result.put("msg", "결재가 초기화 되었습니다.");
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/workspace/_reset", "결재 초기화 함수");
 		}
 		return result;
 	}

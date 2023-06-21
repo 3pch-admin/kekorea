@@ -145,9 +145,10 @@ public class RequestDocumentController extends BaseController {
 		JSONArray elecs = OrgHelper.manager.getDepartmentUser("ELEC");
 		JSONArray softs = OrgHelper.manager.getDepartmentUser("SOFT");
 		JSONArray machines = OrgHelper.manager.getDepartmentUser("MACHINE");
-		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getValueMap("MAK");
-		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getValueMap("CUSTOMER");
-		ArrayList<Map<String, String>> installs = CommonCodeHelper.manager.getValueMap("INSTALL");
+		ArrayList<Map<String, String>> maks = CommonCodeHelper.manager.getArrayKeyValueMap("MAK");
+		ArrayList<Map<String, String>> details = CommonCodeHelper.manager.getArrayKeyValueMap("MAK_DETAIL");
+		ArrayList<Map<String, String>> customers = CommonCodeHelper.manager.getArrayKeyValueMap("CUSTOMER");
+		ArrayList<Map<String, String>> installs = CommonCodeHelper.manager.getArrayKeyValueMap("INSTALL");
 		ArrayList<Map<String, String>> projectTypes = CommonCodeHelper.manager.getValueMap("PROJECT_TYPE");
 		model.addObject("maks", JSONArray.fromObject(maks));
 		model.addObject("installs", JSONArray.fromObject(installs));
@@ -155,6 +156,7 @@ public class RequestDocumentController extends BaseController {
 		model.addObject("projectTypes", JSONArray.fromObject(projectTypes));
 		model.addObject("elecs", elecs);
 		model.addObject("softs", softs);
+		model.addObject("details", JSONArray.fromObject(details));
 		model.addObject("machines", machines);
 		model.addObject("list", list);
 		model.addObject("poid", poid);

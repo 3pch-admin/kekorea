@@ -9,8 +9,6 @@ import java.util.Map;
 
 import e3ps.common.util.PageQueryUtils;
 import e3ps.common.util.QuerySpecUtils;
-import e3ps.erp.ErpSendHistory;
-import e3ps.erp.dto.ErpDTO;
 import e3ps.system.ErrorLog;
 import e3ps.system.dto.ErrorLogDTO;
 import wt.fc.PagingQueryResult;

@@ -11,7 +11,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
@@ -19,7 +19,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
-		<input type="hidden" name="sessionid" id="sessionid"><input type="hidden" name="lastNum" id="lastNum">
+		<input type="hidden" name="sessionid" id="sessionid">
+		<input type="hidden" name="lastNum" id="lastNum">
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
 			<colgroup>
@@ -30,8 +31,47 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			</colgroup>
 			<tr>
 				<th>결재 제목</th>
-				<td colspan="3" class="indent5">
+				<td class="indent5">
 					<input type="text" name="approvalTitle" id="approvalTitle" class="width-300">
+				</td>
+				<th>검토여부</th>
+				<td>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="state" value="전체">
+						<div class="state p-success">
+							<label>
+								<b>전체</b>
+							</label>
+						</div>
+					</div>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="state" value="검토중" checked="checked">
+						<div class="state p-success">
+							<label>
+								<b>검토중</b>
+							</label>
+						</div>
+					</div>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="state" value="검토반려">
+						<div class="state p-success">
+							<label>
+								<b>검토반려</b>
+							</label>
+						</div>
+					</div>
+					&nbsp;
+					<div class="pretty p-switch">
+						<input type="radio" name="state" value="검토완료">
+						<div class="state p-success">
+							<label>
+								<b>검토완료</b>
+							</label>
+						</div>
+					</div>
 				</td>
 			</tr>
 			<tr>
@@ -73,7 +113,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 		<!-- 메뉴얼 비디오 구간 -->
 		<%@include file="/extcore/jsp/common/video-layer.jsp"%>
-		
+
 		<div id="grid_wrap" style="height: 705px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
@@ -219,14 +259,26 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/workspace/agree");
-				const field = ["approvalTitle","_psize","submiterOid","receiveFrom","receiveTo"];
+				const field = [ "approvalTitle", "_psize", "submiterOid", "receiveFrom", "receiveTo" ];
 				params = toField(params, field);
+
+				const radios = document.getElementsByName("state");
+				let selectedValue;
+
+				for (let i = 0; i < radios.length; i++) {
+					if (radios[i].checked) {
+						selectedValue = radios[i].value;
+						break;
+					}
+				}
+				params.state = selectedValue;
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
-					document.getElementById("curPage").value = data.curPage;document.getElementById("lastNum").value = data.list.length;
+					document.getElementById("curPage").value = data.curPage;
+					document.getElementById("lastNum").value = data.list.length;
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});

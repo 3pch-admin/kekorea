@@ -343,8 +343,8 @@
 			const item = addRows[i];
 			const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
 			if (isNull(item.lotNo) || item.lotNo === 0) {
-				AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.");
-				return false;
+// 				AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0혹은 공백을 입력 할 수 없습니다.");
+// 				return false;
 			}
 
 			if (isNull(item.name)) {
@@ -362,8 +362,8 @@
 			const item = editRows[i];
 			const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
 			if (isNull(item.lotNo) || item.lotNo === 0) {
-				AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
-				return false;
+// 				AUIGrid.showToastMessage(myGridID, rowIndex, 0, "LOT NO의 값은 0을 입력 할 수 없습니다.");
+// 				return false;
 			}
 
 			if (isNull(item.name)) {

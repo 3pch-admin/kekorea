@@ -1,5 +1,9 @@
 package e3ps.epm.workOrder.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -8,14 +12,19 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -23,8 +32,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.aspose.cells.FileFormatType;
+
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
+import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.AUIGridUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.ContentUtils;
@@ -45,6 +57,9 @@ import e3ps.project.ProjectUserLink;
 import e3ps.project.variable.ProjectUserTypeVariable;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import wt.content.ApplicationData;
+import wt.content.ContentRoleType;
+import wt.content.ContentServerHelper;
 import wt.epm.EPMDocument;
 import wt.epm.EPMDocumentMaster;
 import wt.fc.PagingQueryResult;
@@ -60,6 +75,7 @@ import wt.queue.QueueHelper;
 import wt.services.ServiceFactory;
 import wt.session.SessionHelper;
 import wt.util.WTAttributeNameIfc;
+import wt.util.WTProperties;
 
 public class WorkOrderHelper {
 
@@ -69,6 +85,15 @@ public class WorkOrderHelper {
 	private static final String processQueueName = "WorkOrderProcessQueue";
 	private static final String className = "e3ps.common.aspose.AsposeUtils";
 	private static final String methodName = "attachMergePdf";
+
+	private static String codebase = null;
+	static {
+		try {
+			codebase = WTProperties.getServerProperties().getProperty("wt.codebase.location");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * 도면 일람표 조회
@@ -453,6 +478,8 @@ public class WorkOrderHelper {
 	 */
 	public Workbook createWorkOrderCover(WorkOrder workOrder, ArrayList<WorkOrderDataLink> list) throws Exception {
 
+		WorkOrder first = getFirst(workOrder);
+
 		Workbook workbook = new XSSFWorkbook();
 
 		// 헤더 스타일
@@ -461,8 +488,16 @@ public class WorkOrderHelper {
 		Font headerFont = workbook.createFont();
 		headerFont.setBold(true);
 		headerFont.setUnderline(Font.U_SINGLE);
-		headerFont.setFontHeightInPoints((short) 20);
+		headerFont.setFontHeightInPoints((short) 40);
 		headerStyle.setFont(headerFont);
+
+		Font dotFont = workbook.createFont();
+		dotFont.setBold(true);
+		dotFont.setFontHeightInPoints((short) 10);
+
+		// 헤더 스타일
+		CellStyle headerDotStyle = workbook.createCellStyle();
+		headerDotStyle.setFont(dotFont);
 
 		// 정렬 설정
 		headerStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -473,13 +508,22 @@ public class WorkOrderHelper {
 		headerStyle.setBorderLeft(BorderStyle.NONE);
 		headerStyle.setBorderRight(BorderStyle.NONE);
 
-		CellStyle noneBorderStyl = workbook.createCellStyle();
+		// 정렬 설정
+		headerDotStyle.setAlignment(HorizontalAlignment.CENTER);
+		headerDotStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		// 경계선 설정
+		headerDotStyle.setBorderTop(BorderStyle.DASH_DOT);
+		headerDotStyle.setBorderBottom(BorderStyle.DASH_DOT);
+		headerDotStyle.setBorderLeft(BorderStyle.DASH_DOT);
+		headerDotStyle.setBorderRight(BorderStyle.DASH_DOT);
+
+		CellStyle noneBorderStyle = workbook.createCellStyle();
 
 		// 경계선 설정
-		noneBorderStyl.setBorderTop(BorderStyle.NONE);
-		noneBorderStyl.setBorderBottom(BorderStyle.NONE);
-		noneBorderStyl.setBorderLeft(BorderStyle.NONE);
-		noneBorderStyl.setBorderRight(BorderStyle.NONE);
+		noneBorderStyle.setBorderTop(BorderStyle.NONE);
+		noneBorderStyle.setBorderBottom(BorderStyle.NONE);
+		noneBorderStyle.setBorderLeft(BorderStyle.NONE);
+		noneBorderStyle.setBorderRight(BorderStyle.NONE);
 
 		// 데이터 헤더 스타일
 		CellStyle dataHeaderStyle = workbook.createCellStyle();
@@ -491,11 +535,49 @@ public class WorkOrderHelper {
 		dataHeaderStyle.setBorderLeft(BorderStyle.MEDIUM);
 		dataHeaderStyle.setBorderRight(BorderStyle.MEDIUM);
 
-		Font dataHeaderFont = workbook.createFont();
-		dataHeaderFont.setBold(true);
-		dataHeaderStyle.setFont(dataHeaderFont);
+		CellStyle dataLeftStyle = workbook.createCellStyle();
+		dataLeftStyle.setWrapText(true);
+		dataLeftStyle.setAlignment(HorizontalAlignment.LEFT);
+		dataLeftStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		dataLeftStyle.setBorderTop(BorderStyle.MEDIUM);
+		dataLeftStyle.setBorderBottom(BorderStyle.MEDIUM);
+		dataLeftStyle.setBorderLeft(BorderStyle.MEDIUM);
+		dataLeftStyle.setBorderRight(BorderStyle.MEDIUM);
 
-		int columnWidth = 150;
+		CellStyle rightStyle = workbook.createCellStyle();
+		rightStyle.setWrapText(true);
+		rightStyle.setAlignment(HorizontalAlignment.LEFT);
+		rightStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		rightStyle.setBorderTop(BorderStyle.MEDIUM);
+		rightStyle.setBorderBottom(BorderStyle.MEDIUM);
+		rightStyle.setBorderLeft(BorderStyle.MEDIUM);
+		rightStyle.setBorderRight(BorderStyle.NONE);
+
+		CellStyle leftStyle = workbook.createCellStyle();
+		leftStyle.setWrapText(true);
+		leftStyle.setAlignment(HorizontalAlignment.LEFT);
+		leftStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+		leftStyle.setBorderTop(BorderStyle.MEDIUM);
+		leftStyle.setBorderBottom(BorderStyle.MEDIUM);
+		leftStyle.setBorderLeft(BorderStyle.NONE);
+		leftStyle.setBorderRight(BorderStyle.MEDIUM);
+
+		CellStyle topStyle = workbook.createCellStyle();
+		topStyle.setWrapText(true);
+		topStyle.setAlignment(HorizontalAlignment.CENTER);
+		topStyle.setVerticalAlignment(VerticalAlignment.TOP);
+		topStyle.setBorderTop(BorderStyle.MEDIUM);
+		topStyle.setBorderBottom(BorderStyle.MEDIUM);
+		topStyle.setBorderLeft(BorderStyle.MEDIUM);
+		topStyle.setBorderRight(BorderStyle.MEDIUM);
+
+		Font dataFont = workbook.createFont();
+		dataFont.setBold(true);
+		dataHeaderStyle.setFont(dataFont);
+		dataLeftStyle.setFont(dataFont);
+		topStyle.setFont(dataFont);
+		leftStyle.setFont(dataFont);
+		rightStyle.setFont(dataFont);
 
 		int size = list.size();
 		int loop = size / 45;
@@ -510,41 +592,70 @@ public class WorkOrderHelper {
 			project = (Project) result.nextElement();
 		}
 
+		String mak = project.getMak() != null ? project.getMak().getName() : "";
+		String detail = project.getDetail() != null ? project.getDetail().getName() : "";
+		String customer = project.getCustomer() != null ? project.getCustomer().getName() : "";
+
 		// 데이터 FOR 문 변수
 		int start = 0;
 		int end = 45;
 
 		if (list.size() < 45) {
-			end = list.size();
+			end = 45;
 		}
 
 		for (int i = 0; i < loop; i++) {
-			String sheetName = (i + 1) + "번 시트";
+			String sheetName = workOrder.getNumber() + " (" + (i + 1) + ")";
 
 			Sheet sheet = workbook.createSheet(sheetName);
 			sheet.setDisplayGridlines(false);
-			
+
+			PrintSetup printSetup = sheet.getPrintSetup();
+			printSetup.setPaperSize(PrintSetup.A4_PAPERSIZE);
+
+			sheet.setMargin(Sheet.LeftMargin, 0.3);
+			sheet.setMargin(Sheet.RightMargin, 0.2);
+			sheet.setMargin(Sheet.TopMargin, 0.8);
+			sheet.setMargin(Sheet.BottomMargin, 0.4);
+			sheet.setFitToPage(true);
+
 			Header header = sheet.getHeader();
 			Footer footer = sheet.getFooter();
-			
-			
-			// 헤더 폰트
-			Font headerRightFont = workbook.createFont();
-			headerRightFont.setBold(true);
-			
-			Font headerLeftFont = workbook.createFont();
-			headerLeftFont.setBold(true);
-			headerLeftFont.setColor(IndexedColors.RED.getIndex());
-			headerLeftFont.setUnderline(Font.U_SINGLE);
-			
-			header.setLeft("KOKUSAI ELECTRIC");
-			
-			header.setRight("CONFIDENTIAL");
 
+//			// 헤더 폰트
+//			Font headerLeftFont = workbook.createFont();
+//			headerLeftFont.setBold(true);
+//			
+//			CellStyle headerRightStyle = workbook.createCellStyle();
+//			Font headerRightFont = workbook.createFont();
+//			headerRightFont.setBold(true);
+//			headerRightFont.setColor(IndexedColors.RED.getIndex());
+//			headerRightFont.setUnderline(Font.U_SINGLE);
+//			headerRightStyle.setFont(headerRightFont);
+
+			header.setLeft("KOKUSAI ELECTRIC");
+			header.setRight("CONFIDENTIAL");
 			footer.setRight("국제엘렉트릭코리아(주)");
-			
+
+//			File file = new File(codebase + File.separator + "extcore" + File.separator + "images" + File.separator
+//					+ "confidential.jpg");
+//			InputStream imageStream = new FileInputStream(file);
+//			byte[] imageBytes = IOUtils.toByteArray(imageStream);
+//
+//
+//            // 이미지 삽입
+//            int pictureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_JPEG);
+//            CreationHelper helper = workbook.getCreationHelper();
+////            Sheet sheet = workbook.createSheet("Sheet1");
+//            Drawing<?> drawing = sheet.createDrawingPatriarch();
+//            ClientAnchor anchor = helper.createClientAnchor();
+//            anchor.setCol1(0); // 이미지를 삽입할 열 인덱스
+//            anchor.setRow1(0); // 이미지를 삽입할 행 인덱스
+//            Picture picture = drawing.createPicture(anchor, pictureIdx);
+//            picture.resize(); // 이미지 크기 조정 (선택 사항)
+
 			// 헤더 머지
-			CellRangeAddress headerMerge = new CellRangeAddress(0, 0, 1, 17);
+			CellRangeAddress headerMerge = new CellRangeAddress(0, 0, 5, 15);
 			sheet.addMergedRegion(headerMerge);
 
 			// 데이터 헤더 머지
@@ -555,22 +666,66 @@ public class WorkOrderHelper {
 			sheet.addMergedRegion(dataHeaderMerge1);
 			sheet.addMergedRegion(dataHeaderMerge2);
 
-			sheet.setColumnWidth(0, columnWidth * 8);
+			sheet.setColumnWidth(0, 50);
 			sheet.setColumnWidth(18, 50);
+			sheet.setDefaultColumnWidth(8);
+//			sheet.setDefaultRowHeight((short) 22);
 
 			Row row = null;
 			Cell cell = null;
 
 			// 1행 1열
 			row = sheet.createRow(0);
-			row.setHeight((short) 500);
+			row.setHeight((short) 700);
 			cell = row.createCell(0);
 			cell.setCellValue("");
 
+			CellRangeAddress makMerge = new CellRangeAddress(0, 0, 1, 4);
+			sheet.addMergedRegion(makMerge);
+
 			// 1행 헤더
 			cell = row.createCell(1);
+			cell.setCellStyle(headerDotStyle);
+			cell.setCellValue(mak + "/" + detail);
+			cell = row.createCell(2);
+			cell.setCellStyle(headerDotStyle);
+			cell = row.createCell(3);
+			cell.setCellStyle(headerDotStyle);
+			cell = row.createCell(4);
+			cell.setCellStyle(headerDotStyle);
+
+			cell = row.createCell(5);
 			cell.setCellStyle(headerStyle);
-			cell.setCellValue("ALL DRAWING TABLE");
+			cell.setCellValue("ALL DRAWING");
+			cell = row.createCell(6);
+			cell.setCellStyle(headerStyle);
+			cell = row.createCell(7);
+			cell.setCellStyle(headerStyle);
+			cell = row.createCell(8);
+			cell.setCellStyle(headerStyle);
+			cell = row.createCell(9);
+			cell.setCellStyle(headerStyle);
+			cell = row.createCell(10);
+			cell.setCellStyle(headerStyle);
+			cell = row.createCell(11);
+			cell.setCellStyle(headerStyle);
+			cell = row.createCell(12);
+			cell.setCellStyle(headerStyle);
+			cell = row.createCell(13);
+			cell.setCellStyle(headerStyle);
+			cell = row.createCell(14);
+			cell.setCellStyle(headerStyle);
+			cell = row.createCell(15);
+			cell.setCellStyle(headerStyle);
+
+			CellRangeAddress customerMerge = new CellRangeAddress(0, 0, 16, 17);
+			sheet.addMergedRegion(customerMerge);
+
+			cell = row.createCell(16);
+			cell.setCellStyle(headerDotStyle);
+			cell.setCellValue(customer);
+			cell = row.createCell(17);
+			cell.setCellStyle(headerDotStyle);
 
 			cell = row.createCell(18);
 			cell.setCellValue("");
@@ -643,84 +798,184 @@ public class WorkOrderHelper {
 			for (int j = start; j < end; j++) {
 				// 데이터 머지
 
-				WorkOrderDataLink data = (WorkOrderDataLink) list.get(j);
-				Persistable per = data.getData();
-				String name = "";
-				String number = "";
-				String current = "";
-				String lotNo = "";
-				if (per instanceof KeDrawing) {
-					KeDrawing keDrawing = (KeDrawing) per;
-					name = keDrawing.getMaster().getName();
-					number = keDrawing.getMaster().getKeNumber();
-					current = String.valueOf(keDrawing.getVersion());
-					lotNo = String.valueOf(keDrawing.getMaster().getLotNo());
+				if ((list.size() - 1) > j) {
+					WorkOrderDataLink data = (WorkOrderDataLink) list.get(j);
+					Persistable per = data.getData();
+					String name = "";
+					String number = "";
+					String current = "";
+					String lotNo = "";
+					if (per instanceof KeDrawing) {
+						KeDrawing keDrawing = (KeDrawing) per;
+						name = keDrawing.getMaster().getName();
+						number = keDrawing.getMaster().getKeNumber();
+						current = String.valueOf(keDrawing.getVersion());
+						lotNo = String.valueOf(keDrawing.getMaster().getLotNo());
+					}
+
+					CellRangeAddress dataValueMerge = new CellRangeAddress(rowIndex, rowIndex, 2, 9);
+					CellRangeAddress dataValueMerge1 = new CellRangeAddress(rowIndex, rowIndex, 10, 12);
+					CellRangeAddress dataValueMerge2 = new CellRangeAddress(rowIndex, rowIndex, 16, 17);
+					sheet.addMergedRegion(dataValueMerge);
+					sheet.addMergedRegion(dataValueMerge1);
+					sheet.addMergedRegion(dataValueMerge2);
+
+					// 데이터 값 행
+					row = sheet.createRow(rowIndex);
+					cell = row.createCell(1);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataHeaderStyle);
+					cell.setCellValue((j + 1));
+
+					cell = row.createCell(2);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell.setCellValue(name);
+					cell = row.createCell(3);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell = row.createCell(4);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell = row.createCell(5);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell = row.createCell(6);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell = row.createCell(7);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell = row.createCell(8);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell = row.createCell(9);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+
+					cell = row.createCell(10);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell.setCellValue(number);
+					cell = row.createCell(11);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell = row.createCell(12);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+
+					cell = row.createCell(13);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataHeaderStyle);
+					cell.setCellValue(data.getRev());
+
+					cell = row.createCell(14);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataHeaderStyle);
+					cell.setCellValue(current);
+
+					cell = row.createCell(15);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataHeaderStyle);
+					cell.setCellValue(lotNo);
+
+					cell = row.createCell(16);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataHeaderStyle);
+					cell.setCellValue(data.getNote());
+
+					cell = row.createCell(17);
+					cell.setCellStyle(dataHeaderStyle);
+
+					rowIndex++;
+				} else {
+					String name = "";
+					String number = "";
+					String current = "";
+					String lotNo = "";
+					CellRangeAddress dataValueMerge = new CellRangeAddress(rowIndex, rowIndex, 2, 9);
+					CellRangeAddress dataValueMerge1 = new CellRangeAddress(rowIndex, rowIndex, 10, 12);
+					CellRangeAddress dataValueMerge2 = new CellRangeAddress(rowIndex, rowIndex, 16, 17);
+					sheet.addMergedRegion(dataValueMerge);
+					sheet.addMergedRegion(dataValueMerge1);
+					sheet.addMergedRegion(dataValueMerge2);
+
+					// 데이터 값 행
+					row = sheet.createRow(rowIndex);
+					cell = row.createCell(1);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataHeaderStyle);
+					cell.setCellValue((j + 1));
+
+					cell = row.createCell(2);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell.setCellValue(name);
+					cell = row.createCell(3);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell = row.createCell(4);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell = row.createCell(5);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell = row.createCell(6);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell = row.createCell(7);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell = row.createCell(8);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell = row.createCell(9);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+
+					cell = row.createCell(10);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell.setCellValue(number);
+					cell = row.createCell(11);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+					cell = row.createCell(12);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataLeftStyle);
+
+					cell = row.createCell(13);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataHeaderStyle);
+					cell.setCellValue("");
+
+					cell = row.createCell(14);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataHeaderStyle);
+					cell.setCellValue(current);
+
+					cell = row.createCell(15);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataHeaderStyle);
+					cell.setCellValue(lotNo);
+					row.setHeightInPoints(21.7f);
+
+					cell = row.createCell(16);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataHeaderStyle);
+					cell.setCellValue("");
+
+					cell = row.createCell(17);
+					row.setHeightInPoints(21.7f);
+					cell.setCellStyle(dataHeaderStyle);
+
+					rowIndex++;
 				}
-
-				CellRangeAddress dataValueMerge = new CellRangeAddress(rowIndex, rowIndex, 2, 9);
-				CellRangeAddress dataValueMerge1 = new CellRangeAddress(rowIndex, rowIndex, 10, 12);
-				CellRangeAddress dataValueMerge2 = new CellRangeAddress(rowIndex, rowIndex, 16, 17);
-				sheet.addMergedRegion(dataValueMerge);
-				sheet.addMergedRegion(dataValueMerge1);
-				sheet.addMergedRegion(dataValueMerge2);
-
-				// 데이터 값 행
-				row = sheet.createRow(rowIndex);
-				cell = row.createCell(1);
-				cell.setCellStyle(dataHeaderStyle);
-				cell.setCellValue((j + 1));
-
-				cell = row.createCell(2);
-				cell.setCellStyle(dataHeaderStyle);
-				cell.setCellValue(name);
-				cell = row.createCell(3);
-				cell.setCellStyle(dataHeaderStyle);
-				cell = row.createCell(4);
-				cell.setCellStyle(dataHeaderStyle);
-				cell = row.createCell(5);
-				cell.setCellStyle(dataHeaderStyle);
-				cell = row.createCell(6);
-				cell.setCellStyle(dataHeaderStyle);
-				cell = row.createCell(7);
-				cell.setCellStyle(dataHeaderStyle);
-				cell = row.createCell(8);
-				cell.setCellStyle(dataHeaderStyle);
-				cell = row.createCell(9);
-				cell.setCellStyle(dataHeaderStyle);
-
-				cell = row.createCell(10);
-				cell.setCellStyle(dataHeaderStyle);
-				cell.setCellValue(number);
-				cell = row.createCell(11);
-				cell.setCellStyle(dataHeaderStyle);
-				cell = row.createCell(12);
-				cell.setCellStyle(dataHeaderStyle);
-
-				cell = row.createCell(13);
-				cell.setCellStyle(dataHeaderStyle);
-				cell.setCellValue(data.getRev());
-
-				cell = row.createCell(14);
-				cell.setCellStyle(dataHeaderStyle);
-				cell.setCellValue(current);
-
-				cell = row.createCell(15);
-				cell.setCellStyle(dataHeaderStyle);
-				cell.setCellValue(lotNo);
-
-				cell = row.createCell(16);
-				cell.setCellStyle(dataHeaderStyle);
-				cell.setCellValue(data.getNote());
-
-				cell = row.createCell(17);
-				cell.setCellStyle(dataHeaderStyle);
-
-				rowIndex++;
 			}
 
 			if (i == loop - 2) {
 				start += 45;
-				end += gap;
+				end += 45;
 			} else {
 				// 어차피 안돈다?
 				start += 45;
@@ -747,53 +1002,74 @@ public class WorkOrderHelper {
 				sheet.addMergedRegion(footerMerge3);
 
 				// 푸터
+
+				WorkOrder v1 = getVersionData(workOrder, numericValue);
+
 				row = sheet.createRow(footerIndex);
-				row.setHeight((short) 350);
 				cell = row.createCell(1);
+				row.setHeightInPoints(21.7f);
 				cell.setCellStyle(dataHeaderStyle);
 				cell.setCellValue("▲" + numericValue);
 
 				cell = row.createCell(2);
+				row.setHeightInPoints(21.7f);
 				cell.setCellStyle(dataHeaderStyle);
-				cell.setCellValue("");
+				cell.setCellValue(v1 != null ? CommonUtils.getPersistableTime(v1.getCreateTimestamp()) : "");
 				cell = row.createCell(3);
+				row.setHeightInPoints(21.7f);
 				cell.setCellStyle(dataHeaderStyle);
 				cell = row.createCell(4);
+				row.setHeightInPoints(21.7f);
 				cell.setCellStyle(dataHeaderStyle);
 
 				cell = row.createCell(5);
-				cell.setCellStyle(dataHeaderStyle);
-				cell.setCellValue("");
+				row.setHeightInPoints(21.7f);
+				cell.setCellStyle(dataLeftStyle);
+				cell.setCellValue(v1 != null ? v1.getNote() : "");
 				cell = row.createCell(6);
-				cell.setCellStyle(dataHeaderStyle);
+				row.setHeightInPoints(21.7f);
+				cell.setCellStyle(dataLeftStyle);
 				cell = row.createCell(7);
-				cell.setCellStyle(dataHeaderStyle);
+				row.setHeightInPoints(21.7f);
+				cell.setCellStyle(dataLeftStyle);
 				cell = row.createCell(8);
-				cell.setCellStyle(dataHeaderStyle);
+				row.setHeightInPoints(21.7f);
+				cell.setCellStyle(dataLeftStyle);
 				cell = row.createCell(9);
-				cell.setCellStyle(dataHeaderStyle);
+				row.setHeightInPoints(21.7f);
+				cell.setCellStyle(dataLeftStyle);
+
+				WorkOrder v2 = getVersionData(workOrder, (numericValue + 3));
 
 				cell = row.createCell(10);
+				row.setHeightInPoints(21.7f);
 				cell.setCellStyle(dataHeaderStyle);
 				cell.setCellValue("▲" + (numericValue + 3));
 
 				cell = row.createCell(11);
 				cell.setCellStyle(dataHeaderStyle);
-				cell.setCellValue("");
+				cell.setCellValue(v2 != null ? CommonUtils.getPersistableTime(v2.getCreateTimestamp()) : "");
+				row.setHeightInPoints(21.7f);
 				cell = row.createCell(12);
+				row.setHeightInPoints(21.7f);
 				cell.setCellStyle(dataHeaderStyle);
 				cell = row.createCell(13);
+				row.setHeightInPoints(21.7f);
 				cell.setCellStyle(dataHeaderStyle);
 
 				cell = row.createCell(14);
-				cell.setCellStyle(dataHeaderStyle);
-				cell.setCellValue("");
+				row.setHeightInPoints(21.7f);
+				cell.setCellStyle(dataLeftStyle);
+				cell.setCellValue(v2 != null ? v2.getNote() : "");
 				cell = row.createCell(15);
-				cell.setCellStyle(dataHeaderStyle);
+				row.setHeightInPoints(21.7f);
+				cell.setCellStyle(dataLeftStyle);
 				cell = row.createCell(16);
-				cell.setCellStyle(dataHeaderStyle);
+				row.setHeightInPoints(21.7f);
+				cell.setCellStyle(dataLeftStyle);
 				cell = row.createCell(17);
-				cell.setCellStyle(dataHeaderStyle);
+				row.setHeightInPoints(21.7f);
+				cell.setCellStyle(dataLeftStyle);
 
 				numericValue++;
 				footerIndex++;
@@ -804,64 +1080,63 @@ public class WorkOrderHelper {
 			sheet.addMergedRegion(toleranceMerge);
 			row = sheet.createRow(52);
 			cell = row.createCell(1);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 			cell.setCellValue("TOLERANCE");
 			cell = row.createCell(2);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 			cell = row.createCell(3);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(rightStyle);
 
-			CellRangeAddress toleranceValueMerge = new CellRangeAddress(52, 52, 4, 5);
-			sheet.addMergedRegion(toleranceValueMerge);
+			CellRangeAddress toleranceValuedwMerge = new CellRangeAddress(52, 52, 4, 5);
+			sheet.addMergedRegion(toleranceValuedwMerge);
 			cell = row.createCell(4);
-			cell.setCellStyle(dataHeaderStyle);
-			cell.setCellValue("");
+			cell.setCellStyle(leftStyle);
 			cell = row.createCell(5);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(leftStyle);
 
 			CellRangeAddress scaleMerge = new CellRangeAddress(52, 52, 6, 8);
 			sheet.addMergedRegion(scaleMerge);
 			cell = row.createCell(6);
-			cell.setCellStyle(dataHeaderStyle);
-			cell.setCellValue("SCALE   FREE");
+			cell.setCellStyle(dataLeftStyle);
+			cell.setCellValue("SCALE          FREE");
 			cell = row.createCell(7);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 			cell = row.createCell(8);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 
 			CellRangeAddress unitMerge = new CellRangeAddress(52, 52, 9, 10);
 			sheet.addMergedRegion(unitMerge);
 			cell = row.createCell(9);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 			cell.setCellValue("UNIT");
 			cell = row.createCell(10);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 
 			CellRangeAddress issueMerge = new CellRangeAddress(52, 57, 11, 12);
 			sheet.addMergedRegion(issueMerge);
 			cell = row.createCell(11);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(topStyle);
 			cell.setCellValue("ISSUE");
 			cell = row.createCell(12);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(topStyle);
 
 			CellRangeAddress mfgMerge = new CellRangeAddress(52, 52, 13, 15);
 			sheet.addMergedRegion(mfgMerge);
 			cell = row.createCell(13);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 			cell.setCellValue("MFG NO.");
 			cell = row.createCell(14);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 			cell = row.createCell(15);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 
 			CellRangeAddress orderMerge = new CellRangeAddress(52, 52, 16, 17);
 			sheet.addMergedRegion(orderMerge);
 			cell = row.createCell(16);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 			cell.setCellValue("ORDER NO.");
 			cell = row.createCell(17);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 			// 52행 끝
 
 			// 53행 시작
@@ -869,38 +1144,38 @@ public class WorkOrderHelper {
 			sheet.addMergedRegion(modelMerge);
 			row = sheet.createRow(53);
 			cell = row.createCell(1);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 			cell.setCellValue("MODEL");
 			cell = row.createCell(2);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(rightStyle);
 
 			CellRangeAddress modelValueMerge = new CellRangeAddress(53, 53, 3, 6);
 			sheet.addMergedRegion(modelValueMerge);
 			cell = row.createCell(3);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(leftStyle);
 			cell.setCellValue(project.getModel());
 			cell = row.createCell(4);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(leftStyle);
 			cell = row.createCell(5);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(leftStyle);
 			cell = row.createCell(6);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(leftStyle);
 
 			CellRangeAddress eqptMerge = new CellRangeAddress(53, 53, 7, 8);
 			sheet.addMergedRegion(eqptMerge);
 			cell = row.createCell(7);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 			cell.setCellValue("EQPT");
 			cell = row.createCell(8);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 
 			CellRangeAddress eqptValueMerge = new CellRangeAddress(53, 53, 9, 10);
 			sheet.addMergedRegion(eqptValueMerge);
 			cell = row.createCell(9);
-			cell.setCellStyle(dataHeaderStyle);
-			cell.setCellValue("");
+			cell.setCellStyle(dataLeftStyle);
+			cell.setCellValue("Q2LN");
 			cell = row.createCell(10);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 
 			cell = row.createCell(11);
 			cell.setCellStyle(dataHeaderStyle);
@@ -908,14 +1183,14 @@ public class WorkOrderHelper {
 			cell.setCellStyle(dataHeaderStyle);
 
 			cell = row.createCell(13);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 			cell.setCellValue("TITLE");
 
 			CellRangeAddress titleValueMerge = new CellRangeAddress(53, 53, 14, 17);
 			sheet.addMergedRegion(titleValueMerge);
 			cell = row.createCell(14);
 			cell.setCellStyle(dataHeaderStyle);
-			cell.setCellValue("");
+			cell.setCellValue("ALL DRAWING");
 			cell = row.createCell(15);
 			cell.setCellStyle(dataHeaderStyle);
 			cell = row.createCell(16);
@@ -974,7 +1249,7 @@ public class WorkOrderHelper {
 			CellRangeAddress dwgNoMergre = new CellRangeAddress(54, 56, 13, 13);
 			sheet.addMergedRegion(dwgNoMergre);
 			cell = row.createCell(13);
-			cell.setCellStyle(dataHeaderStyle);
+			cell.setCellStyle(dataLeftStyle);
 			cell.setCellValue("DWG\nNo.");
 
 			CellRangeAddress dwgNoValueMergre = new CellRangeAddress(54, 56, 14, 16);
@@ -999,7 +1274,7 @@ public class WorkOrderHelper {
 			row = sheet.createRow(55);
 			cell = row.createCell(1);
 			cell.setCellStyle(dataHeaderStyle);
-			cell.setCellValue("");
+			cell.setCellValue(workOrder.getApproved() != null ? workOrder.getApproved() : "");
 			cell = row.createCell(2);
 			cell.setCellStyle(dataHeaderStyle);
 
@@ -1015,7 +1290,7 @@ public class WorkOrderHelper {
 			sheet.addMergedRegion(designedValueMerge);
 			cell = row.createCell(5);
 			cell.setCellStyle(dataHeaderStyle);
-			cell.setCellValue("");
+			cell.setCellValue(workOrder.getCreatorFullName());
 			cell = row.createCell(6);
 			cell.setCellStyle(dataHeaderStyle);
 
@@ -1023,7 +1298,7 @@ public class WorkOrderHelper {
 			sheet.addMergedRegion(drawnValueMerge);
 			cell = row.createCell(7);
 			cell.setCellStyle(dataHeaderStyle);
-			cell.setCellValue("");
+			cell.setCellValue(workOrder.getCreatorFullName());
 			cell = row.createCell(8);
 			cell.setCellStyle(dataHeaderStyle);
 
@@ -1124,7 +1399,7 @@ public class WorkOrderHelper {
 			sheet.addMergedRegion(timeMerge);
 			cell = row.createCell(13);
 			cell.setCellStyle(dataHeaderStyle);
-			cell.setCellValue(CommonUtils.getPersistableTime(workOrder.getCreateTimestamp()));
+			cell.setCellValue(CommonUtils.getPersistableTime(first.getCreateTimestamp()));
 			cell = row.createCell(14);
 			cell.setCellStyle(dataHeaderStyle);
 			cell = row.createCell(15);
@@ -1429,5 +1704,78 @@ public class WorkOrderHelper {
 			list.add(project);
 		}
 		return list;
+	}
+
+	/**
+	 * 결재 완료후 페이지 및 PDF 병합 처리
+	 */
+	public void afterAction(WorkOrder workOrder) throws Exception {
+		// 기존 도면 일람표 링크 모두제거
+		QueryResult qr = PersistenceHelper.manager.navigate(workOrder, "data", WorkOrderDataLink.class, false);
+		ArrayList<WorkOrderDataLink> list = new ArrayList<>();
+		while (qr.hasMoreElements()) {
+			WorkOrderDataLink link = (WorkOrderDataLink) qr.nextElement();
+			list.add(link);
+		}
+
+		CommonContentHelper.manager.clear(workOrder);
+
+		Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
+		File excelFile = ContentUtils.getTempFile(workOrder.getName() + "_표지.xlsx");
+		FileOutputStream fos = new FileOutputStream(excelFile);
+		cover.write(fos);
+
+		ApplicationData data = ApplicationData.newApplicationData(workOrder);
+		data.setRole(ContentRoleType.PRIMARY);
+		PersistenceHelper.manager.save(data);
+		ContentServerHelper.service.updateContent(workOrder, data, excelFile.getAbsolutePath());
+
+		// pdf 표지
+		File pdfFile = ContentUtils.getTempFile(workOrder.getName() + "_표지.pdf");
+		com.aspose.cells.Workbook wb = new com.aspose.cells.Workbook(new FileInputStream(excelFile));
+		FileOutputStream fospdf = new FileOutputStream(pdfFile);
+		wb.save(fospdf, FileFormatType.PDF);
+
+		ApplicationData dd = ApplicationData.newApplicationData(workOrder);
+		dd.setRole(ContentRoleType.ADDITIONAL_FILES);
+		PersistenceHelper.manager.save(dd);
+		ContentServerHelper.service.updateContent(workOrder, dd, pdfFile.getAbsolutePath());
+
+		// PDF 병합
+		WorkOrderHelper.manager.postAfterAction(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
+	}
+
+	/**
+	 * 최초 도면일람표
+	 */
+	public WorkOrder getFirst(WorkOrder workOrder) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WorkOrder.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, WorkOrder.class, WorkOrder.NUMBER, workOrder.getNumber());
+		QuerySpecUtils.toEqualsAnd(query, idx, WorkOrder.class, WorkOrder.VERSION, 0);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WorkOrder first = (WorkOrder) obj[0];
+			return first;
+		}
+		return null;
+	}
+
+	/**
+	 * 버전에 맞는 도면 일람표 가져오기
+	 */
+	public WorkOrder getVersionData(WorkOrder workOrder, int version) throws Exception {
+		QuerySpec query = new QuerySpec();
+		int idx = query.appendClassList(WorkOrder.class, true);
+		QuerySpecUtils.toEqualsAnd(query, idx, WorkOrder.class, WorkOrder.NUMBER, workOrder.getNumber());
+		QuerySpecUtils.toEqualsAnd(query, idx, WorkOrder.class, WorkOrder.VERSION, version);
+		QueryResult result = PersistenceHelper.manager.find(query);
+		if (result.hasMoreElements()) {
+			Object[] obj = (Object[]) result.nextElement();
+			WorkOrder first = (WorkOrder) obj[0];
+			return first;
+		}
+		return null;
 	}
 }

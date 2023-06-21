@@ -291,6 +291,20 @@ public class CommonContentHelper {
 			ContentItem item = (ContentItem) result.nextElement();
 			ContentServerHelper.service.deleteContent(holder, item);
 		}
+		
+		result.reset();
+		result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.THUMBNAIL);
+		while (result.hasMoreElements()) {
+			ContentItem item = (ContentItem) result.nextElement();
+			ContentServerHelper.service.deleteContent(holder, item);
+		}
+		
+		result.reset();
+		result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.ADDITIONAL_FILES);
+		while (result.hasMoreElements()) {
+			ContentItem item = (ContentItem) result.nextElement();
+			ContentServerHelper.service.deleteContent(holder, item);
+		}
 	}
 
 	/**

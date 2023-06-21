@@ -64,4 +64,9 @@ public interface WorkspaceService {
 	 * 개인결재선 즐겨찾기 저장
 	 */
 	public abstract void favorite(Map<String, Object> params) throws Exception;
+
+	/**
+	 * 결재 초기화 함수
+	 */
+	public abstract void _reset(Map<String, Object> params) throws Exception;
 }

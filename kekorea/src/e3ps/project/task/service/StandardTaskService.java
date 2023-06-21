@@ -7,7 +7,6 @@ import java.util.Map;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.DateUtils;
 import e3ps.project.Project;
-import e3ps.project.service.ProjectHelper;
 import e3ps.project.task.ParentTaskChildTaskLink;
 import e3ps.project.task.Task;
 import e3ps.project.task.variable.TaskStateVariable;

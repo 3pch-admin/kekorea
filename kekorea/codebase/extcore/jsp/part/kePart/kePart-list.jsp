@@ -592,7 +592,6 @@ boolean isSupervisor = (boolean) request.getAttribute("isSupervisor");
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
-					parent.closeLayer();
 					if (data.result) {
 						loadGridData();
 					} else {

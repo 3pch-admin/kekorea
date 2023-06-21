@@ -72,6 +72,25 @@ public class AsposeUtils {
 		// pdf 경로..
 		ArrayList<String> list = new ArrayList<>();
 
+		QueryResult rs = ContentHelper.service.getContentsByRole(workOrder, ContentRoleType.ADDITIONAL_FILES);
+		System.out.println("표지 PDF = " + rs.size());
+		while (rs.hasMoreElements()) {
+			ApplicationData data = (ApplicationData) rs.nextElement();
+			byte[] buffer = new byte[10240];
+			InputStream is = ContentServerHelper.service.findLocalContentStream(data);
+			String name = data.getFileName();
+			String fullPath = mergePath + File.separator + name;
+			File file = new File(fullPath);
+			list.add(fullPath); // 경로 추가
+			FileOutputStream fos = new FileOutputStream(file);
+			int j = 0;
+			while ((j = is.read(buffer, 0, 10240)) > 0) {
+				fos.write(buffer, 0, j);
+			}
+			fos.close();
+			is.close();
+		}
+
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(WorkOrder.class, true);
 		int idx_link = query.appendClassList(WorkOrderDataLink.class, true);

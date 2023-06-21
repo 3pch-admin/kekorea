@@ -186,6 +186,7 @@ public class WorkspaceHelper {
 		String submiterOid = (String) params.get("submiterOid"); // 작성자
 		String receiveFrom = (String) params.get("receiveFrom");
 		String receiveTo = (String) params.get("receiveTo");
+		String state = (String) params.get("state");
 
 		// 쿼리문 작성
 		QuerySpec query = new QuerySpec();
@@ -194,7 +195,35 @@ public class WorkspaceHelper {
 
 		QuerySpecUtils.toInnerJoin(query, ApprovalLine.class, ApprovalMaster.class, "masterReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_master);
-		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, STATE_AGREE_READY);
+
+		if ("검토완료".equals(state)) {
+			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, STATE_AGREE_COMPLETE);
+		} else if ("검토중".equals(state)) {
+			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, STATE_AGREE_READY);
+		} else if ("검토반려".equals(state)) {
+			QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.STATE, STATE_AGREE_REJECT);
+		} else if ("전체".equals(state)) {
+
+			if (query.getConditionCount() > 0) {
+				query.appendAnd();
+			}
+
+			query.appendOpenParen();
+
+			SearchCondition sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", STATE_AGREE_COMPLETE);
+			query.appendWhere(sc, new int[] { idx });
+			query.appendOr();
+
+			sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", STATE_AGREE_READY);
+			query.appendWhere(sc, new int[] { idx });
+			query.appendOr();
+
+			sc = new SearchCondition(ApprovalLine.class, ApprovalLine.STATE, "=", STATE_AGREE_REJECT);
+			query.appendWhere(sc, new int[] { idx });
+
+			query.appendCloseParen();
+		}
+
 		QuerySpecUtils.toEqualsAnd(query, idx, ApprovalLine.class, ApprovalLine.TYPE, AGREE_LINE);
 		QuerySpecUtils.toTimeGreaterAndLess(query, idx, ApprovalLine.class, ApprovalLine.CREATE_TIMESTAMP, receiveFrom,
 				receiveTo);

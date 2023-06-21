@@ -11,7 +11,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 <title></title>
 <%@include file="/extcore/jsp/common/css.jsp"%>
 <%@include file="/extcore/jsp/common/script.jsp"%>
-<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>    
+<%@include file="/extcore/jsp/common/aui/auigrid.jsp"%>
 <script type="text/javascript" src="/Windchill/extcore/js/auigrid.js"></script>
 </head>
 <body>
@@ -19,7 +19,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 		<input type="hidden" name="isAdmin" id="isAdmin" value="<%=isAdmin%>">
 		<input type="hidden" name="sessionName" id="sessionName" value="<%=sessionUser.getFullName()%>">
 		<input type="hidden" name="sessionId" id="sessionId" value="<%=sessionUser.getName()%>">
-		<input type="hidden" name="sessionid" id="sessionid"><input type="hidden" name="lastNum" id="lastNum">
+		<input type="hidden" name="sessionid" id="sessionid">
+		<input type="hidden" name="lastNum" id="lastNum">
 		<input type="hidden" name="curPage" id="curPage">
 		<table class="search-table">
 			<colgroup>
@@ -50,6 +51,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						<option value="200">200</option>
 						<option value="300">300</option>
 					</select>
+					<input type="button" value="결재 초기화" title="결재 초기화" onclick="_reset();" class="blue">
 					<input type="button" value="조회" title="조회" onclick="loadGridData();">
 				</td>
 			</tr>
@@ -57,7 +59,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 
 		<!-- 메뉴얼 비디오 구간 -->
 		<%@include file="/extcore/jsp/common/video-layer.jsp"%>
-		
+
 		<div id="grid_wrap" style="height: 740px; border-top: 1px solid #3180c3;"></div>
 		<%@include file="/extcore/jsp/common/aui/aui-context.jsp"%>
 		<script type="text/javascript">
@@ -110,6 +112,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function createAUIGrid(columnLayout) {
 				const props = {
 					headerHeight : 30,
+					showRowCheckColumn : true,
 					showRowNumColumn : true,
 					rowNumHeaderText : "번호",
 					showAutoNoDataMessage : false,
@@ -138,19 +141,50 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 			function loadGridData() {
 				let params = new Object();
 				const url = getCallUrl("/workspace/progress");
-				const field = ["approvalTitle","_psize"];
+				const field = [ "approvalTitle", "_psize" ];
 				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {
 					AUIGrid.removeAjaxLoader(myGridID);
 					document.getElementById("sessionid").value = data.sessionid;
-					document.getElementById("curPage").value = data.curPage;document.getElementById("lastNum").value = data.list.length;
+					document.getElementById("curPage").value = data.curPage;
+					document.getElementById("lastNum").value = data.list.length;
 					AUIGrid.setGridData(myGridID, data.list);
 					parent.closeLayer();
 				});
 			}
 
+			function _reset() {
+				const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+				if(checkedItems.length === 0) {
+					alert("결재 초기화 하려는 결재를 선택하세요.");
+					return false;
+				}
+				
+				if(!confirm("선택한 결재들을 초기화 하시겠습니까?")) {
+					return false;
+				}
+				
+				const arr = new Array();
+				for (let i = checkedItems.length - 1; i >= 0; i--) {
+					const item = checkedItems[i].item;
+					const poid = item.poid;
+					arr.push(poid);
+				}
+				const url = getCallUrl("/workspace/_reset");
+				const params = new Object();
+				params.arr = arr;
+				parent.openLayer();
+				call(url, params, function(data) {
+					alert(data.msg);
+					if(data.result) {
+						loadGridData();
+					}
+					parent.closeLayer();
+				})
+			}
+			
 			function exportExcel() {
 				const exceptColumnFields = [ "point" ];
 				const sessionName = document.getElementById("sessionName").value;

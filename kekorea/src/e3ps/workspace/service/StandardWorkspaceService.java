@@ -18,6 +18,7 @@ import e3ps.epm.keDrawing.KeDrawing;
 import e3ps.epm.numberRule.NumberRule;
 import e3ps.epm.numberRule.NumberRuleMaster;
 import e3ps.epm.workOrder.WorkOrder;
+import e3ps.epm.workOrder.service.WorkOrderHelper;
 import e3ps.erp.service.ErpHelper;
 import e3ps.org.Department;
 import e3ps.org.People;
@@ -263,10 +264,11 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
-
+			WTUser sessionUser = CommonUtils.sessionUser();
 			Timestamp completeTime = new Timestamp(new Date().getTime());
 			ApprovalLine line = (ApprovalLine) CommonUtils.getObject(oid);
 			ApprovalMaster master = line.getMaster();
+			Persistable persist = master.getPersist();
 			line.setDescription(description);
 			line.setCompleteTime(completeTime);
 			line.setState(WorkspaceHelper.STATE_AGREE_COMPLETE);
@@ -275,6 +277,15 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 
 			boolean isEndAgree = WorkspaceHelper.manager.isEndAgree(master);
 			if (isEndAgree) {
+
+				if (persist instanceof WorkOrder) {
+					WorkOrder workOrder = (WorkOrder) persist;
+					workOrder.setChecekd(sessionUser.getFullName());
+					PersistenceHelper.manager.modify(workOrder);
+					workOrder = (WorkOrder) PersistenceHelper.manager.refresh(workOrder);
+					WorkOrderHelper.manager.afterAction(workOrder);
+				}
+
 				ArrayList<ApprovalLine> approvalLines = WorkspaceHelper.manager.getApprovalLines(master);
 				for (ApprovalLine approvalLine : approvalLines) {
 					int sort = approvalLine.getSort();
@@ -291,6 +302,15 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 						master.setState(WorkspaceHelper.STATE_MASTER_APPROVAL_APPROVING);
 						PersistenceHelper.manager.modify(master);
 					}
+				}
+			} else {
+				// 도면일람표일 경우에만 해당...
+				if (persist instanceof WorkOrder) {
+					WorkOrder workOrder = (WorkOrder) persist;
+					workOrder.setJudged(sessionUser.getFullName());
+					PersistenceHelper.manager.modify(workOrder);
+					workOrder = (WorkOrder) PersistenceHelper.manager.refresh(workOrder);
+					WorkOrderHelper.manager.afterAction(workOrder);
 				}
 			}
 
@@ -348,7 +368,8 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 		try {
 			trs.start();
 
-			String sessionUserName = CommonUtils.sessionUser().getName();
+			WTUser sessionUser = CommonUtils.sessionUser();
+			String sessionUserName = sessionUser.getName();
 			Timestamp completeTime = new Timestamp(new Date().getTime());
 			ApprovalLine line = (ApprovalLine) CommonUtils.getObject(oid);
 
@@ -390,7 +411,12 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 					per = (Persistable) LifeCycleHelper.service.setLifeCycleState((LifeCycleManaged) per, state);
 
 					if (per instanceof WorkOrder) {
-						observe((WorkOrder) per, Constants.State.APPROVED);
+						WorkOrder workOrder = (WorkOrder) per;
+						workOrder.setApproved(sessionUser.getFullName());
+						PersistenceHelper.manager.modify(workOrder);
+						workOrder = (WorkOrder) PersistenceHelper.manager.refresh(workOrder);
+						WorkOrderHelper.manager.afterAction(workOrder);
+						observe(workOrder, Constants.State.APPROVED);
 					}
 
 					if (per instanceof WTDocument) {
@@ -889,6 +915,30 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 					aLine.setFavorite(false);
 				}
 				PersistenceHelper.manager.modify(aLine);
+			}
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void _reset(Map<String, Object> params) throws Exception {
+		ArrayList<String> arr = (ArrayList<String>) params.get("arr");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			for (String oid : arr) {
+				Persistable persist = CommonUtils.getObject(oid);
+				WorkspaceHelper.manager.deleteAllLines(persist);
 			}
 
 			trs.commit();

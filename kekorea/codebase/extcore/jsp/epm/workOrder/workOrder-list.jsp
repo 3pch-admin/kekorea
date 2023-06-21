@@ -268,7 +268,7 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					mergePolicy : "restrict"
 				}, {
 					dataField : "primary",
-					headerText : "표지",
+					headerText : "표지엑셀",
 					dataType : "string",
 					width : 60,
 					editable : false,
@@ -282,7 +282,25 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					cellMerge : true,
 					mergeRef : "oid",
 					mergePolicy : "restrict"
-				}, {
+				},
+// 				{
+// 					dataField : "additional",
+// 					headerText : "표지PDF",
+// 					dataType : "string",
+// 					width : 60,
+// 					editable : false,
+// 					renderer : {
+// 						type : "TemplateRenderer",
+// 					},
+// 					filter : {
+// 						showIcon : false,
+// 						inline : false
+// 					},
+// 					cellMerge : true,
+// 					mergeRef : "oid",
+// 					mergePolicy : "restrict"
+// 				}, 
+				{
 					dataField : "thumbnail",
 					headerText : "병합PDF",
 					dataType : "string",

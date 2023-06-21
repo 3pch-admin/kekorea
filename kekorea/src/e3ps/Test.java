@@ -29,8 +29,6 @@ public class Test {
 	public static void main(String[] args) throws Exception {
 
 		
-		LicensingHelper.getTotalActiveUsersCount()
-		
 		File file = new File(args[0]);
 
 		Workbook workbook = new XSSFWorkbook(file);

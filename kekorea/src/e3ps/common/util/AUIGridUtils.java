@@ -39,7 +39,7 @@ public class AUIGridUtils {
 	/**
 	 * AUIGrid 도면 첨부파일 아이콘으로 표시 하기 위한 함수
 	 */
-	public static String additionalTemplate(ContentHolder holder) throws Exception {
+	public static String representationTemplate(ContentHolder holder) throws Exception {
 		String template = "";
 		Representation representation = PublishUtils.getRepresentation(holder);
 		if (representation != null) {
@@ -53,6 +53,23 @@ public class AUIGridUtils {
 				template += "<a href=" + url + "><img src=" + icon
 						+ " style='position: relative; top: 2px;'></a>&nbsp;";
 			}
+		}
+		return template;
+	}
+
+	/**
+	 * AUIGrid 도면 첨부파일 아이콘으로 표시 하기 위한 함수
+	 */
+	public static String additionalTemplate(ContentHolder holder) throws Exception {
+		String template = "";
+		QueryResult result = ContentHelper.service.getContentsByRole(holder, ContentRoleType.ADDITIONAL_FILES);
+		if (result.hasMoreElements()) {
+			ApplicationData data = (ApplicationData) result.nextElement();
+			String ext = FileUtil.getExtension(data.getFileName());
+			String icon = getAUIGridFileIcon(ext);
+			String url = "/Windchill/plm/content/download?oid="
+					+ data.getPersistInfo().getObjectIdentifier().getStringValue();
+			template += "<a href=" + url + "><img src=" + icon + " style='position: relative; top: 2px;'></a>";
 		}
 		return template;
 	}

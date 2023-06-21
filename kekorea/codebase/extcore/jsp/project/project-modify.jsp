@@ -122,7 +122,7 @@ ArrayList<HashMap<String, String>> list = (ArrayList<HashMap<String, String>>) r
 	<tr>
 		<th class="lb">작업 내용</th>
 		<td colspan="3" class="indent5">
-			<textarea class="description" name="description" id="description" rows="9"  tabindex="12"></textarea>
+			<textarea class="description" name="description" id="description" rows="9"  tabindex="12"><%=dto.getDescription() != null ? dto.getDescription() : "" %></textarea>
 		</td>
 	</tr>
 </table>

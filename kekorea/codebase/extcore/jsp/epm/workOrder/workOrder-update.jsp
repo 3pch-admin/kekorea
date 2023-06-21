@@ -1,3 +1,4 @@
+<%@page import="e3ps.common.util.StringUtils"%>
 <%@page import="e3ps.epm.workOrder.dto.WorkOrderDTO"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="e3ps.admin.commonCode.CommonCode"%>
@@ -5,6 +6,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 WorkOrderDTO dto = (WorkOrderDTO) request.getAttribute("dto");
+String toid = dto.getToid();
 JSONArray list = (JSONArray) request.getAttribute("list");
 String workOrderType = dto.getWorkOrderType();
 String mode = (String)request.getAttribute("mode");
@@ -69,6 +71,18 @@ if ("modify".equals(mode)) {
 					<textarea name="description" id="description" rows="5"><%=dto.getContent() != null ? dto.getContent() : ""%></textarea>
 				</td>
 			</tr>
+			<%
+				if("revise".equals(mode)) {
+			%>
+			<tr>
+				<th class="lb">개정사유</th>
+				<td class="indent5" colspan="5">
+					<textarea name="note" id="note" rows="5"></textarea>
+				</td>
+			</tr>
+			<%
+				}
+			%>			
 			<tr>
 				<th class="req lb">KEK 작번</th>
 				<td colspan="3">
@@ -364,6 +378,13 @@ if ("modify".equals(mode)) {
 		const description = document.getElementById("description").value;
 		const workOrderType = document.getElementById("workOrderType").value;
 // 		const progress = document.getElementById("progress").value;
+		<%
+			if("revise".equals(mode)) {
+		%>
+		const note = document.getElementById("note").value;
+		<%
+			}
+		%>
 		const addRows = AUIGrid.getGridData(myGridID);
 		const addRows9 = AUIGrid.getGridData(myGridID9);
 		const addRows8 = AUIGrid.getGridData(myGridID8);
@@ -407,13 +428,24 @@ if ("modify".equals(mode)) {
 // 		params.progress = Number(progress);
 		params.addRows = addRows;
 		params.addRows9 = addRows9;
+		<%
+			if("revise".equals(mode)) {
+		%>
+		params.note = note;
+		<%
+			}
+		%>
 		params.secondarys = toArray("secondarys");
 		toRegister(params, addRows8);
 		openLayer();
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
-// 				opener.loadGridData();
+				<%if (!StringUtils.isNull(toid)) {%>
+				opener._reload();
+				<%} else {%>
+				opener.loadGridData();
+				<%}%>
 				self.close();
 			} else {
 				closeLayer();

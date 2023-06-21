@@ -469,7 +469,8 @@ ArrayList<Map<String, String>> projectTypes = (ArrayList<Map<String, String>>) r
 
 			function create() {
 				const url = getCallUrl("/requestDocument/create");
-				popup(url, 1400, 750);
+				popup(url, 1800, 750);
+// 				popup(url);
 			}
 
 			function loadGridData() {

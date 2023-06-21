@@ -218,12 +218,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 				parent.openLayer();
 				call(url, params, function(data) {
 					alert(data.msg);
-					parent.closeLayer();
 					if (data.result) {
 						loadGridData();
-					} else {
-						parent.closeLayer();
 					}
+					parent.closeLayer();
 				});
 			}
 

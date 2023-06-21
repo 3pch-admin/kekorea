@@ -1,6 +1,7 @@
 package e3ps.epm.workOrder.service;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
+
+import com.aspose.cells.FileFormatType;
 
 import e3ps.common.content.service.CommonContentHelper;
 import e3ps.common.util.CommonUtils;
@@ -81,7 +84,7 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			workOrder.setWorkOrderType(workOrderType);
 			workOrder.setNumber(number);
 			workOrder.setNumberRule(numberRule);
-			workOrder.setVersion(1);
+			workOrder.setVersion(0);
 			workOrder.setLatest(true);
 
 			Folder folder = FolderTaskLogic.getFolder(location, CommonUtils.getPDMLinkProductContainer());
@@ -180,14 +183,25 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			}
 
 			Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
-			File tempFile = ContentUtils.getTempFile(workOrder.getName() + "_표지.xlsx");
-			FileOutputStream fos = new FileOutputStream(tempFile);
+			File excelFile = ContentUtils.getTempFile(workOrder.getName() + "_표지.xlsx");
+			FileOutputStream fos = new FileOutputStream(excelFile);
 			cover.write(fos);
 
 			ApplicationData data = ApplicationData.newApplicationData(workOrder);
 			data.setRole(ContentRoleType.PRIMARY);
 			PersistenceHelper.manager.save(data);
-			ContentServerHelper.service.updateContent(workOrder, data, tempFile.getAbsolutePath());
+			ContentServerHelper.service.updateContent(workOrder, data, excelFile.getAbsolutePath());
+
+			// pdf 표지
+			File pdfFile = ContentUtils.getTempFile(workOrder.getName() + "_표지.pdf");
+			com.aspose.cells.Workbook wb = new com.aspose.cells.Workbook(new FileInputStream(excelFile));
+			FileOutputStream fospdf = new FileOutputStream(pdfFile);
+			wb.save(fospdf, FileFormatType.PDF);
+
+			ApplicationData dd = ApplicationData.newApplicationData(workOrder);
+			dd.setRole(ContentRoleType.ADDITIONAL_FILES);
+			PersistenceHelper.manager.save(dd);
+			ContentServerHelper.service.updateContent(workOrder, dd, pdfFile.getAbsolutePath());
 
 			WorkOrderHelper.manager.postAfterAction(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
 
@@ -268,16 +282,6 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 				ContentServerHelper.service.updateContent(workOrder, applicationData, vault.getPath());
 			}
 
-			Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
-			File tempFile = ContentUtils.getTempFile(workOrder.getName() + "_표지.xlsx");
-			FileOutputStream fos = new FileOutputStream(tempFile);
-			cover.write(fos);
-
-			ApplicationData data = ApplicationData.newApplicationData(workOrder);
-			data.setRole(ContentRoleType.PRIMARY);
-			PersistenceHelper.manager.save(data);
-			ContentServerHelper.service.updateContent(workOrder, data, tempFile.getAbsolutePath());
-
 			// 기존 작번과 도면일람표 링크 제거
 			QueryResult _qr = PersistenceHelper.manager.navigate(workOrder, "project", WorkOrderProjectLink.class,
 					false);
@@ -350,6 +354,27 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 //				ProjectHelper.service.commit(project);
 			}
 
+			Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
+			File excelFile = ContentUtils.getTempFile(workOrder.getName() + "_표지.xlsx");
+			FileOutputStream fos = new FileOutputStream(excelFile);
+			cover.write(fos);
+
+			ApplicationData data = ApplicationData.newApplicationData(workOrder);
+			data.setRole(ContentRoleType.PRIMARY);
+			PersistenceHelper.manager.save(data);
+			ContentServerHelper.service.updateContent(workOrder, data, excelFile.getAbsolutePath());
+
+			// pdf 표지
+			File pdfFile = ContentUtils.getTempFile(workOrder.getName() + "_표지.pdf");
+			com.aspose.cells.Workbook wb = new com.aspose.cells.Workbook(new FileInputStream(excelFile));
+			FileOutputStream fospdf = new FileOutputStream(pdfFile);
+			wb.save(fospdf, FileFormatType.PDF);
+
+			ApplicationData dd = ApplicationData.newApplicationData(workOrder);
+			dd.setRole(ContentRoleType.ADDITIONAL_FILES);
+			PersistenceHelper.manager.save(dd);
+			ContentServerHelper.service.updateContent(workOrder, dd, pdfFile.getAbsolutePath());
+
 			// PDF 병합
 			WorkOrderHelper.manager.postAfterAction(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
 
@@ -412,6 +437,7 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 	@Override
 	public void revise(WorkOrderDTO dto) throws Exception {
 		String name = dto.getName();
+		String note = dto.getNote();
 		String description = dto.getDescription();
 		int progress = dto.getProgress();
 		String workOrderType = dto.getWorkOrderType();
@@ -442,7 +468,7 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 			workOrder.setNumberRule(pre.getNumberRule());
 			workOrder.setVersion(pre.getVersion() + 1);
 			workOrder.setLatest(true);
-			workOrder.setNote(dto.getNote());
+			workOrder.setNote(note);
 
 			Folder folder = FolderTaskLogic.getFolder(location, CommonUtils.getPDMLinkProductContainer());
 			FolderHelper.assignLocation((FolderEntry) workOrder, folder);
@@ -456,12 +482,12 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 				String oid = (String) addRow.get("doid");
 				int rev = (int) addRow.get("rev");
 				int lotNo = (int) addRow.get("lotNo");
-				String note = (String) addRow.get("note");
+				String n = (String) addRow.get("note");
 				Persistable persistable = (Persistable) CommonUtils.getObject(oid);
 				WorkOrderDataLink link = WorkOrderDataLink.newWorkOrderDataLink(workOrder, persistable);
 				link.setSort(sort);
 				link.setLotNo(lotNo);
-				link.setNote(note);
+				link.setNote(n);
 				link.setRev(rev);
 				PersistenceHelper.manager.save(link);
 				sort++;
@@ -476,16 +502,6 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 				PersistenceHelper.manager.save(applicationData);
 				ContentServerHelper.service.updateContent(workOrder, applicationData, vault.getPath());
 			}
-
-			Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
-			File tempFile = ContentUtils.getTempFile(workOrder.getName() + "_도면일람표.xlsx");
-			FileOutputStream fos = new FileOutputStream(tempFile);
-			cover.write(fos);
-
-			ApplicationData data = ApplicationData.newApplicationData(workOrder);
-			data.setRole(ContentRoleType.PRIMARY);
-			PersistenceHelper.manager.save(data);
-			ContentServerHelper.service.updateContent(workOrder, data, tempFile.getAbsolutePath());
 
 			for (Map<String, String> addRow9 : addRows9) {
 				String oid = addRow9.get("oid");
@@ -543,6 +559,27 @@ public class StandardWorkOrderService extends StandardManager implements WorkOrd
 //				ProjectHelper.service.calculation(project);
 //				ProjectHelper.service.commit(project);
 			}
+
+			Workbook cover = WorkOrderHelper.manager.createWorkOrderCover(workOrder, list);
+			File excelFile = ContentUtils.getTempFile(workOrder.getName() + "_표지.xlsx");
+			FileOutputStream fos = new FileOutputStream(excelFile);
+			cover.write(fos);
+
+			ApplicationData data = ApplicationData.newApplicationData(workOrder);
+			data.setRole(ContentRoleType.PRIMARY);
+			PersistenceHelper.manager.save(data);
+			ContentServerHelper.service.updateContent(workOrder, data, excelFile.getAbsolutePath());
+
+			// pdf 표지
+			File pdfFile = ContentUtils.getTempFile(workOrder.getName() + "_표지.pdf");
+			com.aspose.cells.Workbook wb = new com.aspose.cells.Workbook(new FileInputStream(excelFile));
+			FileOutputStream fospdf = new FileOutputStream(pdfFile);
+			wb.save(fospdf, FileFormatType.PDF);
+
+			ApplicationData dd = ApplicationData.newApplicationData(workOrder);
+			dd.setRole(ContentRoleType.ADDITIONAL_FILES);
+			PersistenceHelper.manager.save(dd);
+			ContentServerHelper.service.updateContent(workOrder, dd, pdfFile.getAbsolutePath());
 
 			WorkOrderHelper.manager.postAfterAction(workOrder.getPersistInfo().getObjectIdentifier().getStringValue());
 
