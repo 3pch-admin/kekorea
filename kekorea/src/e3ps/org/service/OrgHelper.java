@@ -436,6 +436,10 @@ public class OrgHelper {
 		QuerySpecUtils.toInnerJoin(query, People.class, WTUser.class, "wtUserReference.key.id",
 				WTAttributeNameIfc.ID_NAME, idx, idx_w);
 
+		if (query.getConditionCount() > 0) {
+			query.appendAnd();
+		}
+
 		if (!StringUtils.isNull(key)) {
 			query.appendOpenParen();
 			QuerySpecUtils.toLike(query, idx, People.class, People.NAME, key);
