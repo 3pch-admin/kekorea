@@ -231,6 +231,20 @@ public class QuerySpecUtils {
 	/**
 	 * 쿼리문에 '%' like '%' (or) 조건 추가
 	 */
+	public static void toLike(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
+		if (StringUtils.isNull(value)) {
+			return;
+		}
+		ClassAttribute ca = new ClassAttribute(clazz, column);
+		ColumnExpression ce = ConstantExpression.newExpression("%" + value.toUpperCase() + "%");
+		SQLFunction function = SQLFunction.newSQLFunction(SQLFunction.UPPER, ca);
+		SearchCondition sc = new SearchCondition(function, SearchCondition.LIKE, ce);
+		query.appendWhere(sc, new int[] { idx });
+	}
+
+	/**
+	 * 쿼리문에 '%' like '%' (or) 조건 추가
+	 */
 	public static void toLikeOr(QuerySpec query, int idx, Class clazz, String column, String value) throws Exception {
 		if (StringUtils.isNull(value)) {
 			return;

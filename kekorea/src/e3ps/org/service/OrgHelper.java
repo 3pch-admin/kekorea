@@ -438,7 +438,7 @@ public class OrgHelper {
 
 		if (!StringUtils.isNull(key)) {
 			query.appendOpenParen();
-			QuerySpecUtils.toLikeOr(query, idx, People.class, People.NAME, key);
+			QuerySpecUtils.toLike(query, idx, People.class, People.NAME, key);
 			QuerySpecUtils.toLikeOr(query, idx, People.class, People.ID, key);
 			query.appendCloseParen();
 		}
