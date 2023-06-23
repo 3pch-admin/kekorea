@@ -120,7 +120,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 					agreeLine.setName(name);
 					agreeLine.setOwnership(Ownership.newOwnership(wtuser));
 					agreeLine.setMaster(master);
-					agreeLine.setReads(true);
+					agreeLine.setReads(false);
 					agreeLine.setSort(0);
 					agreeLine.setStartTime(startTime);
 					agreeLine.setType(WorkspaceHelper.AGREE_LINE);
@@ -182,7 +182,7 @@ public class StandardWorkspaceService extends StandardManager implements Workspa
 				receiveLine.setName(name);
 				receiveLine.setOwnership(Ownership.newOwnership(wtuser));
 				receiveLine.setMaster(master);
-				receiveLine.setReads(true);
+				receiveLine.setReads(false);
 				receiveLine.setSort(0);
 				receiveLine.setStartTime(startTime);
 				receiveLine.setType(WorkspaceHelper.RECEIVE_LINE);

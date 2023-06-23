@@ -18,7 +18,7 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 					<a href="javascript:index();">
 						<span class="block m-t-xs font-bold"><%=data.getName()%></span>
 						<span class="text-muted text-xs block">
-							<font color="white"><%=data.getDepartment_name()%>-<%=data.getDuty()%></font>
+							<font color="white"><%=data.getDepartment_name()%>-<%=data.getDuty() != null ? data.getDuty() : "지정안됨"%></font>
 						</span>
 					</a>
 				</div>
