@@ -30,7 +30,9 @@ public class UserDTO {
 	private String mak;
 	private String last_txt;
 	private String password;
-	
+	private int gap;
+	private boolean setting;
+
 	public UserDTO() {
 
 	}
@@ -55,7 +57,10 @@ public class UserDTO {
 			setResign(people.getResign());
 			setMak(OrgHelper.manager.getGridMaks(people));
 		}
-		setLast_txt(people.getLast() != null ? people.getLast().toString().substring(0, 10) : CommonUtils.getPersistableTime(people.getCreateTimestamp()));
+		setLast_txt(people.getLast() != null ? people.getLast().toString().substring(0, 10)
+				: CommonUtils.getPersistableTime(people.getCreateTimestamp()));
+		setGap(people.getGap() != null ? people.getGap() : 0);
+		setSetting(people.getSetting());
 	}
 
 	public UserDTO(People people) throws Exception {
@@ -73,7 +78,9 @@ public class UserDTO {
 		setCreatedDate(people.getCreateTimestamp());
 		setResign(people.getResign());
 		setMak(OrgHelper.manager.getGridMaks(people));
-		setLast_txt(people.getLast() != null ? people.getLast().toString().substring(0, 10) : CommonUtils.getPersistableTime(people.getCreateTimestamp()));
+		setLast_txt(people.getLast() != null ? people.getLast().toString().substring(0, 10)
+				: CommonUtils.getPersistableTime(people.getCreateTimestamp()));
+		setGap(people.getGap() != null ? people.getGap() : 0);
+		setSetting(people.getSetting());
 	}
-
 }

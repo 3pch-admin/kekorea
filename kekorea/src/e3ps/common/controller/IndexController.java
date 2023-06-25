@@ -1,5 +1,6 @@
 package e3ps.common.controller;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,14 +14,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import e3ps.common.util.CommonUtils;
+import e3ps.common.util.DateUtils;
 import e3ps.common.util.FolderUtils;
 import e3ps.common.util.ThumnailUtils;
+import e3ps.org.People;
+import e3ps.org.PeopleWTUserLink;
 import e3ps.org.dto.UserDTO;
 import e3ps.project.service.ProjectHelper;
 import e3ps.system.service.ErrorLogHelper;
 import e3ps.workspace.notice.service.NoticeHelper;
 import e3ps.workspace.service.WorkspaceHelper;
 import net.sf.json.JSONArray;
+import wt.fc.PersistenceHelper;
+import wt.fc.QueryResult;
 import wt.org.WTUser;
 import wt.session.SessionHelper;
 
@@ -45,6 +51,26 @@ public class IndexController extends BaseController {
 		JSONArray nList = NoticeHelper.manager.firstPageData();
 		JSONArray aList = WorkspaceHelper.manager.firstPageData(sessionUser);
 		JSONArray pList = ProjectHelper.manager.firstPageData(sessionUser);
+		
+
+		WTUser user = CommonUtils.sessionUser();
+		People people = null;
+		QueryResult result = PersistenceHelper.manager.navigate(user, "people", PeopleWTUserLink.class);
+		Timestamp last = null;
+		if (result.hasMoreElements()) {
+			people = (People) result.nextElement();
+			last = people.getLast();
+		}
+
+		Timestamp today = DateUtils.today();
+		int gap = 0;
+		if (last != null) {
+			gap = DateUtils.getDuration(last, today);
+		}
+		boolean setting = people.getSetting();
+		model.addObject("setting", setting);
+		model.addObject("gap", gap);
+		model.addObject("isGap", gap >= people.getGap() ? true : false);
 		model.addObject("pList", pList);
 		model.addObject("aList", aList);
 		model.addObject("nList", nList);

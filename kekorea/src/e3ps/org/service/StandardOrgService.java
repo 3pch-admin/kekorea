@@ -231,6 +231,8 @@ public class StandardOrgService extends StandardManager implements OrgService {
 				String email = dto.getEmail();
 				String duty = dto.getDuty();
 				String department_oid = dto.getDepartment_oid();
+				boolean setting = dto.isSetting();
+				int gap = dto.getGap();
 				boolean resign = dto.isResign();
 
 				People people = (People) CommonUtils.getObject(oid);
@@ -242,6 +244,8 @@ public class StandardOrgService extends StandardManager implements OrgService {
 				people.setEmail(email);
 				people.setDuty(duty);
 				people.setResign(resign);
+				people.setSetting(setting);
+				people.setGap(gap);
 				PersistenceHelper.manager.modify(people);
 
 				ArrayList<PeopleMakLink> makLinks = OrgHelper.manager.getMakLinks(people);

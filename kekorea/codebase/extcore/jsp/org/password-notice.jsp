@@ -3,7 +3,8 @@
 <%@page import="e3ps.org.dto.UserDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-
+	int gap = (int) request.getAttribute("gap");
+	UserDTO dto = (UserDTO) request.getAttribute("dto");
 %>
 <table class="button-table">
 	<tr>
@@ -38,6 +39,17 @@
 		</td>
 	</tr>
 </table>
+<br>
+<b><font color="red">비밀번호 변경 기간 초과</font></b>
+<br>
+<b>최종 비밀번호 변경일 : <font color="red"><%=dto.getLast_txt() %></font></b>
+<br>
+<b>최종 비밀번호 변경일로 부터 지난 기간 : <font color="red"><%=gap %>일</font></b>
+<br>
+<b>비밀번호 변경 기간 설정 값 :  <font color="red"><%=dto.getGap() %>일</font></b>
+<br>
+<b>시스템 사용을 위해선 비밀번호를 변경 해주시기 바랍니다.</b>
+
 <script type="text/javascript">
 	function modify() {
 		const password = document.getElementById("password");
@@ -76,7 +88,7 @@
 		call(url, params, function(data) {
 			alert(data.msg);
 			if (data.result) {
-				opener._logout();
+				opener.logout();
 				self.close();
 			} else {
 				closeLayer();

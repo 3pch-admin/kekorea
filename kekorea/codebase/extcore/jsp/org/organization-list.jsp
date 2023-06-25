@@ -134,7 +134,7 @@ JSONArray departments = JSONArray.fromObject(list);
 					dataField : "name",
 					headerText : "이름",
 					dataType : "string",
-					width : 100,
+					width : 80,
 					editable : false,
 					renderer : {
 						type : "LinkRenderer",
@@ -153,7 +153,7 @@ JSONArray departments = JSONArray.fromObject(list);
 					dataField : "id",
 					headerText : "아이디",
 					dataType : "string",
-					width : 100,
+					width : 80,
 					editable : false,
 					renderer : {
 						type : "LinkRenderer",
@@ -172,7 +172,7 @@ JSONArray departments = JSONArray.fromObject(list);
 					dataField : "duty",
 					headerText : "직급",
 					dataType : "string",
-					width : 130,
+					width : 80,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -286,6 +286,35 @@ JSONArray departments = JSONArray.fromObject(list);
 						inline : true
 					},
 				}, {
+					dataField : "gap",
+					headerText : "비밀번호 기간 설정",
+					dataType : "numeric",
+					width : 130,
+					postfix : "일",
+					formatString : "###0",
+					editRenderer : {
+						type : "InputEditRenderer",
+						onlyNumeric : true,
+						maxlength : 3
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
+				}, {
+					dataField : "setting",
+					headerText : "비밀번호 기간 유무",
+					dataType : "boolean",
+					width : 130,
+					renderer : {
+						type : "CheckBoxEditRenderer",
+						editable : true
+					},
+					filter : {
+						showIcon : false,
+						inline : false
+					},
+				},{
 					dataField : "resign",
 					headerText : "퇴사여부",
 					dataType : "boolean",

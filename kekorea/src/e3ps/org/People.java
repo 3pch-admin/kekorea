@@ -29,8 +29,13 @@ import wt.util.WTException;
 
 				@GeneratedProperty(name = "resign", type = Boolean.class, javaDoc = "퇴사 처리", initialValue = "false"),
 
-				@GeneratedProperty(name = "last", type = Timestamp.class, javaDoc = "비밀번호 최종 변경일")
+				@GeneratedProperty(name = "last", type = Timestamp.class, javaDoc = "비밀번호 최종 변경일"),
 
+				@GeneratedProperty(name = "gap", type = Integer.class, javaDoc = "비밀번호 변경 기간 설정"),
+				
+				@GeneratedProperty(name="setting", type=Boolean.class, javaDoc = "비밀번호 변경 기간 설정 사용 유무")
+
+				
 		},
 
 		foreignKeys = {

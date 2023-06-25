@@ -4,6 +4,9 @@
 JSONArray nList = (JSONArray) request.getAttribute("nList");
 JSONArray aList = (JSONArray) request.getAttribute("aList");
 JSONArray pList = (JSONArray) request.getAttribute("pList");
+boolean isGap = (boolean) request.getAttribute("isGap");
+boolean setting = (boolean) request.getAttribute("setting");
+int gap = (int) request.getAttribute("gap");
 %>
 <!DOCTYPE html>
 <html>
@@ -218,6 +221,11 @@ JSONArray pList = (JSONArray) request.getAttribute("pList");
 			</tr>
 		</table>
 		<script type="text/javascript">
+		
+			function logout() {
+				parent._logout();
+			}
+		
 			document.addEventListener("DOMContentLoaded", function() {
 				createAUIGrid(columns);
 				_createAUIGrid(_columns);
@@ -232,6 +240,17 @@ JSONArray pList = (JSONArray) request.getAttribute("pList");
 				AUIGrid.resize(_myGridID);
 				AUIGrid.resize(_myGridID_);
 			});
+			
+			<%
+				// 비밀번호 변경 공지
+				if(isGap && setting) {
+			%>
+			const _url = getCallUrl("/org/notice?gap=<%=gap%>");
+			popup(_url, 800, 250);
+			parent.openLayer();
+			<%
+				}
+			%>
 		</script>
 	</form>
 </body>

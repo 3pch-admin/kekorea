@@ -265,8 +265,6 @@ public class OrgController extends BaseController {
 	@GetMapping(value = "/password")
 	public ModelAndView password() throws Exception {
 		ModelAndView model = new ModelAndView();
-		WTUser sessionUser = CommonUtils.sessionUser();
-		model.addObject("oid", sessionUser.getPersistInfo().getObjectIdentifier().getStringValue());
 		model.setViewName("popup:/org/password-edit");
 		return model;
 	}
@@ -278,7 +276,7 @@ public class OrgController extends BaseController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			OrgHelper.service.password(params);
-			result.put("msg", "비밀번호가 변경 되었습니다.");
+			result.put("msg", "비밀번호가 변경 되었습니다.\n자동으로 시스템에서 로그아웃 되어집니다.");
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -288,7 +286,7 @@ public class OrgController extends BaseController {
 		}
 		return result;
 	}
-	
+
 	@Description(value = "비밀번호 초기화 함수")
 	@ResponseBody
 	@PostMapping(value = "/init")
@@ -305,5 +303,17 @@ public class OrgController extends BaseController {
 			ErrorLogHelper.service.create(e.toString(), "/org/password", "비밀번호 초기화 함수");
 		}
 		return result;
+	}
+
+	@Description(value = "비밀번호 기간 지났을시 변경 팝업창")
+	@GetMapping(value = "/notice")
+	public ModelAndView notice(@RequestParam String gap) throws Exception {
+		ModelAndView model = new ModelAndView();
+		WTUser user = CommonUtils.sessionUser();
+		UserDTO dto = new UserDTO(user);
+		model.addObject("dto", dto);
+		model.addObject("gap", Integer.parseInt(gap));
+		model.setViewName("popup:/org/password-notice");
+		return model;
 	}
 }

@@ -1,6 +1,8 @@
 package e3ps.project.template.controller;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -97,7 +99,9 @@ public class TemplateController extends BaseController {
 	public Map<String, Object> load(@RequestParam String oid) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+			System.out.println("START TEMPLATE TREE = " + new Timestamp(new Date().getTime()));
 			JSONArray list = TemplateHelper.manager.load(oid);
+			System.out.println("END TEMPLATE TREE = " + new Timestamp(new Date().getTime()));
 			result.put("list", list);
 			result.put("result", SUCCESS);
 		} catch (Exception e) {
