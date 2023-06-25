@@ -21,10 +21,6 @@ public interface OrgService {
 
 	public abstract People createUser(WTUser sessionUser) throws WTException;
 
-	public abstract Map<String, Object> changePasswordAction(Map<String, Object> param) throws WTException;
-
-	public abstract Map<String, Object> initPasswordAction(Map<String, Object> param) throws WTException;;
-
 	/**
 	 * 사용자 정보 저장 그리드 용
 	 */
@@ -39,4 +35,24 @@ public interface OrgService {
 	 * OOTB WTUSER 수정시 이벤트로 PEOPLE 객체 수정
 	 */
 	public abstract void modify(WTUser wtUser) throws Exception;
+
+	/**
+	 * 사용자 정보 수정 함수
+	 */
+	public abstract void modify(UserDTO dto) throws Exception;
+
+	/**
+	 * 사용자 퇴사 처리 함수
+	 */
+	public abstract void fire(String oid, boolean isFire) throws Exception;
+
+	/**
+	 * 사용자 비밀번호 변경 함수
+	 */
+	public abstract void init(Map<String, String> params) throws Exception;
+
+	/**
+	 * 사용자 비밀번호 초기화 함수
+	 */
+	public abstract void password(Map<String, String> params) throws Exception;
 }

@@ -1,5 +1,7 @@
 package e3ps.org;
 
+import java.sql.Timestamp;
+
 import com.ptc.windchill.annotations.metadata.Cardinality;
 import com.ptc.windchill.annotations.metadata.ColumnProperties;
 import com.ptc.windchill.annotations.metadata.ForeignKeyRole;
@@ -24,8 +26,12 @@ import wt.util.WTException;
 				@GeneratedProperty(name = "email", type = String.class, javaDoc = "이메일"),
 
 				@GeneratedProperty(name = "duty", type = String.class, javaDoc = "직급"),
-				
-				@GeneratedProperty(name = "resign", type = Boolean.class, javaDoc = "퇴사 처리", initialValue = "false"), },
+
+				@GeneratedProperty(name = "resign", type = Boolean.class, javaDoc = "퇴사 처리", initialValue = "false"),
+
+				@GeneratedProperty(name = "last", type = Timestamp.class, javaDoc = "비밀번호 최종 변경일")
+
+		},
 
 		foreignKeys = {
 

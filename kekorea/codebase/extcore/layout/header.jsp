@@ -36,41 +36,44 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 					<li>
 						<a onclick="moveToPage(this, '/workspace/agree', '> 나의 업무 > 검토함');">
 							검토함
-							<span class="label label-info float-right"><%=count.get("agree") %></span>
+							<span class="label label-info float-right"><%=count.get("agree")%></span>
 						</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/workspace/approval', '> 나의 업무 > 결재함');">
 							결재함
-							<span class="label label-info float-right"><%=count.get("approval") %></span>
+							<span class="label label-info float-right"><%=count.get("approval")%></span>
 						</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/workspace/receive', '> 나의 업무 > 수신함');">
 							수신함
-							<span class="label label-info float-right"><%=count.get("receive") %></span>
+							<span class="label label-info float-right"><%=count.get("receive")%></span>
 						</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/workspace/progress', '> 나의 업무 > 진행함');">
 							진행함
-							<span class="label label-info float-right"><%=count.get("progress") %></span>
+							<span class="label label-info float-right"><%=count.get("progress")%></span>
 						</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/workspace/complete', '> 나의 업무 > 완료함');">
 							완료함
-							<span class="label label-info float-right"><%=count.get("complete") %></span>
+							<span class="label label-info float-right"><%=count.get("complete")%></span>
 						</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/workspace/reject', '> 나의 업무 > 반려함');">
 							반려함
-							<span class="label label-info float-right"><%=count.get("reject") %></span>
+							<span class="label label-info float-right"><%=count.get("reject")%></span>
 						</a>
 					</li>
 					<li>
 						<a onclick="moveToPage(this, '/org/organization', '> 나의 업무 > 조직도');">조직도</a>
+					</li>
+					<li>
+						<a onclick="javascript:_popup('/org/password');">비밀번호 변경</a>
 					</li>
 				</ul>
 			</li>
@@ -132,9 +135,9 @@ Map<String, Integer> count = (Map<String, Integer>) request.getAttribute("count"
 					<li>
 						<a onclick="moveToPage(this, '/part/list', '> 부품 관리 > 부품 조회');">부품 조회</a>
 					</li>
-<!-- 					<li> -->
-<!-- 						<a href="profile.html">코드 생성</a> -->
-<!-- 					</li> -->
+					<!-- 					<li> -->
+					<!-- 						<a href="profile.html">코드 생성</a> -->
+					<!-- 					</li> -->
 					<li>
 						<a onclick="moveToPage(this, '/part/bundle', '> 부품 관리 > 부품 일괄 등록');">부품 일괄 등록</a>
 					</li>

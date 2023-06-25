@@ -77,9 +77,23 @@
 			document.location.href = "/Windchill/login/logout.jsp";
 		}
 
+		function _logout() {
+			document.execCommand("ClearAuthenticationCache");
+			document.location.href = "/Windchill/login/logout.jsp";
+		}
+
 		function index() {
 			cover.open();
 			document.location.href = "/Windchill/plm/index";
+		}
+
+		function _popup(url) {
+			const popW = 800;
+			const popH = 200;
+			const left = (screen.width - popW) / 2;
+			const top = (screen.height - popH) / 2;
+			const panel = window.open("/Windchill/plm" + url, "", "top=" + top + ", left=" + left + ", height=" + popH + ", width=" + popW);
+			return panel;
 		}
 	</script>
 </body>

@@ -1,16 +1,16 @@
 package e3ps.org.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import com.infoengine.SAK.Task;
 
 import e3ps.admin.commonCode.CommonCode;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
-import e3ps.common.mail.MailUtils;
 import e3ps.common.util.CommonUtils;
 import e3ps.common.util.QuerySpecUtils;
 import e3ps.common.util.StringUtils;
@@ -21,7 +21,6 @@ import e3ps.org.PeopleWTUserLink;
 import e3ps.org.dto.UserDTO;
 import wt.fc.PersistenceHelper;
 import wt.fc.QueryResult;
-import wt.fc.ReferenceFactory;
 import wt.federation.PrincipalManager.DirContext;
 import wt.org.OrganizationServicesMgr;
 import wt.org.WTUser;
@@ -220,113 +219,6 @@ public class StandardOrgService extends StandardManager implements OrgService {
 	}
 
 	@Override
-	public Map<String, Object> changePasswordAction(Map<String, Object> param) throws WTException {
-		Map<String, Object> map = new HashMap<String, Object>();
-		Transaction trs = new Transaction();
-		String password = (String) param.get("password");
-		WTUser user = null;
-
-		try {
-			trs.start();
-
-			user = (WTUser) SessionHelper.manager.getPrincipal();
-			String id = user.getName();
-			String uid = DirContext.getMapping(userAdapter, "user.uniqueIdAttribute",
-					DirContext.getMapping(userAdapter, "user.uid"));
-			String object = uid + "=" + id + "," + userSearch;
-
-			Task task = new Task("/wt/federation/UpdatePrincipal.xml");
-			task.addParam("object", object);
-			task.addParam("field", DirContext.getMapping(userAdapter, "user.userPassword") + "=" + password);
-			task.addParam("modification", "replace");
-			task.addParam("instance", userAdapter);
-			task.setUsername(userDirectory);
-			task.invoke();
-
-			// success
-			map.put("msg", user.getFullName() + " 사용자의 비밀번호가 변경 되었습니다.");
-
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			map.put("msg", user.getFullName() + " 사용자의 비밀번호 변경 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-		return map;
-	}
-
-	@Override
-	public Map<String, Object> initPasswordAction(Map<String, Object> param) throws WTException {
-		String oid = (String) param.get("oid");
-		People user = null;
-		ReferenceFactory rf = new ReferenceFactory();
-		Map<String, Object> map = new HashMap<String, Object>();
-		Transaction trs = new Transaction();
-
-		try {
-			trs.start();
-
-			user = (People) rf.getReference(oid).getObject();
-
-			String email = user.getEmail();
-			Random rnd = new Random();
-			String password = "";
-			for (int i = 0; i < 10; i++) {
-				String lowerStr = String.valueOf((char) ((int) (rnd.nextInt(26)) + 97));
-				String upperStr = String.valueOf((char) ((int) (rnd.nextInt(26)) + 65));
-				String number = String.valueOf(rnd.nextInt(10));
-				if (i % 3 == 0) {
-					password += lowerStr;
-				} else if (i % 3 == 1) {
-					password += upperStr;
-				} else {
-					password += number;
-				}
-			}
-
-			String id = user.getWtUser().getName();
-			String uid = DirContext.getMapping(userAdapter, "user.uniqueIdAttribute",
-					DirContext.getMapping(userAdapter, "user.uid"));
-			String object = uid + "=" + id + "," + userSearch;
-
-			Task task = new Task("/wt/federation/UpdatePrincipal.xml");
-			task.addParam("object", object);
-			task.addParam("field", DirContext.getMapping(userAdapter, "user.userPassword") + "=" + password);
-			task.addParam("modification", "replace");
-			task.addParam("instance", userAdapter);
-			task.setUsername(userDirectory);
-			task.invoke();
-
-			// email = "jongwoong.moon@techwing.co.kr";
-//			email = "jhkim@e3ps.com";
-
-			if (MailUtils.isMail && !StringUtils.isNull(email)) {
-				// 메일 연동할 경우만..
-				System.out.println("이메일 전송 : " + email);
-				MailUtils.sendInitPasswordMail(email, password);
-			}
-
-			// success
-			map.put("msg", user.getName() + " 사용자의 비밀번호가 초기화되었습니다.");
-			trs.commit();
-			trs = null;
-		} catch (Exception e) {
-			map.put("msg", user.getName() + " 사용자의 비밀번호 초기화 중 에러가 발생하였습니다.\n시스템 관리자에게 문의하세요.");
-			// fail..
-			e.printStackTrace();
-			trs.rollback();
-		} finally {
-			if (trs != null)
-				trs.rollback();
-		}
-		return map;
-	}
-
-	@Override
 	public void save(HashMap<String, List<UserDTO>> dataMap) throws Exception {
 		List<UserDTO> editRows = dataMap.get("editRows");
 		Transaction trs = new Transaction();
@@ -436,4 +328,146 @@ public class StandardOrgService extends StandardManager implements OrgService {
 
 		}
 	}
+
+	@Override
+	public void modify(UserDTO dto) throws Exception {
+		String oid = dto.getOid();
+		String department_oid = dto.getDepartment_oid();
+		String duty = dto.getDuty();
+		String email = dto.getEmail();
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			People people = (People) CommonUtils.getObject(oid);
+			people.setDuty(duty);
+			if (!StringUtils.isNull(department_oid)) {
+				Department department = (Department) CommonUtils.getObject(department_oid);
+				people.setDepartment(department);
+			}
+			people.setEmail(email + postFix);
+			PersistenceHelper.manager.modify(people);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void fire(String oid, boolean isFire) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			People people = (People) CommonUtils.getObject(oid);
+			people.setResign(isFire);
+			PersistenceHelper.manager.modify(people);
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void init(Map<String, String> params) throws Exception {
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			WTUser user = CommonUtils.sessionUser();
+
+			QueryResult result = PersistenceHelper.manager.navigate(user, "people", PeopleWTUserLink.class);
+			if (result.hasMoreElements()) {
+				People people = (People) result.nextElement();
+				people.setLast(new Timestamp(new Date().getTime()));
+				PersistenceHelper.manager.modify(people);
+			}
+
+			String id = user.getName();
+			if ("wcadmin".equals(id)) {
+				id = "Administrator";
+			}
+			String uid = DirContext.getMapping(userAdapter, "user.uniqueIdAttribute",
+					DirContext.getMapping(userAdapter, "user.uid"));
+			String object = uid + "=" + id + "," + userSearch;
+
+			Task task = new Task("/wt/federation/UpdatePrincipal.xml");
+			task.addParam("object", object);
+			task.addParam("field", DirContext.getMapping(userAdapter, "user.userPassword") + "=1");
+			task.addParam("modification", "replace");
+			task.addParam("instance", userAdapter);
+			task.setUsername(userDirectory);
+			task.invoke();
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
+	@Override
+	public void password(Map<String, String> params) throws Exception {
+		String password = params.get("password");
+		Transaction trs = new Transaction();
+		try {
+			trs.start();
+
+			WTUser user = CommonUtils.sessionUser();
+
+			QueryResult result = PersistenceHelper.manager.navigate(user, "people", PeopleWTUserLink.class);
+			if (result.hasMoreElements()) {
+				People people = (People) result.nextElement();
+				people.setLast(new Timestamp(new Date().getTime()));
+				PersistenceHelper.manager.modify(people);
+			}
+
+			String id = user.getName();
+			if ("Administrator".equals(id)) {
+				id = "wcadmin";
+			}
+
+			String uid = DirContext.getMapping(userAdapter, "user.uniqueIdAttribute",
+					DirContext.getMapping(userAdapter, "user.uid"));
+			String object = uid + "=" + id + "," + userSearch;
+
+			Task task = new Task("/wt/federation/UpdatePrincipal.xml");
+			task.addParam("object", object);
+			task.addParam("field", DirContext.getMapping(userAdapter, "user.userPassword") + "=" + password);
+			task.addParam("modification", "replace");
+			task.addParam("instance", userAdapter);
+			task.setUsername(userDirectory);
+			task.invoke();
+
+			trs.commit();
+			trs = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			trs.rollback();
+			throw e;
+		} finally {
+			if (trs != null)
+				trs.rollback();
+		}
+	}
+
 }

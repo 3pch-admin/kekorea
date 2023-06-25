@@ -22,6 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import e3ps.admin.commonCode.service.CommonCodeHelper;
 import e3ps.common.controller.BaseController;
 import e3ps.common.util.CommonUtils;
+import e3ps.doc.dto.DocumentDTO;
+import e3ps.doc.service.DocumentHelper;
 import e3ps.org.dto.UserDTO;
 import e3ps.org.service.OrgHelper;
 import e3ps.system.service.ErrorLogHelper;
@@ -187,11 +189,121 @@ public class OrgController extends BaseController {
 	public ModelAndView view(@RequestParam String oid) throws Exception {
 		ModelAndView model = new ModelAndView();
 		boolean isAdmin = CommonUtils.isAdmin();
+		boolean isSupervisor = CommonUtils.isSupervisor();
+		WTUser sessionUser = CommonUtils.sessionUser();
 		WTUser user = (WTUser) CommonUtils.getObject(oid);
+		boolean isSessionUser = user.getName().equals(sessionUser.getName());
 		UserDTO dto = new UserDTO(user);
+		model.addObject("isSessionUser", isSessionUser);
 		model.addObject("dto", dto);
+		model.addObject("isSupervisor", isSupervisor);
 		model.addObject("isAdmin", isAdmin);
-		model.setViewName("/extcore/jsp/org/organization-view.jsp");
+		model.setViewName("popup:/org/organization-view");
 		return model;
+	}
+
+	@Description(value = "사용자 정보 수정 페이지")
+	@GetMapping(value = "/modify")
+	public ModelAndView modify(@RequestParam String oid) throws Exception {
+		ModelAndView model = new ModelAndView();
+		WTUser user = (WTUser) CommonUtils.getObject(oid);
+
+		ArrayList<HashMap<String, String>> list = OrgHelper.manager.getDepartmentMap();
+		String[] dutys = new String[] { "사장", "부사장", "PL", "TL" };
+
+		UserDTO dto = new UserDTO(user);
+		model.addObject("list", list);
+		model.addObject("dutys", dutys);
+		model.addObject("dto", dto);
+		model.setViewName("popup:/org/organization-modify");
+		return model;
+	}
+
+	@Description(value = "사용자 정보 수정 함수")
+	@ResponseBody
+	@PostMapping(value = "/modify")
+	public Map<String, Object> modify(@RequestBody UserDTO dto) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			OrgHelper.service.modify(dto);
+			result.put("msg", MODIFY_MSG);
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/org/modify", "사용자 정보 수정 함수");
+		}
+		return result;
+	}
+
+	@Description(value = "사용자 퇴사처리 함수")
+	@ResponseBody
+	@GetMapping(value = "/fire")
+	public Map<String, Object> fire(@RequestParam String oid, @RequestParam String fire) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+
+			boolean isFire = Boolean.parseBoolean(fire);
+			OrgHelper.service.fire(oid, isFire);
+			if (isFire) {
+				result.put("msg", "퇴사처리 되었습니다.");
+			} else {
+				result.put("msg", "복직처리 되었습니다.");
+			}
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/doc/modify", "사용자 퇴사처리 함수");
+		}
+		return result;
+	}
+
+	@Description(value = "비밀번호 변경 페이지")
+	@GetMapping(value = "/password")
+	public ModelAndView password() throws Exception {
+		ModelAndView model = new ModelAndView();
+		WTUser sessionUser = CommonUtils.sessionUser();
+		model.addObject("oid", sessionUser.getPersistInfo().getObjectIdentifier().getStringValue());
+		model.setViewName("popup:/org/password-edit");
+		return model;
+	}
+
+	@Description(value = "비밀번호 변경 함수")
+	@ResponseBody
+	@PostMapping(value = "/password")
+	public Map<String, Object> password(@RequestBody Map<String, String> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			OrgHelper.service.password(params);
+			result.put("msg", "비밀번호가 변경 되었습니다.");
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/org/password", "비밀번호 변경 함수");
+		}
+		return result;
+	}
+	
+	@Description(value = "비밀번호 초기화 함수")
+	@ResponseBody
+	@PostMapping(value = "/init")
+	public Map<String, Object> init(@RequestBody Map<String, String> params) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			OrgHelper.service.init(params);
+			result.put("msg", "비밀번호가 1로 초기화 되었습니다.");
+			result.put("result", SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("result", FAIL);
+			result.put("msg", e.toString());
+			ErrorLogHelper.service.create(e.toString(), "/org/password", "비밀번호 초기화 함수");
+		}
+		return result;
 	}
 }

@@ -136,13 +136,15 @@ JSONArray departments = JSONArray.fromObject(list);
 					dataType : "string",
 					width : 100,
 					editable : false,
-					// 					renderer : {
-					// 						type : "LinkRenderer",
-					// 						baseUrl : "javascript",
-					// 						jsCallback : function(rowIndex, columnIndex, value, item) {
-					// 							// 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
-					// 						}
-					// 					},
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.woid;
+							const url = getCallUrl("/org/view?oid=" + oid);
+							popup(url, 1000, 320);
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true
@@ -153,13 +155,15 @@ JSONArray departments = JSONArray.fromObject(list);
 					dataType : "string",
 					width : 100,
 					editable : false,
-					// 					renderer : {
-					// 						type : "LinkRenderer",
-					// 						baseUrl : "javascript",
-					// 						jsCallback : function(rowIndex, columnIndex, value, item) {
-					// 							// 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
-					// 						}
-					// 					},
+					renderer : {
+						type : "LinkRenderer",
+						baseUrl : "javascript",
+						jsCallback : function(rowIndex, columnIndex, value, item) {
+							const oid = item.woid;
+							const url = getCallUrl("/org/view?oid=" + oid);
+							popup(url, 1000, 320);
+						}
+					},
 					filter : {
 						showIcon : true,
 						inline : true

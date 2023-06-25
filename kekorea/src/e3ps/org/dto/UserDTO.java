@@ -2,6 +2,7 @@ package e3ps.org.dto;
 
 import java.sql.Timestamp;
 
+import e3ps.common.util.CommonUtils;
 import e3ps.org.People;
 import e3ps.org.PeopleWTUserLink;
 import e3ps.org.service.OrgHelper;
@@ -27,7 +28,9 @@ public class UserDTO {
 	private Timestamp createdDate;
 	private boolean resign;
 	private String mak;
-
+	private String last_txt;
+	private String password;
+	
 	public UserDTO() {
 
 	}
@@ -52,6 +55,7 @@ public class UserDTO {
 			setResign(people.getResign());
 			setMak(OrgHelper.manager.getGridMaks(people));
 		}
+		setLast_txt(people.getLast() != null ? people.getLast().toString().substring(0, 10) : CommonUtils.getPersistableTime(people.getCreateTimestamp()));
 	}
 
 	public UserDTO(People people) throws Exception {
@@ -69,6 +73,7 @@ public class UserDTO {
 		setCreatedDate(people.getCreateTimestamp());
 		setResign(people.getResign());
 		setMak(OrgHelper.manager.getGridMaks(people));
+		setLast_txt(people.getLast() != null ? people.getLast().toString().substring(0, 10) : CommonUtils.getPersistableTime(people.getCreateTimestamp()));
 	}
 
 }
