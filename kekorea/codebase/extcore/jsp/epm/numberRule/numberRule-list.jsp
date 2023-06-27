@@ -165,16 +165,16 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					<img src="/Windchill/extcore/images/save.gif" title="테이블 저장" onclick="saveColumnLayout('numberRule-list');">
 					<img src="/Windchill/extcore/images/redo.gif" title="테이블 초기화" onclick="resetColumnLayout('numberRule-list');">
 					<img src="/Windchill/extcore/images/help.gif" title="메뉴얼 재생" onclick="play('test.mp4');">
-					<input type="button" value="등록" title="등록" class="blue" onclick="create();">
+<!-- 					<input type="button" value="등록" title="등록" class="blue" onclick="create();"> -->
 					<input type="button" value="저장" title="저장" onclick="save();">
 					<input type="button" value="개정" title="개정" class="red" onclick="revise();">
 					<%
-					if (isSupervisor) {
+// 					if (isSupervisor) {
 					%>
 					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
 					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
 					<%
-					}
+// 					}
 					%>
 				</td>
 				<td class="right">
@@ -544,17 +544,37 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 				});
 				AUIGrid.bind(myGridID, "cellEditBegin", auiCellEditBeginHandler);
 				AUIGrid.bind(myGridID, "cellEditEnd", auiCellEditEndHandler);
+				AUIGrid.bind(myGridID, "keyDown", auiKeyDownHandler);
 			}
-			
+
+			// enter 키 행 추가
+			function auiKeyDownHandler(event) {
+				if (event.keyCode == 13) { // 엔터 키
+					var selectedItems = AUIGrid.getSelectedItems(event.pid);
+					var rowIndex = selectedItems[0].rowIndex;
+					if (rowIndex === AUIGrid.getRowCount(event.pid) - 1) { // 마지막 행인지 여부
+						const item = {
+							version : 1,
+							drawingCompany_code : "K",
+							businessSector_code : "K",
+							number : "K"
+						}
+						AUIGrid.addRow(event.pid, item); // 행 추가
+						return false; // 엔터 키의 기본 행위 안함.
+					}
+				}
+				return true; // 기본 행위 유지
+			}
+
 			function create() {
 				const url = getCallUrl("/numberRule/create");
 				popup(url, 1600, 650);
 			}
 
-// 			function register() {
-// 				const url = getCallUrl("/numberRule/register");
-// 				popup(url);
-// 			}
+			// 			function register() {
+			// 				const url = getCallUrl("/numberRule/register");
+			// 				popup(url);
+			// 			}
 
 			function auiCellEditEndHandler(event) {
 				const item = event.item;
