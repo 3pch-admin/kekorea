@@ -470,6 +470,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					headerText : "상태",
 					dataType : "string",
 					width : 80,
+					editable : false,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -479,6 +480,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					headerText : "작성자",
 					dataType : "string",
 					width : 100,
+					editable : false,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -488,6 +490,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					headerText : "작성일",
 					dataType : "string",
 					width : 100,
+					editable : false,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -497,6 +500,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					headerText : "수정자",
 					dataType : "string",
 					width : 100,
+					editable : false,
 					filter : {
 						showIcon : true,
 						inline : true
@@ -506,6 +510,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					headerText : "수정일",
 					dataType : "string",
 					width : 100,
+					editable : false,
 					filter : {
 						showIcon : true,
 						inline : true
