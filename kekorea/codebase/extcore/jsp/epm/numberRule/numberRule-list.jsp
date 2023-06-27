@@ -303,6 +303,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					headerText : "도번명",
 					dataType : "string",
 					width : 250,
+					style : "aui-left",
 					filter : {
 						showIcon : true,
 						inline : true
@@ -375,6 +376,15 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 						valueField : "value",
 						validator : function(oldValue, newValue, item, dataField, fromClipboard, which) {
 							let isValid = false;
+							if (fromClipboard) {
+								for (let i = 0, len = classificationWritingDepartments.length; i < len; i++) {
+									if (classificationWritingDepartments[i]["key"] == newValue) {
+										isValid = true;
+										break;
+									}
+								}
+							}
+							
 							for (let i = 0, len = classificationWritingDepartments.length; i < len; i++) {
 								if (classificationWritingDepartments[i]["value"] == newValue) {
 									isValid = true;
