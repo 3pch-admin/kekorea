@@ -356,7 +356,7 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					renderer : {
 						type : "IconRenderer",
 						iconWidth : 16,
-						iconHeight :  16,
+						iconHeight :   16,
 						iconPosition : "aisleRight",
 						iconTableRef : {
 							"default" : "/Windchill/extcore/component/AUIGrid/images/list-icon.png"
