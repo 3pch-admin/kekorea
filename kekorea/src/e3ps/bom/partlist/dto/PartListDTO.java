@@ -97,24 +97,41 @@ public class PartListDTO {
 		setProjectType_code(project.getProjectType().getCode());
 		setProjectType_name(project.getProjectType().getName());
 		setProjectType_oid(project.getProjectType().getPersistInfo().getObjectIdentifier().getStringValue());
-		setMak_code(project.getMak().getCode());
-		setMak_name(project.getMak().getName());
-		setMak_oid(project.getMak().getPersistInfo().getObjectIdentifier().getStringValue());
-		setDetail_code(project.getDetail().getCode());
-		setDetail_name(project.getDetail().getName());
-		setDetail_oid(project.getDetail().getPersistInfo().getObjectIdentifier().getStringValue());
+
+		if (project.getMak() != null) {
+			setMak_code(project.getMak().getCode());
+			setMak_name(project.getMak().getName());
+			setMak_oid(project.getMak().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+
+		if (project.getDetail() != null) {
+			setDetail_code(project.getDetail().getCode());
+			setDetail_name(project.getDetail().getName());
+			setDetail_oid(project.getDetail().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+
 		setKekNumber(project.getKekNumber());
 		setKeNumber(project.getKeNumber());
 		setUserId(project.getUserId());
 		setDescription(project.getDescription());
-		setCustomer_code(project.getCustomer().getCode());
-		setCustomer_name(project.getCustomer().getName());
-		setCustomer_oid(project.getCustomer().getPersistInfo().getObjectIdentifier().getStringValue());
-		setInstall_code(project.getInstall().getCode());
-		setInstall_name(project.getInstall().getName());
-		setInstall_oid(project.getInstall().getPersistInfo().getObjectIdentifier().getStringValue());
-		setPdate(project.getPDate());
-		setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
+
+		if (project.getCustomer() != null) {
+			setCustomer_code(project.getCustomer().getCode());
+			setCustomer_name(project.getCustomer().getName());
+			setCustomer_oid(project.getCustomer().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+
+		if (project.getInstall() != null) {
+			setInstall_code(project.getInstall().getCode());
+			setInstall_name(project.getInstall().getName());
+			setInstall_oid(project.getInstall().getPersistInfo().getObjectIdentifier().getStringValue());
+		}
+
+		if (project.getPDate() != null) {
+			setPdate(project.getPDate());
+			setPdate_txt(CommonUtils.getPersistableTime(project.getPDate()));
+		}
+
 		setModel(project.getModel());
 		setState(master.getLifeCycleState().getDisplay());
 		setCreator(master.getCreatorFullName());
