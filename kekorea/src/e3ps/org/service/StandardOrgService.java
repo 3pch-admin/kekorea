@@ -335,6 +335,8 @@ public class StandardOrgService extends StandardManager implements OrgService {
 
 	@Override
 	public void modify(UserDTO dto) throws Exception {
+		String name = dto.getName();
+		String woid = dto.getWoid();
 		String oid = dto.getOid();
 		String department_oid = dto.getDepartment_oid();
 		String duty = dto.getDuty();
@@ -349,8 +351,13 @@ public class StandardOrgService extends StandardManager implements OrgService {
 				Department department = (Department) CommonUtils.getObject(department_oid);
 				people.setDepartment(department);
 			}
+			people.setName(name);
 			people.setEmail(email + postFix);
 			PersistenceHelper.manager.modify(people);
+
+			WTUser user = (WTUser) CommonUtils.getObject(woid);
+			user.setFullName(name);
+			PersistenceHelper.manager.modify(user);
 
 			trs.commit();
 			trs = null;

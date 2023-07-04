@@ -30,7 +30,8 @@ boolean isSessionUser = (boolean) request.getAttribute("isSessionUser");
 			%>
 			<input type="button" value="퇴사처리" title="퇴사처리" class="red" onclick="fire('true', '퇴사');">
 			<%
-			} else {
+			}
+			if (isSupervisor && dto.isResign()) {
 			%>
 			<input type="button" value="복직처리" title="복직처리" class="red" onclick="fire('false', '복직');">
 			<%

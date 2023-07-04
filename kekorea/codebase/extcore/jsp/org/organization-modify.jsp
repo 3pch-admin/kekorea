@@ -42,7 +42,7 @@ String email = dto.getEmail() != null ? dto.getEmail().substring(0, dto.getEmail
 			</colgroup>
 			<tr>
 				<th class="lb">이름</th>
-				<td class="indent5"><%=dto.getName()%></td>
+				<td class="indent5"><input type="text" name="name" id="name" value="<%=dto.getName()%>"></td>
 				<th>아이디</th>
 				<td class="indent5"><%=dto.getId()%></td>
 			</tr>
@@ -92,6 +92,7 @@ String email = dto.getEmail() != null ? dto.getEmail().substring(0, dto.getEmail
 <script type="text/javascript">
 	function modify() {
 		const oid = document.getElementById("oid").value;
+		const name = document.getElementById("name").value;
 		const woid = document.getElementById("woid").value;
 		const department = document.getElementById("department").value;
 		const duty = document.getElementById("duty").value;
@@ -102,6 +103,7 @@ String email = dto.getEmail() != null ? dto.getEmail().substring(0, dto.getEmail
 		const params = new Object();
 		const url = getCallUrl("/org/modify");
 		params.oid = oid;
+		params.name = name;
 		params.woid = woid;
 		params.department_oid = department;
 		params.duty = duty;
@@ -120,6 +122,7 @@ String email = dto.getEmail() != null ? dto.getEmail().substring(0, dto.getEmail
 	}
 
 	document.addEventListener("DOMContentLoaded", function() {
+		toFocus("name");
 		$("#tabs").tabs({
 			active : 0
 		});

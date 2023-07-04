@@ -691,8 +691,8 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
 
 					if (isNull(item.size_code)) {
-						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "사이즈를 선택하세요.");
-						return false;
+// 						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "사이즈를 선택하세요.");
+// 						return false;
 					}
 
 					if (isNull(item.lotNo) || item.lotNo === 0) {
@@ -726,8 +726,8 @@ JSONArray classificationWritingDepartments = (JSONArray) request.getAttribute("c
 					const rowIndex = AUIGrid.rowIdToIndex(myGridID, item._$uid);
 
 					if (isNull(item.size_code)) {
-						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "사이즈를 선택하세요.");
-						return false;
+// 						AUIGrid.showToastMessage(myGridID, rowIndex, 1, "사이즈를 선택하세요.");
+// 						return false;
 					}
 
 					if (isNull(item.lotNo) || item.lotNo === 0) {
