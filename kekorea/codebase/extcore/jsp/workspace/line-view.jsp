@@ -1,3 +1,5 @@
+<%@page import="wt.fc.PersistenceHelper"%>
+<%@page import="e3ps.common.util.CommonUtils"%>
 <%@page import="e3ps.bom.partlist.PartListMaster"%>
 <%@page import="wt.fc.Persistable"%>
 <%@page import="e3ps.workspace.ApprovalLine"%>
@@ -8,6 +10,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 ApprovalLineDTO dto = (ApprovalLineDTO) request.getAttribute("dto");
+String oid = dto.getOid();
+
+ApprovalLine line = (ApprovalLine)CommonUtils.getObject(oid);
+line.setReads(true);
+PersistenceHelper.manager.modify(line);
+
 Persistable per = (Persistable) request.getAttribute("per");
 String poid = (String) request.getAttribute("poid");
 %>

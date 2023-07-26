@@ -20,6 +20,7 @@ import e3ps.org.PeopleMakLink;
 import e3ps.org.PeopleWTUserLink;
 import e3ps.org.dto.UserDTO;
 import wt.fc.PersistenceHelper;
+import wt.fc.PersistenceServerHelper;
 import wt.fc.QueryResult;
 import wt.federation.PrincipalManager.DirContext;
 import wt.org.OrganizationServicesMgr;
@@ -82,6 +83,7 @@ public class StandardOrgService extends StandardManager implements OrgService {
 	protected synchronized void performStartupProcess() throws ManagerException {
 		super.performStartupProcess();
 		try {
+			System.out.println("performStartupProcess 1111");
 			Department department = makeRoot();
 			inspectUser(department);
 		} catch (Exception e) {
@@ -134,7 +136,7 @@ public class StandardOrgService extends StandardManager implements OrgService {
 		Transaction trs = new Transaction();
 		try {
 			trs.start();
-
+			System.out.println("performStartupProcess 222");
 			SessionHelper.manager.setAdministrator();
 
 			QuerySpec qs = new QuerySpec();
@@ -145,6 +147,7 @@ public class StandardOrgService extends StandardManager implements OrgService {
 				Object[] obj = (Object[]) qr.nextElement();
 				People u = (People) obj[0];
 				String id = u.getId();
+				System.out.println("performStartupProcess 1133311");
 				WTUser user = OrganizationServicesMgr.getUser(id);
 				if (user == null) {
 					PersistenceHelper.manager.delete(u);
@@ -312,14 +315,13 @@ public class StandardOrgService extends StandardManager implements OrgService {
 			QueryResult result = PersistenceHelper.manager.navigate(wtUser, "people", PeopleWTUserLink.class);
 			if (result.hasMoreElements()) {
 				user = (People) result.nextElement();
-				user.setDepartment(OrgHelper.manager.getRoot());
 				user.setWtUser(wtUser);
 				user.setName(wtUser.getFullName());
 				user.setId(wtUser.getName());
 				user.setEmail(wtUser.getEMail() != null ? wtUser.getEMail() : "");
 				user = (People) PersistenceHelper.manager.modify(user);
 			}
-
+			
 			trs.commit();
 			trs = null;
 		} catch (Exception e) {
@@ -347,14 +349,15 @@ public class StandardOrgService extends StandardManager implements OrgService {
 
 			People people = (People) CommonUtils.getObject(oid);
 			people.setDuty(duty);
+			
 			if (!StringUtils.isNull(department_oid)) {
 				Department department = (Department) CommonUtils.getObject(department_oid);
 				people.setDepartment(department);
 			}
 			people.setName(name);
 			people.setEmail(email + postFix);
-			PersistenceHelper.manager.modify(people);
-
+			
+			
 			WTUser user = (WTUser) CommonUtils.getObject(woid);
 			user.setFullName(name);
 			PersistenceHelper.manager.modify(user);

@@ -455,7 +455,7 @@ ArrayList<Map<String, String>> projectTypes = (ArrayList<Map<String, String>>) r
 				if (!confirm("저장 하시겠습니까?")) {
 					return false;
 				}
-				const url = getCallUrl("/request/save");
+				const url = getCallUrl("/requestDocument/save");
 				const params = new Object();
 				const removeRows = AUIGrid.getRemovedItems(myGridID);
 				params.removeRows = removeRows;

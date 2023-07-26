@@ -237,6 +237,8 @@ public class WorkspaceHelper {
 		QuerySpecUtils.toOrderBy(query, idx, ApprovalLine.class, ApprovalLine.START_TIME, true);
 
 		PageQueryUtils pager = new PageQueryUtils(params, query);
+		
+		
 		PagingQueryResult result = pager.find();
 		while (result.hasMoreElements()) {
 			Object[] obj = (Object[]) result.nextElement();
@@ -1007,6 +1009,9 @@ public class WorkspaceHelper {
 	 */
 	public Map<String, Integer> count() throws Exception {
 		Map<String, Object> params = new HashMap<>();
+		
+		params.put("_psize", "1000000");
+		
 		Map<String, Object> agree = agree(params);
 		Map<String, Object> approval = approval(params);
 		Map<String, Object> receive = receive(params);

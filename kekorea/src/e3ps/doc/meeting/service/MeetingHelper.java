@@ -20,6 +20,7 @@ import e3ps.doc.meeting.dto.MeetingTemplateDTO;
 import e3ps.project.Project;
 import e3ps.project.ProjectUserLink;
 import e3ps.project.variable.ProjectUserTypeVariable;
+import e3ps.workspace.notice.Notice;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import wt.doc.WTDocumentMaster;
@@ -45,10 +46,19 @@ public class MeetingHelper {
 	public Map<String, Object> template(Map<String, Object> params) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		ArrayList<MeetingTemplateDTO> list = new ArrayList<>();
+		
+		String name = (String) params.get("name");
+		String creatorOid = (String) params.get("creatorOid");
+		String createdFrom = (String) params.get("createdFrom");
+		String createdTo = (String) params.get("createdTo");
 
 		QuerySpec query = new QuerySpec();
 		int idx = query.appendClassList(MeetingTemplate.class, true);
 
+		QuerySpecUtils.toLikeAnd(query, idx, MeetingTemplate.class, MeetingTemplate.NAME, name);
+		QuerySpecUtils.toTimeGreaterEqualsThan(query, idx, MeetingTemplate.class, MeetingTemplate.CREATE_TIMESTAMP, createdFrom);
+		QuerySpecUtils.toTimeLessEqualsThan(query, idx, MeetingTemplate.class, MeetingTemplate.CREATE_TIMESTAMP, createdTo);
+		QuerySpecUtils.toCreator(query, idx, MeetingTemplate.class, creatorOid);
 		QuerySpecUtils.toBooleanAnd(query, idx, MeetingTemplate.class, MeetingTemplate.ENABLE, true);
 		QuerySpecUtils.toOrderBy(query, idx, MeetingTemplate.class, MeetingTemplate.NAME, false);
 

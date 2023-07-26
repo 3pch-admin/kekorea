@@ -251,7 +251,8 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataType : "boolean",
 					width : 80,
 					renderer : {
-						type : "CheckBoxEditRenderer"
+						type : "CheckBoxEditRenderer",
+// 						editable : true //체크 가능여부 확인 필요
 					},
 					filter : {
 						showIcon : false,

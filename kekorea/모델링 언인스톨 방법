@@ -2,3 +2,8 @@
 	- tools model_uninstall -Dmodel_uninstall.filter=모델링 있는 패키지명 (ex : e3ps.admin.code)
 	- 해당 클래스 폴더 삭제
 	- 이클립스 재실행 -> 프로젝트 클린 -> 서버 재구동
+	
+	tools model_uninstall -Dmodel_uninstall.filter=e3ps.project.ProjectTargetSourceLink
+	tools model_uninstall -Dmodel_uninstall.filter=e3ps.project.TemplateTargetSourceLink
+	TargetTaskSourceTaskLink
+	TemplateTargetSourceLink

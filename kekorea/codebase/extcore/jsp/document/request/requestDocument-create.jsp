@@ -97,6 +97,14 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 		</table>
 	</div>
 	<div id="tabs-2">
+		<table class="button-table">
+			<tr>
+				<td class="left">
+					<input type="button" value="행 추가" title="행 추가" class="blue" onclick="addRow();">
+					<input type="button" value="행 삭제" title="행 삭제" class="red" onclick="deleteRow();">
+				</td>
+			</tr>
+		</table>
 		<div id="grid_wrap" style="height: 610px; border-top: 1px solid #3180c3; margin-top: 5px;"></div>
 	</div>
 	<script type="text/javascript">
@@ -700,6 +708,22 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			AUIGrid.bind(myGridID, "keyDown", auiKeyDownHandler);
 		}
 		
+		//행 삭제
+		function deleteRow() {
+			const checkedItems = AUIGrid.getCheckedRowItems(myGridID);
+			for (let i = checkedItems.length-1; i >= 0; i--) {
+				const item = checkedItems[i].item;
+				const rowIndex = checkedItems[i].rowIndex;
+				AUIGrid.removeRow(myGridID, rowIndex);
+			}
+		}
+		
+		//행 추가
+		function addRow() {
+			const item = new Object();
+			item.latest = true;
+			AUIGrid.addRow(myGridID, item, "last");
+		}
 		
 		// enter 키 행 추가
 		function auiKeyDownHandler(event) {
@@ -713,6 +737,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			}
 			return true; // 기본 행위 유지
 		}
+		
 
 		function contextItemHandler(event) {
 			const item = new Object();
@@ -787,6 +812,7 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 			const template = document.getElementById("template");
 			const addRows = AUIGrid.getAddedRowItems(myGridID);
 			const addRows8 = AUIGrid.getAddedRowItems(myGridID8);
+
 			if (isNull(name.value)) {
 				alert("의뢰서 제목을 입력하세요.");
 				name.focus();
@@ -802,6 +828,13 @@ JSONArray projectTypes = (JSONArray) request.getAttribute("projectTypes");
 				alert("결재선을 지정하세요.");
 				_register();
 				return false;
+			}
+			
+			for(let i=0; addRows.length>i; i++){
+				if (isNull(addRows[i].kekNumber) || isNull(addRows[i].keNumber)) {
+					alert("관련 작번을 추가하세요.");
+					return false;
+				}
 			}
 
 			if (!confirm("등록 하시겠습니까?")) {

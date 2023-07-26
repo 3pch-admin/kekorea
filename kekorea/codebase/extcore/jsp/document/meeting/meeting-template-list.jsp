@@ -21,21 +21,16 @@
 				<col width="*">
 				<col width="130">
 				<col width="*">
-				<col width="130">
-				<col width="*">
 			</colgroup>
 			<tr>
-				<th>공지사항 제목</th>
+				<th>회의록 템플릿 제목</th>
 				<td class="indent5">
-					<input type="text" name="fileName" class="width-200">
-				</td>
-				<th>설명</th>
-				<td class="indent5">
-					<input type="text" name="description" class="width-200">
+					<input type="text" name="name"  id="name" class="width-300">
 				</td>
 				<th>작성자</th>
 				<td class="indent5">
-					<input type="text" name="creator" id="creator" data-multi="false" class="width-200">
+					<input type="text" name="creator"  id="creator" data-multi="false" class="width-200">
+					<input type="hidden" name="creatorOid" id="creatorOid">
 					<img src="/Windchill/extcore/images/delete.png" class="delete" title="삭제" onclick="clearUser('creator')">
 				</td>
 				<th>작성일</th>
@@ -132,8 +127,10 @@
 			}
 
 			function loadGridData() {
-				const params = new Object();
+				let params = new Object();
 				const url = getCallUrl("/meeting/template");
+				const field = ["name","creatorOid","createdFrom","createdTo"];
+				params = toField(params, field);
 				AUIGrid.showAjaxLoader(myGridID);
 				parent.openLayer();
 				call(url, params, function(data) {

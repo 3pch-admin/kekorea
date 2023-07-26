@@ -273,9 +273,10 @@ String end = (String) request.getAttribute("end");
 					renderer : {
 						type : "LinkRenderer",
 						baseUrl : "javascript",
-						jsCallback : function(rowIndex, columnIndex, value, item) {
+						jsCallback : function(rowIndex, columnIndex, value, item) {console.log(item);
 							const oid = item.oid;
-							alert("링크 준비중");
+							const url = getCallUrl("/history/view?oid=" + oid);
+							popup(url);
 						}
 					},
 					filter : {
@@ -293,7 +294,8 @@ String end = (String) request.getAttribute("end");
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
 							const oid = item.oid;
-							alert("링크 준비중");
+							const url = getCallUrl("/history/view?oid=" + oid);
+							popup(url);
 						}
 					},
 					filter : {

@@ -179,7 +179,10 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 						type : "LinkRenderer",
 						baseUrl : "javascript",
 						jsCallback : function(rowIndex, columnIndex, value, item) {
-							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+// 							alert("( " + rowIndex + ", " + columnIndex + " ) " + item.color + "  Link 클릭\r\n자바스크립트 함수 호출하고자 하는 경우로 사용하세요!");
+							const poid = item.poid;
+							const url = getCallUrl("/project/info?oid=" + poid);
+							popup(url);
 						}
 					},
 					filter : {
@@ -190,8 +193,17 @@ WTUser sessionUser = (WTUser) request.getAttribute("sessionUser");
 					dataField : "keNumber",
 					headerText : "KE 작번",
 					dataType : "string",
-					style : "underline",
+					style : "underline", //링크를 안 건다면 언더라인 효과 빼는 게 맞을 것 같음. 확인 필요
 					width : 100,
+// 					renderer : { //팝업 필요성 확인 필요
+// 						type : "LinkRenderer",
+// 						baseUrl : "javascript",
+// 						jsCallback : function(rowIndex, columnIndex, value, item) {
+// 							const poid = item.poid;
+// 							const url = getCallUrl("/project/info?oid=" + poid);
+// 							popup(url);
+// 						}
+// 					},
 					filter : {
 						showIcon : true,
 						inline : true
