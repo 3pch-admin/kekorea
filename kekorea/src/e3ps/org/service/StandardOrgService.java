@@ -356,7 +356,7 @@ public class StandardOrgService extends StandardManager implements OrgService {
 			}
 			people.setName(name);
 			people.setEmail(email + postFix);
-			
+			PersistenceHelper.manager.modify(people);
 			
 			WTUser user = (WTUser) CommonUtils.getObject(woid);
 			user.setFullName(name);
